@@ -1,100 +1,91 @@
-# Docker images for bpmn-web
+# BPMN Server Docker installation
 
-bpmn-web (the web application, model editor and REST APIs on bpmn-server) and MongoDB, in two containers.
+The distribution uses `ralphhanna/bpmn-server:latest`, replacing the obsolete `ralphhanna/bpmn-web` image name. It includes the server and its API/UI hosting application.
 
-## Install
+## Interactive setup (recommended)
 
-Docker is all you need, and two files. On Linux or macOS:
+Linux/macOS:
 
 ```sh
-mkdir bpmn-web && cd bpmn-web
-curl -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
-curl -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.sh
+mkdir -p bpmn-server && cd bpmn-server
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/setup.sh
+sh setup.sh
+```
+
+The setup prompts for the **host port**, **database** (memory or persistent MongoDB), and **image** (published Docker Hub image or local build). It generates a private `.env` with secrets and remembers your choices. For a local image, it downloads editable `image/Dockerfile` and `image/docker-entrypoint.sh` along with a build override. Edit these files, then run the same Compose build command again. An existing `.env` is preserved on ordinary startup; `sh setup.sh --reconfigure` prompts again.
+
+```sh
+# Run the same mode again (after downloading up.sh)
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.sh
 sh up.sh
 ```
 
-On Windows (PowerShell):
+For Windows, download `docker-compose.yml` and `up.cmd` as described below, or use WSL to run the interactive `setup.sh`.
+
+## Local .env
+
+The file is next to `docker-compose.yml`. Edit it with `nano .env` or VS Code:
+
+```dotenv
+PORT=3000
+MONGO_DB_URL=memory
+BPMN_IMAGE=ralphhanna/bpmn-server:latest
+REQUIRE_AUTHENTICATION=true
+ENFORCE_SECURITY=true
+API_SERVICE_USER_NAME=integration
+API_SERVICE_USER_GROUPS=SYSTEM
+API_KEY=...                 # generated secret
+ADMIN_API_KEY=...           # generated secret
+SESSION_SECRET=...          # generated secret
+ADMIN_PASSWORD=...          # first admin user only
+```
+
+`env_file: .env` passes settings into the container. `PORT` sets the host-facing port only; the internal application port remains 3000. Changes to `.env` require recreating the container (not `docker compose restart`).
+
+`MONGO_DB_URL=memory` needs no MongoDB container. It uses `mongodb-memory-server`, which downloads its MongoDB executable on first start and loses DB contents when the container stops. The image is Debian based for compatibility. Model files persist in the `processes` volume.
+
+For persistent MongoDB, choose `mongo` during setup (or set `MONGO_DB_URL=mongodb://mongo:27017/bpmn` and use `docker-compose.mongo.yml`). The optional MongoDB service isn't exposed outside the Docker network.
+
+## Commands
+
+For a normal published memory installation:
+
+```sh
+docker compose up -d --force-recreate
+docker compose ps -a
+docker compose logs --tail=100 server
+docker compose exec server npm run cli
+docker compose down
+```
+
+For persistent MongoDB:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.mongo.yml up -d
+```
+
+For a local build (from `docker/` with `image/` present):
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+```
+
+For local build **and** bundled MongoDB, include both override files. A local build uses the selected version of *published npm packages*; changing package source in `packages/` requires a separate source-build workflow.
+
+`docker compose config` can print secrets; redact before sharing. Do not use `docker compose down -v` unless you intend to remove stored data.
+
+## Publish an image
+
+See [image/README.md](image/README.md). The image must be built, tested, then pushed to Docker Hub. An image tag is not created automatically by changing a Compose file.
+
+## Windows (without WSL)
 
 ```powershell
-mkdir bpmn-web; cd bpmn-web
-curl.exe -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
-curl.exe -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.cmd
+mkdir bpmn-server; cd bpmn-server
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.cmd
 .\up.cmd
 ```
 
-Open http://localhost:3000 and sign in as `admin`. The first start creates `.env` next to `docker-compose.yml`
-with random values, and prints the password: `ADMIN_PASSWORD`, the password of `admin`, used when the first user is
-made (change it later in your profile, or the console: `spw`); `API_KEY` (the REST API); `ADMIN_API_KEY` (model
-administration through the API); and `SESSION_SECRET`. Keep it; bpmn-client and other callers need the keys.
-
-## Docker operations
-
-| Action | Command |
-|---|---|
-| Start | `up.cmd` / `sh up.sh` (or `docker compose up -d` once `.env` exists) |
-| Stop | `docker compose down` |
-| View logs | `docker compose logs -f` |
-| Use another port | `PORT=3001` in `.env`, then start |
-| Update to the latest image | `docker compose pull`, then start |
-| Shell in the container | `docker compose exec bpmn-web sh` |
-| Console (start processes, list tasks, set passwords) | `docker compose exec bpmn-web npm run cli` |
-
-## Where the data is
-
-- The database: the `database` Docker volume.
-- The models (the `processes` folder): the `processes` Docker volume, filled from the image the first time.
-
-The application itself is in the image, so a new image updates it.
-
-MongoDB is not published to the host and has no password. To reach it from your machine (MongoDB Compass), add
-`ports: ["27017:27017"]` to the `mongo` service, on a machine others can not reach.
-
-## Customize
-
-- The containers: `docker-compose.yml`. Any setting of bpmn-web's `INSTALL.env` can be added under
-  `environment` (email, `SITE_NAME`, `HTTPS`, ...).
-- The image: `image/Dockerfile`. It installs a release from npm, as `npx bpmn-server init` does: the sample
-  application, on exactly that version of bpmn-server and bpmn-web. `BPMN_VERSION` picks the release (default:
-  the latest):
-
-```sh
-cd image
-sh build.sh             # the latest release, tagged with its version and latest (Windows: build.cmd)
-sh build.sh 3.5.2       # that release, tagged with its version only
-```
-
-  To check which release an image holds:
-  `docker compose exec bpmn-web npm ls bpmn-server bpmn-web`
-
-## Upgrading from the 2024 setup
-
-The 2024 setup came from the `bpmnServer/docker` repository, now retired, and kept everything in folders next to
-`docker-compose.yml`. This one keeps it in Docker volumes, so it starts with an empty database until you bring your
-data over. The old folders are only read, and stay as they are.
-
-**Models.** The ones you edited are in `./bpmn_server_volume/bpmn-web/processes`. Copy the ones you need into the
-new `processes` volume: `docker compose cp <file> bpmn-web:/app/processes/`.
-
-**The database.** Copy it with a dump and a restore, not the folder: the old setup ran whichever `mongo` image was
-the latest, and `mongo:8.0` may not open its files. With the old containers stopped, in the old folder:
-
-```sh
-docker run -d --name old-mongo -v "$PWD/mongodb_volume:/data/db" mongo
-docker exec old-mongo mongodump --db bpmn --archive=/tmp/bpmn.archive
-docker cp old-mongo:/tmp/bpmn.archive .
-docker rm -f old-mongo
-```
-
-Then, where the new `docker-compose.yml` is, with `bpmn.archive` copied there:
-
-```sh
-docker compose cp bpmn.archive mongo:/tmp/bpmn.archive
-docker compose exec mongo mongorestore --drop --archive=/tmp/bpmn.archive
-docker compose restart bpmn-web
-```
-
-In Git Bash on Windows, run these with `MSYS_NO_PATHCONV=1` set: it otherwise rewrites `/tmp` and `/data/db` into
-Windows paths.
-
-Sign in with your old users and passwords: the first user is only made when there are none, so `ADMIN_PASSWORD`
-does not apply.
+This creates a local `.env` for memory mode with random secrets, then starts the published image. For an interactive installer use WSL, or edit `.env` and use the Compose overlays manually.
