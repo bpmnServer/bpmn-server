@@ -1,3 +1,5 @@
+import { siteGuide } from './routes/siteGuide.js';
+import { apiTrace } from './routes/middleware/apiTrace.js';
 import fs from 'node:fs';
 import http from 'node:http';
 import https from 'node:https';
@@ -229,7 +231,11 @@ export class WebApp {
 		// the application's routes first, then the API routers: the UI router at '/' requires a session
 		// for every path it sees, which would send API-key callers to /login.
 		this.application.routes?.(this.app, this);
+		// where an AI agent given this site's address starts; no sign-in
+		this.app.get('/llms.txt', (req, res, next) => siteGuide(this, req).then(text => res.type('text/markdown').send(text), next));
 		if (api) {
+			// API_TRACE: every API call and its answer, to replay what a client did
+			this.app.use(['/api', '/api2'], apiTrace());
 			this.app.use('/api', (new API(this)).config());
 			this.app.use('/api2', (new API2(this)).config());
 			if (!adminDisabled()) {

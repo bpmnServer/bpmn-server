@@ -56,6 +56,11 @@ export function modelApi(bpmnServer) {
 
     const exists = async (name: string) => (await definitions.getList()).some(m => (typeof m === 'string' ? m : m.name) === name);
 
+    router.get('/models', handler(async (req, res) => {
+        const names = (await definitions.getList()).map(m => (typeof m === 'string' ? m : m.name));
+        res.json(names.map(name => ({ name, url: editorUrl(req, name) })));
+    }));
+
     router.get('/models/:name', handler(async (req, res) => {
         const name = req.params.name;
         if (!(await exists(name))) return res.status(404).json({ error: `No model ${name}` });
@@ -73,15 +78,17 @@ export function modelApi(bpmnServer) {
         const answer = answerCheck(check);
         if (!answer.valid && req.query.force !== 'true')
             return res.status(422).json({ name, saved: false, ...answer });
-        // as the editor's import: a model without a diagram is laid out; the picture is drawn
+        // as the editor's import: a model without a diagram is laid out (its warning no longer holds); the picture is drawn
+        let laidOut = false;
         if (!/<(\w+:)?BPMNDiagram[\s>]/.test(source)) {
-            try { source = await layoutProcess(source); } catch { /* saved as it is */ }
+            try { source = await layoutProcess(source); laidOut = true; } catch { /* saved as it is */ }
         }
+        if (laidOut) answer.warnings = answer.warnings.filter(w => w.code !== 'no-diagram');
         let svg = null;
         try { svg = await bpmnToSvg(source); } catch { /* no picture */ }
         const created = !(await exists(name));
         await definitions.save(name, source, svg, null, userName());
-        res.status(created ? 201 : 200).json({ name, saved: true, created, ...answer, url: editorUrl(req, name) });
+        res.status(created ? 201 : 200).json({ name, saved: true, created, laidOut, ...answer, url: editorUrl(req, name), urlOpensFor: 'a person signed in to the site (not the API key)' });
     }));
 
     /** Check a model without saving it: the source given, else the saved model. */
@@ -101,8 +108,10 @@ export function modelApi(bpmnServer) {
 
     /** The model's tests: a .feature that reads as tests; with base, only over the text it came from. */
     router.put('/models/:name/feature', design, handler(async (req, res) => {
-        const { text, base } = req.body ?? {};
-        if (typeof text !== 'string') return res.status(400).json({ error: 'text, the .feature file, is required' });
+        // text, or source as for a model
+        const { base } = req.body ?? {};
+        const text = req.body?.text ?? req.body?.source;
+        if (typeof text !== 'string') return res.status(400).json({ error: 'text (or source), the .feature file, is required' });
         const stopped = await saveFeatureText(req.params.name, text, typeof base === 'string' ? base : await loadFeatureText(req.params.name));
         if (stopped) return res.status(stopped.status).json({ error: stopped.error });
         res.json({ name: req.params.name, saved: true });
@@ -112,7 +121,8 @@ export function modelApi(bpmnServer) {
     router.post('/models/:name/test', design, handler(async (req, res) => {
         const name = req.params.name;
         const file = path.join(bpmnServer.configuration.definitionsPath, `${name}.feature`);
-        const source = typeof req.body?.source === 'string' ? req.body.source : FS.existsSync(file) ? FS.readFileSync(file, 'utf8') : null;
+        const given = req.body?.source ?? req.body?.text;
+        const source = typeof given === 'string' ? given : FS.existsSync(file) ? FS.readFileSync(file, 'utf8') : null;
         if (source === null) return res.status(404).json({ error: `No ${name}.feature: write one (PUT /models/${name}/feature) or give it as source` });
         try {
             const results = await bpmnServer.engine.call('runFeature', source, `${name}.feature`);
@@ -143,12 +153,12 @@ export function openApiDocument(req) {
     const check = { valid: { type: 'boolean' }, errors: { type: 'array', items: issue }, warnings: { type: 'array', items: issue } };
     return {
         openapi: '3.1.0',
-        info: { title: 'BPMN Server API', version: '3.6', description: 'Build, check, test and run BPMN workflows. The key in x-api-key (API_KEY): calls run as the service account.' },
+        info: { title: 'BPMN Server API', version: '3.6', description: `Build, check, test and run BPMN workflows. Start with ${req.protocol}://${req.get('host')}/llms.txt: this site, and how to build workflows (BPMN XML, the tests' Gherkin steps, an example). The key in x-api-key: calls run as the site's service account. Errors answer { error } (a missing or wrong key: { errors }).` },
         servers: [{ url: `${req.protocol}://${req.get('host')}/api2` }],
         components: { securitySchemes: { apiKey: { type: 'apiKey', in: 'header', name: 'x-api-key' } } },
         security: [{ apiKey: [] }],
         paths: {
-            '/model/list': { get: { operationId: 'listModels', summary: 'The models', responses: { 200: json({ type: 'array', items: {} }) } } },
+            '/models': { get: { operationId: 'listModels', summary: 'The models: each its name and editor URL', responses: { 200: json({ type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, url: { type: 'string' } } } }) } } },
             '/models/{name}': {
                 get: { operationId: 'getModel', summary: 'A model: its BPMN XML, its .feature, its editor URL', parameters: [name],
                     responses: { 200: json({ type: 'object', properties: { name: { type: 'string' }, source: { type: 'string' }, feature: { type: 'string', nullable: true }, url: { type: 'string' } } }), 404: json(error, 'No such model') } },
@@ -163,7 +173,7 @@ export function openApiDocument(req) {
             '/models/{name}/feature': {
                 get: { operationId: 'getModelTests', summary: 'The model\'s tests, as a .feature file', parameters: [name], responses: { 200: json({ type: 'object', properties: { text: { type: 'string' } } }) } },
                 put: { operationId: 'saveModelTests', summary: 'Save the model\'s tests: Gherkin with bpmn-server\'s steps (@start, @invoke, @check, @wait, @stub, ...); with base, only over that text',
-                    parameters: [name], requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, base: { type: 'string' } } } } } },
+                    parameters: [name], requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { text: { type: 'string', description: 'the .feature (or as source)' }, source: { type: 'string' }, base: { type: 'string' } } } } } },
                     responses: { 200: json({ type: 'object' }), 400: json(error, 'It does not read as tests'), 409: json(error, 'Changed since base') } },
             },
             '/models/{name}/test': { post: { operationId: 'runModelTests', summary: 'Run the model\'s tests (or the .feature given) in the engine: each scenario, and where and why it failed', parameters: [name],

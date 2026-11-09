@@ -82,3 +82,32 @@ test('a feature that does not read as tests is refused, and the file stays', asy
   assert.equal(res.status, 400, why(res));
   assert.match((await api('GET', `/models/${MODEL}/feature`)).body.text, /Scenario: approved/);
 });
+
+test('/llms.txt: where an agent starts: this site\'s facts, then BPMN Server\'s guide; no sign-in', async () => {
+  const res = await web.client().get('/llms.txt');
+  assert.equal(res.status, 200, why(res));
+  assert.match(res.headers.get('content-type'), /markdown/);
+  const text = res.text;
+  assert.match(text, /^# .*BPMN Server, for AI agents/);
+  assert.match(text, /## This site/);
+  assert.match(text, /\/api2\/openapi\.json/);
+  assert.match(text, /Creating and changing models, running their tests: on/);
+  assert.match(text, /Services a model can call[^\n]*`notify`/, 'the services of services.json');
+  assert.match(text, /User groups in use[^\n]*`ADMIN`, `DESIGNER`, `manager`, `staff`/, 'the groups of its users');
+  assert.doesNotMatch(text, /user1|manager1/, 'groups, not users');
+  assert.match(text, /## How to build workflows on BPMN Server/);
+  assert.match(text, /\]\(https:\/\/bpmnserver\.github\.io\/bpmn-server\/testing\/\)/, 'the guide\'s links, to the published docs');
+  assert.match((await web.client().get('/api2/openapi.json')).body.info.description, /\/llms\.txt/, 'the OpenAPI document points to it');
+});
+
+test('the list as /models; a model laid out has no "no diagram" warning; a .feature as source', async () => {
+  const list = await api('GET', '/models');
+  assert.ok(list.body.some(m => m.name === MODEL && m.url.endsWith(`/model/edit/${MODEL}`)), JSON.stringify(list.body).slice(0, 200));
+  const saved = await api('PUT', `/models/${MODEL}`, { source: XML() });
+  assert.equal(saved.status, 200, why(saved));
+  assert.equal(saved.body.laidOut, true);
+  assert.ok(!saved.body.warnings.some(w => w.code === 'no-diagram'), JSON.stringify(saved.body.warnings));
+  assert.match(saved.body.urlOpensFor, /signed in/);
+  const feature = await api('PUT', `/models/${MODEL}/feature`, { source: FEATURE('end') });
+  assert.equal(feature.status, 200, why(feature));
+});

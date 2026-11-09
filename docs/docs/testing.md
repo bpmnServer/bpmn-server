@@ -82,9 +82,33 @@ Then @check ${data.total > 100}
   And @check :order data.total > 100
   And @check :order passed element:approve-order 2 times with status "end"
   And @check :order has 3 items of element:approve-order with status "wait"
+  And @check :order has 0 items of element:approve-order with status "wait" for me
   And @check :order last element:approve-order status is "wait"
   And @check :result output.approvalStatus is "Approved"
   And @check :result rules is 1
+```
+
+A path reads into what the scenario holds: `status`, `data.total`, or deeper, `data.notification.to`. A value is
+JSON (`5`, `true`, `"text"`, `{ "a": 1 }`), a word (read as text), or `${...}`, an expression. `is` (or `=`) is equal:
+numbers as numbers (`5` and `"5"`), an object field by field (the fields given), the rest exactly; `is not` (`<>`) is
+not equal; `>`, `<`, `>=`, `<=` compare as numbers when both are numbers, else as text.
+
+### Users and roles
+
+`user:mary @login with role of "Manager"` makes the steps after it act as `mary`, in the one group `Manager`. Her
+`@find` and `@invoke` see only the items she may take: hers (assignee), or offered to her (candidate users) or to
+`Manager` (candidate groups, a lane's group among them). One she may not take is not found (`found 0 items`): a test
+checks the model's assignment this way, as the end-user pages do. To check it outright, `has ... items ... for me`
+counts only the items the current user may take: `has 0 items of element:Approve with status "wait" for me`, as an
+employee, says they can not approve. `user:mary @login` without a role acts as `mary`
+with no such limit.
+
+```gherkin
+When user:emp1 @login with role of "Employee"
+  And @start process:"employee-leave" as :leave
+  And @invoke element:Submit in :leave
+  And user:mgr1 @login with role of "Manager"
+  And @invoke element:Approve in :leave
 ```
 
 ### Stubs

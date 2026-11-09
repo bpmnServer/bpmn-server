@@ -134,13 +134,18 @@ class Scenario {
             const found = await (counted[1] === 'items' ? this.server.dataStore.findItems(query) : this.server.dataStore.findInstances(query, 'summary'));
             return { ok: found.length === Number(counted[2]), said: `found ${found.length}` };
         }
-        const has = new RegExp(`^:(\\w+) has (\\d+) items(?: of element:${NAME})?(?: with status (".*"))?$`).exec(statement);
+        // "for me": only the items the user of @login may take (assignee, candidates): who may do what
+        const has = new RegExp(`^:(\\w+) has (\\d+) items(?: of element:${NAME})?(?: with status ("[^"]*"))?( for me)?$`).exec(statement);
         if (has) {
             const { instance } = await this.instanceOf(has[1]);
             const element = has[3] && unquoted(has[3]);
             const status = has[4] && JSON.parse(has[4]);
-            const count = instance.items.filter(i => (!element || i.elementId === element) && (!status || i.status === status)).length;
-            return { ok: count === Number(has[2]), said: `it has ${count}` };
+            let items = instance.items.filter(i => (!element || i.elementId === element) && (!status || i.status === status));
+            if (has[5]) {
+                const mine = new Set((await this.server.dataStore.findItems(this.qualified({ id: instance.id }))).map(i => i.id));
+                items = items.filter(i => mine.has(i.id));
+            }
+            return { ok: items.length === Number(has[2]), said: `it has ${items.length}${has[5] ? ` for ${this.user?.userName ?? 'no one'}` : ''}` };
         }
         // an element's item: its first, or its latest
         const ofElement = new RegExp(`^:(\\w+) (last )?element:${NAME} ([\\w.]+) (is not|is|<>|>=|<=|=|>|<) (.+)$`).exec(statement);

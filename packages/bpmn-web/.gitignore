@@ -29,3 +29,6 @@ src/tmp/
 !/src/testing/coverage.js
 /public/modeler/
 
+
+# the agents' guide, copied from docs/ at build (build:guide)
+/ai

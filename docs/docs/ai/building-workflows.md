@@ -1,5 +1,8 @@
 # Building workflows with an AI agent
 
+On a server, start with its **`/llms.txt`** (for example `https://bpmn.omniworkflow.com/llms.txt`): what that site
+has (its API, services, connectors, user groups), its own rules, then this guide.
+
 This page is for **AI agents that build workflows on BPMN Server**: a model, its forms and rules, and its tests, from a
 request such as *"a workflow for employee leave requests, with manager approval"*. (Agents changing BPMN Server itself
 read [AGENTS.md](https://github.com/bpmnServer/bpmn-server/blob/main/AGENTS.md) instead.)
@@ -27,6 +30,88 @@ read [AGENTS.md](https://github.com/bpmnServer/bpmn-server/blob/main/AGENTS.md) 
 
 Prefer what the server provides (forms, assignment rules, timers, connectors, decisions) to scripts. Never put a key,
 a password or a token in a model: a connector's key is kept by the server, encrypted.
+
+## A first model: an approval
+
+The smallest useful workflow: someone asks, a manager decides, approved or rejected. Start here and add to it; the
+sample's Leave Application shows more (timers, errors, lanes, services).
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="approval-definitions" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Approval" isExecutable="true">
+    <bpmn:startEvent id="Requested" name="Requested" camunda:initiator="requester" />
+    <bpmn:userTask id="Request" name="Request" camunda:assignee="$(this.data.requester)">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="reason" label="Reason" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+    </bpmn:userTask>
+    <bpmn:userTask id="Approve" name="Approve" camunda:candidateGroups="Manager">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="approved" label="Approved" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Decision" name="Approved?" default="toRejected" />
+    <bpmn:endEvent id="Approved" name="Approved" />
+    <bpmn:endEvent id="Rejected" name="Rejected" />
+    <bpmn:sequenceFlow id="toRequest" sourceRef="Requested" targetRef="Request" />
+    <bpmn:sequenceFlow id="toApprove" sourceRef="Request" targetRef="Approve" />
+    <bpmn:sequenceFlow id="toDecision" sourceRef="Approve" targetRef="Decision" />
+    <bpmn:sequenceFlow id="toApproved" name="yes" sourceRef="Decision" targetRef="Approved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">$(this.data.approved === true)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="toRejected" name="no" sourceRef="Decision" targetRef="Rejected" />
+  </bpmn:process>
+</bpmn:definitions>
+```
+
+- `camunda:initiator` keeps who started it in `data.requester`; `camunda:assignee` gives them the request.
+- `camunda:candidateGroups` offers Approve to the group `Manager` (use the groups the site lists).
+- A form field's value becomes data (`data.approved`); the flow's condition reads it; `default` is taken otherwise.
+- No diagram is needed: the server lays the model out when it is saved.
+
+Its tests, `approval.feature`:
+
+```gherkin
+Feature: approval
+
+  Scenario: approved
+    When user:emp1 @login with role of "Employee"
+      And @start process:approval as :request
+      And @invoke element:Request in :request
+        | reason | Holidays |
+      And user:mgr1 @login with role of "Manager"
+      And @invoke element:Approve in :request
+        | approved | true |
+    Then @check :request status is "end"
+      And @check :request passed element:Approved
+      And @check :request data.reason is "Holidays"
+
+  Scenario: rejected
+    When user:emp1 @login with role of "Employee"
+      And @start process:approval as :request
+      And @invoke element:Request in :request
+      And user:mgr1 @login with role of "Manager"
+      And @invoke element:Approve in :request
+        | approved | false |
+    Then @check :request passed element:Rejected
+
+  Scenario: an employee can not approve
+    When user:emp1 @login with role of "Employee"
+      And @start process:approval as :request
+      And @invoke element:Request in :request
+    Then @check :request has 1 items of element:Approve with status "wait"
+      And @check :request has 0 items of element:Approve with status "wait" for me
+      And user:mgr1 @login with role of "Manager"
+      And @check :request has 1 items of element:Approve with status "wait" for me
+```
+
+`@login ... with role of` acts as a user of that group: `for me` counts only the items they may take, so the third
+scenario checks that an employee can not approve.
 
 ## Working locally
 

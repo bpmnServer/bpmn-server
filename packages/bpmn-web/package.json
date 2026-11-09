@@ -22,7 +22,7 @@
     "name": "bpmnServer RalphHanna"
   },
   "scripts": {
-    "build": "tsc --build && npm run build:modeler",
+    "build": "tsc --build && npm run build:modeler && npm run build:guide",
     "prepack": "npm run build",
     "build:modeler": "node modeler/build.mjs",
     "watch:modeler": "node modeler/build.mjs --watch",
@@ -35,7 +35,8 @@
     "upgrade:running": "node --import tsx src/scripts/upgradeRunning.ts",
     "clean": "tsc --build --clean",
     "lint:models": "node modeler/lint-models.mjs",
-    "test": "npm --prefix ../../testSampleApp test"
+    "test": "npm --prefix ../../testSampleApp test",
+    "build:guide": "node -e \"const fs=require('fs');fs.mkdirSync('ai',{recursive:true});fs.copyFileSync('../../docs/docs/ai/building-workflows.md','ai/building-workflows.md')\""
   },
   "dependencies": {
     "@cucumber/gherkin": "^42.0.1",
@@ -119,7 +120,8 @@
     "src/userAccess/views",
     "public",
     "emailTemplates",
-    "README.md"
+    "README.md",
+    "ai"
   ],
   "bin": {
     "bpmn-web-services": "dist/scanServices.js"

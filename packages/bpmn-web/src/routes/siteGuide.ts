@@ -1,0 +1,70 @@
+/*
+ * GET /llms.txt: where an AI agent given only this site's address starts. Three parts, in Markdown:
+ *   1. This site, as it is now: its version, its API and OpenAPI document, whether design is on, the services and
+ *      connectors a model can call, the user groups in use (their names only).
+ *   2. This site's own guide, when the installation has one: AI_GUIDE, else settings/ai-guide.md in the application.
+ *   3. BPMN Server's guide for agents building workflows (docs/ai/building-workflows.md), shipped in the package, so it
+ *      is the one of this version; its links point to the published documentation.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { designDisabled } from '../userAccess/roles.js';
+import { UserService } from '../userAccess/UserService.js';
+
+const PACKAGE = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+const DOCS = 'https://bpmnserver.github.io/bpmn-server/';
+
+/** BPMN Server's guide: the package's copy, else the repository's docs (a checkout). */
+function standardGuide(): string {
+    for (const file of [path.join(PACKAGE, 'ai', 'building-workflows.md'), path.join(PACKAGE, '..', '..', 'docs', 'docs', 'ai', 'building-workflows.md')])
+        if (fs.existsSync(file))
+            // its links are the docs' own (../testing.md): here, the published pages
+            return fs.readFileSync(file, 'utf8').replace(/\]\((?:\.\.\/)?([\w./-]+?)\.md(#[\w-]*)?\)/g, (_, page, anchor = '') => `](${DOCS}${page}/${anchor})`);
+    return `See ${DOCS}ai/building-workflows/`;
+}
+
+/** The installation's own guide for agents, if it has one. */
+function siteOwnGuide(): string | null {
+    const file = process.env.AI_GUIDE || path.resolve('settings', 'ai-guide.md');
+    return fs.existsSync(file) ? fs.readFileSync(file, 'utf8').trim() : null;
+}
+
+async function facts(webApp, origin: string) {
+    const server = webApp.bpmnServer;
+    const list = items => items.length ? items.map(i => `\`${i}\``).join(', ') : 'none';
+    let services: string[] = [];
+    try { services = JSON.parse(fs.readFileSync(server.configuration.servicesFile ?? path.resolve('services.json'), 'utf8')).services ?? []; } catch { /* none listed */ }
+    let connectors: string[] = [];
+    try { connectors = (await server.connectors?.list() ?? []).filter(c => c.enabled !== false).map(c => c.id); } catch { /* none */ }
+    let groups: string[] = [];
+    try { groups = [...new Set((await new UserService().listUsers()).flatMap(u => u.userGroups ?? []))].sort() as string[]; } catch { /* no users here */ }
+    return [
+        `- BPMN Server ${webApp.packageJson?.version ?? ''}`.trimEnd(),
+        `- API: ${origin}/api2, its key in the \`x-api-key\` header (ask this site for one). The OpenAPI document: ${origin}/api2/openapi.json (no key needed)`,
+        `- Creating and changing models, running their tests: ${designDisabled() ? '**off** on this site (DISABLE_DESIGN)' : 'on'}`,
+        `- Services a model can call (\`camunda:delegateExpression\` or \`implementation\`): ${list(services)}. Anything else is not on this site: use a script task, or a stub in tests`,
+        `- Connectors (\`camunda:connector\`): ${list(connectors)}`,
+        `- User groups in use (for \`candidateGroups\`, lanes, \`@login ... with role of\`): ${list(groups)}`,
+        `- A model opens in the editor at ${origin}/model/edit/<name>, for a person signed in to this site (the API key does not open it)`,
+    ].join('\n');
+}
+
+export async function siteGuide(webApp, req): Promise<string> {
+    const origin = `${req.protocol}://${req.get('host')}`;
+    const own = siteOwnGuide();
+    return [
+        `# ${req.get('host')}: BPMN Server, for AI agents`,
+        '',
+        'Build, check, deploy and test BPMN workflows on this site, through its API. Read this page first: this site, its own rules, then how BPMN Server works.',
+        '',
+        '## This site',
+        '',
+        await facts(webApp, origin),
+        '',
+        ...(own ? ['## This site\'s own guide', '', own, ''] : []),
+        '## How to build workflows on BPMN Server',
+        '',
+        standardGuide().replace(/^# .*\n/, ''),
+    ].join('\n');
+}

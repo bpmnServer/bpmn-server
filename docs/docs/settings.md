@@ -36,6 +36,8 @@ All are optional unless marked.
 | `ITSM_HOST` | The origin allowed to call the server from a browser (CORS) |
 | `DOCS_PATH` | The folder of the docs pages the server shows |
 | `RESTART_ON_EXIT` | `true`: something restarts this process when it exits |
+| `API_TRACE` | A file: every API call (`/api`, `/api2`) and its answer, one JSON line each (when, how long, method, path, status, the kind of credential, the bodies cut at `API_TRACE_MAX` characters, default 4000, with passwords, keys and tokens masked). To see what a client, an AI agent, did. Off by default |
+| `AI_GUIDE` | A Markdown file: this site's own guide for AI agents, in its `/llms.txt`. Default `settings/ai-guide.md` |
 
 ### The database *(host and engine)*
 
