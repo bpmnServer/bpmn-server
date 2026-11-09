@@ -268,7 +268,7 @@ if [ ! -f "$CREDENTIALS" ]; then
         await new UserService().setPassword('admin', process.env.ADMIN_PASSWORD);
         await mongoose.disconnect();\\"" || echo "the admin password could not be set here: use the console (npm run cli)"
     umask 077
-    printf 'admin password: %s\\n' "$ADMIN_PASSWORD" > "$CREDENTIALS"
+    printf 'admin password: %s\n' "$ADMIN_PASSWORD" > "$CREDENTIALS"
     chown root:root "$CREDENTIALS"
     chmod 600 "$CREDENTIALS"
     umask 022
