@@ -262,11 +262,11 @@ if [ ! -f "$CREDENTIALS" ]; then
     # The setup command creates the first account only when no users exist.
     as_app "$APP_DIR" "npm run setup"
     # Legacy compatibility: older bpmn-web releases did not honor ADMIN_PASSWORD.
-    as_app "$APP_DIR" "node --env-file=.env --input-type=module -e \\"
+    as_app "$APP_DIR" "node --env-file=.env --input-type=module -e \"
         import mongoose from 'mongoose'; import { UserService } from 'bpmn-web';
         await mongoose.connect(process.env.MONGO_DB_URL);
         await new UserService().setPassword('admin', process.env.ADMIN_PASSWORD);
-        await mongoose.disconnect();\\"" || echo "the admin password could not be set here: use the console (npm run cli)"
+        await mongoose.disconnect();\"" || echo "the admin password could not be set here: use the console (npm run cli)"
     umask 077
     printf 'admin password: %s\n' "$ADMIN_PASSWORD" > "$CREDENTIALS"
     chown root:root "$CREDENTIALS"
