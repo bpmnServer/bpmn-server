@@ -1,6 +1,6 @@
 # Docker installation
 
-Install the BPMN Server distribution with Docker. The image name is `ralphhanna/bpmn-server` (the former `bpmn-web` image is obsolete).
+Install the BPMN Server distribution with Docker. The image name is `bpmnserver/bpmn-server` (the earlier `ralphhanna/bpmn-server` and `ralphhanna/bpmn-web` images are no longer updated).
 
 ## Guided installation (Linux/macOS/WSL)
 
@@ -54,7 +54,7 @@ If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 
 ```dotenv
 PORT=3000
 MONGO_DB_URL=memory
-BPMN_IMAGE=ralphhanna/bpmn-server:latest
+BPMN_IMAGE=bpmnserver/bpmn-server:latest
 REQUIRE_AUTHENTICATION=true
 ENFORCE_SECURITY=true
 ```

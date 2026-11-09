@@ -469,6 +469,7 @@ test('the administrator\'s changes reach the editor: an operation disabled, a co
 test('the Problems tab: a connector task is checked as one (not "a Camunda setting", not "names no service")', async () => {
     await fresh();
     const problems = async () => {
+        await page.click('#js-tab-problems');     // an earlier test left the Test tab open, and it stays
         await page.waitForSelector('#js-problems-counts .count, #js-problems-status:text("No problems")');
         await page.waitForTimeout(800);       // the server's check, after the editor's own
         return page.locator('#js-problems .problem').allInnerTexts();

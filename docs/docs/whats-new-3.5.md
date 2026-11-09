@@ -41,7 +41,7 @@ const store = new SqliteDocumentStore('./bpmn.sqlite');
 const configuration = new Configuration({ /* ... */ documentStore: () => store });
 ```
 
-See [Setup, Storage](setup.md#storage). bpmn-web's dashboards and backup now go through the storage port, so they
+See [Setup, Storage](persistence.md). bpmn-web's dashboards and backup now go through the storage port, so they
 work on MongoDB, SQLite and the in-memory store alike.
 
 ## Decisions (DMN)
@@ -105,7 +105,7 @@ See [Setup](setup.md).
 - `DEMO_MODE`: scripts run in a sandbox; timers, services and connectors do not run.
 - `DISABLE_ADMIN`: no administration pages or `/admin` APIs; administer with the console.
 - `GUEST_ACCESS`: visitors try the server without signing in, each with models of their own, kept for their
-  browser and downloadable.
+  browser and downloadable. Removed [in 3.6](whats-new-3.6.md): only signed-in users use a server.
 
 See [Security, A public demo](security.md#a-public-demo).
 

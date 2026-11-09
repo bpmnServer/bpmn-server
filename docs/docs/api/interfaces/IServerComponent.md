@@ -20,6 +20,7 @@
 - [appDelegate](IServerComponent.md#appdelegate)
 - [engine](IServerComponent.md#engine)
 - [dataStore](IServerComponent.md#datastore)
+- [scriptHandler](IServerComponent.md#scripthandler)
 - [definitions](IServerComponent.md#definitions)
 
 ## Properties
@@ -30,7 +31,7 @@
 
 #### Defined in
 
-[interfaces/server.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L21)
+[packages/bpmn-server/src/interfaces/server.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L33)
 
 ___
 
@@ -40,7 +41,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L22)
+[packages/bpmn-server/src/interfaces/server.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L34)
 
 ___
 
@@ -50,7 +51,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:23](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L23)
+[packages/bpmn-server/src/interfaces/server.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L35)
 
 ___
 
@@ -60,7 +61,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:24](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L24)
+[packages/bpmn-server/src/interfaces/server.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L36)
 
 ___
 
@@ -70,7 +71,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:25](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L25)
+[packages/bpmn-server/src/interfaces/server.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L37)
 
 ___
 
@@ -80,7 +81,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:26](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L26)
+[packages/bpmn-server/src/interfaces/server.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L38)
 
 ___
 
@@ -90,7 +91,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:27](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L27)
+[packages/bpmn-server/src/interfaces/server.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L39)
 
 ___
 
@@ -100,7 +101,17 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L28)
+[packages/bpmn-server/src/interfaces/server.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L40)
+
+___
+
+### scriptHandler
+
+• **scriptHandler**: [`IScriptHandler`](IScriptHandler.md)
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L41)
 
 ___
 
@@ -110,4 +121,4 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:29](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L29)
+[packages/bpmn-server/src/interfaces/server.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L42)

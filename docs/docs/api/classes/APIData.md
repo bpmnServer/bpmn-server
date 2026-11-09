@@ -53,7 +53,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:44](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L44)
+[packages/bpmn-server/src/API/API.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L63)
 
 ## Properties
 
@@ -67,7 +67,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:42](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L42)
+[packages/bpmn-server/src/API/API.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L61)
 
 ## Accessors
 
@@ -85,7 +85,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:47](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L47)
+[packages/bpmn-server/src/API/API.ts:66](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L66)
 
 ## Methods
 
@@ -109,7 +109,7 @@ APIComponent.getUser
 
 #### Defined in
 
-[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L50)
+[packages/bpmn-server/src/API/API.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L69)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:251](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L251)
+[packages/bpmn-server/src/API/API.ts:296](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L296)
 
 ___
 
@@ -151,7 +151,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:259](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L259)
+[packages/bpmn-server/src/API/API.ts:304](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L304)
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:264](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L264)
+[packages/bpmn-server/src/API/API.ts:309](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L309)
 
 ___
 
@@ -194,13 +194,13 @@ ___
 
 #### Defined in
 
-[API/API.ts:270](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L270)
+[packages/bpmn-server/src/API/API.ts:315](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L315)
 
 ___
 
 ### deleteInstances
 
-▸ **deleteInstances**(`query`, `user?`): `Promise`\<`void`\>
+▸ **deleteInstances**(`query`, `user?`): `Promise`\<\{ `deletedCount`: `number`  }\>
 
 #### Parameters
 
@@ -211,8 +211,8 @@ ___
 
 #### Returns
 
-`Promise`\<`void`\>
+`Promise`\<\{ `deletedCount`: `number`  }\>
 
 #### Defined in
 
-[API/API.ts:275](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L275)
+[packages/bpmn-server/src/API/API.ts:322](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L322)

@@ -13,7 +13,47 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+### Removed
+- **Guest access**: `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone, and only signed-in
+  users use a server. **An account made on a server with guests no longer has models of its own.** Before upgrading such a server,
+  delete its guest users (group `GUEST`): a kept session would otherwise sign one in as a designer of the shared models.
+
 ### Added
+- **Gherkin tests**: a model's tests as a `.feature` file, run whole in the engine (`POST /model/test/feature`), with `@login`, `@start`,
+  `@find`, `@invoke`, `@check`, `@wait`, `@stub` and `@script`. A stub replaces a service or a timer for its own scenario's instances.
+  The Test tab and the decision editor read and write them, and `*.tests.json` files are converted when the server starts. The Mocha scenarios are now `<model>.engine.feature`. See `docs/docs/testing.md`.
+- **The engine in its own process**: `npm run engine`, then `ENGINE_AT` and `ENGINE_KEY` on the host, with the delegate, services, timers and tests in the engine. See `docs/docs/architecture.md`.
+- **Every flow has its Condition field**, open, in the editor; a default flow's says a condition there is not used.
+- **`DISABLE_DESIGN` also removes the test calls from the engine**, so `ENGINE_KEY` can't run a test's scripts on a production engine. Set it on the engine too.
+- A service a test stubbed stays uncalled if its instance outlives the test or the engine, and in what it calls: the instance keeps `flags.stubbed`.
+- **Settings**, a page in the docs: what goes in `.env`, what in `settings/config.ts`, and every setting.
+- A Gherkin script that never finishes fails its step after a second, with or without the sandbox. With design on in production and no sandbox, the server warns at start.
+- **The first start asks for the administrator**, with a setup token the server prints: there is no admin/admin any more. `/setup` makes the administrator, and the tutorials' sample users if asked. `ADMIN_PASSWORD` still makes admin at setup, as Docker and the install script do.
+- **bpmn-mcp with every application**: `npx bpmn-server init` installs it and writes `.mcp.json`. See `packages/bpmn-mcp/CHANGELOG.md`.
+- **An HR application in the sample application**, embedded and called through a connector, to show application integration.
+- **Edit as text**, in the Test tab: a model's whole `.feature` file, comments and all. What does not read as Gherkin is not saved, and it says which line; a file changed since it was opened is not overwritten. A run no longer rewrites the file.
+- **A scenario's last run is its test instance**, tagged `{ process, scenario, run }` in the database: there is no `.runs/` folder any more, and an old one can be deleted; earlier runs show as not run. A decision's test has no instance: its runs stay with the page that ran them.
+- The Test tab's coverage is under the scenarios. "No problems found" and Rules show with the Problems tab only.
+- The web app launches its server (`BPMNServer.launch`), so it handles data, not running executions. **`ENGINE_AT=none`** runs it with no engine: everything but running and testing a model works, and those say an engine is needed. **`npm run services`** scans the application's source, running none of it, and keeps its services' names in `services.json`, for the editor and the model checks.
+- **The Design dashboard's models** show each model's description, its saved versions and its **coverage** by its scenarios; the coverage is saved with the runs, on their test instances, and says when the model has changed since. **Run** on the dashboard now keeps each scenario's run, as the Test tab does.
+- **What happened**, under each step of the Test tab's timeline: that step's part of the Rationale, as the engine
+  logged it, with Add as a check on an item it changed and on the instance's status; a step no step of the scenario
+  asked for (a timer the server fired) has a row of its own. A scenario written in Gherkin lists its run's steps under
+  its text, with Copy check. The Test tab no longer has a separate Rationale. The instance page's Rationale is split
+  by the same steps, each opening to its rows. See `docs/docs/modeler.md`.
+- **Coverage** in the Test tab shows one percentage beside its heading: nodes and flows together, as the Design
+  dashboard counts them.
+- **Restore as copy**, in the History tab: a saved version becomes a new model, opened in its own tab; the model and its unsaved changes stay.
+- The Properties panel shows a **conditional event's condition**, saying that bpmn-server does not run the event, and a condition can be added to a flow out of an **event-based gateway**, as the engine evaluates it.
+- **The task API**, `/api2/tasks`: an application lists, claims and completes tasks for its users, whom it authenticates itself. Off
+  unless `API_ACTING_USER_KEY` is set; that key opens no other route. Existing routes are unchanged.
+- **Coverage**, in the Test tab: how many of the model's nodes and flows the scenarios' last runs have reached; on the diagram, and what is left.
+- **Test all paths**, in the Test tab: tries the model's paths on real runs, with each form's choices and the values in its conditions, and saves a scenario for each that reaches something new, marked as generated until reviewed. **Fill**, on an element not reached: records a new scenario with that element as its goal.
+- The Test tab can complete a **receive task**: a run stopped there, as *Also waiting, not a step here*, and could not go on.
+- The Test tab's scenario list can be resized: drag the handle beside it, or use the arrow keys. The width is remembered.
+- The editor's **Condition** follows its **Language**, which now offers FEEL: a FEEL condition is no longer marked as not compiling.
+- `GET /api/definitions/load/<model>`: a model's BPMN XML with the runtime key, and with administration off. **Anyone
+  with `API_KEY` can now read your models' logic, including their scripts;** changing models stays under `/admin/api`.
 - **The start page** (`/dashboard/start/<model>`): Run on a model with several start events a user can start, or
   a start form, asks first: each start event with its form, as My work shows them. It started at once, with no
   data, at whichever start event was drawn first.
@@ -25,7 +65,7 @@ and here
   and the logs (the lines that name it). At first: the user tasks.
 
 - **A task by itself in the Test tab:** Test this task (the task selected on the diagram), or Start at → A task
-  by itself: the scenario runs that task alone with the data given as its input (`start.only` in scenario files);
+  by itself: the scenario runs that task alone with the data given as its input;
   its run, Debug and checks as any other.
 - **Connectors list:** each connector's key with a link to set or change it (its page's key form), and Delete,
   whose confirmation names the models that use it.
@@ -41,7 +81,7 @@ and here
   A recording closes by itself at the end. Simulate, Debug and Delete are
   by the result, Simulate and Debug each with a panel of its own; Inspect this run has the data, items, decisions and
   log. New has *The whole process* and *The task selected* (was Test this task); Clear all is **Delete all runs**, Duplicate
-  and Delete are under **⋯**. The scenario files are unchanged.
+  and Delete are under **⋯**.
 - **Add as a check**, in the Test tab, on each item and each value of the run shown: a check that it is as it is there, under its step,
   where the run waits (after the last step done, or at the start), else at the end. A check can be **at the start**
   (`"at": "start"`): once the process has started, before any step.
@@ -53,6 +93,13 @@ and here
   20, whose older instances were never deleted). The scenarios are a plain list, without runs under them.
 - The Test tab's instances (`test-...`) are no longer in the lists of instances and tasks, or in My work; they open by their id.
 - **Full window** in the editor's panel: the Problems, Report, Test and History tabs over the whole page; Esc comes back.
+- **A setting for each thing `DEMO_MODE` did**: `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES`, `TIMERS` and `SERVICE_TASKS`.
+  `DEMO_MODE=true` only gives those not set their demo values, as before. `SCRIPT_SANDBOX=true` alone: scripts in a sandbox,
+  their calls to `appServices` and `appUtils` run, and timers and service tasks as always.
+  The Test tab's Evaluate runs in the sandbox whenever scripts do.
+- **Download** in the editor: the model being edited, as a `.bpmn` file.
+- **`SIGNUP_VERIFY_EMAIL`, `SIGNUP_GROUPS`, `SITE_URL`**: signing up can send a verification email and give groups once verified. Sign-up no longer answers twice when
+  a user name is taken, and links in emails no longer always say `http://`.
 - **The Docker image** is built from the npm release, as users install it (`npx bpmn-server init`), not from a git
   clone: one version per image, no `.env` inside, production mode. `up.cmd` and `up.sh` also make a random `ADMIN_PASSWORD`
   and print it; `PORT` in `.env` picks the host's port. The database volume is now `database`: see `docker/README.md`
@@ -64,6 +111,26 @@ and here
   number by its seq. Decision entries in the logs keep their lines.
 
 ### Fixed
+- **After starting a process or completing a task, a user goes back to My work**, where their next task is; only
+  administrators and designers go to the instance's page. Users who are neither were sent to the Workbench (after a
+  task) or to the instance's page (after a start from My work).
+- **The Rationale named an event by another element's item** when a seq was another element's (a test instance's
+  items): it now takes the item of the element logged.
+- **Signing in lands a user on My work**, and administrators and designers on the Workbench. A user's Workbench no
+  longer asks for the diagram preview, a designer's route, which answered 403 on every visit.
+- **Signing in goes on to the page it interrupted**: the session made at sign-in had dropped where it was going, so
+  everyone landed on the Workbench.
+- **The sign-in no longer writes the password to the log.**
+- **A task form's own fields were saved as the task's data**: `_csrf` and `returnTo` are left out now.
+- **A user name has one rule wherever a user is added** (Administration's Add user, signing up, the first start,
+  `UserService.addUser`): 2 to 64 letters, digits or `. _ @ -`, taken without the spaces around it; a name that
+  differs from another only in case is refused (`User1` beside `user1`). Add user also checks the email and the
+  password (4 characters or more) on the server, and keeps no empty group. Users made before keep their names.
+- **`bpmn-web-services`**, a command: the services scan (`services.json`) for an application, which had no way to run it.
+- **Export left a model's tests out**: the export page lists each model's `.feature` files, and Download all (.zip) includes them.
+- **The Test tab's scenarios were not saved while a check was being added** ("Scenarios not saved: 500"): a check with no element,
+  path or status yet could not be written to the `.feature`, and the whole save failed. A check is written once it is filled in.
+- **Security:** a model's name in a URL could climb out of the models folder (`/model/edit/..%2Fx`, `/execute/..%2Fx`, `POST /api/engine/start/..%2Fx`), so a user could read or start a `.bpmn` file outside it. Every such route now answers 400.
 - The menu with sign-in off (`REQUIRE_AUTHENTICATION=false`): every page has the same places, and none offers Sign in,
   Create account or a Sign out. It depended on the page: the dashboards, the docs and the model list showed Sign in
   and no places, the home and instance pages a "system" user. The menu goes by who is signed in (`account`,

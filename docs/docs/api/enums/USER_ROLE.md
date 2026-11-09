@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[API/SecureUser.ts:5](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/SecureUser.ts#L5)
+[packages/bpmn-server/src/API/SecureUser.ts:5](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L5)
 
 ___
 
@@ -28,7 +28,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:6](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/SecureUser.ts#L6)
+[packages/bpmn-server/src/API/SecureUser.ts:6](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L6)
 
 ___
 
@@ -38,4 +38,4 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:7](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/SecureUser.ts#L7)
+[packages/bpmn-server/src/API/SecureUser.ts:7](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L7)

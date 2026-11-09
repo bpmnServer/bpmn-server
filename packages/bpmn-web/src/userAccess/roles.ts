@@ -31,12 +31,22 @@ export const isDesignerGroups = (userGroups) => !designDisabled() && inGroups(us
 export const canDesign = (user) => !designDisabled()
     && (process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(user?.userGroups));
 
-/** A guest of a public demo (GUEST_ACCESS=true): a visitor who did not sign in. */
-export const isGuest = (user) => inGroups(user?.userGroups, ['GUEST']);
+/** Administrators and designers work on the models and instances; everyone else on their tasks, in My work. */
+const worksOnModels = (user) => isAdminGroups(user?.userGroups) || canDesign(user);
 
 /**
- * The groups the engine sees for a user. A guest's include ADMIN, so it sees every task of its own instances
- * whatever group they are for: its tenant holds only its own instances. (The web app's administration is off
- * wherever there are guests: DISABLE_ADMIN.)
+ * Where someone goes after starting a process or completing a task: administrators and designers to the instance, to
+ * see what ran; everyone else back to My work, where their next task is.
  */
-export const engineGroups = (user) => isGuest(user) ? [...(user.userGroups ?? []), 'ADMIN'] : user?.userGroups;
+export const afterWork = (user, instanceId) => worksOnModels(user)
+    ? '/instanceDetails?id=' + encodeURIComponent(instanceId)
+    : '/dashboard';
+
+/** Where signing in lands, unless it was on its way to a page: the Workbench, or My work for everyone else. */
+export const home = (user) => worksOnModels(user) ? '/' : '/dashboard';
+
+/** SIGNUP_VERIFY_EMAIL=true: sign-up sends a verification email, and SIGNUP_GROUPS come only once it is verified. */
+export const signupVerifiesEmail = () => process.env.SIGNUP_VERIFY_EMAIL === 'true';
+/** SIGNUP_GROUPS: the user groups of an account that signs up (DESIGNER: it can design). Default none. */
+export const signupGroups = () => (process.env.SIGNUP_GROUPS ?? '').split(',').map(group => group.trim()).filter(Boolean);
+

@@ -4,13 +4,15 @@ import path from 'node:path';
 
 import { BPMNServer, dateDiff, Behaviour_names, SystemUser   } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
-import { engineGroups } from '../userAccess/roles.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
-import { rationaleEvents } from '../testing/rationale.js';
+import { rationaleSteps } from '../testing/rationale.js';
 import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
+import { guardModelParams } from './middleware/modelName.js';
+import { afterWork } from '../userAccess/roles.js';
+const FORM_ONLY = new Set(['itemId', '_csrf', 'returnTo']);     // the form's own fields, not the task's data
 
 
 var caseId = Math.floor(Math.random() * 10000);
@@ -43,6 +45,7 @@ var bpmnAPI;
 export class EndUser extends Common {
     config() {
         var router = express.Router();
+        guardModelParams(router);
 
         bpmnServer = this.webApp.bpmnServer;
         bpmnAPI = new BPMNAPI(bpmnServer);
@@ -118,7 +121,7 @@ export class EndUser extends Common {
 
             let execution = context.execution;
 
-            response.redirect('/instanceDetails?id=' + execution.id);
+            response.redirect(afterWork(request.user, execution.id));
         }));
 
         router.get('/select/:processName', awaitAppDelegateFactory(async (request, response) => {
@@ -150,7 +153,7 @@ export class EndUser extends Common {
             }
             let instance = context.execution;
 
-            response.redirect('/instanceDetails?id=' + instance.id);
+            response.redirect(afterWork(request.user, instance.id));
         }));
 
         router.get('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
@@ -178,23 +181,19 @@ console.log('fields',fields);
             }
             let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.invoke({ "items.id": id }, {}, getSecureUser(request)));
 
-            response.redirect('/instanceDetails?id=' + result.execution.id);
+            response.redirect(afterWork(request.user, result.execution.id));
         }));
         router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
             let id = request.body.itemId;
             let data = {};
             
-            Object.entries(request.body).forEach(entry => {
-                if (entry[0] == 'itemId') { }
-                else {
-                    data[entry[0]] = entry[1];
-                }
-            });
+            for (const [key, value] of Object.entries(request.body))
+                if (!FORM_ONLY.has(key)) data[key] = value;
 
 
             let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.invoke({ "items.id": id }, data, getSecureUser(request)));
 
-            response.redirect('/instanceDetails?id=' + result.execution.id);
+            response.redirect(afterWork(request.user, result.execution.id));
 
         }));
 
@@ -258,7 +257,7 @@ console.log('fields',fields);
             //console.log('data', data, 'assignment', assignment);
             let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.assign({ "items.id": id }, data, assignment, getSecureUser(request)));
 
-            response.redirect('/instanceDetails?id=' + result.execution.id);
+            response.redirect(afterWork(request.user, result.execution.id));
 
         }));
 
@@ -369,7 +368,7 @@ function getSecureUser(req) {
     {
         const usr = getUser(req);
         if (usr)
-            user=new SecureUser({ userName: usr.userName, userGroups: engineGroups(usr), tenantId: usr.tenantId });
+            user=new SecureUser({ userName: usr.userName, userGroups: usr.userGroups, tenantId: usr.tenantId });
     }
     else
          user=SecureUser.SystemUser();
@@ -419,7 +418,7 @@ async function display(req,res, title, logs = [], items = []) {
         item['fromNow'] = dateDiff(item.startedAt);
     });
 
-    let engines = bpmnServer.cache.list();
+    let engines = await bpmnServer.engine.live();
 
     engines.forEach(engine => {
         engine.fromNow = dateDiff(engine.startedAt); 
@@ -487,7 +486,7 @@ async function instanceDetails(request,response,instanceId) {
             title: 'Instance Details',
             logs,items: instance.items, svg,
             decorations, definition: defJson, lastItem,
-            rationale: rationaleEvents(logs, instance.items, instance.startedAt),
+            rationale: rationaleSteps(logs, instance.items, instance.startedAt),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
             modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });

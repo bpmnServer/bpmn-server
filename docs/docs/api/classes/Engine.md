@@ -24,6 +24,8 @@ super class for various objects that are part of the server
 
 - [runningCounter](Engine.md#runningcounter)
 - [callsCounter](Engine.md#callscounter)
+- [workers](Engine.md#workers)
+- [closing](Engine.md#closing)
 - [server](Engine.md#server)
 
 ### Accessors
@@ -35,14 +37,20 @@ super class for various objects that are part of the server
 - [appDelegate](Engine.md#appdelegate)
 - [engine](Engine.md#engine)
 - [dataStore](Engine.md#datastore)
+- [lockManager](Engine.md#lockmanager)
 - [definitions](Engine.md#definitions)
 - [listener](Engine.md#listener)
+- [scriptHandler](Engine.md#scripthandler)
 
 ### Methods
 
+- [close](Engine.md#close)
+- [drain](Engine.md#drain)
 - [start](Engine.md#start)
+- [retry](Engine.md#retry)
 - [restart](Engine.md#restart)
 - [get](Engine.md#get)
+- [cancel](Engine.md#cancel)
 - [lock](Engine.md#lock)
 - [release](Engine.md#release)
 - [restore](Engine.md#restore)
@@ -52,7 +60,17 @@ super class for various objects that are part of the server
 - [startRepeatTimerEvent](Engine.md#startrepeattimerevent)
 - [startEvent](Engine.md#startevent)
 - [throwMessage](Engine.md#throwmessage)
+- [waitingFor](Engine.md#waitingfor)
 - [throwSignal](Engine.md#throwsignal)
+- [status](Engine.md#status)
+- [deleteInstances](Engine.md#deleteinstances)
+- [tagInstance](Engine.md#taginstance)
+- [upgrade](Engine.md#upgrade)
+- [upgradeRunning](Engine.md#upgraderunning)
+- [findOneItem](Engine.md#findoneitem)
+- [assertOpen](Engine.md#assertopen)
+- [handOff](Engine.md#handoff)
+- [report](Engine.md#report)
 - [exception](Engine.md#exception)
 - [sanitizeData](Engine.md#sanitizedata)
 
@@ -78,7 +96,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/Engine.ts:13](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L13)
+[packages/bpmn-server/src/server/Engine.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L46)
 
 ## Properties
 
@@ -88,7 +106,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/Engine.ts:11](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L11)
+[packages/bpmn-server/src/server/Engine.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L41)
 
 ___
 
@@ -98,7 +116,29 @@ ___
 
 #### Defined in
 
-[server/Engine.ts:12](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L12)
+[packages/bpmn-server/src/server/Engine.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L42)
+
+___
+
+### workers
+
+• `Private` `Readonly` **workers**: `Set`\<`Promise`\<`unknown`\>\>
+
+Executions handed off with `noWait`, still running.
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L44)
+
+___
+
+### closing
+
+• `Private` **closing**: `boolean` = `false`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L45)
 
 ___
 
@@ -112,7 +152,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L9)
+[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L10)
 
 ## Accessors
 
@@ -130,7 +170,7 @@ ServerComponent.configuration
 
 #### Defined in
 
-[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L14)
+[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -148,7 +188,7 @@ ServerComponent.logger
 
 #### Defined in
 
-[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L15)
+[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -166,17 +206,17 @@ ServerComponent.cron
 
 #### Defined in
 
-[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L16)
+[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L17)
 
 ___
 
 ### cache
 
-• `get` **cache**(): [`CacheManager`](CacheManager.md)
+• `get` **cache**(): [`ICacheManager`](../interfaces/ICacheManager.md)
 
 #### Returns
 
-[`CacheManager`](CacheManager.md)
+[`ICacheManager`](../interfaces/ICacheManager.md)
 
 #### Inherited from
 
@@ -184,7 +224,7 @@ ServerComponent.cache
 
 #### Defined in
 
-[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L17)
+[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -202,7 +242,7 @@ ServerComponent.appDelegate
 
 #### Defined in
 
-[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L18)
+[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -220,7 +260,7 @@ ServerComponent.engine
 
 #### Defined in
 
-[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L19)
+[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -238,7 +278,27 @@ ServerComponent.dataStore
 
 #### Defined in
 
-[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L20)
+[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L21)
+
+___
+
+### lockManager
+
+• `get` **lockManager**(): `any`
+
+The lock port: the configuration's, else the data store's.
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.lockManager
+
+#### Defined in
+
+[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L23)
 
 ___
 
@@ -256,7 +316,7 @@ ServerComponent.definitions
 
 #### Defined in
 
-[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L21)
+[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L24)
 
 ___
 
@@ -274,9 +334,65 @@ ServerComponent.listener
 
 #### Defined in
 
-[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L22)
+[packages/bpmn-server/src/server/ServerComponent.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L25)
+
+___
+
+### scriptHandler
+
+• `get` **scriptHandler**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.scriptHandler
+
+#### Defined in
+
+[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L26)
 
 ## Methods
+
+### close
+
+▸ **close**(): `void`
+
+From now on, new calls are refused; running ones finish.
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L55)
+
+___
+
+### drain
+
+▸ **drain**(`timeout?`): `Promise`\<`boolean`\>
+
+Waits until no call runs and no handed-off execution is running, or `timeout` ms pass; true when idle.
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `timeout` | `number` | `10_000` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L57)
+
+___
 
 ### start
 
@@ -304,7 +420,35 @@ loads a definitions  and start execution
 
 #### Defined in
 
-[server/Engine.ts:25](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L25)
+[packages/bpmn-server/src/server/Engine.ts:73](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L73)
+
+___
+
+### retry
+
+▸ **retry**(`itemQuery`, `userName?`): `Promise`\<[`Execution`](Execution.md)\>
+
+Runs a failed item's work again: an item whose status is `error` (its work threw; statusDetails.error says
+why), and the instance on from it.
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `itemQuery` | `any` | `undefined` |
+| `userName` | `string` | `null` |
+
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[retry](../interfaces/IEngine.md#retry)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:137](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L137)
 
 ___
 
@@ -331,7 +475,7 @@ ___
 
 #### Defined in
 
-[server/Engine.ts:79](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L79)
+[packages/bpmn-server/src/server/Engine.ts:160](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L160)
 
 ___
 
@@ -359,7 +503,38 @@ this will also resume execution
 
 #### Defined in
 
-[server/Engine.ts:128](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L128)
+[packages/bpmn-server/src/server/Engine.ts:210](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L210)
+
+___
+
+### cancel
+
+▸ **cancel**(`instanceQuery`, `userName?`, `options?`): `Promise`\<[`Execution`](Execution.md)\>
+
+Cancels a running instance: its tokens are terminated (their waiting items end as
+terminated), its timers on this server are cancelled, `process.terminated` is emitted, and it
+is saved as `terminated`: never deleted. An instance that has ended or was cancelled before is
+left as it is.
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `instanceQuery` | `any` | `undefined` | criteria to fetch the instance, as for `get` |
+| `userName` | `string` | `null` | - |
+| `options` | `Object` | `{}` | - |
+
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[cancel](../interfaces/IEngine.md#cancel)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:232](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L232)
 
 ___
 
@@ -381,21 +556,22 @@ lock instance
 
 #### Defined in
 
-[server/Engine.ts:138](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L138)
+[packages/bpmn-server/src/server/Engine.ts:268](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L268)
 
 ___
 
 ### release
 
-▸ **release**(`execution`): `Promise`\<`void`\>
+▸ **release**(`execution`, `id?`): `Promise`\<`void`\>
 
 release instance lock
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `execution` | [`Execution`](Execution.md) |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `execution` | [`Execution`](Execution.md) | `undefined` |
+| `id` | `any` | `null` |
 
 #### Returns
 
@@ -403,7 +579,7 @@ release instance lock
 
 #### Defined in
 
-[server/Engine.ts:147](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L147)
+[packages/bpmn-server/src/server/Engine.ts:280](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L280)
 
 ___
 
@@ -429,7 +605,7 @@ check if in cache
 
 #### Defined in
 
-[server/Engine.ts:171](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L171)
+[packages/bpmn-server/src/server/Engine.ts:294](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L294)
 
 ___
 
@@ -450,7 +626,7 @@ ___
 
 #### Defined in
 
-[server/Engine.ts:203](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L203)
+[packages/bpmn-server/src/server/Engine.ts:318](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L318)
 
 ___
 
@@ -483,7 +659,7 @@ can modify data or assignment or both
 
 #### Defined in
 
-[server/Engine.ts:216](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L216)
+[packages/bpmn-server/src/server/Engine.ts:331](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L331)
 
 ___
 
@@ -522,7 +698,7 @@ instance,task	{instanceId: instanceId, elementId: value }
 
 #### Defined in
 
-[server/Engine.ts:270](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L270)
+[packages/bpmn-server/src/server/Engine.ts:379](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L379)
 
 ___
 
@@ -551,7 +727,7 @@ Repeat Timers need to create new Item
 
 #### Defined in
 
-[server/Engine.ts:341](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L341)
+[packages/bpmn-server/src/server/Engine.ts:435](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L435)
 
 ___
 
@@ -563,9 +739,9 @@ Invoking an event (usually start event of a secondary process) against an existi
 or
 Invoking a start event (of a secondary process) against an existing instance
 ----------------------------------------------------------------------------
-	 instance,task 
+	 instance,task
 ```
-	{instanceId: instanceId, elementId: value } 
+	{instanceId: instanceId, elementId: value }
 ```
 
 #### Parameters
@@ -588,7 +764,7 @@ Invoking a start event (of a secondary process) against an existing instance
 
 #### Defined in
 
-[server/Engine.ts:383](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L383)
+[packages/bpmn-server/src/server/Engine.ts:480](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L480)
 
 ___
 
@@ -596,20 +772,18 @@ ___
 
 ▸ **throwMessage**(`messageId`, `data?`, `matchingQuery?`): `Promise`\<[`Execution`](Execution.md)\>
 
-signal/message raise a signal or throw a message
-
-will seach for a matching event/task given the signalId/messageId
-
-that can be againt a running instance or it may start a new instance
-----------------------------------------------------------------------------
+A message has one receiver (a signal is the broadcast): the first waiting item the matching
+query finds (an instance waiting for it: a catch event, a receive task, a boundary event), else,
+when none waits, a definition whose start event it is, started. A waiting instance is never
+passed over for a new one (the upstream tried the start events first).
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `messageId` | `any` | the id of the message or signal as per bpmn definition |
-| `data` | `Object` | message data |
-| `matchingQuery` | `Object` | - |
+| `messageId` | `any` | the message's name |
+| `data` | `Object` | - |
+| `matchingQuery` | `Object` | what narrows the waiting instances (their id, their data) |
 
 #### Returns
 
@@ -621,28 +795,50 @@ that can be againt a running instance or it may start a new instance
 
 #### Defined in
 
-[server/Engine.ts:411](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L411)
+[packages/bpmn-server/src/server/Engine.ts:521](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L521)
+
+___
+
+### waitingFor
+
+▸ **waitingFor**(`kind`, `name`, `matchingQuery?`): `Promise`\<`any`\>
+
+The items waiting for a message or signal (`kind`: messageId or signalId), the matching query narrowing their instances.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `kind` | ``"messageId"`` \| ``"signalId"`` |
+| `name` | `string` |
+| `matchingQuery` | `Object` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:545](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L545)
 
 ___
 
 ### throwSignal
 
-▸ **throwSignal**(`signalId`, `data?`, `matchingQuery?`): `Promise`\<`any`[]\>
+▸ **throwSignal**(`signalId`, `data?`, `matchingQuery?`, `from?`): `Promise`\<`any`[]\>
 
-signal/message raise a signal or throw a message 
-
-will seach for a matching event/task given the signalId/messageId
-
-that can be againt a running instance or it may start a new instance 
-----------------------------------------------------------------------------
+Throws a signal: starts the models whose start event catches it, and invokes the items waiting for it.
+`from` is the item throwing it inside an instance: that instance's own catching items are signalled on its
+running execution (an engine call on it would be refused: the throwing call holds it).
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `signalId` | `any` | - |
-| `data` | `Object` | message data |
-| `matchingQuery` | `Object` | should match the itemKey (if specified) |
+| Name | Type |
+| :------ | :------ |
+| `signalId` | `any` |
+| `data` | `Object` |
+| `matchingQuery` | `Object` |
+| `from?` | [`IItem`](../interfaces/IItem.md) |
 
 #### Returns
 
@@ -654,13 +850,235 @@ that can be againt a running instance or it may start a new instance
 
 #### Defined in
 
-[server/Engine.ts:468](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L468)
+[packages/bpmn-server/src/server/Engine.ts:568](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L568)
+
+___
+
+### status
+
+▸ **status**(): `Object`
+
+#### Returns
+
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `running` | `number` |
+| `calls` | `number` |
+| `handedOff` | `number` |
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:629](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L629)
+
+___
+
+### deleteInstances
+
+▸ **deleteInstances**(`query`): `Promise`\<\{ `deletedCount`: `number`  }\>
+
+Removes the instances a query matches, each under its lock, so a call running it finishes first, and with its timers,
+so nothing fires for it after. What changes an instance is the engine's: its host asks.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+
+#### Returns
+
+`Promise`\<\{ `deletedCount`: `number`  }\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[deleteInstances](../interfaces/IEngine.md#deleteinstances)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:637](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L637)
+
+___
+
+### tagInstance
+
+▸ **tagInstance**(`instanceId`, `tag`): `Promise`\<`void`\>
+
+Marks a saved instance with a tag of the caller's (a test's run), as the data store does.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `string` |
+| `tag` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[tagInstance](../interfaces/IEngine.md#taginstance)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:657](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L657)
+
+___
+
+### upgrade
+
+▸ **upgrade**(`model`, `afterNodeIds`): `Promise`\<`string`[] \| \{ `errors`: `any`  }\>
+
+Points the saved instances of `model` at its current definition source, each under its
+instance lock; with `afterNodeIds`, only the instances that have not reached any of them.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `model` | `string` |
+| `afterNodeIds` | `string`[] |
+
+#### Returns
+
+`Promise`\<`string`[] \| \{ `errors`: `any`  }\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[upgrade](../interfaces/IEngine.md#upgrade)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:669](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L669)
+
+___
+
+### upgradeRunning
+
+▸ **upgradeRunning**(`models?`, `options?`): `Promise`\<[`IUpgradeReport`](../interfaces/IUpgradeReport.md)[]\>
+
+Moves the instances that have not ended onto their model's current saved source: a model saved again
+(with the data store's saveSource, each instance runs the source it started with) reaches the instances
+still running, not only those started afterwards. Unlike upgrade(), it needs no node ids and leaves the
+ended instances alone: their source is the record of what ran.
+
+- The saved model must pass verifyModel; one with errors is refused and none of its instances changed.
+- An instance on a step (waiting, or part-way) that the new model does not have would be stranded: it is
+  left as it is and reported.
+- Each instance changes under its instance lock and is checked again once the lock is held; one another
+  call holds past the lock wait is reported as busy, to try again.
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `models` | `string`[] | `[]` | the models to upgrade; none: every model that has instances still running |
+| `options` | `Object` | `{}` | dryRun: report what would change, change nothing |
+| `options.dryRun?` | `boolean` | `undefined` | - |
+
+#### Returns
+
+`Promise`\<[`IUpgradeReport`](../interfaces/IUpgradeReport.md)[]\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[upgradeRunning](../interfaces/IEngine.md#upgraderunning)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:721](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L721)
+
+___
+
+### findOneItem
+
+▸ **findOneItem**(`itemQuery`): `Promise`\<`any`\>
+
+The one item `itemQuery` names; none, or more than one, is an error.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `itemQuery` | `any` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:803](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L803)
+
+___
+
+### assertOpen
+
+▸ **assertOpen**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:811](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L811)
+
+___
+
+### handOff
+
+▸ **handOff**(`execution`, `run`): `void`
+
+Keeps a handed-off execution's worker until it settles (then its lock is released); its rejection stays on `execution.worker`, for whoever awaits it, and is reported.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `execution` | [`Execution`](Execution.md) |
+| `run` | `Promise`\<`unknown`\> |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:815](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L815)
+
+___
+
+### report
+
+▸ **report**(`error`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/Engine.ts:821](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L821)
 
 ___
 
 ### exception
 
-▸ **exception**(`exc`, `execution`): `Promise`\<`any`\>
+▸ **exception**(`exc`, `execution`): `Promise`\<`never`\>
+
+A failed call: reported, the execution dropped from the cache (its state in memory may be
+part-way; the next call restores it from the store), `process.exception` emitted, and the
+error thrown to the caller as it is (the engine has always thrown here).
 
 #### Parameters
 
@@ -671,11 +1089,11 @@ ___
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<`never`\>
 
 #### Defined in
 
-[server/Engine.ts:515](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L515)
+[packages/bpmn-server/src/server/Engine.ts:830](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L830)
 
 ___
 
@@ -695,4 +1113,4 @@ ___
 
 #### Defined in
 
-[server/Engine.ts:523](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/Engine.ts#L523)
+[packages/bpmn-server/src/server/Engine.ts:845](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Engine.ts#L845)

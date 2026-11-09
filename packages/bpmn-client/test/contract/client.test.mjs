@@ -34,6 +34,13 @@ test('engine.start, datastore.findItems, engine.invoke', { skip }, async () => {
   assert.equal(done.status, 'end');
 });
 
+test('the user given to engine.start and engine.invoke is the one the engine records', { skip }, async () => {
+  const instance = await client.engine.start(MODEL, {}, null, 'emp1');
+  assert.equal(instance.items.find(i => i.type === 'bpmn:StartEvent')?.userName, 'emp1');
+  const done = await client.engine.invoke({ id: instance.id, 'items.elementId': 'Submit' }, { days: 1 }, 'emp2');
+  assert.equal(done.items.find(i => i.elementId === 'Submit').userName, 'emp2');
+});
+
 test('engine.get returns an instance', { skip }, async () => {
   const started = await client.engine.start(MODEL, {});
   const instance = await client.engine.get({ id: started.id });

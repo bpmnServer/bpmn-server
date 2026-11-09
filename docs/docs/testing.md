@@ -4,14 +4,122 @@ A model is ready when it passes three kinds of checks:
 
 1. **It loads**: [`bpmn-server verify`](verify.md) checks the XML, the structure, and that scripts and expressions
    compile, without running anything.
-2. **It runs as intended**: a test starts it, completes its tasks with data and checks the path it took. Tests
-   run in memory, on your application's own delegate and services, with no database and no waiting for timers.
+2. **It runs as intended**: a test starts it, completes its tasks with data and checks the path it took. Write it
+   [in Gherkin](#tests-in-gherkin), to run in the engine on a real server, or [in TypeScript](#tests-in-typescript),
+   to run in memory with no database and no waiting for timers.
 3. **When it does not**: run the test, or the application, under a debugger, with breakpoints in your
    services, in bpmn-server, and in the model's own scripts.
 
 The examples below come from `testSampleApp` in the [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server) repository: its tests are in
 `testSampleApp/test/custom/`. `testSampleApp/examples/` has more, one feature each (a sub-process loop, an
 event-based gateway, a multi-instance vote, an escalation, a restart), written to be read and run.
+
+## Tests in Gherkin
+
+A test is a scenario in a `.feature` file beside its model. It runs whole in the engine, on your real delegate and services, whether you start it from the model editor or the command line.
+
+```gherkin
+@feature:order-approval
+Scenario: The manager approves one order line
+  When user:Johnson @login with role of "HR-Manager"
+    And @start process:order-approval as :order
+    And @find element:approve-order in :order as :approval
+      | item.status  | wait |
+      | item.itemKey | 5001 |
+    And @invoke :approval
+      | approved | true   |
+      | date     | ${now} |
+  Then @check :order status is "end"
+    And @check :approval status is "end"
+```
+
+An **element** belongs to the model and an **item** belongs to the instance, so a test finds an item before acting on it. With one waiting item, the short form does both: `@invoke element:approve-order in :order`.
+
+### Files
+
+| File | Holds | Shown in the Test tab |
+|---|---|---|
+| `<model>.feature` | A model's scenarios | Yes |
+| `<decision>.dmn.feature` | A decision's tests | In the decision editor |
+| `<model>.engine.feature` | Tests of the engine itself, run by `npm run test:scenarios` | No |
+
+### How a step is written
+
+A step is `[subject] @command [arguments] [as :name]`, followed by a table or a doc string if the command needs one.
+
+| Written | Means |
+|---|---|
+| `@invoke` | A command |
+| `process:order-approval` | Something named in the model or application |
+| `:order` | Something this scenario holds, kept with `as :order` for the rest of the scenario |
+| `"end"` | A literal string |
+| `${now}` | A JavaScript expression. It can read `data`, `item`, `instance`, `context` and `now` |
+
+### Commands
+
+| Command | Does |
+|---|---|
+| `user:<name> @login [with role of "<role>"]` | Acts as that user |
+| `@start process:<p> [at element:<e>] [only] as :i` | Starts an instance, with the table as its start data. `only` runs that element by itself |
+| `@find element:<e> [in :i] as :x`, `@find item ...` | Finds one item, filtered by the table |
+| `@invoke :x`, `@invoke [first] element:<e> [key "K"] in :i [as :x] [no wait]` | Completes an item with the table as its data |
+| `@check <statement>` | Checks something now |
+| `@wait <statement> [within N seconds\|minutes\|hours]` | Waits until the statement holds. The default limit is 30 seconds |
+| `@stub service:<s> with`, `@stub timer:<t> with 5 seconds` | Replaces a service or a timer, for this scenario's instances only |
+| `@evaluate decision:<d> as :result` | Evaluates a decision, with the table as its input |
+| `@script` | Runs JavaScript from a doc string |
+| `@assign :x`, `@restart :x`, `@startEvent element:<e> in :i [restart]` | Assigns an item, restarts at it, or starts at an event |
+
+A step fails if `@invoke` or `@find` doesn't match exactly one item. Use `first` or a `key`, or add to the table, to pick one.
+
+### Statements
+
+`@check` and `@wait` take the same statements:
+
+```gherkin
+Then @check ${data.total > 100}
+  And @check :order status is "end"
+  And @check :order data.total > 100
+  And @check :order passed element:approve-order 2 times with status "end"
+  And @check :order has 3 items of element:approve-order with status "wait"
+  And @check :order last element:approve-order status is "wait"
+  And @check :result output.approvalStatus is "Approved"
+  And @check :result rules is 1
+```
+
+### Stubs
+
+A stub replaces a service or a timer for its own scenario's instances, and for the processes they call. Nothing outside a test can set one.
+
+```gherkin
+Given @stub service:credit-check with
+  """javascript
+  return { score: input.amount > 1000 ? 500 : 800 };
+  """
+  And @stub timer:wait-3-days with 5 seconds
+When @start process:order-approval as :order
+Then @wait :order status is "end"
+```
+
+| In a stub | Behaves |
+|---|---|
+| `input`, `data` | The task's mapped input (empty without a mapping) and the instance's data |
+| `throw new Error(...)` | As a real service throwing: `camunda:exceptionsAsErrors` decides what happens |
+| `return { bpmnError: "code" }` | As a real service returning a BPMN error |
+| `fail("message")` | Always fails the scenario |
+
+A stubbed service runs even with `SERVICE_TASKS=false`. A stubbed timer needs timers on.
+
+### Tags
+
+- `@feature:<id>` on a scenario or a `Feature:` says which feature it covers. `npm run features -- --check` reports one that names no feature.
+- `@skip` keeps a scenario without running it.
+
+### In the model editor
+
+The [Test tab](modeler.md#testing-a-model) reads and writes `<model>.feature`. A scenario made of a start, steps and checks opens in its form. Anything else, such as a `@stub` or an expression, stays as written: you can run it and change it with **Edit as text**.
+
+Each run is a real instance, its id starting with `test-`, which can be opened on the instance page. An older `<model>.tests.json` in the models folder is converted to a `.feature` file when the server starts.
 
 ## Tests in TypeScript
 
@@ -82,64 +190,16 @@ app = await testApp({
 });
 ```
 
-## Scenario files
-
-A scenario can also be written as data, in the format the model editor's **Test** tab uses: the Test tab saves a
-model's scenarios in this format, beside the model (`<model>.tests.json` in the models folder). A file holds one
-scenario with its model, or a model's list of them:
-
-```json
-{
-  "model": "Buy Used Car",
-  "scenarios": [
-    {
-      "name": "buy, no repairs",
-      "start": { "data": { "caseId": 1 } },
-      "steps": [
-        { "element": "task_Buy", "data": { "needsCleaning": "No", "needsRepairs": "No" } },
-        { "element": "task_Drive" }
-      ],
-      "checks": [
-        { "at": "end", "kind": "status", "status": "end" },
-        { "at": "after", "step": "task_Buy", "kind": "data", "path": "needsRepairs", "op": "=", "value": "No" },
-        { "kind": "node", "node": "task_repair", "count": 0 }
-      ]
-    }
-  ]
-}
-```
-
-| | |
-|---|---|
-| `start` | `data` the instance starts with; `startNodeId` picks one of several start events, or a task, with `"only": true`, to run by itself (the run ends once it is done). |
-| `steps` | In order, each a waiting `element` (by id) to complete, with its `data`. The data decides the branches a gateway takes; the order decides which of several waiting elements happens first (an event-based gateway's events, a boundary timer, parallel tasks). |
-| `checks` | Each at the end (`"at": "end"`, the default), at the start (`"at": "start"`, once the process has started) or after a step (`"at": "after"`, `"step"`: its element). `status`: the instance's status. `node`: an element ran (`count` times, optionally in a `status`). `data`: a value at `path` (`a.b.c`) compared with `op` (`=`, `<>`, `>`, `<`, `>=`, `<=`) to `value`. |
-
-`testSampleApp/test/custom/scenarios.test.ts` runs every `*.json` file of its folder as tests, on `testApp()`,
-with bpmn-web's `runScenario` (exported by bpmn-web from the release after 3.1). A failure says what went wrong:
-
-```text
-✖ broken.json: wrong on purpose
-  A step could not be done
-  step 2 (task_repair): task_repair is not waiting; waiting: task_Drive
-  check failed: data.needsRepairs is "Yes" (actual "No")
-```
-
-The Test tab keeps its scenarios in the application's database (the `wf_test_scenarios` collection), one set per
-model, and runs them on the running server: each run is a real instance, its id starting with `test-`, which can
-be opened on the instance page. Scenario files are the same format, kept with your code and run anywhere.
-
 ## Debugging
 
 ### In VS Code
 
-The repository's `.vscode/launch.json` has three configurations:
+The repository's `.vscode/launch.json` has two configurations:
 
 | | |
 |---|---|
 | **testSampleApp: dev (debug)** | The application, from the TypeScript sources of bpmn-server and bpmn-web (`npm run dev`); it restarts when one of them changes, and the debugger attaches again. |
 | **Test: current file** | The open test file (`*.test.ts`, `*.test.mjs`). It runs on the packages' builds: run `npm run build` first; their source maps put breakpoints set in `packages/*/src` in place. |
-| **Scenarios: current file** | The open scenario file (`*.json`). |
 
 Breakpoints work in the test, in your services and delegate, and in bpmn-server and bpmn-web.
 

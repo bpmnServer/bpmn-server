@@ -1,157 +1,52 @@
-# Tutorial: Executing the Tutorial from NodeJs
-## Prepare a Script
-Let us create a TypeScript (or JavaScript if you prefer) file named 'leave.ts'
-```ts
-// Configuration is the entry point to Application; defining your setup and customization
-import { configuration } from './';
+# Execute from Node.js
 
-// import the objects we need from 'bpmn-server'
-import { BPMNServer,BPMNAPI, SecureUser } from 'bpmn-server';
-```
+The same leave request, from a script: start it as `user1`, fill in the request, and approve it as `manager1`. The script runs the engine itself, in its own process, on the same database as your application: this needs MongoDB or SQLite, not `--memory`.
 
-let us get Server and API objects:
+## The script
+
+In your application's folder, create `leave.ts`:
+
 ```ts
-const server = new BPMNServer(configuration); 
+import { BPMNServer, BPMNAPI, SecureUser, Logger } from 'bpmn-server';
+import { webConfiguration } from 'bpmn-web';
+import { config } from './settings/config.js';
+import { AppDelegate } from './delegates/appDelegate.js';
+
+// the application's own engine, with its settings and services; no timers here, the running server has them
+const server = await BPMNServer.create(webConfiguration(config(), AppDelegate), new Logger({ toConsole: false }), { cron: false });
 const api = new BPMNAPI(server);
-```
-start a function 'leave()':
-```ts
-leave();
 
+// a script signs nobody in: it says who it acts for
+const user1 = new SecureUser({ userName: 'user1', userGroups: ['Employee'] });
+const manager1 = new SecureUser({ userName: 'manager1', userGroups: ['Employee', 'Manager'] });
 
-async function leave() {
-}
-```
-It needs to be `async` functions since we will be making many async calls to the server with 'await' statement.
+let response = await api.engine.start('Leave Application', {}, user1);
+const id = response.instance.id;
+console.log('started', id, response.instance.status);
 
-Since this is a script, a secure one, we will simulate a user or get user info from a secure app.
+response = await api.engine.invoke({ id, 'items.elementId': 'Request', 'items.status': 'wait' },
+    { LeaveType: 'Vacation', StartDate: '2026-12-01', EndDate: '2026-12-05', RequestReason: 'Holidays' }, user1);
 
-```ts
-        let user1 = new SecureUser({userName:'user1',userGroups:['Employee']});
-```
-Assign a caseId:
+response = await api.engine.invoke({ id, 'items.elementId': 'Approve', 'items.status': 'wait' }, { approval: 'A' }, manager1);
+console.log('after approval:', response.instance.status);
+for (const item of response.instance.items)
+    console.log('  ', item.seq, item.elementId, item.status, item.assignee ?? '');
 
-```ts
-        let caseId =1052;
-        
-        let response;
-    
-        console.log('-------------------');
-```
-## Start the workflow:
-we use [api.engine.start](../api/interfaces/IAPIEngine.md/#start)
-```ts
-        console.log('Starting a Leave Application');
-
-        // syntax: ▸ start(name, data?, user?, options?): Promise<IExecution>
-        let response = await api.engine.start('Leave Application',{caseId} ,user1);
-```
-Let us analyse response:
-```ts
-        
-        console.log(
-                'instance',response.instance.id,
-                'status:',response.instance.status,
-                'items:',response.instance.items.length);
-
-        response.instance.items.forEach(item=>{
-            console.log('   item:',item.seq,item.elementId,'status:',item.status,'assignee:',item.assignee?? '');
-        });
-```
-results:
-```
-instance 964a2048-d37c-4a1d-805b-159fc1438872 status: running items: 3
-   item: 0 StartEvent_1 status: end assignee:
-   item: 1 Flow_0xa1hl7 status: end assignee:
-   item: 2 Request status: wait assignee: user1
-```
-## Invoke Request Task        
-we use [api.engine.invoke](../api/interfaces/IAPIEngine.md/#invoke)
-```ts
-        // syntax: ▸ invoke(query, data?, user?, options?): Promise<IExecution>
-
-        response = await api.engine.invoke({ "id": response.instance.id, "items.elementId": 'Request'},
-            {   RequestReason:"Feels Like it",
-                LeaveType:"Sick",
-                StartDate:"2024-05-16",
-                EndDate:"2024-05-22"},
-            user1);
-
-        console.log('---------------------------- after Request ');
-
-        response.instance.items.forEach(item=>{
-            console.log('   item:',item.seq,item.elementId,'status:',item.status,'assignee:',item.assignee?? '');
-        });
-```
-Results:
-```
----------------------------- after Request 
-   item: 0 StartEvent_1 status: end assignee: -
-   item: 1 Flow_0xa1hl7 status: end assignee: -
-   item: 2 Request status: end assignee: user1
-   item: 3 Flow_1ig8mx7 status: end assignee: -
-   item: 4 Approve status: wait assignee: manager1
-   item: 5 timer-event status: wait assignee: -
-```
-## Simulate a Manager user
-```ts
-
-    let manager1 = new SecureUser({userName:'manager1',userGroups:['Manager']});
-```
-Let us find out the pending Tasks for our user:
-We use [api.data.findItems](../api/interfaces/IAPIData.md/#finditems)
-```ts
-    // syntax: ▸ findItems(query, user?): Promise<IItemData[]>
-    let list=await api.data.findItems(
-        {   "items.status": 'wait',         // items that have a status of wait
-            "items.type":'bpmn:UserTask' }, // and of type UserTask
-        manager1    // user: used to filter scope and security
-        );
-        
-        list.forEach(item=>{
-                console.log('findItems: item: ',item.elementId,'model',item.processName,'caseId',item.data.caseId,
-                'started:',item.startedAt.toISOString().split('T')[0]);
-
-        });    
-   
-```
-results:
-```
-findItems: item:  Approve model Leave Application caseId 1062 started: 2024-05-10
-```
-## Invoke Approve Task
-
-```ts        
-        response = await api.engine.invoke(
-            { "id": response.instance.id, "items.elementId": 'Approve'}, // query
-            {   approval:"A" },     // data
-            manager1);
-
-        console.log('---------------------------- after Approve ');
-
-        response.instance.items.forEach(item=>{
-            console.log('   item:',item.seq,item.elementId,'status:',item.status,'assignee:',item.assignee?? '');
-        });
-```
-Results:
-```
----------------------------- after Approve 
-   item: 0 StartEvent_1 status: end assignee: -
-   item: 1 Flow_0xa1hl7 status: end assignee: -
-   item: 2 Request status: end assignee: user1
-   item: 3 Flow_1ig8mx7 status: end assignee: -
-   item: 4 Approve status: end assignee: manager1
-   item: 5 timer-event status: end assignee: -
-   item: 6 Flow_1my72g7 status: end assignee: -
-   item: 7 Gateway_1kqewfd status: end assignee: -
-   item: 10 Flow_1ufmnuh status: end assignee: -
-   item: 11 Activity_1rx1txe status: end assignee: -
-   item: 12 Flow_1un6mui status: end assignee: -
-   item: 13 Event_1qg3mz1 status: end assignee: -
-```
-```ts
-    return;
-    
-    }
+await server.shutdown();
 ```
 
+## Run it
+
+```sh
+npx tsx --env-file=.env leave.ts
+```
+
+`--env-file` gives it your application's `.env`: its database and its settings. It prints the instance, `end` after the approval, and each step with who it was assigned to. The instance is in the Workbench too, as if people had done it in the browser.
+
+## What it shows
+
+- `api.engine.start` and `api.engine.invoke` are what the web pages call. A query, such as `{ id, 'items.elementId': 'Approve' }`, finds the waiting task to complete.
+- Each call says who it acts for, and with `ENFORCE_SECURITY=true` the same rules apply: as `user1`, the `Approve` call would be refused.
+- The engine is yours here: you create it and shut it down. That is [Embedding the engine](../embedding.md), and the API is in [Engine API](../api-summary.md).
+
+One of the walkthroughs after the [tutorials](start.md): next, [Integrate an existing application](tutorial-integrate.md).

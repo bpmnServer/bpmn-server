@@ -15,45 +15,72 @@ The following diagram illustrates the core components of `bpmn-server` and how t
 
 ## Quick Start
 
-### Using the Demo Project
+### Create an application
 
 ```sh
-# 1. Clone the demo app
-$ git clone https://github.com/bpmnServer/bpmn-web.git
-$ cd bpmn-web
-
-# 2. Install dependencies
-$ npm install
-
-# 3. Run setup to create default install files
-$ npm run setup
-
-# 4. Edit `.env` file.
-
-# 5. Run setup to create database and models
-$ npm run setup
-
-# 6. Start the server
-$ npm run start
+npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+cd my-app
+npm run setup                    # the database's indexes
+npm start                        # http://localhost:3000
 ```
 
-Open your browser to [http://localhost:3000](http://localhost:3000) to launch the demo.
+Open your browser to [http://localhost:3000](http://localhost:3000). The first page asks for the administrator, with the setup token the server printed when it started.
+
+`init` creates the sample application, with `bpmn-server` and `bpmn-web` as its dependencies;
+`npx bpmn-server init --help` lists its options, and `--minimal` creates a one-model Hello application
+instead. `init` ships with bpmn-server 3.5.
+
+```
+my-app/
+  package.json      deps: bpmn-server, bpmn-web; scripts: start, dev, setup, cli, verify
+  .env              generated keys, the database URL, what is served
+  index.ts          starts bpmn-web with the settings, delegate and connectors below
+  settings/         config.ts: only the settings you override; bpmn-web supplies the defaults
+  processes/        the models: Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository
+  connectors/       the services service tasks call (appServices.ts), and element templates (*.json)
+  delegates/        the app delegate (on bpmn-web's WebAppDelegate): services, data objects, events
+```
+
+### Install on a server
+
+On a new Linux server (Ubuntu 22.04 or 24.04), one line installs everything (Node.js, MongoDB, the application,
+nginx, a service; HTTPS with `--domain`) and prints the address and a generated admin password:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/install.sh | sudo bash
+```
+
+It also works as a cloud server's launch script (AWS Lightsail's "Add launch script"). See
+[deploy/](https://github.com/bpmnServer/bpmn-server/tree/main/deploy).
+
+### Call it from another application (bpmn-client)
+
+```sh
+npm install bpmn-client
+npx bpmn-client-setup            # writes .env: set API_KEY to the server's, HOST and PORT to where it runs
+npx bpmn-client-cli              # a console on the server: start processes, list and invoke items
+```
+
+```js
+import 'dotenv/config';
+import { BPMNClient2 } from 'bpmn-client';
+
+const client = new BPMNClient2(process.env.HOST, process.env.PORT, process.env.API_KEY);
+const instance = await client.engine.start('Hello', { name: 'Ada' });
+```
+
+See [bpmn-client](https://bpmnserver.github.io/bpmn-server/bpmn-client) for its API.
 
 ### Programmatic Usage Example
 
 ```js
-const { BPMNServer, DefaultAppDelegate } = require('bpmn-server');
-const { configuration } = require('./configuration');
+import { BPMNServer, Logger } from 'bpmn-server';
+import { configuration } from './configuration.js';
 
-const server = new BPMNServer(configuration, new DefaultAppDelegate());
+const server = await BPMNServer.create(configuration, new Logger({ toConsole: false }));
 
-const processName = 'invoice';
-const inputData = { amount: 1200 };
-
-(async () => {
-    const result = await server.engine.start(processName, inputData);
-    console.log('Process started with instance id:', result.instance.id);
-})();
+const result = await server.engine.start('invoice', { amount: 1200 });
+console.log('Process started with instance id:', result.instance.id);
 ```
 
 For more advanced examples, see the [API documentation](https://bpmnserver.github.io/bpmn-server/api).
@@ -138,48 +165,20 @@ A live demo is available at: [https://bpmn.omniworkflow.com](https://bpmn.omniwo
 
 ## Installation
 
-This package requires Node.js and MongoDB.
+This package requires Node.js 20 or later and MongoDB (or `--memory`, to try it without one).
 
-If MongoDB is not installed, you can [create a free cloud account](http://bit.ly/cyd-atlas) or [install it locally](https://www.mongodb.com/docs/manual/installation/).
+If MongoDB is not installed, you can [create a free cloud account](http://bit.ly/cyd-atlas), [install it locally](https://www.mongodb.com/docs/manual/installation/), or run the one `init` puts in the application (`docker compose up -d`).
 
-### 1. Clone the repository
 ```sh
-git clone https://github.com/bpmnServer/bpmn-web.git
+npx bpmn-server init my-app --mongo mongodb://localhost:27017/my-app
+cd my-app
+docker compose up -d             # a MongoDB on this machine, if you do not have one
+npm run setup                    # the database's indexes and the first user
+npm start
 ```
 
-### 2. Install dependencies
-```sh
-npm install
-```
-
-### 3. Set up the app
-```sh
-npm run setup
-```
-
-Edit the `.env` file to configure MongoDB:
-```env
-MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
-```
-
-Run setup again to create DB objects:
-```sh
-npm run setup
-```
-
-### 4. Start the server
-```sh
-npm run start
-```
-
-Console output:
-```text
-bpmn-server WebApp.ts version 1.4.0
-MongoDB URL mongodb://0.0.0.0:27017/bpmn
-db connection open
-App is running at http://localhost:3000 in development mode
-Press CTRL-C to stop
-```
+The application's settings are in `.env` (the database, the port, the API keys, what is served) and
+`settings/config.ts`.
 
 ## Docker Installation
 
@@ -266,7 +265,7 @@ Commands:
 
 ## Updating to Latest Release
 ```sh
-npm update bpmn-server
+npm update bpmn-server bpmn-web
 ```
 
 ## Application Integration

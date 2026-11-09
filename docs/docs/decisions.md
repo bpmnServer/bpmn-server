@@ -105,10 +105,10 @@ gives the decision's inputs and what to check:
 
 A run evaluates the decision as a business rule task does, and shows the result and the rules that matched. A
 test with no checks passes when the decision evaluates. **Use as checks** makes a run's result the test's checks.
-Each test keeps its runs.
+A test's runs stay until the page is reloaded: a decision has no instance to keep them on.
 
 A test names a decision of the file, or uses the file's top decision. A file's tests are saved beside it, in
-`<name>.dmn.tests.json`, and the [Design dashboard](modeler.md#testing-a-model) runs them with the models' tests.
+`<name>.dmn.feature`, and the [Design dashboard](modeler.md#testing-a-model) runs them with the models' tests.
 
 ## When something is wrong
 

@@ -5,11 +5,11 @@
 Build and run long-lived business processes **inside your application**. BPMN Server executes workflow models, coordinates human and service tasks, handles events and timers, and persists execution state. Your application remains responsible for its UI, authentication, domain services, and business records.
 
 !!! info "BPMN Server 3.5"
-    Version 3.5 adds [OpenAPI-based REST connectors](connectors.md), [DMN decisions](decisions.md), [SQLite storage](setup.md#storage), [data objects](data-objects.md), an improved [model editor](modeler.md), and a one-command application starter. See [What's new in 3.5](whats-new-3.5.md) and the [3.x upgrade guide](whats-new-3.md).
+    Version 3.5 adds [OpenAPI-based REST connectors](connectors.md), [DMN decisions](decisions.md), [SQLite storage](persistence.md), [data objects](data-objects.md), an improved [model editor](modeler.md), and a one-command application starter. See [What's new in 3.5](whats-new-3.5.md) and the [3.x upgrade guide](whats-new-3.md).
 
 ## Get started
 
-**Recommended first step:** [Build, test, and run your first workflow](first-workflow.md). Start in the [online demo](https://bpmn.omniworkflow.com/) or install a local application; both paths lead through **Model → Configure → Check → Test → Run → Complete tasks → Inspect results**.
+**Recommended first step:** [Choose your journey](journeys.md). Start in the [online demo](https://bpmn.omniworkflow.com/) or install a local application; both paths lead through **Model → Configure → Check → Test → Run → Complete tasks → Inspect results**.
 
 Try a small application without running a database server:
 
@@ -50,6 +50,8 @@ flowchart TB
     Connectors --> External["External REST APIs"]
     Engine --> Store[("Workflow storage: MongoDB, SQLite, or memory")]
 ```
+
+The engine can also run in a process of its own, away from the host: see [Architecture](architecture.md).
 
 **BPMN Server is a library, not a stand-alone web server.** A host application creates the engine and supplies its configuration and application delegate. The optional `bpmn-web` package provides a ready-to-use web application, modeler, administration tools, and REST endpoints. The `bpmn-client` package calls a running host over HTTP.
 

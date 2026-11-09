@@ -38,7 +38,7 @@ class Cron  extends ServerComponent implements ICron {
 
 	async start() {
 		await this.startTimers();
-		if (this.configuration.demo)
+		if (this.configuration.runTimers === false)
 			return;
 		const interval = this.configuration.timers?.pollInterval ?? 60_000;
 		if (interval > 0 && !this.poller && !this.stopped) {
@@ -72,13 +72,9 @@ class Cron  extends ServerComponent implements ICron {
 			// A model that does not load is reported; the timers of the others still start.
 			this.report(exc);
 		}
-		// a demo runs no timers: no process starts on a timer, no waiting timer is fired
-		if (this.configuration.demo)
+		// no timers: no process starts on a timer, no waiting timer is fired
+		if (this.configuration.runTimers === false)
 			return;
-		const events = await this.definitions.findEvents({ "events.subType": "Timer" });
-		for (const entry of events) {
-			if (entry.timeDue) this.scheduleProcess(entry);
-		}
 		await this.checkTimers();
 	}
 	/** Schedules every waiting timer item in the store that this server has not scheduled yet: recovery at start, and the periodic re-read. */
@@ -87,6 +83,11 @@ class Cron  extends ServerComponent implements ICron {
 		const items = await this.dataStore.findItems({ "items.timeDue": { $exists: true }, "items.status": "wait" });
 		for (const item of items) {
 			if (item.timeDue) this.scheduleItem(item);
+		}
+		// a process timer this server lost the claim on is taken up again from the store: if the winner dies, the next occurrence is still started
+		const events = await this.definitions.findEvents({ "events.subType": "Timer" });
+		for (const entry of events) {
+			if (entry.timeDue) this.scheduleProcess(entry);
 		}
 		const locker: any = this.lockManager;
 		if (typeof locker.purgeClaims === 'function') await locker.purgeClaims();
@@ -112,13 +113,25 @@ class Cron  extends ServerComponent implements ICron {
 		// The item may have moved on (completed, cancelled, fired by another server) since it was read.
 		const current = (await this.dataStore.findItems({ 'items.id': entry.id }))[0];
 		if (!current || current.status !== 'wait') { this.counters.skipped++; return; }
-		await this.engine.invoke({ 'items.id': entry.id }, null);
+		// the firing and the next repetition as one piece of work, which a stopping server waits for
+		const engine = this.engine as any;
+		engine.runningCounter++;
+		try {
+			// a timer that fires: the engine logs it so ('Timer Fired'), not as someone's invoke
+			await this.engine.invoke({ 'items.id': entry.id }, null, null, { timer: true });
+			// recovered after a restart: the Timer behaviour that would start its next repetition went with the old server
+			if (Number(current.timerRepeat) > Number(current.timerCount ?? 0) + 1)
+				await engine.startRepeatTimerEvent(current.instanceId, current, {});
+		}
+		finally {
+			engine.runningCounter--;
+		}
 	}
 	private async processTimerExpired(event: any) {
 		await this.definitions.updateTimer(event.modelName);
 		event.referenceDateTime = new Date().getTime();
 		this.scheduleProcess(event);
-		await this.engine.start(event.modelName, null, null, event.elementId);
+		await this.engine.start(event.modelName, {}, event.elementId);
 	}
 	private scheduleProcess(entry) {
 		const delay = Cron.timeDue(entry.expression, entry.referenceDateTime);
@@ -127,7 +140,9 @@ class Cron  extends ServerComponent implements ICron {
 		const due = Date.now() + ms;
 		this.logger.log('scheduling process ' + entry.modelName + ' at ' + new Date(due));
 		const key = 'process:' + entry.modelName + ':' + entry.elementId;
-		this.schedule(key, ms, undefined, () => this.fireClaimed(`timer:${key}:${Math.round(due / 1000)}`, () => this.processTimerExpired(entry)));
+		// the occurrence, as stored and the same for every server: a due time worked out here would differ between them when overdue
+		const occurrence = entry.referenceDateTime ?? Math.round(due / 1000);
+		this.schedule(key, ms, undefined, () => this.fireClaimed(`timer:${key}:${occurrence}`, () => this.processTimerExpired(entry)));
 	}
 	/** One timer, owned by this server, once per key; a delay longer than `setTimeout` takes is waited out in steps. */
 	private schedule(key: string, delayMs: number, instanceId: string | undefined, fire: () => Promise<void>) {

@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[engine/Model.ts:72](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Model.ts#L72)
+[packages/bpmn-server/src/engine/Model.ts:75](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Model.ts#L75)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:73](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Model.ts#L73)
+[packages/bpmn-server/src/engine/Model.ts:76](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Model.ts#L76)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:74](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Model.ts#L74)
+[packages/bpmn-server/src/engine/Model.ts:77](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Model.ts#L77)
 
 ___
 
@@ -63,4 +63,4 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:75](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Model.ts#L75)
+[packages/bpmn-server/src/engine/Model.ts:78](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Model.ts#L78)

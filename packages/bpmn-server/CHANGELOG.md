@@ -9,12 +9,72 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
-- `engine.start(..., options.instanceId)`: the caller may name the instance (an application whose record of it shares its id).
 
 ### Changed
 -->
+
 ## [Unreleased]
+### Added
+- **Each operation's outcome in the log**: when it saves, the engine logs `{"type":"outcome"}`, with the instance's status,
+  the items whose status changed and the items that wait. A timer the server fires is logged as `Timer Fired`, a
+  restart as `Restart Item`, not as `Invoke Item`.
+- **`engine.deleteInstances(query)` and `engine.tagInstance(id, tag)`**: what changes an instance is the engine's. A delete takes each instance's lock, so a call running it finishes first, and cancels its timers. `api.data.deleteInstances` and bpmn-web's deletes go through it, wherever the engine runs; reads stay with the data store.
+- **`startEngineService(server, { port, host, key, calls })`**: the engine on a port of its own, for its host's `BPMNServer.launch(configuration, logger, { engine, engineKey })`. `calls` adds to what the engine can be asked.
+- `server.testStubs`: stubs of a service or a timer for a test's own instances, which no engine call or start option can set.
+- **`camunda:elementVariable`** gives each round of a multi-instance its element and `loopCounter`; **`bpmn:completionCondition`**, with `nrOfInstances`, `nrOfCompletedInstances`, `nrOfActiveInstances` and `rounds`, ends a loop early, cancelling the parallel rounds still running.
+- Output parameters on a call activity say what comes back; without them, all of the called process's data, as before.
+- `dataStore.tagInstance(instanceId, tag)` marks a saved instance with a tag of the caller's, indexed by `tag.process`. The engine's saves leave it as it is.
+- **`BPMNServer.launch(configuration)`**: a server seen from outside its engine. Its engine calls answer a JSON copy (`id`, `status`, `instance`), never a running execution; the delegate and services stay inside and keep theirs. `new BPMNServer(...)` embeds the engine, as before. `{ engine: 'none' }`: no engine; models can be read and saved, and what would run answers `EngineNotRunningError`. The settings `moddleOptions` and `servicesFile` say what it needs of the application without its code.
+- **`new ScriptHandler({ context })`** (and `SandboxScriptHandler`): variables of the application's that scripts and expressions see, each computed from a copy of the data.
+- A `language="JavaScript"` condition may give its value by **`next(error, value)`**, as an expression or in statements.
+
+- `runTimers` and `runServiceTasks` in the configuration, a setting each (`demo` is deprecated: both false). A run's decisions
+  now say "on this server" rather than "in this demo".
+- `new SandboxScriptHandler({ callServices: true })`: a sandboxed script's calls to `appServices` and `appUtils` run, in the
+  server, with JSON copies; only methods are reached, through plain objects. Without it they run nothing, as before.
+- **FEEL conditions**: a sequence flow's condition with `language="FEEL"` is FEEL, over the data's values by name. JavaScript stays the
+  default, and `${...}` is a wrapper whatever the language.
+- `engine.start(..., options.instanceId)`: the caller may name the instance (an application whose record of it shares its id).
+- `flags.only` (engine.start's `options.flags`): the instance runs one element, the one it starts at
+  (`startNodeId`), and ends once that element is done; a user task waits first. To test a task by itself.
+- `ModelsDatastore.deleteVersion(name, version)` (`ModelHistory.remove`): one saved version of a model removed; the
+  others keep their numbers. It takes its turn with the saves.
+
 ### Fixed
+- **An instance with a multi-instance loop, saved with save points (every test run), failed in the memory store** with
+  "function ... could not be cloned": restoring it wrote the live execution into its stored loops, which a save point
+  shares, so the next save carried the whole server. The stored loops stay as stored.
+- **`init`'s Leave Application is ready for production**: dates checked, any manager deciding, reminders while it waits,
+  the approved leave recorded through a service (with HR fixing a refusal), the employee told, every element documented,
+  and its tests beside it (`Leave Application.feature`, every path). The tutorials explain its design.
+- **`npm test` in a new application** runs every model's tests (`processes/*.feature`) in memory, for a release and
+  for CI; it exits 1 when one fails.
+- **`npm run services` in a new application** pointed at a folder that only this repository has: it is
+  `bpmn-web-services` now, a command of bpmn-web.
+- `deploy/install.sh --packages <folder>` installs packed packages (`npm pack`) instead of npm's, to test a release
+  before publishing; the application's `.env` is its user's and group's only.
+- `init`'s sample application has the model **GitHub repository**: a service task calling GitHub's REST API through a
+  connector added from the catalog, and a 404 caught by an error event (tutorial 8).
+- **Renaming or deleting a model left its tests behind**: its `.feature`, `.engine.feature` and `.tests.json` now go with it, and a
+  rename changes the model's name in its tests (the `Feature:` line and each `process:` naming it).
+- **A user task in a lane with one candidate group failed when it started** (`item.candidateGroups.push is not a function`): one group is text, and the lane's was added as to a list. Both are kept, once.
+- **A cancelled transaction ended its instance.** Every item had ended, but the token that waited on the transaction stayed waiting, so the instance stayed `running`.
+- **A transaction inside a sub-process is undone when cancelled.** Its cancel found the sub-process, not the transaction, so nothing was compensated. And an instance whose compensation had run could not be loaded again: the association it went along was not found by its id.
+- **A process timer's claim goes by its stored occurrence**, the same on every server; it went by a due time worked out on each, which could differ when overdue. A server that lost a claim takes the timer up again from the store (`timers.pollInterval`), so a repeating one goes on if the winner dies.
+- **A repeating timer stopped when its server stopped right after it fired**: the stopping engine refused the next repetition. A repetition now goes on while the server finishes its running work, which waits for it.
+- **A repeating timer stopped at a restart.** `R3/...` recovered by a server fired once and no more: how far it had got was not saved, and only the server that started it would go on. Its remaining repetitions now run.
+- **Locks refuse to run with nothing to exclude anyone.** When the unique index can not be made, it is tried; if two inserts of one id both succeed, locking fails rather than giving no protection.
+- **A process's timer start event started at the wrong place.** Its element id was passed as the user: with several start events the process began at one a user can start, and not at the timer's.
+- **A lock lasts as long as its holder lives.** A running execution renews it, so one longer than `locks.staleAfter` (5 minutes) is no longer taken over by another server while it runs. Only a dead holder's goes stale.
+- The engine's service answers an oversized request with 413, not a broken connection.
+- `engineTimeout` (`ENGINE_TIMEOUT_MS` in bpmn-web): a host stops waiting for its engine, with an error, `ENGINE_TIMEOUT`, that says the engine may still be running what it was asked. Nothing is tried again.
+- A timer's text (`PT${data.hours}H`) was written back into its definition when first filled in, so later rounds of a loop got the first value; each item now fills in its own.
+- With `timers.forceTimersDelay`, a cycle's repeats were not read, so `R3` fired once.
+- A sub-process that finished within its own start could go on twice, and failed with `this.currentNode.getOutbounds is not a function` after an exclusive gateway with a default.
+- A call activity's called process runs as the user whose action reached it, in the caller's tenant; it ran with no user and no tenant.
+- A called process that ended within the call lost its data, and the call failed with "query produced no items".
+- Filtering items with several comparisons on one field (`{ $gte: 5, $lt: 10 }`) checked only the last of them; every one must now hold.
+- An error end event outside any sub-process no longer crashes the engine and leaves the instance running: the error goes to what catches it, or the instance ends there.
 - A model with several start events, started with none named, begins at one a user can start; it began at the
   first drawn, a message, signal or timer start included.
 - A joining gateway is one item. Each branch that arrived added one (a join of 3 branches showed 3 gateway
@@ -24,12 +84,6 @@ and here
 - An item's end is logged once (a join's item logged `Ended` twice).
 - A restored instance numbers its new items after its highest seq; it counted its items, which gave two items
   the same seq once seqs had a gap.
-
-### Added
-- `flags.only` (engine.start's `options.flags`): the instance runs one element, the one it starts at
-  (`startNodeId`), and ends once that element is done; a user task waits first. To test a task by itself.
-- `ModelsDatastore.deleteVersion(name, version)` (`ModelHistory.remove`): one saved version of a model removed; the
-  others keep their numbers. It takes its turn with the saves.
 
 ### Changed
 - Items are numbered from 1 (`item.seq`; it was from 0), as bpmn-web shows them. Instances already started

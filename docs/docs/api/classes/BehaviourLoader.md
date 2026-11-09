@@ -35,13 +35,18 @@
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:36](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/BehaviourLoader.ts#L36)
+[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L43)
 
 ## Methods
 
 ### register
 
 ▸ **register**(`name`, `funct`): `void`
+
+Adds a behaviour for a BPMN element, extension or event definition, by its name (`funct(node, def)`
+makes it). The registry is the library's, for every server in the process, as a moddle extension
+is: it extends what BPMN the engine understands, not one server's configuration. Register once,
+at start, before servers load definitions.
 
 #### Parameters
 
@@ -56,7 +61,7 @@
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:114](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/BehaviourLoader.ts#L114)
+[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:132](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L132)
 
 ___
 
@@ -111,4 +116,4 @@ example:
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:156](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/BehaviourLoader.ts#L156)
+[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:174](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L174)

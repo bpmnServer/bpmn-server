@@ -20,7 +20,7 @@ less /tmp/bpmn-deploy-client.sh
 sudo bash /tmp/bpmn-deploy-client.sh acme 3101
 ```
 
-This uses the existing `ralphhanna/bpmn-server` image referenced in `docker/docker-compose.yml` plus a private MongoDB container. The script pulls the image and runs it; it **does not build a client-customized image**. Pass a reviewed/pinned custom image as the third argument when you have one:
+This uses the existing `bpmnserver/bpmn-server` image referenced in `docker/docker-compose.yml` plus a private MongoDB container. The script pulls the image and runs it; it **does not build a client-customized image**. Pass a reviewed/pinned custom image as the third argument when you have one:
 
 ```bash
 sudo bash /tmp/bpmn-deploy-client.sh acme 3101 registry.example.com/client-bpmn:v1

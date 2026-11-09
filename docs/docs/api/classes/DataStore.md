@@ -24,6 +24,7 @@ super class for various objects that are part of the server
 
 - [dbConfiguration](DataStore.md#dbconfiguration)
 - [db](DataStore.md#db)
+- [ownsDb](DataStore.md#ownsdb)
 - [execution](DataStore.md#execution)
 - [isModified](DataStore.md#ismodified)
 - [isRunning](DataStore.md#isrunning)
@@ -31,6 +32,8 @@ super class for various objects that are part of the server
 - [promises](DataStore.md#promises)
 - [locker](DataStore.md#locker)
 - [enableSavePoints](DataStore.md#enablesavepoints)
+- [saveLogs](DataStore.md#savelogs)
+- [saveSource](DataStore.md#savesource)
 - [seq](DataStore.md#seq)
 - [server](DataStore.md#server)
 
@@ -43,8 +46,10 @@ super class for various objects that are part of the server
 - [appDelegate](DataStore.md#appdelegate)
 - [engine](DataStore.md#engine)
 - [dataStore](DataStore.md#datastore)
+- [lockManager](DataStore.md#lockmanager)
 - [definitions](DataStore.md#definitions)
 - [listener](DataStore.md#listener)
+- [scriptHandler](DataStore.md#scripthandler)
 
 ### Methods
 
@@ -58,9 +63,15 @@ super class for various objects that are part of the server
 - [convertColl](DataStore.md#convertcoll)
 - [findInstances](DataStore.md#findinstances)
 - [findItems](DataStore.md#finditems)
+- [backup](DataStore.md#backup)
+- [countInstances](DataStore.md#countinstances)
+- [updateInstanceSource](DataStore.md#updateinstancesource)
+- [tagInstance](DataStore.md#taginstance)
+- [close](DataStore.md#close)
 - [deleteInstances](DataStore.md#deleteinstances)
 - [install](DataStore.md#install)
 - [archive](DataStore.md#archive)
+- [find](DataStore.md#find)
 
 ## Constructors
 
@@ -84,7 +95,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[datastore/DataStore.ts:35](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L35)
+[packages/bpmn-server/src/datastore/DataStore.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L39)
 
 ## Properties
 
@@ -92,13 +103,17 @@ super class for various objects that are part of the server
 
 • **dbConfiguration**: `any`
 
+**`Deprecated`**
+
+MongoDB's settings, for code written against the MongoDB data store; engine code does not read it.
+
 #### Implementation of
 
 [IDataStore](../interfaces/IDataStore.md).[dbConfiguration](../interfaces/IDataStore.md#dbconfiguration)
 
 #### Defined in
 
-[datastore/DataStore.ts:24](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L24)
+[packages/bpmn-server/src/datastore/DataStore.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L23)
 
 ___
 
@@ -106,13 +121,25 @@ ___
 
 • **db**: `any`
 
+The storage adapter: the server's shared `documentStore`, else this data store's own MongoDB connection.
+
 #### Implementation of
 
 [IDataStore](../interfaces/IDataStore.md).[db](../interfaces/IDataStore.md#db)
 
 #### Defined in
 
-[datastore/DataStore.ts:25](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L25)
+[packages/bpmn-server/src/datastore/DataStore.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L25)
+
+___
+
+### ownsDb
+
+• `Private` `Readonly` **ownsDb**: `boolean`
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L26)
 
 ___
 
@@ -122,7 +149,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:27](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L27)
+[packages/bpmn-server/src/datastore/DataStore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L28)
 
 ___
 
@@ -132,7 +159,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L28)
+[packages/bpmn-server/src/datastore/DataStore.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L29)
 
 ___
 
@@ -142,7 +169,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:29](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L29)
+[packages/bpmn-server/src/datastore/DataStore.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L30)
 
 ___
 
@@ -152,7 +179,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L30)
+[packages/bpmn-server/src/datastore/DataStore.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L31)
 
 ___
 
@@ -162,13 +189,15 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:31](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L31)
+[packages/bpmn-server/src/datastore/DataStore.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L32)
 
 ___
 
 ### locker
 
-• **locker**: `any`
+• **locker**: [`ILockManager`](../interfaces/ILockManager.md)
+
+The data store's own lock adapter; the engine uses the server's (`server.locker`), which is this one unless the configuration supplies another.
 
 #### Implementation of
 
@@ -176,7 +205,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:32](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L32)
+[packages/bpmn-server/src/datastore/DataStore.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L33)
 
 ___
 
@@ -184,9 +213,31 @@ ___
 
 • **enableSavePoints**: `boolean` = `false`
 
+A save point at each save (engine.restart goes back to one); an instance's flags.savePoints overrides it.
+
 #### Defined in
 
-[datastore/DataStore.ts:33](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L33)
+[packages/bpmn-server/src/datastore/DataStore.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L35)
+
+___
+
+### saveLogs
+
+• **saveLogs**: `boolean` = `true`
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L36)
+
+___
+
+### saveSource
+
+• **saveSource**: `boolean` = `true`
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L37)
 
 ___
 
@@ -196,7 +247,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:99](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L99)
+[packages/bpmn-server/src/datastore/DataStore.ts:121](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L121)
 
 ___
 
@@ -210,7 +261,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L9)
+[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L10)
 
 ## Accessors
 
@@ -228,7 +279,7 @@ ServerComponent.configuration
 
 #### Defined in
 
-[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L14)
+[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -250,7 +301,7 @@ ServerComponent.logger
 
 #### Defined in
 
-[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L15)
+[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -268,17 +319,17 @@ ServerComponent.cron
 
 #### Defined in
 
-[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L16)
+[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L17)
 
 ___
 
 ### cache
 
-• `get` **cache**(): [`CacheManager`](CacheManager.md)
+• `get` **cache**(): [`ICacheManager`](../interfaces/ICacheManager.md)
 
 #### Returns
 
-[`CacheManager`](CacheManager.md)
+[`ICacheManager`](../interfaces/ICacheManager.md)
 
 #### Inherited from
 
@@ -286,7 +337,7 @@ ServerComponent.cache
 
 #### Defined in
 
-[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L17)
+[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -304,7 +355,7 @@ ServerComponent.appDelegate
 
 #### Defined in
 
-[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L18)
+[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -322,7 +373,7 @@ ServerComponent.engine
 
 #### Defined in
 
-[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L19)
+[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -340,7 +391,27 @@ ServerComponent.dataStore
 
 #### Defined in
 
-[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L20)
+[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L21)
+
+___
+
+### lockManager
+
+• `get` **lockManager**(): `any`
+
+The lock port: the configuration's, else the data store's.
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.lockManager
+
+#### Defined in
+
+[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L23)
 
 ___
 
@@ -358,7 +429,7 @@ ServerComponent.definitions
 
 #### Defined in
 
-[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L21)
+[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L24)
 
 ___
 
@@ -376,7 +447,25 @@ ServerComponent.listener
 
 #### Defined in
 
-[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L22)
+[packages/bpmn-server/src/server/ServerComponent.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L25)
+
+___
+
+### scriptHandler
+
+• `get` **scriptHandler**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.scriptHandler
+
+#### Defined in
+
+[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L26)
 
 ## Methods
 
@@ -401,7 +490,7 @@ ServerComponent.listener
 
 #### Defined in
 
-[datastore/DataStore.ts:48](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L48)
+[packages/bpmn-server/src/datastore/DataStore.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L67)
 
 ___
 
@@ -426,7 +515,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:51](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L51)
+[packages/bpmn-server/src/datastore/DataStore.ts:70](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L70)
 
 ___
 
@@ -448,7 +537,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:69](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L69)
+[packages/bpmn-server/src/datastore/DataStore.ts:88](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L88)
 
 ___
 
@@ -467,9 +556,13 @@ ___
 
 `Promise`\<`void`\>
 
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[saveInstance](../interfaces/IDataStore.md#saveinstance)
+
 #### Defined in
 
-[datastore/DataStore.ts:100](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L100)
+[packages/bpmn-server/src/datastore/DataStore.ts:122](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L122)
 
 ___
 
@@ -493,7 +586,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:149](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L149)
+[packages/bpmn-server/src/datastore/DataStore.ts:181](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L181)
 
 ___
 
@@ -518,7 +611,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:159](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L159)
+[packages/bpmn-server/src/datastore/DataStore.ts:191](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L191)
 
 ___
 
@@ -539,7 +632,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:180](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L180)
+[packages/bpmn-server/src/datastore/DataStore.ts:206](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L206)
 
 ___
 
@@ -560,7 +653,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:184](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L184)
+[packages/bpmn-server/src/datastore/DataStore.ts:210](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L210)
 
 ___
 
@@ -570,10 +663,10 @@ ___
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `query` | `any` | `undefined` |
-| `option` | `any` | `'summary'` |
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `query` | `any` | `undefined` |  |
+| `option` | `any` | `'summary'` | 'summary' minimal data - 'full' - {projection,sort} |
 
 #### Returns
 
@@ -585,7 +678,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:195](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L195)
+[packages/bpmn-server/src/datastore/DataStore.ts:229](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L229)
 
 ___
 
@@ -632,7 +725,127 @@ Problem with Mongodb:	`projection $elematch returns only the first record`
 
 #### Defined in
 
-[datastore/DataStore.ts:235](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L235)
+[packages/bpmn-server/src/datastore/DataStore.ts:270](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L270)
+
+___
+
+### backup
+
+▸ **backup**(): `Promise`\<`Record`\<`string`, `any`[]\>\>
+
+Every document of the instances, archive and locks collections, by collection name: for a backup.
+
+#### Returns
+
+`Promise`\<`Record`\<`string`, `any`[]\>\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[backup](../interfaces/IDataStore.md#backup)
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:284](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L284)
+
+___
+
+### countInstances
+
+▸ **countInstances**(`query`): `Promise`\<`number`\>
+
+How many instances match `query` (MongoDB's query language, as [findInstances](DataStore.md#findinstances)).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+
+#### Returns
+
+`Promise`\<`number`\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[countInstances](../interfaces/IDataStore.md#countinstances)
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:293](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L293)
+
+___
+
+### updateInstanceSource
+
+▸ **updateInstanceSource**(`instanceId`, `source`): `Promise`\<`void`\>
+
+Replaces a saved instance's definition source (upgrading it to a newer model); the caller holds the instance's lock.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `string` |
+| `source` | `string` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[updateInstanceSource](../interfaces/IDataStore.md#updateinstancesource)
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:300](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L300)
+
+___
+
+### tagInstance
+
+▸ **tagInstance**(`instanceId`, `tag`): `Promise`\<`void`\>
+
+Marks a saved instance with a tag of the caller's: a field of its own, which the engine's saves leave as it is.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `string` |
+| `tag` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[tagInstance](../interfaces/IDataStore.md#taginstance)
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:305](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L305)
+
+___
+
+### close
+
+▸ **close**(): `Promise`\<`void`\>
+
+Releases the store's connections.
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[close](../interfaces/IDataStore.md#close)
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:309](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L309)
 
 ___
 
@@ -656,7 +869,7 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:248](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L248)
+[packages/bpmn-server/src/datastore/DataStore.ts:313](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L313)
 
 ___
 
@@ -678,7 +891,7 @@ creates a new collection and add an index
 
 #### Defined in
 
-[datastore/DataStore.ts:262](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L262)
+[packages/bpmn-server/src/datastore/DataStore.ts:327](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L327)
 
 ___
 
@@ -702,4 +915,44 @@ ___
 
 #### Defined in
 
-[datastore/DataStore.ts:268](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/DataStore.ts#L268)
+[packages/bpmn-server/src/datastore/DataStore.ts:334](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L334)
+
+___
+
+### find
+
+▸ **find**(`«destructured»`): `Promise`\<[`FindResult`](../interfaces/FindResult.md)\<`any`\>\>
+
+MongoDB Pagination class for finding instances in a collection.
+This module provides a function to retrieve paginated results from a MongoDB collection.	
+It allows filtering, sorting, and projecting fields in the results.
+The results can be paginated using a cursor for efficient data retrieval.
+all the parameters are optional and are passed to the findInstances method.
+* `sort` fields can be specified as an object with field names as keys and 1 (ascending) or -1 (descending) as values.
+*   Sort by `_id` in descending order by default.
+*   Sort field can be a nested field, e.g., `data.caseId`
+	*  Sort field can be a numeric or date field.
+* `filter` is an object that specifies the criteria for filtering the results.
+* `after` is a string that specifies the cursor for pagination, allowing you to retrieve results after a specific document.	
+* * `limit` is a number that specifies the maximum number of documents to return in the result set.
+* * `projection` is an object that specifies which fields to include or exclude in the returned documents.
+
+ *
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | [`FindParams`](../interfaces/FindParams.md) |
+
+#### Returns
+
+`Promise`\<[`FindResult`](../interfaces/FindResult.md)\<`any`\>\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[find](../interfaces/IDataStore.md#find)
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/DataStore.ts:365](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DataStore.ts#L365)

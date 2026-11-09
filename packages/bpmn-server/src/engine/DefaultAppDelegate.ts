@@ -28,7 +28,7 @@ class DefaultAppDelegate implements IAppDelegate {
     }
 
     get moddleOptions() {
-        return moddleOptions;
+        return this.server?.configuration?.moddleOptions ?? moddleOptions;
     }
 
     async executionStarted(execution: IExecution) {

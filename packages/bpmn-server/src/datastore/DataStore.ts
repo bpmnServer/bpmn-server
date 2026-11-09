@@ -301,6 +301,11 @@ class DataStore extends ServerComponent  implements IDataStore {
 		await this.db.update(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: instanceId }, { $set: { source } });
 	}
 
+	/** Marks a saved instance with a tag of the caller's: a field of its own, which the engine's saves leave as it is. */
+	async tagInstance(instanceId: string, tag: any): Promise<void> {
+		await this.db.update(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: instanceId }, { $set: { tag } });
+	}
+
 	async close(): Promise<void> {
 		if (this.ownsDb) await this.db.close?.();
 	}
@@ -322,6 +327,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	async install() {
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: 1 }, { unique: true });
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { "items.id": 1 });
+		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { "tag.process": 1 });
 		if (this.locker instanceof InstanceLocker) await this.locker.install();
 	}
 	

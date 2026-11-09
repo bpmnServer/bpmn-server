@@ -19,6 +19,7 @@ import { BPMNServer, Logger } from 'bpmn-server';
 
 import { UserManager } from './userAccess/UserManager.js';
 import { useTestsFolder } from './testing/scenarios.js';
+import { engineTests } from './testing/engineTests.js';
 import { adminDisabled } from './userAccess/roles.js';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import { Workflow } from './routes/workflow.js';
@@ -67,13 +68,14 @@ export class WebApp {
 
 		this.userManager.init();
 		const wflogger = application.logger ?? new Logger({ toConsole: true });
-		this.bpmnServer = new BPMNServer(
+		this.bpmnServer = BPMNServer.launch(
 			application.configuration,
 			wflogger,
-			application.serverOptions ?? {},
+			// where the engine is: ENGINE_AT=http://... (with ENGINE_KEY), or none: everything but running and testing models
+			{ ...application.serverOptions, calls: engineTests, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, ...(Number(process.env.ENGINE_TIMEOUT_MS) > 0 ? { engineTimeout: Number(process.env.ENGINE_TIMEOUT_MS) } : {}) } : {}) },
 		);
 		application.initialize?.(this.bpmnServer);
-		// the Test tabs' tests are files beside the models (a guest's folder in a guest's request)
+		// the Test tabs' tests are files beside the models
 		useTestsFolder(() => this.bpmnServer.configuration.definitionsPath);
 
 		this.setupExpress();
@@ -138,7 +140,7 @@ export class WebApp {
 	setupExpress() {
 		const app = this.app;
 
-		this.userManager.setup(this.bpmnServer.configuration);
+		this.userManager.setup();
 
 		this.setupRoutes();
 

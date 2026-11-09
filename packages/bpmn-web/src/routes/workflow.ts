@@ -4,14 +4,16 @@ import path from 'node:path';
 
 import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
-import { engineGroups } from '../userAccess/roles.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
-import { rationaleEvents } from '../testing/rationale.js';
+import { rationaleSteps } from '../testing/rationale.js';
 import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
+import { guardModelParams } from './middleware/modelName.js';
+import { afterWork } from '../userAccess/roles.js';
+const FORM_ONLY = new Set(['itemId', '_csrf', 'returnTo']);     // the form's own fields, not the task's data
 
 
 var caseId = Math.floor(Math.random() * 10000);
@@ -38,6 +40,7 @@ var bpmnAPI;
 export class Workflow extends Common {
     config() {
         var router = express.Router();
+        guardModelParams(router);
 
         bpmnServer = this.webApp.bpmnServer;
         bpmnAPI = new BPMNAPI(bpmnServer);
@@ -153,7 +156,7 @@ export class Workflow extends Common {
         });
 
         router.post('/resetData', this.isAdmin, awaitAppDelegateFactory(async (request, response) => {
-            await bpmnServer.dataStore.deleteInstances({});
+            await bpmnServer.engine.deleteInstances({});
             let output = ['Data Reset'];
             output = show(output);
             return display(request,response, 'Show', output);
@@ -208,12 +211,8 @@ export class Workflow extends Common {
             let returnTo=request.body.returnTo;
             let data = {};
             
-            Object.entries(request.body).forEach(entry => {
-                if (entry[0] == 'itemId') { }
-                else {
-                    data[entry[0]] = entry[1];
-                }
-            });
+            for (const [key, value] of Object.entries(request.body))
+                if (!FORM_ONLY.has(key)) data[key] = value;
 
 
             let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.invoke({ "items.id": id }, data, getSecureUser(request)));
@@ -374,7 +373,7 @@ async function deleteInstance(req, res) {
 
     let instanceId = req.body.id;
 
-    await bpmnServer.dataStore.deleteInstances({ id: instanceId });
+    await bpmnServer.engine.deleteInstances({ id: instanceId });
 
     let output = ['Complete ' + instanceId];
     return display(req,res, 'Show', output);
@@ -413,7 +412,7 @@ function getSecureUser(req) {
     {
         const usr = getUser(req);
         if (usr)
-            user=new SecureUser({ userName: usr.userName, userGroups: engineGroups(usr), tenantId: usr.tenantId });
+            user=new SecureUser({ userName: usr.userName, userGroups: usr.userGroups, tenantId: usr.tenantId });
     }
     else
          user=SecureUser.SystemUser();
@@ -455,7 +454,7 @@ async function display(req,res, title, output, logs = [], items = []) {
         item['fromNow'] = dateDiff(item.startedAt);
     });
 
-    let engines = bpmnServer.cache.list();
+    let engines = await bpmnServer.engine.live();
 
     engines.forEach(engine => {
         engine.fromNow = dateDiff(engine.startedAt); 
@@ -502,12 +501,7 @@ async function afterOperation(request,response,result) {
     let returnTo = (request.body && request.body.returnTo) || (request.query && request.query.returnTo);
     if (returnTo=='home')
         return display(request,response,'Show',[]);
-    else if (isAdmin(request))
-        {
-         response.redirect('/instanceDetails?id=' + result.execution.id);
-        }
-    else
-        return display(request,response, 'Show', []);
+    response.redirect(afterWork(request.user, result.execution.id));
 
 //    response.redirect('/instanceDetails?id=' + result.execution.id);
 //    console.log('items#',result.instance.items.length);
@@ -566,7 +560,7 @@ async function instanceDetails(request,response,instanceId,version) {
             title: 'Instance Details',
             logs,items:items, svg,
             decorations, definition: defJson, lastItem,
-            rationale: rationaleEvents(logs, items, instance.startedAt),
+            rationale: rationaleSteps(logs, items, instance.startedAt),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
             modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });

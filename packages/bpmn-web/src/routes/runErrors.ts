@@ -58,6 +58,14 @@ export async function runProcess(server, target: RunTarget, operation: () => Pro
 
 /** Express error handler: a failed run as a page (or JSON for API-style requests), status 422 or 409. */
 export function processRunErrorHandler(err, req, res, next): void {
+    // nothing to run it: not the model's fault, so nothing to check
+    if (err?.code === 'ENGINE_NOT_RUNNING' || err?.cause?.code === 'ENGINE_NOT_RUNNING') {
+        if (res.headersSent) return next(err);
+        res.status(503);
+        if (req.xhr || !req.accepts?.('html')) { res.json({ status: 503, error: 'EngineNotRunning', message: err.message }); return; }
+        res.render('runError', { processName: err.processName, message: err.message, issues: [], status: 503 });
+        return;
+    }
     if (!(err instanceof ProcessRunError) || res.headersSent) {
         next(err);
         return;

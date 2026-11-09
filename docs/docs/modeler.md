@@ -16,6 +16,7 @@ Each field is one bpmn-server reads, with what it means when the process runs:
 - **Service and send tasks:** **Calls** a service the application provides (listed from its services), with
   inputs and outputs; or a **connector**, a REST API the administrator added, set up in the connector wizard:
   the operation found by a search, its inputs, and the parts of the answer to keep. See [Connectors](connectors.md).
+- **Conditions:** every sequence flow has a **Condition** field, which suggests the model's data fields as you type (`data.`). A default flow's condition isn't used, and the field says so. **Language** appears once there is a condition.
 - **Script tasks, scripts on events, conditions, loop collections:** code fields that mark code that does not
   compile as you type, checked the way bpmn-server compiles it, and complete the names a script can use: the
   model's data fields, `item`, `instance`, and the application's services.
@@ -46,7 +47,7 @@ Clicking a problem selects its element and opens its field. Elements with proble
 
 ### Choosing the rules
 
-A finding's **Turn off** button, or the **Rules** dialog under the diagram, sets a rule's level: off,
+A finding's **Turn off** button, or the **Rules** dialog on the Problems tab, sets a rule's level: off,
 information, warning or error. The levels are the team's: they apply to every designer, and are saved in
 `bpmnlint.json` in the models folder.
 
@@ -81,8 +82,28 @@ left out (they are not in the model file).
 The **Test** tab keeps test scenarios for the model and runs them. The scenarios are on the left, each with the result
 of its last run; the selected one is on the right: its result, its steps and its checks.
 
+The scenario list on the left can be made wider or narrower: drag the handle beside it, or focus the handle and use the left and right
+arrow keys. The editor remembers the width.
+
+**Coverage**, under the list, says how many of the model's nodes and flows the scenarios' last runs have reached. A scenario counts once
+it has an instance: only the engine knows what comes next, so steps written down prove nothing until they run. An element is
+*tested* when a run that passed reached it, and *reached* when only runs that failed or did not finish did. A boundary event or an event
+sub-process's start that never fired has not been reached. An event sub-process has no count of its own: what is inside it does.
+**Show on diagram** marks them, and **Not reached** lists what is left. Reaching an element does not say it was checked, and every
+element reached does not mean every path through them was.
+
+Two commands close what is left:
+
+- **Test all paths** tries the paths by itself on the saved model, up to 200 runs. At each waiting step it tries the form's choices
+  and the values the model's conditions compare with, and it saves a scenario for each path that reaches something new; the other
+  runs are deleted. Service and send tasks run for real on every try, and it lists them before you start. A saved scenario is marked
+  *auto*: it shows the path runs, not that it does the right thing, so what only those reach is counted apart until you add checks
+  and **Mark as reviewed**. A condition that calls something, or a value only a service sets, can't be read off the model.
+- **Fill**, on an element not reached, records a new scenario with that element as its goal. The data the way there asks is filled
+  in, and the recording says which step is next, when the goal is reached, and when the run can no longer get there.
+
 1. **New** adds a scenario, and **Record** starts the process with its start data and shows what waits as the next
-   steps: user tasks (**Complete step**) and events (**Trigger event**), each with its data.
+   steps: user tasks (**Complete step**), receive tasks (**Receive**) and events (**Trigger event**), each with its data.
 2. Completing a step shows what waits next, until nothing waits: the recording then closes by itself and shows its
    result. The data chooses the branches; which step you complete first chooses between elements that wait together
    (the events after an event-based gateway, a boundary timer, parallel tasks). **Stop** ends it part way.
@@ -108,16 +129,37 @@ and the commands for that run, **Simulate** and **Debug** each opening its panel
 checks it is as it is there: its status or its value, where the run waits (after the last step done, or at the start
 when none is), else at the end.
 
+**What happened**, under each step of the timeline once the scenario has run, opens to that step's part of the
+Rationale, as the engine logged it: what started, waited and ended, and why. An item the step changed has **Add as a
+check** on its row, for its status as the engine logged it, and the instance's status, when the step changed it, on
+the line of What happened. A step the run took that no step of the scenario asked for, such as a timer the server
+fired, has a row of its own, dashed, where it ran. A scenario written in Gherkin lists its run's steps under its text
+(Step 1 · Start Process, Step 2 · Invoke Item, ...), with **Copy check**, the line to paste in **Edit as text**, and its
+checks under the row of the item they check.
+
+The instance page's Rationale has the same steps: each a line (Step 1, Step 2, ..., who, the data) that opens to its
+rows. Its filters open the steps with a row of what they show, and hide the others.
+
 **Full window**, in the bar of the tabs, puts them over the whole page; **Back to the editor** or Esc returns, and so does
 Simulate, which shows on the diagram.
 
-Test runs are ordinary instances whose ids start with `test-`: run tests on a development or test server. They are left
-out of the lists of instances and tasks; **Open instance** opens one.
+Test runs are ordinary instances whose ids start with `test-`, tagged in the database with their process and scenario:
+run tests on a development or test server. They are left out of the lists of instances and tasks; **Open instance** opens one.
 
 The **Design dashboard** (`/dashboard/design`) shows each model's and decision's tests with the last run's result
-(and why it failed), runs one model's or decision's tests, or **Run all tests**.
+(and why it failed), runs one model's or decision's tests, or **Run all tests**. Each model also shows its description
+(its process's documentation), its saved versions, and its **coverage**: what its scenarios' last runs reached, by the
+Test tab's rules. What a run reached is saved on its test instance, so deleting the instance removes the run and its
+coverage; it says how many scenarios have not run, and *out of date* when the model was saved after them. A **Run** here keeps each scenario's
+run, as the Test tab does.
 
-The scenarios are saved in the models folder, beside the model: `<model>.tests.json` (see below).
+The scenarios are saved in the models folder, beside the model, as Gherkin: `<model>.feature` (see below).
+
+**Edit as text**, in the list's **⋯** menu, opens the whole `.feature` file in the tab, with its comments. **Save** keeps it only if
+it reads as tests: otherwise the error gives the line and your text stays. If the file changed since you opened it, it isn't
+overwritten. A scenario the form can't show, such as one with a `@stub` or an expression, stays as written and has an **Edit as text**
+button of its own. A run leaves the file as it is, but changing a scenario through the form rewrites the file and drops its comments.
+See [Tests in Gherkin](testing.md#tests-in-gherkin).
 
 ## History
 
@@ -137,6 +179,8 @@ adds no version; the first save of a model saved before there was a history keep
 - **Restore** loads a saved version into the editor in place of its model, unsaved: the status says so, and the
   editor's unsaved changes are replaced (you are asked first). **Save** keeps it as the newest version; nothing in
   the history is removed, so a restore is undone by restoring the version before it.
+- **Copy** (**Restore as copy** when viewing a version) makes a saved version a new model, under a name you give, and opens it in its own tab. This
+  model, its history and the editor's unsaved changes stay as they are; a name already in use is refused.
 - **Delete** removes one saved version (you are asked first). The other versions keep their numbers, and the model
   stays as it is.
 - **Purge history** deletes every saved version of the model. The model itself stays.
@@ -157,16 +201,15 @@ folder:
 processes/
   Leave Application.bpmn          the model
   Leave Application.svg           its diagram
-  Leave Application.tests.json    its Test tab scenarios
+  Leave Application.feature       its Test tab scenarios
   loan.dmn.xml                    a decision
-  loan.dmn.tests.json             its tests
+  loan.dmn.feature                its tests
   bpmnlint.json                   the team's modeling rules
   .history/Leave Application/     every save of the model: 0001.bpmn, 0002.ann.bpmn (ann saved it), ...
-  .runs/Leave Application.runs.json   the Test tab's runs (they point at instances of this server)
 ```
 
-A `*.tests.json` file has the format of a [scenario file](testing.md#scenario-files). `.runs/` is best left out of
-Git. Test sets kept in the database before 3.5 are moved to these files when the server starts.
+A `.feature` file is [Gherkin](testing.md#tests-in-gherkin). A scenario's last run isn't in it: it is the scenario's test
+instance in the database. Test sets kept in the database before 3.5, and older `*.tests.json` files, become these files when the server starts.
 
 ## Decisions
 

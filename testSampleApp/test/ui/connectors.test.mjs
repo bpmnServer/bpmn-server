@@ -63,7 +63,8 @@ test('a new service task calls a connector: set up in the wizard, shown in the S
         const shape = m.get('modeling').createShape(m.get('elementFactory').createShape({ type: 'bpmn:ServiceTask' }), { x: 700, y: 500 }, parent);
         m.get('selection').select(shape);
     });
-    await openGroup('Service');
+    // the panel draws the new element, with this group open, a moment after it is selected
+    await page.locator('.bio-properties-panel-group-header.open', { hasText: 'Service' }).waitFor();
     assert.deepEqual(await page.locator('#bio-properties-panel-service-calls option').allInnerTexts(), ['Service', 'Connector']);
     assert.equal(await page.locator('#bio-properties-panel-service-name').count(), 1, 'a service by name, as before');
     assert.ok((await groups()).includes('Outputs'), 'a service task keeps its Outputs group');

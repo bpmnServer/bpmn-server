@@ -23,7 +23,7 @@
 - [originItem](Token.md#originitem)
 - [path](Token.md#path)
 - [loop](Token.md#loop)
-- [currentNode](Token.md#currentnode)
+- [\_currentNode](Token.md#_currentnode)
 - [processId](Token.md#processid)
 - [status](Token.md#status)
 - [input](Token.md#input)
@@ -33,6 +33,7 @@
 
 ### Accessors
 
+- [currentNode](Token.md#currentnode)
 - [data](Token.md#data)
 - [currentItem](Token.md#currentitem)
 - [firstItem](Token.md#firstitem)
@@ -54,14 +55,18 @@
 - [preExecute](Token.md#preexecute)
 - [preNext](Token.md#prenext)
 - [execute](Token.md#execute)
+- [retry](Token.md#retry)
+- [addItemToPath](Token.md#additemtopath)
 - [processError](Token.md#processerror)
 - [getScopeCatchEvent](Token.md#getscopecatchevent)
+- [checkTokensForError](Token.md#checktokensforerror)
 - [processCancel](Token.md#processcancel)
 - [processEscalation](Token.md#processescalation)
 - [appendData](Token.md#appenddata)
 - [terminate](Token.md#terminate)
 - [continue](Token.md#continue)
 - [signal](Token.md#signal)
+- [signal2](Token.md#signal2)
 - [end](Token.md#end)
 - [setCurrentNode](Token.md#setcurrentnode)
 - [goNext](Token.md#gonext)
@@ -69,6 +74,7 @@
 - [logS](Token.md#logs)
 - [logE](Token.md#loge)
 - [info](Token.md#info)
+- [decision](Token.md#decision)
 - [error](Token.md#error)
 
 ## Constructors
@@ -94,7 +100,7 @@
 
 #### Defined in
 
-[engine/Token.ts:116](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L116)
+[packages/bpmn-server/src/engine/Token.ts:114](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L114)
 
 ## Properties
 
@@ -108,7 +114,7 @@
 
 #### Defined in
 
-[engine/Token.ts:58](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L58)
+[packages/bpmn-server/src/engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L54)
 
 ___
 
@@ -122,7 +128,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:59](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L59)
+[packages/bpmn-server/src/engine/Token.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L55)
 
 ___
 
@@ -136,7 +142,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:60](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L60)
+[packages/bpmn-server/src/engine/Token.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L56)
 
 ___
 
@@ -150,7 +156,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:61](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L61)
+[packages/bpmn-server/src/engine/Token.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L57)
 
 ___
 
@@ -164,7 +170,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:62](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L62)
+[packages/bpmn-server/src/engine/Token.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L58)
 
 ___
 
@@ -178,7 +184,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:63](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L63)
+[packages/bpmn-server/src/engine/Token.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L59)
 
 ___
 
@@ -192,7 +198,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:65](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L65)
+[packages/bpmn-server/src/engine/Token.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L62)
 
 ___
 
@@ -206,7 +212,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:66](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L66)
+[packages/bpmn-server/src/engine/Token.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L63)
 
 ___
 
@@ -220,21 +226,17 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:67](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L67)
+[packages/bpmn-server/src/engine/Token.ts:64](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L64)
 
 ___
 
-### currentNode
+### \_currentNode
 
-• **currentNode**: [`Node`](Node.md)
-
-#### Implementation of
-
-[IToken](../interfaces/IToken.md).[currentNode](../interfaces/IToken.md#currentnode)
+• **\_currentNode**: [`Node`](Node.md)
 
 #### Defined in
 
-[engine/Token.ts:68](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L68)
+[packages/bpmn-server/src/engine/Token.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L65)
 
 ___
 
@@ -248,7 +250,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:69](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L69)
+[packages/bpmn-server/src/engine/Token.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L67)
 
 ___
 
@@ -262,7 +264,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:70](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L70)
+[packages/bpmn-server/src/engine/Token.ts:68](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L68)
 
 ___
 
@@ -272,7 +274,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:71](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L71)
+[packages/bpmn-server/src/engine/Token.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L69)
 
 ___
 
@@ -282,7 +284,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:72](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L72)
+[packages/bpmn-server/src/engine/Token.ts:70](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L70)
 
 ___
 
@@ -292,19 +294,41 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:73](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L73)
+[packages/bpmn-server/src/engine/Token.ts:71](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L71)
 
 ___
 
 ### itemsKey
 
-• **itemsKey**: `any`
+• **itemsKey**: `any` = `null`
+
+#### Implementation of
+
+[IToken](../interfaces/IToken.md).[itemsKey](../interfaces/IToken.md#itemskey)
 
 #### Defined in
 
-[engine/Token.ts:74](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L74)
+[packages/bpmn-server/src/engine/Token.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L72)
 
 ## Accessors
+
+### currentNode
+
+• `get` **currentNode**(): [`Node`](Node.md)
+
+#### Returns
+
+[`Node`](Node.md)
+
+#### Implementation of
+
+[IToken](../interfaces/IToken.md).[currentNode](../interfaces/IToken.md#currentnode)
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Token.ts:66](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L66)
+
+___
 
 ### data
 
@@ -320,7 +344,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:76](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L76)
+[packages/bpmn-server/src/engine/Token.ts:74](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L74)
 
 ___
 
@@ -338,7 +362,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:79](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L79)
+[packages/bpmn-server/src/engine/Token.ts:77](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L77)
 
 ___
 
@@ -356,7 +380,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:82](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L82)
+[packages/bpmn-server/src/engine/Token.ts:80](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L80)
 
 ___
 
@@ -374,7 +398,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:94](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L94)
+[packages/bpmn-server/src/engine/Token.ts:92](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L92)
 
 ___
 
@@ -392,7 +416,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:104](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L104)
+[packages/bpmn-server/src/engine/Token.ts:102](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L102)
 
 ## Methods
 
@@ -412,7 +436,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:86](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L86)
+[packages/bpmn-server/src/engine/Token.ts:84](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L84)
 
 ___
 
@@ -436,7 +460,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:110](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L110)
+[packages/bpmn-server/src/engine/Token.ts:108](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L108)
 
 ___
 
@@ -465,7 +489,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:146](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L146)
+[packages/bpmn-server/src/engine/Token.ts:146](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L146)
 
 ___
 
@@ -496,7 +520,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:177](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L177)
+[packages/bpmn-server/src/engine/Token.ts:177](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L177)
 
 ___
 
@@ -517,7 +541,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:192](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L192)
+[packages/bpmn-server/src/engine/Token.ts:192](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L192)
 
 ___
 
@@ -535,7 +559,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:206](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L206)
+[packages/bpmn-server/src/engine/Token.ts:206](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L206)
 
 ___
 
@@ -553,7 +577,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:215](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L215)
+[packages/bpmn-server/src/engine/Token.ts:215](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L215)
 
 ___
 
@@ -571,7 +595,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:219](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L219)
+[packages/bpmn-server/src/engine/Token.ts:219](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L219)
 
 ___
 
@@ -589,7 +613,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:224](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L224)
+[packages/bpmn-server/src/engine/Token.ts:224](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L224)
 
 ___
 
@@ -607,7 +631,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:233](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L233)
+[packages/bpmn-server/src/engine/Token.ts:233](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L233)
 
 ___
 
@@ -625,7 +649,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:245](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L245)
+[packages/bpmn-server/src/engine/Token.ts:245](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L245)
 
 ___
 
@@ -643,7 +667,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:252](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L252)
+[packages/bpmn-server/src/engine/Token.ts:252](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L252)
 
 ___
 
@@ -674,7 +698,49 @@ Pre-Conditions:
 
 #### Defined in
 
-[engine/Token.ts:265](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L265)
+[packages/bpmn-server/src/engine/Token.ts:265](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L265)
+
+___
+
+### retry
+
+▸ **retry**(`item`): `Promise`\<`void`\>
+
+A failed item's work again (its status `error`): then on, as execute goes on after its node.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Token.ts:336](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L336)
+
+___
+
+### addItemToPath
+
+▸ **addItemToPath**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Token.ts:359](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L359)
 
 ___
 
@@ -699,7 +765,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:335](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L335)
+[packages/bpmn-server/src/engine/Token.ts:364](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L364)
 
 ___
 
@@ -720,7 +786,30 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:350](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L350)
+[packages/bpmn-server/src/engine/Token.ts:382](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L382)
+
+___
+
+### checkTokensForError
+
+▸ **checkTokensForError**(`tokens`, `bhName`, `propertyName`, `errorCode`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `tokens` | `any` |
+| `bhName` | `any` |
+| `propertyName` | `any` |
+| `errorCode` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Token.ts:449](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L449)
 
 ___
 
@@ -744,7 +833,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:426](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L426)
+[packages/bpmn-server/src/engine/Token.ts:476](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L476)
 
 ___
 
@@ -769,7 +858,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:434](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L434)
+[packages/bpmn-server/src/engine/Token.ts:484](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L484)
 
 ___
 
@@ -796,7 +885,7 @@ renamed from applyInput to appendData
 
 #### Defined in
 
-[engine/Token.ts:451](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L451)
+[packages/bpmn-server/src/engine/Token.ts:519](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L519)
 
 ___
 
@@ -816,7 +905,7 @@ is called by Gateways to cancel current token
 
 #### Defined in
 
-[engine/Token.ts:458](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L458)
+[packages/bpmn-server/src/engine/Token.ts:526](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L526)
 
 ___
 
@@ -832,7 +921,7 @@ is called by events to cancel current token
 
 #### Defined in
 
-[engine/Token.ts:468](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L468)
+[packages/bpmn-server/src/engine/Token.ts:551](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L551)
 
 ___
 
@@ -857,7 +946,21 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:477](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L477)
+[packages/bpmn-server/src/engine/Token.ts:560](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L560)
+
+___
+
+### signal2
+
+▸ **signal2**(): `Promise`\<[`Token`](Token.md)\>
+
+#### Returns
+
+`Promise`\<[`Token`](Token.md)\>
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Token.ts:608](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L608)
 
 ___
 
@@ -881,7 +984,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:528](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L528)
+[packages/bpmn-server/src/engine/Token.ts:636](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L636)
 
 ___
 
@@ -901,7 +1004,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:575](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L575)
+[packages/bpmn-server/src/engine/Token.ts:683](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L683)
 
 ___
 
@@ -919,7 +1022,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:585](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L585)
+[packages/bpmn-server/src/engine/Token.ts:693](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L693)
 
 ___
 
@@ -943,7 +1046,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:675](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L675)
+[packages/bpmn-server/src/engine/Token.ts:792](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L792)
 
 ___
 
@@ -963,7 +1066,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:678](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L678)
+[packages/bpmn-server/src/engine/Token.ts:795](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L795)
 
 ___
 
@@ -983,7 +1086,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:681](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L681)
+[packages/bpmn-server/src/engine/Token.ts:798](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L798)
 
 ___
 
@@ -1007,7 +1110,27 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:684](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L684)
+[packages/bpmn-server/src/engine/Token.ts:801](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L801)
+
+___
+
+### decision
+
+▸ **decision**(`msg`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `msg` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Token.ts:804](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L804)
 
 ___
 
@@ -1031,4 +1154,4 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:687](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Token.ts#L687)
+[packages/bpmn-server/src/engine/Token.ts:807](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Token.ts#L807)

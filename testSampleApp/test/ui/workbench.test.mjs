@@ -86,6 +86,9 @@ test('the workbench: pick a model, see its preview, search the catalog, zoom', a
 
 test('regular users get no designer or administration controls', async () => {
   const { page, problems, close } = await signedIn('staff');
+  // signing in lands a user on My work; the Workbench is a click away
+  assert.equal(new URL(page.url()).pathname, '/dashboard');
+  await page.goto(web.base + '/');
   await page.waitForSelector('#process');
   assert.equal(await page.locator('a[href="/model/new"]').count(), 0, 'no New model');
   assert.equal(await page.locator('a[href="/model/import"]').count(), 0, 'no Import');

@@ -67,12 +67,12 @@ test('completing a task that is no longer waiting says so', async () => {
     assert.match(res.text, /is not waiting/);
 });
 
-/** Start, a script task that throws until `globalThis.__workUp`, end. */
-const FLAKY = `<?xml version="1.0" encoding="UTF-8"?>
+/** Start, a script task that throws until a time, end: whichever process runs it. */
+const FLAKY = upAt => `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d2" targetNamespace="urn:test">
   <bpmn:process id="Flaky" isExecutable="true">
     <bpmn:startEvent id="Start" />
-    <bpmn:scriptTask id="Work" name="Call out" scriptFormat="JavaScript"><bpmn:script>if (!globalThis.__workUp) throw new Error('service down');</bpmn:script></bpmn:scriptTask>
+    <bpmn:scriptTask id="Work" name="Call out" scriptFormat="JavaScript"><bpmn:script>if (Date.now() &lt; ${upAt}) throw new Error('service down');</bpmn:script></bpmn:scriptTask>
     <bpmn:endEvent id="End" />
     <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Work" />
     <bpmn:sequenceFlow id="f2" sourceRef="Work" targetRef="End" />
@@ -80,9 +80,9 @@ const FLAKY = `<?xml version="1.0" encoding="UTF-8"?>
 </bpmn:definitions>`;
 
 test('a task whose work threw: the instance page says it failed and why, and Retry runs it again', async () => {
-    fs.writeFileSync(path.join(web.definitionsPath, 'flaky.bpmn'), FLAKY);
+    const upAt = Date.now() + 5000;
+    fs.writeFileSync(path.join(web.definitionsPath, 'flaky.bpmn'), FLAKY(upAt));
     await web.bpmnServer.definitions.rebuild();
-    globalThis.__workUp = false;
     await assert.rejects(web.bpmnServer.engine.start('flaky', {}), /service down/);
     const [instance] = await web.bpmnServer.dataStore.findInstances({ name: 'flaky' }, 'full');
     const failed = instance.items.find(i => i.elementId === 'Work');
@@ -96,7 +96,7 @@ test('a task whose work threw: the instance page says it failed and why, and Ret
     let res = await staff.post('/retryItem', { itemId: failed.id });
     assert.notEqual(res.status, 302, 'administrators only');
 
-    globalThis.__workUp = true;
+    await new Promise(resolve => setTimeout(resolve, Math.max(upAt - Date.now(), 0) + 50));
     res = await admin.post('/retryItem', { itemId: failed.id });
     assert.ok([200, 302].includes(res.status), why(res));
     const [after] = await web.bpmnServer.dataStore.findInstances({ id: instance.id }, 'full');

@@ -24,6 +24,8 @@ interface IBPMNServer {
     scriptHandler?: IScriptHandler;
     /** The connectors an administrator added: REST APIs that service tasks call (camunda:connector). */
     connectors?: Connectors;
+    /** What the tests running in here replace. */
+    testStubs?: any;
 
 }
 
@@ -90,6 +92,11 @@ interface IEngine {
 
 
 	startRepeatTimerEvent(instanceId, prevItem: IItem, data: {},options?:{}) : Promise<IExecution>;
+
+    /** Removes the instances a query matches, each under its lock and with its timers. */
+    deleteInstances(query: any): Promise<{ deletedCount: number }>;
+    /** Marks a saved instance with a tag of the caller's. */
+    tagInstance(instanceId: string, tag: any): Promise<void>;
 
     /**
      *

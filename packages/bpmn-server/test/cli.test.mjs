@@ -74,7 +74,9 @@ test('init: the sample application, on MongoDB with sign-in, by default', () => 
     'settings/config.ts', 'delegates/appDelegate.ts', 'connectors/appServices.ts', 'connectors/echo.json',
     'processes/Hello.bpmn', 'processes/Buy Used Car.bpmn', 'processes/Leave Application.bpmn'])
     assert.ok(app.exists(file), file);
-  assert.ok(!app.exists('test') && !app.exists('node_modules'), 'no tests, no node_modules');
+  // the sample's tests come with it (npm test: every model's .feature); nothing installed
+  assert.ok(app.exists('test/features.ts'), "the models' tests");
+  assert.ok(!app.exists('node_modules'), 'no node_modules');
   const env = app.read('.env');
   assert.match(env, /^MONGO_DB_URL=mongodb:\/\/localhost:27017\/app$/m);
   assert.match(env, /^SERVE=both$/m);
@@ -85,9 +87,15 @@ test('init: the sample application, on MongoDB with sign-in, by default', () => 
   assert.equal(pkg.name, 'app');
   assert.match(pkg.dependencies['bpmn-server'], /^\^\d/, 'the published bpmn-server, not the workspace\'s "*"');
   assert.match(pkg.dependencies['bpmn-web'], /^\^\d/);
+  assert.equal(pkg.dependencies['bpmn-mcp'], pkg.dependencies['bpmn-web'], 'released together, not the workspace\'s "*"');
+  assert.equal(pkg.scripts.mcp, 'bpmn-mcp');
+  const { bpmn } = JSON.parse(app.read('.mcp.json')).mcpServers;
+  assert.deepEqual([bpmn.command, ...bpmn.args], ['node', 'node_modules/bpmn-mcp/src/index.mjs']);
+  assert.doesNotMatch(app.read('.mcp.json'), /KEY/, 'the keys stay in .env');
   assert.ok(pkg.dependencies.axios && pkg.dependencies.dayjs, 'the sample application\'s own dependencies');
   assert.equal(pkg.dependencies['mongodb-memory-server'], undefined);
   assert.equal(pkg.scripts.start, 'tsx index.ts');
+  assert.equal(pkg.scripts.test, 'tsx test/features.ts');
   assert.match(app.read('README.md'), /^# app$/m, 'titled with the application\'s name');
   assert.match(app.r.stdout, /docker compose up -d/);
   assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the sample models pass');
@@ -112,6 +120,9 @@ test('init --minimal: a Hello application', () => {
     assert.ok(app.exists(file), file);
   assert.ok(!app.exists('connectors'), 'not the sample application');
   assert.equal(JSON.parse(app.read('package.json')).scripts.start, 'tsx src/index.ts');
+  assert.equal(JSON.parse(app.read('package.json')).dependencies['bpmn-mcp'], undefined, '--ui-only: no REST APIs for it');
+  assert.equal(JSON.parse(app.read('package.json')).scripts.mcp, undefined);
+  assert.ok(!fs.existsSync(path.join(app.dir, '.mcp.json')));
   assert.match(app.read('src/index.ts'), /api: false,[\s\S]*ui: true,/);
   assert.match(app.read('README.md'), /npm run setup[\s\S]*http:\/\/localhost:3050/);
   assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the Hello model passes');

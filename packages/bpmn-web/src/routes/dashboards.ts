@@ -14,20 +14,24 @@ import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
-import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
-import { adminDisabled, canDesign, engineGroups, isAdminGroups } from '../userAccess/roles.js';
-import { UserService } from '../userAccess/UserService.js';
+import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
+import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
+import { reachedIn } from '../testing/coverage.js';
+import { loadDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
+import { adminDisabled, afterWork, canDesign, isAdminGroups } from '../userAccess/roles.js';
+import { UserService, userNameProblem } from '../userAccess/UserService.js';
+import validator from 'validator';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
-import { isSafeModelName } from './middleware/modelName.js';
+import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 
 const handler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 /** A comma list or an array, as an array. */
-const toList = (v): string[] => Array.isArray(v) ? v : (typeof v === 'string' && v.trim() ? v.split(',').map(s => s.trim()) : []);
+/** A comma list (or a list), trimmed, its empty entries left out. */
+const toList = (v): string[] => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []).map(s => String(s).trim()).filter(Boolean);
 
 const DMN_FILE = /\.dmn(\.xml)?$/i;
 
@@ -79,10 +83,11 @@ function databaseName(): string {
 
 export class Dashboards extends Common {
     /** verifyModel's counts per model, kept while the file is unchanged */
-    verified = new Map<string, { mtime: number; errors: number; warnings: number }>();
+    verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string }>();
 
     config() {
         const router = express.Router();
+        guardModelParams(router);
         const server = this.webApp.bpmnServer;
         const api = new BPMNAPI(server);
         const folder = () => server.configuration.definitionsPath;
@@ -91,7 +96,7 @@ export class Dashboards extends Common {
 
         const secureUser = (req) => process.env.REQUIRE_AUTHENTICATION === 'false'
             ? SecureUser.SystemUser()
-            : new SecureUser({ userName: req.user.userName, userGroups: engineGroups(req.user), tenantId: req.user.tenantId });
+            : new SecureUser({ userName: req.user.userName, userGroups: req.user.userGroups, tenantId: req.user.tenantId });
         const roles = (req) => ({
             isAdmin: !adminDisabled() && (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups)),
             isDesigner: canDesign(req.user),
@@ -145,7 +150,7 @@ export class Dashboards extends Common {
                 api.engine.start(processName, data, secureUser(req), { startNodeId: startNodeId || undefined }));
             if (context?.errors)
                 return res.status(500).send(String(context.errors));
-            res.redirect('/instanceDetails?id=' + (context.instance?.id ?? context.id));
+            res.redirect(afterWork(req.user, context.instance?.id ?? context.id));
         }));
 
         // ---- design -----------------------------------------------------------------------------------------
@@ -159,8 +164,9 @@ export class Dashboards extends Common {
                 let checked = this.verified.get(name);
                 if (!checked || checked.mtime !== mtime) {
                     try {
-                        const result = await verifyModel(FS.readFileSync(path.join(dir, file), 'utf8'), server, name);
-                        checked = { mtime, errors: result.errors, warnings: result.warnings };
+                        const source = FS.readFileSync(path.join(dir, file), 'utf8');
+                        const result = await verifyModel(source, server, name);
+                        checked = { mtime, errors: result.errors, warnings: result.warnings, description: await modelDescription(source).catch(() => '') };
                     }
                     catch {
                         checked = { mtime, errors: 1, warnings: 0 };
@@ -170,7 +176,12 @@ export class Dashboards extends Common {
                 models.push({ name, saved: new Date(mtime), fromNow: dateDiff(new Date(mtime)), ...checked });
             }
             const tests = new Map((await listScenarioSets()).map(s => [s.model, s]));
-            models.forEach(m => m.tests = tests.get(m.name)?.count ?? 0);
+            for (const m of models) {
+                m.tests = tests.get(m.name)?.count ?? 0;
+                m.versions = (await server.definitions.history(m.name).catch(() => [])).length;
+                if (m.tests)
+                    m.coverage = await savedCoverage(server, FS.readFileSync(path.join(dir, m.name + '.bpmn'), 'utf8'), await withRuns(server, m.name, await loadScenarios(m.name)), m.saved).catch(() => null);
+            }
             const decisionTests = new Map((await listDecisionTestSets()).map(s => [s.decision, s.count]));
             models.sort((a, b) => (b.errors - a.errors) || (b.warnings - a.warnings) || a.name.localeCompare(b.name));
             const recent = [...models].sort((a, b) => b.saved - a.saved).slice(0, 5);
@@ -188,7 +199,7 @@ export class Dashboards extends Common {
         }));
 
         // run the tests of a model (model), of a decision (decision), or every test (neither); the results are
-        // kept in the session, by model and decision, and shown on the dashboard
+        // kept in the session, by model and decision, and shown on the dashboard; a model's are its scenarios' last runs too
         router.post('/design/tests', this.isDesigner, handler(async (req, res) => {
             const { model, decision } = req.body ?? {};
             const dir = folder();
@@ -208,9 +219,22 @@ export class Dashboards extends Common {
                 for (const name of names) {
                     if (!files.includes(name + '.bpmn'))
                         continue;
-                    const results = [];
-                    for (const scenario of await loadScenarios(name))      // one after another: they may share state
-                        results.push(await runScenario(server, name, scenario, req.user?.userName));
+                    const results = [], scenarios = await withRuns(server, name, await loadScenarios(name));
+                    const { listeners } = await modelElements(FS.readFileSync(path.join(dir, name + '.bpmn'), 'utf8'));
+                    for (const scenario of scenarios) {      // one after another: they may share state
+                        const result = await runScenarioInEngine(server, name, scenario, req.user?.userName);
+                        results.push(result);
+                        // this is the scenario's last run now, as in the Test tab: its instance replaces the one before
+                        for (const old of (scenario as any).runs ?? [])
+                            if (String(old.instanceId).startsWith('test-'))
+                                await server.engine.deleteInstances({ id: old.instanceId }).catch(() => { });
+                        (scenario as any).runs = result.instance ? [{
+                            instanceId: result.instance.id, at, how: 'dashboard', ok: result.ok, error: result.error, checks: result.checks, steps: result.steps,
+                            reached: [...reachedIn(result.instance.items, listeners)],
+                        }] : [];
+                    }
+                    await saveScenarios(name, scenarios, req.user?.userName);
+                    await saveRuns(server, name, scenarios);
                     note(runs.models, name, results);
                 }
             }
@@ -219,7 +243,7 @@ export class Dashboards extends Common {
                 for (const name of names) {
                     const file = files.find(f => DMN_FILE.test(f) && f.replace(DMN_FILE, '') === name);
                     if (file)
-                        note(runs.decisions, name, await runDecisionTests(path.join(dir, file), await loadDecisionTests(name)));
+                        note(runs.decisions, name, await runDecisionTestsInEngine(server, file, await loadDecisionTests(name)));
                 }
             }
             const what = model || decision ? `${model || decision}: ` : 'All tests: ';
@@ -258,13 +282,20 @@ export class Dashboards extends Common {
         const back = (res, message: string) => res.redirect('/dashboard/admin?message=' + encodeURIComponent(message));
 
         router.post('/admin/users', this.isAdmin, handler(async (req, res) => {
-            const { userName, email, password } = req.body;
+            const userName = String(req.body.userName ?? '').trim(), email = String(req.body.email ?? '').trim();
+            const password = String(req.body.password ?? '');
             const groups = toList(req.body.userGroups);
             if (!userName || !email || !password)
                 return back(res, 'A new user needs a user name, an email and a password.');
-            if (await new UserService().findUser({ $or: [{ userName }, { email }] }))
+            const problem = userNameProblem(userName)
+                ?? (validator.isEmail(email) ? null : `'${email}' is not an email address.`)
+                ?? (password.length >= 4 ? null : 'The password needs at least 4 characters.');
+            if (problem)
+                return back(res, problem);
+            const users = new UserService();
+            if (await users.userNamed(userName) || await users.findUser({ email }))
                 return back(res, `A user named '${userName}' or with the email '${email}' already exists.`);
-            await new UserService().addUser(userName, email, password, groups);
+            await users.addUser(userName, email, password, groups);
             back(res, `User '${userName}' added.`);
         }));
 
@@ -505,7 +536,7 @@ export class Dashboards extends Common {
     /**
      * A backup to download: the models folder's files and, by collection, what each store keeps (the engine's
      * instances, archive, locks, models and events; the connectors, keys encrypted; the users), as one JSON document. The models'
-     * tests are files of the models folder (*.tests.json).
+     * tests are files of the models folder (*.feature).
      * The stores give their own documents, whatever database they are on; the sessions are never in it.
      */
     async backup(res) {

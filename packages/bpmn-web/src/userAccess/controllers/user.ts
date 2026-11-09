@@ -6,9 +6,29 @@ import passport from 'passport';
 import validator from 'validator';
 import User from '../models/User.js';
 import * as Mailer from '../config/mail.js';
+import { home, signupGroups, signupVerifiesEmail } from '../roles.js';
+import { firstRunPending, isSetupToken, endFirstRun } from '../firstRun.js';
+import { UserService, userNameProblem } from '../UserService.js';
+import { answerMessage } from '../../routes/common.js';
 
 const _ = lodash;
 const randomBytesAsync = promisify(crypto.randomBytes);
+
+/** The address links in emails use: SITE_URL, else the request's. */
+const siteUrl = (req) => (process.env.SITE_URL || `${req.protocol}://${req.headers.host}`).replace(/\/$/, '');
+
+/** A new verification token for the user, and the email with its link. */
+async function sendVerification(req, user) {
+    const token = (await randomBytesAsync(16)).toString('hex');
+    await User.updateOne({ _id: user._id }, { emailVerificationToken: token });
+    const site = process.env.SITE_NAME || 'bpmn-server';
+    return Mailer.sendMail({
+        to: user.email,
+        from: process.env.EMAIL_FROM,
+        subject: `Please verify your email address on ${site}`,
+        text: `Thank you for signing up to ${site}.\n\nTo verify your email address, click on the following link, or paste it into your browser:\n\n${siteUrl(req)}/account/verify/${token}\n\nThank you!`,
+    });
+}
 
 const viewPath = '../userAccess/views/account/';
 export class UserController {
@@ -102,6 +122,34 @@ export class UserController {
      * GET /login
      * Login page.
      */
+    /** The first start: the administrator, with the token the server printed; then, if asked, the tutorials' users. */
+    static getSetup(req, res) {
+        if (!firstRunPending()) return res.redirect('/login');
+        res.render(viewPath + 'setup', { title: 'Set up this server', token: req.query.token ?? '', values: {}, message: null, canSignup: false });
+    }
+
+    static async postSetup(req, res) {
+        if (!firstRunPending()) return answerMessage(req, res, 404, 'This server is set up already: sign in.');
+        const { token, userName = '', email = '', password = '', confirmPassword = '', sampleUsers, samplePassword = '' } = req.body ?? {};
+        const again = (status, message) => res.status(status).render(viewPath + 'setup', {
+            title: 'Set up this server', token: '', values: { userName, email, sampleUsers }, message, canSignup: false });
+        if (!isSetupToken(token)) return again(403, 'That is not the setup token the server printed when it started.');
+        const nameProblem = userNameProblem(String(userName).trim());
+        if (nameProblem) return again(400, nameProblem);
+        if (!validator.isEmail(String(email))) return again(400, 'Give the administrator\'s email.');
+        if (String(password).length < 8) return again(400, 'The password needs at least 8 characters.');
+        if (password !== confirmPassword) return again(400, 'The two passwords differ.');
+        if (sampleUsers === 'true' && String(samplePassword).length < 4) return again(400, 'Give the sample users a password, or leave them out.');
+        const users = new UserService();
+        const admin = await users.addUser(String(userName).trim(), String(email), password, ['ADMIN']);
+        if (sampleUsers === 'true') {
+            await users.addUser('user1', 'user1@example.com', samplePassword, ['Employee']);
+            await users.addUser('manager1', 'manager1@example.com', samplePassword, ['Employee', 'Manager']);
+        }
+        endFirstRun();
+        req.logIn(admin, error => error ? answerMessage(req, res, 500, 'The administrator was created: sign in.') : res.redirect('/'));
+    }
+
     static getLogin(req, res) {
         if (req.user) {
             return res.redirect('/');
@@ -115,7 +163,6 @@ export class UserController {
      * Sign in using email and password.
      */
     static postLogin(req, res, next) {
-        console.log("postLogin", req.body.userid, req.body.password);
         const validationErrors = [];
         if (validator.isEmpty(req.body.userName))
             validationErrors.push({ msg: 'Password cannot be blank.' });
@@ -133,12 +180,15 @@ export class UserController {
                 req.flash('errors', info);
                 return res.redirect('/login');
             }
+            // the page it was on its way to, read now: logging in starts a new session, without it
+            const back = req.session.returnTo;
             req.logIn(user, (err) => {
                 if (err) {
                     return next(err);
                 }
                 req.flash('success', { msg: 'Success! You are logged in.' });
-                res.redirect(req.session.returnTo || '/');
+                // the site itself (/) is the user's home
+                res.redirect(back && back !== '/' ? back : home(user));
             });
         })(req, res, next);
     }
@@ -179,8 +229,14 @@ export class UserController {
     static postSignup(req, res, next) {
         console.log('postSignup');
         const validationErrors = [];
+        req.body.userName = String(req.body.userName ?? '').trim();
+        const nameProblem = userNameProblem(req.body.userName);
+        if (nameProblem)
+            validationErrors.push({ msg: nameProblem });
         if (!validator.isEmail(req.body.email))
             validationErrors.push({ msg: 'Please enter a valid email address.' });
+        else if (signupVerifiesEmail() && !mailChecker.isValid(req.body.email))
+            validationErrors.push({ msg: 'That email address can not be verified: please use another.' });
         if (!validator.isLength(req.body.password, { min: 8 }))
             validationErrors.push({ msg: 'Password must be at least 8 characters long' });
         if (req.body.password !== req.body.confirmPassword)
@@ -190,35 +246,45 @@ export class UserController {
             return res.redirect('/signup');
         }
         req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
+        const verifies = signupVerifiesEmail();
         const user = new User({
             userName: req.body.userName,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            // verifying gives them (getVerifyEmailToken)
+            userGroups: verifies ? [] : signupGroups(),
         });
-        User.findOne({ userName: req.body.userName })
-            .then((existingUser) => {
-            if (existingUser) {
-                req.flash('errors', { msg: 'Account with that userName already exists.' });
-                console.log('already exists');
+        const taken = async () => {
+            if (await new UserService().userNamed(req.body.userName))
+                return 'Account with that userName already exists.';
+            if (await User.findOne({ email: req.body.email }))
+                return 'Account with that email address already exists.';
+        };
+        taken().then(async (message) => {
+            if (message) {
+                req.flash('errors', { msg: message });
                 return res.redirect('/signup');
             }
-        });
-        User.findOne({ email: req.body.email })
-            .then ((existingUser) => {
-            if (existingUser) {
-                req.flash('errors', { msg: 'Account with that email address already exists.' });
-                console.log('already exists');
-                return res.redirect('/signup');
-            }
-            user.save().then((savedUser) => {
-                req.logIn(user, (err) => {
-                    if (err) {
-                        return next(err);
-                    }
-                    res.redirect('/');
-                });
+            await user.save();
+            req.logIn(user, async (err) => {
+                if (err)
+                    return next(err);
+                if (!verifies)
+                    return res.redirect('/');
+                // where the visitor was: an editor, back at its unsaved model
+                if (/^\/model\/(add|edit)\/[^/]+$/.test(String(req.query.next)))
+                    req.session.afterVerify = String(req.query.next);
+                try {
+                    await sendVerification(req, user);
+                    req.flash('info', { msg: `Almost there: we sent an email to ${user.email}. Open its link to start saving.` });
+                }
+                catch (error) {
+                    console.error('Could not send the verification email:', error.message);
+                    req.flash('errors', { msg: 'Your account is made, but the verification email could not be sent. Try again from this page.' });
+                }
+                res.redirect('/account');
             });
-        });
+        }).catch(next);
     }
     /**
      * GET /account
@@ -391,9 +457,14 @@ export class UserController {
                     }
                     user.emailVerificationToken = '';
                     user.emailVerified = true;
-                    void user.save();
-                    req.flash('info', { msg: 'Thank you for verifying your email address.' });
-                    return res.redirect('/account');
+                    if (signupVerifiesEmail())
+                        user.userGroups = [...new Set([...(user.userGroups ?? []), ...signupGroups()])];
+                    return user.save().then(() => {
+                        req.flash('info', { msg: 'Thank you for verifying your email address.' });
+                        const back = req.session.afterVerify;
+                        delete req.session.afterVerify;
+                        return res.redirect(back ?? '/account');
+                    });
                 })
                 .catch((error) => {
                     console.log('Error saving the user profile to the database after email verification', error);
@@ -419,42 +490,7 @@ export class UserController {
             req.flash('errors', { msg: 'The email address is invalid or disposable and can not be verified.  Please update your email address and try again.' });
             return res.redirect('/account');
         }
-        const createRandomToken = randomBytesAsync(16)
-            .then((buf) => buf.toString('hex'));
-        const setRandomToken = (token) => {
-            User
-                .findOne({ email: req.user.email })
-                .then((user) => {
-                    user.emailVerificationToken = token;
-                    void user.save();
-                });
-            return token;
-        };
-        const sendVerifyEmail = (token) => {
-            const mailOptions = {
-                to: req.user.email,
-                from: process.env.EMAIL_FROM,
-                subject: `Please verify your email address on ${process.env.SITE_NAME}`,
-                text: `Thank you for registering with hackathon-starter.\n\n
-        This verify your email address please click on the following link, or paste this into your browser:\n\n
-        http://${req.headers.host}/account/verify/${token}\n\n
-        \n\n
-        Thank you!`
-            };
-            const mailSettings = {
-                successfulType: 'info',
-                successfulMsg: `An e-mail has been sent to ${req.user.email} with further instructions.`,
-                loggingError: 'ERROR: Could not send verifyEmail email after security downgrade.\n',
-                errorType: 'errors',
-                errorMsg: 'Error sending the email verification message. Please try again shortly.',
-                mailOptions,
-                req
-            };
-            return Mailer.sendMail(mailOptions);
-        };
-        createRandomToken
-            .then(setRandomToken)
-            .then(sendVerifyEmail)
+        sendVerification(req, req.user)
             .then(() => {
                 req.flash('info', { msg: `An e-mail has been sent to ${req.user.email} with further instructions.` });
                 res.redirect('/account');
@@ -582,7 +618,7 @@ export class UserController {
                 subject: `Reset your password on ${process.env.SITE_NAME}`,
                 text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
         Please click on the following link, or paste this into your browser to complete the process:\n\n
-        http://${req.headers.host}/reset/${token}\n\n
+        ${siteUrl(req)}/reset/${token}\n\n
         If you did not request this, please ignore this email and your password will remain unchanged.\n`
             };
             const mailSettings = {

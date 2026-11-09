@@ -342,8 +342,16 @@ async function saveIfChanged() {
     if (changed)
         throw new Error('Save the model first: saving failed');
 }
-document.getElementById('js-save').addEventListener('click', () => saveDiagram());
-document.getElementById('js-save-run').addEventListener('click', () => saveDiagram('run'));
+document.getElementById('js-save')?.addEventListener('click', () => saveDiagram());
+document.getElementById('js-save-run')?.addEventListener('click', () => saveDiagram('run'));
+document.getElementById('js-download').addEventListener('click', async () => {
+    const { xml } = await modeler.saveXML({ format: true });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([xml], { type: 'application/xml' }));
+    link.download = `${processName}.bpmn`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+});
 
 document.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {

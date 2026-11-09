@@ -35,7 +35,9 @@
 - [throwMessage](APIEngine.md#throwmessage)
 - [throwSignal](APIEngine.md#throwsignal)
 - [startEvent](APIEngine.md#startevent)
+- [retry](APIEngine.md#retry)
 - [restart](APIEngine.md#restart)
+- [upgrade](APIEngine.md#upgrade)
 
 ## Constructors
 
@@ -59,7 +61,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:44](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L44)
+[packages/bpmn-server/src/API/API.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L63)
 
 ## Properties
 
@@ -73,7 +75,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:42](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L42)
+[packages/bpmn-server/src/API/API.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L61)
 
 ## Accessors
 
@@ -91,7 +93,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:47](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L47)
+[packages/bpmn-server/src/API/API.ts:66](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L66)
 
 ## Methods
 
@@ -115,7 +117,7 @@ APIComponent.getUser
 
 #### Defined in
 
-[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L50)
+[packages/bpmn-server/src/API/API.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L69)
 
 ___
 
@@ -144,7 +146,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:220](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L220)
+[packages/bpmn-server/src/API/API.ts:248](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L248)
 
 ___
 
@@ -173,7 +175,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:224](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L224)
+[packages/bpmn-server/src/API/API.ts:253](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L253)
 
 ___
 
@@ -204,7 +206,7 @@ Also, updates item data
 
 #### Defined in
 
-[API/API.ts:230](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L230)
+[packages/bpmn-server/src/API/API.ts:259](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L259)
 
 ___
 
@@ -234,7 +236,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:235](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L235)
+[packages/bpmn-server/src/API/API.ts:264](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L264)
 
 ___
 
@@ -264,7 +266,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:238](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L238)
+[packages/bpmn-server/src/API/API.ts:270](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L270)
 
 ___
 
@@ -294,7 +296,30 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:241](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L241)
+[packages/bpmn-server/src/API/API.ts:274](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L274)
+
+___
+
+### retry
+
+▸ **retry**(`itemQuery`, `user?`): `Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
+
+Runs a failed item's work again (its status `error`), and the instance on from it.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `itemQuery` | `any` |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+
+#### Returns
+
+`Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:280](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L280)
 
 ___
 
@@ -325,4 +350,34 @@ this add a savePoint for each item, allowing you to select that item to restore 
 
 #### Defined in
 
-[API/API.ts:244](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L244)
+[packages/bpmn-server/src/API/API.ts:284](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L284)
+
+___
+
+### upgrade
+
+▸ **upgrade**(`model`, `afterNodeIds`, `user?`): `Promise`\<`string`[] \| \{ `errors`: `any`  }\>
+
+upgrade running instances with the latest revised bpmn model
+default behaviour is that running instances will retain the model at start
+However, this routine will upgrade already started instances with the revised model
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `model` | `any` | Model Name |
+| `afterNodeIds` | `any` | list of nodeIds, to check if already started, don't apply the upgrade |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) | - |
+
+#### Returns
+
+`Promise`\<`string`[] \| \{ `errors`: `any`  }\>
+
+#### Implementation of
+
+[IAPIEngine](../interfaces/IAPIEngine.md).[upgrade](../interfaces/IAPIEngine.md#upgrade)
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:289](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L289)

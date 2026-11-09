@@ -19,6 +19,10 @@
 - [eventSubProcesses](Process.md#eventsubprocesses)
 - [subProcessEvents](Process.md#subprocessevents)
 - [scripts](Process.md#scripts)
+- [candidateStarterGroups](Process.md#candidatestartergroups)
+- [candidateStarterUsers](Process.md#candidatestarterusers)
+- [historyTimeToLive](Process.md#historytimetolive)
+- [isStartableInTasklist](Process.md#isstartableintasklist)
 
 ### Methods
 
@@ -50,7 +54,7 @@
 
 #### Defined in
 
-[elements/Process.ts:23](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L23)
+[packages/bpmn-server/src/elements/Process.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L26)
 
 ## Properties
 
@@ -60,7 +64,7 @@
 
 #### Defined in
 
-[elements/Process.ts:13](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L13)
+[packages/bpmn-server/src/elements/Process.ts:12](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L12)
 
 ___
 
@@ -70,7 +74,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L14)
+[packages/bpmn-server/src/elements/Process.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L13)
 
 ___
 
@@ -80,7 +84,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L15)
+[packages/bpmn-server/src/elements/Process.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L14)
 
 ___
 
@@ -90,7 +94,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L16)
+[packages/bpmn-server/src/elements/Process.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L15)
 
 ___
 
@@ -100,7 +104,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L17)
+[packages/bpmn-server/src/elements/Process.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L16)
 
 ___
 
@@ -110,7 +114,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L18)
+[packages/bpmn-server/src/elements/Process.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L17)
 
 ___
 
@@ -120,7 +124,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L19)
+[packages/bpmn-server/src/elements/Process.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L18)
 
 ___
 
@@ -130,7 +134,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L20)
+[packages/bpmn-server/src/elements/Process.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L19)
 
 ___
 
@@ -140,7 +144,47 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L21)
+[packages/bpmn-server/src/elements/Process.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L20)
+
+___
+
+### candidateStarterGroups
+
+• **candidateStarterGroups**: `any`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Process.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L21)
+
+___
+
+### candidateStarterUsers
+
+• **candidateStarterUsers**: `any`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Process.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L22)
+
+___
+
+### historyTimeToLive
+
+• **historyTimeToLive**: `any`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Process.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L23)
+
+___
+
+### isStartableInTasklist
+
+• **isStartableInTasklist**: `any`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Process.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L24)
 
 ## Methods
 
@@ -161,7 +205,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L30)
+[packages/bpmn-server/src/elements/Process.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L38)
 
 ___
 
@@ -184,7 +228,7 @@ Notify process that it started
 
 #### Defined in
 
-[elements/Process.ts:37](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L37)
+[packages/bpmn-server/src/elements/Process.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L45)
 
 ___
 
@@ -206,7 +250,7 @@ Notify process that it ended
 
 #### Defined in
 
-[elements/Process.ts:60](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L60)
+[packages/bpmn-server/src/elements/Process.ts:68](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L68)
 
 ___
 
@@ -226,7 +270,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:81](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L81)
+[packages/bpmn-server/src/elements/Process.ts:89](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L89)
 
 ___
 
@@ -246,7 +290,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:84](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L84)
+[packages/bpmn-server/src/elements/Process.ts:92](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L92)
 
 ___
 
@@ -260,7 +304,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:101](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L101)
+[packages/bpmn-server/src/elements/Process.ts:109](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L109)
 
 ___
 
@@ -282,7 +326,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:114](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L114)
+[packages/bpmn-server/src/elements/Process.ts:122](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L122)
 
 ___
 
@@ -296,4 +340,4 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:126](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Process.ts#L126)
+[packages/bpmn-server/src/elements/Process.ts:134](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Process.ts#L134)

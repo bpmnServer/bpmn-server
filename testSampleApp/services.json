@@ -1,0 +1,23 @@
+{
+  "from": "appDelegate.ts",
+  "partial": false,
+  "services": [
+    "DummyService1",
+    "IsApprovalDone",
+    "add",
+    "echo",
+    "flowCondition",
+    "getApprovers",
+    "getCollection",
+    "getTimerDelay",
+    "notify",
+    "notifyhead",
+    "raiseBPMNError",
+    "recordLeave",
+    "service1",
+    "service99",
+    "webService",
+    "webService2"
+  ],
+  "extra": []
+}

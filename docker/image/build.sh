@@ -3,8 +3,8 @@
 set -eu
 cd "$(dirname "$0")"
 if [ "$#" -gt 0 ]; then
-    docker build --build-arg "BPMN_VERSION=$1" -t "ralphhanna/bpmn-server:$1" .
+    docker build --build-arg "BPMN_VERSION=$1" -t "bpmnserver/bpmn-server:$1" .
 else
     version=$(npm view bpmn-server version)
-    docker build --build-arg "BPMN_VERSION=$version" -t "ralphhanna/bpmn-server:$version" -t ralphhanna/bpmn-server:latest .
+    docker build --build-arg "BPMN_VERSION=$version" -t "bpmnserver/bpmn-server:$version" -t bpmnserver/bpmn-server:latest .
 fi

@@ -21,9 +21,11 @@ msgs can be cleared by the clean method
 - [debug](ILogger.md#debug)
 - [warn](ILogger.md#warn)
 - [log](ILogger.md#log)
+- [decision](ILogger.md#decision)
 - [error](ILogger.md#error)
 - [reportError](ILogger.md#reporterror)
 - [save](ILogger.md#save)
+- [saveForInstance](ILogger.md#saveforinstance)
 
 ## Methods
 
@@ -46,7 +48,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[interfaces/common.ts:57](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L57)
+[packages/bpmn-server/src/interfaces/common.ts:108](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L108)
 
 ___
 
@@ -60,7 +62,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:62](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L62)
+[packages/bpmn-server/src/interfaces/common.ts:113](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L113)
 
 ___
 
@@ -74,7 +76,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:63](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L63)
+[packages/bpmn-server/src/interfaces/common.ts:114](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L114)
 
 ___
 
@@ -94,7 +96,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:64](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L64)
+[packages/bpmn-server/src/interfaces/common.ts:115](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L115)
 
 ___
 
@@ -114,7 +116,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:65](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L65)
+[packages/bpmn-server/src/interfaces/common.ts:116](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L116)
 
 ___
 
@@ -134,7 +136,29 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:66](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L66)
+[packages/bpmn-server/src/interfaces/common.ts:117](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L117)
+
+___
+
+### decision
+
+▸ **decision**(`...message`): `any`
+
+Why the engine took a path (an instance log entry of type 'decision'); optional for older loggers.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...message` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/common.ts:119](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L119)
 
 ___
 
@@ -154,7 +178,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:67](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L67)
+[packages/bpmn-server/src/interfaces/common.ts:120](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L120)
 
 ___
 
@@ -174,7 +198,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:68](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L68)
+[packages/bpmn-server/src/interfaces/common.ts:121](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L121)
 
 ___
 
@@ -194,4 +218,24 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:69](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/common.ts#L69)
+[packages/bpmn-server/src/interfaces/common.ts:122](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L122)
+
+___
+
+### saveForInstance
+
+▸ **saveForInstance**(`instanceId`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `string` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/common.ts:123](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L123)

@@ -19,11 +19,17 @@
 - [load](IModelsDatastore.md#load)
 - [loadModel](IModelsDatastore.md#loadmodel)
 - [findEvents](IModelsDatastore.md#findevents)
+- [rebuild](IModelsDatastore.md#rebuild)
+- [backup](IModelsDatastore.md#backup)
 - [install](IModelsDatastore.md#install)
 - [import](IModelsDatastore.md#import)
 - [saveModel](IModelsDatastore.md#savemodel)
 - [deleteModel](IModelsDatastore.md#deletemodel)
 - [renameModel](IModelsDatastore.md#renamemodel)
+- [history](IModelsDatastore.md#history)
+- [historySource](IModelsDatastore.md#historysource)
+- [deleteVersion](IModelsDatastore.md#deleteversion)
+- [purgeHistory](IModelsDatastore.md#purgehistory)
 
 ## Methods
 
@@ -43,7 +49,7 @@
 
 #### Defined in
 
-[interfaces/datastore.ts:26](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L26)
+[packages/bpmn-server/src/interfaces/datastore.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L59)
 
 ___
 
@@ -63,20 +69,20 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:27](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L27)
+[packages/bpmn-server/src/interfaces/datastore.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L60)
 
 ___
 
 ### getSource
 
-▸ **getSource**(`name`, `owner`): `Promise`\<`string`\>
+▸ **getSource**(`name`, `owner?`): `Promise`\<`string`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `owner` | `any` |
+| `owner?` | `any` |
 
 #### Returns
 
@@ -84,20 +90,20 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L28)
+[packages/bpmn-server/src/interfaces/datastore.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L61)
 
 ___
 
 ### getSVG
 
-▸ **getSVG**(`name`, `owner`): `Promise`\<`string`\>
+▸ **getSVG**(`name`, `owner?`): `Promise`\<`string`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `owner` | `any` |
+| `owner?` | `any` |
 
 #### Returns
 
@@ -105,13 +111,15 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:29](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L29)
+[packages/bpmn-server/src/interfaces/datastore.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L62)
 
 ___
 
 ### save
 
-▸ **save**(`name`, `bpmn`, `svg?`, `owner?`): `Promise`\<`boolean`\>
+▸ **save**(`name`, `bpmn`, `svg?`, `owner?`, `savedBy?`): `Promise`\<`boolean`\>
+
+`savedBy`: who saves it, kept in the model's history (files-based datastores)
 
 #### Parameters
 
@@ -121,6 +129,7 @@ ___
 | `bpmn` | `any` |
 | `svg?` | `any` |
 | `owner?` | `any` |
+| `savedBy?` | `string` |
 
 #### Returns
 
@@ -128,20 +137,20 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L30)
+[packages/bpmn-server/src/interfaces/datastore.ts:64](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L64)
 
 ___
 
 ### load
 
-▸ **load**(`name`, `owner`): `Promise`\<[`IDefinition`](IDefinition.md)\>
+▸ **load**(`name`, `owner?`): `Promise`\<[`IDefinition`](IDefinition.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `owner` | `any` |
+| `owner?` | `any` |
 
 #### Returns
 
@@ -149,20 +158,20 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:32](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L32)
+[packages/bpmn-server/src/interfaces/datastore.ts:66](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L66)
 
 ___
 
 ### loadModel
 
-▸ **loadModel**(`name`, `owner`): `Promise`\<[`IBpmnModelData`](IBpmnModelData.md)\>
+▸ **loadModel**(`name`, `owner?`): `Promise`\<[`IBpmnModelData`](IBpmnModelData.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `owner` | `any` |
+| `owner?` | `any` |
 
 #### Returns
 
@@ -170,20 +179,20 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:33](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L33)
+[packages/bpmn-server/src/interfaces/datastore.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L67)
 
 ___
 
 ### findEvents
 
-▸ **findEvents**(`query`, `owner`): `Promise`\<`any`[]\>
+▸ **findEvents**(`query`, `owner?`): `Promise`\<`any`[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `owner` | `any` |
+| `owner?` | `any` |
 
 #### Returns
 
@@ -191,7 +200,43 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:34](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L34)
+[packages/bpmn-server/src/interfaces/datastore.ts:68](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L68)
+
+___
+
+### rebuild
+
+▸ **rebuild**(`model?`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `model?` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/datastore.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L69)
+
+___
+
+### backup
+
+▸ **backup**(): `Promise`\<`Record`\<`string`, `any`[]\>\>
+
+Every document the models datastore keeps, by collection name: for a backup.
+
+#### Returns
+
+`Promise`\<`Record`\<`string`, `any`[]\>\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/datastore.ts:71](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L71)
 
 ___
 
@@ -205,7 +250,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:36](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L36)
+[packages/bpmn-server/src/interfaces/datastore.ts:73](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L73)
 
 ___
 
@@ -225,7 +270,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:37](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L37)
+[packages/bpmn-server/src/interfaces/datastore.ts:74](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L74)
 
 ___
 
@@ -245,20 +290,20 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:39](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L39)
+[packages/bpmn-server/src/interfaces/datastore.ts:75](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L75)
 
 ___
 
 ### deleteModel
 
-▸ **deleteModel**(`name`, `owner`): `Promise`\<`void`\>
+▸ **deleteModel**(`name`, `owner?`): `Promise`\<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `owner` | `any` |
+| `owner?` | `any` |
 
 #### Returns
 
@@ -266,13 +311,13 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:40](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L40)
+[packages/bpmn-server/src/interfaces/datastore.ts:76](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L76)
 
 ___
 
 ### renameModel
 
-▸ **renameModel**(`name`, `newName`, `owner`): `Promise`\<`boolean`\>
+▸ **renameModel**(`name`, `newName`, `owner?`): `Promise`\<`boolean`\>
 
 #### Parameters
 
@@ -280,7 +325,7 @@ ___
 | :------ | :------ |
 | `name` | `any` |
 | `newName` | `any` |
-| `owner` | `any` |
+| `owner?` | `any` |
 
 #### Returns
 
@@ -288,4 +333,94 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:41](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/datastore.ts#L41)
+[packages/bpmn-server/src/interfaces/datastore.ts:77](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L77)
+
+___
+
+### history
+
+▸ **history**(`name`): `Promise`\<\{ `version`: `number` ; `savedAt`: `string` ; `savedBy?`: `string` ; `size`: `number`  }[]\>
+
+A model's saved versions, newest first (files-based datastores: ModelHistory).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `string` |
+
+#### Returns
+
+`Promise`\<\{ `version`: `number` ; `savedAt`: `string` ; `savedBy?`: `string` ; `size`: `number`  }[]\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/datastore.ts:79](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L79)
+
+___
+
+### historySource
+
+▸ **historySource**(`name`, `version`): `Promise`\<`string`\>
+
+A saved version of a model, or null.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `string` |
+| `version` | `number` |
+
+#### Returns
+
+`Promise`\<`string`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/datastore.ts:81](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L81)
+
+___
+
+### deleteVersion
+
+▸ **deleteVersion**(`name`, `version`): `Promise`\<`boolean`\>
+
+Removes one saved version of a model; false when there is none.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `string` |
+| `version` | `number` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/datastore.ts:83](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L83)
+
+___
+
+### purgeHistory
+
+▸ **purgeHistory**(`name`): `Promise`\<`number`\>
+
+Removes a model's history; returns how many versions it had.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `string` |
+
+#### Returns
+
+`Promise`\<`number`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/datastore.ts:85](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L85)

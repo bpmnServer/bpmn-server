@@ -13,6 +13,7 @@
 - [terminated](ITEM_STATUS.md#terminated)
 - [cancelled](ITEM_STATUS.md#cancelled)
 - [discard](ITEM_STATUS.md#discard)
+- [error](ITEM_STATUS.md#error)
 
 ## Enumeration Members
 
@@ -22,7 +23,7 @@
 
 #### Defined in
 
-[interfaces/Enums.ts:77](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L77)
+[packages/bpmn-server/src/interfaces/Enums.ts:77](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L77)
 
 ___
 
@@ -32,7 +33,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:78](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L78)
+[packages/bpmn-server/src/interfaces/Enums.ts:78](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L78)
 
 ___
 
@@ -42,7 +43,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:79](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L79)
+[packages/bpmn-server/src/interfaces/Enums.ts:79](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L79)
 
 ___
 
@@ -52,7 +53,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:80](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L80)
+[packages/bpmn-server/src/interfaces/Enums.ts:80](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L80)
 
 ___
 
@@ -62,7 +63,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:81](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L81)
+[packages/bpmn-server/src/interfaces/Enums.ts:81](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L81)
 
 ___
 
@@ -72,7 +73,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L82)
+[packages/bpmn-server/src/interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L82)
 
 ___
 
@@ -82,4 +83,16 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:83](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L83)
+[packages/bpmn-server/src/interfaces/Enums.ts:83](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L83)
+
+___
+
+### error
+
+• **error** = ``"error"``
+
+the work threw: kept with its message in statusDetails, to be retried (engine.retry)
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/Enums.ts:85](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L85)

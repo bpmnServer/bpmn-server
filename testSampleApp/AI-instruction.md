@@ -16,7 +16,7 @@ TypeScript directly; check every change with the commands below before you repor
 | `delegates/ApprovalManager.ts`, `ApprovalRules.ts`, `appUtils.ts` | Logic the services and scripts use. |
 | `settings/config.ts` | bpmn-server settings that replace bpmn-web's defaults (the models folder). |
 | `index.ts` | Starts bpmn-web with the above (`npm start`). |
-| `test/` | Tests of bpmn-web and of the engine. `test/processes/` and `test/scenarios/processes/` are the tests' **own copies** of models: do not edit them for a change to `processes/`. |
+| `test/` | Tests of bpmn-web and of the engine. All the models are in `processes/`. The tests run on them, so a change to a model there can fail a test: a web test server starts with a few of them (`FIXTURE_MODELS` in `test/support/webApp.mjs`), the engine scenarios (`<model>.engine.feature`) use them directly, and a model named `*-engine-test` is theirs alone. |
 | `.env` | Database URL and keys. **Never read, print or change it.** |
 
 The packages themselves are `../packages/bpmn-server` and `../packages/bpmn-web`. Change them only when the
@@ -132,8 +132,8 @@ Build the packages once if `../packages/bpmn-web/dist` is missing: `npm run buil
    `log()`; `app.message(name, data)` starts a model by its message. A timer or boundary event is completed like a
    task (`run.complete('timer-event')`), without waiting for real time.
 
-   Or a scenario file, `test/custom/<name>.json` (see `test/custom/buy-used-car.json`):
-   `{ "model": "...", "scenarios": [ { "name", "start": { "data" }, "steps": [ { "element", "data" } ], "checks": [...] } ] }`.
+   Or in Gherkin, beside the model: `processes/<model>.engine.feature` (see `processes/Buy Used Car.engine.feature`),
+   run by `npm run test:scenarios`. The syntax is in `docs/docs/testing.md`.
 
    Run them: `npm run test:custom` (one file: `node --import tsx --test test/custom/<name>.test.ts`).
 

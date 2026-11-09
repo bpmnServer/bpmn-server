@@ -40,7 +40,8 @@ export function check(catalog = load()) {
                 const full = path.join(ROOT, file);
                 if (!fs.existsSync(full)) { problems.push(`${at}: ${kind} ${ref} is not there`); continue; }
                 if (anchor && !headings(full).includes(anchor)) problems.push(`${at}: ${ref} has no heading #${anchor}`);
-                if (kind === 'tests') byTest.set(file, [...(byTest.get(file) ?? []), f.id]);
+                // a .feature says what it covers by its own tags, not by a "// @features:" line
+                if (kind === 'tests' && !file.endsWith('.feature')) byTest.set(file, [...(byTest.get(file) ?? []), f.id]);
             }
     }
     return { problems, byTest };
@@ -76,9 +77,35 @@ function writeTags(byTest) {
     }
 }
 
-/** Every test file's tags: its "// @features:" line and "@feature:<id>" in its titles. */
+const TEST_FOLDERS = ['packages/bpmn-server/test', 'testSampleApp/test', 'testSampleApp/examples', 'testSampleApp/processes', 'sampleApp/processes'];
+
+/** Every .feature file's "@feature:<id>" tags, as [file, id], in these folders. */
+export function featureFileTags(folders = TEST_FOLDERS.map(dir => path.join(ROOT, dir))) {
+    const found = [];
+    const walk = dir => {
+        for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, e.name);
+            if (e.isDirectory()) { if (!['node_modules', 'dist', '.git'].includes(e.name)) walk(full); continue; }
+            if (!e.name.endsWith('.feature')) continue;
+            for (const line of fs.readFileSync(full, 'utf8').split(/\r?\n/).filter(l => l.trim().startsWith('@')))
+                for (const [, id] of line.matchAll(/@feature:(\S+)/g)) found.push([path.relative(ROOT, full).replaceAll('\\', '/'), id]);
+        }
+    };
+    for (const dir of folders) if (fs.existsSync(dir)) walk(dir);
+    return found;
+}
+
+/** A .feature's tag that names no feature of the catalog. */
+export function unknownFeatureTags(catalog, tags = featureFileTags()) {
+    const ids = new Set(catalog.features.map(f => f.id));
+    return tags.filter(([, id]) => !ids.has(id)).map(([file, id]) => `${file}: @feature:${id} names no feature`);
+}
+
+/** Every test file's tags: its "// @features:" line and "@feature:<id>" in its titles; a .feature's tags. */
 function taggedTests() {
     const found = new Map();
+    for (const [file, id] of featureFileTags())
+        found.set(id, [...(found.get(id) ?? []), file]);
     const walk = dir => {
         for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
             const full = path.join(dir, e.name);
@@ -132,6 +159,7 @@ function page(catalog, tagged) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const catalog = load();
     const { problems, byTest } = check(catalog);
+    problems.push(...unknownFeatureTags(catalog));
     for (const p of problems) console.error('  ' + p);
     if (process.argv.includes('--check')) {
         const stale = tagsUpToDate(byTest);

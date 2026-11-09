@@ -21,6 +21,22 @@ class AppServices {
     async greet({ name }, context) {
         return `Hello ${name || 'there'}, from ${context.instance?.name ?? context.item?.token?.execution?.name}`;
     }
+    /**
+     * Leave Application's Record the leave: HR's system keeps the approved leave and answers its id. Here it is the
+     * log; put your HR system's call here. A request it refuses is the BPMN error RecordFailed, which the model catches.
+     */
+    async recordLeave({ requester, LeaveType, StartDate, EndDate, days }, context) {
+        if (!requester || !(days > 0))
+            return { bpmnError: 'RecordFailed' };
+        const recordId = `LV-${Date.now()}`;
+        console.log(`leave recorded: ${recordId} ${requester} ${LeaveType} ${StartDate} to ${EndDate} (${days} days)`);
+        return { recordId };
+    }
+    /** A message to a user or a group (Leave Application's reminders and outcome). Here it is the log; put your email or chat here. */
+    async notify({ to, subject, comment }, context) {
+        console.log(`notify ${to}: ${subject}${comment ? ` (${comment})` : ''}`);
+        return { sent: new Date().toISOString() };
+    }
     async echo(input, context) {
         console.log('service echo - input', input);
         context.item.data['echo']=input;

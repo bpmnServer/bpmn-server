@@ -13,12 +13,12 @@ import { bpmnToSvg } from './bpmnToSvg.js';
 
 import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
 import { Common } from './common.js';
-import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
+import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { currentGuest } from '../guests/guests.js';
 import { zip } from './zip.js';
-import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
-import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, expectChecks, checksAt, setTestData, restartTest } from '../testing/scenarios.js';
+import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
+import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
+import { withReached } from '../testing/modelCoverage.js';
 
 
 const awaitHandlerFactory = (middleware) => {
@@ -42,6 +42,9 @@ export class Model extends Common {
 
 
         var router = express.Router();
+
+
+        guardModelParams(router);
 
         // Deny-by-default: model designer routes require a session, as a designer (or administrator).
         router.use(this.isAuthenticated, this.isDesigner, modelNameGuard);
@@ -93,14 +96,18 @@ export class Model extends Common {
         router.get('/export', awaitHandlerFactory(async (request, response) => {
             console.log(request.params);
             let procs = await bpmnServer.definitions.getList();
-            response.render('models/export', { procs});
+            // each model's tests, when it has them
+            const dir = bpmnServer.configuration.definitionsPath;
+            const tests = Object.fromEntries(procs.map(proc => [proc.name,
+                ['feature', 'engine.feature'].map(extension => `${proc.name}.${extension}`).filter(file => FS.existsSync(path.join(dir, file)))]));
+            response.render('models/export', { procs, tests });
 
         }));
-        /** Every model, diagram and decision of the models folder (a guest's: its own) as one .zip. */
+        /** Every model, diagram, decision and test file of the models folder as one .zip. */
         router.get('/download-all', awaitHandlerFactory(async (request, response) => {
             const dir = bpmnServer.configuration.definitionsPath;
             const files = FS.readdirSync(dir)
-                .filter(file => /\.(bpmn|svg)$|\.dmn(\.xml)?$/i.test(file) && FS.statSync(path.join(dir, file)).isFile())
+                .filter(file => /\.(bpmn|svg|feature)$|\.dmn(\.xml)?$/i.test(file) && FS.statSync(path.join(dir, file)).isFile())
                 .map(file => ({ name: file, data: FS.readFileSync(path.join(dir, file)) }));
             response.attachment('models.zip').type('application/zip').send(zip(files));
         }));
@@ -385,7 +392,8 @@ export class Model extends Common {
                     descriptions[id] = [...(descriptions[id] || []), ...clean];
             };
             try {
-                const definition = new Definition(name, source, bpmnServer);
+                // only read: what a definition asks of a server, none of it the engine
+                const definition = new Definition(name, source, { logger: bpmnServer.logger, appDelegate: bpmnServer.appDelegate, listener: { emit: async () => { } } } as any);
                 await definition.load();
                 definition.processes.forEach(proc => add(proc.id, proc.describe()));
                 definition.nodes.forEach(node => {
@@ -546,7 +554,7 @@ export class Model extends Common {
             const problems = checkDecisionTests(tests);
             if (problems.length)
                 return response.status(400).json({ error: problems.join('; ') });
-            response.json({ results: await runDecisionTests(file, tests) });
+            response.json({ results: await runDecisionTestsInEngine(bpmnServer, decisionFile(name), tests) });
         }));
 
         router.get('/services', awaitHandlerFactory(async (request, response) => {
@@ -611,7 +619,7 @@ export class Model extends Common {
         // ---- the editor's Test tab: scenarios per model, run on the saved model
 
         router.get('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
-            response.json({ scenarios: await loadScenarios(request.params.process) });
+            response.json({ scenarios: await withRuns(bpmnServer, request.params.process, await loadScenarios(request.params.process)) });
         }));
         router.put('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
             const scenarios = request.body?.scenarios;
@@ -620,17 +628,25 @@ export class Model extends Common {
                 response.status(400).json({ error: problems.join('; ') });
                 return;
             }
+            await withReached(bpmnServer, request.params.process, scenarios);
             await saveScenarios(request.params.process, scenarios, request.user?.userName);
+            await saveRuns(bpmnServer, request.params.process, scenarios);
             response.json({ saved: scenarios.length });
         }));
-        // a guest (GUEST_ACCESS) reaches only its own test instances
-        router.use('/test', awaitHandlerFactory(async (request, response, next) => {
-            const id = request.body?.instanceId ?? /^\/instance\/([^/]+)/.exec(request.path)?.[1];
-            if (currentGuest() && id && !(await findTest(bpmnServer, decodeURIComponent(String(id))))) {
-                response.status(404).json({ error: 'no such test instance' });
-                return;
-            }
-            next();
+        /** The model's .feature as text: Edit as text. */
+        router.get('/scenarios/:process/feature', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.process))
+                return response.status(400).json({ error: 'Invalid model name' });
+            response.json({ text: await loadFeatureText(request.params.process) });
+        }));
+        router.put('/scenarios/:process/feature', awaitHandlerFactory(async (request, response) => {
+            const { text, base } = request.body ?? {};
+            if (!isSafeModelName(request.params.process) || typeof text !== 'string' || typeof base !== 'string')
+                return response.status(400).json({ error: 'A model name, text and base are required' });
+            const stopped = await saveFeatureText(request.params.process, text, base);
+            if (stopped)
+                return response.status(stopped.status).json({ error: stopped.error });
+            response.json({ saved: true });
         }));
         /** Run a scenario given in the body, or every saved scenario of the model (all: true). */
         router.post('/test/run', awaitHandlerFactory(async (request, response) => {
@@ -643,8 +659,26 @@ export class Model extends Common {
             }
             const results = [];
             for (const one of scenarios)      // one after another: they may share application state
-                results.push(await runScenario(bpmnServer, processName, one, request.user?.userName));
+                results.push(await runScenarioInEngine(bpmnServer, processName, one, request.user?.userName));
             response.json({ results });
+        }));
+        /** A feature, given in the body or the model's <processName>.feature: all of it in the engine; Cucumber's JSON back. */
+        router.post('/test/feature', awaitHandlerFactory(async (request, response) => {
+            const { processName, source } = request.body ?? {};
+            const file = processName && path.join(bpmnServer.configuration.definitionsPath, `${processName}.feature`);
+            if (typeof source !== 'string' && !file) {
+                response.status(400).json({ error: 'source, or processName, is required' });
+                return;
+            }
+            if (typeof source !== 'string' && !FS.existsSync(file)) {
+                response.status(404).json({ error: `no ${processName}.feature` });
+                return;
+            }
+            try {
+                response.json({ results: await bpmnServer.engine.call('runFeature', source ?? FS.readFileSync(file, 'utf8'), processName ? `${processName}.feature` : undefined) });
+            } catch (exc) {
+                response.status(422).json({ error: String(exc?.message ?? exc) });
+            }
         }));
         /** Recording: start, then complete waiting items one at a time. */
         router.post('/test/start', awaitHandlerFactory(async (request, response) => {
@@ -685,7 +719,7 @@ export class Model extends Common {
                 response.status(400).json({ error: 'only test instances are deleted here' });
                 return;
             }
-            await bpmnServer.dataStore.deleteInstances({ id });
+            await bpmnServer.engine.deleteInstances({ id });
             response.json({ deleted: id });
         }));
 
@@ -712,7 +746,8 @@ export class Model extends Common {
                 return;
             }
             try {
-                response.json({ instance: summarize(await setTestData(bpmnServer, instanceId, data)) });
+                await bpmnServer.engine.call('setTestData', instanceId, data);
+                response.json({ instance: summarize(await findTest(bpmnServer, instanceId)) });
             } catch (exc) {
                 response.status(422).json({ error: String(exc?.message ?? exc) });
             }

@@ -73,7 +73,7 @@ Behaviour
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:40](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L40)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L45)
 
 ## Properties
 
@@ -87,7 +87,7 @@ Behaviour
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:38](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L38)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L43)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:39](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L39)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L44)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:55](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L55)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L57)
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:56](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L56)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L58)
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:57](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L57)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L59)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:58](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L58)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L60)
 
 ## Methods
 
@@ -165,7 +165,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:45](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L45)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L50)
 
 ___
 
@@ -189,7 +189,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:48](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L48)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L53)
 
 ___
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:50](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L50)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L55)
 
 ___
 
@@ -237,7 +237,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:52](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L52)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L57)
 
 ___
 
@@ -261,7 +261,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:54](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L54)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L59)
 
 ___
 
@@ -286,7 +286,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:55](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L55)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L60)
 
 ___
 
@@ -304,7 +304,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:59](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L59)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L61)
 
 ___
 
@@ -322,13 +322,13 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:82](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L82)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:84](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L84)
 
 ___
 
 ### timeDue
 
-▸ **timeDue**(`item`, `timerModifier?`): `any`
+▸ **timeDue**(`item`, `timerModifier?`): `Promise`\<`any`\>
 
 return the next time the timer is due
 format is time format
@@ -342,11 +342,11 @@ format is time format
 
 #### Returns
 
-`any`
+`Promise`\<`any`\>
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:99](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L99)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:101](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L101)
 
 ___
 
@@ -366,13 +366,13 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:129](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L129)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:141](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L141)
 
 ___
 
 ### start
 
-▸ **start**(`item`): [`NODE_ACTION`](../enums/NODE_ACTION.md)
+▸ **start**(`item`): `Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
 
 #### Parameters
 
@@ -382,7 +382,7 @@ ___
 
 #### Returns
 
-[`NODE_ACTION`](../enums/NODE_ACTION.md)
+`Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
 
 #### Overrides
 
@@ -390,13 +390,13 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:137](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L137)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:149](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L149)
 
 ___
 
 ### startTimer
 
-▸ **startTimer**(`item`): `void`
+▸ **startTimer**(`item`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -406,11 +406,11 @@ ___
 
 #### Returns
 
-`void`
+`Promise`\<`void`\>
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:148](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L148)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:160](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L160)
 
 ___
 
@@ -424,7 +424,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:166](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L166)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:197](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L197)
 
 ___
 
@@ -448,7 +448,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:202](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L202)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:251](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L251)
 
 ___
 
@@ -466,4 +466,4 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:206](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Timer.ts#L206)
+[packages/bpmn-server/src/elements/behaviours/Timer.ts:255](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Timer.ts#L255)

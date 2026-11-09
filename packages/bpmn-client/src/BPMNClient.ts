@@ -105,9 +105,10 @@ class ClientEngine {
     constructor(client) {
         this.client = client;
     }
+    /** userId: the user it starts for (the server's userName), who becomes the instance's initiator. */
     async start(name, data = {}, startNodeId = null,  userId= null,options = {}): Promise<IInstanceData> {
         const ret = await this.client.post('engine/start',
-            { name, data, startNodeId, userId, options });
+            { name, data, startNodeId, userName: userId, options });
         if (ret['errors']) {
             console.log(ret['errors']);
             throw new Error(ret['errors']);
@@ -116,7 +117,7 @@ class ClientEngine {
         return instance;
     }
     async invoke(query, data, userId= null,options={}): Promise<IInstanceData> {
-        const ret = await this.client.put('engine/invoke', { query, data , userId ,options });
+        const ret = await this.client.put('engine/invoke', { query, data, userName: userId, options });
         if (ret['errors']) {
             console.log(ret['errors']);
             throw new Error(ret['errors']);
@@ -125,7 +126,7 @@ class ClientEngine {
         return instance;
     }
     async assign(query, data, userId= null,assignment): Promise<IInstanceData> {
-        const ret = await this.client.put('engine/assign', { query, data , userId,assignment });
+        const ret = await this.client.put('engine/assign', { query, data, userName: userId, assignment });
         if (ret['errors']) {
             console.log(ret['errors']);
             throw new Error(ret['errors']);
@@ -134,7 +135,7 @@ class ClientEngine {
         return instance;
     }
     async restart(query, data, userId= null,options={}): Promise<IInstanceData> {
-        const ret = await this.client.put('engine/restart', { query, data , userId ,options });
+        const ret = await this.client.put('engine/restart', { query, data, userName: userId, options });
         if (ret['errors']) {
             console.log(ret['errors']);
             throw new Error(ret['errors']);
@@ -318,9 +319,22 @@ class ClientDefinitions {
         return res as IDefinitionData;
 
     }
-    /** The model's BPMN XML source (the legacy API returns the source, /api2 the parsed definition). */
+    /**
+     * The model's BPMN XML source (the legacy API returns the source, /api2 the parsed definition), with the
+     * runtime key; a server older than this route, which answers without saying why, only has it under /admin/api.
+     */
     async load(name): Promise<string> {
-        const res = await this.client.admin(encodeURI('definitions/load/' + name), 'GET', { name });
+        const url = encodeURI('definitions/load/' + name);
+        var res;
+        try {
+            res = await this.client.get(url, {});
+        }
+        catch (error) {
+            if ((error.status === 404 && !error.body?.errors) || error.isWebPage)
+                res = await this.client.admin(url, 'GET', { name });
+            else
+                throw error;
+        }
         if (res['errors']) {
             console.log(res['errors']);
             throw new Error(res['errors']);

@@ -1,7 +1,4 @@
 node_modules/
 .env
 *.log
-# GUEST_ACCESS: the guests models folders
-guests/
 # the Test tabs' runs: they point at instances of one server (the tests themselves, *.tests.json, are kept)
-**/.runs/

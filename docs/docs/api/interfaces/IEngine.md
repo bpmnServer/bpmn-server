@@ -15,10 +15,16 @@
 - [invoke](IEngine.md#invoke)
 - [assign](IEngine.md#assign)
 - [startRepeatTimerEvent](IEngine.md#startrepeattimerevent)
+- [deleteInstances](IEngine.md#deleteinstances)
+- [tagInstance](IEngine.md#taginstance)
 - [startEvent](IEngine.md#startevent)
 - [throwMessage](IEngine.md#throwmessage)
 - [throwSignal](IEngine.md#throwsignal)
+- [retry](IEngine.md#retry)
 - [restart](IEngine.md#restart)
+- [cancel](IEngine.md#cancel)
+- [upgrade](IEngine.md#upgrade)
+- [upgradeRunning](IEngine.md#upgraderunning)
 
 ## Methods
 
@@ -44,7 +50,7 @@ loads a definitions  and start execution
 
 #### Defined in
 
-[interfaces/server.ts:40](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L40)
+[packages/bpmn-server/src/interfaces/server.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L54)
 
 ___
 
@@ -68,7 +74,7 @@ this will also resume execution
 
 #### Defined in
 
-[interfaces/server.ts:58](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L58)
+[packages/bpmn-server/src/interfaces/server.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L72)
 
 ___
 
@@ -103,7 +109,7 @@ instance,task	{instanceId: instanceId, elementId: value }
 
 #### Defined in
 
-[interfaces/server.ts:75](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L75)
+[packages/bpmn-server/src/interfaces/server.ts:89](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L89)
 
 ___
 
@@ -127,7 +133,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:77](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L77)
+[packages/bpmn-server/src/interfaces/server.ts:91](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L91)
 
 ___
 
@@ -150,7 +156,52 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:80](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L80)
+[packages/bpmn-server/src/interfaces/server.ts:94](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L94)
+
+___
+
+### deleteInstances
+
+▸ **deleteInstances**(`query`): `Promise`\<\{ `deletedCount`: `number`  }\>
+
+Removes the instances a query matches, each under its lock and with its timers.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+
+#### Returns
+
+`Promise`\<\{ `deletedCount`: `number`  }\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:97](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L97)
+
+___
+
+### tagInstance
+
+▸ **tagInstance**(`instanceId`, `tag`): `Promise`\<`void`\>
+
+Marks a saved instance with a tag of the caller's.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `string` |
+| `tag` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:99](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L99)
 
 ___
 
@@ -183,7 +234,7 @@ Invoking a start event (of a secondary process) against an existing instance
 
 #### Defined in
 
-[interfaces/server.ts:98](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L98)
+[packages/bpmn-server/src/interfaces/server.ts:117](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L117)
 
 ___
 
@@ -212,13 +263,13 @@ that can be againt a running instance or it may start a new instance
 
 #### Defined in
 
-[interfaces/server.ts:112](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L112)
+[packages/bpmn-server/src/interfaces/server.ts:131](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L131)
 
 ___
 
 ### throwSignal
 
-▸ **throwSignal**(`signalId`, `data`, `matchingQuery`): `any`
+▸ **throwSignal**(`signalId`, `data`, `matchingQuery`, `from?`): `any`
 
 #### Parameters
 
@@ -227,6 +278,7 @@ ___
 | `signalId` | `any` |
 | `data` | `Object` |
 | `matchingQuery` | `Object` |
+| `from?` | [`IItem`](IItem.md) |
 
 #### Returns
 
@@ -234,7 +286,30 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:113](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L113)
+[packages/bpmn-server/src/interfaces/server.ts:132](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L132)
+
+___
+
+### retry
+
+▸ **retry**(`itemQuery`, `userName?`): `Promise`\<[`IExecution`](IExecution.md)\>
+
+Runs a failed item's work again (an item whose status is `error`), and the instance on from it.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `itemQuery` | `any` |
+| `userName?` | `string` |
+
+#### Returns
+
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:134](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L134)
 
 ___
 
@@ -257,4 +332,73 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:114](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L114)
+[packages/bpmn-server/src/interfaces/server.ts:135](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L135)
+
+___
+
+### cancel
+
+▸ **cancel**(`instanceQuery`, `userName?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+
+Cancels a running instance: terminated and saved, never deleted.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceQuery` | `any` |
+| `userName?` | `string` |
+| `options?` | `Object` |
+
+#### Returns
+
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:137](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L137)
+
+___
+
+### upgrade
+
+▸ **upgrade**(`model`, `afterNodeIds`): `Promise`\<`string`[] \| \{ `errors`: `any`  }\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `model` | `string` |
+| `afterNodeIds` | `string`[] |
+
+#### Returns
+
+`Promise`\<`string`[] \| \{ `errors`: `any`  }\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:139](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L139)
+
+___
+
+### upgradeRunning
+
+▸ **upgradeRunning**(`models?`, `options?`): `Promise`\<[`IUpgradeReport`](IUpgradeReport.md)[]\>
+
+Moves the instances that have not ended onto their model's current saved source (see Engine.upgradeRunning).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `models?` | `string`[] |
+| `options?` | `Object` |
+| `options.dryRun?` | `boolean` |
+
+#### Returns
+
+`Promise`\<[`IUpgradeReport`](IUpgradeReport.md)[]\>
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:141](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L141)

@@ -46,8 +46,7 @@ export const CAMUNDA_GROUP_SET = {
     CamundaPlatform__Script: bo => any(bo, ['camunda:resource', 'camunda:resultVariable']),
     CamundaPlatform__Form: bo => any(bo, ['camunda:formRef', 'camunda:formRefBinding', 'camunda:formRefVersion']),
     CamundaPlatform__CallActivity: bo => any(bo, ['camunda:calledElementBinding', 'camunda:calledElementVersion',
-        'camunda:calledElementVersionTag', 'camunda:calledElementTenantId', 'camunda:caseRef']),
-    CamundaPlatform__Condition: bo => (bo.get('eventDefinitions') || []).some(d => is(d, 'bpmn:ConditionalEventDefinition'))
+        'camunda:calledElementVersionTag', 'camunda:calledElementTenantId', 'camunda:caseRef'])
 };
 
 export function hasCamundaOnly(element, groupId) {

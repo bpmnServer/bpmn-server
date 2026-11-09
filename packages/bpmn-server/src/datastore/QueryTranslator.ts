@@ -165,8 +165,9 @@ class QueryTranslator {
 
 	private parseComplexCondition(condition,val) 
 	{
-		let ret=false;
-		Object.keys(condition).forEach(cond=>{
+		// every comparison must hold
+		return Object.keys(condition).every(cond=>{
+			let ret=false;
 			let term=condition[cond];
 			switch(cond) {
 				case '$gte':
@@ -200,10 +201,8 @@ class QueryTranslator {
 					ret=false;
 					break;
 				}
-			if (ret==false)
-				return false;
+			return ret;
 		});
-		return ret;
 	}
 
 

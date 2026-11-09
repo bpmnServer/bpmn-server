@@ -10,6 +10,7 @@ This guide follows the **3.5 monorepo** and its [sample application](https://git
 | --- | --- | --- |
 | Use the starter | You want a complete web application with tasks, modeling, and admin | `npx bpmn-server init my-app` |
 | Embed the engine | You already have a Node.js server/UI and want to control its lifecycle | `BPMNServer.create(...)`, `BPMNAPI` |
+| Run the engine apart | Production: the host serves pages and APIs, and the engine holds your code | [Ways to run it](setup.md#ways-to-run-it) |
 | Call a remote host | Another application already runs BPMN Server and exposes its API | `bpmn-client` |
 | Integrate an external HTTP service | A BPMN task must call a REST service described by OpenAPI | [Connectors](connectors.md) |
 
@@ -152,7 +153,7 @@ To load external data into workflow variables, implement `loadDataObject(name, i
 
 ## Persistence and deployment
 
-BPMN Server supports MongoDB by default, `SqliteDocumentStore` for small persistent installs on Node.js 22.5+, and `MemoryDocumentStore` for tests and demos. Custom adapters use the `documentStore` configuration port. Locking, timer scheduling, and shutdown are described in [Setup](setup.md#storage).
+BPMN Server supports MongoDB by default, `SqliteDocumentStore` for small persistent installs on Node.js 22.5+, and `MemoryDocumentStore` for tests and demos. Custom adapters use the `documentStore` configuration port. Locking, timer scheduling, and shutdown are described in [Setup](persistence.md).
 
 Before exposing an instance to real users, configure the host's authentication, task authorization, connector keys, persistence, backups, and process recovery. See [Security](security.md) and [Advanced topics](advanced.md).
 

@@ -99,11 +99,11 @@ test('an issue selects its element and opens its field, marked in the panel', as
 });
 
 test('condition and timer issues open their fields', async () => {
-    const SAMPLES = path.join(FIXTURES, '..', '..', 'processes');
+    const SAMPLES = FIXTURES;
     const cases = [
-        [path.join(FIXTURES, '..', 'fixtures', 'buy-used-car.bpmn'), s => s.replace('$(item.data.needsCleaning=="Yes")', '$(item.data.needsCleaning=="Yes"'),
+        [path.join(FIXTURES, 'buy-used-car.bpmn'), s => s.replace('$(item.data.needsCleaning=="Yes")', '$(item.data.needsCleaning=="Yes"'),
             /condition expression/, 'flow_gw1_clean', 'bio-properties-panel-conditionExpression'],
-        ['Invoice.bpmn.bpmn', s => s.replace('<bpmn2:timeDuration>PT2S<', '<bpmn2:timeDuration>soon<'),
+        ['Invoice.bpmn', s => s.replace('<bpmn2:timeDuration>PT2S<', '<bpmn2:timeDuration>soon<'),
             /Timer duration 'soon'/, 'event_timer', 'bio-properties-panel-timerEventDefinitionValue']
     ];
     for (const [file, change, message, element, field] of cases) {

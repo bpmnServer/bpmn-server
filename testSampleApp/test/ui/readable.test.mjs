@@ -27,7 +27,7 @@ const STRUCTURE = [
 const DRAWN = /(^|\.)(isSequential|triggeredByEvent|isInterrupting|cancelActivity|isForCompensation)$/;
 
 function modelFiles() {
-    const tracked = execFileSync('git', ['ls-files', 'processes', 'test/processes'], { cwd: ROOT, encoding: 'utf8' })
+    const tracked = execFileSync('git', ['ls-files', 'processes'], { cwd: ROOT, encoding: 'utf8' })
         .split('\n').filter(f => /\.bpmn$/.test(f)).map(f => path.join(ROOT, f))
         .filter(f => fs.existsSync(f));     // a tracked file removed in the working tree is not a model any more
     const extra = process.env.READABLE_MODELS_EXTRA;

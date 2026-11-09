@@ -14,6 +14,7 @@
  */
 import * as bpmnServerPackage from 'bpmn-server';
 import { loadTestSet, saveTestSet, decisionTestKey, compare, valueAt } from './scenarios.js';
+import { sourceFeature } from './featureFiles.js';
 
 export interface DecisionCheck {
     kind: 'output' | 'matches';
@@ -73,10 +74,10 @@ export function checkDecisionTests(tests): string[] {
 }
 
 /** How many rules a result says matched: none (null), one (an object), or the list's. */
-const matched = result => result == null ? 0 : Array.isArray(result) ? result.length : 1;
+export const matched = result => result == null ? 0 : Array.isArray(result) ? result.length : 1;
 
 /** An output's value: at the path in the result; in a list, the given rule's (0.name), else the first that has it. */
-function outputAt(result, path: string) {
+export function outputAt(result, path: string) {
     if (Array.isArray(result) && !/^\d+(\.|$)/.test(path ?? '')) {
         const found = result.map(r => valueAt(r, path)).find(v => v !== undefined);
         return found;
@@ -100,13 +101,30 @@ export function evaluateDecisionCheck(check: DecisionCheck, result) {
     return { what, ok: compare(actual, check.op, check.value), actual };
 }
 
+/** Runs the tests from outside the engine, on its file of that name: all in there. Without an engine each failed, saying so. */
+export async function runDecisionTestsInEngine(server, file: string, tests: DecisionTest[]): Promise<DecisionTestResult[]> {
+    try {
+        return await server.engine.call('runDecisionTests', file, tests);
+    }
+    catch (err) {
+        return tests.map(test => ({ name: test.name, decision: test.decision, checks: [], log: [], ok: false, error: String(err?.message ?? err) }));
+    }
+}
+
 /** Runs each test on the file `filePath` (as saved): one result per test, in order. */
-export async function runDecisionTests(filePath: string, tests: DecisionTest[]): Promise<DecisionTestResult[]> {
+export async function runDecisionTests(filePath: string, tests: DecisionTest[], server?): Promise<DecisionTestResult[]> {
     const DMNEngine = (bpmnServerPackage as any).DMNEngine;
     const results: DecisionTestResult[] = [];
     for (const test of tests) {
         const log: string[] = [];
         try {
+            if ((test as any).source !== undefined) {
+                const { runFeature } = await import('./gherkin.js');
+                const [{ elements }] = await runFeature(server, sourceFeature(test), test.name);
+                const failed = elements.flatMap(element => element.steps).find(step => step.result.status === 'failed');
+                results.push({ name: test.name, checks: [], log, ok: !failed, ...(failed ? { error: `${failed.name}: ${failed.result.error_message}` } : {}) });
+                continue;
+            }
             // the engine's lines on what each decision matched (not that the file was loaded)
             const keep = line => { if (!/ loaded from /.test(line)) log.push(String(line).replace(/^\.+/, '')); };
             const engine = await new DMNEngine({ log: keep }).load(filePath, test.decision);

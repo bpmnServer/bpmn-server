@@ -74,3 +74,10 @@
 .instance-page .rationale-table .rationale-decision { font-weight: 600; color: #1f6f43; }
 .instance-page .rationale-table .rationale-decision.rationale-not { color: #6b7280; }
 .instance-page .rationale-table td > .rationale-decision:not(:first-child) { margin-top: 4px; }
+/* the Rationale by step: a step's row, then what it caused */
+.instance-page .rationale-table tr.rationale-step td { background: #f1f5f9; border-top: 2px solid #cbd5e1; padding-top: 8px; }
+.instance-page .rationale-step-data { margin-left: 8px; font-size: 12px; }
+.instance-page .rationale-step-count { margin-left: 12px; color: #4b5563; font-size: 12px; }
+.instance-page .rationale-table tr.rationale-step { cursor: pointer; }
+.instance-page .rationale-caret { width: 12px; margin-right: 4px; }
+.instance-page .rationale-table tbody.rationale-group:not(.rationale-open) tr:not(.rationale-step) { display: none; }

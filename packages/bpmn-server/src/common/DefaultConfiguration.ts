@@ -28,6 +28,8 @@ export class Configuration implements IConfiguration {
 	};
 	logger: ILogger;
 	apiKey: string;
+	moddleOptions?: any;
+	servicesFile?: string;
 	sendGridAPIKey: string;
 	definitions(server)/* :IModelsDatastore */{
 		return new ModelsDatastore(server); 
@@ -52,22 +54,27 @@ export class Configuration implements IConfiguration {
 	locks?: { retryDelay?: number; maxTries?: number; staleAfter?: number; };
 	shutdownTimeout?: number;
 	demo?: boolean;
+	runTimers?: boolean;
+	runServiceTasks?: boolean;
 	connectors?: IConnectorsConfiguration;
 	modelHistory?: boolean;
 
 	/** Each factory given replaces the default one; one left out keeps it. */
 	constructor({
-		definitionsPath = undefined, templatesPath = undefined, timers = { forceTimersDelay: 1000, precision: 3000 }, database = undefined, apiKey = undefined,
+		definitionsPath = undefined, templatesPath = undefined, timers = { forceTimersDelay: 1000, precision: 3000 }, database = undefined, apiKey = undefined, moddleOptions = undefined, servicesFile = undefined,
 		logger = undefined,
 		definitions = undefined,
 		appDelegate = undefined,
 		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined,
+		runTimers = undefined, runServiceTasks = undefined,
 		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined }: any) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
 		this.database = database;
 		this.apiKey = apiKey;
+		this.moddleOptions = moddleOptions;
+		this.servicesFile = servicesFile;
 		this.logger = logger;
 		if (definitions) this.definitions = definitions;
 		if (appDelegate) this.appDelegate = appDelegate;
@@ -80,6 +87,8 @@ export class Configuration implements IConfiguration {
 		this.locks = locks;
 		this.shutdownTimeout = shutdownTimeout;
 		this.demo = demo;
+		this.runTimers = runTimers ?? !demo;
+		this.runServiceTasks = runServiceTasks ?? !demo;
 		this.connectors = connectors;
 		this.modelHistory = modelHistory;
 	

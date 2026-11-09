@@ -81,6 +81,7 @@ class Item implements IItem {
             candidateUsers:this.candidateUsers,
             dueDate:this.dueDate,
             followUpDate:this.followUpDate,
+            timerCount: this.timerCount, timerRepeat: this['timerRepeat'],
             priority:this.priority
         };
 
@@ -95,6 +96,9 @@ class Item implements IItem {
         item.startedAt = dataObject.startedAt;
         item.endedAt = dataObject.endedAt;
         item.timeDue = dataObject.timeDue;
+        // how far a repeating timer has got, for the server that recovers it
+        item.timerCount = dataObject.timerCount;
+        item['timerRepeat'] = dataObject.timerRepeat;
         item.statusDetails = dataObject.statusDetails;
         item.messageId= dataObject.messageId;
         item.signalId= dataObject.signalId;

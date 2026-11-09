@@ -17,3 +17,15 @@ export function modelNameGuard(req, res, next): void {
     }
     next();
 }
+
+/**
+ * Check a model's name in a route's own path (/edit/:process): modelNameGuard, on the router, runs before the route
+ * is matched and does not see it. On any router with such a route, so that a new one is covered too.
+ */
+export function guardModelParams(router): void {
+    for (const param of ['name', 'process', 'processName', 'file'])
+        router.param(param, (req, res, next, value) => {
+            if (isSafeModelName(value)) next();
+            else res.status(400).send('Invalid model name');
+        });
+}

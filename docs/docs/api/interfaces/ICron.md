@@ -13,18 +13,19 @@
 - [checkTimers](ICron.md#checktimers)
 - [start](ICron.md#start)
 - [startTimers](ICron.md#starttimers)
+- [stop](ICron.md#stop)
 
 ## Methods
 
 ### checkTimers
 
-▸ **checkTimers**(`duration`): `any`
+▸ **checkTimers**(`duration?`): `any`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `duration` | `any` |
+| `duration?` | `any` |
 
 #### Returns
 
@@ -32,7 +33,7 @@
 
 #### Defined in
 
-[interfaces/server.ts:121](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L121)
+[packages/bpmn-server/src/interfaces/server.ts:164](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L164)
 
 ___
 
@@ -46,7 +47,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:122](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L122)
+[packages/bpmn-server/src/interfaces/server.ts:165](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L165)
 
 ___
 
@@ -60,4 +61,18 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:123](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L123)
+[packages/bpmn-server/src/interfaces/server.ts:166](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L166)
+
+___
+
+### stop
+
+▸ **stop**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:167](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L167)

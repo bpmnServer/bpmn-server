@@ -11,6 +11,10 @@ import type { IBPMNServer, IServerComponent } from './server.js';
 interface IScriptHandler {
     /** label: what the expression is (a condition, an assignment): its name for debuggers and errors */
     evaluateExpression(scope: IItem|IToken, expression, label?: string);
+    /** a sequence flow's condition, in its language attribute's language (FEEL, else JavaScript); without it, evaluateExpression */
+    evaluateCondition?(scope: IItem|IToken, expression, language?: string, label?: string);
+    /** variables scripts see besides their own */
+    context?: Record<string, (scope: { data: any }) => any>;
     /** label: which script it is (an event's, a script task's): its name for debuggers and errors */
     executeScript(scope: IItem|IExecution, script, label?: string);
 
@@ -77,6 +81,20 @@ interface IToken {
     log(...msg: any): void;
     info(...msg: any): void;
     error(msg: any): void;
+}
+
+/** What an engine call answers: a JSON copy of where the instance stands, not the running execution. */
+interface IExecutionResult {
+    id: any;
+    name: any;
+    status: any;
+    userName?: any;
+    operation?: string;
+    errors?: any;
+    action?: any;
+    instance: IInstanceData;
+    /** as a running execution's own `.execution` read: its id, name and status */
+    execution: { id: any; name: any; status: any };
 }
 
 interface IExecution extends IServerComponent {
@@ -162,4 +180,4 @@ interface IItem extends IItemData {
 }
 
 
-export { IItem, IToken, IExecution , IScriptHandler}
+export { IItem, IToken, IExecution, IExecutionResult , IScriptHandler}

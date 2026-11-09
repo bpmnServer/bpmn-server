@@ -9,7 +9,7 @@ import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { makeServer, quiet } from './helpers.mjs';
-import { ConnectorError, parseDocument, listOperations, verifyModel } from '../dist/index.js';
+import { ConnectorError, parseDocument, listOperations, resolveRefs, verifyModel } from '../dist/index.js';
 
 const FIXTURES = fileURLToPath(new URL('./fixtures/connectors/', import.meta.url));
 const SHOP = fs.readFileSync(path.join(FIXTURES, 'shop.openapi.yaml'), 'utf8');
@@ -210,7 +210,7 @@ test('without CONNECTORS_KEY no key can be set; in demo mode connectors do not r
   const demo = await server.engine.start('customer-lookup', { customerId: 'C-1' });
   assert.equal(demo.instance.status, 'end');
   assert.equal(demo.instance.data.tier, undefined, 'not called');
-  assert.match(JSON.stringify(demo.instance.decisions ?? demo.instance.logs), /in this demo, connectors do not run/);
+  assert.match(JSON.stringify(demo.instance.decisions ?? demo.instance.logs), /connectors do not run on this server/);
 
   const key = process.env.CONNECTORS_KEY;
   delete process.env.CONNECTORS_KEY;
@@ -254,4 +254,207 @@ test('the sample: GitHub\'s repository bpmnServer/bpmn-server, its description a
   const missing = await server.engine.start('github-repo', { owner: 'bpmnServer', repo: 'no-such-repository-here' });
   assert.ok(missing.instance.items.some(i => i.elementId === 'NotFound'), 'a 404 ends at Not found');
   await server.shutdown();
+});
+
+// ---- how a key is sent, and what comes back
+
+const keyed = {
+  openapi: '3.0.3', info: { title: 'Keyed' },
+  components: { securitySchemes: {
+    header: { type: 'apiKey', in: 'header', name: 'X-Key' },
+    query: { type: 'apiKey', in: 'query', name: 'key' },
+    cookie: { type: 'apiKey', in: 'cookie', name: 'key' },
+    basic: { type: 'http', scheme: 'basic' },
+    oauth: { type: 'oauth2', flows: {} },
+  } },
+  paths: {
+    '/show': { get: { operationId: 'show', parameters: [
+      { name: 'tag', in: 'query', schema: { type: 'array' } },
+      { name: 'filter', in: 'query', schema: { type: 'object' } },
+      { name: 'session', in: 'cookie', schema: { type: 'string' } },
+    ], responses: { 200: { description: 'ok' } } } },
+    '/empty': { get: { operationId: 'empty', responses: { 204: { description: 'nothing' } } } },
+    '/text': { get: { operationId: 'text', responses: { 200: { description: 'text' } } } },
+    '/broken': { get: { operationId: 'broken', responses: { 200: { description: 'not quite JSON' } } } },
+    '/huge': { get: { operationId: 'huge', responses: { 200: { description: 'more than it should' } } } },
+    '/chunked': { get: { operationId: 'chunked', responses: { 200: { description: 'more than it said' } } } },
+    '/submit': { post: { operationId: 'submit', requestBody: { content: { 'application/json': { schema: { type: 'object', properties: { a: { type: 'string' } } } } } }, responses: { 200: { description: 'ok' } } } },
+  },
+};
+const echo = http.createServer((req, res) => {
+  const url = new URL(req.url, 'http://x');
+  if (url.pathname === '/empty') { res.writeHead(204); return res.end(); }
+  if (url.pathname === '/text') { res.writeHead(200, { 'Content-Type': 'text/plain' }); return res.end('plain words'); }
+  if (url.pathname === '/broken') { res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end('{ not json'); }
+  if (url.pathname === '/huge') { res.writeHead(200, { 'Content-Length': 200 }); return res.end('x'.repeat(200)); }
+  if (url.pathname === '/chunked') { res.writeHead(200); return res.end('x'.repeat(200)); }
+  if (url.pathname === '/notfound') { res.writeHead(500); return res.end(); }
+  let body = '';
+  req.on('data', chunk => body += chunk);
+  req.on('end', () => {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ query: Object.fromEntries(url.searchParams), all: url.searchParams.getAll('tag'), key: req.headers['x-key'], cookie: req.headers.cookie, authorization: req.headers.authorization, body }));
+  });
+});
+let echoBase;
+test.before(async () => {
+  await new Promise(resolve => echo.listen(0, '127.0.0.1', resolve));
+  echoBase = `http://127.0.0.1:${echo.address().port}`;
+});
+test.after(() => echo.close());
+
+async function keyedServer(document = keyed, extra = {}) {
+  const made = await makeServer({ extra: { connectors: { retryDelay: 1, ...extra } } });
+  await made.server.connectors.install();
+  await made.server.connectors.add({ id: 'keyed', document, baseUrl: echoBase });
+  return made;
+}
+
+test('a key goes where its scheme says: a header, the query (hidden in the log), a cookie, basic', async () => {
+  const { server } = await keyedServer();
+  const { connectors } = server;
+
+  assert.equal((await connectors.setKey('keyed', 'k-header', 'header')).auth.name, 'X-Key');
+  assert.equal((await connectors.call('keyed/show')).output.key, 'k-header');
+
+  await connectors.setKey('keyed', 'k-query', 'query');
+  const queried = await connectors.call('keyed/show');
+  assert.equal(queried.output.query.key, 'k-query');
+  assert.ok(!queried.url.includes('k-query'), 'the key is not in the URL logged');
+  assert.match(queried.url, /key=\*\*\*/);
+
+  await connectors.setKey('keyed', 'k-cookie', 'cookie');
+  const cookied = await connectors.call('keyed/show', { session: 'a b' });
+  assert.equal(cookied.output.cookie, 'session=a%20b; key=k-cookie', 'a cookie parameter and the key');
+
+  await connectors.setKey('keyed', 'sam:secret', 'basic');
+  assert.equal((await connectors.call('keyed/show')).output.authorization, `Basic ${Buffer.from('sam:secret').toString('base64')}`);
+
+  await connectors.setKey('keyed', 'given', { type: 'apiKey', name: 'X-Key' });
+  assert.equal((await connectors.get('keyed')).auth.in, 'header', 'in a header unless told');
+  assert.equal((await connectors.call('keyed/show')).output.key, 'given');
+
+  assert.equal((await connectors.clearKey('keyed')).auth, undefined);
+  assert.equal((await connectors.call('keyed/show')).output.key, undefined, 'no key: no authorization');
+  await server.shutdown();
+});
+
+test('a key that can not be sent is refused, saying why', async () => {
+  const { server } = await keyedServer();
+  const { connectors } = server;
+  await assert.rejects(connectors.setKey('nope', 'k'), /No connector 'nope'/);
+  await assert.rejects(connectors.setKey('keyed', ''), /The key is empty/);
+  await assert.rejects(connectors.setKey('keyed', 'k', { type: 'magic' }), /Unknown authorization type 'magic'/);
+  await assert.rejects(connectors.setKey('keyed', 'k', { type: 'apiKey' }), /An apiKey needs the name/);
+  await assert.rejects(connectors.setKey('keyed', 'k', { type: 'apiKey', name: 'x', in: 'body' }), /An apiKey needs the name/);
+  await assert.rejects(connectors.setKey('keyed', 'k', 'nope'), /no security scheme 'nope'/);
+  await assert.rejects(connectors.setKey('keyed', 'k'), /Name the security scheme: header, query, cookie, basic/);
+  await assert.rejects(connectors.setKey('keyed', 'k', 'oauth'), /The security scheme 'oauth' \(oauth2\) is not supported yet/);
+  await assert.rejects(connectors.setKey('keyed', 'no-colon', { type: 'basic' }), /A basic key is user:password/);
+  await assert.rejects(connectors.clearKey('nope'), /No connector 'nope'/);
+  await server.shutdown();
+
+  const { components, ...noSchemes } = keyed;
+  const plain = await keyedServer(noSchemes);
+  await assert.rejects(plain.server.connectors.setKey('keyed', 'k'), /no security scheme this server can send/);
+  assert.equal((await plain.server.connectors.setKey('keyed', 'k', { type: 'bearer' })).auth.type, 'bearer');
+  await plain.server.shutdown();
+});
+
+test('answers: nothing, text, what only looks like JSON, and what is too big', async () => {
+  const { server } = await keyedServer(keyed, { maxResponseBytes: 100 });
+  const { connectors } = server;
+  assert.equal((await connectors.call('keyed/empty')).output, undefined);
+  assert.equal((await connectors.call('keyed/text')).output, 'plain words');
+  assert.equal((await connectors.call('keyed/broken')).output, '{ not json');
+  await assert.rejects(connectors.call('keyed/huge'), /keyed\/huge: the answer is 200 bytes, more than 100/);
+  await assert.rejects(connectors.call('keyed/chunked'), /keyed\/chunked: the answer is 200 bytes, more than 100/);
+  await server.shutdown();
+});
+
+test('requests: lists and objects in the query, a body as text or as fields', async () => {
+  const { server } = await keyedServer();
+  const { connectors } = server;
+  const { output } = await connectors.call('keyed/show', { tag: ['a', 'b'], filter: { x: 1 } });
+  assert.deepEqual(output.all, ['a', 'b']);
+  assert.equal(output.query.filter, '{"x":1}');
+  assert.equal((await connectors.call('keyed/submit', { body: 'as it is' })).output.body, 'as it is');
+  assert.equal((await connectors.call('keyed/submit', { 'body.a': 'field' })).output.body, '{"a":"field"}');
+  assert.equal((await connectors.call('keyed/submit', { body: { a: 'whole' }, 'body.b': 'more' })).output.body, '{"a":"whole","b":"more"}');
+  await server.shutdown();
+});
+
+test('when the server can not be reached: retried when safe, then the reason; a call given up is not retried', async () => {
+  const closed = http.createServer();
+  await new Promise(resolve => closed.listen(0, '127.0.0.1', resolve));
+  const gone = `http://127.0.0.1:${closed.address().port}`;
+  await new Promise(resolve => closed.close(resolve));
+
+  const { server } = await makeServer({ extra: { connectors: { retryDelay: 1, retries: 1 } } });
+  const { connectors } = server;
+  await connectors.install();
+  await connectors.add({ id: 'gone', document: keyed, baseUrl: gone });
+  await assert.rejects(connectors.call('gone/show'), /gone\/show: /);
+
+  const given = new AbortController();
+  given.abort();
+  await assert.rejects(connectors.call('gone/show', {}, { signal: given.signal }), /gone\/show: /);
+
+  const tested = await connectors.test('gone', 'show');
+  assert.equal(tested.ok, false, 'a test that fails is kept, not thrown');
+  assert.equal((await connectors.get('gone')).test.ok, false);
+  await assert.rejects(connectors.test('gone', 'nope'), /No operation 'nope'/);
+
+  await connectors.add({ id: 'unnamed', document: { ...keyed, paths: { '/show': { get: { operationId: 'show', parameters: [{ name: 'q', in: 'query', required: true }] } } } }, baseUrl: gone });
+  await assert.rejects(connectors.test('unnamed'), /Name an operation to test with/);
+  await server.shutdown();
+});
+
+test('what can not be added: no document, one that can not be fetched, no operations, no server', async () => {
+  const { server } = await keyedServer();
+  const { connectors } = server;
+  await assert.rejects(connectors.add({ id: 'a' }), /Give the OpenAPI document, or its URL/);
+  await assert.rejects(connectors.add({ id: 'a', source: 'http://127.0.0.1:1/doc' }), /could not be fetched from/);
+  await assert.rejects(connectors.add({ id: 'a', source: `${echoBase}/notfound` }), /could not be fetched from .*HTTP 500/);
+  await assert.rejects(connectors.add({ id: 'a', document: { openapi: '3.0.0', paths: { '/x': { get: {} } } }, baseUrl: echoBase }), /no operation with an operationId/);
+  await assert.rejects(connectors.add({ id: 'a', document: keyed }), /Give the base URL/);
+  await assert.rejects(connectors.add({ id: 'a', document: keyed, baseUrl: 'http://[bad' }), /is not a URL/);
+  await assert.rejects(connectors.add({}), /can not be a connector id/);
+  assert.equal((await connectors.add({ id: 'named', document: { ...keyed, info: {} }, baseUrl: echoBase })).name, 'named', 'no title: named by its id');
+  assert.equal((await connectors.add({ id: 'off', document: keyed, baseUrl: echoBase, operations: { show: false } })).operations.show, false);
+  await assert.rejects(connectors.refresh('nope'), /No connector 'nope'/);
+  await server.shutdown();
+});
+
+test('OpenAPI documents: what is refused, references with siblings, in a loop and along a chain', () => {
+  assert.throws(() => parseDocument('7'), /is not an object/);
+  assert.throws(() => parseDocument({ openapi: '2.0' }), /Not an OpenAPI 3\.0 or 3\.1 document/);
+  assert.throws(() => parseDocument({ info: {} }), /Not an OpenAPI 3\.0 or 3\.1 document \(openapi: undefined\)/);
+  assert.throws(() => parseDocument({ openapi: '3.0.0' }), /has no paths/);
+
+  const document = {
+    openapi: '3.1.0',
+    components: { schemas: {
+      node: { type: 'object', properties: { next: { $ref: '#/components/schemas/node' } } },
+      alias: { $ref: '#/components/schemas/base' },
+      base: { type: 'string' },
+      loopA: { $ref: '#/components/schemas/loopB' },
+      loopB: { $ref: '#/components/schemas/loopA' },
+    } },
+    paths: { '/x': { description: 'not an operation', parameters: [null], get: { operationId: 'x',
+      requestBody: { content: { 'text/plain+json': { schema: { $ref: '#/components/schemas/base', description: 'with a sibling' } } } },
+      responses: { 200: { description: 'ok', content: { 'text/plain': {} } } } } }, '/skip': 'nothing here' },
+  };
+  const resolved = resolveRefs(document);
+  assert.equal(resolved.components.schemas.node.properties.next.properties.next.type, 'object', 'a schema that contains itself');
+  assert.equal(resolved.components.schemas.alias.type, 'string', 'along a chain');
+  assert.equal(resolved.components.schemas.loopA, undefined, 'a chain that loops ends as undefined');
+  assert.throws(() => resolveRefs({ a: { $ref: '#/nothing/here' } }), /refers to #\/nothing\/here, which it does not have/);
+  assert.throws(() => resolveRefs({ a: { $ref: 'other.yaml#/x' } }), /refers to another file/);
+
+  const { operations } = listOperations(document);
+  const x = operations.get('x');
+  assert.equal(x.body.contentType, 'text/plain+json', 'any type naming json');
+  assert.equal(x.body.schema.description, 'with a sibling');
+  assert.equal(x.body.schema.type, 'string');
 });

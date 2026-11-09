@@ -48,18 +48,20 @@ section.models-workspace(aria-labelledby="models-heading")
                 a#renameLink(href="#") Rename
                 a(href="/model/export") Export
                 a#deleteLink.details-danger(href="#") Delete model
-      .models-preview-shell
-        .models-zoom-controls(role="group", aria-label="Diagram zoom")
-          button#diagram-zoom-out.btn.btn-default(type="button", aria-label="Zoom out", title="Zoom out")
-            i.fa.fa-search-minus(aria-hidden="true")
-          button#diagram-zoom-reset.btn.btn-default(type="button", aria-label="Reset zoom", title="Reset zoom") 100%
-          button#diagram-zoom-in.btn.btn-default(type="button", aria-label="Zoom in", title="Zoom in")
-            i.fa.fa-search-plus(aria-hidden="true")
-        .models-preview
-          a#diagram-link(href="#", target="_blank", rel="noopener", aria-label="Open full-size diagram in a new tab")
-            img#svg(alt="Selected BPMN process diagram")
-          p Preview unavailable for this model.
-      p.models-preview-caption Use the zoom buttons to inspect the diagram here, or select it to open at full size.
+      //- the diagram is a designer's (/model/getSVg): others start the process, with no preview to fail
+      if canDesign
+        .models-preview-shell
+          .models-zoom-controls(role="group", aria-label="Diagram zoom")
+            button#diagram-zoom-out.btn.btn-default(type="button", aria-label="Zoom out", title="Zoom out")
+              i.fa.fa-search-minus(aria-hidden="true")
+            button#diagram-zoom-reset.btn.btn-default(type="button", aria-label="Reset zoom", title="Reset zoom") 100%
+            button#diagram-zoom-in.btn.btn-default(type="button", aria-label="Zoom in", title="Zoom in")
+              i.fa.fa-search-plus(aria-hidden="true")
+          .models-preview
+            a#diagram-link(href="#", target="_blank", rel="noopener", aria-label="Open full-size diagram in a new tab")
+              img#svg(alt="Selected BPMN process diagram")
+            p Preview unavailable for this model.
+        p.models-preview-caption Use the zoom buttons to inspect the diagram here, or select it to open at full size.
 
 script.
   (function () {
@@ -110,6 +112,7 @@ script.
           link.setAttribute('aria-disabled', name ? 'false' : 'true');
         }
       });
+      if (!preview) return;
       if (name) {
         const url = '/model/getSVg/' + encodeURIComponent(name);
         preview.src = url;
@@ -135,13 +138,15 @@ script.
       updateSelection();
     });
     select.addEventListener('change', updateSelection);
-    preview.addEventListener('error', () => {
-      previewBox.classList.add('preview-unavailable');
-      zoomControls.hidden = true;
-    });
-    zoomOut.addEventListener('click', () => setZoom(zoomIndex - 1));
-    zoomReset.addEventListener('click', () => setZoom(2));
-    zoomIn.addEventListener('click', () => setZoom(zoomIndex + 1));
+    if (preview) {
+      preview.addEventListener('error', () => {
+        previewBox.classList.add('preview-unavailable');
+        zoomControls.hidden = true;
+      });
+      zoomOut.addEventListener('click', () => setZoom(zoomIndex - 1));
+      zoomReset.addEventListener('click', () => setZoom(2));
+      zoomIn.addEventListener('click', () => setZoom(zoomIndex + 1));
+    }
     if (menuButton) {
       menuButton.addEventListener('click', () => {
         menuItems.hidden = !menuItems.hidden;

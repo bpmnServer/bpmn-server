@@ -22,6 +22,7 @@ html(lang="en")
         span#js-save-status.modeler-status(role="status")
         nav.modeler-actions
           a(href=`/execute/${processName}` target="execute") Run
+          button#js-download(type="button" title="Download this model as a .bpmn file") Download
           button#js-save-run(type="button") Save &amp; Run
           button#js-save.primary(type="button" title="Ctrl+S") Save
         +editorUser

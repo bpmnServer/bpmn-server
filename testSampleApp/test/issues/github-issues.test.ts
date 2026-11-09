@@ -1,7 +1,7 @@
 // @features: ad-hoc-sub-process, errors-escalations, multi-instance
-// GitHub issues of bpmnServer/bpmn-server, each on the model it was reported with (test/scenarios/processes),
+// GitHub issues of bpmnServer/bpmn-server, each on the model it was reported with (processes),
 // and engine problems found going over the old bpmn-web examples. The other issues have scenarios in
-// test/scenarios/feature: Issue124-2.js, Issue186.js, Issue196.js, Issue197A.js, Issue197_cancel_loop.js,
+// processes/*.engine.feature: Issue 196, Issue 233, Issue186, Issue197, test-throw.
 // Issue233.js. Not here: Issue186A.bpmn reads `rootData`, which the engine does not have, and Issue193.bpmn calls
 // the reporter's own appDelegate.collService.
 import { test, before, after } from 'node:test';
@@ -10,11 +10,11 @@ import { testApp, type TestApp } from '../support/testApp.js';
 
 let app: TestApp;      // the issue models
 let ours: TestApp;     // the app's models, processes/
-let local: TestApp;    // test/issues/models: small models for one problem each
+let local: TestApp;    // small models for one problem each, in processes/ with the rest
 before(async () => {
-    app = await testApp({ models: 'test/scenarios/processes/', quiet: true });
+    app = await testApp({ models: 'processes/', quiet: true });
     ours = await testApp({ quiet: true });
-    local = await testApp({ models: 'test/issues/models/', quiet: true });
+    local = await testApp({ models: 'processes/', quiet: true });
 });
 after(async () => { await app.stop(); await ours.stop(); await local.stop(); });
 

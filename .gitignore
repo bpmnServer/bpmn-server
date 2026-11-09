@@ -4,3 +4,6 @@ my-new-app*/
 
 # notes and drafts: kept in bpmn-internal/work
 work/
+
+# npm run test:coverage
+/coverage/

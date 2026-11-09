@@ -9,6 +9,18 @@ import { ModelHistory, type IModelVersion } from "./ModelHistory.js";
 import type { IModelsDatastore } from '../interfaces/datastore.js';
 
 
+/** A model's files in the models folder: the model, its diagram, and its tests (the Test tab's, the engine's, and the JSON before them). */
+const MODEL_FILES = ['bpmn', 'svg', 'feature', 'engine.feature', 'tests.json'];
+
+/** A .feature with the model called by its new name: its Feature line, and each `process:` naming it. */
+function renamedInFeature(text: string, name: string, newName: string): string {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const ref = /\s/.test(newName) ? `"${newName}"` : newName;
+    return text
+        .replace(new RegExp(`^(\\s*Feature:\\s*)${escaped}\\s*$`, 'm'), `$1${newName}`)
+        .replace(new RegExp(`process:(?:"${escaped}"|${escaped}(?=\\s|$))`, 'gm'), `process:${ref}`);
+}
+
 class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
 
     constructor(server: IBPMNServer) {
@@ -98,7 +110,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         return this.getFile(name, 'svg');
     }
 
-    /** Every save of a model, kept beside it (`.history/<name>/`), in the models folder of the moment (a guest's, with guests). */
+    /** Every save of a model, kept beside it (`.history/<name>/`), in the models folder. */
     get modelHistory() { return new ModelHistory(this.definitionsPath); }
 
     /** The model's file and its time before a save: kept first when the model has no history yet. */
@@ -163,18 +175,22 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
     async deleteModel(name: any,owner=null): Promise<void> {
         const fs = require('fs');
         await super.deleteModel(name);
-        for (const extension of ['bpmn', 'svg']) {
+        for (const extension of MODEL_FILES) {
             try { await fs.promises.unlink(this.definitionsPath + name + '.' + extension); }
             catch (error) { if (error.code !== 'ENOENT') throw error; }
         }
         await this.modelHistory.purge(name);
     }
+    /** The model's files go with it, its tests too; in its tests, the model is then called by its new name. */
     async renameModel(name: any, newName: any,owner=null): Promise<boolean> {
         const fs = require('fs');
         await super.renameModel(name, newName);
-        for (const extension of ['bpmn', 'svg']) {
-            try { await fs.promises.rename(this.definitionsPath + name + '.' + extension, this.definitionsPath + newName + '.' + extension); }
-            catch (error) { if (error.code !== 'ENOENT') throw error; }
+        for (const extension of MODEL_FILES) {
+            const from = this.definitionsPath + name + '.' + extension, to = this.definitionsPath + newName + '.' + extension;
+            try { await fs.promises.rename(from, to); }
+            catch (error) { if (error.code !== 'ENOENT') throw error; continue; }
+            if (extension.endsWith('feature'))
+                await fs.promises.writeFile(to, renamedInFeature(await fs.promises.readFile(to, 'utf8'), name, newName));
         }
         await this.modelHistory.rename(name, newName);
         return true;

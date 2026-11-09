@@ -67,10 +67,10 @@ class ServiceTask extends Node {
      */
     async runConnector(item: Item, connector: ConnectorBehaviour): Promise<NODE_ACTION> {
         const what = `${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`;
-        if (item.context.configuration?.demo) {
+        if (item.context.configuration?.runServiceTasks === false) {
             item.token.decision({
                 seq: item.seq, element: `service task ${what}`, action: 'ends with no output',
-                why: [`a real server calls the connector ${connector.connectorId} here`, 'in this demo, connectors do not run'],
+                why: [`a real server calls the connector ${connector.connectorId} here`, 'connectors do not run on this server'],
             });
             item.output = {};
             return NODE_ACTION.end;
@@ -110,10 +110,23 @@ class ServiceTask extends Node {
 
         let ret;
 
-        if (item.context.configuration?.demo) {
+        // a test's stub stands for the service: it calls nothing, so it runs wherever service tasks do not
+        const stub = (await item.token.execution.server.testStubs?.of(item.token.execution))?.services?.[this.serviceName];
+
+        // stubbed by a test that has ended, or by an engine since restarted: its instance goes on, and does not reach the real service
+        if (!stub && item.token.execution.instance.flags?.stubbed?.includes(this.serviceName)) {
             item.token.decision({
                 seq: item.seq, element: `service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'ends with no output',
-                why: [`a real server calls ${this.serviceName ? `the service ${this.serviceName}` : 'its service'} here`, 'in this demo, service tasks do not run'],
+                why: [`a test stubbed the service ${this.serviceName} for this instance`, 'that test has ended, and the real service is not called'],
+            });
+            item.output = {};
+            return NODE_ACTION.end;
+        }
+
+        if (!stub && item.context.configuration?.runServiceTasks === false) {
+            item.token.decision({
+                seq: item.seq, element: `service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'ends with no output',
+                why: [`a real server calls ${this.serviceName ? `the service ${this.serviceName}` : 'its service'} here`, 'service tasks do not run on this server'],
             });
             item.output = {};
             return NODE_ACTION.end;
@@ -121,7 +134,7 @@ class ServiceTask extends Node {
 
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
-        const servicesProvider= await appDelegate.getServicesProvider(item.token.execution);
+        const servicesProvider= stub ? null : await appDelegate.getServicesProvider(item.token.execution);
 
         let obj = servicesProvider;
 
@@ -141,7 +154,9 @@ class ServiceTask extends Node {
             }
         }
 
-        if (typeof method === 'function') {
+        if (stub) {
+            ret = await stub(item.input, item.data);
+        } else if (typeof method === 'function') {
             ret = await (method as Function).call(owner, item.input, item.context);
         } else {
             ret = await appDelegate['serviceCalled'](item.input, item.context, item);
@@ -268,12 +283,13 @@ class UserTask extends Node {
             await this.setAssignVal(item,"followUpDate",true);
             await this.setAssignVal(item,"priority");
             }
+        // a task in a lane is offered to the group of the lane's name too; a single candidate group is text, not a list
         if (this.lane && this.lane !=='')
             {
-            if (item.candidateGroups==null)
-                item.candidateGroups=new Array();
-
-            item.candidateGroups.push(this.lane);
+            const groups = item.candidateGroups == null ? [] : Array.isArray(item.candidateGroups) ? item.candidateGroups : [item.candidateGroups];
+            if (!groups.includes(this.lane))
+                groups.push(this.lane);
+            item.candidateGroups = groups;
             }
 
         return await super.start(item);
@@ -356,13 +372,25 @@ class SubProcess extends Node {
         await this.childProcess.start(token.execution,newToken);
 
         await this.startBoundaryEvents(item, newToken);
-        await newToken.execute(null);
+        // while it starts, a child that ends does not signal this item (Token.end): this start goes on, once.
+        // (It did both: the parent went on twice, and a gateway after it failed on its second pass.)
+        item['starting'] = true;
+        try {
+            await newToken.execute(null);
+        }
+        finally {
+            delete item['starting'];
+        }
 
         // An interrupting boundary event fired during the synchronous child execution
         // has terminated the child token; the subprocess must not take its outgoing
         // sequence flow.
         if (newToken.status === TOKEN_STATUS.terminated)
             return NODE_ACTION.end;
+        if (newToken.status === TOKEN_STATUS.end) {     // done within its start: on
+            item.status = ITEM_STATUS.start;
+            return NODE_ACTION.continue;
+        }
         if (item.status == ITEM_STATUS.wait)
             return NODE_ACTION.wait;
         else
@@ -488,18 +516,36 @@ class CallActivity extends Node {
     get requiresWait() { return true; }
     get canBeInvoked() { return false; }
 
+    /** Its output parameters (camunda:outputParameter): what of the called process's data comes back. */
+    get outputParameters() {
+        const io = this.getBehaviour(Behaviour_names.CamundaIO) as any;
+        return (io?.parameters ?? []).filter(p => p.isOutput());
+    }
+
     /**
-     * A called process has ended: its caller's call activity continues. When it ended within its own
-     * start, the call activity is still running (`start` below sees the end, and continues); otherwise
-     * the caller waits, and is invoked, before the called process's own call returns.
+     * A called process has ended: its caller's call activity continues, with the called process's data. When it
+     * ended within its own start, the call activity is still running (`start` below takes the data, and
+     * continues); otherwise the caller waits, and is invoked, as the user who ended the called process.
      */
     static async executionEnded(execution: IExecution) {
-        if (execution.operation === 'start') return;
+        // ended within the call that started it (the call activity is still running, not saved): `start` takes it
+        if (execution.operation === 'start' || execution.options?.['calledBy'] === execution.instance.parentItemId) return;
         const itemId = execution.instance.parentItemId;
         const engine = execution.server.engine;
-        await engine.invoke({ "items.id": itemId }, execution.instance.data);
+        await engine.invoke({ "items.id": itemId }, execution.instance.data, execution.userName);
 
     }
+
+    /**
+     * The called process's data, as the call's result. With output parameters, only what they say comes back
+     * (`output` in them is the called process's data: `$output.decision`); without, all of it, as before.
+     */
+    async setInput(item: Item, input) {
+        if (!this.outputParameters.length)
+            return super.setInput(item, input);
+        item.output = input ?? {};
+    }
+
     async start(item): Promise<NODE_ACTION> {
 
         const token = item.token;
@@ -508,16 +554,23 @@ class CallActivity extends Node {
 
         const context = item.context;
         const modelName = this.calledElement;
-        //const data = await item.node.getOutput(item);
+        const instance = token.execution.instance;
+        // the called process runs as the user whose action reached here (else who started the caller: its first
+        // item's user), in the caller's tenant: it has a user, and its instance is isolated as the caller's is
+        const userName = token.execution.userName ?? token.execution.getItems()[0]?.userName ?? null;
 
-        const response = await context.engine.start(modelName, item.input,null,null,{parentItemId: item.id});
+        const response = await context.engine.start(modelName, item.input, null, userName,
+            { parentItemId: item.id, calledBy: item.id, ...(instance.tenantId != null ? { tenantId: instance.tenantId } : {}), ...(instance.flags?.stubbed ? { flags: { stubbed: instance.flags.stubbed } } : {}) });
 
         token.log('..end of executing a call activity for item:' + item.id + " calling " + this.calledElement);
 
         token.log('..response :' + response.execution.status);
 
-        if (response.execution.status == EXECUTION_STATUS.end)
+        if (response.execution.status == EXECUTION_STATUS.end) {
+            // ended within its start: its data comes back here (it was lost)
+            await this.setInput(item, response.instance.data);
             return NODE_ACTION.continue;
+        }
         else
             return NODE_ACTION.wait;
     }

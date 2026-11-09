@@ -17,6 +17,7 @@
 - [throwSignal](IAPIEngine.md#throwsignal)
 - [startEvent](IAPIEngine.md#startevent)
 - [restart](IAPIEngine.md#restart)
+- [upgrade](IAPIEngine.md#upgrade)
 
 ## Methods
 
@@ -41,13 +42,13 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:89](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L89)
+[packages/bpmn-server/src/API/API.ts:105](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L105)
 
 ___
 
 ### invoke
 
-▸ **invoke**(`query`, `data`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **invoke**(`query`, `data`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 continue with the execution of a particular item that is in a wait state, typically a user task
 
@@ -57,7 +58,7 @@ continue with the execution of a particular item that is in a wait state, typica
 | :------ | :------ |
 | `query` | `any` |
 | `data` | `Object` |
-| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `user` | [`ISecureUser`](ISecureUser.md) |
 | `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
@@ -66,13 +67,13 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:96](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L96)
+[packages/bpmn-server/src/API/API.ts:112](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L112)
 
 ___
 
 ### assign
 
-▸ **assign**(`query`, `data`, `assignment`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **assign**(`query`, `data`, `assignment`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 provide assignment data to a user task
 Also, updates item data
@@ -84,7 +85,7 @@ Also, updates item data
 | `query` | `any` |
 | `data` | `any` |
 | `assignment` | `any` |
-| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `user` | [`ISecureUser`](ISecureUser.md) |
 | `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
@@ -93,13 +94,13 @@ Also, updates item data
 
 #### Defined in
 
-[API/API.ts:101](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L101)
+[packages/bpmn-server/src/API/API.ts:117](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L117)
 
 ___
 
 ### throwMessage
 
-▸ **throwMessage**(`messageId`, `data`, `messageMatchingKey`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **throwMessage**(`messageId`, `data`, `messageMatchingKey`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 throw a message with an id, system will identify receiving item
 
@@ -110,7 +111,7 @@ throw a message with an id, system will identify receiving item
 | `messageId` | `any` |
 | `data` | `any` |
 | `messageMatchingKey` | `any` |
-| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `user` | [`ISecureUser`](ISecureUser.md) |
 | `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
@@ -119,13 +120,13 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:105](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L105)
+[packages/bpmn-server/src/API/API.ts:121](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L121)
 
 ___
 
 ### throwSignal
 
-▸ **throwSignal**(`signalId`, `data`, `messageMatchingKey`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **throwSignal**(`signalId`, `data`, `messageMatchingKey`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 throw a signal with an id, system will identify receiving item(s)
 
@@ -136,7 +137,7 @@ throw a signal with an id, system will identify receiving item(s)
 | `signalId` | `any` |
 | `data` | `any` |
 | `messageMatchingKey` | `any` |
-| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `user` | [`ISecureUser`](ISecureUser.md) |
 | `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
@@ -145,13 +146,13 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:109](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L109)
+[packages/bpmn-server/src/API/API.ts:125](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L125)
 
 ___
 
 ### startEvent
 
-▸ **startEvent**(`query`, `elementId`, `data`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **startEvent**(`query`, `elementId`, `data`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 start a second event node (in a subprocess) for a running instance
 
@@ -162,7 +163,7 @@ start a second event node (in a subprocess) for a running instance
 | `query` | `any` |
 | `elementId` | `any` |
 | `data` | `Object` |
-| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `user` | [`ISecureUser`](ISecureUser.md) |
 | `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
@@ -171,7 +172,7 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:113](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L113)
+[packages/bpmn-server/src/API/API.ts:129](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L129)
 
 ___
 
@@ -198,4 +199,30 @@ this add a savePoint for each item, allowing you to select that item to restore 
 
 #### Defined in
 
-[API/API.ts:127](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L127)
+[packages/bpmn-server/src/API/API.ts:143](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L143)
+
+___
+
+### upgrade
+
+▸ **upgrade**(`model`, `afterNodeIds`, `user`): `Promise`\<`string`[] \| \{ `errors`: `any`  }\>
+
+upgrade running instances with the latest revised bpmn model
+default behaviour is that running instances will retain the model at start
+However, this routine will upgrade already started instances with the revised model
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `model` | `string` | Model Name |
+| `afterNodeIds` | `string`[] | list of nodeIds, to check if already started, don't apply the upgrade |
+| `user` | [`ISecureUser`](ISecureUser.md) | - |
+
+#### Returns
+
+`Promise`\<`string`[] \| \{ `errors`: `any`  }\>
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:154](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L154)

@@ -181,3 +181,60 @@ test('api.model.verifyModel checks saved models against the application', async 
   await assert.rejects(() => api.model.verifyModel(source), /authenticated principal is required/);
   await server.shutdown();
 });
+
+const flowModel = (body) => model(`<bpmn:startEvent id="s" /><bpmn:endEvent id="e" />${body}`);
+
+test('more modelling mistakes: empty conditions, flows into a start or out of an end, gateways, call activities', async () => {
+  const has = async (body, code) => assert.ok(codes(await verifyModel(model(body))).includes(code), `${code} in ${codes(await verifyModel(model(body)))}`);
+  await has('', 'empty-process');
+  await has(`<bpmn:startEvent id="s" /><bpmn:endEvent id="e" /><bpmn:sequenceFlow id="f" sourceRef="s" targetRef="e"><bpmn:conditionExpression> </bpmn:conditionExpression></bpmn:sequenceFlow>`, 'empty-condition');
+  await has(`<bpmn:startEvent id="s" /><bpmn:sequenceFlow id="f" sourceRef="s" />`, 'flow-missing-endpoint');
+  await has(`<bpmn:startEvent id="s" /><bpmn:sequenceFlow id="f" targetRef="s" />`, 'flow-missing-endpoint');
+  await has(`<bpmn:startEvent id="s" /><bpmn:task id="t" /><bpmn:sequenceFlow id="f" sourceRef="t" targetRef="s" />`, 'start-event-incoming');
+  await has(`<bpmn:endEvent id="e" /><bpmn:task id="t" /><bpmn:sequenceFlow id="f" sourceRef="e" targetRef="t" />`, 'end-event-outgoing');
+  await has(`<bpmn:startEvent id="s" /><bpmn:callActivity id="c" /><bpmn:sequenceFlow id="f" sourceRef="s" targetRef="c" />`, 'call-activity-no-target');
+  await has(`<bpmn:startEvent id="s" /><bpmn:exclusiveGateway id="g" /><bpmn:sequenceFlow id="f" sourceRef="s" targetRef="g" />`, 'no-outgoing');
+  await has(`<bpmn:startEvent id="s" /><bpmn:task id="t" /><bpmn:exclusiveGateway id="g" /><bpmn:endEvent id="e" /><bpmn:endEvent id="e2" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="g" /><bpmn:sequenceFlow id="f2" sourceRef="t" targetRef="g" /><bpmn:sequenceFlow id="f3" sourceRef="g" targetRef="e" /><bpmn:sequenceFlow id="f4" sourceRef="g" targetRef="e2" />`, 'mixed-gateway');
+});
+
+test('files that are not one process: none, or the same id twice', async () => {
+  const none = await verifyModel(`<?xml version="1.0" encoding="UTF-8"?><bpmn:definitions ${NS} id="d" targetNamespace="urn:test"></bpmn:definitions>`);
+  assert.ok(codes(none).includes('no-process'), codes(none).join());
+  const twice = await verifyModel(flowModel(`<bpmn:task id="s" />`));
+  assert.ok(codes(twice).includes('duplicate-id'), codes(twice).join());
+});
+
+test('the application\'s own checks: reported with the others; bad entries left out; one that throws is a warning', async () => {
+  const delegate = { verifyModel: async () => [null, { code: 'no-message' }, { code: 'mine', message: 'Mine', severity: 'warning' }, { code: 'plain', message: 'No severity' }] };
+  const checked = await verifyModel(model(linear), { appDelegate: delegate });
+  assert.equal(issue(checked, 'mine').severity, 'warning');
+  assert.equal(issue(checked, 'plain').severity, 'error', 'no severity: an error');
+  assert.equal(issue(checked, 'no-message'), undefined);
+  const failing = await verifyModel(model(linear), { appDelegate: { verifyModel: async () => { throw new Error('the check broke'); } } });
+  assert.match(issue(failing, 'application-check-failed').message, /the check broke/);
+  const nothing = await verifyModel(model(linear), { appDelegate: { verifyModel: async () => null } });
+  assert.equal(issue(nothing, 'application-check-failed'), undefined);
+});
+
+test('what can not be asked does not stop the check: models that can not be listed, services that need a running execution', async () => {
+  const server = {
+    definitions: { getList: async () => { throw new Error('down'); } },
+    appDelegate: { getServicesProvider: async () => { throw new Error('needs an execution'); } },
+  };
+  const result = await verifyModel(model(`<bpmn:startEvent id="s" /><bpmn:serviceTask id="w" implementation="x.y" /><bpmn:callActivity id="c" calledElement="other" /><bpmn:endEvent id="e" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="w" /><bpmn:sequenceFlow id="f2" sourceRef="w" targetRef="c" /><bpmn:sequenceFlow id="f3" sourceRef="c" targetRef="e" />`), server);
+  assert.equal(result.valid, true, JSON.stringify(result.issues));
+});
+
+test('a service named by a path is looked for along it', async () => {
+  const provider = { billing: { charge() { } }, flat: 1 };
+  const server = { appDelegate: { getServicesProvider: async () => provider } };
+  const service = (name) => model(`<bpmn:startEvent id="s" /><bpmn:serviceTask id="w" implementation="${name}" /><bpmn:endEvent id="e" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="w" /><bpmn:sequenceFlow id="f2" sourceRef="w" targetRef="e" />`);
+  const unknown = async (name) => (await verifyModel(service(name), server)).issues.filter(i => /service/.test(i.code)).map(i => i.code);
+  assert.deepEqual(await unknown('billing.charge'), []);
+  assert.notDeepEqual(await unknown('billing.refund'), []);
+  assert.notDeepEqual(await unknown('flat.x'), []);
+  assert.notDeepEqual(await unknown('billing'), [], 'an object, not a service');
+});

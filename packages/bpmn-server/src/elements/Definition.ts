@@ -124,6 +124,8 @@ class Definition implements IDefinition{
                         const toNode = this.getNodeById(to.id);
                         const flow = new Flow(art.id, art.type, fromNode, toNode, definition.elementsById[art.id]);
                         this.flows.push(flow);
+                        // by its id as a sequence flow is: a compensation that went along it is an item, which a restore looks up
+                        this.nodes.set(art.id, flow);
                         DEBUG("assoc: ", from.id, to.id, fromNode.id, toNode.id);
                         fromNode.outbounds.push(flow);
                         toNode.inbounds.push(flow)

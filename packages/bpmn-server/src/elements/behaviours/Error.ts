@@ -33,19 +33,22 @@ class ErrorEventBehaviour extends Behaviour {
 
             let transItem;
 
-            if (item.token.originItem.type==BPMN_TYPE.Transaction)
+            if (item.token.originItem?.type==BPMN_TYPE.Transaction)
                 transItem=item.token.originItem;
             else
-                transItem=item.token.parentToken.originItem;
+                transItem=item.token.parentToken?.originItem;
             
 
             await item.token.processError(this.errorId,item);
 
-            await Transaction.Cancel(transItem);
+            // thrown outside any sub-process: there is nothing around it to cancel
+            if (transItem) {
+                await Transaction.Cancel(transItem);
 
-            transItem.token.status=TOKEN_STATUS.terminated;
-            
-            await transItem.node.end(transItem,true);
+                transItem.token.status=TOKEN_STATUS.terminated;
+
+                await transItem.node.end(transItem,true);
+            }
 
             await item.node.end(item,false); // mark me as properly ended
 

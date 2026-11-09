@@ -100,30 +100,34 @@ class TimerBehaviour extends Behaviour {
      */
     async timeDue(item,timerModifier=null) {
 
+        // a test's stub of this timer
+        const stubbed = (await item.token.execution.server.testStubs?.of(item.token.execution))?.timers?.[item.node.id];
+        if (stubbed !== undefined)
+            timerModifier = stubbed * 1000;
+
         let seconds;
         let timeDue;
+        // filled in for this item: an expression ($js, ${js}) or a text with ${...} parts (PT${data.days}D). The
+        // definition keeps its text (it was overwritten with the first item's value, which later items then got).
+        const duration = this.duration ? await evaluateText(item.context.scriptHandler, item, this.duration) : undefined;
+        const cycle = this.timeCycle ? await evaluateText(item.context.scriptHandler, item, this.timeCycle) : undefined;
+        // a cycle's repeats count, forced delay or not (with one, it stayed 1: a cycle fired once)
+        if (cycle) {
+            this.repeat = this.getRepeat(cycle);
+            item['timerRepeat'] = this.repeat;
+        }
         if (timerModifier) {
             seconds = timerModifier/1000;
             timeDue = dayjs(new Date()).add(seconds,'s').toDate();
         }
         else {
-            if (this.duration) {
-
-                // an expression ($js, ${js}) or a text with ${...} parts (PT${data.days}D)
-                this.duration= await evaluateText(item.context.scriptHandler, item, this.duration);
-
-                //seconds = toSeconds((parse(this.duration)));
-                seconds= Cron.timeDue(this.duration, null);
+            if (duration) {
+                seconds= Cron.timeDue(duration, null);
                 timeDue = new Date();
                 timeDue = dayjs(timeDue).add(seconds,'s').toDate();
             }
-            else if (this.timeCycle) {
-
-                this.timeCycle= await evaluateText(item.context.scriptHandler, item, this.timeCycle);
-
-                //seconds = toSeconds((parse(this.timeCycle)));
-                seconds = Cron.timeDue(this.timeCycle, null);
-                this.repeat = this.getRepeat(this.timeCycle);
+            else if (cycle) {
+                seconds = Cron.timeDue(cycle, null);
                 timeDue = new Date();
                 timeDue = dayjs(timeDue).add(seconds,'s').toDate();
             }
@@ -157,11 +161,11 @@ class TimerBehaviour extends Behaviour {
 
         let timerModifier = null;
         const config = item.context.configuration;
-        if (config.demo) {
+        if (config.runTimers === false) {
             const definition = this.duration ? `duration ${this.duration}` : this.timeCycle ? `cycle ${this.timeCycle}` : this.timeDate ? `date ${this.timeDate}` : 'no time';
             item.token.decision({
                 seq: item.seq, element: `timer ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'waits until invoked',
-                why: [definition, 'in this demo, timers are disabled so they do not keep the server busy'],
+                why: [definition, 'timers do not run on this server'],
             });
             return;
         }
@@ -191,45 +195,56 @@ class TimerBehaviour extends Behaviour {
             setLongTimeout(expires, seconds * 1000);
     }
     async expires() {
-        let item = this['item'] as unknown as Item;
-        let timer = this['timer'];
-        let instanceId= this['instanceId'];
+        // its firing and its next repetition are one piece of work: a server stopping waits for both, or the repetitions
+        // would end when it stopped between them
+        const engine = (this['item'] as unknown as Item).token.execution.server.engine as any;
+        engine.runningCounter++;
+        try {
+
+            let item = this['item'] as unknown as Item;
+            let timer = this['timer'];
+            let instanceId= this['instanceId'];
      
-        const exec=item.token.execution;
-        item.token.log("Action:---timer Expired --- lock:"+exec.isLocked+' for '+item.id);
-        if (item.status == ITEM_STATUS.wait)    // just in case it was cancelled
-        {
-            //item.token.signal(null);
+            const exec=item.token.execution;
+            item.token.log("Action:---timer Expired --- lock:"+exec.isLocked+' for '+item.id);
+            if (item.status == ITEM_STATUS.wait)    // just in case it was cancelled
+            {
+                //item.token.signal(null);
 
-            // A call is running on this execution (it holds the lock): signal the timer's token alone; the call
-            // waits for exec.promises, then saves. (signalItem would wait for exec.promises too, itself among them.)
-            if (exec.isLocked===true)
-                exec.promises.push(item.token.signal(null));
-            else {
-                // This execution may be an old copy: fire only while the stored item still waits.
-                const stored = (await exec.server.dataStore.findItems({ "items.id": item.id }))[0];
-                if (stored && stored.status == ITEM_STATUS.wait)
-    			    await exec.server.engine.invoke({ "items.id": item.id }, null);
+                // A call is running on this execution (it holds the lock): signal the timer's token alone; the call
+                // waits for exec.promises, then saves. (signalItem would wait for exec.promises too, itself among them.)
+                if (exec.isLocked===true)
+                    exec.promises.push(item.token.signal(null));
+                else {
+                    // This execution may be an old copy: fire only while the stored item still waits.
+                    const stored = (await exec.server.dataStore.findItems({ "items.id": item.id }))[0];
+                    if (stored && stored.status == ITEM_STATUS.wait)
+        			    await exec.server.engine.invoke({ "items.id": item.id }, null);
+                }
+
             }
+            // check for repeat
+            if (timer.timeCycle) {
 
+    //console.log('repeating ',item.timerCount);
+
+                // this item is fire number timerCount + 1 (the first has 0): R3 fires three times
+                if (Number(item['timerRepeat'] ?? timer.repeat) > item.timerCount + 1) {
+
+                    let resp=await exec.server.engine.startRepeatTimerEvent(instanceId, item,{});
+                    //let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
+                    //let newItem = newToken.currentItem;
+                    //item.token.log('new token for timer repeat ' + item.timerCount + '  '+newItem.elementId);
+
+                    //            item.timerCount++;
+
+                    //await timer.startTimer(new);
+                }
+            }
+    
         }
-        // check for repeat
-        if (timer.timeCycle) {
-
-//console.log('repeating ',item.timerCount);
-
-            // this item is fire number timerCount + 1 (the first has 0): R3 fires three times
-            if (Number(timer.repeat) > item.timerCount + 1) {
-
-                let resp=await exec.server.engine.startRepeatTimerEvent(instanceId, item,{});
-                //let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
-                //let newItem = newToken.currentItem;
-                //item.token.log('new token for timer repeat ' + item.timerCount + '  '+newItem.elementId);
-
-                //            item.timerCount++;
-
-                //await timer.startTimer(new);
-            }
+        finally {
+            engine.runningCounter--;
         }
     }
 

@@ -22,7 +22,7 @@ import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 }
 
 import { apiKeyAuth as loggedIn } from './middleware/apiKeyAuth.js';
-import { modelNameGuard } from './middleware/modelName.js';
+import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
@@ -33,6 +33,8 @@ export class API extends Common {
     config() {
 
         var router = express.Router();
+
+        guardModelParams(router);
         var bpmnServer = this.bpmnServer;
 
         router.use(['/definitions', '/model'], modelNameGuard);
@@ -41,6 +43,24 @@ export class API extends Common {
         // off (DISABLE_ADMIN); changing models stays under /admin/api
         router.get('/definitions/list', loggedIn, async function (req, response) {
             response.json(await bpmnServer.definitions.getList());
+        });
+
+        // a model's BPMN XML, read-only: who may run a process may read what it does
+        router.get('/definitions/load/:name', loggedIn, async function (request, response) {
+            const name = (request.params as any).name;
+            // modelNameGuard, on the router, does not see a route's own parameters
+            if (!isSafeModelName(name)) {
+                response.status(400).json({ errors: 'Invalid model name' });
+                return;
+            }
+            let source;
+            try {
+                source = await bpmnServer.definitions.getSource(name);
+            } catch {
+                response.status(404).json({ errors: `No process definition named ${name}` });
+                return;
+            }
+            response.type('application/xml').send(source);
         });
 
         router.get('/status', loggedIn, awaitAppDelegateFactory(async (request, response) => {
@@ -189,10 +209,10 @@ export class API extends Common {
             try {
 
                 var list = [];
-                (this.bpmnServer.cache.list() || []).forEach(exec => {   // this server's live executions
-                    list.push({ instance: exec.instance, currentItem: exec.item.id,currentElement: exec.item.elementId, status: exec.instance.status });
+                (await this.bpmnServer.engine.live()).forEach(exec => {   // this server's live executions
+                    list.push({ instance: exec.instance, currentItem: exec.currentItem,currentElement: exec.currentElementlementId, status: exec.instance.status });
                 });
-                response.json({cache:list,engine: this.bpmnServer.engine.status()});
+                response.json({cache:list,engine: await this.bpmnServer.engine.status()});
             }
             catch (exc) {
                 response.json({ errors: exc.toString() });
@@ -506,6 +526,7 @@ export class API extends Common {
     /** Definition administration is mounted separately under /admin/api. */
     adminConfig() {
         const router = express.Router();
+        guardModelParams(router);
         const bpmnServer = this.bpmnServer;
         const fsx = FS;
 
@@ -619,6 +640,10 @@ export class API extends Common {
 
                 //console.log(request.params);
                 let name = (request.params as any).name;
+                if (!isSafeModelName(name)) {
+                    response.status(400).send('Invalid model name');
+                    return;
+                }
 
                 try {
                     let definition = await bpmnServer.definitions.getSource(name);
@@ -691,7 +716,7 @@ export class API extends Common {
                 let errors;
                 let result;
                 try {
-                    result = await this.bpmnServer.dataStore.deleteInstances(query);
+                    result = await this.bpmnServer.engine.deleteInstances(query);
                 }
                 catch (exc) {
                     errors = exc.toString();

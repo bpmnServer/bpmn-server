@@ -7,8 +7,8 @@
  *   REQUIRE_AUTHENTICATION=false    anyone can use the web pages as an administrator;
  *                                   allowed in production only with ALLOW_INSECURE_NO_AUTH=true
  *
- * The public demo modes (GUEST_ACCESS, DEMO_MODE) check their own settings (guests/guests.ts);
- * they need sessions too, so SESSION_SECRET applies to them as well.
+ * DEMO_MODE needs sessions too, so SESSION_SECRET applies to it as well.
+ * With design on in production and no sandbox, designers' scripts and tests run in the server's own process: a warning.
  */
 export interface BootConfigReport {
 	errors: string[];
@@ -37,6 +37,8 @@ export function checkBootConfig(env: Env = process.env, parts: BootParts = {}): 
 		unsafe('SESSION_SECRET is not set: sessions and CSRF tokens cannot be secured.');
 	if (api && !env.API_KEY)
 		unsafe('API_KEY is not set: /api and /api2 will reject all requests (fail closed).');
+	if (api && env.API_ACTING_USER_KEY && env.API_ACTING_USER_KEY === env.API_KEY)
+		unsafe('API_ACTING_USER_KEY is the same as API_KEY: it must be a secret of its own.');
 	if (api && (!env.API_SERVICE_USER_NAME || !env.API_SERVICE_USER_GROUPS))
 		warnings.push('API_SERVICE_USER_NAME and API_SERVICE_USER_GROUPS are required for /api2.');
 	if (ui && env.REQUIRE_AUTHENTICATION === 'false') {
@@ -46,6 +48,9 @@ export function checkBootConfig(env: Env = process.env, parts: BootParts = {}): 
 		else
 			warnings.push('REQUIRE_AUTHENTICATION=false: UI authentication is DISABLED (dev only).');
 	}
+	if (production && ui && env.DISABLE_DESIGN !== 'true' && !isTrue(env.SCRIPT_SANDBOX) && !isTrue(env.DEMO_MODE))
+		warnings.push('Model design is on with no SCRIPT_SANDBOX: what designers write in models and tests runs with this server\'s rights. '
+			+ 'Set DISABLE_DESIGN=true on a production server, or SCRIPT_SANDBOX=true if people you do not trust can design.');
 	return { errors, warnings };
 }
 

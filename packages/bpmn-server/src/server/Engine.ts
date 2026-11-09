@@ -434,7 +434,7 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async startRepeatTimerEvent(instanceId, prevItem, data = {},options={}) : Promise<Execution> {
 
-		this.assertOpen();
+		// not refused while stopping: a repetition goes on with work already running, which a stopping server lets finish
 		// need to load instance first
 		this.logger.log('startRepeatTimeEvent');
 		let execution;
@@ -628,6 +628,35 @@ class Engine extends ServerComponent implements IEngine{
 	}
 	status() {
 		return { running: this.runningCounter, calls: this.callsCounter, handedOff: this.workers.size };
+	}
+
+	/**
+	 * Removes the instances a query matches, each under its lock, so a call running it finishes first, and with its timers,
+	 * so nothing fires for it after. What changes an instance is the engine's: its host asks.
+	 */
+	async deleteInstances(query): Promise<{ deletedCount: number }> {
+		this.assertOpen();
+		const found = await this.dataStore.findInstances(query, { projection: { id: 1 } });
+		let deletedCount = 0;
+		for (const { id } of found) {
+			await this.lockManager.lock(id);
+			try {
+				this.cron.cancelInstance?.(id);
+				this.cache.remove(id);
+				const removed: any = await this.dataStore.deleteInstances({ id });
+				deletedCount += Number(removed?.deletedCount ?? removed ?? 0);
+			}
+			finally {
+				await this.lockManager.release(id);
+			}
+		}
+		return { deletedCount };
+	}
+
+	/** Marks a saved instance with a tag of the caller's (a test's run), as the data store does. */
+	async tagInstance(instanceId: string, tag: any): Promise<void> {
+		this.assertOpen();
+		await this.dataStore.tagInstance(instanceId, tag);
 	}
 
 	/**

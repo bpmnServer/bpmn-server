@@ -9,8 +9,8 @@ import MongoStore from 'connect-mongo';
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
-import { adminDisabled, canDesign, isAdminGroups, isGuest, signupDisabled } from './roles.js';
-import { guestAccess, guestMiddleware } from '../guests/guests.js';
+import { adminDisabled, canDesign, isAdminGroups, signupDisabled } from './roles.js';
+import { firstRunPending } from './firstRun.js';
 
 
 export class UserManager {
@@ -88,8 +88,7 @@ export class UserManager {
 		this.app.use((req, res, next) => apiPath.test(req.path) ? next() : csrf(req, res, next));
 
 	} 
-	/** configuration: the engine's; with guests, their requests read and write its definitionsPath */
-	setup(configuration?) {
+	setup() {
 
 		const app = this.app;
 
@@ -119,11 +118,15 @@ export class UserManager {
 			legacyHeaders: false,
 			message: { error: 'Too many attempts, please try again later.' },
 		});
-		app.use(['/login', '/signup', '/forgot', '/reset'], authLimiter);
+		app.use(['/login', '/signup', '/forgot', '/reset', '/account/verify', '/setup'], authLimiter);
 
-		// GUEST_ACCESS=true: a visitor's first page makes it a guest; a guest's requests run in its context
-		if (guestAccess() && configuration)
-			app.use(guestMiddleware(configuration));
+		// a server with no users yet: its pages ask for the administrator first (firstRun.ts)
+		app.use((req, res, next) => {
+			if (!firstRunPending() || req.path === '/setup' || /\./.test(req.path)
+				|| /^\/(api|api2|admin\/api|admin\/api2|healthz)(\/|$)/.test(req.path))
+				return next();
+			return res.redirect('/setup');
+		});
 
 		app.use((req, res, next) => {
 			res.locals.user = req.user;
@@ -133,7 +136,6 @@ export class UserManager {
 			// views show the model actions (new, import, open, rename, delete) to designers
 			res.locals.canDesign = canDesign(req.user);
 			res.locals.canSignup = !signupDisabled();
-			res.locals.isGuest = isGuest(req.user);
 			// the menu (views/includes/menu.pug): Administration for administrators; the page it is on
 			res.locals.canAdminister = !adminDisabled()
 				&& (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups));

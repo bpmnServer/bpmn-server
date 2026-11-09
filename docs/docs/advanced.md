@@ -87,6 +87,10 @@ To recover:
 		let ret = await api.engine.invoke({ "items.id": item.id }, {}, null, { recover: true });
 ```
 
+The console's `re` does this, and the Admin dashboard lists hung items. A restart doesn't recover them by itself.
+
+**A recovered step runs again from its start.** bpmn-server can't know how far it got before the failure, so a service that had already sent an email or charged a card does so again. Make services that have side effects safe to repeat, for example with the instance and item ids as an idempotency key, or check before recovering. Timers aren't affected: one that falls due while the engine is down fires once when it's back.
+
 # Data Archiving
 
 `scripts/archive` tools takes 2 parameters

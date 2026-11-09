@@ -46,6 +46,15 @@ test('a type shows its elements in the items and the Rationale, and the log line
     assert.equal(await page.locator('#rationale').isHidden(), true);
     await page.click('#showRationale');
     assert.equal(await page.locator('#rationale').isVisible(), true);
+    // each step closed, its line alone; a click on it opens it
+    // (a row the filter shows: Submit's)
+    const first = page.locator('.rationale-table tbody.rationale-group').first();
+    const submit = first.locator('tr[data-element="Submit"]').first();
+    assert.equal(await submit.isVisible(), false, 'the default filter opens no step');
+    await first.locator('.rationale-step').click();
+    assert.equal(await submit.isVisible(), true, 'opened by its line');
+    await first.locator('.rationale-step').click();
+    assert.equal(await submit.isVisible(), false, 'and closed');
     assert.deepEqual(await visible(page, '#dataTable tbody tr[data-element]'), ['Submit', 'Approve']);
     assert.deepEqual([...new Set(await visible(page, '.rationale-table tbody tr[data-element]'))], ['Submit', 'Approve']);
     const options = await page.locator('#filter-element option').evaluateAll(os => os.filter(o => !o.hidden).map(o => o.value));
@@ -71,9 +80,23 @@ test('a flow: the gateway\'s choice of it is not its row, its condition is', asy
     await page.click('#filter-clear');
     await page.click('#showRationale');
     await page.selectOption('#filter-element', 'ToApprove');
-    const rows = await page.locator('.rationale-table tbody tr').evaluateAll(trs => trs.filter(tr => !tr.hidden).map(tr => tr.innerText.replace(/\s+/g, ' ').trim()));
-    assert.ok(rows.some(r => /ToApprove yes bpmn:SequenceFlow taken .*result: true \(days=10\)/.test(r)), rows.join('\n'));
-    assert.ok(rows.every(r => /ToApprove/.test(r)));
+    // the steps with a row of it open, the others hidden; in a step, its rows alone
+    const rows = await page.locator('.rationale-table tbody:not([hidden]) tr:not(.rationale-step)').evaluateAll(trs => trs.filter(tr => !tr.hidden).map(tr => tr.innerText.replace(/\s+/g, ' ').trim()));
+    assert.ok(rows.some(r => /yes \(ToApprove\) bpmn:SequenceFlow taken .*result: true \(days=10\)/.test(r)), rows.join('\n'));
+    assert.ok(rows.every(r => /ToApprove/.test(r)), rows.join('\n'));
+    const lines = await page.locator('.rationale-table tbody:not([hidden]) .rationale-step').allInnerTexts();
+    assert.equal(lines.length, 1, 'the step that took it, alone');
+    assert.match(lines[0], /^Step 2 · Invoke Item\s+Submit request\s+by admin/);
+
+    // a step opens and closes on its line (the filter opened the one it showed)
+    await page.click('#filter-clear');
+    const step2 = page.locator('.rationale-table tbody.rationale-group').nth(1);
+    const open = () => step2.locator('tr:not(.rationale-step)').first().isVisible();
+    assert.equal(await open(), true);
+    await step2.locator('.rationale-step').click();
+    assert.equal(await open(), false, 'closed: its line alone');
+    await step2.locator('.rationale-step').click();
+    assert.equal(await open(), true);
     await close();
 });
 

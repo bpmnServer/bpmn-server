@@ -34,11 +34,14 @@ super class for various objects that are part of the server
 - [appDelegate](CacheManager.md#appdelegate)
 - [engine](CacheManager.md#engine)
 - [dataStore](CacheManager.md#datastore)
+- [lockManager](CacheManager.md#lockmanager)
 - [definitions](CacheManager.md#definitions)
 - [listener](CacheManager.md#listener)
+- [scriptHandler](CacheManager.md#scripthandler)
 
 ### Methods
 
+- [onEnded](CacheManager.md#onended)
 - [list](CacheManager.md#list)
 - [getInstance](CacheManager.md#getinstance)
 - [add](CacheManager.md#add)
@@ -67,17 +70,17 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/CacheManager.ts:32](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/CacheManager.ts#L32)
+[packages/bpmn-server/src/server/CacheManager.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/CacheManager.ts#L29)
 
 ## Properties
 
 ### liveInstances
 
-▪ `Static` **liveInstances**: `Map`\<`any`, `any`\>
+• `Private` `Readonly` **liveInstances**: `Map`\<`string`, [`IExecution`](../interfaces/IExecution.md)\>
 
 #### Defined in
 
-[server/CacheManager.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/CacheManager.ts#L30)
+[packages/bpmn-server/src/server/CacheManager.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/CacheManager.ts#L25)
 
 ___
 
@@ -91,7 +94,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L9)
+[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L10)
 
 ## Accessors
 
@@ -109,7 +112,7 @@ ServerComponent.configuration
 
 #### Defined in
 
-[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L14)
+[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -127,7 +130,7 @@ ServerComponent.logger
 
 #### Defined in
 
-[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L15)
+[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -145,17 +148,17 @@ ServerComponent.cron
 
 #### Defined in
 
-[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L16)
+[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L17)
 
 ___
 
 ### cache
 
-• `get` **cache**(): [`CacheManager`](CacheManager.md)
+• `get` **cache**(): [`ICacheManager`](../interfaces/ICacheManager.md)
 
 #### Returns
 
-[`CacheManager`](CacheManager.md)
+[`ICacheManager`](../interfaces/ICacheManager.md)
 
 #### Inherited from
 
@@ -163,7 +166,7 @@ ServerComponent.cache
 
 #### Defined in
 
-[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L17)
+[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -181,7 +184,7 @@ ServerComponent.appDelegate
 
 #### Defined in
 
-[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L18)
+[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -199,7 +202,7 @@ ServerComponent.engine
 
 #### Defined in
 
-[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L19)
+[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -217,7 +220,27 @@ ServerComponent.dataStore
 
 #### Defined in
 
-[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L20)
+[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L21)
+
+___
+
+### lockManager
+
+• `get` **lockManager**(): `any`
+
+The lock port: the configuration's, else the data store's.
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.lockManager
+
+#### Defined in
+
+[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L23)
 
 ___
 
@@ -235,7 +258,7 @@ ServerComponent.definitions
 
 #### Defined in
 
-[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L21)
+[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L24)
 
 ___
 
@@ -253,9 +276,50 @@ ServerComponent.listener
 
 #### Defined in
 
-[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L22)
+[packages/bpmn-server/src/server/ServerComponent.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L25)
+
+___
+
+### scriptHandler
+
+• `get` **scriptHandler**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.scriptHandler
+
+#### Defined in
+
+[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L26)
 
 ## Methods
+
+### onEnded
+
+▸ **onEnded**(`«destructured»`): `void`
+
+Drops an ended or cancelled execution: nothing more runs in it.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `context` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/CacheManager.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/CacheManager.ts#L27)
+
+___
 
 ### list
 
@@ -271,13 +335,13 @@ ServerComponent.listener
 
 #### Defined in
 
-[server/CacheManager.ts:44](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/CacheManager.ts#L44)
+[packages/bpmn-server/src/server/CacheManager.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/CacheManager.ts#L35)
 
 ___
 
 ### getInstance
 
-▸ **getInstance**(`instanceId`): `any`
+▸ **getInstance**(`instanceId`): [`IExecution`](../interfaces/IExecution.md)
 
 #### Parameters
 
@@ -287,11 +351,15 @@ ___
 
 #### Returns
 
-`any`
+[`IExecution`](../interfaces/IExecution.md)
+
+#### Implementation of
+
+[ICacheManager](../interfaces/ICacheManager.md).[getInstance](../interfaces/ICacheManager.md#getinstance)
 
 #### Defined in
 
-[server/CacheManager.ts:52](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/CacheManager.ts#L52)
+[packages/bpmn-server/src/server/CacheManager.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/CacheManager.ts#L43)
 
 ___
 
@@ -315,7 +383,7 @@ ___
 
 #### Defined in
 
-[server/CacheManager.ts:58](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/CacheManager.ts#L58)
+[packages/bpmn-server/src/server/CacheManager.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/CacheManager.ts#L49)
 
 ___
 
@@ -339,13 +407,15 @@ ___
 
 #### Defined in
 
-[server/CacheManager.ts:62](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/CacheManager.ts#L62)
+[packages/bpmn-server/src/server/CacheManager.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/CacheManager.ts#L53)
 
 ___
 
 ### shutdown
 
 ▸ **shutdown**(): `Promise`\<`void`\>
+
+Clear only this server's cached executions.
 
 #### Returns
 
@@ -357,4 +427,4 @@ ___
 
 #### Defined in
 
-[server/CacheManager.ts:66](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/CacheManager.ts#L66)
+[packages/bpmn-server/src/server/CacheManager.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/CacheManager.ts#L57)

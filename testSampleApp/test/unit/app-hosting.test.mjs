@@ -48,7 +48,7 @@ test('DISABLE_DESIGN: nobody designs in the pages, administrators and the no-sig
   });
 });
 
-test('install adds admin/admin only to a database without users', async () => {
+test('install adds admin only to a database without users, and only with ADMIN_PASSWORD: no admin/admin', async () => {
   UserService.initialized = true;            // no database connection in a unit test
   const count = User.countDocuments, add = UserService.prototype.addUser;
   const added = [];
@@ -58,7 +58,13 @@ test('install adds admin/admin only to a database without users', async () => {
     User.countDocuments = async () => 3;     // users named otherwise: before, admin/admin was added
     assert.equal(await new UserService().install(), false);
     User.countDocuments = async () => 0;
-    assert.equal(await new UserService().install(), true);
+    const before = process.env.ADMIN_PASSWORD;
+    delete process.env.ADMIN_PASSWORD;
+    assert.equal(await new UserService().install(), false, 'without it, the first page asks for the administrator');
+    assert.deepEqual(added, []);
+    process.env.ADMIN_PASSWORD = 'from-the-installer';
+    try { assert.equal(await new UserService().install(), true); }
+    finally { if (before === undefined) delete process.env.ADMIN_PASSWORD; else process.env.ADMIN_PASSWORD = before; }
     assert.deepEqual(added, ['admin']);
   }
   finally {

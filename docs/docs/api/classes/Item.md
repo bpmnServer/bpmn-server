@@ -33,6 +33,7 @@
 - [followUpDate](Item.md#followupdate)
 - [priority](Item.md#priority)
 - [status](Item.md#status)
+- [statusDetails](Item.md#statusdetails)
 - [timeDue](Item.md#timedue)
 - [timerCount](Item.md#timercount)
 - [messageId](Item.md#messageid)
@@ -76,7 +77,7 @@
 
 #### Defined in
 
-[engine/Item.ts:55](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L55)
+[packages/bpmn-server/src/engine/Item.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L56)
 
 ## Properties
 
@@ -90,7 +91,7 @@
 
 #### Defined in
 
-[engine/Item.ts:8](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L8)
+[packages/bpmn-server/src/engine/Item.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L10)
 
 ___
 
@@ -104,7 +105,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:9](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L9)
+[packages/bpmn-server/src/engine/Item.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L11)
 
 ___
 
@@ -118,7 +119,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:10](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L10)
+[packages/bpmn-server/src/engine/Item.ts:12](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L12)
 
 ___
 
@@ -132,7 +133,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:11](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L11)
+[packages/bpmn-server/src/engine/Item.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L13)
 
 ___
 
@@ -146,7 +147,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:12](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L12)
+[packages/bpmn-server/src/engine/Item.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L14)
 
 ___
 
@@ -160,7 +161,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:13](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L13)
+[packages/bpmn-server/src/engine/Item.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L15)
 
 ___
 
@@ -174,7 +175,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L14)
+[packages/bpmn-server/src/engine/Item.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L16)
 
 ___
 
@@ -188,7 +189,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L15)
+[packages/bpmn-server/src/engine/Item.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L17)
 
 ___
 
@@ -202,7 +203,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L16)
+[packages/bpmn-server/src/engine/Item.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L18)
 
 ___
 
@@ -212,7 +213,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L17)
+[packages/bpmn-server/src/engine/Item.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L19)
 
 ___
 
@@ -220,9 +221,13 @@ ___
 
 • **output**: `Object` = `{}`
 
+#### Implementation of
+
+[IItem](../interfaces/IItem.md).[output](../interfaces/IItem.md#output)
+
 #### Defined in
 
-[engine/Item.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L18)
+[packages/bpmn-server/src/engine/Item.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L20)
 
 ___
 
@@ -236,7 +241,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L19)
+[packages/bpmn-server/src/engine/Item.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L21)
 
 ___
 
@@ -250,7 +255,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L20)
+[packages/bpmn-server/src/engine/Item.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L22)
 
 ___
 
@@ -264,7 +269,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L21)
+[packages/bpmn-server/src/engine/Item.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L23)
 
 ___
 
@@ -278,7 +283,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L22)
+[packages/bpmn-server/src/engine/Item.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L24)
 
 ___
 
@@ -292,7 +297,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:23](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L23)
+[packages/bpmn-server/src/engine/Item.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L25)
 
 ___
 
@@ -306,7 +311,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:24](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L24)
+[packages/bpmn-server/src/engine/Item.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L26)
 
 ___
 
@@ -320,7 +325,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:25](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L25)
+[packages/bpmn-server/src/engine/Item.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L27)
 
 ___
 
@@ -334,7 +339,21 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L28)
+[packages/bpmn-server/src/engine/Item.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L28)
+
+___
+
+### statusDetails
+
+• **statusDetails**: `object`
+
+#### Implementation of
+
+[IItem](../interfaces/IItem.md).[statusDetails](../interfaces/IItem.md#statusdetails)
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Item.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L29)
 
 ___
 
@@ -348,7 +367,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:49](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L49)
+[packages/bpmn-server/src/engine/Item.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L50)
 
 ___
 
@@ -356,9 +375,15 @@ ___
 
 • **timerCount**: `any`
 
+a repeating timer: which firing this is, from 0, and how many there are to be
+
+#### Implementation of
+
+[IItem](../interfaces/IItem.md).[timerCount](../interfaces/IItem.md#timercount)
+
 #### Defined in
 
-[engine/Item.ts:50](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L50)
+[packages/bpmn-server/src/engine/Item.ts:51](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L51)
 
 ___
 
@@ -372,7 +397,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:52](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L52)
+[packages/bpmn-server/src/engine/Item.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L53)
 
 ___
 
@@ -386,7 +411,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:53](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L53)
+[packages/bpmn-server/src/engine/Item.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L54)
 
 ## Accessors
 
@@ -398,9 +423,13 @@ ___
 
 `any`
 
+#### Implementation of
+
+[IItem](../interfaces/IItem.md).[data](../interfaces/IItem.md#data)
+
 #### Defined in
 
-[engine/Item.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L30)
+[packages/bpmn-server/src/engine/Item.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L31)
 
 • `set` **data**(`val`): `void`
 
@@ -414,9 +443,13 @@ ___
 
 `void`
 
+#### Implementation of
+
+[IItem](../interfaces/IItem.md).[data](../interfaces/IItem.md#data)
+
 #### Defined in
 
-[engine/Item.ts:31](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L31)
+[packages/bpmn-server/src/engine/Item.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L32)
 
 ___
 
@@ -430,7 +463,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:33](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L33)
+[packages/bpmn-server/src/engine/Item.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L34)
 
 ___
 
@@ -448,7 +481,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:34](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L34)
+[packages/bpmn-server/src/engine/Item.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L35)
 
 ___
 
@@ -466,7 +499,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:35](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L35)
+[packages/bpmn-server/src/engine/Item.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L36)
 
 ___
 
@@ -484,7 +517,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:36](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L36)
+[packages/bpmn-server/src/engine/Item.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L37)
 
 ___
 
@@ -502,7 +535,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:39](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L39)
+[packages/bpmn-server/src/engine/Item.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L40)
 
 ___
 
@@ -520,7 +553,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:42](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L42)
+[packages/bpmn-server/src/engine/Item.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L43)
 
 ___
 
@@ -538,7 +571,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:45](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L45)
+[packages/bpmn-server/src/engine/Item.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L46)
 
 ## Methods
 
@@ -558,7 +591,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:29](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L29)
+[packages/bpmn-server/src/engine/Item.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L30)
 
 ___
 
@@ -578,7 +611,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:32](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L32)
+[packages/bpmn-server/src/engine/Item.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L33)
 
 ___
 
@@ -592,7 +625,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:67](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L67)
+[packages/bpmn-server/src/engine/Item.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L72)
 
 ___
 
@@ -614,4 +647,4 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:83](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/Item.ts#L83)
+[packages/bpmn-server/src/engine/Item.ts:89](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Item.ts#L89)

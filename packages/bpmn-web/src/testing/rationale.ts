@@ -27,7 +27,9 @@ export function rationaleEvents(logs, items, startedAt) {
     (logs || []).forEach(l => {
         const m = l && l.type === 'info' && ACTION.exec(String(l.message || ''));
         if (m) {
-            const item = bySeq[Number(m[1])] || byId[m[3]];
+            // the item of this element with this seq; a seq can be another element's (a test instance, a loop)
+            const atSeq = bySeq[Number(m[1])];
+            const item = atSeq && atSeq.elementId === m[3] ? atSeq : byId[m[3]];
             let word = WORDS[m[4]] || m[4].toLowerCase();
             if (m[4] === 'Ended' && item && /UserTask/.test(item.type)) word = 'completed' + (item.userName ? ' by ' + item.userName : '');
             // waiting as it starts: one row, "started · waits"
@@ -40,4 +42,55 @@ export function rationaleEvents(logs, items, startedAt) {
                 decisions: [{ action: l.action, not: /^not taken|takes no flow/.test(l.action), why: whyOf(l) }] });
     });
     return events;
+}
+
+/** An entry the engine logs as JSON: {"type":"execution",...} opens an operation, {"type":"outcome",...} says what it did. */
+const entryOf = (l, type) => {
+    if (!l || l.type !== 'info' || !String(l.message || '').startsWith(`{"type":"${type}"`)) return null;
+    try { return JSON.parse(l.message); } catch { return null; }
+};
+
+/**
+ * The Rationale by step, from the log alone: each operation the engine logged ({"type":"execution"}: Start Process,
+ * Invoke Item, Timer Fired, Invoke Event, Retry Item, ...), the rows of rationaleEvents up to the next one, and its
+ * outcome as the engine logged it ({"type":"outcome"}: the instance's status, the items whose status changed, what
+ * waits). A log from before outcomes were logged has none: `outcome` is null.
+ */
+export function rationaleSteps(logs, items, startedAt) {
+    const byItemId = {};
+    (items || []).forEach(i => { byItemId[i.id] = i; });
+    const t0 = startedAt ? new Date(startedAt).getTime() : null;
+    const elapsed = at => {
+        if (!at || t0 == null) return '';
+        const s = Math.max(0, (new Date(at).getTime() - t0) / 1000);
+        return s < 60 ? s.toFixed(1) + 's' : Math.floor(s / 60) + 'm ' + Math.round(s % 60) + 's';
+    };
+    const groups: any[] = [];
+    let slice = [], step = null;
+    const close = () => {
+        if (step || slice.length) groups.push({ ...(step ?? { label: '', element: null, data: null }), logs: slice });
+        slice = [];
+    };
+    for (const l of logs || []) {
+        const x = entryOf(l, 'execution');
+        if (!x) { slice.push(l); continue; }
+        close();
+        const item = byItemId[x.itemId];
+        step = { label: x.label, element: x.startNodeId ?? item?.elementId ?? x.id ?? null, name: item?.name ?? '',
+            userName: x.userName ?? null, data: x.inputData ?? null, at: elapsed(l.date) };
+    }
+    close();
+    let before = null;
+    return groups.map(g => ({ ...g, events: rationaleEvents(g.logs, items, startedAt) }))
+        .filter(g => g.label || g.events.length)
+        .map((g, n) => {
+            const outcomes = g.logs.map(l => entryOf(l, 'outcome')).filter(Boolean);
+            // the operation's outcome: its last save's; what it changed, from all its saves
+            const outcome = outcomes.length ? { status: outcomes.at(-1).status, waiting: outcomes.at(-1).waiting,
+                changed: [...new Map(outcomes.flatMap(o => o.changed).map(i => [i.id, i])).values()] } : null;
+            const statusBefore = before;
+            if (outcome) before = outcome.status;
+            const { logs: _, ...rest } = g;
+            return { ...rest, n: n + 1, outcome, statusBefore };
+        });
 }

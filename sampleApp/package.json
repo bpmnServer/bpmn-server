@@ -9,10 +9,14 @@
     "dev": "tsx watch index.ts",
     "setup": "tsx index.ts --setup",
     "cli": "tsx index.ts --cli",
-    "verify": "bpmn-server verify processes"
+    "mcp": "bpmn-mcp",
+    "verify": "bpmn-server verify processes",
+    "services": "bpmn-web-services delegates/appDelegate.ts services.json",
+    "test": "tsx test/features.ts"
   },
   "dependencies": {
     "axios": "^1.18.1",
+    "bpmn-mcp": "*",
     "bpmn-server": "*",
     "bpmn-web": "*",
     "dayjs": "^1.11.21",

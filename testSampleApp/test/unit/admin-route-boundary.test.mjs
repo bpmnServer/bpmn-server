@@ -8,10 +8,10 @@ import { API2 } from '../../../packages/bpmn-web/dist/routes/api2.js';
 const webApp = { bpmnServer: {} };
 const paths = (router) => router.stack.map((layer) => layer.route?.path).filter(Boolean);
 
-test('legacy operational router lists models but excludes definition administration', () => {
+test('legacy operational router lists and reads models but excludes definition administration', () => {
   const api = new API(webApp);
   const runtimeModel = paths(api.config()).filter((path) => path.startsWith('/definitions') || path.startsWith('/model'));
-  assert.deepEqual(runtimeModel, ['/definitions/list']);
+  assert.deepEqual(runtimeModel, ['/definitions/list', '/definitions/load/:name']);
   const admin = paths(api.adminConfig());
   for (const write of ['/definitions/import{/:name}', '/definitions/rename', '/definitions/delete', '/model/save'])
     assert.ok(admin.includes(write), write);

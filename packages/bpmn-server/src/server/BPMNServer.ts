@@ -9,6 +9,9 @@ import type { IDataStore, IModelsDatastore } from '../interfaces/datastore.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
 import type { IBPMNServer, ICacheManager } from '../interfaces/server.js';
 import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
+import { LaunchedServer } from './LaunchedServer.js';
+import { TestStubs } from '../engine/TestStubs.js';
+import { DefaultAppDelegate } from '../engine/DefaultAppDelegate.js';
 import { Engine } from './Engine.js';
 import { Cron } from './Cron.js';
 import { Listener } from './Listener.js';
@@ -62,6 +65,8 @@ class BPMNServer implements IBPMNServer {
 	locker: ILockManager;
 	/** The connectors an administrator added: REST APIs service tasks call (docs/docs/connectors.md). */
 	connectors: Connectors;
+	/** What the tests running in here replace: no call of the engine reaches them. */
+	testStubs = new TestStubs(this);
 	error;
 	/** Settles when the server has started: the application delegate's start-up, then (unless `cron: false`) the timers. Rejects with the reason it could not start. */
 	readonly ready: Promise<void>;
@@ -70,6 +75,22 @@ class BPMNServer implements IBPMNServer {
 	/**
 	 * Builds a server and waits until it is ready.
 	 */
+	/**
+	 * Launches a server, instead of embedding one as `new BPMNServer` does: what you get is outside its engine, and answers
+	 * data, not running executions. The delegate and services are inside the engine, and keep them.
+	 * `engine` says where the engine is: left out, in this process; `'http://...'`, there (startEngineService, with `engineKey`);
+	 * `'none'`, nowhere: models can be edited and saved, and what would run answers EngineNotRunningError.
+	 * `calls` adds to what the engine in this process can be asked; an engine elsewhere has its own (startEngineService's `calls`).
+	 */
+	static launch(configuration: IConfiguration, logger?: ILogger, options: { engine?: string, engineKey?: string, engineTimeout?: number, calls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>>, cron?: boolean } = {}): LaunchedServer {
+		if (options.engine) {
+			// the application's code is the engine's, and so are the timers
+			const withoutApplication = Object.create(configuration, { appDelegate: { value: server => new DefaultAppDelegate(server) } });
+			return new LaunchedServer(new BPMNServer(withoutApplication, logger, { ...options, cron: false }), options);
+		}
+		return new LaunchedServer(new BPMNServer(configuration, logger, options), options);
+	}
+
 	static async create(configuration: IConfiguration, logger?: ILogger, options = {}): Promise<BPMNServer> {
 		const server = new BPMNServer(configuration, logger, options);
 		await server.ready;

@@ -12,6 +12,7 @@
 ### Methods
 
 - [list](ICacheManager.md#list)
+- [getInstance](ICacheManager.md#getinstance)
 - [add](ICacheManager.md#add)
 - [remove](ICacheManager.md#remove)
 - [shutdown](ICacheManager.md#shutdown)
@@ -28,7 +29,29 @@
 
 #### Defined in
 
-[interfaces/server.ts:129](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L129)
+[packages/bpmn-server/src/interfaces/server.ts:173](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L173)
+
+___
+
+### getInstance
+
+▸ **getInstance**(`instanceId`): [`IExecution`](IExecution.md)
+
+The live execution of an instance this cache holds, or null/undefined.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+
+#### Returns
+
+[`IExecution`](IExecution.md)
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/server.ts:175](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L175)
 
 ___
 
@@ -48,7 +71,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:130](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L130)
+[packages/bpmn-server/src/interfaces/server.ts:176](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L176)
 
 ___
 
@@ -68,7 +91,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:131](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L131)
+[packages/bpmn-server/src/interfaces/server.ts:177](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L177)
 
 ___
 
@@ -82,4 +105,4 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:132](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/server.ts#L132)
+[packages/bpmn-server/src/interfaces/server.ts:178](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L178)

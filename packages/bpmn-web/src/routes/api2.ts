@@ -17,8 +17,9 @@ const awaitAppDelegateFactory = (middleware) => {
 }
 
 import { apiKeyAuth as loggedIn, apiServiceAuth, configuredApiUser } from './middleware/apiKeyAuth.js';
-import { modelNameGuard } from './middleware/modelName.js';
+import { modelNameGuard, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
+import { taskApi } from './taskApi.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
 import { assertModelAcceptable, sendModelRejection } from '../runtime/modelVerification.js';
@@ -54,6 +55,10 @@ export class API2 extends Common {
     config() {
 
         var router = express.Router();
+
+        guardModelParams(router);
+        // the task API has a key of its own, and API_KEY does not open it
+        router.use('/tasks', taskApi(this.bpmnServer));
         router.use(loggedIn, apiServiceAuth);
         router.use('/model', modelNameGuard);
         var bpmnServer = this.bpmnServer;
@@ -420,6 +425,7 @@ export class API2 extends Common {
     /** Model administration is mounted separately under /admin/api2. */
     adminConfig() {
         const router = express.Router();
+        guardModelParams(router);
         const bpmnServer = this.bpmnServer;
         const api = new BPMNAdminAPI(this.bpmnServer);
         const self = this;

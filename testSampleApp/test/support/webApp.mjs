@@ -1,5 +1,5 @@
 // Starts testSampleApp (its settings, delegate and connectors on bpmn-web) in-process for the HTTP and UI
-// tests: its own MongoDB database (dropped on stop), its own definitions folder (a copy of test/processes),
+// tests: its own MongoDB database (dropped on stop), its own definitions folder (a copy of FIXTURE_MODELS),
 // no timers, authentication on, and three users.
 //
 //   const web = await startWebApp();
@@ -9,13 +9,17 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawn } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 /** bpmn-web's package: the tests reach its built modules (dist/) as well as its public API. */
 const WEB = path.join(ROOT, '..', 'packages', 'bpmn-web');
-export const FIXTURES = path.join(ROOT, 'test', 'processes');
+export const FIXTURES = path.join(ROOT, 'processes');
+/** The models a test server starts with: these few, whatever else the folder holds. */
+const FIXTURE_MODELS = ['leave-request.bpmn', 'simple.bpmn', 'test-exclusive-gateway.bpmn'];
 export const PASSWORD = 'Test-password-1';
 export const API_KEY = 'test-api-key';
 export const ADMIN_API_KEY = 'test-admin-api-key';
@@ -37,18 +41,42 @@ function testDatabaseUrl() {
         base = parsed.MONGO_DB_URL || 'mongodb://localhost:27017/bpmn';
     }
     const url = new URL(base);
-    url.pathname = '/bpmn_web_test_' + process.pid;
+    // not by the process's id alone: an id comes round again, and a database left behind then has this one's users
+    url.pathname = `/bpmn_web_test_${process.pid}_${randomUUID().slice(0, 8)}`;
     return url.toString();
+}
+
+/** A catalog folder for a test: a good entry and a tampered one, which the real catalog can not have. */
+export function testCatalog() {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-catalog-'));
+    fs.mkdirSync(path.join(dir, 'models'));
+    fs.copyFileSync(path.join(ROOT, 'test', 'support', 'test-catalog.json'), path.join(dir, 'catalog.json'));
+    fs.copyFileSync(path.join(FIXTURES, 'hello.bpmn'), path.join(dir, 'models', 'hello.bpmn'));
+    return dir + path.sep;
 }
 
 function definitionsFolder() {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-defs-'));
-    for (const file of fs.readdirSync(FIXTURES))
+    for (const file of FIXTURE_MODELS)
         fs.copyFileSync(path.join(FIXTURES, file), path.join(dir, file));
     return dir + path.sep;
 }
 
-export async function startWebApp({ env = {} } = {}) {
+/** The engine in a process of its own, on the same database and models; what ENGINE_AT then points to. */
+function startEngineProcess(port = '0') {
+    return new Promise((resolve, reject) => {
+        const child = spawn(process.execPath, ['--import', 'tsx', 'engine.ts'], { cwd: ROOT, env: { ...process.env, ENGINE_PORT: port }, stdio: ['ignore', 'pipe', 'inherit'] });
+        let output = '';
+        child.stdout.on('data', chunk => {
+            output += chunk;
+            const ready = /ENGINE_READY ([\d.]+):(\d+)/.exec(output);
+            if (ready) resolve({ child, at: `http://${ready[1]}:${ready[2]}` });
+        });
+        child.once('exit', code => reject(new Error(`the engine stopped, code ${code}: ${output.slice(-500)}`)));
+    });
+}
+
+export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true } = {}) {
     const dbUrl = testDatabaseUrl();
     const definitionsPath = definitionsFolder();
     // the app reads its settings from the environment; dotenv never overrides these
@@ -70,6 +98,14 @@ export async function startWebApp({ env = {} } = {}) {
         SAVE_LOGS: 'true',
     }, env);
 
+    let engineProcess;
+    if (remoteEngine) {
+        process.env.ENGINE_KEY = `test-${randomUUID()}`;
+        delete process.env.ENGINE_AT;
+        engineProcess = await startEngineProcess();
+        process.env.ENGINE_AT = engineProcess.at;
+    }
+
     const quiet = !process.env.TEST_VERBOSE;
     const restoreConsole = quiet ? silenceConsole() : () => { };
 
@@ -80,8 +116,13 @@ export async function startWebApp({ env = {} } = {}) {
     const { AppDelegate } = await import(fileUrl(ROOT, 'delegates/appDelegate.ts'));
     const mongoose = (await import('mongoose')).default;
 
+    // what a test needs from inside the engine, as an application's delegate has it
+    let embedded;
+    class TestDelegate extends AppDelegate {
+        constructor(server) { super(server); embedded = server; }
+    }
     const webApp = new WebApp({
-        configuration: webConfiguration(config(), AppDelegate),
+        configuration: webConfiguration(config(), TestDelegate),
         elementTemplatesPath: connectorsPath,
         serverOptions: { cron: false },
     });
@@ -90,7 +131,8 @@ export async function startWebApp({ env = {} } = {}) {
     await bpmnServer.dataStore.install?.();
     await bpmnServer.definitions.rebuild();
 
-    for (const [userName, userGroups] of Object.entries(USERS))
+    // users: false, a server's first start: no users at all
+    for (const [userName, userGroups] of users ? Object.entries(USERS) : [])
         await User.create({ userName, email: `${userName}@test.local`, password: PASSWORD, userGroups });
 
     webApp.start();
@@ -102,7 +144,24 @@ export async function startWebApp({ env = {} } = {}) {
     const base = `http://127.0.0.1:${webApp.server.address().port}`;
 
     const web = {
-        base, webApp, bpmnServer, definitionsPath, dbUrl,
+        base, webApp, bpmnServer, definitionsPath, dbUrl, embedded,
+        engineAt: engineProcess?.at, enginePid: engineProcess?.child.pid,
+        /** Killed, not asked to stop: what a crash leaves behind. */
+        async killEngine() {
+            engineProcess.child.removeAllListeners('exit');
+            await new Promise(resolve => { engineProcess.child.once('exit', resolve); engineProcess.child.kill('SIGKILL'); });
+        },
+        /** Back on its port, where ENGINE_AT says it is. */
+        async startEngineAgain() {
+            engineProcess = await startEngineProcess(new URL(engineProcess.at).port);
+            web.enginePid = engineProcess.child.pid;
+        },
+        async stopEngine() {
+            // killed: on Windows it never gets an exit code
+            if (!engineProcess || engineProcess.child.killed || engineProcess.child.exitCode !== null) return;
+            engineProcess.child.removeAllListeners('exit');
+            await new Promise(resolve => { engineProcess.child.once('exit', resolve); engineProcess.child.kill(); });
+        },
         client: () => new WebClient(base),
         /** A client logged in as one of USERS. */
         async login(userName) {
@@ -123,6 +182,7 @@ export async function startWebApp({ env = {} } = {}) {
             webApp.server.closeAllConnections?.();
             await new Promise(resolve => webApp.server.close(() => resolve()));
             await bpmnServer.shutdown?.();
+            await web.stopEngine();
             try {
                 await mongoose.connection.db?.dropDatabase();
             } catch { /* best effort */ }

@@ -28,14 +28,18 @@ class CancelEventBehaviour extends Behaviour {
         else {  // throw a message
             item.log("Cancel Event is throwing a TransactionCancel");
 
-            let transItem=item.token.parentToken.originItem;
+            // the transaction this ends: its own token, or up through those between (a gateway adds one)
+            let scope = item.token;
+            while (scope && (scope.originItem?.node as any)?.isTransaction !== true) scope = scope.parentToken;
+            let transItem = scope?.originItem ?? item.token.parentToken.originItem;
   
             await item.token.processCancel(item);      // find the event and invoke it
             
             await Transaction.Cancel(transItem);
-            /*transItem.token.status=TOKEN_STATUS.terminated;
-            
-            await transItem.node.end(transItem,true);*/
+            // its way out is the cancel boundary event's token: the one that waited on the transaction has nothing left to do,
+            // and left waiting it would keep the instance running with every item ended
+            if (transItem.token.status === TOKEN_STATUS.wait)
+                transItem.token.status = TOKEN_STATUS.terminated;
 
             return NODE_ACTION.error;
         }

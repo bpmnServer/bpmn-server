@@ -98,10 +98,19 @@ test('the instance page gives the Rationale: the run from start to end, each ste
   assert.match(page.text, /<h2 id="rationale-heading">Rationale<\/h2>/);
   const table = page.text.match(/<table class="instance-table rationale-table">([^]*?)<\/table>/)[1];
   const text = html => html.replace(/<[^>]+>/g, '').replace(/&#39;/g, "'").replace(/&gt;/g, '>');
-  // each row's cells: seq, at, id, name, type, what happened, why (as the items: the element's id, name and type)
-  const rows = [...table.matchAll(/<tr[^>]*>([^]*?)<\/tr>/g)].slice(1)
-    .map(r => [...r[1].matchAll(/<td[^>]*>([^]*?)<\/td>/g)].map(c => text(c[1])))
-    .map(([seq, at, id, name, type, happened, why]) => ({ seq: Number(seq), at, id, name, type, happened, why }));
+  // each row's cells: seq, at, the element (its name and id, or its id), type, what happened, why
+  // a step's row heads what it caused: its number, what it was, who, the data, what waits after it
+  const steps = [...table.matchAll(/<tr class="rationale-step"[^>]*>([^]*?)<\/tr>/g)].map(r => r[1].replace(/<[^>]+>/g, ' ').replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim());
+  assert.deepEqual(steps, [
+    'Step 1 · Start Process 4 rows',
+    'Step 2 · Invoke Item Submit request by admin {"days":10} 8 rows',
+  ]);
+  const rows = [...table.matchAll(/<tr([^>]*)>([^]*?)<\/tr>/g)].slice(1).filter(r => !/rationale-step/.test(r[1]))
+    .map(r => [...r[2].matchAll(/<td[^>]*>([^]*?)<\/td>/g)].map(c => text(c[1])))
+    .map(([seq, at, element, type, happened, why]) => {
+      const [, name, id] = /^(.*) \(([^()]+)\)$/.exec(element) ?? [, '', element];
+      return { seq: Number(seq), at, id, name, type, happened, why };
+    });
   // the log, in its order: each item's start (waiting as it starts: one row), end, and each decision where made
   assert.deepEqual(rows.map(r => [r.seq, r.id, r.name, r.type, r.happened]), [
     [1, 'Requested', 'Leave requested', 'bpmn:StartEvent', 'started'],

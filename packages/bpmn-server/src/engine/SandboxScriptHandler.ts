@@ -1,4 +1,4 @@
-import { ScriptHandler } from './ScriptHandler.js';
+import { ScriptHandler, type ScriptContext } from './ScriptHandler.js';
 import { scriptOf } from './Expressions.js';
 import type { Item } from './Item.js';
 import type { Token } from './Token.js';
@@ -16,15 +16,22 @@ import type { Execution } from './Execution.js';
  * (assignee, candidateUsers, ...) is copied back. `appServices` and `appUtils` are there, but calling one of their
  * methods runs nothing: it returns undefined and the run's decisions say so. There is no `appDelegate`, no
  * `require`, no `process`, no timers; `$py` scripts are refused.
+ *
+ * With `callServices`, calling a method of `appServices` or `appUtils` runs it, in the server, with JSON copies of
+ * its arguments, and the script gets a JSON copy of what it returns. Whoever writes a model can then call every one
+ * of those methods with any arguments, so they must be safe to be called so. Only methods are reached, and only
+ * through plain objects: not a service's other objects (its appDelegate), nor what every object inherits.
  */
 export class SandboxScriptHandler extends ScriptHandler {
     /** Milliseconds a script or expression may run. */
     timeLimit = 200;
     /** Bytes a script may use. */
     memoryLimit = 32 * 1024 * 1024;
+    /** Calling a method of appServices or appUtils runs it (else it runs nothing, and the run's decisions say so). */
+    callServices = false;
 
-    constructor(options: { timeLimit?: number; memoryLimit?: number } = {}) {
-        super();
+    constructor(options: { timeLimit?: number; memoryLimit?: number; callServices?: boolean; context?: ScriptContext } = {}) {
+        super(options);
         Object.assign(this, options);
     }
 
@@ -44,30 +51,32 @@ export class SandboxScriptHandler extends ScriptHandler {
     async run(scope, body: string, label: string) {
         const name = ScriptHandler.scriptName(scope, label);
         const view = scopeView(scope);
-        const { result, back, calls } = await runSandboxed(view.values, body, {
+        const { result, back, calls } = await runSandboxed({ ...view.values, ...this.contextValues(scope) }, body, {
             name, timeLimit: this.timeLimit, memoryLimit: this.memoryLimit, log: text => scope.log?.(text),
+            services: this.callServices ? view.services : undefined,
             self: 'item ?? instance',
             prelude: 'if (item) { item.data = data; item.input = input; item.output = output; }',
             returned: '{ data: item ? item.data : data, input: item ? item.input : input, output: item ? item.output : output, item, instance }',
         });
         view.copyBack(back);
         for (const service of new Set(calls))
-            decide(scope, `${service}: not called. A real server runs the service; this demo does not, so the script got undefined.`);
+            decide(scope, `${service}: not called. This server does not let scripts call services, so the script got undefined.`);
         return result;
     }
 }
 
 /**
  * Runs a function body in QuickJS with `values` as its variables (JSON copies). `appServices` and `appUtils` are
- * there too: calling one of their methods returns undefined and is listed in `calls`. Returns the body's value and
- * `returned` (an expression over the variables, default all of them) as JSON. Throws the script's error, or a
- * time-limit error.
+ * there too: calling one of their methods returns undefined and is listed in `calls`, or, given `services`, runs it.
+ * Returns the body's value and `returned` (an expression over the variables, default all of them) as JSON. Throws the
+ * script's error, or a time-limit error. The time limit is the script's own: not what it waits for a service.
  */
 export async function runSandboxed(values: Record<string, any>, body: string, options: {
     name?: string; timeLimit?: number; memoryLimit?: number; log?: (text: string) => void;
     /** an expression: `this` in the body */ self?: string;
     /** statements run before the body */ prelude?: string;
     /** an expression: what comes back of the variables */ returned?: string;
+    /** what calling appServices.x and appUtils.x runs */ services?: { appServices?: any; appUtils?: any };
 } = {}): Promise<{ result: any; back: any; calls: string[] }> {
     const { name = 'script', timeLimit = 200, memoryLimit = 32 * 1024 * 1024 } = options;
     const keys = Object.keys(values).filter(key => /^[A-Za-z_$][\w$]*$/.test(key));
@@ -78,13 +87,59 @@ export async function runSandboxed(values: Record<string, any>, body: string, op
     const runtime = QuickJS.newRuntime();
     runtime.setMemoryLimit(memoryLimit);
     runtime.setMaxStackSize(512 * 1024);
-    const deadline = Date.now() + timeLimit;
+    let deadline = Date.now() + timeLimit;
     runtime.setInterruptHandler(() => Date.now() > deadline);
     const vm = runtime.newContext();
     const failed = (error) => sandboxError(name, error, Date.now() > deadline ? timeLimit : 0);
+    // the calls still running, and the script's jobs: run again when one comes back; not the script's time while it waits
+    const running = new Set<any>();
+    let closed = false, waitingSince = 0, stop: (error) => void;
+    const stopped = new Promise<never>((_, reject) => { stop = reject; });
+    const runJobs = () => {
+        const jobs = runtime.executePendingJobs();
+        if (jobs.error) {
+            const error = vm.dump(jobs.error);
+            jobs.error.dispose();
+            stop(error);
+        }
+        else
+            jobs.dispose();
+    };
+    const cameBack = (settle: () => void) => {
+        if (closed) return;     // the script ended without waiting for it
+        deadline += Date.now() - waitingSince;
+        settle();
+        runJobs();
+        waitingSince = Date.now();
+    };
+    const asError = (error) => vm.newError({ name: String(error?.name ?? 'Error'), message: String(error?.message ?? error) });
+    const callService = (path: string, args: string) => {
+        const started = Date.now();
+        try {
+            const result = serviceMethod(options.services, path)(JSON.parse(args));
+            if (typeof result?.then !== 'function')
+                return vm.newString(asJson(result));
+            const promise = vm.newPromise();
+            running.add(promise);
+            result.then(
+                value => cameBack(() => { running.delete(promise); vm.newString(asJson(value)).consume(text => promise.resolve(text)); }),
+                error => cameBack(() => { running.delete(promise); asError(error).consume(handle => promise.reject(handle)); }));
+            return promise.handle;
+        }
+        catch (error) {
+            return { error: asError(error) };
+        }
+        finally {
+            deadline += Date.now() - started;
+        }
+    };
     try {
-        // the host's two functions: a service called (recorded, not run) and console.log
-        const called = vm.newFunction('__called', nameHandle => { calls.push(vm.getString(nameHandle)); });
+        // the host's two functions: a service called (recorded, or run) and console.log
+        const called = vm.newFunction('__called', (nameHandle, argsHandle) => {
+            const path = vm.getString(nameHandle);
+            if (options.services) return callService(path, vm.getString(argsHandle));
+            calls.push(path);
+        });
         const log = vm.newFunction('__log', textHandle => { options.log?.(vm.getString(textHandle)); });
         vm.setProp(vm.global, '__called', called);
         vm.setProp(vm.global, '__log', log);
@@ -95,7 +150,11 @@ export async function runSandboxed(values: Record<string, any>, body: string, op
             const __s = JSON.parse(${JSON.stringify(state)});
             const services = (path) => new Proxy(function () {}, {
                 get: (_, key) => typeof key === 'string' ? services(path ? path + '.' + key : key) : undefined,
-                apply: () => { __called(path); return undefined; },
+                apply: (_, __, args) => {
+                    const back = __called(path, JSON.stringify(args));
+                    const value = text => JSON.parse(text).value;
+                    return back === undefined ? undefined : typeof back === 'string' ? value(back) : back.then(value);
+                },
             });
             const console = { log: (...args) => __log(args.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(' ')) };
             const appServices = services('appServices'), appUtils = services('appUtils');
@@ -111,8 +170,9 @@ ${body}
             const promise = vm.unwrapResult(vm.evalCode(code, name));
             const settled = vm.resolvePromise(promise);
             promise.dispose();
-            runtime.executePendingJobs();
-            outcome = await settled;
+            runJobs();
+            waitingSince = Date.now();
+            outcome = await Promise.race([settled, stopped]);
         }
         catch (error) {
             // a syntax error, or one QuickJS raised outside the script (out of memory, interrupted)
@@ -128,9 +188,33 @@ ${body}
         return { result: parsed.result === null ? undefined : parsed.result, back: parsed.back, calls };
     }
     finally {
+        closed = true;
+        for (const promise of running) promise.dispose();
         vm.dispose();
         runtime.dispose();
     }
+}
+
+/** What a service returned, for the sandbox. */
+const asJson = (value) => JSON.stringify({ value }, jsonValue);
+
+/**
+ * `appServices.a.b` as a function of its arguments' list: a method, reached through plain objects only (a service's
+ * other objects are the server's), and none of what every object or function inherits (constructor, __proto__, call).
+ */
+function serviceMethod(services, path: string) {
+    const [root, ...keys] = path.split('.');
+    let owner = services?.[root], value = owner;
+    for (const key of keys) {
+        const plain = value === services?.[root] || Object.getPrototypeOf(value ?? 0) === Object.prototype || Object.getPrototypeOf(value ?? 0) === null;
+        if (!plain || key in Object.prototype)
+            throw new TypeError(`${path} is not a service`);
+        owner = value;
+        value = value[key];
+    }
+    if (typeof value !== 'function' || !keys.length)
+        throw new TypeError(`${path} is not a function`);
+    return (args: any[]) => value.apply(owner, args);
 }
 
 /** The QuickJS engine, loaded once (its WebAssembly module) and only when a sandboxed script first runs. */
@@ -155,15 +239,19 @@ function scopeView(scope) {
     const execution = isExecution ? scope : isToken ? scope.execution : scope.token?.execution;
     const instance = execution?.instance ?? {};
     const instanceView = { id: instance.id, name: instance.name, status: instance.status, startedAt: instance.startedAt, data: instance.data };
+    const services = { appServices: execution?.servicesProvider, appUtils: execution?.appDelegate?.appUtils };
 
     if (isExecution) {
         return {
-            values: { instance: instanceView },
+            services,
+            // a process's own script has no item; the sandbox's own code reads these whatever the scope
+            values: { instance: instanceView, item: undefined, data: undefined, input: undefined, output: undefined },
             copyBack(back) { mergeChanges(instance.data, back.instance?.data); },
         };
     }
     const item = isToken ? undefined : Object.fromEntries(ITEM_READABLE.map(key => [key, scope[key]]));
     return {
+        services,
         values: { data: scope.data ?? {}, input: scope.input ?? {}, output: scope.output ?? {}, item, instance: { ...instanceView, data: undefined } },
         copyBack(back) {
             mergeChanges(scope.data, back.data);

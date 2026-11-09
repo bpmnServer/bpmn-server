@@ -94,7 +94,10 @@ class Flow extends Element implements IFlow {
             let expression = this.def.conditionExpression.body;
             item.token.log('..conditionExpression:' + JSON.stringify(expression));
             item.token.log(JSON.stringify(item.token.data));
-            let result = await item.context.scriptHandler.evaluateExpression(item, expression, 'condition');
+            const handler = item.context.scriptHandler;
+            let result = handler.evaluateCondition
+                ? await handler.evaluateCondition(item, expression, this.def.conditionExpression.language)
+                : await handler.evaluateExpression(item, expression, 'condition');
             item.token.log('..conditionExpression:' + expression + " result: " + result);
             return result;
         }

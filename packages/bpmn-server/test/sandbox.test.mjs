@@ -1,6 +1,6 @@
 // @features: sandbox, script-task
-// A public demo: scripts and expressions run in SandboxScriptHandler (QuickJS: no Node.js, a time limit), timers
-// are not scheduled and service tasks call nothing (configuration.demo); each says so in the run's decisions.
+// Scripts and expressions run in SandboxScriptHandler (QuickJS: no Node.js, a time limit), timers are not scheduled
+// (runTimers) and service tasks call nothing (runServiceTasks); each says so in the run's decisions.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -29,7 +29,7 @@ const calls = [];
 test.before(async () => {
   ({ server, dir } = await makeServer({
     services: { charge: async (input) => { calls.push(input); return { charged: true }; } },
-    extra: { demo: true, scriptHandler: () => new SandboxScriptHandler({ timeLimit: 100 }) },
+    extra: { runTimers: false, runServiceTasks: false, scriptHandler: () => new SandboxScriptHandler({ timeLimit: 100 }) },
   }));
   const models = {
     'sb-data': scripted('sbData', `
@@ -107,6 +107,12 @@ test('a script reaches no Node.js: no process, no require, no appDelegate, not e
   assert.equal(escape.instance.data.p, 'undefined');
 });
 
+test('a process\'s own script runs: it has the instance, and no item', async () => {
+  const { result } = await new SandboxScriptHandler().run({ tokens: [], instance: { id: 'i1', data: { a: 1 } }, log() { } }, 'instance.data.seen = typeof item; return instance.id;', 'start')
+    .then(result => ({ result }));
+  assert.equal(result, 'i1');
+});
+
 test('an endless loop is stopped at the time limit', async () => {
   const started = Date.now();
   await assert.rejects(server.engine.start('sb-loop', {}), /stopped after 100 ms/);
@@ -121,17 +127,17 @@ test('a service called from a script runs nothing and says so', async () => {
   assert.ok(decisions(execution).some(d => /appServices\.charge: not called/.test(d)), decisions(execution).join('\n'));
 });
 
-test('demo: a timer is not scheduled; it waits until invoked, and says so', async () => {
+test('runTimers false: a timer is not scheduled; it waits until invoked, and says so', async () => {
   const execution = await server.engine.start('sb-timer', {});
   const pause = execution.instance.items.find(i => i.elementId === 'pause');
   assert.equal(pause.status, 'wait');
   assert.equal(server.cron.pending, 0, 'no timer scheduled');
-  assert.ok(decisions(execution).some(d => /timers are disabled/.test(d)), decisions(execution).join('\n'));
+  assert.ok(decisions(execution).some(d => /timers do not run on this server/.test(d)), decisions(execution).join('\n'));
   const done = await server.engine.invoke({ 'items.id': pause.id }, {});
   assert.equal(done.instance.status, 'end');
 });
 
-test('demo: a service task calls nothing, ends with no output, and says so', async () => {
+test('runServiceTasks false: a service task calls nothing, ends with no output, and says so', async () => {
   calls.length = 0;
   const execution = await server.engine.start('sb-service', { amount: 5 });
   assert.equal(execution.instance.status, 'end');

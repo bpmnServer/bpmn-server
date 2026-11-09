@@ -367,10 +367,12 @@ test('debug: a check after a step; the variables changed; a step restarted and r
     assert.deepEqual(await checkResults(page), ['✗ after Submit: data.days > 5 (is 2)']);
     assert.equal(await page.locator('.test-debug-panel').count(), 0, 'closed with the recording');
 
-    // why: the gateway's condition with the value it read
-    const why = await page.locator('.test-rationale').innerText();
-    assert.deepEqual(await page.locator('.test-rationale th').allInnerTexts(), ['Seq #', 'At', 'Element ID', 'Name', 'Type', 'What happened'], 'as on the instance page, the why under its row');
-    assert.match(await page.locator('.test-rationale-decision.not').first().innerText(), /not taken/);
+    // why: the gateway's condition with the value it read, in the timeline (each step opened to what happened)
+    for (const summary of await page.locator('.test-timeline .test-steps-rows > summary').all()) await summary.click();
+    const why = await page.locator('.test-timeline').innerText();
+    assert.deepEqual(await page.locator('.test-timeline table').first().locator('th').allInnerTexts(), ['Seq #', 'At', 'Element', 'Type', 'What happened', ''],
+        'as on the instance page, the why under its row; a column for Add check');
+    assert.match(await page.locator('.test-timeline .test-rationale-decision.not').first().innerText(), /not taken/);
     assert.match(why, /condition[^]*days[^]*result: false \(days=2\)/);
     assert.match(why, /takes its default flow/);
     assert.deepEqual(errors, []);
@@ -495,83 +497,82 @@ test('New, The task selected: the task selected on the diagram, by itself; a scr
     await close();
 });
 
-test('Add as a check: an item or a value of the run, as it is there, under its step: at the start, after the last step, else at the end', async () => {
+test('Add as a check: on a step\'s row, or a value; the check under the row of its item; the step is when it is checked', async () => {
     const { page, errors, close } = await openTestTab();
-    const addItem = id => page.locator(`.test-items tbody tr[data-element-id="${id}"] .test-add-check`).click();
+    // the item's row in the step that changed it (What happened, opened first): its Add as a check
+    const addItem = async id => {
+        const row = page.locator(`.test-timeline .test-rationale-scroll tbody tr[data-element="${id}"]:has(.test-add-check)`).last();
+        const details = row.locator('xpath=ancestor::details[1]');
+        if (!(await details.evaluate(d => d.open))) await details.locator(':scope > summary').click();
+        await row.locator('.test-add-check').click();
+    };
     const addValue = path => page.locator(`.test-data-row[data-path="${path}"] .test-add-check`).click();
     const prose = locator => locator.locator('.test-check-prose').allInnerTexts();
     const atStart = page.locator('.test-step-start .test-check-row');
     const afterSubmit = page.locator('.test-step[data-element-id="Submit"] .test-check-row');
-    const atEnd = page.locator('.test-checks-editor .test-check-row');
+    const afterApprove = page.locator('.test-step[data-element-id="Approve"] .test-check-row');
     await newScenario(page);
     await page.fill('.test-name', 'Checks from the run');
     await startRun(page);
 
-    // just started, no step done: at the start, under the Start row, in words, times filled in
+    // just started: Submit waits, a row of the start; its check at the start, under that row, found as it is added
     await addItem('Submit');
     assert.deepEqual(await prose(atStart), ['Submit request (Submit) was reached 1 time, and is waiting']);
-    await atStart.locator('.test-check-icon.ok').waitFor();     // found as it is added
-    assert.equal(await atEnd.count(), 0, 'not in the list at the end');
+    await atStart.locator('.test-check-icon.ok').waitFor();
+    const under = atStart.locator('xpath=ancestor::tr[1]/preceding-sibling::tr[1]');
+    assert.equal(await under.getAttribute('data-element'), 'Submit', 'under the row of its item');
 
-    // Edit opens its fields; Done back to words
+    // Edit opens its fields, with no When: the step is when; Done back to words
     await atStart.locator('.test-check-edit').click();
-    assert.equal(await atStart.locator('.test-check-at').inputValue(), 'start');
+    assert.equal(await atStart.locator('.test-check-at').count(), 0);
     assert.equal(await atStart.locator('.test-check-kind').inputValue(), 'node');
     assert.equal(await atStart.locator('.test-check-node').inputValue(), 'Submit');
     assert.equal(await atStart.locator('.test-check-status').inputValue(), 'wait');
     assert.equal(await atStart.locator('.test-check-count').inputValue(), '1');
     await atStart.locator('.test-check-done').click();
-    assert.equal(await atStart.locator('.test-check-at').count(), 0);
 
     await runStep(page, 'Submit', { days: 10, nested: { level: 3 } });
 
-    // the run waits at Approve: after Submit, the last step done, under it
+    // after Submit: Approve waits, a row of Submit's step; values from the Data, under Submit's own row
     await addItem('Approve');
     await addValue('days');
     await addValue('nested.level');     // a value inside an object: its own row
-    assert.deepEqual(await prose(afterSubmit), ['Approve request (Approve) was reached 1 time, and is waiting', 'days is 10', 'nested.level is 3']);
-    await afterSubmit.nth(1).locator('.test-check-edit').click();
-    assert.equal(await afterSubmit.nth(1).locator('.test-check-at').inputValue(), 'after:Submit');
-    assert.equal(await afterSubmit.nth(1).locator('.test-check-path').inputValue(), 'days');
-    assert.equal(await afterSubmit.nth(1).locator('.test-check-value').inputValue(), '10');
-    await afterSubmit.nth(1).locator('.test-check-done').click();
+    assert.deepEqual(await prose(afterSubmit), ['days is 10', 'nested.level is 3', 'Approve request (Approve) was reached 1 time, and is waiting']);
+    await afterSubmit.nth(0).locator('.test-check-edit').click();
+    assert.equal(await afterSubmit.nth(0).locator('.test-check-path').inputValue(), 'days');
+    assert.equal(await afterSubmit.nth(0).locator('.test-check-value').inputValue(), '10');
+    await afterSubmit.nth(0).locator('.test-check-done').click();
     assert.equal(await page.locator('.test-data-row[data-path="days"] .test-add-check').innerText(), '✓ In checks', 'not twice');
-    assert.equal(await page.locator('.test-data-row[data-path="days"] .test-add-check').isDisabled(), true);
 
     // a click on the button does not select the row's element
     assert.deepEqual(await page.evaluate(() => window.bpmnModeler.get('selection').get().map(e => e.id)), []);
 
-    // finished: at the end, in the list; a flow, as any item, reads with its id
+    // finished: the end event, a row of Approve's step
     await runStep(page, 'Approve', { approved: true });
     await page.waitForSelector('.test-summary.ok');
     await addItem('Approved');
-    await addItem('ToSubmit');
-    assert.equal(await atEnd.count(), 2, 'in the list at the end');
-    assert.match((await prose(atEnd))[0], /^At the end: .*Approved.* was reached 1 time, and has ended$/);
-    assert.match((await prose(atEnd))[1], /^At the end: .*ToSubmit.* was reached 1 time, and has ended$/);
-    await atEnd.nth(1).locator('.test-check-edit').click();
-    assert.equal(await atEnd.nth(1).locator('.test-check-node').inputValue(), 'ToSubmit');
-    await atEnd.nth(1).locator('.test-check-done').click();
+    assert.match((await prose(afterApprove)).at(-1), /Approved.* was reached, and has ended$/);
 
     // Run: what was added holds on the same path
     await page.waitForTimeout(800);
     await page.click('.test-replay');
     await page.waitForSelector('.test-status:text("Checks from the run: passed")');
     const checks = await checkResults(page);
-    assert.equal(checks.length, 6, checks.join(' | '));
+    assert.equal(checks.length, 5, checks.join(' | '));
     assert.ok(checks.every(c => c.startsWith('✓')), checks.join(' | '));
     assert.ok(checks.includes('✓ at the start: passes Submit, wait, 1 time'), checks.join(' | '));
 
-    // Add check opens its fields; while recording it is where the recording waits; its When moves it; Done: in words
+    // a step's Add check: a check of any kind, under its row, its fields open
     await startRun(page);
-    await page.click('.test-check-add');
+    await page.locator('.test-step-start .test-step-add-check').click();
     assert.equal(await atStart.count(), 2);
-    await atStart.last().locator('.test-check-at').selectOption('end');
-    assert.equal(await atStart.count(), 1);
-    assert.equal(await atEnd.last().locator('.test-check-done').count(), 1);
-    await atEnd.last().locator('.test-check-done').click();
-    assert.match((await prose(atEnd)).at(-1), /At the end: A node: none chosen yet/);
-    await atEnd.last().locator('.test-check-remove').click();
+    // under the start's own row (its first), its fields open to choose what it checks
+    const added = atStart.first();
+    assert.equal(await added.locator('.test-check-kind').count(), 1, 'its fields, to choose what it checks');
+    assert.equal(await added.locator('.test-check-at').count(), 0);
+    await added.locator('.test-check-done').click();
+    assert.match((await prose(atStart))[0], /A node: none chosen yet/);
+    await atStart.first().locator('.test-check-remove').click();
     await page.click('.test-stop-recording');
     assert.deepEqual(errors, []);
     await close();
@@ -630,6 +631,171 @@ test('Full window: the panel over the whole page, on any tab; Esc or Simulate co
     await page.reload();
     await page.waitForSelector('#js-canvas .djs-shape');
     assert.equal(await isFull(), false);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('the scenario list resizes: dragged, within limits, by the keyboard; drawn again and after a reload it stays', async () => {
+    const { page, errors, close } = await openTestTab();
+    const width = () => page.evaluate(() => Math.round(document.querySelector('.test-list').getBoundingClientRect().width));
+    const drag = async by => {
+        const box = await page.evaluate(() => { const { x, y } = document.querySelector('.test-list-resizer').getBoundingClientRect(); return { x, y }; });
+        await page.mouse.move(box.x + 2, box.y + 50);
+        await page.mouse.down();
+        await page.mouse.move(box.x + 2 + by, box.y + 50, { steps: 4 });
+        await page.mouse.up();
+    };
+    assert.equal(await width(), 220);
+    await drag(120);
+    assert.equal(await width(), 340);
+
+    // drawn again: a new scenario redraws the panel
+    await newScenario(page);
+    assert.equal(await width(), 340);
+
+    // the limits: the list stays usable, and so does what is beside it
+    await drag(-1000);
+    assert.equal(await width(), 160);
+    await drag(5000);
+    const room = await page.locator('.test-main').evaluate(e => e.getBoundingClientRect().width);
+    assert.ok(room >= 235, `the scenario keeps its room: ${room}`);
+
+    await drag(-5000);
+    await page.locator('.test-list-resizer').focus();
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await width(), 180);
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await width(), 200);
+
+    await page.reload();
+    await page.waitForSelector('#js-canvas .djs-shape');
+    await page.click('#js-tab-test');
+    await page.waitForSelector('#js-test .test-panel');
+    assert.equal(await width(), 200);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('Edit as text: the whole .feature in the Test tab; what does not read is not saved; a run leaves it as typed; coverage under the scenarios', async () => {
+    const { page, errors } = await openTestTab();
+    const order = await page.evaluate(() => [...document.querySelector('.test-list').children].map(c => c.className));
+    assert.ok(order.findIndex(c => c.includes('test-tree')) < order.findIndex(c => c.includes('test-coverage')), order.join());
+
+    await page.click('.test-list-menu summary');
+    await page.click('.test-edit-text');
+    await page.waitForSelector('.test-text-input');
+    assert.equal(await page.locator('.test-list').count(), 0, 'the text has the panel to itself');
+
+    const wrong = 'Feature: x\n\n  Scenario: a\n    When @check\n    Nonsense here\n';
+    await page.fill('.test-text-input', wrong);
+    await page.click('.test-text-save');
+    await page.waitForSelector('.test-status.error');
+    assert.match(await page.locator('.test-status').innerText(), /Not saved.*\(5:/s);
+    assert.equal(await page.inputValue('.test-text-input'), wrong, 'the text stays to be corrected');
+
+    const typed = [
+        'Feature: leave-request',
+        '',
+        '  # a comment that stays',
+        '  Scenario: typed, with an expression',
+        '    When @start process:leave-request as :instance',
+        '    Then @check ${instance.status === "running"}',
+        '',
+    ].join('\n');
+    await page.fill('.test-text-input', typed);
+    await page.click('.test-text-save');
+    await page.waitForSelector('.test-list');
+    const file = path.join(web.definitionsPath, 'leave-request.feature');
+    assert.equal(fs.readFileSync(file, 'utf8'), typed);
+
+    await page.click('.test-tree li:has-text("typed, with an expression")');
+    await page.waitForSelector('.test-written-edit');
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-status:text("typed, with an expression: passed")');
+    await page.waitForTimeout(1000);
+    assert.equal(fs.readFileSync(file, 'utf8'), typed, 'a run leaves the file as typed');
+
+    await page.click('.test-written-edit');
+    await page.waitForSelector('.test-text-input');
+    assert.equal(await page.inputValue('.test-text-input'), typed);
+    page.once('dialog', dialog => dialog.accept());
+    await page.fill('.test-text-input', `${typed}  # more\n`);
+    await page.click('.test-text-cancel');
+    await page.waitForSelector('.test-list');
+    assert.equal(fs.readFileSync(file, 'utf8'), typed, 'Cancel saves nothing');
+    fs.rmSync(file);
+    assert.deepEqual(errors, []);
+});
+
+test('"No problems found" and Rules show with the Problems tab only', async () => {
+    const { page } = await openTestTab();
+    assert.equal(await page.locator('#js-lint-rules-open').isVisible(), false);
+    assert.equal(await page.locator('#js-problems-status').isVisible(), false);
+    await page.click('#js-tab-problems');
+    assert.equal(await page.locator('#js-lint-rules-open').isVisible(), true);
+    await page.click('#js-tab-report');
+    assert.equal(await page.locator('#js-lint-rules-open').isVisible(), false);
+});
+
+test('a step of the timeline opens to what happened when it ran: its Rationale, Add check on a row; a written scenario, its steps', async () => {
+    const { page, errors, close } = await openTestTab();
+    // a row of a table, by its element: its last
+    const row = (where, id) => where.locator(`.test-rationale-scroll tbody tr[data-element="${id}"]`).last();
+
+    // recorded: the start and each step has what happened; Add check adds the check, which the timeline shows under the step
+    await newScenario(page);
+    await page.fill('.test-name', 'Steps of a long leave');
+    await startRun(page);
+    await runStep(page, 'Submit', { days: 10 });
+    await page.click('.test-stop-recording');
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-timeline .test-step[data-element-id="Submit"] .test-steps-rows');
+    assert.equal(await page.locator('.test-timeline .test-steps-rows').count(), 2, 'the start, then Submit');
+    const submit = page.locator('.test-timeline .test-step[data-element-id="Submit"]');
+    assert.equal(await submit.locator('.test-rationale-scroll').isVisible(), false, 'closed: the step is its line');
+    await submit.locator('.test-steps-rows > summary').click();
+    assert.match(await submit.locator('.test-steps-rows').innerText(), /days[^]*result: true \(days=10\)/, 'its rows, the why under them');
+    await row(submit, 'Approve').locator('.test-add-check').click();
+    await page.waitForSelector('.test-timeline .test-step[data-element-id="Submit"] .test-rationale-checks .test-check-row');
+    const under = row(submit, 'Approve').locator('xpath=following-sibling::tr[1]');
+    assert.match(await under.getAttribute('class'), /test-rationale-checks/, 'the check, under the row of its item');
+    assert.match(await under.innerText(), /Approve request/);
+    assert.equal(await submit.locator('.test-step-check-rows').count(), 0, 'once: not in the timeline too');
+    assert.equal(await row(submit, 'Approve').locator('.test-add-check').count(), 0, 'a check shows once: in the timeline, not on its row too');
+
+    // written in Gherkin: its steps under its text; a row copies its check's line; a check of no item is under the step's line
+    const file = path.join(web.definitionsPath, 'leave-request.feature');
+    await page.click('.test-list-menu summary');
+    await page.click('.test-edit-text');
+    await page.waitForSelector('.test-text-input');
+    const text = await page.inputValue('.test-text-input');
+    await page.fill('.test-text-input', text.replace(/\s*$/, '\n') + [
+        '',
+        '  Scenario: a long leave, written',
+        '    When @start process:leave-request as :r',
+        '    And @invoke element:Submit in :r',
+        '      | days | 10 |',
+        '    Then @check ${data.days == 10}',
+        '',
+    ].join('\n'));
+    await page.click('.test-text-save');
+    await page.waitForSelector('.test-list');
+    await page.click('.test-tree li:has-text("a long leave, written")');
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-summary.ok, .test-summary.failed');
+    assert.equal(await page.locator('.test-summary-title').innerText(), '✓ Passed', (await page.locator('.test-error').allInnerTexts()).join(' | '));
+    await page.waitForSelector('.test-written .test-steps-step >> nth=1');
+    const step = n => page.locator('.test-written .test-steps-step').nth(n - 1);
+    assert.match(await step(1).locator('.test-steps-head').innerText(), /^Step 1 · Start Process/, 'as the engine logged it');
+    assert.match(await step(2).locator('.test-steps-head').innerText(), /^Step 2 · Invoke Item[^]*Submit request/);
+    await step(2).locator('.test-steps-rows > summary').click();
+    // a check of no item (data, an expression): under the step's own row, Submit's
+    const expression = step(2).locator('.test-rationale-check', { hasText: '@check ${data.days == 10}' });
+    assert.equal(await expression.locator('xpath=ancestor::tr[1]/preceding-sibling::tr[1]').getAttribute('data-element'), 'Submit');
+    assert.match(await row(step(2), 'Approve').locator('.test-copy-check').getAttribute('title'), /@check :r has 1 items of element:Approve with status "wait"$/);
+    fs.rmSync(file);
     assert.deepEqual(errors, []);
     await close();
 });

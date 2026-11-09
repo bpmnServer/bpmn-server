@@ -128,11 +128,8 @@ An application can prove a UI to allow users to assign tasks to others, this can
 
 ## Security Rules:
 
-To enable security Rules, you have to edit `.env'
-```
-ENFORCE_SECURITY=true
-
-```
+The security rules are on unless `.env` turns them off: `ENFORCE_SECURITY=false`, or `REQUIRE_AUTHENTICATION=false`.
+A new application's `.env` has both `true`.
 ### When security checks are bypassed
 
 - A user in the `ADMIN` or `SYSTEM` group has privileged access according to the engine's access-control checks.
@@ -196,22 +193,22 @@ If you have selected to enforce Security Rules, the above will by automatically 
 
 ### Demo Application Authentication and Security
 
-Default installation, disables `User Authentication` and `Security Rules`
-To enable them, edit the .env file 
+**A new application** (`npx bpmn-server init`) has sign-in and the security rules on: its `.env` has
 
-```
-# -- Security Setting
-# if true, would direct users to login page, requires registration
-# valid values:	true	flase
-# set to false if you just want to run in DEV environment
-REQUIRE_AUTHENTICATION=false
-ENFORCE_SECURITY=false
-```
-To:
 ```
 REQUIRE_AUTHENTICATION=true
 ENFORCE_SECURITY=true
 ```
+
+Answering **no** to `init`'s "Require sign-in and security rules?" writes both `false`, for development on your own
+machine only. Either setting left out of `.env` counts as on.
+
+**An application made before 3.6** may have both `false` in its `.env`: set them to `true` before anyone else can reach
+it. In production (`NODE_ENV=production`), `REQUIRE_AUTHENTICATION=false` stops the server at start unless
+`ALLOW_INSECURE_NO_AUTH=true`.
+
+**The first administrator**: a server with no users asks for one on its first page, with a setup token it prints
+where it runs; `ADMIN_PASSWORD`, when set, creates `admin` instead. See [The first start](setup.md#the-first-start).
 
 ### A public demo
 
@@ -239,7 +236,8 @@ DISABLE_ADMIN=true
 - Do not give visitors the `DESIGNER` group, and do not run a demo with `REQUIRE_AUTHENTICATION=false`.
   Without authentication, every visitor is a designer. Models contain scripts, and scripts run inside the
   server process with its permissions: whoever can save a model can run code on the server.
-- To let visitors write and run their own models, also set `DEMO_MODE=true`:
+- To let visitors write and run their own models, also set `DEMO_MODE=true`, which sets these
+  ([each can be set by itself](#what-runs)):
     - Scripts and expressions run in a sandbox (QuickJS, a JavaScript engine compiled to WebAssembly). They
       have no access to Node.js, files, the network or the server's objects, and each one stops after 200 ms.
       Calling `appServices` from a script returns `undefined`.
@@ -247,24 +245,30 @@ DISABLE_ADMIN=true
       no process starts on a timer.
     - Service tasks do not run: they end with no output.
     - Each of these says so in the run's decisions (the Test tab's "Why").
-- To let visitors try it without signing in, also set `GUEST_ACCESS=true`. The server refuses to start with
-  it unless `DEMO_MODE`, `DISABLE_ADMIN`, `REQUIRE_AUTHENTICATION` and `ENFORCE_SECURITY` are all `true`.
-    - A visitor's first page makes them a guest: a user of their own (`guest-<random>`) with a session cookie
-      that lasts a year. A guest can design models.
-    - Each guest has their own models folder (under `GUESTS_PATH`, default `./guests`), started as a copy of
-      the application's models. A guest changes, adds and deletes only their own models; the application's
-      models and other guests' never change.
-    - A guest's instances and test runs carry their own tenant, so nobody else sees them, and they see
-      nobody else's.
-    - Guests download their models one by one or all at once as a `.zip` (Models, Export).
-    - Limits: `GUEST_MAX_MODELS` models per guest (default 50), and `GUEST_RATE_LIMIT` new guests per address
-      per hour (default 20).
-    - Guests' models are not in the models database, so a message or signal does not start another guest's
-      process.
 - Run the demo on its own machine or container, with its own database. Give it no secrets it does not need
   (no SMTP account, no API keys of other systems), and reset its database on a schedule.
 - Set `API_KEY` and `ADMIN_API_KEY` to long random values, or leave `SERVE=ui` so that only the web pages
   are served.
+
+#### What runs
+
+Each of these is a setting of its own, and says what it changes. `DEMO_MODE=true` only gives them other values when they
+are not set; one that is set wins.
+
+| Variable | Default | With `DEMO_MODE=true` | What it does |
+|---|---|---|---|
+| `SCRIPT_SANDBOX` | `false` | `true` | `true`: scripts and expressions run in a sandbox ([Where scripts run](scripting.md#where-scripts-run-in-the-server-or-in-a-sandbox)). |
+| `SCRIPT_SANDBOX_SERVICES` | `true` | `false` | With the sandbox, `true`: a script's calls to `appServices` and `appUtils` run, so those must be safe for whoever writes a model to call. `false`: they run nothing and return `undefined`. |
+| `TIMERS` | `true` | `false` | `false`: a timer event waits until it is invoked, and no process starts on a timer. |
+| `SERVICE_TASKS` | `true` | `false` | `false`: service tasks and connectors call nothing and end with no output. |
+
+Signing up has settings of its own:
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SIGNUP_VERIFY_EMAIL` | `false` | `true`: signing up sends a verification email (`SMTP_USER`, `SMTP_PASSWORD`), and `SIGNUP_GROUPS` come once it is verified. |
+| `SIGNUP_GROUPS` | none | The user groups of an account that signs up, separated by commas. `DESIGNER`: it can design. |
+| `SITE_URL` | the request's | The address links in emails use. Set it on a public server. |
 
 ## Handling Access Control
 

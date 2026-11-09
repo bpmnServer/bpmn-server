@@ -2,6 +2,13 @@ import { IUserService } from '../index.js';
 import mongoose from 'mongoose';
 import User from './models/User.js';
 
+/** What a user name may be: what assignments, task lists, the APIs (x-acting-user) and the logs name a user by. */
+export const USER_NAME_RULE = 'A user name is 2 to 64 letters, digits or . _ @ -';
+/** Why a user name can't be used, or null when it can. */
+export function userNameProblem(userName): string | null {
+	return typeof userName === 'string' && /^[A-Za-z0-9._@-]{2,64}$/.test(userName) ? null : USER_NAME_RULE;
+}
+
 export class UserService implements IUserService {
 	static initialized = false;	
 	constructor() {
@@ -28,8 +35,15 @@ export class UserService implements IUserService {
 	async backup(): Promise<Record<string, any[]>> {
 		return { [User.collection.collectionName]: await User.find({}).lean() };
 	}
+	/** The user of this name, whatever its case: `User1` is `user1`, so one can't pass for the other. */
+	async userNamed(userName) {
+		return await User.findOne({ userName }).collation({ locale: 'en', strength: 2 });
+	}
+	/** A new user; the user of that name or email when there is one already. A name against the rule is refused. */
 	async addUser(userName, email, password, userGroups) {
-		let exist = await User.findOne({ userName: userName });
+		const problem = userNameProblem(userName);
+		if (problem) throw new Error(`${problem}: '${userName}'`);
+		let exist = await this.userNamed(userName);
 		if (exist) {
 			console.log(`user '${userName}' already exists`);
 			return exist;
@@ -64,14 +78,21 @@ export class UserService implements IUserService {
 	 * there are no users at all. start() runs this on every start: a server whose users have other names must not
 	 * gain an administrator with a known password. Returns true when it made the user.
 	 */
+	/** The first user, admin, with ADMIN_PASSWORD; without it none: the pages ask for the administrator (firstRun.ts). */
 	async install(): Promise<boolean> {
 		if (await User.countDocuments({}) > 0)
 			return false;
-		const password = process.env.ADMIN_PASSWORD || 'admin';
-		console.log(` adding new User for 'admin'  password: ${process.env.ADMIN_PASSWORD ? '(ADMIN_PASSWORD)' : "'admin'"}`);
-		await this.addUser('admin', 'admin@mySite.com', password, ['ADMIN']);
+		if (!process.env.ADMIN_PASSWORD)
+			return false;
+		console.log(` adding new User for 'admin'  password: (ADMIN_PASSWORD)`);
+		await this.addUser('admin', 'admin@mySite.com', process.env.ADMIN_PASSWORD, ['ADMIN']);
 		return true;
     }
+
+	/** How many users there are. */
+	async count(): Promise<number> {
+		return User.countDocuments({});
+	}
 
 	init() {
 		mongoose.set('strictQuery', false);

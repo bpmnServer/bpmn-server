@@ -25,18 +25,6 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
-        },
-        {
-            // the open scenario file (test/custom/*.json), run by test/custom/scenarios.test.ts
-            "name": "Scenarios: current file",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/testSampleApp",
-            "runtimeArgs": ["--import", "tsx"],
-            "program": "${workspaceFolder}/testSampleApp/test/custom/scenarios.test.ts",
-            "args": ["${file}"],
-            "console": "integratedTerminal",
-            "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
         }
     ]
 }

@@ -40,24 +40,39 @@ test('scenarios are kept per model', async () => {
     assert.match(JSON.parse(res.text).error, /has no name.*step 1: no element/);
 });
 
-test('scenarios are files beside the model, their runs apart; none left: no file', async () => {
-    const file = path.join(web.definitionsPath, 'leave-request.tests.json');
-    const runsFile = path.join(web.definitionsPath, '.runs', 'leave-request.runs.json');
-    const RUN = { instanceId: 'test-1', at: '2026-11-03T10:00:00.000Z', how: 'run', ok: true };
+test('scenarios are files beside the model; a run is a tag on its test instance, kept by its saves; none left: no file', async () => {
+    const file = path.join(web.definitionsPath, 'leave-request.feature');
+    const started = JSON.parse((await designer.request('POST', '/model/test/start', { json: { processName: 'leave-request' } })).text).instance;
+    const RUN = { instanceId: started.id, at: '2026-11-03T10:00:00.000Z', how: 'run', ok: true };
     let res = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [{ ...SHORT, runs: [RUN] }, LONG] } });
     assert.equal(res.status, 200, why(res));
-    const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
-    assert.equal(saved.model, 'leave-request', 'the format of a scenario file');
-    assert.deepEqual(saved.scenarios.map(s => s.name), [SHORT.name, LONG.name]);
-    assert.ok(saved.scenarios.every(s => !('runs' in s)), 'no runs in the tests file');
-    assert.deepEqual(JSON.parse(fs.readFileSync(runsFile, 'utf8')), { [SHORT.name]: [RUN] });
-    const loaded = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
-    assert.deepEqual(loaded[0].runs, [RUN], 'the runs put back');
+    const saved = fs.readFileSync(file, 'utf8');
+    assert.match(saved, /^Feature: leave-request/, 'the format of a scenario file');
+    assert.ok(saved.includes(`Scenario: ${SHORT.name}`) && saved.includes(`Scenario: ${LONG.name}`));
+    assert.ok(!saved.includes(started.id), 'no runs in the tests file');
+    assert.ok(!fs.existsSync(path.join(web.definitionsPath, '.runs')), 'no runs in files at all');
+    const stored = await web.bpmnServer.dataStore.findInstances({ id: started.id }, 'summary');
+    assert.deepEqual(stored[0].tag.process, 'leave-request');
+    assert.deepEqual(stored[0].tag.scenario, SHORT.name);
+    let loaded = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
+    assert.equal(loaded[0].runs[0].instanceId, started.id, 'the run read from the tag');
+    assert.equal(loaded[0].runs[0].ok, true);
     assert.equal(loaded[1].runs, undefined);
+
+    const waiting = started.items.find(i => i.status === 'wait');
+    assert.equal((await designer.request('POST', '/model/test/invoke', { json: { instanceId: started.id, itemId: waiting.id, data: {} } })).status, 200);
+    loaded = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
+    assert.equal(loaded[0].runs?.[0]?.instanceId, started.id, 'the engine saving the instance leaves its tag');
+
+    const renamed = { ...loaded[0], name: 'Renamed' };
+    assert.equal((await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [renamed, LONG] } })).status, 200);
+    loaded = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
+    assert.equal(loaded[0].runs?.[0]?.instanceId, started.id, 'a rename takes its run along');
 
     res = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [] } });
     assert.equal(res.status, 200, why(res));
-    assert.ok(!fs.existsSync(file) && !fs.existsSync(runsFile));
+    assert.ok(!fs.existsSync(file));
+    assert.equal((await web.bpmnServer.dataStore.findInstances({ id: started.id }, 'summary')).length, 0, 'a scenario gone: its instance too');
     // as before, for the tests after this one
     await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [SHORT, LONG] } });
 });
@@ -104,18 +119,6 @@ test('modelHistory off (MODEL_HISTORY=false): saves keep no versions, and the ed
     finally {
         configuration.modelHistory = true;
     }
-});
-
-test('runs kept under the older name (.runs/<model>.tests.json) are moved to .runs/<model>.runs.json', async () => {
-    const runs = path.join(web.definitionsPath, '.runs');
-    const RUN = { instanceId: 'test-old', at: '2026-11-01T10:00:00.000Z', how: 'run', ok: true };
-    fs.rmSync(path.join(runs, 'leave-request.runs.json'), { force: true });
-    fs.mkdirSync(runs, { recursive: true });
-    fs.writeFileSync(path.join(runs, 'leave-request.tests.json'), JSON.stringify({ [SHORT.name]: [RUN] }));
-    const loaded = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
-    assert.deepEqual(loaded.find(s => s.name === SHORT.name).runs, [RUN]);
-    assert.ok(fs.existsSync(path.join(runs, 'leave-request.runs.json')));
-    assert.ok(!fs.existsSync(path.join(runs, 'leave-request.tests.json')));
 });
 
 test('a test instance is not in the lists of instances and work; it opens by its id', async () => {
@@ -231,7 +234,7 @@ test('a joining gateway is not a step: it completes when its branches arrive', a
     assert.match(result.steps[1].error, /Join is not waiting; waiting: B/);
 });
 
-test('steps are user tasks and events, as the instance page offers them: a timer is forced', async () => {
+test('steps are user tasks, receive tasks and events: a timer is forced, a receive task gets its message', async () => {
     const fs = await import('node:fs'), path = await import('node:path');
     fs.writeFileSync(path.join(web.definitionsPath, 'timer.bpmn'), `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d" targetNamespace="urn:test">
@@ -248,8 +251,8 @@ test('steps are user tasks and events, as the instance page offers them: a timer
     await web.bpmnServer.definitions.rebuild();
     const [result] = JSON.parse((await run({ processName: 'timer', scenario: { name: 'timer', steps: [{ element: 'Wait' }, { element: 'Receive' }] } })).text).results;
     assert.equal(result.steps[0].ok, true, 'the timer is forced');
-    assert.equal(result.steps[1].ok, false, 'a receive task is not a step');
-    assert.match(result.steps[1].error, /Receive is not waiting; the instance is/);
+    assert.equal(result.steps[1].ok, true, 'a receive task is a step');
+    assert.equal(result.instance.status, 'end');
 });
 
 test('testing is for designers', async () => {

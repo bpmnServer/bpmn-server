@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[interfaces/User.ts:63](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/User.ts#L63)
+[packages/bpmn-server/src/interfaces/User.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L63)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:64](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/User.ts#L64)
+[packages/bpmn-server/src/interfaces/User.ts:64](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L64)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:65](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/User.ts#L65)
+[packages/bpmn-server/src/interfaces/User.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L65)
 
 ___
 
@@ -87,4 +87,4 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:66](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/User.ts#L66)
+[packages/bpmn-server/src/interfaces/User.ts:66](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L66)

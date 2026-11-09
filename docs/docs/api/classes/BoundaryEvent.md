@@ -45,6 +45,8 @@
 - [canBeInvoked](BoundaryEvent.md#canbeinvoked)
 - [processId](BoundaryEvent.md#processid)
 - [loopDefinition](BoundaryEvent.md#loopdefinition)
+- [dataObjectNames](BoundaryEvent.md#dataobjectnames)
+- [exceptionsAsErrors](BoundaryEvent.md#exceptionsaserrors)
 
 ### Methods
 
@@ -65,10 +67,14 @@
 - [getInput](BoundaryEvent.md#getinput)
 - [getOutput](BoundaryEvent.md#getoutput)
 - [enter](BoundaryEvent.md#enter)
+- [loadDataObjects](BoundaryEvent.md#loaddataobjects)
 - [execute](BoundaryEvent.md#execute)
+- [perform](BoundaryEvent.md#perform)
+- [failed](BoundaryEvent.md#failed)
 - [continue](BoundaryEvent.md#continue)
 - [cancelEBG](BoundaryEvent.md#cancelebg)
 - [cancelBoundaryEvents](BoundaryEvent.md#cancelboundaryevents)
+- [getBoundaryEventItems](BoundaryEvent.md#getboundaryeventitems)
 - [resume](BoundaryEvent.md#resume)
 - [init](BoundaryEvent.md#init)
 - [getOutbounds](BoundaryEvent.md#getoutbounds)
@@ -100,7 +106,7 @@
 
 #### Defined in
 
-[elements/Events.ts:90](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L90)
+[packages/bpmn-server/src/elements/Events.ts:100](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L100)
 
 ## Properties
 
@@ -114,7 +120,7 @@
 
 #### Defined in
 
-[elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L13)
+[packages/bpmn-server/src/elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L13)
 
 ___
 
@@ -128,7 +134,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L14)
+[packages/bpmn-server/src/elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L14)
 
 ___
 
@@ -142,7 +148,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L15)
+[packages/bpmn-server/src/elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L15)
 
 ___
 
@@ -156,7 +162,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L17)
+[packages/bpmn-server/src/elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L17)
 
 ___
 
@@ -170,7 +176,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L18)
+[packages/bpmn-server/src/elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L18)
 
 ___
 
@@ -184,7 +190,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L19)
+[packages/bpmn-server/src/elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L19)
 
 ___
 
@@ -194,13 +200,13 @@ ___
 
 #### Defined in
 
-[elements/Events.ts:89](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L89)
+[packages/bpmn-server/src/elements/Events.ts:99](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L99)
 
 ___
 
 ### name
 
-• **name**: `any`
+• **name**: `string` = `''`
 
 #### Inherited from
 
@@ -208,7 +214,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:13](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L13)
+[packages/bpmn-server/src/elements/Node.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L15)
 
 ___
 
@@ -222,7 +228,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L14)
+[packages/bpmn-server/src/elements/Node.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L16)
 
 ___
 
@@ -236,7 +242,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L15)
+[packages/bpmn-server/src/elements/Node.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L17)
 
 ___
 
@@ -250,7 +256,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L16)
+[packages/bpmn-server/src/elements/Node.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L18)
 
 ___
 
@@ -264,7 +270,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L17)
+[packages/bpmn-server/src/elements/Node.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L19)
 
 ___
 
@@ -278,7 +284,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L18)
+[packages/bpmn-server/src/elements/Node.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L20)
 
 ___
 
@@ -292,7 +298,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L19)
+[packages/bpmn-server/src/elements/Node.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L21)
 
 ___
 
@@ -306,7 +312,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L20)
+[packages/bpmn-server/src/elements/Node.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L22)
 
 ___
 
@@ -320,7 +326,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L21)
+[packages/bpmn-server/src/elements/Node.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L23)
 
 ___
 
@@ -334,7 +340,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L22)
+[packages/bpmn-server/src/elements/Node.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L24)
 
 ___
 
@@ -348,7 +354,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:23](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L23)
+[packages/bpmn-server/src/elements/Node.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L25)
 
 ___
 
@@ -362,7 +368,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:24](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L24)
+[packages/bpmn-server/src/elements/Node.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L26)
 
 ___
 
@@ -376,7 +382,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:25](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L25)
+[packages/bpmn-server/src/elements/Node.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L27)
 
 ___
 
@@ -390,7 +396,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:26](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L26)
+[packages/bpmn-server/src/elements/Node.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L28)
 
 ## Accessors
 
@@ -408,7 +414,7 @@ Event.isCatching
 
 #### Defined in
 
-[elements/Events.ts:87](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L87)
+[packages/bpmn-server/src/elements/Events.ts:97](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L97)
 
 ___
 
@@ -426,7 +432,7 @@ Event.requiresWait
 
 #### Defined in
 
-[elements/Events.ts:98](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L98)
+[packages/bpmn-server/src/elements/Events.ts:108](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L108)
 
 ___
 
@@ -444,7 +450,7 @@ Event.canBeInvoked
 
 #### Defined in
 
-[elements/Events.ts:101](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L101)
+[packages/bpmn-server/src/elements/Events.ts:111](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L111)
 
 ___
 
@@ -462,7 +468,7 @@ Event.processId
 
 #### Defined in
 
-[elements/Node.ts:27](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L27)
+[packages/bpmn-server/src/elements/Node.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L29)
 
 ___
 
@@ -480,7 +486,48 @@ Event.loopDefinition
 
 #### Defined in
 
-[elements/Node.ts:138](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L138)
+[packages/bpmn-server/src/elements/Node.ts:143](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L143)
+
+___
+
+### dataObjectNames
+
+• `get` **dataObjectNames**(): `string`[]
+
+The data objects connected to this element by a data association, either way: their names, as the diagram
+shows them (the reference's name, else the data object's or data store's, else its id).
+
+#### Returns
+
+`string`[]
+
+#### Inherited from
+
+Event.dataObjectNames
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Node.ts:161](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L161)
+
+___
+
+### exceptionsAsErrors
+
+• `get` **exceptionsAsErrors**(): `boolean`
+
+`camunda:exceptionsAsErrors="true"`: an exception of the task's work is raised as a BPMN error.
+
+#### Returns
+
+`boolean`
+
+#### Inherited from
+
+Event.exceptionsAsErrors
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Node.ts:296](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L296)
 
 ## Methods
 
@@ -504,7 +551,7 @@ Event.loopDefinition
 
 #### Defined in
 
-[elements/Element.ts:24](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L24)
+[packages/bpmn-server/src/elements/Element.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L24)
 
 ___
 
@@ -531,7 +578,7 @@ respond by providing behaviour attributes beyond item and node information
 
 #### Defined in
 
-[elements/Element.ts:34](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L34)
+[packages/bpmn-server/src/elements/Element.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L34)
 
 ___
 
@@ -555,7 +602,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:38](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L38)
+[packages/bpmn-server/src/elements/Element.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L38)
 
 ___
 
@@ -580,7 +627,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:41](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L41)
+[packages/bpmn-server/src/elements/Element.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L41)
 
 ___
 
@@ -598,7 +645,7 @@ ___
 
 #### Defined in
 
-[elements/Events.ts:9](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L9)
+[packages/bpmn-server/src/elements/Events.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L11)
 
 ___
 
@@ -616,7 +663,7 @@ ___
 
 #### Defined in
 
-[elements/Events.ts:12](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L12)
+[packages/bpmn-server/src/elements/Events.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L14)
 
 ___
 
@@ -634,7 +681,7 @@ ___
 
 #### Defined in
 
-[elements/Events.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L15)
+[packages/bpmn-server/src/elements/Events.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L17)
 
 ___
 
@@ -659,7 +706,7 @@ ___
 
 #### Defined in
 
-[elements/Events.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L28)
+[packages/bpmn-server/src/elements/Events.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L30)
 
 ___
 
@@ -688,7 +735,7 @@ is called by
 
 #### Defined in
 
-[elements/Events.ts:43](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L43)
+[packages/bpmn-server/src/elements/Events.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L45)
 
 ___
 
@@ -714,7 +761,7 @@ using token: check if fromEventBasedGateway;	if yes cancel all other events
 
 #### Defined in
 
-[elements/Events.ts:105](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L105)
+[packages/bpmn-server/src/elements/Events.ts:115](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L115)
 
 ___
 
@@ -738,7 +785,7 @@ ___
 
 #### Defined in
 
-[elements/Events.ts:108](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Events.ts#L108)
+[packages/bpmn-server/src/elements/Events.ts:118](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Events.ts#L118)
 
 ___
 
@@ -762,7 +809,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:45](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L45)
+[packages/bpmn-server/src/elements/Node.ts:48](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L48)
 
 ___
 
@@ -789,7 +836,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:58](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L58)
+[packages/bpmn-server/src/elements/Node.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L61)
 
 ___
 
@@ -818,7 +865,7 @@ todo
 
 #### Defined in
 
-[elements/Node.ts:94](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L94)
+[packages/bpmn-server/src/elements/Node.ts:99](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L99)
 
 ___
 
@@ -843,7 +890,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:104](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L104)
+[packages/bpmn-server/src/elements/Node.ts:109](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L109)
 
 ___
 
@@ -870,7 +917,7 @@ todo
 
 #### Defined in
 
-[elements/Node.ts:118](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L118)
+[packages/bpmn-server/src/elements/Node.ts:123](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L123)
 
 ___
 
@@ -894,21 +941,16 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:122](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L122)
+[packages/bpmn-server/src/elements/Node.ts:127](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L127)
 
 ___
 
-### execute
+### loadDataObjects
 
-▸ **execute**(`item`): `Promise`\<`void` \| [`wait`](../enums/NODE_ACTION.md#wait) \| [`end`](../enums/NODE_ACTION.md#end) \| [`error`](../enums/NODE_ACTION.md#error) \| [`abort`](../enums/NODE_ACTION.md#abort)\>
+▸ **loadDataObjects**(`item`): `Promise`\<`void`\>
 
-this is the primary exectuion method for a node
-
-considerations: the following are handled by Token
-     1.  Loops we are inside a loop already (if any)
-     2.  Gatways 
-     3.  Subprocess the parent node is fired as normal
-             run method will fire the subprocess invoking a new token and will go into wait
+Load the element's data objects into the instance data (appDelegate.loadDataObject), where they are saved
+with the instance: `data.client` for a data object 'client'. They load each time the element runs.
 
 #### Parameters
 
@@ -918,7 +960,31 @@ considerations: the following are handled by Token
 
 #### Returns
 
-`Promise`\<`void` \| [`wait`](../enums/NODE_ACTION.md#wait) \| [`end`](../enums/NODE_ACTION.md#end) \| [`error`](../enums/NODE_ACTION.md#error) \| [`abort`](../enums/NODE_ACTION.md#abort)\>
+`Promise`\<`void`\>
+
+#### Inherited from
+
+[Event](Event.md).[loadDataObjects](Event.md#loaddataobjects)
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Node.ts:178](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L178)
+
+___
+
+### execute
+
+▸ **execute**(`item`): `Promise`\<`any`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`Promise`\<`any`\>
 
 #### Inherited from
 
@@ -926,7 +992,63 @@ considerations: the following are handled by Token
 
 #### Defined in
 
-[elements/Node.ts:152](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L152)
+[packages/bpmn-server/src/elements/Node.ts:194](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L194)
+
+___
+
+### perform
+
+▸ **perform**(`item`): `Promise`\<`any`\>
+
+Steps 4 and 5 of execute: the work (run), then on. Also a failed item's retry (Token.retry): the work again.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Inherited from
+
+[Event](Event.md).[perform](Event.md#perform)
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Node.ts:260](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L260)
+
+___
+
+### failed
+
+▸ **failed**(`item`, `error`): `Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
+
+The task's work threw. With exceptionsAsErrors and an error event that catches it (by the exception's code,
+else its name; an error event with no code catches any), it is raised there as a BPMN error and the task
+ends. Otherwise the item's status is `error`, with the message, saved so the instance shows it and the item
+can be retried (engine.retry), and the exception is thrown to the caller as before.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `error` | `any` |
+
+#### Returns
+
+`Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
+
+#### Inherited from
+
+[Event](Event.md).[failed](Event.md#failed)
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Node.ts:305](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L305)
 
 ___
 
@@ -950,7 +1072,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:232](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L232)
+[packages/bpmn-server/src/elements/Node.ts:334](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L334)
 
 ___
 
@@ -974,7 +1096,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:251](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L251)
+[packages/bpmn-server/src/elements/Node.ts:353](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L353)
 
 ___
 
@@ -998,7 +1120,31 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:259](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L259)
+[packages/bpmn-server/src/elements/Node.ts:361](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L361)
+
+___
+
+### getBoundaryEventItems
+
+▸ **getBoundaryEventItems**(`item`): `any`[]
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`any`[]
+
+#### Inherited from
+
+[Event](Event.md).[getBoundaryEventItems](Event.md#getboundaryeventitems)
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Node.ts:399](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L399)
 
 ___
 
@@ -1025,7 +1171,7 @@ different than init, which is called for all items
 
 #### Defined in
 
-[elements/Node.ts:336](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L336)
+[packages/bpmn-server/src/elements/Node.ts:486](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L486)
 
 ___
 
@@ -1049,13 +1195,13 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:339](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L339)
+[packages/bpmn-server/src/elements/Node.ts:489](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L489)
 
 ___
 
 ### getOutbounds
 
-▸ **getOutbounds**(`item`): [`Item`](Item.md)[]
+▸ **getOutbounds**(`item`): `Promise`\<[`Item`](Item.md)[]\>
 
 #### Parameters
 
@@ -1065,7 +1211,7 @@ ___
 
 #### Returns
 
-[`Item`](Item.md)[]
+`Promise`\<[`Item`](Item.md)[]\>
 
 #### Inherited from
 
@@ -1073,7 +1219,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:344](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L344)
+[packages/bpmn-server/src/elements/Node.ts:494](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L494)
 
 ___
 
@@ -1098,7 +1244,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:363](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L363)
+[packages/bpmn-server/src/elements/Node.ts:527](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L527)
 
 ___
 
@@ -1116,4 +1262,4 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:374](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Node.ts#L374)
+[packages/bpmn-server/src/elements/Node.ts:546](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Node.ts#L546)
