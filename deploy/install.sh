@@ -25,6 +25,7 @@ PORT=${PORT:-3000}                      # --port: the application's own port, be
 BPMN_DIR=${BPMN_DIR:-/opt/bpmn}         # --dir: where the application's folder is made (/opt/bpmn/<app>)
 ACCESS_USER=${ACCESS_USER:-}            # --access: local editor (defaults to sudo-invoking user, else ubuntu)
 INTERACTIVE=auto                        # prompts on first interactive install; --interactive or --yes override
+INSTALL_MODE=${INSTALL_MODE:-production} # development for local use; production for public/cloud deployment
 
 while [ $# -gt 0 ]; do
     case "$1" in --interactive) INTERACTIVE=yes; shift; continue;; --yes|--non-interactive) INTERACTIVE=no; shift; continue;; esac
@@ -37,6 +38,7 @@ while [ $# -gt 0 ]; do
         --port) PORT=$2; shift 2 ;;
         --dir) BPMN_DIR=$2; shift 2 ;;
         --access) ACCESS_USER=$2; shift 2 ;;
+        --mode) INSTALL_MODE=$2; shift 2 ;;
         -h|--help) sed -n '2,16p' "$0" 2>/dev/null | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "unknown option: $1"; exit 1 ;;
     esac
@@ -69,6 +71,7 @@ if [ "$INTERACTIVE" = yes ]; then
     fi
     printf '\nBPMN Server native installation (not Docker)\nPress Enter to accept each default.\n\n' > /dev/tty
     prompt APP_NAME "Application name" "$APP_NAME"
+    prompt INSTALL_MODE "Mode (development/production)" "$INSTALL_MODE"
     prompt BPMN_VERSION "BPMN Server npm version" "$BPMN_VERSION"
     prompt PORT "Application port behind nginx" "$PORT"
     prompt BPMN_DIR "Application root directory" "$BPMN_DIR"
@@ -77,8 +80,8 @@ if [ "$INTERACTIVE" = yes ]; then
     prompt EMAIL "Email for Let's Encrypt (none to skip)" "${EMAIL:-none}"
     [ "$DOMAIN" = none ] && DOMAIN=
     [ "$EMAIL" = none ] && EMAIL=
-    printf '\nApp: %s/%s | version: %s | port: %s | editor: %s | domain: %s\n' \
-        "${BPMN_DIR%/}" "$APP_NAME" "$BPMN_VERSION" "$PORT" "$ACCESS_USER" "${DOMAIN:-none}" > /dev/tty
+    printf '\nApp: %s/%s | mode: %s | version: %s | port: %s | editor: %s | domain: %s\n' \
+        "${BPMN_DIR%/}" "$APP_NAME" "$INSTALL_MODE" "$BPMN_VERSION" "$PORT" "$ACCESS_USER" "${DOMAIN:-none}" > /dev/tty
     prompt CONFIRM "Proceed with installation? (yes/no)" yes
     [ "$CONFIRM" = yes ] || { echo "Installation cancelled"; exit 0; }
 fi
@@ -87,6 +90,14 @@ fi
 touch /var/log/bpmn-install.log && chmod 600 /var/log/bpmn-install.log
 exec > >(tee -a /var/log/bpmn-install.log) 2>&1
 echo "=== bpmn-server install, $(date -u +%FT%TZ)"
+case "$INSTALL_MODE" in
+  development|production) ;;
+  *) echo "Invalid --mode: use development or production" >&2; exit 2 ;;
+esac
+if [ "$INSTALL_MODE" = development ] && [ -n "$DOMAIN" ]; then
+    echo "Development mode is for local use only: omit --domain or choose --mode production" >&2
+    exit 2
+fi
 APP_USER=bpmn
 HOME_DIR=${BPMN_DIR%/}
 APP_DIR=$HOME_DIR/$APP_NAME
@@ -215,13 +226,16 @@ set_env() {
     local file=$APP_DIR/.env
     if grep -q "^$1=" "$file" 2>/dev/null; then sed -i "s|^$1=.*|$1=$2|" "$file"; else echo "$1=$2" >> "$file"; fi
 }
-# Native systemd installation runs with NODE_ENV=production. Authentication and security must
-# be enabled: newly initialized apps may default to false and otherwise enter a restart loop.
-# Do not allow an insecure .env from a prior development install to break the service.
-set_env REQUIRE_AUTHENTICATION true
-set_env ENFORCE_SECURITY true
-set_env ALLOW_INSECURE_NO_AUTH false
-echo "Production configuration: authentication and security enabled"
+# Production deployments enforce authentication; development respects local .env.
+if [ "$INSTALL_MODE" = production ]; then
+    set_env REQUIRE_AUTHENTICATION true
+    set_env ENFORCE_SECURITY true
+    set_env ALLOW_INSECURE_NO_AUTH false
+    echo "Production mode: authentication and security enabled"
+else
+    echo "Development mode: existing authentication settings retained from .env"
+    echo "WARNING: do not expose development ports to untrusted networks"
+fi
 
 # cookies marked Secure only once the site is HTTPS: a browser does not send them back over http
 grep -q '^SECURE_COOKIES=true' "$APP_DIR/.env" 2>/dev/null || set_env SECURE_COOKIES false
@@ -252,7 +266,7 @@ Requires=mongod.service
 [Service]
 User=$APP_USER
 WorkingDirectory=$APP_DIR
-Environment=NODE_ENV=production
+Environment=NODE_ENV=$INSTALL_MODE
 ExecStart=/usr/bin/npm start
 Restart=always
 RestartSec=5
@@ -267,6 +281,240 @@ systemctl enable "$SERVICE"
 systemctl restart "$SERVICE"
 
 # ---- nginx in front, on port 80
+# Development binds nginx to loopback only. Production may listen publicly.
+if [ "$INSTALL_MODE" = development ]; then
+    NGINX_LISTEN='listen 127.0.0.1:80 default_server;'
+else
+    NGINX_LISTEN=
+
+cat > "/etc/nginx/sites-available/$SERVICE" <<EOF
+server {
+    $NGINX_LISTEN
+    server_name ${DOMAIN:-_};
+    client_max_body_size 20m;
+    location / {
+        proxy_pass http://127.0.0.1:$PORT;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host \$host;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_read_timeout 300s;
+    }
+}
+EOF
+rm -f /etc/nginx/sites-enabled/default
+ln -sf "/etc/nginx/sites-available/$SERVICE" "/etc/nginx/sites-enabled/$SERVICE"
+nginx -t
+systemctl enable nginx
+systemctl reload nginx 2>/dev/null || systemctl restart nginx
+
+# a firewall on the server itself: ufw when it is on; Oracle Cloud's Ubuntu images reject all but SSH in iptables
+if command -v ufw >/dev/null && ufw status 2>/dev/null | grep -q '^Status: active'; then
+    ufw allow 'Nginx Full' >/dev/null && echo "ufw: 80 and 443 open"
+fi
+if command -v iptables >/dev/null && iptables -S INPUT 2>/dev/null | grep -q -- '-j REJECT'; then
+    for port in 80 443; do
+        iptables -C INPUT -p tcp --dport $port -m state --state NEW -j ACCEPT 2>/dev/null \
+            || iptables -I INPUT 1 -p tcp --dport $port -m state --state NEW -j ACCEPT
+    done
+    command -v netfilter-persistent >/dev/null && netfilter-persistent save >/dev/null 2>&1 || true
+    echo "iptables: 80 and 443 open"
+fi
+
+# ---- the bpmn command: status, logs, monitor, restart, update, domain and HTTPS, access (bpmn help)
+
+# a domain set before (bpmn domain) stays
+KEPT_DOMAIN=$(grep -s '^DOMAIN=' /etc/bpmn.conf | cut -d= -f2- || true)
+KEPT_EMAIL=$(grep -s '^EMAIL=' /etc/bpmn.conf | cut -d= -f2- || true)
+rm -f /usr/local/sbin/bpmn-https      # the HTTPS script of an earlier install: bpmn https now
+cat > /etc/bpmn.conf <<EOF
+# the bpmn command's settings (written by install.sh; bpmn domain adds DOMAIN and EMAIL)
+APP_NAME=$APP_NAME
+APP_USER=$APP_USER
+HOME_DIR=$HOME_DIR
+APP_DIR=$APP_DIR
+SERVICE=$SERVICE
+PORT=$PORT
+INSTALL_MODE=$INSTALL_MODE
+DOMAIN=$KEPT_DOMAIN
+EMAIL=$KEPT_EMAIL
+EOF
+
+cat > /usr/local/bin/bpmn <<'BPMN'
+#!/usr/bin/env bash
+# bpmn: the bpmn-server application on this server (installed by bpmn-server's deploy/install.sh)
+set -uo pipefail
+[ -f /etc/bpmn.conf ] || { echo "no /etc/bpmn.conf: bpmn-server's install.sh makes it"; exit 1; }
+. /etc/bpmn.conf
+# what needs root asks sudo for it
+[ "$(id -u)" = 0 ] || case "${1:-help}" in help|-h|--help) ;; *) exec sudo "$0" "$@" ;; esac
+
+conf() {        # a setting in /etc/bpmn.conf
+    if grep -q "^$1=" /etc/bpmn.conf; then sed -i "s|^$1=.*|$1=$2|" /etc/bpmn.conf; else echo "$1=$2" >> /etc/bpmn.conf; fi
+}
+envset() {      # a setting in the application's .env
+    if grep -q "^$1=" "$APP_DIR/.env"; then sed -i "s|^$1=.*|$1=$2|" "$APP_DIR/.env"; else echo "$1=$2" >> "$APP_DIR/.env"; fi
+}
+address() { curl -fsS --max-time 5 https://checkip.amazonaws.com 2>/dev/null | tr -d '[:space:]' || hostname -I | awk '{ print $1 }'; }
+state() { printf '%-8s %s\n' "$(systemctl is-active "$1" 2>/dev/null)" "$1"; }
+
+status() {
+    echo "bpmn-server: $APP_DIR (port $PORT)"
+    state "$SERVICE"; state mongod; state nginx
+    local since memory restarts
+    since=$(systemctl show "$SERVICE" -p ActiveEnterTimestamp --value 2>/dev/null)
+    memory=$(systemctl show "$SERVICE" -p MemoryCurrent --value 2>/dev/null)
+    restarts=$(systemctl show "$SERVICE" -p NRestarts --value 2>/dev/null)
+    if [[ "$memory" =~ ^[0-9]+$ ]]; then memory="$((memory / 1048576)) MB"; else memory=?; fi
+    echo "since ${since:-?}, memory $memory, restarts ${restarts:-0}"
+    if [ -n "${DOMAIN:-}" ] && [ -d "/etc/letsencrypt/live/$DOMAIN" ]; then echo "https://$DOMAIN/"
+    elif [ -n "${DOMAIN:-}" ]; then echo "http://$(address)/   (https://$DOMAIN/ waits for its DNS: bpmn https)"
+    else echo "http://$(address)/   (no domain: bpmn domain <name> [email])"; fi
+    curl -fsS -o /dev/null --max-time 5 "http://127.0.0.1:$PORT/login" && echo "answering" || echo "!!! not answering on port $PORT: bpmn logs"
+}
+
+monitor() {     # a live view, every 3 seconds, until Ctrl+C
+    trap 'tput cnorm 2>/dev/null; exit 0' INT
+    tput civis 2>/dev/null
+    while true; do
+        clear
+        echo "bpmn monitor  $(date '+%F %T')   (Ctrl+C to stop)"; echo
+        status; echo
+        top -b -n 1 | sed -n '1,5p'; echo
+        ps -o pid,pcpu,pmem,rss,etime,cmd -C node,mongod --sort=-pcpu | cut -c1-110 | head -6; echo
+        echo "--- the last lines of its log"
+        journalctl -u "$SERVICE" -n 12 --no-pager -o cat | cut -c1-150
+        sleep 3
+    done
+}
+
+https_now() {   # a certificate for DOMAIN once it points here; then the cookies are Secure
+    [ -n "${DOMAIN:-}" ] || { echo "no domain: bpmn domain <name> [email]"; return 1; }
+    if [ -d "/etc/letsencrypt/live/$DOMAIN" ]; then
+        echo "https://$DOMAIN/ has its certificate (renewed by certbot's own timer)"
+        systemctl disable --now bpmn-https.timer >/dev/null 2>&1 || true
+        return 0
+    fi
+    local here there
+    here=$(address); there=$(getent ahostsv4 "$DOMAIN" | awk 'NR==1 { print $1 }')
+    if [ "$here" != "$there" ]; then
+        echo "$DOMAIN points at '${there:-nothing}', not this server ($here): add a DNS A record $DOMAIN -> $here"
+        echo "(tried again every 5 minutes until it does)"
+        return 0
+    fi
+    command -v certbot >/dev/null || DEBIAN_FRONTEND=noninteractive apt-get install -y -qq certbot python3-certbot-nginx >/dev/null
+    local contact="--register-unsafely-without-email"
+    [ -n "${EMAIL:-}" ] && contact="-m $EMAIL"
+    certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos $contact --redirect || return 1
+    envset SECURE_COOKIES true
+    systemctl restart "$SERVICE"
+    systemctl disable --now bpmn-https.timer >/dev/null 2>&1 || true
+    echo "https://$DOMAIN/ is ready"
+}
+
+domain() {      # bpmn domain <name> [email]
+    local name=${1:-} email=${2:-${EMAIL:-}}
+    [[ "$name" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]] || { echo "usage: bpmn domain <name> [email]   e.g. bpmn domain bpmn.example.com you@example.com"; return 1; }
+    conf DOMAIN "$name"; conf EMAIL "$email"; DOMAIN=$name; EMAIL=$email
+    sed -i "0,/server_name .*;/s//server_name $name;/" "/etc/nginx/sites-available/$SERVICE"
+    nginx -t -q && systemctl reload nginx
+    if ! command -v certbot >/dev/null; then
+        echo "installing certbot (Let's Encrypt)..."
+        DEBIAN_FRONTEND=noninteractive apt-get install -y -qq certbot python3-certbot-nginx >/dev/null
+    fi
+    cat > /etc/systemd/system/bpmn-https.service <<EOF
+[Unit]
+Description=HTTPS for the bpmn-server site once its domain points here
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/bpmn https
+EOF
+    cat > /etc/systemd/system/bpmn-https.timer <<EOF
+[Unit]
+Description=Try HTTPS for the bpmn-server site every 5 minutes until it works
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+[Install]
+WantedBy=timers.target
+EOF
+    systemctl daemon-reload
+    https_now
+    [ -d "/etc/letsencrypt/live/$name" ] || systemctl enable --now bpmn-https.timer >/dev/null 2>&1
+}
+
+access() {      # bpmn access <user>
+    local user=${1:-${SUDO_USER:-}}
+    id "$user" >/dev/null 2>&1 || { echo "usage: bpmn access <user>"; return 1; }
+    usermod -aG "$APP_USER" "$user"
+    echo "$user may edit $APP_DIR from its next sign-in (or now: newgrp $APP_USER)"
+}
+
+update() {      # bpmn update: the newest bpmn-server and bpmn-web, then a restart
+    runuser -u "$APP_USER" -- env HOME="$HOME_DIR" bash -c "cd '$APP_DIR' && npm update bpmn-server bpmn-web" || return 1
+    runuser -u "$APP_USER" -- env HOME="$HOME_DIR" bash -c "cd '$APP_DIR' && npm ls bpmn-server bpmn-web --depth=0" | tail -n +2
+    systemctl restart "$SERVICE" && echo "restarted"
+}
+
+case "${1:-help}" in
+    status) status ;;
+    logs) shift; if [ $# -gt 0 ]; then journalctl -u "$SERVICE" --no-pager "$@"; else journalctl -u "$SERVICE" -f; fi ;;
+    monitor) monitor ;;
+    restart|stop|start) systemctl "$1" "$SERVICE" && echo "$1: done" ;;
+    update) update ;;
+    password) cat "$HOME_DIR/admin-password.txt" 2>/dev/null || echo "no password file: it was changed or never made" ;;
+    domain) shift; domain "$@" ;;
+    https) https_now ;;
+    access) shift; access "$@" ;;
+    env) ${EDITOR:-nano} "$APP_DIR/.env" && systemctl restart "$SERVICE" ;;
+    cli) shift; runuser -u "$APP_USER" -- env HOME="$HOME_DIR" bash -c 'cd "$0" && npm run --silent cli -- "$@"' "$APP_DIR" "$@" ;;
+    *) cat <<EOF
+bpmn: the bpmn-server application in $APP_DIR (the service $SERVICE)
+
+  bpmn status                   the app, MongoDB and nginx; its address
+  bpmn logs                     its log, live (Ctrl+C); bpmn logs -n 200, bpmn logs --since "1 hour ago", bpmn logs -p err
+  bpmn monitor                  a live view: status, CPU and memory, the last log lines
+  bpmn restart | stop | start
+  bpmn update                   the newest bpmn-server and bpmn-web, then a restart
+  bpmn env                      edit its .env, then a restart
+  bpmn cli [command ...]        its console (npm run cli); with a command, just that: bpmn cli cod asana
+  bpmn domain <name> [email]    the site's domain name, and HTTPS for it once its DNS points here
+  bpmn https                    HTTPS now (or why not yet)
+  bpmn access <user>            let a user edit the application's files (the group $APP_USER)
+  bpmn password                 the first admin password (until it is changed)
+EOF
+    ;;
+esac
+BPMN
+chmod 755 /usr/local/bin/bpmn
+
+# ---- the domain, and HTTPS for it as soon as it points here
+if [ -n "$DOMAIN" ]; then
+    /usr/local/bin/bpmn domain "$DOMAIN" "$EMAIL" || echo "HTTPS is not set yet: bpmn https tries again"
+fi
+
+# ---- ready when the application answers
+
+for _ in $(seq 90); do
+    if curl -fsS -o /dev/null "http://127.0.0.1:$PORT/login" 2>/dev/null; then
+        address=$(curl -fsS --max-time 5 https://checkip.amazonaws.com 2>/dev/null | tr -d '[:space:]' || true)
+        address=${address:-$(hostname -I | awk '{ print $1 }')}
+        echo
+        echo "=== bpmn-server is ready: http://$address/${DOMAIN:+  (https://$DOMAIN/ once $DOMAIN points at $address)}"
+        echo "    sign in as admin, $(cat "$CREDENTIALS")   (change it: your profile, top right)"
+        echo "    the application: $APP_DIR${ACCESS_USER:+ (editor $ACCESS_USER in group $APP_USER; re-login or newgrp $APP_USER)}"
+        echo "    bpmn status | logs | monitor | restart | update | domain <name> [email]   (bpmn help)"
+        date -u +%FT%TZ > "$HOME_DIR/INSTALLED"
+        exit 0
+    fi
+    sleep 2
+done
+echo "=== the application does not answer on port $PORT: journalctl -u $SERVICE"
+exit 1
+listen 80 default_server;\n    listen [::]:80 default_server;'
+fi
 
 cat > "/etc/nginx/sites-available/$SERVICE" <<EOF
 server {
