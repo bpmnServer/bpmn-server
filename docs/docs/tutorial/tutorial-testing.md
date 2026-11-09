@@ -19,7 +19,7 @@ Scenario: An approved request is recorded, and the employee told
     """javascript
     return { recordId: 'LV-1' };
     """
-    And @stub service:notify with
+    And @stub service:notifyUsers with
     """javascript
     return { sent: 'now' };
     """
@@ -46,7 +46,7 @@ Scenario: An approved request is recorded, and the employee told
 
 ## Stubs: no real messages, no real records
 
-A **stub** replaces a service for this scenario's instances only. `notify` sends nothing; `recordLeave` records
+A **stub** replaces a service for this scenario's instances only. `notifyUsers` sends nothing; `recordLeave` records
 nothing. A stub can also fail on purpose, as HR's system would:
 
 ```gherkin

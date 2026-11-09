@@ -22,6 +22,10 @@ and here
 - **`/llms.txt`**: where an AI agent given only the site's address starts: the site's facts (its API and OpenAPI
   document, whether design is on, the services, connectors and user groups a model can use), its own guide
   (`AI_GUIDE`, default `settings/ai-guide.md`), then BPMN Server's guide for agents, shipped in the package.
+- **The test environment's services**: `/llms.txt` says which environment a site is (`APP_ENV`); the sample
+  application has `connectors/testServices.ts`, `TestServices`, the same service names with nothing sent or recorded,
+  used when `APP_ENV=test` (`npm test` runs as the test environment). Its `notify` service is now `notifyUsers`, whom
+  to tell given as `users` and `groups`.
 - **`API_TRACE`**: every API call and its answer, one JSON line each, secrets masked: what a client, an AI agent, did.
 - **`has ... items ... for me`** in a `.feature`: only the items the user of `@login` may take, to check who may do what
   (an employee can not approve); `@invoke ... is refused` holds when the user can not do it.

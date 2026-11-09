@@ -28,6 +28,10 @@ read [AGENTS.md](https://github.com/bpmnServer/bpmn-server/blob/main/AGENTS.md) 
 | Tests: the `.feature` file and its steps (`@start`, `@invoke`, `@check`, `@wait`, `@stub`, ...) | [Testing](../testing.md) |
 | A complete example: model, forms, rules, tests | the sample application's **Leave Application**: [its model](https://github.com/bpmnServer/bpmn-server/blob/main/sampleApp/processes/Leave%20Application.bpmn) and [its tests](https://github.com/bpmnServer/bpmn-server/blob/main/sampleApp/processes/Leave%20Application.feature), and the [tutorials](../tutorial/start.md), which design it step by step |
 
+A site says in its `/llms.txt` which environment it is. Build and test on a **test** environment: its services have
+the same names as production's but reach nothing outside (no message sent, nothing recorded). On a production site,
+services are real: a scenario can replace one with `@stub service:<name>`.
+
 Prefer what the server provides (forms, assignment rules, timers, connectors, decisions) to scripts. Never put a key,
 a password or a token in a model: a connector's key is kept by the server, encrypted.
 

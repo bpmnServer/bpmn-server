@@ -37,6 +37,7 @@ All are optional unless marked.
 | `DOCS_PATH` | The folder of the docs pages the server shows |
 | `RESTART_ON_EXIT` | `true`: something restarts this process when it exits |
 | `API_TRACE` | A file: every API call (`/api`, `/api2`) and its answer, one JSON line each (when, how long, method, path, status, the kind of credential, the bodies cut at `API_TRACE_MAX` characters, default 4000, with passwords, keys and tokens masked). To see what a client, an AI agent, did. Off by default |
+| `APP_ENV` | The environment: `test` makes the sample application use its test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Default: production |
 | `AI_GUIDE` | A Markdown file: this site's own guide for AI agents, in its `/llms.txt`. Default `settings/ai-guide.md` |
 
 ### The database *(host and engine)*

@@ -31,7 +31,7 @@ keeps each saved version, by who saved it: **Compare** shows what changed betwee
 
    ![The Rationale, step by step](design/rationale-steps.png)
 
-`user1` never sees Approve: tutorial 2's rules at work. The server's log shows what `notify` and `recordLeave` were
+`user1` never sees Approve: tutorial 2's rules at work. The server's log shows what `notifyUsers` and `recordLeave` were
 asked to do.
 
 ## What to look for

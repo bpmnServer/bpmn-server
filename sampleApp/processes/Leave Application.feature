@@ -7,7 +7,7 @@ Feature: Leave Application
       """javascript
       return { recordId: 'LV-1' };
       """
-      And @stub service:notify with
+      And @stub service:notifyUsers with
       """javascript
       return { sent: 'now' };
       """
@@ -39,7 +39,7 @@ Feature: Leave Application
       And @check :leave passed element:Approve 0 times
 
   Scenario: A rejected request is not recorded, and the employee is told
-    Given @stub service:notify with
+    Given @stub service:notifyUsers with
       """javascript
       return { sent: 'now' };
       """
@@ -75,7 +75,7 @@ Feature: Leave Application
       """javascript
       return data.fixed ? { recordId: 'LV-2' } : { bpmnError: 'RecordFailed' };
       """
-      And @stub service:notify with
+      And @stub service:notifyUsers with
       """javascript
       return { sent: 'now' };
       """
@@ -97,7 +97,7 @@ Feature: Leave Application
 
   Scenario: The managers are reminded while Approve waits
     Given @stub timer:ReminderTimer with 1 seconds
-      And @stub service:notify with
+      And @stub service:notifyUsers with
       """javascript
       return { sent: 'now' };
       """

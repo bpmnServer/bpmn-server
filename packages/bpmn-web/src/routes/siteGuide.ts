@@ -30,6 +30,14 @@ function siteOwnGuide(): string | null {
     return fs.existsSync(file) ? fs.readFileSync(file, 'utf8').trim() : null;
 }
 
+/** Which environment this site is (APP_ENV): a test one has its own services, which reach nothing outside. */
+function environment(): string {
+    const env = process.env.APP_ENV || 'production';
+    return env === 'test'
+        ? '**test** (APP_ENV=test): its services are the test environment\'s, with the same names; nothing is sent or recorded outside. Test here freely'
+        : `**${env}**: services are real (they send, they record). Build and test models on a test site; a scenario can still replace a service with \`@stub service:<name>\``;
+}
+
 async function facts(webApp, origin: string) {
     const server = webApp.bpmnServer;
     const list = items => items.length ? items.map(i => `\`${i}\``).join(', ') : 'none';
@@ -43,7 +51,8 @@ async function facts(webApp, origin: string) {
         `- BPMN Server ${webApp.packageJson?.version ?? ''}`.trimEnd(),
         `- API: ${origin}/api2, its key in the \`x-api-key\` header (ask this site for one). The OpenAPI document: ${origin}/api2/openapi.json (no key needed)`,
         `- Creating and changing models, running their tests: ${designDisabled() ? '**off** on this site (DISABLE_DESIGN)' : 'on'}`,
-        `- Services a model can call (\`camunda:delegateExpression\` or \`implementation\`): ${list(services)}. Anything else is not on this site: use a script task, or a stub in tests`,
+        `- Environment: ${environment()}`,
+        `- Services a model can call (\`camunda:delegateExpression\` or \`implementation\`): ${list(services)}. Anything else is not on this site: use a script task`,
         `- Connectors (\`camunda:connector\`): ${list(connectors)}`,
         `- User groups in use (for \`candidateGroups\`, lanes, \`@login ... with role of\`): ${list(groups)}`,
         `- A model opens in the editor at ${origin}/model/edit/<name>, for a person signed in to this site (the API key does not open it)`,

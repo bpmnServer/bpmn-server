@@ -23,10 +23,15 @@ class AppServices {
             return { bpmnError: 'RecordFailed' };
         return { recordId: `LV-${Date.now()}` };
     }
-    /** The sample's Leave Application: a message to a user or a group (here, the log). */
-    async notify({ to, subject }, context) {
-        console.log(`notify ${to}: ${subject}`);
-        return { sent: new Date().toISOString() };
+    /**
+     * A message to users and groups: input { users, groups } (a user name or group name, or a list of them), subject,
+     * message; answers { sent: whom it was for, at }. The model says when and why. Here it is the log; put your email or
+     * chat here.
+     */
+    async notifyUsers({ users, groups, subject, message }, context) {
+        const to = [...[].concat(users ?? []), ...[].concat(groups ?? []).map(g => `group ${g}`)];
+        console.log(`notify ${to.join(', ')}: ${subject}${message ? ` (${message})` : ''}`);
+        return { sent: to, at: new Date().toISOString() };
     }
     async echo(input, context) {
         console.log('service echo - input', input);
