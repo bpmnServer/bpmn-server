@@ -11,6 +11,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { designDisabled } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
+import { originOf } from './modelApi.js';
 
 const PACKAGE = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DOCS = 'https://bpmnserver.github.io/bpmn-server/';
@@ -60,10 +61,10 @@ async function facts(webApp, origin: string) {
 }
 
 export async function siteGuide(webApp, req): Promise<string> {
-    const origin = `${req.protocol}://${req.get('host')}`;
+    const origin = originOf(req);
     const own = siteOwnGuide();
     return [
-        `# ${req.get('host')}: BPMN Server, for AI agents`,
+        `# ${new URL(origin).host}: BPMN Server, for AI agents`,
         '',
         'Build, check, deploy and test BPMN workflows on this site, through its API. Read this page first: this site, its own rules, then how BPMN Server works.',
         '',

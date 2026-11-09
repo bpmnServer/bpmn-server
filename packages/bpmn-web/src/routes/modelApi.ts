@@ -17,8 +17,11 @@ import { designDisabled } from '../userAccess/roles.js';
 
 const handler = fn => (req, res, next) => fn(req, res).catch(next);
 
+/** This site's address as the client used it: behind a proxy (ngrok, nginx) its scheme is the proxy's, https. */
+export const originOf = req => `${String(req.get('x-forwarded-proto') ?? req.protocol).split(',')[0].trim()}://${req.get('x-forwarded-host') ?? req.get('host')}`;
+
 /** Where a person opens the model: the editor. */
-const editorUrl = (req, name: string) => `${req.protocol}://${req.get('host')}/model/edit/${encodeURIComponent(name)}`;
+const editorUrl = (req, name: string) => `${originOf(req)}/model/edit/${encodeURIComponent(name)}`;
 
 /** A model's check, as the API answers it. */
 const answerCheck = check => ({
@@ -157,8 +160,8 @@ export function openApiDocument(req) {
     const check = { valid: { type: 'boolean' }, errors: { type: 'array', items: issue }, warnings: { type: 'array', items: issue } };
     return {
         openapi: '3.1.0',
-        info: { title: 'BPMN Server API', version: '3.6', description: `Build, check, test and run BPMN workflows. Start with ${req.protocol}://${req.get('host')}/llms.txt: this site, and how to build workflows (BPMN XML, the tests' Gherkin steps, an example). The key in x-api-key: calls run as the site's service account. Errors answer { error } (a missing or wrong key: { errors }).` },
-        servers: [{ url: `${req.protocol}://${req.get('host')}/api2` }],
+        info: { title: 'BPMN Server API', version: '3.6', description: `Build, check, test and run BPMN workflows. Start with ${originOf(req)}/llms.txt: this site, and how to build workflows (BPMN XML, the tests' Gherkin steps, an example). The key in x-api-key: calls run as the site's service account. Errors answer { error } (a missing or wrong key: { errors }).` },
+        servers: [{ url: `${originOf(req)}/api2` }],
         components: { securitySchemes: { apiKey: { type: 'apiKey', in: 'header', name: 'x-api-key' } } },
         security: [{ apiKey: [] }],
         paths: {
