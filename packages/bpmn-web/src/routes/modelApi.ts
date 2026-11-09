@@ -160,11 +160,13 @@ export function openApiDocument(req) {
     const check = { valid: { type: 'boolean' }, errors: { type: 'array', items: issue }, warnings: { type: 'array', items: issue } };
     return {
         openapi: '3.1.0',
-        info: { title: 'BPMN Server API', version: '3.6', description: `Build, check, test and run BPMN workflows. Start with ${originOf(req)}/llms.txt: this site, and how to build workflows (BPMN XML, the tests' Gherkin steps, an example). The key in x-api-key: calls run as the site's service account. Errors answer { error } (a missing or wrong key: { errors }).` },
+        info: { title: 'BPMN Server API', version: '3.6', description: `Build, check, test and run BPMN workflows. Start with getGuide (GET /guide, the same as ${originOf(req)}/llms.txt): this site, and how to build workflows (BPMN XML, the tests' Gherkin steps, an example). The key in x-api-key: calls run as the site's service account. Errors answer { error } (a missing or wrong key: { errors }).` },
         servers: [{ url: `${originOf(req)}/api2` }],
         components: { securitySchemes: { apiKey: { type: 'apiKey', in: 'header', name: 'x-api-key' } } },
         security: [{ apiKey: [] }],
         paths: {
+            '/guide': { get: { operationId: 'getGuide', summary: 'Read first: this site (its services, groups, environment), its rules, and how to build workflows: BPMN XML, the Gherkin steps of tests, an example', security: [],
+                responses: { 200: { description: 'The guide, in Markdown', content: { 'text/markdown': { schema: { type: 'string' } } } } } } },
             '/models': { get: { operationId: 'listModels', summary: 'The models: each its name and editor URL', responses: { 200: json({ type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, url: { type: 'string' } } } }) } } },
             '/models/{name}': {
                 get: { operationId: 'getModel', summary: 'A model: its BPMN XML, its .feature, its editor URL', parameters: [name],

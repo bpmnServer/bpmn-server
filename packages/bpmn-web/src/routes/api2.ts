@@ -21,6 +21,7 @@ import { modelNameGuard, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { taskApi } from './taskApi.js';
 import { modelApi, openApiDocument } from './modelApi.js';
+import { siteGuide } from './siteGuide.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
 import { assertModelAcceptable, sendModelRejection } from '../runtime/modelVerification.js';
@@ -62,6 +63,8 @@ export class API2 extends Common {
         router.use('/tasks', taskApi(this.bpmnServer));
         // what a client can call, without a key: how an agent finds it
         router.get('/openapi.json', (req, res) => res.json(openApiDocument(req)));
+        // /llms.txt as an operation: a client that only calls the API's operations (a ChatGPT action) reads it here
+        router.get('/guide', (req, res, next) => siteGuide(this.webApp, req).then(text => res.type('text/markdown').send(text), next));
         router.use(loggedIn, apiServiceAuth);
         // models and their tests, for a client that builds workflows: JSON in and out
         router.use(modelApi(this.bpmnServer));

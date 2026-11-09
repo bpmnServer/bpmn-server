@@ -118,6 +118,9 @@ test('/llms.txt: where an agent starts: this site\'s facts, then BPMN Server\'s 
   assert.match(text, /## How to build workflows on BPMN Server/);
   assert.match(text, /\]\(https:\/\/bpmnserver\.github\.io\/bpmn-server\/testing\/\)/, 'the guide\'s links, to the published docs');
   assert.match((await web.client().get('/api2/openapi.json')).body.info.description, /\/llms\.txt/, 'the OpenAPI document points to it');
+  const asOperation = await web.client().get('/api2/guide');
+  assert.equal(asOperation.status, 200, 'the same, as an operation (getGuide), without a key');
+  assert.match(asOperation.text, /## This site/);
 });
 
 test('the list as /models; a model laid out has no "no diagram" warning; a .feature as source', async () => {
