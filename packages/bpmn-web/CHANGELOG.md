@@ -19,6 +19,11 @@ and here
   delete its guest users (group `GUEST`): a kept session would otherwise sign one in as a designer of the shared models.
 
 ### Added
+- **Models and their tests over the API**, for a client that builds workflows (an AI agent, a script), with the API
+  key: `GET`/`PUT /api2/models/:name` (created or changed from XML, checked first, refused with its errors), `POST
+  .../verify`, `GET`/`PUT .../feature`, `POST .../test` (each scenario's result, the failing step and why),
+  `GET /api2/instances/:id/rationale`; `GET /api2/openapi.json`, without a key, describes them. See
+  `docs/docs/ai/building-workflows.md`.
 - **Gherkin tests**: a model's tests as a `.feature` file, run whole in the engine (`POST /model/test/feature`), with `@login`, `@start`,
   `@find`, `@invoke`, `@check`, `@wait`, `@stub` and `@script`. A stub replaces a service or a timer for its own scenario's instances.
   The Test tab and the decision editor read and write them, and `*.tests.json` files are converted when the server starts. The Mocha scenarios are now `<model>.engine.feature`. See `docs/docs/testing.md`.

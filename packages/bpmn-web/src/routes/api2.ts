@@ -20,6 +20,7 @@ import { apiKeyAuth as loggedIn, apiServiceAuth, configuredApiUser } from './mid
 import { modelNameGuard, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { taskApi } from './taskApi.js';
+import { modelApi, openApiDocument } from './modelApi.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
 import { assertModelAcceptable, sendModelRejection } from '../runtime/modelVerification.js';
@@ -59,7 +60,11 @@ export class API2 extends Common {
         guardModelParams(router);
         // the task API has a key of its own, and API_KEY does not open it
         router.use('/tasks', taskApi(this.bpmnServer));
+        // what a client can call, without a key: how an agent finds it
+        router.get('/openapi.json', (req, res) => res.json(openApiDocument(req)));
         router.use(loggedIn, apiServiceAuth);
+        // models and their tests, for a client that builds workflows: JSON in and out
+        router.use(modelApi(this.bpmnServer));
         router.use('/model', modelNameGuard);
         var bpmnServer = this.bpmnServer;
         var api=new BPMNAPI(this.bpmnServer);
