@@ -1,46 +1,49 @@
-# Docker images for bpmn-web
+# Docker installation
 
-bpmn-web and MongoDB in two containers. The image `ralphhanna/bpmn-web` holds a release from npm.
+Install the BPMN Server distribution with Docker. The image name is `ralphhanna/bpmn-server` (the former `bpmn-web` image is obsolete).
 
-## Install
-
-Docker is all you need, and two files. On Linux or macOS:
+## Guided installation (Linux/macOS/WSL)
 
 ```sh
-mkdir bpmn-web && cd bpmn-web
-curl -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
-curl -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.sh
-sh up.sh
+mkdir -p bpmn-server && cd bpmn-server
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/setup.sh
+sh setup.sh
 ```
 
-On Windows (PowerShell):
+Setup asks for the **port**, the **database** (`memory` or persistent MongoDB), and the **image** (published or local build). It generates `.env` next to the Compose file with random credentials and preserves that file on repeated runs. To change choices, use `sh setup.sh --reconfigure`.
 
-```powershell
-mkdir bpmn-web; cd bpmn-web
-curl.exe -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
-curl.exe -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.cmd
-.\up.cmd
+The **local build** option downloads editable image files into `./image/` and builds them. It uses the selected npm release of `bpmn-server` and `bpmn-web`; edits to the packages' source in GitHub are not automatically compiled into the image.
+
+## .env and database
+
+```dotenv
+PORT=3000
+MONGO_DB_URL=memory
+BPMN_IMAGE=ralphhanna/bpmn-server:latest
+REQUIRE_AUTHENTICATION=true
+ENFORCE_SECURITY=true
 ```
 
-Open http://localhost:3000 and sign in as `admin`. The first start creates `.env` next to `docker-compose.yml`
-with random keys and the password of `admin`, and prints the password. Keep the file.
+These are example settings; the generated file also includes API keys, the session secret and the initial admin password. Keep `.env` private. `env_file` passes the file to the container, while `PORT` controls its host mapping (the internal port is 3000). After edits, recreate the service rather than using `docker compose restart`.
 
-## Docker operations
+Memory mode needs no MongoDB container, but loses users and workflow instances on restart. It uses `mongodb-memory-server`; the first start may need internet access to fetch a MongoDB binary. Model files persist in a Docker volume.
 
-| Action | Command |
-|---|---|
-| Start | `sh up.sh` or `up.cmd` (or `docker compose up -d` once `.env` exists) |
-| Stop | `docker compose down` |
-| View logs | `docker compose logs -f` |
-| Update to the latest image | `docker compose pull`, then start |
-| Shell in the container | `docker compose exec bpmn-web sh` |
-| Console (start processes, list tasks, set passwords) | `docker compose exec bpmn-web npm run cli` |
+For persistent MongoDB, setup uses `docker-compose.mongo.yml` and sets `MONGO_DB_URL=mongodb://mongo:27017/bpmn`.
 
-## Customize
+## Manage
 
-- The containers: edit `docker-compose.yml`.
-- The image: [docker/image](https://github.com/bpmnServer/bpmn-server/tree/main/docker/image) in this repository
-  builds a release from npm.
+In the default memory/published configuration:
 
-More, and upgrading from the 2024 setup: the
-[README](https://github.com/bpmnServer/bpmn-server/blob/main/docker/README.md).
+```sh
+docker compose up -d --force-recreate
+docker compose ps -a
+docker compose logs --tail=100 server
+docker compose down
+```
+
+When using the MongoDB or local build overlays, include them with `-f docker-compose.yml -f docker-compose.mongo.yml` and/or `-f docker-compose.build.yml`, or run the mode-aware `up.sh` from the installation folder.
+
+Do not use `docker compose down -v` if you want to preserve models or database volumes.
+
+See the [detailed Docker README](https://github.com/bpmnServer/bpmn-server/blob/main/docker/README.md) for installation, configuration, and publishing instructions.
