@@ -1,8 +1,10 @@
+# AI agents: start here
+
+**Building a workflow on BPMN Server** (a model, its forms, its tests)? Read [docs/docs/ai/building-workflows.md](docs/docs/ai/building-workflows.md); on a server, start with its `/llms.txt`. The rest of this file is for agents changing BPMN Server itself.
+
 # AI contributor instructions
 
 This file applies to the entire repository. Its audience is **coding agents enhancing BPMN Server itself**, not BPMN product users.
-
-**Building a workflow on BPMN Server** (a model, its forms, its tests), not changing BPMN Server? Read [docs/docs/ai/building-workflows.md](docs/docs/ai/building-workflows.md) instead.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and [AI-CONTRIBUTING.md](AI-CONTRIBUTING.md) before editing.
 
