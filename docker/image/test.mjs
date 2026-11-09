@@ -1,4 +1,4 @@
-// Tests an image of bpmn-web before it is pushed: the image itself, then the application running through the real
+// Tests the BPMN Server distribution image before it is pushed: the image itself, then the application running through the real
 // docker-compose.yml, under a project and a port of its own, so an installation on this machine is not touched.
 // Needs Docker and Node.js 20 or later; no packages.
 //
@@ -46,7 +46,7 @@ if (run('docker', ['image', 'inspect', image]).status !== 0) {
     process.exit(2);
 }
 const versionOf = pkg => inImage(`grep -m1 '"version"' /app/node_modules/${pkg}/package.json | cut -d'"' -f4`).out.trim();
-const server = versionOf('bpmn-server'), web = versionOf('server');
+const server = versionOf('bpmn-server'), web = versionOf('bpmn-web');
 const tag = /:([^:/]+)$/.exec(image)?.[1];
 const expected = versionArg ?? (tag && /^\d/.test(tag) ? tag : run('npm', ['view', 'bpmn-server', 'version']).out.trim());
 check('bpmn-server and bpmn-web are the expected release', server === expected && web === expected,
