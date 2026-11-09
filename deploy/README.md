@@ -20,7 +20,7 @@ less /tmp/bpmn-deploy-client.sh
 sudo bash /tmp/bpmn-deploy-client.sh acme 3101
 ```
 
-This uses the existing `ralphhanna/bpmn-web` image referenced in `docker/docker-compose.yml` plus a private MongoDB container. The script pulls the image and runs it; it **does not build a client-customized image**. Pass a reviewed/pinned custom image as the third argument when you have one:
+This uses the existing `ralphhanna/bpmn-server` image referenced in `docker/docker-compose.yml` plus a private MongoDB container. The script pulls the image and runs it; it **does not build a client-customized image**. Pass a reviewed/pinned custom image as the third argument when you have one:
 
 ```bash
 sudo bash /tmp/bpmn-deploy-client.sh acme 3101 registry.example.com/client-bpmn:v1
@@ -109,9 +109,34 @@ The admin password is on the server: `sudo cat /opt/bpmn/admin-password.txt`.
 | `--port <port>` | `PORT` | the application's own port, behind nginx; default `3000` |
 | `--dir <path>` | `BPMN_DIR` | where the application's folder is made; default `/opt/bpmn` |
 | `--access <user>` | `ACCESS_USER` | who may edit its files; default: the user running `sudo`, else `ubuntu`; `none`: nobody |
+| `--mode development\|production` | `INSTALL_MODE` | native service mode; defaults to production |
+| `--interactive` / `--yes` | | show or skip setup prompts |
 
 Run it again at any time: what is there is kept (the application, its data, its `.env`, the admin password),
 and the packages, the service and nginx are set up as above.
+
+### Native `bpmn` command reference
+
+After installation, run `bpmn` with no arguments to see the management commands:
+
+```text
+$ bpmn
+bpmn: the bpmn-server application in /opt/bpmn/my-app (the service bpmn-my-app)
+
+  bpmn status                   the app, MongoDB and nginx; its address
+  bpmn logs                     its log, live (Ctrl+C); bpmn logs -n 200, bpmn logs --since "1 hour ago", bpmn logs -p err
+  bpmn monitor                  a live view: status, CPU and memory, the last log lines
+  bpmn restart | stop | start
+  bpmn update                   the newest bpmn-server and bpmn-web, then a restart
+  bpmn env                      edit its .env, then a restart
+  bpmn cli [command ...]        its console (npm run cli); with a command, just that: bpmn cli cod asana
+  bpmn domain <name> [email]    the site's domain name, and HTTPS for it once its DNS points here
+  bpmn https                    HTTPS now (or why not yet)
+  bpmn access <user>            let a user edit the application's files (the group bpmn)
+  bpmn password                 the first admin password (until it is changed)
+```
+
+These commands operate the **native systemd installation**, not Docker. `bpmn env` edits the application settings and restarts the service. The password shown by `bpmn password` is the initial password, not necessarily the current account password.
 
 ## On the server, afterwards: the `bpmn` command
 
@@ -142,6 +167,51 @@ MongoDB; the journal keeps and rotates the logs.
 | The `bpmn` command's settings | `/etc/bpmn.conf` |
 | MongoDB, nginx | `journalctl -u mongod`, `sudo tail -f /var/log/nginx/error.log` |
 | The console | `cd /opt/bpmn/my-app && sudo -u bpmn npm run cli` |
+
+### Development versus production
+
+The native installer supports `--mode development` or `--mode production` (default). The interactive installer prompts for the mode. Production deployments enforce authentication and application security. Development mode retains the project's `.env` authentication choices and runs the service with `NODE_ENV=development`; nginx binds only to `127.0.0.1:80`.
+
+For a local test machine:
+
+```sh
+sudo bash install.sh --interactive
+# Choose mode: development
+```
+
+For a noninteractive local install, pass `--mode development --yes`. Lightsail launch scripts continue to default to production. If the app is already installed, do not rerun the installer solely to change the mode; override `NODE_ENV` in its systemd unit:
+
+```sh
+sudo systemctl edit bpmn-my-app
+# Add:
+# [Service]
+# Environment=NODE_ENV=development
+sudo systemctl daemon-reload
+sudo systemctl restart bpmn-my-app
+```
+
+`REQUIRE_AUTHENTICATION=false` can be used for trusted local development only. Note that the application might still listen directly on port 3000, even when nginx is loopback-only; use a firewall or bind the app to localhost to prevent network exposure. Development mode must not be used on publicly accessible hosts.
+
+### Interactive native installation and folder access
+
+For a local installation, download the script and run it with Bash:
+
+```sh
+curl -fLo install.sh https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/install.sh
+sudo bash install.sh --interactive
+```
+
+The installer prompts for application name, version, port, directory, access user, and optional domain/email. Use `--yes` for unattended installs. It creates or reuses the `bpmn` group, adds the selected user, sets application directory group access, and checks read/write permissions. Existing installations are preserved.
+
+After installation, **log out and back in** to refresh your group membership, or run `newgrp bpmn` as your regular user. Verify access:
+
+```sh
+id -nG
+ls -ld /opt/bpmn /opt/bpmn/my-app
+cd /opt/bpmn/my-app
+```
+
+If a previous installation did not grant access, run `sudo bpmn access "$USER"` and log in again. The password file `/opt/bpmn/admin-password.txt` remains root-only.
 
 ### Who may edit its files
 
@@ -203,8 +273,25 @@ waits until the application answers, and prints the address and the admin passwo
 ./deploy/lightsail/create-lightsail.sh                                  # the 2 GB size, the CLI's region
 ./deploy/lightsail/create-lightsail.sh --domain bpmn.example.com --email you@example.com
 ./deploy/lightsail/create-lightsail.sh --bundle medium_3_0 --region eu-west-2
+./deploy/lightsail/create-lightsail.sh --access ubuntu                    # editable /opt/bpmn/my-app
 ./deploy/lightsail/create-lightsail.sh --delete                         # the instance and its static IP
 ```
 
 It needs the [AWS CLI](https://aws.amazon.com/cli/), signed in (`aws configure`). Lightsail bills the instance
 monthly; `--delete` stops it.
+
+### Lightsail file access
+
+The Lightsail launcher now passes `ACCESS_USER=ubuntu` by default to the remote native installer. It adds that user to group `bpmn`, checks access to `/opt/bpmn/my-app`, and preserves the system service account `bpmn` as owner. Use `--access <username>` for a different existing Linux account, or `--access none` to disable user access. It does not create that Linux account.
+
+After connecting through Lightsail SSH, reconnect or run `newgrp bpmn` to pick up the new group membership. Then `cd /opt/bpmn/my-app` should work without `sudo`.
+
+For an **existing** Lightsail server, changing `create-lightsail.sh` doesn't retroactively change its permissions. On the instance run:
+
+```sh
+sudo bpmn access ubuntu
+newgrp bpmn
+cd /opt/bpmn/my-app
+```
+
+Use the instance's actual login name instead of `ubuntu` if different. Cloud launch scripts remain noninteractive so instance creation cannot hang waiting for input.

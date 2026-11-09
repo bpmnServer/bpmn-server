@@ -16,6 +16,7 @@ REGION=${AWS_REGION:-${AWS_DEFAULT_REGION:-}}
 BUNDLE=small_3_0            # 2 GB memory: room for MongoDB and Node
 BLUEPRINT=ubuntu_24_04
 APP_NAME=my-app
+ACCESS_USER=ubuntu             # default login account on Lightsail Ubuntu images
 BPMN_VERSION=latest
 DOMAIN=
 EMAIL=
@@ -31,6 +32,7 @@ Options:
   --region <region>      an AWS region (us-east-1, eu-west-2, ...)             default: the CLI's region
   --bundle <id>          the size (aws lightsail get-bundles)                  default $BUNDLE
   --app <name>           the application's folder and database                default $APP_NAME
+  --access <user>        grant local folder access through group bpmn          default $ACCESS_USER (none to skip)
   --version <version>    the bpmn-server version whose init makes the app      default $BPMN_VERSION
   --domain <name>        the site's domain: HTTPS once its DNS points at the static IP
   --email <address>      for Let's Encrypt's notices (with --domain)
@@ -44,6 +46,7 @@ while [ $# -gt 0 ]; do
         --region) REGION=$2; shift 2 ;;
         --bundle) BUNDLE=$2; shift 2 ;;
         --app) APP_NAME=$2; shift 2 ;;
+        --access) ACCESS_USER=$2; shift 2 ;;
         --version) BPMN_VERSION=$2; shift 2 ;;
         --domain) DOMAIN=$2; shift 2 ;;
         --email) EMAIL=$2; shift 2 ;;
@@ -52,6 +55,11 @@ while [ $# -gt 0 ]; do
         *) echo "unknown option: $1 (--help lists them)"; exit 1 ;;
     esac
 done
+
+if [ "$ACCESS_USER" != none ] && [[ ! "$ACCESS_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
+    echo "Invalid --access user name" >&2
+    exit 2
+fi
 
 command -v aws >/dev/null || { echo "The AWS CLI is not installed: https://aws.amazon.com/cli/ , then aws configure"; exit 1; }
 REGION=${REGION:-$(aws configure get region 2>/dev/null || true)}
@@ -81,7 +89,7 @@ LAUNCH=$(mktemp)
 trap 'rm -f "$LAUNCH"' EXIT
 {
     echo '#!/bin/bash'
-    printf 'export APP_NAME=%q BPMN_VERSION=%q DOMAIN=%q EMAIL=%q ADMIN_PASSWORD=%q\n' "$APP_NAME" "$BPMN_VERSION" "$DOMAIN" "$EMAIL" "$ADMIN_PASSWORD"
+    printf 'export APP_NAME=%q BPMN_VERSION=%q DOMAIN=%q EMAIL=%q ADMIN_PASSWORD=%q ACCESS_USER=%q\n' "$APP_NAME" "$BPMN_VERSION" "$DOMAIN" "$EMAIL" "$ADMIN_PASSWORD" "$ACCESS_USER"
     tail -n +2 "$HERE/../install.sh" | tr -d '\r'
 } > "$LAUNCH"
 
@@ -128,6 +136,7 @@ bpmn-server is ready:
 
 On the instance (Lightsail console: https://lightsail.aws.amazon.com/ls/webapp/$REGION/instances/$NAME/connect):
   the application  /opt/bpmn/$APP_NAME   (its models: processes/; settings: .env)
+  folder access     $ACCESS_USER (bpmn group; reconnect SSH or run newgrp bpmn)
   the service      sudo systemctl restart bpmn-$APP_NAME ; journalctl -u bpmn-$APP_NAME -f
   the install log  /var/log/bpmn-install.log
 

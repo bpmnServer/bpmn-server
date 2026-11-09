@@ -1,9 +1,9 @@
-// Tests an image of bpmn-web before it is pushed: the image itself, then the application running through the real
+// Tests the BPMN Server distribution image before it is pushed: the image itself, then the application running through the real
 // docker-compose.yml, under a project and a port of its own, so an installation on this machine is not touched.
 // Needs Docker and Node.js 20 or later; no packages.
 //
-//   node test.mjs                                    ralphhanna/bpmn-web:latest, as built here (it is not pulled)
-//   node test.mjs ralphhanna/bpmn-web:3.5.2          that image
+//   node test.mjs                                    ralphhanna/bpmn-server:latest, as built here (it is not pulled)
+//   node test.mjs ralphhanna/bpmn-server:3.5.2          that image
 //   node test.mjs <image> --version 3.5.2            and the version it must hold
 //
 // The version expected, without --version: the image's tag; for latest or no tag, the latest on npm.
@@ -18,7 +18,7 @@ import path from 'node:path';
 const args = process.argv.slice(2);
 const versionAt = args.indexOf('--version');
 const versionArg = versionAt >= 0 ? args.splice(versionAt, 2)[1] : undefined;
-const image = args[0] ?? 'ralphhanna/bpmn-web:latest';
+const image = args[0] ?? 'ralphhanna/bpmn-server:latest';
 
 const results = [];
 function check(name, ok, detail = '') {
@@ -45,10 +45,14 @@ if (run('docker', ['image', 'inspect', image]).status !== 0) {
     console.error(`${image} is not on this machine: build it (build.cmd, build.sh) or docker pull it`);
     process.exit(2);
 }
+const metadata = run('docker', ['image', 'inspect', image, '--format', '{{json .Config.Cmd}}']);
+check('image starts npm with exec-form CMD', metadata.status === 0 && metadata.out.trim() === '["npm","start"]', metadata.out.trim());
+check('memory database dependency installed', inImage("node -e 'require.resolve(\"mongodb-memory-server\")'").status === 0);
+check('MongoDB runtime libcurl available', inImage('test -e /usr/lib/x86_64-linux-gnu/libcurl.so.4 || test -e /usr/lib/aarch64-linux-gnu/libcurl.so.4').status === 0);
 const versionOf = pkg => inImage(`grep -m1 '"version"' /app/node_modules/${pkg}/package.json | cut -d'"' -f4`).out.trim();
 const server = versionOf('bpmn-server'), web = versionOf('bpmn-web');
 const tag = /:([^:/]+)$/.exec(image)?.[1];
-const expected = versionArg ?? (tag && /^\d/.test(tag) ? tag : run('npm', ['view', 'bpmn-web', 'version']).out.trim());
+const expected = versionArg ?? (tag && /^\d/.test(tag) ? tag : run('npm', ['view', 'bpmn-server', 'version']).out.trim());
 check('bpmn-server and bpmn-web are the expected release', server === expected && web === expected,
     `expected ${expected}, bpmn-server ${server || 'none'}, bpmn-web ${web || 'none'}`);
 check('no .env in the image: no keys shared by every container', inImage('test ! -e /app/.env').status === 0);
@@ -67,15 +71,17 @@ const secrets = { API_KEY: key(), ADMIN_API_KEY: key(), SESSION_SECRET: key(), A
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-image-test-'));
 const override = path.join(work, 'override.yml');
 fs.writeFileSync(override, `services:
-  bpmn-web:
+  server:
+    env_file: !override []
     image: ${image}
     pull_policy: never
     ports: !override
       - ${port}:3000
 `);
 const composeFile = path.join(import.meta.dirname, '..', 'docker-compose.yml');
-const compose = (argv, options = {}) => run('docker', ['compose', '-p', 'bpmn-image-test', '-f', composeFile, '-f', override, ...argv],
-    { env: { ...process.env, ...secrets }, ...options });
+const mongoFile = path.join(import.meta.dirname, '..', 'docker-compose.mongo.yml');
+const compose = (argv, options = {}) => run('docker', ['compose', '-p', 'bpmn-image-test', '-f', composeFile, '-f', mongoFile, '-f', override, ...argv],
+    { env: { ...process.env, ...secrets, MONGO_DB_URL: 'mongodb://mongo:27017/bpmn' }, ...options });
 
 /** Waits for the sign-in page; false when it does not come. */
 async function up() {
@@ -140,12 +146,12 @@ try {
         const models = await fetch(`${base}/api2/model/list`, { signal: timeout(), headers: { 'x-api-key': secrets.API_KEY } });
         check('the API lists the models with its key', models.status === 200 && (await models.text()).includes('Hello'), `status ${models.status}`);
 
-        compose(['restart', 'bpmn-web']);
+        compose(['restart', 'server']);
         check('it starts again after a restart', await up());
-        check('a restart adds no user', /already has users/.test(compose(['logs', 'bpmn-web', '--since', '2m']).out));
+        check('a restart adds no user', /already has users/.test(compose(['logs', 'server', '--since', '2m']).out));
         check('the password still works after a restart', await browser().signIn('admin', secrets.ADMIN_PASSWORD));
 
-        const cli = compose(['exec', '-T', 'bpmn-web', 'npm', 'run', 'cli'], { input: 'q\n', timeout: 60000 });
+        const cli = compose(['exec', '-T', 'server', 'npm', 'run', 'cli'], { input: 'q\n', timeout: 60000 });
         check('the console runs', /Enter Command/.test(cli.out));
     }
     exitCode = results.every(Boolean) ? 0 : 1;

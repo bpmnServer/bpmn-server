@@ -5,7 +5,7 @@ set -euo pipefail
 usage() {
   cat <<'HELP'
 Usage: sudo bash deploy/docker/deploy-client.sh CLIENT PORT [IMAGE]
-Example: sudo bash deploy/docker/deploy-client.sh acme 3101 ralphhanna/bpmn-web:latest
+Example: sudo bash deploy/docker/deploy-client.sh acme 3101 ralphhanna/bpmn-server:latest
 Creates /opt/bpmn-clients/CLIENT/ with compose.yaml and root-readable .env secrets.
 Uses per-client Docker project, named storage volumes and internal DB network.
 Re-running updates the image but preserves database, process models and secrets.
@@ -13,7 +13,7 @@ HELP
 }
 [[ $# -ge 2 && $# -le 3 ]] || { usage; exit 2; }
 [[ $(id -u) -eq 0 ]] || { echo "Run as root (sudo)" >&2; exit 1; }
-client=$1; port=$2; image=${3:-ralphhanna/bpmn-web:latest}
+client=$1; port=$2; image=${3:-ralphhanna/bpmn-server:latest}
 [[ "$client" =~ ^[a-z][a-z0-9-]{0,39}$ ]] || { echo "Invalid client id" >&2; exit 2; }
 [[ "$port" =~ ^[0-9]+$ ]] && ((10#$port >= 1024 && 10#$port <= 65535)) || { echo "Invalid port" >&2; exit 2; }
 [[ "$image" =~ ^[a-zA-Z0-9][a-zA-Z0-9._/@:-]+$ ]] || { echo "Invalid image reference" >&2; exit 2; }
@@ -97,4 +97,4 @@ docker compose ps
 echo "Client $client deployed on localhost:$port"
 echo "Configure a separate HTTPS reverse-proxy vhost for this client; do NOT open port $port in Lightsail."
 echo "IMPORTANT: ensure the application's first admin password is changed BEFORE internet exposure."
-echo "Manage: cd $dir; sudo docker compose ps; sudo docker compose logs -f web; sudo docker compose stop/start"
+echo "Manage: cd $dir; sudo docker compose ps; sudo docker compose logs -f server; sudo docker compose stop/start"

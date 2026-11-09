@@ -11,7 +11,7 @@
 # DigitalOcean user data): paste this whole file, and set what you want in the settings below.
 #
 # It can be run again: what is there is kept (the application, its data, its .env, its admin password).
-# The admin password is in /opt/bpmn/admin-password.txt (root only); the log in /var/log/bpmn-install.log.
+# The admin password is ADMIN_PASSWORD in the application's .env (bpmn password); the log in /var/log/bpmn-install.log.
 # Afterwards, the `bpmn` command: bpmn status, logs, monitor, restart, update, domain, access, password (bpmn help).
 set -euo pipefail
 
@@ -23,12 +23,14 @@ EMAIL=${EMAIL:-}                        # --email: where Let's Encrypt sends its
 ADMIN_PASSWORD=${ADMIN_PASSWORD:-}      # --admin-password: the first user's (admin); empty: one is generated
 PORT=${PORT:-3000}                      # --port: the application's own port, behind nginx
 BPMN_DIR=${BPMN_DIR:-/opt/bpmn}         # --dir: where the application's folder is made (/opt/bpmn/<app>)
-ACCESS_USER=${ACCESS_USER:-}            # --access: who may edit its files besides root (default: the one running
-                                        #   sudo, else ubuntu); --access none: nobody
+ACCESS_USER=${ACCESS_USER:-}            # --access: local editor (defaults to sudo-invoking user, else ubuntu)
+INTERACTIVE=auto                        # prompts on first interactive install; --interactive or --yes override
+INSTALL_MODE=${INSTALL_MODE:-production} # development for local use; production for public/cloud deployment
 PACKAGES=${PACKAGES:-}                  # --packages: a folder of packed bpmn-server, bpmn-web, bpmn-client and bpmn-mcp
                                         #   (npm pack, *.tgz) to install instead of npm's: to test a release before publishing
 
 while [ $# -gt 0 ]; do
+    case "$1" in --interactive) INTERACTIVE=yes; shift; continue;; --yes|--non-interactive) INTERACTIVE=no; shift; continue;; esac
     case "$1" in
         --app) APP_NAME=$2; shift 2 ;;
         --version) BPMN_VERSION=$2; shift 2 ;;
@@ -38,16 +40,67 @@ while [ $# -gt 0 ]; do
         --port) PORT=$2; shift 2 ;;
         --dir) BPMN_DIR=$2; shift 2 ;;
         --access) ACCESS_USER=$2; shift 2 ;;
+        --mode) INSTALL_MODE=$2; shift 2 ;;
         --packages) PACKAGES=$2; shift 2 ;;
         -h|--help) sed -n '2,16p' "$0" 2>/dev/null | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "unknown option: $1"; exit 1 ;;
     esac
 done
 
+# Prompt only on a first install from a terminal. Lightsail/user-data and piped installs remain unattended.
+# /dev/tty is used because 'curl ... | sudo bash' consumes standard input for the script.
+if [ "$INTERACTIVE" = auto ]; then
+    if [ -r /dev/tty ] && [ -w /dev/tty ] && [ -t 2 ] && [ ! -d "${BPMN_DIR%/}/$APP_NAME" ]; then
+        INTERACTIVE=yes
+    else
+        INTERACTIVE=no
+    fi
+fi
+if [ "$INTERACTIVE" = yes ]; then
+    [ -r /dev/tty ] && [ -w /dev/tty ] || { echo "Interactive mode requires a terminal; use --yes for automation" >&2; exit 2; }
+    prompt() {
+        local __name=$1 __label=$2 __default=$3 __value
+        printf '%s [%s]: ' "$__label" "$__default" > /dev/tty
+        IFS= read -r __value < /dev/tty || __value=
+        printf -v "$__name" '%s' "${__value:-$__default}"
+    }
+    default_access=$ACCESS_USER
+    if [ -z "$default_access" ]; then
+        if [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != root ]; then default_access=$SUDO_USER
+        elif [ -n "$(logname 2>/dev/null || true)" ] && [ "$(logname 2>/dev/null || true)" != root ]; then default_access=$(logname 2>/dev/null)
+        elif id ubuntu >/dev/null 2>&1; then default_access=ubuntu
+        else default_access=none
+        fi
+    fi
+    printf '\nBPMN Server native installation (not Docker)\nPress Enter to accept each default.\n\n' > /dev/tty
+    prompt APP_NAME "Application name" "$APP_NAME"
+    prompt INSTALL_MODE "Mode (development/production)" "$INSTALL_MODE"
+    prompt BPMN_VERSION "BPMN Server npm version" "$BPMN_VERSION"
+    prompt PORT "Application port behind nginx" "$PORT"
+    prompt BPMN_DIR "Application root directory" "$BPMN_DIR"
+    prompt ACCESS_USER "Local user to add to bpmn group (none disables)" "$default_access"
+    prompt DOMAIN "Domain for HTTPS (none to skip)" "${DOMAIN:-none}"
+    prompt EMAIL "Email for Let's Encrypt (none to skip)" "${EMAIL:-none}"
+    [ "$DOMAIN" = none ] && DOMAIN=
+    [ "$EMAIL" = none ] && EMAIL=
+    printf '\nApp: %s/%s | mode: %s | version: %s | port: %s | editor: %s | domain: %s\n' \
+        "${BPMN_DIR%/}" "$APP_NAME" "$INSTALL_MODE" "$BPMN_VERSION" "$PORT" "$ACCESS_USER" "${DOMAIN:-none}" > /dev/tty
+    prompt CONFIRM "Proceed with installation? (yes/no)" yes
+    [ "$CONFIRM" = yes ] || { echo "Installation cancelled"; exit 0; }
+fi
+
 # the log holds the admin password: root's only
 touch /var/log/bpmn-install.log && chmod 600 /var/log/bpmn-install.log
 exec > >(tee -a /var/log/bpmn-install.log) 2>&1
 echo "=== bpmn-server install, $(date -u +%FT%TZ)"
+case "$INSTALL_MODE" in
+  development|production) ;;
+  *) echo "Invalid --mode: use development or production" >&2; exit 2 ;;
+esac
+if [ "$INSTALL_MODE" = development ] && [ -n "$DOMAIN" ]; then
+    echo "Development mode is for local use only: omit --domain or choose --mode production" >&2
+    exit 2
+fi
 APP_USER=bpmn
 HOME_DIR=${BPMN_DIR%/}
 APP_DIR=$HOME_DIR/$APP_NAME
@@ -61,9 +114,14 @@ command -v apt-get >/dev/null || { echo "this installer is for Ubuntu (apt-get);
 # who may edit the application's files: the one running sudo, else the cloud image's user (a launch script runs as root)
 if [ -z "$ACCESS_USER" ]; then
     if [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != root ]; then ACCESS_USER=$SUDO_USER
+    elif [ -n "$(logname 2>/dev/null || true)" ] && [ "$(logname 2>/dev/null || true)" != root ]; then ACCESS_USER=$(logname 2>/dev/null)
     elif id ubuntu >/dev/null 2>&1; then ACCESS_USER=ubuntu; fi
 fi
 [ "$ACCESS_USER" = none ] && ACCESS_USER=
+[[ "$PORT" =~ ^[0-9]+$ ]] && ((10#$PORT >= 1 && 10#$PORT <= 65535)) || { echo "PORT must be 1-65535"; exit 1; }
+if [ -n "$ACCESS_USER" ] && ! id "$ACCESS_USER" >/dev/null 2>&1; then
+    echo "Access user '$ACCESS_USER' does not exist. Use --access none to skip."; exit 1
+fi
 case "${ADMIN_PASSWORD:-}" in
     *[\'\"\\\$\`]*) echo "ADMIN_PASSWORD: no quotes, backslashes, \$ or backticks"; exit 1 ;;
 esac
@@ -167,12 +225,19 @@ find "$APP_DIR" -type d -exec chmod g+s {} +
 find "$APP_DIR" -path "$APP_DIR/node_modules" -prune -o -type d -print0 \
     | xargs -0 -r setfacl -m g:"$APP_USER":rwX -m d:g:"$APP_USER":rwX 2>/dev/null || true
 chmod 750 "$HOME_DIR"
-# its secrets (keys, the session secret, the database): its user and group only, whatever the folders above allow
+# The parent path must be traversable; do not loosen permissions on /opt or shared ancestors.
+# its secrets (keys, the session secret, the database, the first admin password): its user and group only
 chmod o-rwx "$APP_DIR/.env"
 if [ -n "$ACCESS_USER" ]; then
     if id "$ACCESS_USER" >/dev/null 2>&1; then
         usermod -aG "$APP_USER" "$ACCESS_USER"
-        echo "$ACCESS_USER may edit $APP_DIR (the group $APP_USER; from its next sign-in)"
+        echo "$ACCESS_USER added to group $APP_USER (edit $APP_DIR after next login, or: newgrp $APP_USER)"
+        echo "Check: id -nG $ACCESS_USER; ls -ld $HOME_DIR $APP_DIR"
+        if runuser -u "$ACCESS_USER" -- sh -c 'test -x "$1" && test -r "$2" && test -w "$2"' sh "$HOME_DIR" "$APP_DIR"; then
+            echo "ACCESS OK: $ACCESS_USER can traverse $HOME_DIR and read/write $APP_DIR after group refresh"
+        else
+            echo "ACCESS WARNING: $ACCESS_USER cannot yet read/write $APP_DIR; inspect: namei -l $APP_DIR"
+        fi
     else
         echo "no user $ACCESS_USER: nobody else may edit $APP_DIR (bpmn access <user> adds one)"
     fi
@@ -183,23 +248,51 @@ set_env() {
     local file=$APP_DIR/.env
     if grep -q "^$1=" "$file" 2>/dev/null; then sed -i "s|^$1=.*|$1=$2|" "$file"; else echo "$1=$2" >> "$file"; fi
 }
+# Production deployments enforce authentication; development respects local .env.
+if [ "$INSTALL_MODE" = production ]; then
+    set_env REQUIRE_AUTHENTICATION true
+    set_env ENFORCE_SECURITY true
+    set_env ALLOW_INSECURE_NO_AUTH false
+    echo "Production mode: authentication and security enabled"
+else
+    echo "Development mode: existing authentication settings retained from .env"
+    echo "WARNING: do not expose development ports to untrusted networks"
+fi
+
 # cookies marked Secure only once the site is HTTPS: a browser does not send them back over http
 grep -q '^SECURE_COOKIES=true' "$APP_DIR/.env" 2>/dev/null || set_env SECURE_COOKIES false
 
-# the first user, admin, with a password of its own (never admin/admin on a public server)
+# Admin password for first-time account creation. Keep one stable value in .env
+# (the same convention as Docker); editing it later does NOT reset MongoDB users.
+# On an upgrade, migrate the initial password from the legacy root-only file if present.
 CREDENTIALS=$HOME_DIR/admin-password.txt
+configured_password=$(sed -n 's/^ADMIN_PASSWORD=//p' "$APP_DIR/.env" | head -n 1)
+if [ -n "$configured_password" ]; then
+    ADMIN_PASSWORD=$configured_password
+elif [ -f "$CREDENTIALS" ]; then
+    ADMIN_PASSWORD=$(sed -n 's/^admin password: //p' "$CREDENTIALS" | head -n 1)
+    ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(cat "$CREDENTIALS")}
+fi
+if [ -z "$ADMIN_PASSWORD" ]; then
+    ADMIN_PASSWORD=$(openssl rand -hex 16)
+fi
+# Avoid accidentally publishing credentials to other local accounts.
+set_env ADMIN_PASSWORD "$ADMIN_PASSWORD"
+chown "$APP_USER:$APP_USER" "$APP_DIR/.env"
+chmod 660 "$APP_DIR/.env"
 if [ ! -f "$CREDENTIALS" ]; then
-    ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 20)}
-    as_app "$APP_DIR" "ADMIN_PASSWORD='$ADMIN_PASSWORD' npm run setup"
-    # a bpmn-web that predates ADMIN_PASSWORD made admin/admin: set the password through its user service
-    as_app "$APP_DIR" "ADMIN_PASSWORD='$ADMIN_PASSWORD' node --env-file=.env --input-type=module -e \"
+    # The setup command creates the first account only when no users exist.
+    as_app "$APP_DIR" "npm run setup"
+    # Legacy compatibility: older bpmn-web releases did not honor ADMIN_PASSWORD.
+    as_app "$APP_DIR" "node --env-file=.env --input-type=module -e \"
         import mongoose from 'mongoose'; import { UserService } from 'bpmn-web';
         await mongoose.connect(process.env.MONGO_DB_URL);
         await new UserService().setPassword('admin', process.env.ADMIN_PASSWORD);
-        await mongoose.disconnect();\"" || echo "the admin password could not be set here: the console (npm run cli) sets it"
+        await mongoose.disconnect();\"" || echo "the admin password could not be set here: use the console (npm run cli)"
     umask 077
-    echo "admin password: $ADMIN_PASSWORD" > "$CREDENTIALS"
+    printf 'admin password: %s\n' "$ADMIN_PASSWORD" > "$CREDENTIALS"
     chown root:root "$CREDENTIALS"
+    chmod 600 "$CREDENTIALS"
     umask 022
 fi
 
@@ -212,7 +305,7 @@ Requires=mongod.service
 [Service]
 User=$APP_USER
 WorkingDirectory=$APP_DIR
-Environment=NODE_ENV=production
+Environment=NODE_ENV=$INSTALL_MODE
 ExecStart=/usr/bin/npm start
 Restart=always
 RestartSec=5
@@ -227,11 +320,17 @@ systemctl enable "$SERVICE"
 systemctl restart "$SERVICE"
 
 # ---- nginx in front, on port 80
+# Development binds nginx to loopback only. Production may listen publicly.
+if [ "$INSTALL_MODE" = development ]; then
+    NGINX_LISTEN='listen 127.0.0.1:80 default_server;'
+else
+    NGINX_LISTEN='listen 80 default_server;
+    listen [::]:80 default_server;'
+fi
 
 cat > "/etc/nginx/sites-available/$SERVICE" <<EOF
 server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+    $NGINX_LISTEN
     server_name ${DOMAIN:-_};
     client_max_body_size 20m;
     location / {
@@ -279,6 +378,7 @@ HOME_DIR=$HOME_DIR
 APP_DIR=$APP_DIR
 SERVICE=$SERVICE
 PORT=$PORT
+INSTALL_MODE=$INSTALL_MODE
 DOMAIN=$KEPT_DOMAIN
 EMAIL=$KEPT_EMAIL
 EOF
@@ -405,7 +505,9 @@ case "${1:-help}" in
     monitor) monitor ;;
     restart|stop|start) systemctl "$1" "$SERVICE" && echo "$1: done" ;;
     update) update ;;
-    password) cat "$HOME_DIR/admin-password.txt" 2>/dev/null || echo "no password file: it was changed or never made" ;;
+    password)   # the first admin password: ADMIN_PASSWORD in the application's .env (until it is changed)
+        sed -n 's/^ADMIN_PASSWORD=//p' "$APP_DIR/.env" 2>/dev/null | head -n 1 | grep . \
+            || cat "$HOME_DIR/admin-password.txt" 2>/dev/null || echo "no ADMIN_PASSWORD in $APP_DIR/.env" ;;
     domain) shift; domain "$@" ;;
     https) https_now ;;
     access) shift; access "$@" ;;
@@ -444,8 +546,8 @@ for _ in $(seq 90); do
         address=${address:-$(hostname -I | awk '{ print $1 }')}
         echo
         echo "=== bpmn-server is ready: http://$address/${DOMAIN:+  (https://$DOMAIN/ once $DOMAIN points at $address)}"
-        echo "    sign in as admin, $(cat "$CREDENTIALS")   (change it: your profile, top right)"
-        echo "    the application: $APP_DIR${ACCESS_USER:+ (editable by $ACCESS_USER)}"
+        echo "    sign in as admin, password $ADMIN_PASSWORD (ADMIN_PASSWORD in $APP_DIR/.env; change it: your profile, top right)"
+        echo "    the application: $APP_DIR${ACCESS_USER:+ (editor $ACCESS_USER in group $APP_USER; re-login or newgrp $APP_USER)}"
         echo "    bpmn status | logs | monitor | restart | update | domain <name> [email]   (bpmn help)"
         date -u +%FT%TZ > "$HOME_DIR/INSTALLED"
         exit 0

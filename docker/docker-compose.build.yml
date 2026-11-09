@@ -1,0 +1,10 @@
+# Optional local image build. Use with docker-compose.yml; preserves editable ./image.
+services:
+  server:
+    image: ${BPMN_IMAGE:-bpmn-server:local}
+    build:
+      context: ./image
+      dockerfile: Dockerfile
+      args:
+        BPMN_VERSION: ${BPMN_VERSION:-latest}
+    pull_policy: build
