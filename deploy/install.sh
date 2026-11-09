@@ -62,6 +62,7 @@ if [ "$INTERACTIVE" = yes ]; then
     default_access=$ACCESS_USER
     if [ -z "$default_access" ]; then
         if [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != root ]; then default_access=$SUDO_USER
+        elif [ -n "$(logname 2>/dev/null || true)" ] && [ "$(logname 2>/dev/null || true)" != root ]; then default_access=$(logname 2>/dev/null)
         elif id ubuntu >/dev/null 2>&1; then default_access=ubuntu
         else default_access=none
         fi
@@ -99,6 +100,7 @@ command -v apt-get >/dev/null || { echo "this installer is for Ubuntu (apt-get);
 # who may edit the application's files: the one running sudo, else the cloud image's user (a launch script runs as root)
 if [ -z "$ACCESS_USER" ]; then
     if [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != root ]; then ACCESS_USER=$SUDO_USER
+    elif [ -n "$(logname 2>/dev/null || true)" ] && [ "$(logname 2>/dev/null || true)" != root ]; then ACCESS_USER=$(logname 2>/dev/null)
     elif id ubuntu >/dev/null 2>&1; then ACCESS_USER=ubuntu; fi
 fi
 [ "$ACCESS_USER" = none ] && ACCESS_USER=
@@ -192,10 +194,17 @@ find "$APP_DIR" -type d -exec chmod g+s {} +
 find "$APP_DIR" -path "$APP_DIR/node_modules" -prune -o -type d -print0 \
     | xargs -0 -r setfacl -m g:"$APP_USER":rwX -m d:g:"$APP_USER":rwX 2>/dev/null || true
 chmod 750 "$HOME_DIR"
+# The parent path must be traversable; do not loosen permissions on /opt or shared ancestors.
 if [ -n "$ACCESS_USER" ]; then
     if id "$ACCESS_USER" >/dev/null 2>&1; then
         usermod -aG "$APP_USER" "$ACCESS_USER"
         echo "$ACCESS_USER added to group $APP_USER (edit $APP_DIR after next login, or: newgrp $APP_USER)"
+        echo "Check: id -nG $ACCESS_USER; ls -ld $HOME_DIR $APP_DIR"
+        if runuser -u "$ACCESS_USER" -- sh -c 'test -x "$1" && test -r "$2" && test -w "$2"' sh "$HOME_DIR" "$APP_DIR"; then
+            echo "ACCESS OK: $ACCESS_USER can traverse $HOME_DIR and read/write $APP_DIR after group refresh"
+        else
+            echo "ACCESS WARNING: $ACCESS_USER cannot yet read/write $APP_DIR; inspect: namei -l $APP_DIR"
+        fi
     else
         echo "no user $ACCESS_USER: nobody else may edit $APP_DIR (bpmn access <user> adds one)"
     fi
