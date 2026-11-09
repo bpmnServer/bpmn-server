@@ -1,26 +1,20 @@
 #!/bin/sh
-# Create a locally editable .env once; never overwrite user edits.
+# Start an existing installation, applying mode from local .env.
 set -eu
 cd "$(dirname "$0")"
 if [ ! -f .env ]; then
-  umask 077
-  key() { od -An -N24 -tx1 /dev/urandom | tr -d ' \n'; }
-  password=$(key)
-  cat > .env <<EOF
-# Host port (the container listens on 3000)
-PORT=3000
-# memory is ephemeral; for persistent MongoDB use mongodb://mongo:27017/bpmn
-MONGO_DB_URL=memory
-REQUIRE_AUTHENTICATION=true
-ENFORCE_SECURITY=true
-API_SERVICE_USER_NAME=integration
-API_SERVICE_USER_GROUPS=SYSTEM
-API_KEY=$(key)
-ADMIN_API_KEY=$(key)
-SESSION_SECRET=$(key)
-ADMIN_PASSWORD=$password
-EOF
-  chmod 600 .env
-  echo "Created .env in $(pwd); initial admin password: $password"
+  if [ -f setup.sh ]; then exec sh setup.sh; fi
+  echo "Missing .env. Download and run setup.sh first." >&2
+  exit 1
 fi
-docker compose up -d --remove-orphans
+get_setting() { sed -n "s/^$1=//p" .env | head -n 1; }
+set -- -f docker-compose.yml
+case "$(get_setting MONGO_DB_URL)" in
+  memory) ;;
+  mongodb://mongo:*) set -- "$@" -f docker-compose.mongo.yml ;;
+  *) echo "Only memory or bundled MongoDB is supported by this launcher; use docker compose directly for an external DB." >&2; exit 2 ;;
+esac
+case "$(get_setting BPMN_IMAGE)" in
+  *:local) set -- "$@" -f docker-compose.build.yml ;;
+esac
+docker compose "$@" up -d --remove-orphans "$@"
