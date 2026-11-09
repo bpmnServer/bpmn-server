@@ -78,6 +78,7 @@ nav:
   - Overview: index.md
   - Choose Your Journey: journeys.md
   - Building Workflows with AI: ai/building-workflows.md
+  - Chatting with Your Server: ai/chat-assistants.md
   - Online Demo: first-workflow.md
   - Build an Application: build.md
   - Integrate an Existing Application: integrate.md

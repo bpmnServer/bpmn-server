@@ -157,4 +157,6 @@ A failed scenario names its step and why; its instance's Rationale tells what ha
 the test, save, and run again. Changing models and running tests is design: a server with `DISABLE_DESIGN=true`
 answers 404.
 
+To let your users reach a server from ChatGPT or Claude, see [Chatting with your server](chat-assistants.md).
+
 `bpmn-mcp` gives a local AI client the same calls as MCP tools: see its README.
