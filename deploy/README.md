@@ -109,6 +109,8 @@ The admin password is on the server: `sudo cat /opt/bpmn/admin-password.txt`.
 | `--port <port>` | `PORT` | the application's own port, behind nginx; default `3000` |
 | `--dir <path>` | `BPMN_DIR` | where the application's folder is made; default `/opt/bpmn` |
 | `--access <user>` | `ACCESS_USER` | who may edit its files; default: the user running `sudo`, else `ubuntu`; `none`: nobody |
+| `--mode development\|production` | `INSTALL_MODE` | native service mode; defaults to production |
+| `--interactive` / `--yes` | | show or skip setup prompts |
 
 Run it again at any time: what is there is kept (the application, its data, its `.env`, the admin password),
 and the packages, the service and nginx are set up as above.
@@ -142,6 +144,30 @@ MongoDB; the journal keeps and rotates the logs.
 | The `bpmn` command's settings | `/etc/bpmn.conf` |
 | MongoDB, nginx | `journalctl -u mongod`, `sudo tail -f /var/log/nginx/error.log` |
 | The console | `cd /opt/bpmn/my-app && sudo -u bpmn npm run cli` |
+
+### Development versus production
+
+The native installer supports `--mode development` or `--mode production` (default). The interactive installer prompts for the mode. Production deployments enforce authentication and application security. Development mode retains the project's `.env` authentication choices and runs the service with `NODE_ENV=development`; nginx binds only to `127.0.0.1:80`.
+
+For a local test machine:
+
+```sh
+sudo bash install.sh --interactive
+# Choose mode: development
+```
+
+For a noninteractive local install, pass `--mode development --yes`. Lightsail launch scripts continue to default to production. If the app is already installed, do not rerun the installer solely to change the mode; override `NODE_ENV` in its systemd unit:
+
+```sh
+sudo systemctl edit bpmn-my-app
+# Add:
+# [Service]
+# Environment=NODE_ENV=development
+sudo systemctl daemon-reload
+sudo systemctl restart bpmn-my-app
+```
+
+`REQUIRE_AUTHENTICATION=false` can be used for trusted local development only. Note that the application might still listen directly on port 3000, even when nginx is loopback-only; use a firewall or bind the app to localhost to prevent network exposure. Development mode must not be used on publicly accessible hosts.
 
 ### Interactive native installation and folder access
 
