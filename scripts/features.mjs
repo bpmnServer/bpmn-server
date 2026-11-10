@@ -77,7 +77,7 @@ function writeTags(byTest) {
     }
 }
 
-const TEST_FOLDERS = ['packages/bpmn-server/test', 'testSampleApp/test', 'testSampleApp/examples', 'testSampleApp/processes', 'sampleApp/processes'];
+const TEST_FOLDERS = ['packages/bpmn-server/test', 'apps/testSampleApp/test', 'apps/testSampleApp/examples', 'apps/testSampleApp/processes', 'apps/sampleApp/processes'];
 
 /** Every .feature file's "@feature:<id>" tags, as [file, id], in these folders. */
 export function featureFileTags(folders = TEST_FOLDERS.map(dir => path.join(ROOT, dir))) {
@@ -117,7 +117,7 @@ function taggedTests() {
             for (const id of ids) found.set(id, [...(found.get(id) ?? []), path.relative(ROOT, full).replaceAll('\\', '/')]);
         }
     };
-    for (const dir of ['packages/bpmn-server/test', 'testSampleApp/test', 'testSampleApp/examples'])
+    for (const dir of ['packages/bpmn-server/test', 'apps/testSampleApp/test', 'apps/testSampleApp/examples'])
         if (fs.existsSync(path.join(ROOT, dir))) walk(path.join(ROOT, dir));
     return found;
 }

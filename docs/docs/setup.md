@@ -85,7 +85,7 @@ Then start the host, pointing at it:
 ENGINE_AT=http://127.0.0.1:3001 ENGINE_KEY=your-secret npm start
 ```
 
-`npm run engine` runs the application's `engine.ts`. `testSampleApp/engine.ts` in the repository is the one to copy, because `npx bpmn-server init` doesn't create it yet.
+`npm run engine` runs the application's `engine.ts`. `apps/testSampleApp/engine.ts` in the repository is the one to copy, because `npx bpmn-server init` doesn't create it yet.
 
 | Setting | On | Means |
 |---|---|---|
@@ -113,7 +113,7 @@ git clone https://github.com/bpmnServer/bpmn-server.git
 cd bpmn-server
 npm install
 npm run build
-cd testSampleApp
+cd apps/testSampleApp
 cp .env.example .env             # set MONGO_DB_URL
 npm run setup
 npm start

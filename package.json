@@ -6,8 +6,8 @@
     "packages/bpmn-client",
     "packages/bpmn-mcp",
     "packages/bpmn-web",
-    "testSampleApp",
-    "sampleApp"
+    "apps/testSampleApp",
+    "apps/sampleApp"
   ],
   "scripts": {
     "build": "npm run build -w bpmn-server -w bpmn-client -w bpmn-web",

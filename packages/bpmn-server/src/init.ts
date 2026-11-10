@@ -26,7 +26,7 @@ function templateFolder(minimal: boolean): string {
     if (minimal)
         return path.join(PACKAGE_ROOT, 'templates', 'minimal');
     const packed = path.join(PACKAGE_ROOT, 'templates', 'app');
-    return fs.existsSync(packed) ? packed : path.join(PACKAGE_ROOT, '..', '..', 'sampleApp');
+    return fs.existsSync(packed) ? packed : path.join(PACKAGE_ROOT, '..', '..', 'apps', 'sampleApp');
 }
 /** Not copied: what each application has of its own (init writes package.json and .env). */
 const NOT_COPIED = new Set(['node_modules', 'package.json', 'package-lock.json', '.env']);

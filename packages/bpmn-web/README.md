@@ -6,7 +6,7 @@ The reusable `WebApp` host is independent of any particular workflow
 application. An application supplies its own workflow definitions,
 configuration, persistence adapters and service implementations through a
 `WorkflowApplication`, usually through `start()`. The sample application, with its processes,
-connectors and delegates, and bpmn-web's tests are in `testSampleApp/` at the repository root.
+connectors and delegates, and bpmn-web's tests are in `apps/testSampleApp/` at the repository root.
 
 ## Installation
 
@@ -56,7 +56,7 @@ npm start                        # http://localhost:3000: the first page asks fo
 ### Standalone
 
 `npm start` runs bpmn-web on its defaults: models in `./processes`, the `WebAppDelegate`, no element
-templates. The sample application is started from the repository root (`npm start`) or `testSampleApp/`.
+templates. The sample application is started from the repository root (`npm start`) or `apps/testSampleApp/`.
 
 ### Command line
 
@@ -109,7 +109,7 @@ reaches something new, marked as generated until reviewed; service and send task
 Configured tasks (a service task that calls a given service with its inputs, a user task for a given group)
 are element templates in the [Camunda 7 template format](https://docs.camunda.io/docs/components/modeler/desktop-modeler/element-templates/c7-element-templates/),
 one or more per `*.json` file in the application's `elementTemplatesPath` (the sample's are in
-`testSampleApp/connectors/`). The editor offers them under **Template** in the
+`apps/testSampleApp/connectors/`). The editor offers them under **Template** in the
 properties panel.
 
 A template is offered only if bpmn-server runs everything it sets: `property` bindings of the attributes

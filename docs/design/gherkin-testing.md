@@ -197,7 +197,7 @@ A scenario's last run is its test instance in the database, tagged `{ process, s
 
 Engine tests are `<model>.engine.feature`, beside the model: `npm run test:scenarios` runs them, and the Test tab doesn't show them. `@skip` keeps a scenario without running it.
 
-**A test lives beside its model**, wherever that model lives. The Test tab reads and writes it there, it moves with the model, and each tenant's tests stay in that tenant's folder. Only a test spanning several models or the application goes elsewhere, in that application's `test/features/`. In this repository, `testSampleApp/processes` holds the models used for testing, and `sampleApp` is what users see.
+**A test lives beside its model**, wherever that model lives. The Test tab reads and writes it there, it moves with the model, and each tenant's tests stay in that tenant's folder. Only a test spanning several models or the application goes elsewhere, in that application's `test/features/`. In this repository, `apps/testSampleApp/processes` holds the models used for testing, and `sampleApp` is what users see.
 
 **Production has no testing, so a deploy leaves out `*.feature`.**
 

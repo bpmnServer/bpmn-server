@@ -11,7 +11,7 @@ A model is ready when it passes three kinds of checks:
    services, in bpmn-server, and in the model's own scripts.
 
 The examples below come from `testSampleApp` in the [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server) repository: its tests are in
-`testSampleApp/test/custom/`. `testSampleApp/examples/` has more, one feature each (a sub-process loop, an
+`apps/testSampleApp/test/custom/`. `apps/testSampleApp/examples/` has more, one feature each (a sub-process loop, an
 event-based gateway, a multi-instance vote, an escalation, a restart), written to be read and run.
 
 ## Tests in Gherkin
@@ -151,7 +151,7 @@ Each run is a real instance, its id starting with `test-`, which can be opened o
 
 `testApp()` starts your application in memory: your settings, your app delegate and services, bpmn-web's
 configuration, an in-memory store instead of MongoDB, and no timers. It is a small file in the bpmn-server
-repository, `testSampleApp/test/support/testApp.ts`: copy it into your application's `test/support/` and adjust
+repository, `apps/testSampleApp/test/support/testApp.ts`: copy it into your application's `test/support/` and adjust
 its two imports (your settings and your delegate).
 
 ```ts

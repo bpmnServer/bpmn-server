@@ -15,8 +15,8 @@ Read [AI contributor instructions](AI-CONTRIBUTING.md) before using an AI assist
 | Feature catalog (source of truth) | `docs/features.yaml` |
 | Generated feature reference | `docs/docs/features.md` |
 | Feature catalog generator/check | `scripts/features.mjs` |
-| Examples and end-to-end tests | `testSampleApp/` |
-| Sample host | `sampleApp/` |
+| Examples and end-to-end tests | `apps/testSampleApp/` |
+| Sample host | `apps/sampleApp/` |
 | Package changelogs | `packages/*/CHANGELOG.md` |
 
 ## Required development workflow

@@ -2,7 +2,7 @@
 
 BPMN Server is an **embeddable execution engine**, not a stand-alone process server. Your application hosts the engine, owns authentication and business data, and provides the business behavior invoked by workflows. Use [bpmn-web](bpmn-web.md) if you also want a packaged UI, modeler and HTTP API.
 
-This guide follows the **3.5 monorepo** and its [sample application](https://github.com/bpmnServer/bpmn-server/tree/main/sampleApp), rather than the retired `WorkflowApp` layout.
+This guide follows the **3.5 monorepo** and its [sample application](https://github.com/bpmnServer/bpmn-server/tree/main/apps/sampleApp), rather than the retired `WorkflowApp` layout.
 
 ## Choose your integration
 
@@ -55,7 +55,7 @@ A process can store a business identifier such as `claimId` and call the applica
 
 ## Start with the sample application
 
-The source is at [`sampleApp/`](https://github.com/bpmnServer/bpmn-server/tree/main/sampleApp). The starter command copies its application structure:
+The source is at [`apps/sampleApp/`](https://github.com/bpmnServer/bpmn-server/tree/main/apps/sampleApp). The starter command copies its application structure:
 
 ```text
 my-app/
@@ -71,7 +71,7 @@ my-app/
 └── .env                       # DB, port and API keys (keep private)
 ```
 
-`index.ts` starts the web host using `start` from `bpmn-web`. This is the [same pattern as the checked-in sample](https://github.com/bpmnServer/bpmn-server/blob/main/sampleApp/index.ts):
+`index.ts` starts the web host using `start` from `bpmn-web`. This is the [same pattern as the checked-in sample](https://github.com/bpmnServer/bpmn-server/blob/main/apps/sampleApp/index.ts):
 
 ```ts
 import { start } from 'bpmn-web';
@@ -114,7 +114,7 @@ The application supplies `configuration` (including `appDelegate`, `definitionsP
 
 ## Implement service tasks in application code
 
-In the starter, [`connectors/appServices.ts`](https://github.com/bpmnServer/bpmn-server/blob/main/sampleApp/connectors/appServices.ts) exports `AppServices`. One of its methods is:
+In the starter, [`connectors/appServices.ts`](https://github.com/bpmnServer/bpmn-server/blob/main/apps/sampleApp/connectors/appServices.ts) exports `AppServices`. One of its methods is:
 
 ```ts
 class AppServices {

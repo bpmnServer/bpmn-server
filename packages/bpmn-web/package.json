@@ -35,7 +35,7 @@
     "upgrade:running": "node --import tsx src/scripts/upgradeRunning.ts",
     "clean": "tsc --build --clean",
     "lint:models": "node modeler/lint-models.mjs",
-    "test": "npm --prefix ../../testSampleApp test",
+    "test": "npm --prefix ../../apps/testSampleApp test",
     "build:guide": "node -e \"const fs=require('fs');fs.mkdirSync('ai',{recursive:true});fs.copyFileSync('../../docs/docs/ai/building-workflows.md','ai/building-workflows.md')\""
   },
   "dependencies": {

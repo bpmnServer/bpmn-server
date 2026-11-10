@@ -1,0 +1,64 @@
+# testSampleApp
+
+The working application of bpmnServer4: the sample processes, connectors and delegates on bpmn-web, the
+app to start and debug from, and the home of bpmn-web's tests.
+
+## Run
+
+```sh
+cp .env.example .env      # then set MONGO_DB_URL
+npm run setup             # the database's indexes and the first user (admin / admin)
+npm start                 # or npm run debug (Node inspector); from the repository root: npm start
+npm run cli               # the console
+npm run dev               # from the packages' sources, restarting on changes (dev:debug: with the inspector)
+```
+
+## What is where
+
+| | |
+|---|---|
+| `settings/config.ts` | bpmn-server settings that replace bpmn-web's defaults. |
+| `processes/` | The sample models. |
+| `connectors/` | Element templates (`*.json`) and the services they call (`appServices.ts`); `openapi/`: OpenAPI documents to add as connectors. |
+| `delegates/` | The app delegate (`appDelegate.ts`, on bpmn-web's `WebAppDelegate`) and the logic it uses. |
+| `scripts/` | `setupDemoUsers.ts` (`npm run setup:users`). |
+| `index.ts` | Starts bpmn-web with the above. |
+| `test/` | bpmn-web's tests, run against this app (`npm test`, `npm run test:ui`). |
+| `processes/*.feature` | The models' tests, in Gherkin, beside them; `*.engine.feature` are the engine's own, on this app's delegate (`npm run test:scenarios`). |
+| `test/custom/` | Tests of this app's models (`npm run test:custom`), in memory on its delegate and services, in TypeScript (`*.test.ts`, with `test/support/testApp.ts`). |
+
+## Connectors
+
+A service task can call a **connector** instead of a service: a REST API, described by OpenAPI, that the
+administrator adds with its key ([Connectors](https://bpmnserver.github.io/docs/connectors)). The model names
+`<connector>/<operationId>`; in the model editor, *Calls → Connector* opens the connector wizard.
+
+The model **GitHub repository** calls `github/repos/get` for an `owner` and `repo`, and keeps the repository's
+`description` and `starsCount`; a repository that is not there (404) ends at Not found. Add the connector from the
+console (`npm run cli`): `coa`, id `github`, document `connectors/openapi/github.json`, the rest empty. Then start
+the model with `owner bpmnServer repo bpmn-server`. `test/web/connectors.test.mjs` does the same through the REST
+API (it calls GitHub, so it is skipped when GitHub can not be reached); `test/ui/connectors*.test.mjs` drive the
+wizard and the Connectors page against a local API.
+
+## Testing a model
+
+In TypeScript, with `testApp()`: it starts this application in memory (no MongoDB, no timers), and `run`
+drives an instance.
+
+```ts
+const app = await testApp();                       // { services: { name: stub } } replaces services
+const run = await app.start('Buy Used Car', { caseId: 1 }, 'buyer');
+await run.complete('task_Buy', { needsRepairs: 'No', needsCleaning: 'No' });
+assert.equal(run.item('task_Drive').status, 'wait');
+// also: run.waiting(), run.items(id), run.data, run.status, run.message(name), run.signal(name), run.log()
+```
+
+Or in Gherkin, beside the model: `processes/<model>.engine.feature` (see `Buy Used Car.engine.feature`), run by `npm run test:scenarios`.
+
+To debug, in VS Code: **Test: current file** (a `.test.ts`); breakpoints
+work in the test, in `connectors/` and `delegates/`, and in the packages' `src`. A model's scripts are listed under
+Loaded Scripts as `bpmn:///<model>/<element>/<label>.js`, and `debugger;` in a script stops there; an error in one
+names that location in its stack.
+
+The tests use their own database and a copy of a few models of `processes/`; they reach bpmn-web's built modules in
+`../../packages/bpmn-web/dist`, so build bpmn-web first (`npm run build` at the root).

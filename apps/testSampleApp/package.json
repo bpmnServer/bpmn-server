@@ -1,0 +1,48 @@
+{
+  "name": "test-sample-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The working application of bpmnServer4: the sample processes, connectors and delegates on bpmn-web, and bpmn-web's tests",
+  "type": "module",
+  "scripts": {
+    "prestart": "npm run build:modeler -w bpmn-web",
+    "start": "node --import tsx index.ts",
+    "engine": "node --import tsx engine.ts",
+    "debug": "node --inspect --import tsx index.ts",
+    "predev": "npm run build:modeler -w bpmn-web",
+    "dev": "node --watch --conditions=bpmn-source --import tsx index.ts",
+    "dev:debug": "node --watch --inspect --conditions=bpmn-source --import tsx index.ts",
+    "setup": "node --import tsx index.ts --setup",
+    "cli": "node --import tsx index.ts --cli",
+    "setup:users": "node --import tsx scripts/setupDemoUsers.ts",
+    "test": "npm run test:unit && npm run test:client && npm run test:engine && npm run test:web && npm run test:custom && npm run test:examples && npm run test:issues && npm run test:scenarios && npm run test:features",
+    "test:unit": "node --test \"test/unit/*.test.mjs\"",
+    "test:client": "node --test \"test/client/*.test.mjs\"",
+    "test:engine": "node --import tsx --test \"test/engine/*.test.mjs\"",
+    "test:web": "node --import tsx --test --test-concurrency=1 \"test/web/*.test.mjs\"",
+    "test:mcp-prompts": "node --import tsx test/mcp-prompts/run.mjs",
+    "test:features": "tsx test/features.ts",
+    "test:scenarios": "node --import tsx --test --test-concurrency=1 test/scenarios/features.test.mjs",
+    "test:custom": "node --import tsx --test \"test/custom/*.test.ts\"",
+    "test:examples": "node --import tsx --test \"examples/*.test.ts\"",
+    "test:issues": "node --import tsx --test \"test/issues/*.test.ts\"",
+    "test:scenario-coverage": "node --import tsx test/coverage/scenario-coverage.mjs",
+    "pretest:ui": "npm run build:modeler -w bpmn-web",
+    "test:ui": "node --import tsx --test --test-concurrency=1 \"test/ui/*.test.mjs\"",
+    "demo:video": "npm run build:modeler -w bpmn-web && node --import tsx test/demo/record-demo.mjs",
+    "services": "node ../../packages/bpmn-web/dist/scanServices.js delegates/appDelegate.ts services.json"
+  },
+  "dependencies": {
+    "axios": "^1.18.1",
+    "bpmn-web": "*",
+    "dayjs": "^1.11.21",
+    "pug": "^3.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "chai": "^6.2.2",
+    "mongodb": "^7.6.0",
+    "playwright": "^1.61.1",
+    "tsx": "^4.23.1"
+  }
+}

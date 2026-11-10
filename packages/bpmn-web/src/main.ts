@@ -13,7 +13,7 @@ function setupEnvVars() {
 setupEnvVars();
 
 // bpmn-web on its own, with its defaults (models in ./processes, WebAppDelegate); an application calls
-// start() with its own settings, delegate and connectors (testSampleApp/index.ts). Loaded after the
+// start() with its own settings, delegate and connectors (apps/testSampleApp/index.ts). Loaded after the
 // environment variables are established.
 const { start } = await import('./start.js');
 

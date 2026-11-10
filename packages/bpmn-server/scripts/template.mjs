@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = path.join(import.meta.dirname, '..');
-const from = path.join(root, '..', '..', 'sampleApp');
+const from = path.join(root, '..', '..', 'apps', 'sampleApp');
 const to = path.join(root, 'templates', 'app');
 const SKIP = new Set(['node_modules', 'package-lock.json', '.env']);
 

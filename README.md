@@ -311,7 +311,7 @@ cd bpmn-server
 npm install                      # every package, linked to each other (npm workspaces)
 npm run build                    # bpmn-server, bpmn-client, bpmn-web
 
-cd testSampleApp
+cd apps/testSampleApp
 cp .env.example .env             # set MONGO_DB_URL
 npm run setup                    # the database's indexes
 npm start                        # or npm run debug (Node inspector); npm start at the root runs it too

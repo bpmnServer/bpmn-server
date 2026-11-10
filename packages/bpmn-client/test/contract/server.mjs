@@ -10,7 +10,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const WEB_DIR = path.resolve(process.env.BPMN_WEB_DIR || path.join(HERE, '../../../bpmn-web'));
 // in the bpmn-server repository the harness is testSampleApp's, beside packages/
 const OWN_HARNESS = path.join(WEB_DIR, 'test', 'support', 'webApp.mjs');
-const HARNESS = fs.existsSync(OWN_HARNESS) ? OWN_HARNESS : path.join(WEB_DIR, '..', '..', 'testSampleApp', 'test', 'support', 'webApp.mjs');
+const HARNESS = fs.existsSync(OWN_HARNESS) ? OWN_HARNESS : path.join(WEB_DIR, '..', '..', 'apps', 'testSampleApp', 'test', 'support', 'webApp.mjs');
 
 export const available = fs.existsSync(HARNESS) && fs.existsSync(path.join(WEB_DIR, 'dist', 'app.js'));
 export const skip = available ? false : `bpmn-web (built) not found at ${WEB_DIR}; set BPMN_WEB_DIR`;

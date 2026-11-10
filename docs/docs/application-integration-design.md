@@ -34,7 +34,7 @@ This proposal builds on the current repository documentation:
 
 ### 2.1 What the server does today
 
-Each of these is checked by a "today" test in `testSampleApp/test/web/task-api.test.mjs`. The design works with them; none is changed in the engine.
+Each of these is checked by a "today" test in `apps/testSampleApp/test/web/task-api.test.mjs`. The design works with them; none is changed in the engine.
 
 | Behavior | What it means for integration |
 | --- | --- |
@@ -131,7 +131,7 @@ The routes live in `bpmn-web`. They do not call `throwMessage`, which can start 
 
 ## 5.1 Phase 1 contract: the task API
 
-**Built.** The tests are in `testSampleApp/test/web/task-api.test.mjs`. The routes are in `bpmn-web` (`routes/taskApi.ts`); the engine is unchanged.
+**Built.** The tests are in `apps/testSampleApp/test/web/task-api.test.mjs`. The routes are in `bpmn-web` (`routes/taskApi.ts`); the engine is unchanged.
 
 **Who calls.** A new secret, `API_ACTING_USER_KEY`, is for applications trusted to authenticate their own users. It is unset by default, and then the routes answer 404.
 

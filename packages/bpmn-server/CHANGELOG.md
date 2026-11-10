@@ -14,6 +14,9 @@ and here
 -->
 
 ## [Unreleased]
+### Changed
+- In the repository, the sample application is at `apps/sampleApp` (was `sampleApp`): `npm run template` copies it from
+  there, and `bpmn-server init` run from a checkout reads it there. The published package is unchanged.
 
 ## Release 3.6.0 (2026-11-10)
 ### Added

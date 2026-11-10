@@ -8,7 +8,7 @@ git clone https://github.com/bpmnServer/bpmn-server.git
 cd bpmn-server
 npm install
 npm run build                    # bpmn-server, bpmn-client, bpmn-web
-cd testSampleApp
+cd apps/testSampleApp
 cp .env.example .env             # set MONGO_DB_URL
 npm run setup
 npm run debug                    # the sample application with the Node inspector; npm start without it
