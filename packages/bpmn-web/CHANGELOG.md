@@ -13,6 +13,8 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+### Added
+- **The task API starts processes, and gives each task its form** (`/api2/tasks`, with `API_ACTING_USER_KEY` and `x-acting-user`): `POST /api2/tasks/start/:name` starts a process as the acting user, at a start event they may use (its lane or candidates), and answers their first task; `GET /api2/tasks/:id` answers `form: { fields, formKey }`, each field with its options and validation. An application no longer needs `/api` to start a process for one of its users.
 
 ## Release 3.6.0 (2026-11-10)
 ### Removed
