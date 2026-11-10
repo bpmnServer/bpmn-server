@@ -4,6 +4,21 @@
 
 This repository holds the engine (`bpmn-server`), its web application (`bpmn-web`), its REST client (`bpmn-client`), the documentation and the sample application: see [This repository](#this-repository).
 
+## Why BPMN Server?
+
+Business processes are rarely just a sequence of API calls. Approvals can wait for days, timers must survive restarts, and teams need to understand what happened when something goes wrong. Hardcoding all of this into an application makes workflows difficult to change and test.
+
+**BPMN Server brings visual workflow design and durable execution into your Node.js application.**
+
+- **Model the flow, not the plumbing.** Use BPMN 2.0 to describe tasks, approvals, decisions, timers, and exceptions.
+- **Run long-lived processes reliably.** Persist state and resume workflows across application restarts.
+- **Connect to your systems.** Invoke application services and external REST APIs through delegates and OpenAPI connectors.
+- **Test before deploying.** Verify models, automate scenarios with Gherkin, and inspect execution decisions when tests fail.
+- **Work with AI agents.** Let AI-assisted tools create, validate, and test models using the server's integration interfaces.
+- **Choose how to deploy.** Embed the engine in a Node.js app or run it separately from the web host.
+
+Open source under the MIT license, BPMN Server is for developers who want BPMN capabilities without adopting a large workflow platform.
+
 ## Getting started
 
 Choose how you want to start ([Choose Your Journey](https://bpmnserver.github.io/bpmn-server/journeys)):
@@ -25,89 +40,25 @@ APIs, connectors and Gherkin tests.
 [testing a model](https://omniworkflow.com/videos/#2-testing) (record scenarios, add checks, see what breaks when
 the model changes) and [a connector to GitHub](https://omniworkflow.com/videos/#7-github).
 
-## Architecture Overview
+## Architecture at a glance
 
-The following diagram illustrates the core components of `bpmn-server` and how they interact:
-
-```mermaid
-flowchart TB
-  subgraph Users["People and systems"]
-    Browser["Browser<br/>designers, users, administrators"]
-    Remote["Another application<br/>(bpmn-client)"]
-  end
-
-  subgraph Web["Host: bpmn-web"]
-    Modeler["Model editor<br/>(bpmn.io, DMN, tests)"]
-    Pages["Dashboards, tasks,<br/>administration"]
-    REST["REST APIs<br/>/api2, /admin/api2"]
-  end
-
-  subgraph EngineSide["Engine: in the host's process or its own"]
-    Engine["Engine<br/>executions, tokens, items, timers, tests"]
-    Delegate["Your app delegate<br/>and services"]
-    DMN["Decisions<br/>(DMN, FEEL)"]
-    Connectors["Connectors<br/>(OpenAPI)"]
-  end
-
-  Verify["Model checks<br/>(verifyModel)"]
-
-  subgraph Storage["Storage port"]
-    Mongo[("MongoDB")]
-    SQLite[("SQLite")]
-    Memory[("Memory")]
-  end
-
-  APIs["External REST APIs"]
-
-  Browser --> Modeler & Pages
-  Remote --> REST
-  Modeler & Pages & REST --> Engine
-  Modeler --> Verify
-  Engine --> DMN
-  Engine -- service tasks --> Delegate
-  Engine -- service tasks --> Connectors
-  Connectors --> APIs
-  Engine --> Storage
-```
-
-- **The host, bpmn-web**: the model editor (bpmn.io) with its checks and tests, the decision editor,
-  dashboards and task lists, administration (users, connectors, backups), and the REST APIs. Only signed-in
-  users use it. It doesn't run anything itself: it asks the engine.
-- **The engine, bpmn-server**: executes BPMN workflows and timers, evaluates DMN decisions, and runs tests. It
-  holds your app delegate and services, in the host's process or in one of its own.
-- **Your application**: starts bpmn-web (or embeds the engine), and provides the app delegate and the services
-  that service tasks call.
-- **Connectors**: REST APIs described by OpenAPI that an administrator adds with their keys; service tasks call
-  them with no code.
-- **Storage**: instances, models and history through one storage port: MongoDB (the default), SQLite, or memory.
-- **bpmn-client**: another Node.js application drives the server through the REST APIs.
-- **bpmn-mcp**: AI clients use a running server over MCP.
-
-### Ways to run it
-
-| Setup | Host | Address | Engine |
-|---|---|---|---|
-| Development and test | 1 | 1 | 1, in the host's process |
-| Production | 1 | 1 | 1, in its own process |
-
-See [Architecture](https://bpmnserver.github.io/bpmn-server/architecture) and [Ways to run it](https://bpmnserver.github.io/bpmn-server/setup#ways-to-run-it).
+BPMN Server combines a workflow engine with optional web-based modeling, task management, REST APIs, connectors, and testing tools. Your application hosts the engine or connects to it as a separate service. See the [Architecture guide](https://bpmnserver.github.io/bpmn-server/architecture) for the component diagram and deployment options.
 
 ## Quick Start
 
 ### Create an application
 
 ```sh
-npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+npx bpmn-server init my-app --memory   # first trial; no external MongoDB
 cd my-app
-npm run setup                    # the database's indexes
 npm start                        # http://localhost:3000
 ```
 
 Open your browser to [http://localhost:3000](http://localhost:3000). The first page asks for the administrator, with the setup token the server printed when it started.
 
-`init` creates the sample application, with `bpmn-server` and `bpmn-web` as its dependencies;
+`init` installs the application dependencies, including `bpmn-server`, `bpmn-web`, and `bpmn-mcp`;
 `npx bpmn-server init --help` lists its options, and `--minimal` creates a one-model Hello application
-instead. `init` ships with bpmn-server 3.5 and later.
+instead. For a persistent MongoDB installation, use `npx bpmn-server init my-app --mongo mongodb://localhost:27017/my-app`, start MongoDB if needed, and run `npm run setup` before `npm start`.
 
 ```
 my-app/
@@ -250,77 +201,26 @@ Features include:
 
 A live demo is available at: [https://bpmn.omniworkflow.com](https://bpmn.omniworkflow.com)
 
-## Installation
+## Installation options
 
-This package requires Node.js 20 or later and MongoDB (or `--memory`, to try it without one).
-
-If MongoDB is not installed, you can [create a free cloud account](http://bit.ly/cyd-atlas), [install it locally](https://www.mongodb.com/docs/manual/installation/), or run the one `init` puts in the application (`docker compose up -d`).
-
-```sh
-npx bpmn-server init my-app --mongo mongodb://localhost:27017/my-app
-cd my-app
-docker compose up -d             # a MongoDB on this machine, if you do not have one
-npm run setup                    # the database's indexes
-npm start                        # prints the setup token; the first page asks for the administrator
-```
-
-The application's settings are in `.env` (the database, the port, the API keys, what is served) and
-`settings/config.ts`: see [Settings](https://bpmnserver.github.io/bpmn-server/settings). MongoDB is the default;
-`init --memory` runs without a database, and SQLite is chosen in the settings
-([Custom persistence](https://bpmnserver.github.io/bpmn-server/persistence)).
+For the quickest local trial, use [Create an application](#create-an-application) with `--memory`. For durable storage, initialize against MongoDB and run `npm run setup` before starting the application. For an Ubuntu server, use the [native installer](#install-on-a-server). For a container-based installation, follow the guided Docker setup below.
 
 ## Docker Installation
 
-<details>
-<summary>Install `bpmn-server` and dependencies with Docker.</summary>
+The supported Docker image is **`bpmnserver/bpmn-server:latest`**. The older `ralphhanna/bpmn-web` and `ralphhanna/bpmn-server` images are no longer updated.
 
-### 1. Create a project folder
+For a guided installation on Linux, macOS, or WSL:
 
-### 2. Add a `docker-compose.yml` file:
-```yaml
-version: "3.7"
-name: bpmn-server
-services:
-  bpmn-web:
-    image: ralphhanna/bpmn-web
-    command: sh -c "
-        npm run setup &&
-        npm run start"
-    ports:
-      - 3000:3000
-    volumes:
-      - 'app:/app'
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb:/data/db
-
-volumes:
-  mongodb:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './mongodb_volume'
-
-  app:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './bpmn_server_volume'
-```
-
-### 3. Start the container
 ```sh
-docker compose up -d
+mkdir -p bpmn-server && cd bpmn-server
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/setup.sh
+sh setup.sh
 ```
-</details>
+
+The setup asks for a port, memory or persistent MongoDB, and a published or locally built image. It generates private API and admin keys in `.env`, then starts the application. Memory mode is for trials: users and workflow instances are lost on restart.
+
+For Windows without WSL, or for updates and troubleshooting, see the [Docker installation guide](https://bpmnserver.github.io/bpmn-server/docker) and [Docker scripts](https://github.com/bpmnServer/bpmn-server/tree/main/docker). **Do not use the old `bpmn-web` Compose image.**
 
 ## Command Line Interface
 

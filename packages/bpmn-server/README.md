@@ -18,9 +18,8 @@ The following diagram illustrates the core components of `bpmn-server` and how t
 ### Create an application
 
 ```sh
-npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+npx bpmn-server init my-app --memory   # trial without external MongoDB
 cd my-app
-npm run setup                    # the database's indexes
 npm start                        # http://localhost:3000
 ```
 
@@ -173,7 +172,7 @@ If MongoDB is not installed, you can [create a free cloud account](http://bit.ly
 npx bpmn-server init my-app --mongo mongodb://localhost:27017/my-app
 cd my-app
 docker compose up -d             # a MongoDB on this machine, if you do not have one
-npm run setup                    # the database's indexes and the first user
+npm run setup                    # the database's indexes
 npm start
 ```
 
@@ -182,56 +181,20 @@ The application's settings are in `.env` (the database, the port, the API keys, 
 
 ## Docker Installation
 
-<details>
-<summary>Install `bpmn-server` and dependencies with Docker.</summary>
+The supported Docker image is **`bpmnserver/bpmn-server:latest`**. The older `ralphhanna/bpmn-web` and `ralphhanna/bpmn-server` images are no longer updated.
 
-### 1. Create a project folder
+For a guided installation on Linux, macOS, or WSL:
 
-### 2. Add a `docker-compose.yml` file:
-```yaml
-version: "3.7"
-name: bpmn-server
-services:
-  bpmn-web:
-    image: ralphhanna/bpmn-web
-    command: sh -c "
-        npm run setup &&
-        npm run start"
-    ports:
-      - 3000:3000
-    volumes:
-      - 'app:/app'
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb:/data/db
-
-volumes:
-  mongodb:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './mongodb_volume'
-
-  app:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './bpmn_server_volume'
-```
-
-### 3. Start the container
 ```sh
-docker compose up -d
+mkdir -p bpmn-server && cd bpmn-server
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/setup.sh
+sh setup.sh
 ```
-</details>
+
+The setup asks for a port, memory or persistent MongoDB, and a published or locally built image. It generates private API and admin keys in `.env`, then starts the application. Memory mode is for trials: users and workflow instances are lost on restart.
+
+For Windows without WSL, or for updates and troubleshooting, see the [Docker installation guide](https://bpmnserver.github.io/bpmn-server/docker) and [Docker scripts](https://github.com/bpmnServer/bpmn-server/tree/main/docker). **Do not use the old `bpmn-web` Compose image.**
 
 ## Command Line Interface
 
