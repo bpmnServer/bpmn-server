@@ -4,6 +4,7 @@ import { Tokens, TokenError } from './tokens.js';
 import { canDesign, isAdminGroups } from '../../userAccess/roles.js';
 import { TaskOperations, DEFAULT_LIMIT } from './tasks.js';
 import { v2TaskError } from '../taskApi.js';
+import { openApiV3 } from './openapi-v3.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 
 /*
@@ -20,6 +21,13 @@ export function v3Router(server) {
     const tokens = new Tokens(server);
     const tasks = new TaskOperations(server);
     const instances = new InstanceOperations(server);
+
+    // the contract, with no credential: the address as the client used it (https behind a proxy)
+    router.get('/openapi.json', (req, res) => {
+        const proto = String(req.get('x-forwarded-proto') ?? req.protocol).split(',')[0].trim();
+        const host = String(req.get('x-forwarded-host') ?? req.get('host')).split(',')[0].trim();
+        res.json(openApiV3(`${proto}://${host}`));
+    });
     router.use(door('v3', tokens));
 
     /** Only with the service key: an application's back end, never a user's token. */
