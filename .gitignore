@@ -7,3 +7,7 @@ work/
 
 # npm run test:coverage
 /coverage/
+
+# the editor's saved versions of models and its deleted runs
+processes/.history/
+processes/.runs.del/
