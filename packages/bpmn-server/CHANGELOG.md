@@ -14,6 +14,8 @@ and here
 -->
 
 ## [Unreleased]
+
+## Release 3.6.0 (2026-11-10)
 ### Added
 - **Each operation's outcome in the log**: when it saves, the engine logs `{"type":"outcome"}`, with the instance's status,
   the items whose status changed and the items that wait. A timer the server fires is logged as `Timer Fired`, a

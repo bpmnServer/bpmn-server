@@ -13,6 +13,8 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+
+## Release 3.6.0 (2026-11-10)
 ### Changed
 - `definitions.load()` reads `/api` with `API_KEY`, so reading a model needs no administration; on an older server
   it falls back to `/admin/api`.
