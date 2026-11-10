@@ -5,7 +5,9 @@ BPMNClient is a lightweight Node package to remotely access bpmn-server using bp
 
 [See code Example using bpmn-clienthere](examples/BuyCar-Remote.md)
 
-Alternatively, you can access bpmn-server through http(https) calls, [view Postman documentation](https://documenter.getpostman.com/view/11781516/Szzn7wsm)
+Alternatively, you can call bpmn-server over HTTP(S). To try the API by hand, import its OpenAPI document,
+`https://your-site/api/v3/openapi.json`, into Postman (or any OpenAPI tool): every operation, its parameters and how to
+sign in, always up to date. See [the API](#api-v3-user-tokens-in-progress-37) below.
 
 bpmn-server provides api calls to the following objects:
 
