@@ -4,6 +4,21 @@
 
 This repository holds the engine (`bpmn-server`), its web application (`bpmn-web`), its REST client (`bpmn-client`), the documentation and the sample application: see [This repository](#this-repository).
 
+## Why BPMN Server?
+
+Business processes are rarely just a sequence of API calls. Approvals can wait for days, timers must survive restarts, and teams need to understand what happened when something goes wrong. Hardcoding all of this into an application makes workflows difficult to change and test.
+
+**BPMN Server brings visual workflow design and durable execution into your Node.js application.**
+
+- **Model the flow, not the plumbing.** Use BPMN 2.0 to describe tasks, approvals, decisions, timers, and exceptions.
+- **Run long-lived processes reliably.** Persist state and resume workflows across application restarts.
+- **Connect to your systems.** Invoke application services and external REST APIs through delegates and OpenAPI connectors.
+- **Test before deploying.** Verify models, automate scenarios with Gherkin, and inspect execution decisions when tests fail.
+- **Work with AI agents.** Let AI-assisted tools create, validate, and test models using the server's integration interfaces.
+- **Choose how to deploy.** Embed the engine in a Node.js app or run it separately from the web host.
+
+Open source under the MIT license, BPMN Server is for developers who want BPMN capabilities without adopting a large workflow platform.
+
 ## Getting started
 
 Choose how you want to start ([Choose Your Journey](https://bpmnserver.github.io/bpmn-server/journeys)):
@@ -25,72 +40,9 @@ APIs, connectors and Gherkin tests.
 [testing a model](https://omniworkflow.com/videos/#2-testing) (record scenarios, add checks, see what breaks when
 the model changes) and [a connector to GitHub](https://omniworkflow.com/videos/#7-github).
 
-## Architecture Overview
+## Architecture at a glance
 
-The following diagram illustrates the core components of `bpmn-server` and how they interact:
-
-```mermaid
-flowchart TB
-  subgraph Users["People and systems"]
-    Browser["Browser<br/>designers, users, administrators"]
-    Remote["Another application<br/>(bpmn-client)"]
-  end
-
-  subgraph Web["Host: bpmn-web"]
-    Modeler["Model editor<br/>(bpmn.io, DMN, tests)"]
-    Pages["Dashboards, tasks,<br/>administration"]
-    REST["REST APIs<br/>/api2, /admin/api2"]
-  end
-
-  subgraph EngineSide["Engine: in the host's process or its own"]
-    Engine["Engine<br/>executions, tokens, items, timers, tests"]
-    Delegate["Your app delegate<br/>and services"]
-    DMN["Decisions<br/>(DMN, FEEL)"]
-    Connectors["Connectors<br/>(OpenAPI)"]
-  end
-
-  Verify["Model checks<br/>(verifyModel)"]
-
-  subgraph Storage["Storage port"]
-    Mongo[("MongoDB")]
-    SQLite[("SQLite")]
-    Memory[("Memory")]
-  end
-
-  APIs["External REST APIs"]
-
-  Browser --> Modeler & Pages
-  Remote --> REST
-  Modeler & Pages & REST --> Engine
-  Modeler --> Verify
-  Engine --> DMN
-  Engine -- service tasks --> Delegate
-  Engine -- service tasks --> Connectors
-  Connectors --> APIs
-  Engine --> Storage
-```
-
-- **The host, bpmn-web**: the model editor (bpmn.io) with its checks and tests, the decision editor,
-  dashboards and task lists, administration (users, connectors, backups), and the REST APIs. Only signed-in
-  users use it. It doesn't run anything itself: it asks the engine.
-- **The engine, bpmn-server**: executes BPMN workflows and timers, evaluates DMN decisions, and runs tests. It
-  holds your app delegate and services, in the host's process or in one of its own.
-- **Your application**: starts bpmn-web (or embeds the engine), and provides the app delegate and the services
-  that service tasks call.
-- **Connectors**: REST APIs described by OpenAPI that an administrator adds with their keys; service tasks call
-  them with no code.
-- **Storage**: instances, models and history through one storage port: MongoDB (the default), SQLite, or memory.
-- **bpmn-client**: another Node.js application drives the server through the REST APIs.
-- **bpmn-mcp**: AI clients use a running server over MCP.
-
-### Ways to run it
-
-| Setup | Host | Address | Engine |
-|---|---|---|---|
-| Development and test | 1 | 1 | 1, in the host's process |
-| Production | 1 | 1 | 1, in its own process |
-
-See [Architecture](https://bpmnserver.github.io/bpmn-server/architecture) and [Ways to run it](https://bpmnserver.github.io/bpmn-server/setup#ways-to-run-it).
+BPMN Server combines a workflow engine with optional web-based modeling, task management, REST APIs, connectors, and testing tools. Your application hosts the engine or connects to it as a separate service. See the [Architecture guide](https://bpmnserver.github.io/bpmn-server/architecture) for the component diagram and deployment options.
 
 ## Quick Start
 
