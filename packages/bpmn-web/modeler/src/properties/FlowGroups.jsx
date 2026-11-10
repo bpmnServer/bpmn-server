@@ -1,6 +1,6 @@
 // Conditions, loops, forms, decisions and called processes as bpmn-server reads them:
 //   a sequence flow's condition is a JavaScript expression (ScriptHandler.evaluateExpression; a leading $ is
-//   optional), a multi-instance loop runs once per entry of camunda:collection (engine/Loop.ts), a user task's
+//   optional), or FEEL when its language says so, a multi-instance loop runs once per entry of camunda:collection (engine/Loop.ts), a user task's
 //   form is camunda:formKey plus its form fields, a business rule task evaluates the decision camunda:decisionRef
 //   names (DMNEngine; its result saved by camunda:resultVariable, shaped by camunda:mapDecisionResult) and a call
 //   activity starts the saved model named by calledElement.
@@ -10,10 +10,48 @@ import { useService } from 'bpmn-js-properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
 import { addExtensionElement } from './extensions.js';
-import { formatEntry } from './FormatEntry.jsx';
 import { codeEntry } from './code/CodeEntry.jsx';
 
 // an event-based gateway too: the engine evaluates the conditions on its flows
+
+/**
+ * The language picked for a flow that has no condition yet: there is nowhere in the model to keep it until the
+ * condition is written, so it waits here, and the condition is made in it.
+ */
+const pendingLanguage = new WeakMap();
+
+/** A condition's language: JavaScript (no language attribute) or FEEL; another the model says is shown as it is. */
+function ConditionLanguageField({ element, id }) {
+    const commandStack = useService('commandStack');
+    const eventBus = useService('eventBus');
+    const translate = useService('translate');
+    const bo = getBusinessObject(element);
+    const said = () => String(bo.get('conditionExpression')?.get('language') ?? pendingLanguage.get(bo) ?? '');
+    const value = () => /feel/i.test(said()) ? 'FEEL' : !said() || /^(javascript|js)$/i.test(said()) ? 'JavaScript' : said();
+    return <SelectEntry
+        element={element}
+        id={id}
+        label={translate('Language')}
+        description={translate(value() === 'FEEL'
+            ? "FEEL: names are the data's values (days > 5, status = \"new\")"
+            : 'JavaScript: data.days > 5, or a leading $ for an expression')}
+        getValue={value}
+        setValue={choice => {
+            const language = choice === 'FEEL' ? 'FEEL' : choice === 'JavaScript' ? undefined : choice;
+            const condition = bo.get('conditionExpression');
+            if (condition)
+                return commandStack.execute('element.updateModdleProperties', { element, moddleElement: condition, properties: { language } });
+            // no condition yet: kept for when it is written; the panel redrawn, so the field below follows the language
+            if (language) pendingLanguage.set(bo, language); else pendingLanguage.delete(bo);
+            eventBus.fire('elements.changed', { elements: [element] });
+        }}
+        getOptions={() => [
+            { value: 'JavaScript', label: translate('JavaScript (default)') },
+            { value: 'FEEL', label: 'FEEL' },
+            ...(['JavaScript', 'FEEL'].includes(value()) ? [] : [{ value: value(), label: value() }]),
+        ]}
+    />;
+}
 
 
 /** A conditional event's condition, so it can be read and changed; bpmn-server does not run the event. */
@@ -53,7 +91,7 @@ export function ConditionGroup(element, translate) {
     // every flow has the field: the engine evaluates a condition wherever the flow starts
     const condition = bo.get('conditionExpression');
     // the field follows the condition's language: FEEL is not JavaScript, and next(...) may be statements
-    const language = String(condition?.get('language') ?? '');
+    const language = String(condition?.get('language') ?? pendingLanguage.get(bo) ?? '');
     const feel = /feel/i.test(language);
     const statements = /javascript|^js$/i.test(language) && /(^|[^.\w$])next\s*\(/.test(condition?.get('body') ?? '');
     // the default flow is taken when no other condition holds, whatever it says
@@ -64,6 +102,8 @@ export function ConditionGroup(element, translate) {
         component: Group,
         shouldOpen: true,     // what decides whether the flow is taken is not left folded away
         entries: [
+            // the language first: FEEL can be picked before the condition is written
+            { id: 'conditionLanguage', element, component: ConditionLanguageField, isEdited: isSelectEntryEdited },
             codeEntry(element, {
                 id: 'conditionExpression', label: 'Condition', mode: feel ? 'feel' : statements ? 'script' : 'expression', rows: 2,
                 description: isDefault
@@ -79,17 +119,14 @@ export function ConditionGroup(element, translate) {
                     else if (condition)
                         commandStack.execute('element.updateModdleProperties', { element, moddleElement: condition, properties: { body: value } });
                     else {
-                        const created = bpmnFactory.create('bpmn:FormalExpression', { body: value });
+                        // in the language picked before it was written, if one was
+                        const created = bpmnFactory.create('bpmn:FormalExpression', { body: value, ...(pendingLanguage.has(bo) ? { language: pendingLanguage.get(bo) } : {}) });
+                        pendingLanguage.delete(bo);
                         created.$parent = bo;
                         commandStack.execute('element.updateModdleProperties', { element, moddleElement: bo, properties: { conditionExpression: created } });
                     }
                 }
-            }),
-            ...(condition ? [formatEntry(element, {
-                id: 'conditionLanguage', label: 'Language', allowEmpty: true,
-                target: () => bo.get('conditionExpression'), property: 'language',
-                languages: ['JavaScript', 'FEEL'], description: 'bpmn-server runs JavaScript or FEEL here'
-            })] : [])
+            })
         ]
     };
 }
