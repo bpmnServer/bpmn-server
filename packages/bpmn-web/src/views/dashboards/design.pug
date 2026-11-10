@@ -130,20 +130,26 @@ block dash
 			a#tests
 			h2 Models
 				span.count= models.length
-			p.dash-muted Models with errors first. Run a model's tests here, or open it to see its Problems list and its tests (the Test tab).
+			p.dash-muted Models with errors first; search, or click a heading to sort. Run a model's tests here, or open it to see its Problems list and its tests (the Test tab).
 			if models.length
-				table
-					tr
-						th Model
-						th Checks
-						th Tests
-						th Coverage
-						th Last run
+				//- search by name or description; click a heading to sort by it, again to reverse
+				input#model-search.form-control.input-sm(type='search', placeholder='Search models', aria-label='Search models', style='max-width:280px; margin:6px 0 10px')
+				table#models-table
+					tr.sort-head
+						th(data-sort='name') Model
+						th(data-sort='checks') Checks
+						th(data-sort='tests') Tests
+						th(data-sort='coverage') Coverage
+						th(data-sort='run') Last run
 						th
-						th Versions
-						th Changed
+						th(data-sort='versions') Versions
+						th(data-sort='changed') Changed
 					each m in models
-						tr
+						- const r = runs.models[m.name]
+						tr.model-row(data-name=m.name.toLowerCase(), data-text=(m.name + ' ' + (m.description || '')).toLowerCase(),
+							data-checks=(m.errors || 0) * 1000 + (m.warnings || 0), data-tests=m.tests || 0,
+							data-coverage=m.coverage ? m.coverage.percent : -1, data-run=r ? (r.failed ? -r.failed : r.passed) : -1000,
+							data-versions=m.versions || 0, data-changed=m.saved ? new Date(m.saved).getTime() : 0)
 							td
 								a(href=`/model/edit/${encodeURIComponent(m.name)}`)= m.name
 								if m.description
@@ -157,5 +163,38 @@ block dash
 									+runButton('model', m.name)
 							td= m.versions || ''
 							td= m.fromNow
+				p#model-search-none.dash-empty(hidden) No model matches.
+				script.
+					(function () {
+						var table = document.getElementById('models-table'), search = document.getElementById('model-search');
+						var rows = function () { return Array.prototype.slice.call(table.querySelectorAll('tr.model-row')); };
+						search.addEventListener('input', function () {
+							var words = search.value.toLowerCase().split(/\s+/).filter(Boolean), shown = 0;
+							rows().forEach(function (row) {
+								var match = words.every(function (w) { return row.dataset.text.indexOf(w) >= 0; });
+								row.hidden = !match;
+								if (match) shown++;
+							});
+							document.getElementById('model-search-none').hidden = shown > 0;
+						});
+						var current = null, ascending = true;
+						table.querySelectorAll('th[data-sort]').forEach(function (th) {
+							th.style.cursor = 'pointer';
+							th.title = 'Sort by ' + th.textContent.toLowerCase();
+							th.addEventListener('click', function () {
+								var key = th.dataset.sort;
+								ascending = current === key ? !ascending : key === 'name';
+								current = key;
+								var sorted = rows().sort(function (a, b) {
+									var x = a.dataset[key], y = b.dataset[key];
+									var order = key === 'name' ? x.localeCompare(y) : Number(x) - Number(y);
+									return (ascending ? order : -order) || a.dataset.name.localeCompare(b.dataset.name);
+								});
+								sorted.forEach(function (row) { table.appendChild(row); });
+								table.querySelectorAll('th[data-sort]').forEach(function (h) { h.textContent = h.textContent.replace(/ [▲▼]$/, ''); });
+								th.textContent += ascending ? ' ▲' : ' ▼';
+							});
+						});
+					})();
 			else
 				p.dash-empty No models in the models folder.
