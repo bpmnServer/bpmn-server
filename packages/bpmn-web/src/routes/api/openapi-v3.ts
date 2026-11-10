@@ -128,6 +128,11 @@ export function openApiV3(origin: string) {
                 operationId: 'throwSignal', summary: 'A signal, to everything that waits for it (the system)', parameters: [id('id', 'The signal')],
                 requestBody: body({ type: 'object', properties: { data, matchingKey: data } }), responses: { 200: answer('Signalled', { type: 'object', properties: { signalled: { type: 'string' } } }), ...errors(401, 403) },
             } },
+            '/rules/{name}': { post: {
+                operationId: 'evaluateRule', summary: 'Evaluate a decision table of the models folder with the data given, as a business rule task does; nothing changes', parameters: [id('name', 'A file <name>.dmn.xml, or a decision\'s id')],
+                requestBody: body({ type: 'object', properties: { data: { ...data, description: 'The decision\'s inputs, by name' } } }),
+                responses: { 200: answer('What it decided', ref('RuleResult')), ...errors(400, 401, 404, 422) },
+            } },
             '/tokens': {
                 post: {
                     operationId: 'issueToken', summary: 'A token for one of the application\'s users (the service key)', security: [{ serviceKey: [] }],
@@ -159,7 +164,8 @@ export function openApiV3(origin: string) {
                 Check: { type: 'object', properties: { name: { type: 'string' }, valid: { type: 'boolean' }, errors: { type: 'array', items: ref('Issue') }, warnings: { type: 'array', items: ref('Issue') } } },
                 ModelSaved: { allOf: [ref('Check'), { type: 'object', properties: { created: { type: 'boolean' }, laidOut: { type: 'boolean' }, url: { type: 'string' } } }] },
                 TestRun: { type: 'object', properties: { name: { type: 'string' }, passed: { type: 'integer' }, failed: { type: 'integer' }, skipped: { type: 'integer' }, scenarios: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, status: { enum: ['passed', 'failed', 'skipped'] }, failedStep: { type: 'string' }, error: { type: 'string' }, instances: { type: 'array', items: { type: 'string' } } } } } } },
-                InstanceWithItems: { allOf: [ref('Instance'), { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } } } }] },
+                RuleResult: { type: 'object', properties: { decision: { type: 'string', description: 'The decision\'s id' }, file: { type: 'string' }, result: { description: 'Its output: an object, or a list of them for a table with several hits' } } },
+                InstanceWithItems:{ allOf: [ref('Instance'), { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } } } }] },
             },
         },
     };

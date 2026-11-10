@@ -10,12 +10,18 @@ import { SettingsOperations, SettingsError, settingsSchema } from './settings.js
 import { UserOperations, UserError } from './users.js';
 import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
+import { invokeDecision } from '../decisions.js';
 
 /*
  * API v3, /api/v3 (docs/design/api-v3.md): every call through the door (a user's token, or the service key) and as
  * that user. Errors are { error: { code, message } } with the status their kind gives; lists are { items, next }, and
  * the next page is asked with ?cursor=<next> (next is absent on the last page; the cursor is opaque).
  */
+
+/** A rule that can not be evaluated: not there (404), or failing on the data given (422). */
+class RuleError extends Error {
+    constructor(public status: number, message: string, public code: string) { super(message); }
+}
 
 /** A page's bookmark as the client sees it: opaque. */
 const toCursor = (position: string | null) => position ? Buffer.from(position).toString('base64url') : undefined;
@@ -74,7 +80,7 @@ export function v3Router(server) {
         catch (error) {
             if (error instanceof ModelError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
-            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError)
+            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
@@ -165,6 +171,20 @@ export function v3Router(server) {
 
     router.post('/messages/:id', handler((req, user) => instances.message(user, req.params.id, req.body?.data ?? {}, req.body?.matchingKey ?? {})));
     router.post('/signals/:id', handler((req, user) => instances.signal(user, req.params.id, req.body?.data ?? {}, req.body?.matchingKey ?? {})));
+
+    // ---- rules: a decision table of the models folder, evaluated with the data given; anyone the door lets in (it changes nothing)
+
+    router.post('/rules/:name', handler(async req => {
+        const data = req.body?.data ?? {};
+        if (typeof data !== 'object' || Array.isArray(data))
+            throw new RuleError(400, "data is an object: the decision's inputs by name", 'BAD_DATA');
+        try { return await invokeDecision(server, { decision: req.params.name, data }); }
+        catch (error) {
+            if (/^Decision '.*' not found/.test(error?.message ?? ''))
+                throw new RuleError(404, error.message, 'RULE_NOT_FOUND');
+            throw new RuleError(422, error?.message ?? String(error), 'RULE_FAILED');
+        }
+    }));
 
     // ---- tokens
 

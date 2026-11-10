@@ -136,6 +136,7 @@ A header naming a user is never trusted. How an application uses it:
 | `GET`, `POST /api/v3/users`; `PUT /api/v3/users/{name}/groups`; `POST /api/v3/users/{name}/password`; `DELETE /api/v3/users/{name}` | Administrators (their own token) or the service key; never an AI link. Changing a user's groups or deleting them ends their tokens. | 200, 201, 400, 403, 404, 409 |
 | `GET /api/v3/settings`, `GET /api/v3/settings/schema`, `POST /api/v3/settings/checks/{name}` | Administrators, or an AI link at the administer level: every setting with its value (secrets as `***`) and source; a check (`database`, `engine`, `url`). Nothing here changes a setting. | 200, 403 |
 | `POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}` | Body `{ data, matchingKey }`. The system only (a service account in `SYSTEM`). | 200, 403 `SYSTEM_REQUIRED` |
+| `POST /api/v3/rules/{name}` | Body `{ data }`: evaluates a decision table of the models folder (a file `<name>.dmn.xml`, or a decision's id) with those inputs, as a business rule task does. Anyone the door lets in; nothing changes. | 200 `{ decision, file, result }`, 400 `BAD_DATA`, 404 `RULE_NOT_FOUND`, 422 `RULE_FAILED` |
 
 A token is random; the server keeps only its SHA-256 (in `wf_tokens`), so a token can not be read back, and it holds
 across a restart and for every server on the same database. Errors are `{ error: { code, message } }` with a real
