@@ -49,17 +49,16 @@ BPMN Server combines a workflow engine with optional web-based modeling, task ma
 ### Create an application
 
 ```sh
-npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+npx bpmn-server init my-app --memory   # first trial; no external MongoDB
 cd my-app
-npm run setup                    # the database's indexes
 npm start                        # http://localhost:3000
 ```
 
 Open your browser to [http://localhost:3000](http://localhost:3000). The first page asks for the administrator, with the setup token the server printed when it started.
 
-`init` creates the sample application, with `bpmn-server` and `bpmn-web` as its dependencies;
+`init` installs the application dependencies, including `bpmn-server`, `bpmn-web`, and `bpmn-mcp`;
 `npx bpmn-server init --help` lists its options, and `--minimal` creates a one-model Hello application
-instead. `init` ships with bpmn-server 3.5 and later.
+instead. For a persistent MongoDB installation, use `npx bpmn-server init my-app --mongo mongodb://localhost:27017/my-app`, start MongoDB if needed, and run `npm run setup` before `npm start`.
 
 ```
 my-app/
@@ -202,77 +201,26 @@ Features include:
 
 A live demo is available at: [https://bpmn.omniworkflow.com](https://bpmn.omniworkflow.com)
 
-## Installation
+## Installation options
 
-This package requires Node.js 20 or later and MongoDB (or `--memory`, to try it without one).
-
-If MongoDB is not installed, you can [create a free cloud account](http://bit.ly/cyd-atlas), [install it locally](https://www.mongodb.com/docs/manual/installation/), or run the one `init` puts in the application (`docker compose up -d`).
-
-```sh
-npx bpmn-server init my-app --mongo mongodb://localhost:27017/my-app
-cd my-app
-docker compose up -d             # a MongoDB on this machine, if you do not have one
-npm run setup                    # the database's indexes
-npm start                        # prints the setup token; the first page asks for the administrator
-```
-
-The application's settings are in `.env` (the database, the port, the API keys, what is served) and
-`settings/config.ts`: see [Settings](https://bpmnserver.github.io/bpmn-server/settings). MongoDB is the default;
-`init --memory` runs without a database, and SQLite is chosen in the settings
-([Custom persistence](https://bpmnserver.github.io/bpmn-server/persistence)).
+For the quickest local trial, use [Create an application](#create-an-application) with `--memory`. For durable storage, initialize against MongoDB and run `npm run setup` before starting the application. For an Ubuntu server, use the [native installer](#install-on-a-server). For a container-based installation, follow the guided Docker setup below.
 
 ## Docker Installation
 
-<details>
-<summary>Install `bpmn-server` and dependencies with Docker.</summary>
+The supported Docker image is **`bpmnserver/bpmn-server:latest`**. The older `ralphhanna/bpmn-web` and `ralphhanna/bpmn-server` images are no longer updated.
 
-### 1. Create a project folder
+For a guided installation on Linux, macOS, or WSL:
 
-### 2. Add a `docker-compose.yml` file:
-```yaml
-version: "3.7"
-name: bpmn-server
-services:
-  bpmn-web:
-    image: ralphhanna/bpmn-web
-    command: sh -c "
-        npm run setup &&
-        npm run start"
-    ports:
-      - 3000:3000
-    volumes:
-      - 'app:/app'
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb:/data/db
-
-volumes:
-  mongodb:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './mongodb_volume'
-
-  app:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './bpmn_server_volume'
-```
-
-### 3. Start the container
 ```sh
-docker compose up -d
+mkdir -p bpmn-server && cd bpmn-server
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/setup.sh
+sh setup.sh
 ```
-</details>
+
+The setup asks for a port, memory or persistent MongoDB, and a published or locally built image. It generates private API and admin keys in `.env`, then starts the application. Memory mode is for trials: users and workflow instances are lost on restart.
+
+For Windows without WSL, or for updates and troubleshooting, see the [Docker installation guide](https://bpmnserver.github.io/bpmn-server/docker) and [Docker scripts](https://github.com/bpmnServer/bpmn-server/tree/main/docker). **Do not use the old `bpmn-web` Compose image.**
 
 ## Command Line Interface
 
