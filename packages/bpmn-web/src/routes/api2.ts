@@ -21,6 +21,7 @@ import { modelNameGuard, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { taskApi } from './taskApi.js';
 import { modelApi, openApiDocument } from './modelApi.js';
+import { aiKeyUser } from './aiAccess.js';
 import { siteGuide } from './siteGuide.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
@@ -32,8 +33,9 @@ import { json } from 'body-parser';
 
 export class API2 extends Common {
     getUser(request): SecureUser {
-        // The API key authenticates one configured service account. Client-supplied
-        // user/group claims must never become an authorization principal.
+        // The API key authenticates one configured service account; a person's AI key (/ai/key), that person.
+        // Client-supplied user/group claims must never become an authorization principal.
+        if (request.aiKeyHolder) return aiKeyUser(request.aiKeyHolder);
         return configuredApiUser();
     }
     requireSystem = (req, res, next) => {

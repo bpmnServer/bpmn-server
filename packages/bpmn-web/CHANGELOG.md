@@ -13,6 +13,10 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+### Added
+- **A link for an AI agent** (`/ai/key`, in the menu under your name): a signed-in person gets a link to hand to an agent (Codex, Claude Code). On `/api2` the agent acts as them, with their groups and no more (designing models needs a designer's or an administrator's link); not on `/api` or the administration APIs. The key is random, kept as its hash, masked in the request log; it expires after 30 minutes (`AI_KEY_TTL_GROUPS` sets minutes by group) and goes when they sign out or revoke it.
+- `/llms.txt` and the guide for agents advise a lane for each role, named as its user group.
+
 ### Removed
 - **Guest access**: `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone, and only signed-in
   users use a server. **An account made on a server with guests no longer has models of its own.** Before upgrading such a server,

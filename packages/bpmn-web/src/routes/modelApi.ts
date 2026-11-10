@@ -13,7 +13,7 @@ import { isSafeModelName } from './middleware/modelName.js';
 import { checkModel } from '../runtime/modelVerification.js';
 import { loadFeatureText, saveFeatureText } from '../testing/scenarios.js';
 import { rationaleSteps } from '../testing/rationale.js';
-import { designDisabled } from '../userAccess/roles.js';
+import { designDisabled, canDesign } from '../userAccess/roles.js';
 
 const handler = fn => (req, res, next) => fn(req, res).catch(next);
 
@@ -51,11 +51,17 @@ function summarize(results) {
 export function modelApi(bpmnServer) {
     const router = express.Router();
     const definitions = bpmnServer.definitions;
-    const userName = () => process.env.API_SERVICE_USER_NAME || 'api';
+    // whom a call acts as: the person of an AI key (/ai/key), else the API's service account
+    const userOf = req => req.aiKeyHolder
+        ? { userName: req.aiKeyHolder.userName, userGroups: req.aiKeyHolder.groups }
+        : { userName: process.env.API_SERVICE_USER_NAME || 'api', userGroups: (process.env.API_SERVICE_USER_GROUPS ?? '').split(',').map(g => g.trim()).filter(Boolean) };
 
     router.param('name', (req, res, next, value) => isSafeModelName(value) ? next() : res.status(400).json({ error: 'Invalid model name' }));
-    // changing models and running their tests is design: off with DISABLE_DESIGN, as in the editor
-    const design = (req, res, next) => designDisabled() ? res.status(404).json({ error: 'Design is turned off on this server (DISABLE_DESIGN)' }) : next();
+    // changing models and running their tests is design: off with DISABLE_DESIGN, as in the editor. A person's AI key
+    // designs only if they may; the site's API_KEY is the installation's own, as before
+    const design = (req, res, next) => designDisabled() ? res.status(404).json({ error: 'Design is turned off on this server (DISABLE_DESIGN)' })
+        : req.aiKeyHolder && !canDesign(userOf(req)) ? res.status(403).json({ error: `${userOf(req).userName} may not design models: ask a designer or an administrator for their link` })
+        : next();
 
     const exists = async (name: string) => (await definitions.getList()).some(m => (typeof m === 'string' ? m : m.name) === name);
 
@@ -90,7 +96,7 @@ export function modelApi(bpmnServer) {
         let svg = null;
         try { svg = await bpmnToSvg(source); } catch { /* no picture */ }
         const created = !(await exists(name));
-        await definitions.save(name, source, svg, null, userName());
+        await definitions.save(name, source, svg, null, userOf(req).userName);
         res.status(created ? 201 : 200).json({ name, saved: true, created, laidOut, ...answer, url: editorUrl(req, name), urlOpensFor: 'a person signed in to the site (not the API key)' });
     }));
 
@@ -141,7 +147,8 @@ export function modelApi(bpmnServer) {
     }));
 
     /** An instance's status and its Rationale by step (the engine's log: each operation, its outcome, its decisions). */
-    router.get('/instances/:id/rationale', handler(async (req, res) => {
+    // a run's Rationale is the design's: test runs, and why a model went its way
+    router.get('/instances/:id/rationale', design, handler(async (req, res) => {
         const instance = await bpmnServer.dataStore.findInstance({ id: req.params.id }, 'full').catch(() => null);
         if (!instance) return res.status(404).json({ error: `No instance ${req.params.id}` });
         res.json({ id: instance.id, name: instance.name, status: instance.status, data: instance.data,

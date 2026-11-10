@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { SecureUser } from 'bpmn-server';
+import { aiKeyHolder } from '../aiAccess.js';
 
 export function configuredApiUser(): SecureUser {
     const userName = process.env.API_SERVICE_USER_NAME;
@@ -15,6 +16,8 @@ export function configuredApiUser(): SecureUser {
 }
 
 export function apiServiceAuth(req, res, next): void {
+    // an AI key acts as its person: no service account needed
+    if (req.aiKeyHolder) return next();
     try {
         configuredApiUser();
         next();
@@ -59,6 +62,15 @@ export function apiKeyAuth(req, res, next): void {
 
     const presented = req.header('x-api-key');
     if (typeof presented === 'string' && timingSafeEqualStr(presented, configured)) {
+        next();
+        return;
+    }
+    // a person's AI key (/ai/key): on /api2 only, where it acts as that person; never /api (whose caller names whom to
+    // act as) nor the administration's
+    const onApi2 = typeof req.originalUrl === 'string' && /^\/api2(\/|$|\?)/.test(req.originalUrl);
+    const holder = onApi2 ? aiKeyHolder(presented) : undefined;
+    if (holder) {
+        req.aiKeyHolder = holder;
         next();
         return;
     }

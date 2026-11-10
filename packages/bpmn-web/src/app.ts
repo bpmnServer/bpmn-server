@@ -1,4 +1,6 @@
 import { siteGuide } from './routes/siteGuide.js';
+import { issueAiKey, aiKeyHolder, revokeAiKeys } from './routes/aiAccess.js';
+import { originOf } from './routes/modelApi.js';
 import { apiTrace } from './routes/middleware/apiTrace.js';
 import fs from 'node:fs';
 import http from 'node:http';
@@ -118,6 +120,8 @@ export class WebApp {
         app.use(cors({
             origin: process.env.ITSM_HOST,
         }));
+		// an AI link's key is a credential: not in the request log
+		morgan.token('url', (req: any) => String(req.originalUrl || req.url).replace(/\/ai\/ai_[\w-]+/g, '/ai/ai_***'));
 		app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 		const bodyLimit = process.env.BODY_LIMIT || '50mb';
 		app.use(bodyParser.json({ limit: bodyLimit }));
@@ -233,6 +237,58 @@ export class WebApp {
 		this.application.routes?.(this.app, this);
 		// where an AI agent given this site's address starts; no sign-in
 		this.app.get('/llms.txt', (req, res, next) => siteGuide(this, req).then(text => res.type('text/markdown').send(text), next));
+		// a link for a person's AI agent: it acts as them on /api2, for minutes (routes/aiAccess.ts)
+		this.app.get('/ai/key', (req, res) => {
+			if (!req.user) {
+				req.session.returnTo = req.originalUrl;
+				return res.redirect('/login');
+			}
+			const issued = issueAiKey(req.user);
+			const url = `${originOf(req)}/ai/${issued.key}`;
+			if (req.query.format === 'json')
+				return res.json({ url, expiresAt: issued.expiresAt, expiresInSeconds: issued.ttlMs / 1000, userName: req.user.userName, groups: issued.groups });
+			res.render('aiKey', { title: 'A link for your AI agent', url, userName: req.user.userName, groups: issued.groups,
+				expiresAt: issued.expiresAt, minutes: Math.round(issued.ttlMs / 60000),
+				revoked: req.query.revoked !== undefined ? Number(req.query.revoked) : undefined });
+		});
+		this.app.post('/ai/revoke', (req, res) => {
+			if (!req.user) return res.redirect('/login');
+			res.redirect(`/ai/key?revoked=${revokeAiKeys(req.user.userName)}`);
+		});
+		// what the agent reads first: whom it acts as, until when, and where to start
+		this.app.get('/ai/:key', (req, res) => {
+			const holder = aiKeyHolder(req.params.key);
+			res.type('text/markdown');
+			if (!holder)
+				return res.status(401).send('# This link no longer works\n\nIt expired, was revoked, or is not a link of this site. '
+					+ 'Ask the person who gave it to you for a new one: they get it, signed in, at /ai/key.\n');
+			const origin = originOf(req);
+			res.send([
+				'# Access to this BPMN Server',
+				'',
+				`You act as **${holder.userName}**${holder.groups.length ? ` (groups: ${holder.groups.join(', ')})` : ''}, `
+					+ `until ${new Date(holder.expiresAt).toISOString()}: with their rights, no more.`,
+				'',
+				'## Rules',
+				'',
+				'1. Use curl only (or your own HTTP calls): never a browser, browser tool or computer use. The site\'s pages need a '
+					+ 'sign-in you do not have; you would only see a login page.',
+				`2. Use ${origin}/api2 only, never /api: this key works there and nowhere else.`,
+				`3. Send the header \`x-api-key: ${req.params.key}\` on every call to /api2.`,
+				'',
+				'## Start',
+				'',
+				`- Read ${origin}/llms.txt (no key needed): this site, and how to build workflows on it.`,
+				`- The operations: ${origin}/api2/openapi.json.`,
+				'',
+				'For example:',
+				'',
+				'```',
+				`curl -H "x-api-key: ${req.params.key}" ${origin}/api2/models`,
+				'```',
+				'',
+			].join('\n'));
+		});
 		if (api) {
 			// API_TRACE: every API call and its answer, to replay what a client did
 			this.app.use(['/api', '/api2'], apiTrace());

@@ -50,12 +50,12 @@ async function facts(webApp, origin: string) {
     try { groups = [...new Set((await new UserService().listUsers()).flatMap(u => u.userGroups ?? []))].sort() as string[]; } catch { /* no users here */ }
     return [
         `- BPMN Server ${webApp.packageJson?.version ?? ''}`.trimEnd(),
-        `- API: ${origin}/api2, its key in the \`x-api-key\` header (ask this site for one). The OpenAPI document: ${origin}/api2/openapi.json (no key needed)`,
+        `- API: ${origin}/api2, its key in the \`x-api-key\` header (or a person's link from ${origin}/ai/key: it acts as them, for minutes). The OpenAPI document: ${origin}/api2/openapi.json (no key needed)`,
         `- Creating and changing models, running their tests: ${designDisabled() ? '**off** on this site (DISABLE_DESIGN)' : 'on'}`,
         `- Environment: ${environment()}`,
         `- Services a model can call (\`camunda:delegateExpression\` or \`implementation\`): ${list(services)}. Anything else is not on this site: use a script task`,
         `- Connectors (\`camunda:connector\`): ${list(connectors)}`,
-        `- User groups in use (for \`candidateGroups\`, lanes, \`@login ... with role of\`): ${list(groups)}`,
+        `- User groups in use: ${list(groups)}. Give each role a lane named as its group: the lane's tasks are offered to that group (\`@login ... with role of\` in tests)`,
         `- A model opens in the editor at ${origin}/model/edit/<name>, for a person signed in to this site (the API key does not open it)`,
     ].join('\n');
 }

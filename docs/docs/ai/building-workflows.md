@@ -44,6 +44,18 @@ sample's Leave Application shows more (timers, errors, lanes, services).
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="approval-definitions" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="Approval" isExecutable="true">
+    <bpmn:laneSet id="Roles">
+      <bpmn:lane id="EmployeeLane" name="Employee">
+        <bpmn:flowNodeRef>Requested</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Request</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="ManagerLane" name="Manager">
+        <bpmn:flowNodeRef>Approve</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Decision</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Approved</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Rejected</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
     <bpmn:startEvent id="Requested" name="Requested" camunda:initiator="requester" />
     <bpmn:userTask id="Request" name="Request" camunda:assignee="$(this.data.requester)">
       <bpmn:extensionElements>
@@ -52,7 +64,7 @@ sample's Leave Application shows more (timers, errors, lanes, services).
         </camunda:formData>
       </bpmn:extensionElements>
     </bpmn:userTask>
-    <bpmn:userTask id="Approve" name="Approve" camunda:candidateGroups="Manager">
+    <bpmn:userTask id="Approve" name="Approve">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="approved" label="Approved" type="boolean" />
@@ -73,10 +85,14 @@ sample's Leave Application shows more (timers, errors, lanes, services).
 </bpmn:definitions>
 ```
 
-- `camunda:initiator` keeps who started it in `data.requester`; `camunda:assignee` gives them the request.
-- `camunda:candidateGroups` offers Approve to the group `Manager`. Group names are matched exactly, case and all: on a
-  site, use the groups its `/llms.txt` lists (`manager`, say). In a test, `@login ... with role of` can name any group:
-  the user is made up for the test, with that one group.
+- **Use a lane for each role**, named exactly as the user group that plays it. A user task in a lane is offered to
+  that group: Approve, in the lane `Manager`, goes to managers. A start event in a lane lets only that group start
+  the process. The diagram then shows who does what, and there is no `candidateGroups` to repeat on every task. Use
+  `camunda:candidateGroups` only for a task that is offered to more than its lane's group.
+- Lane names are matched exactly, case and all: on a site, use the groups its `/llms.txt` lists (`manager`, say). In a
+  test, `@login ... with role of` can name any group: the user is made up for the test, with that one group.
+- `camunda:initiator` keeps who started it in `data.requester`; `camunda:assignee` gives them the request. An assignee
+  wins over the lane: Request stays with the person who asked, not with every employee.
 - A form field's value becomes data (`data.approved`); the flow's condition reads it; `default` is taken otherwise.
 - No diagram is needed: the server lays the model out when it is saved.
 
