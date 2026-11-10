@@ -10,7 +10,7 @@ Choose how you want to start ([Choose Your Journey](https://bpmnserver.github.io
 
 | Journey | For | Start with |
 |---|---|---|
-| **A. Online demo** | Trying it with nothing installed | [Online demo](https://bpmnserver.github.io/bpmn-server/first-workflow) |
+| **A. Online demo** | Trying it with nothing installed | [bpmn.omniworkflow.com](https://bpmn.omniworkflow.com) |
 | **B. Build an application** | A workflow application of your own, on bpmn-web | [Build an application](https://bpmnserver.github.io/bpmn-server/build) |
 | **C. Integrate an existing application** | An application that keeps its own UI and users, and runs its processes here | [Integrate an existing application](https://bpmnserver.github.io/bpmn-server/integrate) |
 | **D. Embed the engine** | Running processes from your own Node.js code | [Embedding the engine](https://bpmnserver.github.io/bpmn-server/embedding) |

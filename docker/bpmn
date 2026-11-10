@@ -94,8 +94,8 @@ HELP
         dc exec server npm run cli -- "$@" ;;
     password)
         value=$(setting ADMIN_PASSWORD)
-        [ -n "$value" ] || { echo "No initial ADMIN_PASSWORD in .env" >&2; exit 1; }
-        printf 'Initial admin password (not a reset): %s\n' "$value" ;;
+        [ -n "$value" ] || { echo "No initial ADMIN_PASSWORD in $DIR/.env" >&2; exit 1; }
+        printf 'Initial admin password (not a reset), from %s/.env: %s\n' "$DIR" "$value" ;;
     setup) [ -f setup.sh ] || { echo "Missing setup.sh" >&2; exit 1; }; sh setup.sh "$@" ;;
     *) echo "Unknown command: $cmd (use ./bpmn help)" >&2; exit 2 ;;
 esac

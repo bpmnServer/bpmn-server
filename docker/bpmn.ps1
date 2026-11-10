@@ -96,8 +96,8 @@ CLI runs in a separate process and cannot access the live memory database.
     }
     'password' {
         $value = Setting 'ADMIN_PASSWORD'
-        if (-not $value) { Fail 'No initial ADMIN_PASSWORD in .env' }
-        "Initial admin password (not a reset): $value"
+        if (-not $value) { Fail "No initial ADMIN_PASSWORD in $PSScriptRoot\.env" }
+        "Initial admin password (not a reset), from $PSScriptRoot\.env: $value"
     }
     'setup' {
         if (Test-Path .env) { '.env exists: edit it with bpmn env (rename it first for a new one).'; break }

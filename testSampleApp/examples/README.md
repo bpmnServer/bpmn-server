@@ -12,7 +12,6 @@ In VS Code, **Test: current file** runs the open one under the debugger.
 
 | Example | Model | Shows |
 |---|---|---|
-| [cancel-application](cancel-application.test.ts) | Cancel Application | a sub-process's data (`data.<sub-process id>`), ending a sub-process ends what waits in it, looping back over a sub-process |
 | [invoice](invoice.test.ts) | Invoice | an event-based gateway, a receive task, a terminate end event |
 | [multi-instance-vote](multi-instance-vote.test.ts) | multi-inst | a parallel multi-instance sub-process, an item by its `itemKey`, each instance's data |
 | [escalation](escalation.test.ts) | test-escalation | an escalation thrown in a sub-process, caught without interrupting it |

@@ -83,7 +83,6 @@ features:
     docs: [docs/docs/examples/subProcess.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts]
     tests: [testSampleApp/test/custom/subprocess.test.ts, testSampleApp/processes/SubProcess-engine-test.engine.feature]
-    examples: [testSampleApp/examples/cancel-application.test.ts]
   - id: event-sub-process
     area: modeling
     name: "Event sub-process"
