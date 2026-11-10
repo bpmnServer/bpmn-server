@@ -1,13 +1,13 @@
 # Application Integration — Architecture and Design Proposal
 
 - **Status:** Proposed design; nothing here is implemented unless it says so. Phase 1, the task API, is built.
-- **Date:** 2026-11-04, revised 2026-11-05
+- **Date:** 2026-11-04, revised 2026-11-10
 - **Scope:** BPMN Server 3.5+ evolution, including future multi-application hosting
 - **Placement:** the integration is built in `bpmn-web`, where the API is, with as little change to `bpmn-server` as possible
 
 ## 1. Overview
 
-BPMN Server should integrate with an existing business application without requiring custom TypeScript for ordinary operations. The application owns its user interface, business rules, authoritative business data and identities; BPMN Server owns process execution, waiting items, task state, tokens, timers and workflow history.
+BPMN Server should integrate with an existing business application without requiring custom TypeScript for ordinary operations. The application owns its shell, business forms where provided, business rules, authoritative business data and identities; OWF supplies embeddable standard workflow pages and dynamic forms when a host form is not defined. BPMN Server owns process execution, waiting items, task state, tokens, timers and workflow history.
 
 The integration model has five complementary surfaces:
 
@@ -15,7 +15,7 @@ The integration model has five complementary surfaces:
 | --- | --- | --- |
 | Inbound process events | App → BPMN | Authenticated HTTP API / named webhook routes |
 | Outbound application operations | BPMN → App | Connector operations (`<connector>/<operationId>`); later, manually configured HTTP or SQL |
-| Human tasks | Both | BPMN creates/waits; app lists or receives notification, shows its UI and completes task via workflow API |
+| Human tasks | Both | BPMN creates/waits; OWF or host shows task lists; BPMN form key routes to host form where mapped, otherwise OWF provides a dynamic form; task completion uses workflow API |
 | Workflow data | Both | Shared store, selective replication, event notification or on-demand workflow API |
 | Custom extensions | Both | Existing appDelegate/services remain optional escape hatches |
 
@@ -168,9 +168,9 @@ A User Task is not a call that launches a remote user interface. When BPMN reach
 
 1. BPMN creates a waiting User Task (assignee, candidate roles/users, business key, optional form/task type).
 2. `bpmn-web` **may** send a task event to the application (section 7.1). Notification is optional; an app may instead query the task API.
-3. The application presents the task in its own inbox, notification center or existing case/task system.
-4. The user initiates opening the application form. The app retrieves business data from its own API/DB and task state from BPMN if needed.
-5. The authenticated application calls the workflow task completion API with result data; BPMN validates authorization and resumes execution.
+3. The user sees a task in either the host's inbox or an embedded OWF task page.
+4. On opening it, the UI resolves the BPMN task `formKey` against the host's form routes or OWF form definitions. If no form is defined, OWF renders a dynamic form based on available task/form metadata. A declared but unknown form key is a configuration error, not an automatic fallback.
+5. The user submits through the authenticated host server/API integration; BPMN validates authorization and resumes execution.
 
 ```mermaid
 sequenceDiagram
@@ -183,7 +183,7 @@ sequenceDiagram
   end
   U->>A: Open inbox / task
   A->>W: Query task (optional)
-  A-->>U: Render application form
+  A-->>U: Resolve formKey; render host form or OWF dynamic form
   U->>A: Submit decision
   A->>W: Complete waiting task via authenticated API
   W->>W: Advance process
@@ -192,6 +192,59 @@ sequenceDiagram
 Do **not** add a notification subsystem to the engine. Task events are a lifecycle subscriber in `bpmn-web`, and they call the application through a connector. A form reference is application metadata, not an instruction to open a browser remotely.
 
 For task assignment, optionally resolve a user or role through a connector operation (`HR/getManager`) while the engine remains responsible for assignment state and enforcement. The app may act on its own business transaction before completing the BPMN task, or the workflow may orchestrate the business API update; document idempotency/recovery for partial success in either mode.
+
+### 6.1 UI integration: host shell and OWF pages (proposed)
+
+The **host application owns the shell**: sign-in, navigation, branding, business pages, and authorization context. OWF provides reusable workflow pages (My Tasks, Start Process, Instances/History; optional Modeler and Administration). The host may mount OWF pages beneath its own route prefix, or embed the existing OWF UI while keeping the host navigation. Do not require a particular frontend framework or duplicate OWF UI implementations. Initial integrations may reuse existing pages; reusable components are an optional later evolution.
+
+The UI integration is not a second workflow engine. All list/claim/complete actions go through the existing authenticated workflow APIs. The browser must **never** receive `API_KEY`, `ADMIN_API_KEY`, or `API_ACTING_USER_KEY`; the host backend mediates API access and maps its authenticated user and roles to the task API. An iframe, if used, needs an explicit session and origin/clickjacking policy and must not be the only supported integration method.
+
+### 6.2 Form-key routing and dynamic-form fallback (proposed)
+
+The BPMN model's existing `formKey` is the binding between a user task and a UI form. Do not introduce a parallel form selector in workflow definitions.
+
+| Model/task condition | UI behavior |
+| --- | --- |
+| `formKey` maps to an existing host application route | Redirect/navigate to that page, passing an opaque task identifier or equivalent task context; host loads task/business data and completes through its backend. |
+| `formKey` identifies a registered OWF form | Render the OWF form inside the host's workflow area. |
+| No `formKey` and no form defined | OWF renders a dynamic form from available task input/form metadata. |
+| Explicit `formKey` has no matching route/form | Report a missing-form configuration error. Do not silently bypass the declared business form. |
+
+Example **illustrative configuration, not an implemented schema**:
+
+```json
+{
+  "workflow": { "basePath": "/workflow", "apiBaseUrl": "/api2" },
+  "forms": {
+    "leave-request": "/leave/request",
+    "leave-approval": "/leave/approve"
+  }
+}
+```
+
+OWF dynamic forms should derive field names, labels, types, editable fields and validation from declared metadata where available. Raw instance data alone is **not** authoritative form schema: do not automatically expose secrets, system/internal values, or arbitrary fields as editable. Missing metadata should lead to safe defaults or an explicit error if safe input cannot be determined. Host and OWF form submission share the same task-completion and authorization contract.
+
+### 6.3 AI-assisted application integration (proposed development-time workflow)
+
+AI is an **integration agent at development time**, not a runtime dependency for navigating forms or completing tasks. Given access to the host codebase and OWF integration documentation, the AI should:
+
+1. Inspect host framework, routing, authentication, user/role mapping, menus, and existing forms; inspect OWF models and collect all user-task `formKey` references.
+2. Compare keys with host routes; propose mappings; identify missing or ambiguous keys and suggest OWF dynamic forms when no application form is defined.
+3. Generate minimal integration code/configuration for embedded workflow pages, backend-only `/api2` access, task context and completion, and host navigation.
+4. Preserve the application's authorization, business validation, and data ownership; never embed server credentials in frontend code or infer unrestricted editability from workflow data.
+5. Generate/execute automated browser integration tests (e.g. Playwright) and workflow scenarios (Gherkin) covering task visibility, access denial, form-key resolution, unknown keys, dynamic fallback, and successful completion; review failures and correct code before reporting results.
+6. Document the implemented mappings, changed files, test evidence, and any unresolved gaps. Human review remains required for security-sensitive changes.
+
+A model-form-key inventory/inspection operation would be useful for the AI; this is a **proposed capability**, not a claim that a CLI command already exists. Prefer existing model metadata/read APIs before adding new runtime infrastructure.
+
+### 6.4 Minimum UI acceptance scenarios
+
+- Authenticated host user opens OWF My Tasks without a second sign-in; user sees only authorized tasks.
+- A mapped `formKey` opens the host route with task context and completes the correct waiting item.
+- An OWF-defined form opens and completes its item; missing `formKey` uses a safe dynamic form.
+- A declared but unmapped `formKey` raises an actionable error rather than rendering an arbitrary form.
+- Users cannot impersonate another acting user, claim others' tasks, or access secret keys through browser requests.
+- Browser navigation, task completion and returned instance state are verified end-to-end.
 
 ## 7. Workflow data-store integration
 
@@ -270,6 +323,7 @@ Future multi-app hosting requires namespaced routes, per-app models, tasks, work
 | **4 — Connector calls from scripts** | Document section 4.3. | A test of the same operation from a service task and a listener, including a failure and the sandbox. |
 | **5 — Inbound webhooks** | Section 5, in `bpmn-web`. | A retry never starts a second instance; signature, correlation and no-match tests. |
 | **6 — APIs without OpenAPI** | Manually configured HTTP operations, with SSRF protection. | Blocked addresses are refused. |
+| **UI integration — proposed** | Host-shell embedding of OWF standard pages; form-key mapping, dynamic fallback, and AI integration guide. | Playwright host-navigation/auth checks plus Gherkin task tests, including explicit unknown-form errors. |
 | **Later** | SQL, shared storage and multi-app hosting, each with its own design first. | Crash, migration, isolation and cross-app denial tests. |
 
 Phases 1, 2 and 5 are expected to need no change to `bpmn-server`. If one turns out to need it, keep the change small and call it out for review. They should also leave room for an application ID, so that multi-app hosting does not rework them.
@@ -280,12 +334,16 @@ Phases 1, 2 and 5 are expected to need no change to `bpmn-server`. If one turns 
 1. Connectors are the normal outbound integration mechanism; OpenAPI is preferred but not mandatory.
 2. Scripts can call the same connector operations as Service Tasks. There is no registry of named integrations for now.
 3. Task notifications are a lifecycle subscriber in `bpmn-web`, not a mechanism in the engine and not a model listener.
-4. The UI belongs to the application. The engine owns waiting tasks and advances when its API receives completion.
+4. The host owns the application shell and any host-specific business forms. OWF supplies embeddable workflow pages and safe dynamic forms when no form is defined; the BPMN `formKey` selects a mapped host route or OWF form. The engine owns waiting tasks and advances when its API receives completion.
 5. The app can use shared storage, replication, notifications or on-demand queries; choose per integration need.
 6. **Keep appDelegate** fully available as an optional escape hatch, with backward compatibility.
 7. Plan for an eventual server capable of hosting multiple applications with isolation.
 8. An application may act for its users, with a separate key, off by default, and never as an administrator.
 9. Integration is built in `bpmn-web`, where the API is, with minimum impact on `bpmn-server`.
+
+**Additional agreed direction**
+- Application UI integration is AI-assisted during development: inspect host pages and BPMN form keys, generate mappings/adapters, and verify with browser and workflow tests.
+- Explicitly unresolved form keys fail visibly; OWF dynamic fallback applies when no form is defined.
 
 **Pending detailed contracts**
 - Supported SQL engines, read/write policy and driver deployment.
@@ -293,6 +351,7 @@ Phases 1, 2 and 5 are expected to need no change to `bpmn-server`. If one turns 
 - Durable notification/replication delivery and reconciliation implementation.
 - Stable task projection schemas; exact per-app configuration JSON schema and migrations.
 - Definition of application identity/user roles and task assignment resolution across apps.
+- Host route registry and OWF dynamic-form metadata schema; packaging and embedding contract for OWF standard pages.
 
 ## 12. Related documentation
 
