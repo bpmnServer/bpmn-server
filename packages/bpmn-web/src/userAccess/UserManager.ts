@@ -145,7 +145,10 @@ export class UserManager {
 
 		
 		app.use((req, res, next) => {
-			// After successful login, redirect back to the intended page
+			// After successful login, redirect back to the intended page. Not for the APIs: they have no sign-in, and a
+			// session kept for each of their calls (the pages' own, through routes/api/pageClient.ts) is waste
+			if (/^\/(admin\/)?api(2|\/|$)|^\/api2/.test(req.path))
+				return next();
 			if (!req.user
 				&& req.path !== '/login'
 				&& req.path !== '/signup'

@@ -65,6 +65,9 @@ export function v3Router(server) {
     // ---- tasks: the waiting tasks this user has a part in; one with its form; claim; complete
 
     router.get('/tasks', handler(async (req, user) => {
+        // the ones this user completed, newest first
+        if (req.query.status === 'completed')
+            return { items: await tasks.completed(user, { limit: req.query.limit === undefined ? 10 : Number(req.query.limit) }) };
         const { tasks: items, next } = await tasks.list(user, {
             limit: req.query.limit === undefined ? DEFAULT_LIMIT : Number(req.query.limit),
             after: fromCursor(req.query.cursor),

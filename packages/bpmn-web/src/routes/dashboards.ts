@@ -13,6 +13,7 @@ import { createRequire } from 'node:module';
 import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
+import { pageApi } from './api/pageClient.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
@@ -101,42 +102,33 @@ export class Dashboards extends Common {
             isAdmin: !adminDisabled() && (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups)),
             isDesigner: canDesign(req.user),
         });
+        // the person the pages act for, as pageApi's token says
+        const pageUserName = (req) => req.user?.userName ?? (process.env.REQUIRE_AUTHENTICATION === 'false' ? 'system' : undefined);
+        // v3's startable processes as the start forms' views have them: their fields, from the form
+        const startsOf = (items) => items.map(s => ({ processName: s.processName, startNodeId: s.startNodeId, name: s.name, fields: s.form?.fields ?? [] }));
         const render = (req, res, view, data) => res.render('dashboards/' + view, { ...data, ...roles(req), me: req.user?.userName, user: req.user, request: req });
 
         // ---- my work ----------------------------------------------------------------------------------------
+        // through API v3, as the person (routes/api/pageClient.ts): their waiting tasks, the ones they completed, what they may start
         router.get('/', handler(async (req, res) => {
-            const user = secureUser(req);
-            const me = req.user?.userName;
-            const myGroups = toList(req.user?.userGroups);
-
-            const waiting: any[] = await api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest }, user);
+            const api = await pageApi(req, server);
+            const me = pageUserName(req);
+            const [waiting, done, startable] = await Promise.all([
+                api.get('/tasks?limit=200'), api.get('/tasks?status=completed&limit=10'), api.get('/processes/startable')]);
             const mine = [], available = [];
-            for (const item of waiting) {
-                item.fromNow = dateDiff(item.startedAt);
-                if (item.assignee) {
-                    if (item.assignee === me) mine.push(item);
-                    continue;
-                }
-                const users = toList(item.candidateUsers), groups = toList(item.candidateGroups);
-                const open = !users.length && !groups.length;
-                if (open || users.includes(me) || groups.some(g => myGroups.includes(g)))
-                    available.push(item);
+            for (const task of waiting.items) {
+                task.fromNow = dateDiff(task.startedAt);
+                (task.assignee === me ? mine : task.assignee ? [] : available).push(task);
             }
-
-            const ended: any[] = await api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': me, ...notATest }, user);
-            const completed = ended
-                .filter(i => i.userName === me && i.status === 'end' && i.type === 'bpmn:UserTask')
-                .sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime())
-                .slice(0, 10);
-            completed.forEach(i => i.fromNow = dateDiff(i.endedAt));
-
-            render(req, res, 'user', { title: 'My work', mine, available, completed, starts: await this.startEvents() });
+            const completed = done.items.map(task => ({ ...task, fromNow: dateDiff(task.endedAt) }));
+            render(req, res, 'user', { title: 'My work', mine, available, completed, starts: startsOf(startable.items) });
         }));
 
         // the start page of a model: its start events a user can start, each with its start form
         router.get('/start/:processName', handler(async (req, res) => {
             const processName = req.params.processName;
-            render(req, res, 'start', { title: 'Start a process', processName, starts: await this.startEvents(processName) });
+            const startable = await (await pageApi(req, server)).get('/processes/startable');
+            render(req, res, 'start', { title: 'Start a process', processName, starts: startsOf(startable.items.filter(s => s.processName === processName)) });
         }));
 
         // start a process at one of its start events, with the start form's fields
@@ -146,11 +138,10 @@ export class Dashboards extends Common {
             for (const [key, value] of Object.entries(req.body))
                 if (key.startsWith('field.') && value !== '')
                     data[key.substring(6)] = value;
-            const context = await runProcess(server, { processName }, () =>
-                api.engine.start(processName, data, secureUser(req), { startNodeId: startNodeId || undefined }));
-            if (context?.errors)
-                return res.status(500).send(String(context.errors));
-            res.redirect(afterWork(req.user, context.instance?.id ?? context.id));
+            const api = await pageApi(req, server);
+            const started = await runProcess(server, { processName }, () =>
+                api.post(`/processes/${encodeURIComponent(processName)}/start`, { data, startNodeId: startNodeId || undefined }));
+            res.redirect(afterWork(req.user, started.instance.id));
         }));
 
         // ---- design -----------------------------------------------------------------------------------------
@@ -510,27 +501,6 @@ export class Dashboards extends Common {
                 used.set(id, [...(used.get(id) ?? []), file.slice(0, -5)]);
         }
         return used;
-    }
-
-    /** Every model's start events a user can start (no timer, message or signal), with their form fields. */
-    /** The start events a user can start, with their start forms' fields: every model's, or one model's. */
-    async startEvents(model?: string) {
-        const server = this.webApp.bpmnServer;
-        const starts = [];
-        const names = model ? [{ name: model }] : await server.definitions.getList({});
-        for (const { name } of names) {
-            try {
-                const definition = await server.definitions.load(name);
-                for (const node of definition.getStartNodes(true)) {
-                    const fields = definition.getNodeInfo(node.id).fields ?? [];
-                    starts.push({ processName: name, startNodeId: node.id, name: node.name || node.id, fields });
-                }
-            }
-            catch {
-                // a model that does not load has nothing to start; the design dashboard reports it
-            }
-        }
-        return starts.sort((a, b) => a.processName.localeCompare(b.processName));
     }
 
     /**

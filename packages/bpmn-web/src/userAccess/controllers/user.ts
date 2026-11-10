@@ -8,6 +8,7 @@ import User from '../models/User.js';
 import * as Mailer from '../config/mail.js';
 import { home, signupGroups, signupVerifiesEmail } from '../roles.js';
 import { firstRunPending, isSetupToken, endFirstRun } from '../firstRun.js';
+import { Tokens } from '../../routes/api/tokens.js';
 import { UserService, userNameProblem } from '../UserService.js';
 import { answerMessage } from '../../routes/common.js';
 import { revokeAiKeys } from '../../routes/aiAccess.js';
@@ -198,8 +199,10 @@ export class UserController {
      * Log out.
      */
     static logout(req, res, next) {
-        // their AI links go with them
+        // their AI links go with them, and the pages' token for them (routes/api/pageClient.ts)
         if (req.user?.userName) revokeAiKeys(req.user.userName);
+        const server = req.app?.get('bpmnServer'), pageToken = req.session?.apiToken?.token;
+        if (server && pageToken) new Tokens(server).revokeToken(pageToken).catch(() => { /* it expires by itself */ });
         req.session.destroy((err) => {
             if (err)
                 console.log('Error : Failed to destroy the session during logout.', err);

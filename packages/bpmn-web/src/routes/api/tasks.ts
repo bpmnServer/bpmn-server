@@ -95,6 +95,18 @@ export class TaskOperations {
         return { tasks: page.map(asTask), next: waiting.length > limit ? position(page.at(-1)) : null };
     }
 
+    /** The tasks this user completed, newest first: the latest `limit`. */
+    async completed(user: SecureUser, { limit = 10 }: { limit?: number } = {}) {
+        if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
+            throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
+        const ended = await this.api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': user.userName, ...notATest }, user);
+        return ended
+            .filter(item => item.userName === user.userName && item.status === 'end' && item.type === 'bpmn:UserTask')
+            .sort((a, b) => new Date(b.endedAt ?? 0).getTime() - new Date(a.endedAt ?? 0).getTime())
+            .slice(0, limit)
+            .map(asTask);
+    }
+
     /** One task, with its instance's data and its form. */
     async get(user: SecureUser, id: string) {
         const item = await this.find(id, user);
@@ -151,7 +163,7 @@ export class TaskOperations {
                 forms.set(event.modelName, await this.server.definitions.load(event.modelName).catch(() => null));
             const definition = forms.get(event.modelName);
             if (!definition) continue;
-            starts.push({ processName: event.modelName, startNodeId: event.elementId, name: event.name ?? event.elementId, documentation: event.documentation, form: formOf(definition, event.elementId) });
+            starts.push({ processName: event.modelName, startNodeId: event.elementId, name: event.name || event.elementId, documentation: event.documentation, form: formOf(definition, event.elementId) });
         }
         return starts.sort((a, b) => a.processName.localeCompare(b.processName) || a.startNodeId.localeCompare(b.startNodeId));
     }

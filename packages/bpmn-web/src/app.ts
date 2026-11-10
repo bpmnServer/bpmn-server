@@ -235,6 +235,8 @@ export class WebApp {
 		const { api = true, ui = true } = this.application;
 		// the application's routes first, then the API routers: the UI router at '/' requires a session
 		// for every path it sees, which would send API-key callers to /login.
+		// for what has the request but not the server (signing out revokes the pages' token: routes/api/pageClient.ts)
+		this.app.set('bpmnServer', this.bpmnServer);
 		this.application.routes?.(this.app, this);
 		// where an AI agent given this site's address starts; no sign-in
 		this.app.get('/llms.txt', (req, res, next) => siteGuide(this, req).then(text => res.type('text/markdown').send(text), next));

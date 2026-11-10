@@ -36,7 +36,7 @@ export function openApiV3(origin: string) {
                 requestBody: body({ type: 'object', properties: { data, startNodeId: { type: 'string' } } }),
                 responses: { 201: answer('The instance, and this user\'s first task in it', { type: 'object', properties: { instance: ref('Instance'), task: { oneOf: [ref('Task'), { type: 'null' }] } } }), ...errors(400, 401, 404) },
             } },
-            '/tasks': { get: { operationId: 'listTasks', summary: 'The waiting tasks this user has a part in, oldest first', parameters: page, responses: { 200: answer('A page', list(ref('Task'))), ...errors(400, 401) } } },
+            '/tasks': { get: { operationId: 'listTasks', summary: 'The waiting tasks this user has a part in, oldest first; with status=completed, the ones they completed, newest first', parameters: [...page, { name: 'status', in: 'query', schema: { enum: ['waiting', 'completed'] }, description: 'completed: the latest this user completed (limit, default 10)' }], responses: { 200: answer('A page', list(ref('Task'))), ...errors(400, 401) } } },
             '/tasks/{id}': { get: { operationId: 'getTask', summary: 'One task, with its instance\'s data and its form', parameters: [id('id', 'The task')], responses: { 200: answer('The task', ref('TaskWithForm')), ...errors(401, 404) } } },
             '/tasks/{id}/claim': { post: { operationId: 'claimTask', summary: 'The task becomes this user\'s', parameters: [id('id', 'The task')], responses: { 200: answer('The task', { type: 'object', properties: { task: ref('Task') } }), ...errors(401, 404, 409) } } },
             '/tasks/{id}/complete': { post: {

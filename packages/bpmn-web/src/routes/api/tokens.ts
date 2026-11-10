@@ -67,6 +67,11 @@ export class Tokens {
         return { userName, groups, issuedBy, issuedAt, expiresAt };
     }
 
+    /** This token goes (a page's, when its person signs out). */
+    async revokeToken(token: string): Promise<void> {
+        if (typeof token === 'string') await this.store.remove(this.database, COLLECTION, { hash: hash(token) });
+    }
+
     /** Every token of this user goes: they signed out, were disabled, or asked. How many went. */
     async revoke(userName: string): Promise<number> {
         return (await this.store.remove(this.database, COLLECTION, { userName })).deletedCount;
