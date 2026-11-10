@@ -108,8 +108,15 @@ A header naming a user is never trusted. How an application uses it:
 | `POST /api/v3/tokens` | Service key only. Body `{ userName, groups, minutes }`: a token for that user, for `minutes` (default 15, at most 1440). `groups` can not have `SYSTEM`, `ADMIN` or `DESIGNER`. | 201 `{ token, expiresAt, userName, groups }`, 400, 403 |
 | `DELETE /api/v3/tokens?userName=` | Service key only. Revokes every token of that user, at once. | 200 `{ revoked }` |
 | `GET /api/v3/me` | Who this call acts as, and what they may do. | 200 `{ userName, groups, credential, may: { start, design, administer } }` |
+| `GET /api/v3/processes/startable` | The start events this user may use (their lanes, candidate users and groups decide), each with its form. | 200 `{ items: [{ processName, startNodeId, name, documentation, form }] }` |
+| `POST /api/v3/processes/{name}/start` | Body `{ data, startNodeId }` (both optional). Starts the process as this user. | 201 `{ instance, task }` (`task`: their first waiting task in it, or `null`), 400, 404 `NOT_STARTABLE` |
+| `GET /api/v3/tasks?limit=&cursor=` | The waiting user tasks this user has a part in, oldest first. `limit` 1 to 200, default 50; `cursor` is a page's `next`. | 200 `{ items, next }` (`next` absent on the last page), 400 |
+| `GET /api/v3/tasks/{id}` | One task, with its instance's data and its form: `form: { fields, formKey }`. | 200, 404 |
+| `POST /api/v3/tasks/{id}/claim` | The task becomes this user's. | 200 `{ task }`, 404, 409 |
+| `POST /api/v3/tasks/{id}/complete` | Body `{ data }`. Completes it, recording this user. | 200 `{ task, instance }`, 400, 403, 404, 409 |
 
 A token is random; the server keeps only its SHA-256 (in `wf_tokens`), so a token can not be read back, and it holds
 across a restart and for every server on the same database. Errors are `{ error: { code, message } }` with a real
 status: `UNAUTHORIZED`, `TOKEN_INVALID` (unknown, expired or revoked), `SERVICE_KEY_REQUIRED`, `GROUP_REFUSED`,
-`BAD_USER`, `BAD_GROUPS`, `BAD_MINUTES`. The processes, tasks and models follow on v3 in 3.7.
+`BAD_USER`, `BAD_GROUPS`, `BAD_MINUTES`, and the task API's codes (`TASK_NOT_FOUND`, `TASK_ASSIGNED`, `ITEM_NOT_WAITING`,
+`NOT_STARTABLE`, `BAD_DATA`, `BAD_LIMIT`, `BAD_CURSOR`, `INSTANCE_BUSY`). Instances and models follow on v3 in 3.7.

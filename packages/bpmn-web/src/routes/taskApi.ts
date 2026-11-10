@@ -1,184 +1,53 @@
 import express from 'express';
-import { BPMNAPI, SecureUser } from '../index.js';
 import { door } from './api/door.js';
-import { notATest } from '../testing/scenarios.js';
+import { TaskOperations, TaskError, DEFAULT_LIMIT } from './api/tasks.js';
 
 /*
- * The task API (/api2/tasks): an application lists, claims and completes tasks for its users, whom it has authenticated itself.
- * Off unless API_ACTING_USER_KEY is set; that key opens these routes and no other, and API_KEY does not open these.
- * A user has a part in a task when they are its assignee, a candidate, in a candidate group, or the task has no assignment.
- * Without one, or with no such task, the answer is the same 404, so an id can not be probed.
- * See docs/docs/application-integration-design.md, section 5.1. The engine is not changed: it holds the rule for who may
- * see an item and the check that an item still waits, under the instance's lock; the assignee's rule is here.
+ * The task API (/api2/tasks): an application lists, claims and completes tasks for its users, whom it has authenticated
+ * itself, and starts processes for them. Off unless API_ACTING_USER_KEY is set; that key opens these routes and no
+ * other, and API_KEY does not open these. The operations are routes/api/tasks.ts's (v3 has them too); this is their v2
+ * mapping: `after` for a page's bookmark, answers as they were, errors as { errors, code }.
  */
 
-const DEFAULT_LIMIT = 50, MAX_LIMIT = 200;
-
-/** An answer with a real status. */
-class TaskError extends Error {
-    constructor(readonly status: number, message: string, readonly code: string) {
-        super(message);
-    }
-}
-const notFound = () => new TaskError(404, 'No such task', 'TASK_NOT_FOUND');
-
-const toList = (value): string[] => Array.isArray(value) ? value : typeof value === 'string' && value.trim() ? value.split(',').map(v => v.trim()) : [];
-
-function hasPart(item, user: SecureUser): boolean {
-    const users = toList(item.candidateUsers), groups = toList(item.candidateGroups);
-    if (!item.assignee && !users.length && !groups.length) return true;
-    return item.assignee === user.userName || users.includes(user.userName) || groups.some(group => user.userGroups.includes(group));
-}
-
-/** What an application sees of a task: not the engine's own fields. */
-function asTask(item) {
-    const { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, userName } = item;
-    return { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, completedBy: endedAt ? userName : undefined };
-}
-
-/** A form field as the model has it (camunda:formField), as plain JSON: its options and validation too. */
-function asField(field) {
-    const children = field.$children ?? [];
-    const values = field.values ?? children.filter(c => c.$type === 'camunda:value');
-    const validation = field.validation?.constraints ?? children.filter(c => c.$type === 'camunda:validation').flatMap(v => v.$children ?? []);
-    return {
-        id: field.id, label: field.label ?? field.id, type: field.type, defaultValue: field.defaultValue,
-        ...(values.length ? { values: values.map(v => ({ id: v.id, name: v.name ?? v.id })) } : {}),
-        ...(validation.length ? { validation: validation.map(c => ({ name: c.name, config: c.config })) } : {}),
-    };
-}
-
-/** An element's form: its fields, and the application's own form when the model names one (formKey). */
-function formOf(definition, elementId: string) {
-    const { node, fields, formKey } = definition.getNodeInfo(elementId);
-    return node ? { fields: (fields ?? []).map(asField), formKey } : { fields: [] };
-}
-
-/** Where a task is in the list, by when it started: the list's `next`, and a call's `after`. */
-const position = item => `${new Date(item.startedAt ?? 0).getTime()}_${item.id}`;
-function isAfter(item, after: string) {
-    const [time, id] = [Number(after.slice(0, after.indexOf('_'))), after.slice(after.indexOf('_') + 1)];
-    const itemTime = new Date(item.startedAt ?? 0).getTime();
-    return itemTime > time || (itemTime === time && item.id > id);
+/** An error as v2 answers it: its status, { errors, code }. */
+export function v2TaskError(error): [number, object] {
+    if (error instanceof TaskError)
+        return [error.status, { errors: error.message, code: error.code }];
+    // the engine's own check, under the instance's lock: another call got there first
+    if (error?.code === 'ITEM_NOT_WAITING')
+        return [409, { errors: error.message, code: error.code }];
+    if (/^failed to lock instance/.test(error?.message ?? ''))
+        return [503, { errors: 'The instance is busy: try again', code: 'INSTANCE_BUSY' }];
+    console.error('task API:', error);
+    return [500, { errors: String(error?.message ?? error), code: 'TASK_FAILED' }];
 }
 
 export function taskApi(server) {
     const router = express.Router();
-    const api = new BPMNAPI(server);
+    const tasks = new TaskOperations(server);
 
     // who calls: the acting-user key, then the user it speaks for (routes/api/door.ts, way acting)
     router.use(door('acting'));
 
-    /** The task this user has a part in, or the same 404. */
-    async function findTask(id: string, user: SecureUser) {
-        const [item] = await api.data.findItems({ 'items.id': id, ...notATest }, user);
-        if (!item || item.type !== 'bpmn:UserTask' || !hasPart(item, user))
-            throw notFound();
-        return item;
-    }
-    const assertWaiting = item => {
-        if (item.status !== 'wait')
-            throw new TaskError(409, `Task ${item.id} is not waiting (it is ${item.status})`, 'ITEM_NOT_WAITING');
-    };
     const handler = fn => async (req, res) => {
         try {
             res.json(await fn(req, req.apiUser));
         }
         catch (error) {
-            if (error instanceof TaskError)
-                return res.status(error.status).json({ errors: error.message, code: error.code });
-            // the engine's own check, under the instance's lock: another call got there first
-            if (error?.code === 'ITEM_NOT_WAITING')
-                return res.status(409).json({ errors: error.message, code: error.code });
-            if (/^failed to lock instance/.test(error?.message ?? ''))
-                return res.status(503).json({ errors: 'The instance is busy: try again', code: 'INSTANCE_BUSY' });
-            console.error('task API:', error);
-            res.status(500).json({ errors: String(error?.message ?? error), code: 'TASK_FAILED' });
+            const [status, body] = v2TaskError(error);
+            res.status(status).json(body);
         }
     };
 
-    router.get('/', handler(async (req, user) => {
-        const limit = req.query.limit === undefined ? DEFAULT_LIMIT : Number(req.query.limit);
-        if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
-            throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
-        const after = req.query.after;
-        if (after !== undefined && !/^\d+_./.test(String(after)))
-            throw new TaskError(400, 'after is a list\'s next', 'BAD_AFTER');
-        const waiting = (await api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest }, user))
-            .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && hasPart(item, user) && (after === undefined || isAfter(item, String(after))))
-            .sort((a, b) => new Date(a.startedAt ?? 0).getTime() - new Date(b.startedAt ?? 0).getTime() || (a.id < b.id ? -1 : 1));
-        const page = waiting.slice(0, limit);
-        return { tasks: page.map(asTask), next: waiting.length > limit ? position(page.at(-1)) : null };
-    }));
-
+    router.get('/', handler((req, user) => tasks.list(user, {
+        limit: req.query.limit === undefined ? DEFAULT_LIMIT : Number(req.query.limit),
+        after: req.query.after,
+    })));
     // start a process as the acting user, at a start event they may use; the instance, and their first task in it
-    router.post('/start/:name', handler(async (req, user) => {
-        const { name } = req.params;
-        const data = req.body?.data ?? {};
-        if (typeof data !== 'object' || Array.isArray(data))
-            throw new TaskError(400, 'data is an object', 'BAD_DATA');
-        const starts = (await api.model.findStartEvents({}, user)).filter(event => event.modelName === name);
-        const startNodeId = req.body?.startNodeId;
-        const start = startNodeId ? starts.find(event => event.elementId === startNodeId) : starts[0];
-        if (!start)
-            throw new TaskError(404, `No process ${name} that this user may start${startNodeId ? ` at ${startNodeId}` : ''}`, 'NOT_STARTABLE');
-        const { instance } = await api.engine.start(name, data, user, { startNodeId: start.elementId });
-        const first = instance.items
-            .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && hasPart(item, user))
-            .map(item => asTask({ ...item, instanceId: instance.id, processName: instance.name }))[0];
-        return {
-            instance: { id: instance.id, name: instance.name, status: instance.status, data: instance.data },
-            task: first ?? null,
-        };
-    }));
-
-    router.get('/:id', handler(async (req, user) => {
-        const item = await findTask(req.params.id, user);
-        const definition = await server.definitions.load(item.processName).catch(() => null);
-        return { ...asTask(item), data: (item as any).instanceData, form: definition ? formOf(definition, item.elementId) : { fields: [] } };
-    }));
-
-    router.post('/:id/claim', handler(async (req, user) => {
-        const { id } = req.params;
-        const item = await findTask(id, user);
-        assertWaiting(item);
-        if (item.assignee === user.userName)
-            return { task: asTask(item) };
-        if (item.assignee)
-            throw new TaskError(409, 'The task is assigned to someone else', 'TASK_ASSIGNED');
-        // the check and the assignment are one step: two claims at the same moment can not both win
-        const key = `task:${id}`;
-        if (!await server.dataStore.locker.claim(key))
-            throw new TaskError(409, 'The task is being claimed', 'TASK_ASSIGNED');
-        try {
-            const current = await findTask(id, user);
-            assertWaiting(current);
-            if (current.assignee && current.assignee !== user.userName)
-                throw new TaskError(409, 'The task is assigned to someone else', 'TASK_ASSIGNED');
-            await api.engine.assign({ id: item.instanceId, 'items.id': id }, {}, { assignee: user.userName }, user);
-            return { task: asTask(await findTask(id, user)) };
-        }
-        finally {
-            await server.dataStore.locker.release(`claim:${key}`);
-        }
-    }));
-
-    router.post('/:id/complete', handler(async (req, user) => {
-        const { id } = req.params;
-        const data = req.body?.data ?? {};
-        if (typeof data !== 'object' || Array.isArray(data))
-            throw new TaskError(400, 'data is an object', 'BAD_DATA');
-        const item = await findTask(id, user);
-        assertWaiting(item);
-        if (item.assignee && item.assignee !== user.userName)
-            throw new TaskError(403, 'The task is assigned to someone else', 'TASK_ASSIGNED');
-        const { instance } = await api.engine.invoke({ id: item.instanceId, 'items.id': id }, data, user);
-        const done = instance.items.find(i => i.id === id);
-        return {
-            task: asTask({ ...done, instanceId: instance.id, processName: instance.name }),
-            instance: { id: instance.id, name: instance.name, status: instance.status, data: instance.data },
-        };
-    }));
+    router.post('/start/:name', handler((req, user) => tasks.start(user, req.params.name, { data: req.body?.data ?? {}, startNodeId: req.body?.startNodeId })));
+    router.get('/:id', handler((req, user) => tasks.get(user, req.params.id)));
+    router.post('/:id/claim', handler((req, user) => tasks.claim(user, req.params.id)));
+    router.post('/:id/complete', handler((req, user) => tasks.complete(user, req.params.id, req.body?.data ?? {})));
 
     router.use((req, res) => { res.status(404).json({ errors: `No task API route ${req.method} ${req.originalUrl}`, code: 'NO_ROUTE' }); });
     return router;
