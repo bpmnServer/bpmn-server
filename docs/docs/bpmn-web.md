@@ -71,7 +71,7 @@ with random keys and the password, and prints the password; see [Docker](docker.
 ### Command Line Interface
 
 bpmnServer provide some basic functionalities using CLI. In the application's folder run `npm run cli`; in a
-Docker installation it runs in the container: `sh bpmn cli`, `.\bpmn.cmd cli` on Windows, or
+Docker installation it runs in the container: `sh owf cli`, `.\owf.cmd cli` on Windows, or
 `docker compose exec server npm run cli` (see [Docker](docker.md#the-console-cli)).
 
 ```sh

@@ -56,10 +56,10 @@ Re-running `deploy-client.sh` with the same client and port preserves stored dat
 [`install.sh`](install.sh) installs bpmn-server on a new Linux server (Ubuntu 22.04 or 24.04), ready to use:
 
 - Node.js 22 and MongoDB 8;
-- the application `npx bpmn-server init` makes, with its sample models, in `/opt/bpmn/my-app`;
-- run as a service (`bpmn-my-app`), restarted if it stops and when the server starts;
+- the application `npx bpmn-server init` makes, with its sample models, in `/opt/owf/my-app`;
+- run as a service (`owf-my-app`), restarted if it stops and when the server starts;
 - behind nginx on port 80; with a domain, HTTPS from Let's Encrypt as soon as the domain points at the server;
-- an `admin` user with a generated password, shown at the end (and kept in `/opt/bpmn/admin-password.txt`,
+- an `admin` user with a generated password, shown at the end (and kept in `/opt/owf/admin-password.txt`,
   readable by root only).
 
 A 2 GB server is enough for a start (MongoDB and Node.js together need more than 1 GB).
@@ -95,7 +95,7 @@ Cloud providers run a script you give them on the server's first start. Paste th
 - **AWS EC2:** Advanced details, User data. **DigitalOcean:** Advanced options, Add initialization scripts.
 
 The install runs in the background; it is done when `http://<the server's address>/` shows the sign-in page.
-The admin password is on the server: `sudo cat /opt/bpmn/admin-password.txt`.
+The admin password is on the server: `sudo cat /opt/owf/admin-password.txt`.
 
 ## Options
 
@@ -104,10 +104,10 @@ The admin password is on the server: `sudo cat /opt/bpmn/admin-password.txt`.
 | `--domain <name>` | `DOMAIN` | the site's name, for HTTPS once its DNS points at the server |
 | `--email <address>` | `EMAIL` | where Let's Encrypt sends notices about the certificate |
 | `--admin-password <password>` | `ADMIN_PASSWORD` | the admin's first password; default: generated |
-| `--app <name>` | `APP_NAME` | the application's folder (`/opt/bpmn/<name>`) and database; default `my-app` |
+| `--app <name>` | `APP_NAME` | the application's folder (`/opt/owf/<name>`) and database; default `my-app` |
 | `--version <version>` | `BPMN_VERSION` | the bpmn-server version whose `init` makes the application; default `latest` |
 | `--port <port>` | `PORT` | the application's own port, behind nginx; default `3000` |
-| `--dir <path>` | `BPMN_DIR` | where the application's folder is made; default `/opt/bpmn` |
+| `--dir <path>` | `BPMN_DIR` | where the application's folder is made; default `/opt/owf` |
 | `--access <user>` | `ACCESS_USER` | who may edit its files; default: the user running `sudo`, else `ubuntu`; `none`: nobody |
 | `--mode development\|production` | `INSTALL_MODE` | native service mode; defaults to production |
 | `--interactive` / `--yes` | | show or skip setup prompts |
@@ -115,58 +115,60 @@ The admin password is on the server: `sudo cat /opt/bpmn/admin-password.txt`.
 Run it again at any time: what is there is kept (the application, its data, its `.env`, the admin password),
 and the packages, the service and nginx are set up as above.
 
-### Native `bpmn` command reference
+### Native `owf` command reference
 
-After installation, run `bpmn` with no arguments to see the management commands:
+After installation, run `owf` with no arguments to see the management commands. (Before 3.7 it was named `bpmn`, and an
+install made then keeps its `bpmn` names, `/opt/bpmn` and the service `bpmn-<app>`, when the installer runs again; `bpmn` stays
+another name for the command until 4.0.)
 
 ```text
-$ bpmn
-bpmn: the bpmn-server application in /opt/bpmn/my-app (the service bpmn-my-app)
+$ owf
+owf: the BPMN Server application in /opt/owf/my-app (the service owf-my-app); bpmn is another name for it
 
-  bpmn status                   the app, MongoDB and nginx; its address
-  bpmn logs                     its log, live (Ctrl+C); bpmn logs -n 200, bpmn logs --since "1 hour ago", bpmn logs -p err
-  bpmn monitor                  a live view: status, CPU and memory, the last log lines
-  bpmn restart | stop | start
-  bpmn update                   the newest bpmn-server and bpmn-web, then a restart
-  bpmn env                      edit its .env, then a restart
-  bpmn cli [command ...]        its console (npm run cli); with a command, just that: bpmn cli cod asana
-  bpmn domain <name> [email]    the site's domain name, and HTTPS for it once its DNS points here
-  bpmn https                    HTTPS now (or why not yet)
-  bpmn access <user>            let a user edit the application's files (the group bpmn)
-  bpmn password                 the first admin password (until it is changed)
+  owf status                   the app, MongoDB and nginx; its address
+  owf logs                     its log, live (Ctrl+C); owf logs -n 200, owf logs --since "1 hour ago", owf logs -p err
+  owf monitor                  a live view: status, CPU and memory, the last log lines
+  owf restart | stop | start
+  owf update                   the newest bpmn-server and bpmn-web, then a restart
+  owf env                      edit its .env, then a restart
+  owf cli [command ...]        its console (npm run cli); with a command, just that: owf cli cod asana
+  owf domain <name> [email]    the site's domain name, and HTTPS for it once its DNS points here
+  owf https                    HTTPS now (or why not yet)
+  owf access <user>            let a user edit the application's files (the group owf)
+  owf password                 the first admin password (until it is changed)
 ```
 
-These commands operate the **native systemd installation**, not Docker. `bpmn env` edits the application settings and restarts the service. The password shown by `bpmn password` is the initial password, not necessarily the current account password.
+These commands operate the **native systemd installation**, not Docker. `owf env` edits the application settings and restarts the service. The password shown by `owf password` is the initial password, not necessarily the current account password.
 
-## On the server, afterwards: the `bpmn` command
+## On the server, afterwards: the `owf` command
 
-The install adds a `bpmn` command for the everyday work (it asks for `sudo` itself where it needs it):
+The install adds a `owf` command for the everyday work (it asks for `sudo` itself where it needs it):
 
 | | |
 |---|---|
-| `bpmn status` | the app, MongoDB and nginx running or not, since when, its memory, its address |
-| `bpmn logs` | its log, live (Ctrl+C to stop); `bpmn logs -n 200`, `bpmn logs --since "1 hour ago"`, `bpmn logs -p err` |
-| `bpmn monitor` | a live view every 3 seconds: status, CPU and memory, the processes, the last log lines |
-| `bpmn restart`, `stop`, `start` | the service |
-| `bpmn update` | the newest bpmn-server and bpmn-web, then a restart |
-| `bpmn env` | edit its `.env`, then a restart |
-| `bpmn cli [command ...]` | its console; with a command and its answers, just that, e.g. `bpmn cli co` (the connectors), `bpmn cli cod asana` (delete one) |
-| `bpmn domain <name> [email]` | the site's domain name, and HTTPS for it (below) |
-| `bpmn https` | HTTPS now, or why not yet |
-| `bpmn access <user>` | let another user edit the application's files |
-| `bpmn password` | the first admin password, as long as it was not changed |
+| `owf status` | the app, MongoDB and nginx running or not, since when, its memory, its address |
+| `owf logs` | its log, live (Ctrl+C to stop); `owf logs -n 200`, `owf logs --since "1 hour ago"`, `owf logs -p err` |
+| `owf monitor` | a live view every 3 seconds: status, CPU and memory, the processes, the last log lines |
+| `owf restart`, `stop`, `start` | the service |
+| `owf update` | the newest bpmn-server and bpmn-web, then a restart |
+| `owf env` | edit its `.env`, then a restart |
+| `owf cli [command ...]` | its console; with a command and its answers, just that, e.g. `owf cli co` (the connectors), `owf cli cod asana` (delete one) |
+| `owf domain <name> [email]` | the site's domain name, and HTTPS for it (below) |
+| `owf https` | HTTPS now, or why not yet |
+| `owf access <user>` | let another user edit the application's files |
+| `owf password` | the first admin password, as long as it was not changed |
 
-They are systemd's own commands underneath (`systemctl status bpmn-my-app`, `journalctl -u bpmn-my-app -f`,
-`systemctl restart bpmn-my-app`): no pm2. systemd restarts the app if it stops and starts it with the server, after
+They are systemd's own commands underneath (`systemctl status owf-my-app`, `journalctl -u owf-my-app -f`,
+`systemctl restart owf-my-app`): no pm2. systemd restarts the app if it stops and starts it with the server, after
 MongoDB; the journal keeps and rotates the logs.
 
 | Where | |
 |---|---|
-| The application | `/opt/bpmn/my-app`: its models in `processes/`, its settings in `.env` |
-| The install log | `sudo less /var/log/bpmn-install.log` |
-| The `bpmn` command's settings | `/etc/bpmn.conf` |
+| The application | `/opt/owf/my-app`: its models in `processes/`, its settings in `.env` |
+| The install log | `sudo less /var/log/owf-install.log` |
+| The `owf` command's settings | `/etc/owf.conf` |
 | MongoDB, nginx | `journalctl -u mongod`, `sudo tail -f /var/log/nginx/error.log` |
-| The console | `cd /opt/bpmn/my-app && sudo -u bpmn npm run cli` |
+| The console | `cd /opt/owf/my-app && sudo -u owf npm run cli` |
 
 ### Development versus production
 
@@ -182,12 +184,12 @@ sudo bash install.sh --interactive
 For a noninteractive local install, pass `--mode development --yes`. Lightsail launch scripts continue to default to production. If the app is already installed, do not rerun the installer solely to change the mode; override `NODE_ENV` in its systemd unit:
 
 ```sh
-sudo systemctl edit bpmn-my-app
+sudo systemctl edit owf-my-app
 # Add:
 # [Service]
 # Environment=NODE_ENV=development
 sudo systemctl daemon-reload
-sudo systemctl restart bpmn-my-app
+sudo systemctl restart owf-my-app
 ```
 
 `REQUIRE_AUTHENTICATION=false` can be used for trusted local development only. Note that the application might still listen directly on port 3000, even when nginx is loopback-only; use a firewall or bind the app to localhost to prevent network exposure. Development mode must not be used on publicly accessible hosts.
@@ -201,43 +203,43 @@ curl -fLo install.sh https://raw.githubusercontent.com/bpmnServer/bpmn-server/ma
 sudo bash install.sh --interactive
 ```
 
-The installer prompts for application name, version, port, directory, access user, and optional domain/email. Use `--yes` for unattended installs. It creates or reuses the `bpmn` group, adds the selected user, sets application directory group access, and checks read/write permissions. Existing installations are preserved.
+The installer prompts for application name, version, port, directory, access user, and optional domain/email. Use `--yes` for unattended installs. It creates or reuses the `owf` group, adds the selected user, sets application directory group access, and checks read/write permissions. Existing installations are preserved.
 
-After installation, **log out and back in** to refresh your group membership, or run `newgrp bpmn` as your regular user. Verify access:
+After installation, **log out and back in** to refresh your group membership, or run `newgrp owf` as your regular user. Verify access:
 
 ```sh
 id -nG
-ls -ld /opt/bpmn /opt/bpmn/my-app
-cd /opt/bpmn/my-app
+ls -ld /opt/owf /opt/owf/my-app
+cd /opt/owf/my-app
 ```
 
-If a previous installation did not grant access, run `sudo bpmn access "$USER"` and log in again. The password file `/opt/bpmn/admin-password.txt` remains root-only.
+If a previous installation did not grant access, run `sudo owf access "$USER"` and log in again. The password file `/opt/owf/admin-password.txt` remains root-only.
 
 ### Who may edit its files
 
-The application runs as its own user, `bpmn`, not root and not you: a break-in through the app reaches its files
-only. Its files belong to the group `bpmn` too, and the user who ran the install (with `sudo`, or `ubuntu` on a cloud
+The application runs as its own user, `owf`, not root and not you: a break-in through the app reaches its files
+only. Its files belong to the group `owf` too, and the user who ran the install (with `sudo`, or `ubuntu` on a cloud
 image) is put in that group: you edit the models and `.env` as yourself, without `sudo`. It takes effect from your
-next sign-in (or now: `newgrp bpmn`).
+next sign-in (or now: `newgrp owf`).
 
 ```sh
-bpmn access alice        # another user, the same way (sudo usermod -aG bpmn alice)
+owf access alice        # another user, the same way (sudo usermod -aG owf alice)
 ```
 
 ### A domain name and HTTPS
 
-1. At your domain's DNS, add an **A record**: the name (`bpmn.example.com`) → the server's address (`bpmn status`
+1. At your domain's DNS, add an **A record**: the name (`bpmn.example.com`) → the server's address (`owf status`
    shows it; on Lightsail, attach a static IP first, or the address changes when the instance stops).
 2. Open port **443**: on Lightsail, the instance's Networking tab, add HTTPS.
 3. On the server:
 
    ```sh
-   bpmn domain bpmn.example.com you@example.com
+   owf domain bpmn.example.com you@example.com
    ```
 
 It gets a certificate from Let's Encrypt (certbot) as soon as the name points at the server, checking every 5
 minutes until it does, then sends http to https and marks the app's cookies Secure. certbot renews the certificate
-by itself. `bpmn https` says where it stands. The same with `--domain` and `--email` at install.
+by itself. `owf https` says where it stands. The same with `--domain` and `--email` at install.
 
 ### Keeping the models in Git
 
@@ -245,7 +247,7 @@ Git is installed. The models are files in `processes/` (with their tests, `*.tes
 and the test runs (`.runs/`) are best left out:
 
 ```sh
-cd /opt/bpmn/my-app/processes
+cd /opt/owf/my-app/processes
 git init && printf '.history/
 .runs/
 ' > .gitignore
@@ -254,7 +256,7 @@ git remote add origin git@github.com:you/models.git && git push -u origin main
 ```
 
 Or the other way, models kept in a repository elsewhere: clone it into `processes/` before the first start, or pull
-into it and restart (`git pull && bpmn restart`).
+into it and restart (`git pull && owf restart`).
 
 ### A firewall on the server
 
@@ -273,7 +275,7 @@ waits until the application answers, and prints the address and the admin passwo
 ./deploy/lightsail/create-lightsail.sh                                  # the 2 GB size, the CLI's region
 ./deploy/lightsail/create-lightsail.sh --domain bpmn.example.com --email you@example.com
 ./deploy/lightsail/create-lightsail.sh --bundle medium_3_0 --region eu-west-2
-./deploy/lightsail/create-lightsail.sh --access ubuntu                    # editable /opt/bpmn/my-app
+./deploy/lightsail/create-lightsail.sh --access ubuntu                    # editable /opt/owf/my-app
 ./deploy/lightsail/create-lightsail.sh --delete                         # the instance and its static IP
 ```
 
@@ -282,16 +284,16 @@ monthly; `--delete` stops it.
 
 ### Lightsail file access
 
-The Lightsail launcher now passes `ACCESS_USER=ubuntu` by default to the remote native installer. It adds that user to group `bpmn`, checks access to `/opt/bpmn/my-app`, and preserves the system service account `bpmn` as owner. Use `--access <username>` for a different existing Linux account, or `--access none` to disable user access. It does not create that Linux account.
+The Lightsail launcher now passes `ACCESS_USER=ubuntu` by default to the remote native installer. It adds that user to group `owf`, checks access to `/opt/owf/my-app`, and preserves the system service account `owf` as owner. Use `--access <username>` for a different existing Linux account, or `--access none` to disable user access. It does not create that Linux account.
 
-After connecting through Lightsail SSH, reconnect or run `newgrp bpmn` to pick up the new group membership. Then `cd /opt/bpmn/my-app` should work without `sudo`.
+After connecting through Lightsail SSH, reconnect or run `newgrp owf` to pick up the new group membership. Then `cd /opt/owf/my-app` should work without `sudo`.
 
 For an **existing** Lightsail server, changing `create-lightsail.sh` doesn't retroactively change its permissions. On the instance run:
 
 ```sh
-sudo bpmn access ubuntu
-newgrp bpmn
-cd /opt/bpmn/my-app
+sudo owf access ubuntu
+newgrp owf
+cd /opt/owf/my-app
 ```
 
 Use the instance's actual login name instead of `ubuntu` if different. Cloud launch scripts remain noninteractive so instance creation cannot hang waiting for input.

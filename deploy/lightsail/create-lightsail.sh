@@ -32,7 +32,7 @@ Options:
   --region <region>      an AWS region (us-east-1, eu-west-2, ...)             default: the CLI's region
   --bundle <id>          the size (aws lightsail get-bundles)                  default $BUNDLE
   --app <name>           the application's folder and database                default $APP_NAME
-  --access <user>        grant local folder access through group bpmn          default $ACCESS_USER (none to skip)
+  --access <user>        grant local folder access through group owf           default $ACCESS_USER (none to skip)
   --version <version>    the bpmn-server version whose init makes the app      default $BPMN_VERSION
   --domain <name>        the site's domain: HTTPS once its DNS points at the static IP
   --email <address>      for Let's Encrypt's notices (with --domain)
@@ -121,7 +121,7 @@ until [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://$IP/login
     if [ "$(date +%s)" -gt "$deadline" ]; then
         echo
         echo "No answer after $WAIT_MINUTES minutes. On the instance (Lightsail console, Connect using SSH):"
-        echo "  sudo tail -50 /var/log/bpmn-install.log; journalctl -u bpmn-$APP_NAME"
+        echo "  sudo tail -50 /var/log/owf-install.log; journalctl -u owf-$APP_NAME"
         exit 1
     fi
     printf '.'; sleep 15
@@ -135,10 +135,10 @@ bpmn-server is ready:
   sign in as admin, password $ADMIN_PASSWORD   (change it: your profile, top right)
 
 On the instance (Lightsail console: https://lightsail.aws.amazon.com/ls/webapp/$REGION/instances/$NAME/connect):
-  the application  /opt/bpmn/$APP_NAME   (its models: processes/; settings: .env)
-  folder access     $ACCESS_USER (bpmn group; reconnect SSH or run newgrp bpmn)
-  the service      sudo systemctl restart bpmn-$APP_NAME ; journalctl -u bpmn-$APP_NAME -f
-  the install log  /var/log/bpmn-install.log
+  the application  /opt/owf/$APP_NAME   (its models: processes/; settings: .env)
+  folder access     $ACCESS_USER (owf group; reconnect SSH or run newgrp owf)
+  the service      sudo systemctl restart owf-$APP_NAME ; journalctl -u owf-$APP_NAME -f
+  the install log  /var/log/owf-install.log
 
 Delete it all:  $0 --name $NAME --region $REGION --delete
 EOF

@@ -47,7 +47,7 @@ For an installation using overlays, pass them to the check in the same order as 
 sh status.sh -f docker-compose.yml -f docker-compose.build.yml
 ```
 
-If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 server`. With memory mode, check for missing Linux libraries (such as `libcurl.so.4`) or MongoDB binary download failures. Use `sh up.sh` to apply the saved image/database mode. On Windows, `up.cmd` starts Compose without the readiness check; `.\bpmn.cmd status` shows the container and the HTTP status.
+If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 server`. With memory mode, check for missing Linux libraries (such as `libcurl.so.4`) or MongoDB binary download failures. Use `sh up.sh` to apply the saved image/database mode. On Windows, `up.cmd` starts Compose without the readiness check; `.\owf.cmd status` shows the container and the HTTP status.
 
 ## .env and database
 
@@ -67,34 +67,35 @@ For persistent MongoDB, setup uses `docker-compose.mongo.yml` and sets `MONGO_DB
 
 ## Docker management command
 
-The Docker distribution provides a `bpmn` command for the most common operations. In your installation directory, download the command once:
+The Docker distribution provides an `owf` command for the most common operations (named `bpmn` before 3.7; the old
+name still works until 4.0). In your installation directory, download the command once:
 
 ```sh
-curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn
-sh bpmn help
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/owf
+sh owf help
 ```
 
 ```text
-bpmn status                 Container state, port and HTTP status
-bpmn logs [options]         Follow logs or show a snapshot (--tail=100)
-bpmn monitor                Live container stats and recent logs
-bpmn start | stop | restart Start, stop, or recreate containers
-bpmn update                 Pull or rebuild the configured image
-bpmn env                    Edit local .env and optionally apply
-bpmn cli [arguments]        Invoke the application console
-bpmn password               Show the initial admin password
-bpmn setup                  Configure the installation
+owf status                 Container state, port and HTTP status
+owf logs [options]         Follow logs or show a snapshot (--tail=100)
+owf monitor                Live container stats and recent logs
+owf start | stop | restart Start, stop, or recreate containers
+owf update                 Pull or rebuild the configured image
+owf env                    Edit local .env and optionally apply
+owf cli [arguments]        Invoke the application console
+owf password               Show the initial admin password
+owf setup                  Configure the installation
 ```
 
-For a global command, download `install-cli.sh` from the same folder and run `sudo sh install-cli.sh`. If native `bpmn` is already installed, the helper installs `bpmn-docker` instead. Native-only commands (`domain`, `https`, `access`) are managed outside Docker.
+For a global command, download `install-cli.sh` from the same folder and run `sudo sh install-cli.sh`. If native `owf` is already installed, the helper installs `owf-docker` instead. Native-only commands (`domain`, `https`, `access`) are managed outside Docker.
 
-On Windows, `bpmn.cmd` has the same commands in PowerShell or `cmd`, without WSL. It runs `bpmn.ps1`, so download both:
+On Windows, `owf.cmd` has the same commands in PowerShell or `cmd`, without WSL. It runs `owf.ps1`, so download both:
 
 ```powershell
-curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn.cmd
-curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn.ps1
-.\bpmn.cmd status
-.\bpmn.cmd password
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/owf.cmd
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/owf.ps1
+.\owf.cmd status
+.\owf.cmd password
 ```
 
 ## The console (CLI)
@@ -102,12 +103,12 @@ curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/dock
 The console runs inside the server container. From the installation folder:
 
 ```sh
-sh bpmn cli                                  # Linux, macOS, WSL
-.\bpmn.cmd cli                               # Windows
-docker compose exec server npm run cli       # either, without the bpmn command
+sh owf cli                                  # Linux, macOS, WSL
+.\owf.cmd cli                               # Windows
+docker compose exec server npm run cli       # either, without the owf command
 ```
 
-A command after it runs just that and quits: `bpmn cli co` lists the connectors, `bpmn cli lm` the models
+A command after it runs just that and quits: `owf cli co` lists the connectors, `owf cli lm` the models
 (see [Advanced Topics](advanced.md)). In memory mode the console is a separate process with its own empty
 database: it does not see the running server's users or instances. Use MongoDB for that.
 

@@ -14,6 +14,13 @@ and here
 -->
 
 ## [Unreleased]
+### Changed
+- **On a server, the names are `owf`**: the command (`owf status`, `owf logs`, `owf password`, ...), a native install's
+  folder (`/opt/owf/<app>`), its service (`owf-<app>`), user and group (`owf`), `/etc/owf.conf` and `/var/log/owf-install.log`;
+  the Docker installation's command (`owf`, `owf.cmd`, `owf.ps1`). The npm packages, the Docker image
+  (`bpmnserver/bpmn-server`) and the `BPMN_` settings keep their names. An install made before keeps its `bpmn` names
+  when `install.sh` runs again, so nothing that runs moves; `bpmn` stays another name for the command, and the Docker
+  folder's `bpmn`, `bpmn.cmd` and `bpmn.ps1` run `owf` (downloading it the first time), until 4.0.
 
 ## Release 3.6.0 (2026-11-10)
 ### Added

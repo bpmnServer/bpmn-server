@@ -31,7 +31,7 @@ Enter Command, q to quit, or ? to list commands
 ### One command, from the command line
 
 A command after `--`, with the answers to its questions, runs just that and quits: for scripts, and for a server
-(on one made by the installer, `bpmn cli ...` does the same). A yes/no question it does not answer is yes.
+(on one made by the installer, `owf cli ...` does the same). A yes/no question it does not answer is yes.
 
 ```sh
 npm run cli -- lm                 # the models
