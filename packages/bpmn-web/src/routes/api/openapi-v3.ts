@@ -136,7 +136,7 @@ export function openApiV3(origin: string) {
             '/tokens': {
                 post: {
                     operationId: 'issueToken', summary: 'A token for one of the application\'s users (the service key)', security: [{ serviceKey: [] }],
-                    requestBody: body({ type: 'object', required: ['userName'], properties: { userName: { type: 'string' }, groups: { type: 'array', items: { type: 'string' } }, minutes: { type: 'number', default: 15, maximum: 1440 } } }, true),
+                    requestBody: body({ type: 'object', required: ['userName'], properties: { userName: { type: 'string' }, groups: { type: 'array', items: { type: 'string' }, description: 'The groups the application gives the user: not SYSTEM, ADMIN or DESIGNER' }, minutes: { type: 'number', default: 15, maximum: 1440 } } }, true),
                     responses: { 201: answer('The token: keep it secret', { type: 'object', properties: { token: { type: 'string' }, expiresAt: { type: 'string', format: 'date-time' }, userName: { type: 'string' }, groups: { type: 'array', items: { type: 'string' } } } }), ...errors(400, 401, 403) },
                 },
                 delete: {

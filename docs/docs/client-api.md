@@ -92,7 +92,7 @@ Anyone holding the key can act as any user, so it belongs on the application's s
 > answers say so (`Deprecation`, and a `Link` to the API's document); their documents are `/api/openapi.json` and
 > `/api2/openapi.json`. New work goes to the API, below.
 
-## API v3: user tokens (in progress, 3.7)
+## API v3
 
 `/api/v3` is the API the next versions build on ([its design](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/api-v3.md)).
 Every call acts as one user, and says who in one of two ways:
@@ -109,37 +109,10 @@ A header naming a user is never trusted. How an application uses it:
 3. The application (its back end, or its pages) calls the API with that token, as that user.
 4. When the user signs out, or is disabled, the back end revokes their tokens.
 
-| Call | What it does | Answers |
-|---|---|---|
-| `POST /api/v3/tokens` | Service key only. Body `{ userName, groups, minutes }`: a token for that user, for `minutes` (default 15, at most 1440). `groups` can not have `SYSTEM`, `ADMIN` or `DESIGNER`. | 201 `{ token, expiresAt, userName, groups }`, 400, 403 |
-| `DELETE /api/v3/tokens?userName=` | Service key only. Revokes every token of that user, at once. | 200 `{ revoked }` |
-| `GET /api/v3/me` | Who this call acts as, and what they may do. | 200 `{ userName, groups, credential, may: { start, design, administer } }` |
-| `GET /api/v3/processes/startable` | The start events this user may use (their lanes, candidate users and groups decide), each with its form. | 200 `{ items: [{ processName, startNodeId, name, documentation, form }] }` |
-| `POST /api/v3/processes/{name}/start` | Body `{ data, startNodeId }` (both optional). Starts the process as this user. | 201 `{ instance, task }` (`task`: their first waiting task in it, or `null`), 400, 404 `NOT_STARTABLE` |
-| `GET /api/v3/tasks?limit=&cursor=` | The waiting user tasks this user has a part in, oldest first. `limit` 1 to 200, default 50; `cursor` is a page's `next`. | 200 `{ items, next }` (`next` absent on the last page), 400 |
-| `GET /api/v3/tasks/{id}` | One task, with its instance's data and its form: `form: { fields, formKey }`. | 200, 404 |
-| `POST /api/v3/tasks/{id}/claim` | The task becomes this user's. | 200 `{ task }`, 404, 409 |
-| `POST /api/v3/tasks/{id}/complete` | Body `{ data }`. Completes it, recording this user. | 200 `{ task, instance }`, 400, 403, 404, 409 |
-| `GET /api/v3/instances?status=&name=&limit=&cursor=` | The instances this user may see (the models' rules: an instance with an item they have a part in, or one with no assignment), newest first. | 200 `{ items, next }`, 400 |
-| `GET /api/v3/instances/{id}` | One instance: its data and its items. | 200, 404 `INSTANCE_NOT_FOUND` |
-| `GET /api/v3/instances/{id}/rationale` | Why it went the way it did, step by step: each operation, its outcome, each decision. | 200 `{ id, name, status, data, steps }`, 404 |
-| `POST /api/v3/instances/{id}/events/{elementId}` | Body `{ data }`. A start event of the running instance. | 200 `{ instance }`, 404, 422 `ENGINE_ERROR` |
-| `POST /api/v3/instances/{id}/restart` | Body `{ itemId, data }`. Runs that item again, and the instance on from it. | 200 `{ instance }`, 400, 404, 422 |
-| `DELETE /api/v3/instances/{id}` | Administrators only. | 200 `{ deleted }`, 403 `ADMIN_REQUIRED`, 404 |
-| `GET /api/v3/models`, `GET /api/v3/models/{name}` | The models; one with its BPMN XML, its `.feature`, and where a person opens it. | 200, 404 `MODEL_NOT_FOUND` |
-| `PUT /api/v3/models/{name}` | Design. Body `{ source }`: checked first, refused with its check (`422 MODEL_INVALID`, `details: { errors, warnings }`) unless `?force=true`; laid out when it has no diagram. | 201 created, 200 changed, `{ valid, errors, warnings, laidOut, url }` |
-| `POST /api/v3/models/{name}/verify` | Body `{ source }` (or none: the saved model). The check, without saving. | 200 `{ valid, errors, warnings }` |
-| `GET /api/v3/models/{name}/elements/{id}` | One element: type, name, documentation, lane, assignment, form. | 200, 404 |
-| `GET`, `PUT /api/v3/models/{name}/feature` | Its tests: the `.feature`. Writing is design; `{ text, base }`. | 200, 403, 409 |
-| `POST /api/v3/models/{name}/test` | Design. Runs its tests (or `{ source }`, a `.feature` not saved). | 200 `{ passed, failed, skipped, scenarios }` |
-| `POST /api/v3/models/{name}/rename`, `DELETE /api/v3/models/{name}` | Design. | 200, 404, 409 |
-| `GET`, `POST /api/v3/users`; `PUT /api/v3/users/{name}/groups`; `POST /api/v3/users/{name}/password`; `DELETE /api/v3/users/{name}` | Administrators (their own token) or the service key; never an AI link. Changing a user's groups or deleting them ends their tokens. | 200, 201, 400, 403, 404, 409 |
-| `GET /api/v3/settings`, `GET /api/v3/settings/schema`, `POST /api/v3/settings/checks/{name}` | Administrators, or an AI link at the administer level: every setting with its value (secrets as `***`) and source; a check (`database`, `engine`, `url`). Nothing here changes a setting. | 200, 403 |
-| `POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}` | Body `{ data, matchingKey }`. The system only (a service account in `SYSTEM`). | 200, 403 `SYSTEM_REQUIRED` |
-| `POST /api/v3/rules/{name}` | Body `{ data }`: evaluates a decision table of the models folder (a file `<name>.dmn.xml`, or a decision's id) with those inputs, as a business rule task does. Anyone the door lets in; nothing changes. | 200 `{ decision, file, result }`, 400 `BAD_DATA`, 404 `RULE_NOT_FOUND`, 422 `RULE_FAILED` |
+Every call, its parameters, its body, its answers and the shapes they have: the [API v3 reference](api-v3.md), made from the API's OpenAPI document (`GET /api/v3/openapi.json`, no key needed). The calls, in short: who am I (`/me`); the processes this user may start, and starting one; their tasks (list, one with its form, claim, complete); the instances they may see, with why each went its way; models and their tests (design); rules (a decision table); messages and signals (the system); users and settings (administrators); tokens (the service key).
 
 A token is random; the server keeps only its SHA-256 (in `wf_tokens`), so a token can not be read back, and it holds
 across a restart and for every server on the same database. Errors are `{ error: { code, message } }` with a real
 status: `UNAUTHORIZED`, `TOKEN_INVALID` (unknown, expired or revoked), `SERVICE_KEY_REQUIRED`, `GROUP_REFUSED`,
 `BAD_USER`, `BAD_GROUPS`, `BAD_MINUTES`, and the task API's codes (`TASK_NOT_FOUND`, `TASK_ASSIGNED`, `ITEM_NOT_WAITING`,
-`NOT_STARTABLE`, `BAD_DATA`, `BAD_LIMIT`, `BAD_CURSOR`, `INSTANCE_BUSY`). Changing models and running tests is design: a designer's token, or the service key (`403 DESIGN_REFUSED`; `404 DESIGN_OFF` with `DISABLE_DESIGN`).
+`NOT_STARTABLE`, `BAD_DATA`, `BAD_LIMIT`, `BAD_CURSOR`, `INSTANCE_BUSY`), and the rules' (`RULE_NOT_FOUND`, `RULE_FAILED`). Changing models and running tests is design: a designer's token, or the service key (`403 DESIGN_REFUSED`; `404 DESIGN_OFF` with `DISABLE_DESIGN`).

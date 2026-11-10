@@ -449,9 +449,9 @@ features:
     area: api
     name: "API v3"
     what: "/api/v3: every call as one user (a user's token, an AI link, or the service key for the service account); processes, tasks, instances, models and their tests, rules, users, settings, tokens; errors and paged lists in one shape; its OpenAPI document."
-    docs: [docs/docs/client-api.md, docs/docs/security.md]
+    docs: [docs/docs/client-api.md, docs/docs/security.md, docs/docs/api-v3.md, docs/docs/integrate.md, docs/docs/tutorial/tutorial-integrate.md]
     code: [packages/bpmn-web/src/routes/api/v3.ts, packages/bpmn-web/src/routes/api/door.ts, packages/bpmn-web/src/routes/api/tokens.ts, packages/bpmn-web/src/routes/api/openapi-v3.ts]
-    tests: [apps/testSampleApp/test/web/api-door.test.mjs, apps/testSampleApp/test/web/api-v3-contract.test.mjs, apps/testSampleApp/test/web/api-v3-tokens.test.mjs, apps/testSampleApp/test/web/api-v3-tasks.test.mjs, apps/testSampleApp/test/web/api-v3-instances.test.mjs, apps/testSampleApp/test/web/api-v3-models.test.mjs, apps/testSampleApp/test/web/api-v3-users.test.mjs, apps/testSampleApp/test/web/api-v3-rules.test.mjs]
+    tests: [apps/testSampleApp/test/web/api-door.test.mjs, apps/testSampleApp/test/web/api-v3-contract.test.mjs, apps/testSampleApp/test/web/api-v3-tokens.test.mjs, apps/testSampleApp/test/web/api-v3-tasks.test.mjs, apps/testSampleApp/test/web/api-v3-instances.test.mjs, apps/testSampleApp/test/web/api-v3-models.test.mjs, apps/testSampleApp/test/web/api-v3-users.test.mjs, apps/testSampleApp/test/web/api-v3-rules.test.mjs, apps/testSampleApp/test/web/tutorial-integrate.test.mjs, apps/testSampleApp/test/unit/api-docs.test.mjs]
   - id: bpmn-client
     area: api
     name: "bpmn-client (remote)"

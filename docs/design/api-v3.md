@@ -128,6 +128,10 @@ clients (said in the docs, so fields can be added without a new version).
 
 Each step ends with the full web suite passing.
 
+**Status (2026-11-10):** steps 0 to 6 are done on the 3.7 branch. Step 6 made v3's page (`docs/docs/api-v3.md`) from its
+document (`npm run api-docs`; a test fails while the page is out of date); v1's and v2's stay described by hand in the
+client API page, as they are frozen and their documents are made from the running routers. Next: a v3 bpmn-client.
+
 ## Decisions (2026-11-10)
 
 1. **`/api` stops trusting a caller-named user in 3.7.** With the plain `API_KEY`, `/api` acts as the service account,

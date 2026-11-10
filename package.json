@@ -16,6 +16,7 @@
     "dev": "concurrently -k -n app,modeler -c blue,magenta \"npm run dev -w test-sample-app\" \"npm run watch:modeler -w bpmn-web\"",
     "docs": "cd docs && npm run start",
     "features": "node scripts/features.mjs",
+    "api-docs": "node scripts/api-docs.mjs",
     "test:coverage": "node scripts/coverage.mjs"
   },
   "overrides": {

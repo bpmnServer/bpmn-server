@@ -72,6 +72,7 @@ For every observable change, inspect and update:
 | Source and automated tests | Required for behavior changes |
 | `docs/features.yaml` | Update feature entry, supported/partial status and code/test/example links |
 | `docs/docs/features.md` | Regenerate using `npm run features`; do not hand-edit |
+| `docs/docs/api-v3.md` | Regenerate from API v3's OpenAPI document using `npm run api-docs` (after `npm run build`); do not hand-edit |
 | `docs/docs/` | Update affected user documentation, API pages, setup/configuration and examples |
 | `packages/*/CHANGELOG.md` | Update affected package(s) for externally visible changes |
 | `docs/docs/whats-new-*.md` | Update when preparing a release or explicitly requested |

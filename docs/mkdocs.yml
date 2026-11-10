@@ -167,5 +167,6 @@ nav:
   - 'install': bpmn-client.md
   - 'Executing Example': examples/BuyCar-Remote.md
   - 'Client API': client-api.md
+  - 'API v3 reference': api-v3.md
 
 not_in_nav: api/

@@ -21,6 +21,9 @@ and here
 - **`POST /api/v3/rules/{name}`**: a decision table of the models folder evaluated with `{ data }`, as a business rule task
   does, by anyone the door lets in (a user's token, an AI link, the service key). `404 RULE_NOT_FOUND`, `400 BAD_DATA`,
   `422 RULE_FAILED`. On `/api` and `/api2` it stays an administrator's (`PUT /admin/api/rules/invoke`).
+- **API v3's reference** (`docs/docs/api-v3.md`): every operation, its parameters, body, answers and shapes, made from the
+  API's OpenAPI document by `npm run api-docs`. The tutorial and the guide for integrating an application use API v3: a
+  token for each of the application's users.
 - `@start ... is refused` in a model's tests: holds when the start fails (a listener or script throws, the engine
   refuses), as `@invoke ... is refused` does for an item.
 
