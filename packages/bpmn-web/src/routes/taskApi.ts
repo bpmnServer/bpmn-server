@@ -38,6 +38,24 @@ function asTask(item) {
     return { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, completedBy: endedAt ? userName : undefined };
 }
 
+/** A form field as the model has it (camunda:formField), as plain JSON: its options and validation too. */
+function asField(field) {
+    const children = field.$children ?? [];
+    const values = field.values ?? children.filter(c => c.$type === 'camunda:value');
+    const validation = field.validation?.constraints ?? children.filter(c => c.$type === 'camunda:validation').flatMap(v => v.$children ?? []);
+    return {
+        id: field.id, label: field.label ?? field.id, type: field.type, defaultValue: field.defaultValue,
+        ...(values.length ? { values: values.map(v => ({ id: v.id, name: v.name ?? v.id })) } : {}),
+        ...(validation.length ? { validation: validation.map(c => ({ name: c.name, config: c.config })) } : {}),
+    };
+}
+
+/** An element's form: its fields, and the application's own form when the model names one (formKey). */
+function formOf(definition, elementId: string) {
+    const { node, fields, formKey } = definition.getNodeInfo(elementId);
+    return node ? { fields: (fields ?? []).map(asField), formKey } : { fields: [] };
+}
+
 /** Where a task is in the list, by when it started: the list's `next`, and a call's `after`. */
 const position = item => `${new Date(item.startedAt ?? 0).getTime()}_${item.id}`;
 function isAfter(item, after: string) {
@@ -111,9 +129,31 @@ export function taskApi(server) {
         return { tasks: page.map(asTask), next: waiting.length > limit ? position(page.at(-1)) : null };
     }));
 
+    // start a process as the acting user, at a start event they may use; the instance, and their first task in it
+    router.post('/start/:name', handler(async (req, user) => {
+        const { name } = req.params;
+        const data = req.body?.data ?? {};
+        if (typeof data !== 'object' || Array.isArray(data))
+            throw new TaskError(400, 'data is an object', 'BAD_DATA');
+        const starts = (await api.model.findStartEvents({}, user)).filter(event => event.modelName === name);
+        const startNodeId = req.body?.startNodeId;
+        const start = startNodeId ? starts.find(event => event.elementId === startNodeId) : starts[0];
+        if (!start)
+            throw new TaskError(404, `No process ${name} that this user may start${startNodeId ? ` at ${startNodeId}` : ''}`, 'NOT_STARTABLE');
+        const { instance } = await api.engine.start(name, data, user, { startNodeId: start.elementId });
+        const first = instance.items
+            .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && hasPart(item, user))
+            .map(item => asTask({ ...item, instanceId: instance.id, processName: instance.name }))[0];
+        return {
+            instance: { id: instance.id, name: instance.name, status: instance.status, data: instance.data },
+            task: first ?? null,
+        };
+    }));
+
     router.get('/:id', handler(async (req, user) => {
         const item = await findTask(req.params.id, user);
-        return { ...asTask(item), data: (item as any).instanceData };
+        const definition = await server.definitions.load(item.processName).catch(() => null);
+        return { ...asTask(item), data: (item as any).instanceData, form: definition ? formOf(definition, item.elementId) : { fields: [] } };
     }));
 
     router.post('/:id/claim', handler(async (req, user) => {

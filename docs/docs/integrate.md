@@ -10,7 +10,7 @@ Your application talks to a running BPMN Server over its REST APIs, from any lan
 
 Your application signs its users in, not BPMN Server. Two ways to act for them:
 
-- **Starting a process for a user**: `/api`'s `engine.start` (bpmn-client's `BPMNClient`, with `API_KEY`) takes the user it starts for, and that user is the process's initiator. A model that gives the first task to its initiator, as the leave request does, gives it to them.
+- **Starting a process for a user**: `POST /api2/tasks/start/:name`, with `API_ACTING_USER_KEY` and the user in `x-acting-user`, starts it as that user, if the model lets them (its start event's lane or candidates), and answers their first task; that user is the process's initiator. (`/api`'s `engine.start` with `API_KEY` also takes a user, but trusts whatever name it is sent: it is restricted in 3.7.) A model that gives the first task to its initiator, as the leave request does, gives it to them.
 - **`/api2`** runs every call as one service account (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`), and ignores any user a caller names: a process it starts has the service account as its initiator. Use it for system work.
 - **`/api2/tasks`** acts for one of your users, named in each call (`x-acting-user`, `x-acting-groups`), with its own key, `API_ACTING_USER_KEY`. A task is shown to, claimed and completed by the user it is for, by its assignee, candidate users and candidate groups.
 

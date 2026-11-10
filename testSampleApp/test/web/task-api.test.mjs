@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { BPMNAPI, SecureUser } from 'bpmn-server';
-import { startWebApp, WebClient, API_KEY } from '../support/webApp.mjs';
+import { startWebApp, WebClient, API_KEY, why } from '../support/webApp.mjs';
 
 const ACTING_KEY = 'test-acting-user-key';
 const MODEL = 'leave-request';
@@ -355,4 +355,77 @@ test('contract: the tenant is the service account\'s, not the caller\'s', async 
 
 test('contract: API_KEY still has its own routes, as they were', async () => {
     assert.equal((await web.api('GET', '/api2/model/list')).status, 200);
+});
+
+// ---- the bridge to v3: a task's form, and starting as the acting user
+
+const MANAGERS_ONLY = 'managers-start';
+const MANAGERS_ONLY_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="urn:test">
+  <bpmn:process id="ManagersStart" isExecutable="true">
+    <bpmn:laneSet id="Roles">
+      <bpmn:lane id="ManagerLane" name="manager">
+        <bpmn:flowNodeRef>Begin</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Review</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Begin" />
+    <bpmn:userTask id="Review" name="Review">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="verdict" label="Verdict" type="enum" defaultValue="ok">
+            <camunda:value id="ok" name="Fine" />
+            <camunda:value id="no" name="Not fine" />
+          </camunda:formField>
+          <camunda:formField id="note" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Done" />
+    <bpmn:sequenceFlow id="f1" sourceRef="Begin" targetRef="Review" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Review" targetRef="Done" />
+  </bpmn:process>
+</bpmn:definitions>`;
+
+test('bridge: a task comes with its form: fields, options, validation', async () => {
+    const id = await waitingForApproval();
+    const submitted = await tasks('GET', `/${await approveId(id)}`, MANAGER);
+    assert.deepEqual(submitted.body.form, { fields: [] }, 'Approve has no form');
+
+    await web.bpmnServer.definitions.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
+    const started = await tasks('POST', `/start/${MANAGERS_ONLY}`, { ...MANAGER, body: {} });
+    assert.equal(started.status, 200, why(started));
+    const task = await tasks('GET', `/${started.body.task.id}`, MANAGER);
+    assert.deepEqual(task.body.form.fields, [
+        { id: 'verdict', label: 'Verdict', type: 'enum', defaultValue: 'ok', values: [{ id: 'ok', name: 'Fine' }, { id: 'no', name: 'Not fine' }] },
+        { id: 'note', label: 'note', type: 'string', defaultValue: undefined, validation: [{ name: 'required', config: undefined }] },
+    ].map(f => JSON.parse(JSON.stringify(f))));
+});
+
+test('bridge: the acting user starts a process, and gets their first task in it', async () => {
+    const started = await tasks('POST', `/start/${MODEL}`, { ...STAFF, body: { data: { days: 2 } } });
+    assert.equal(started.status, 200, why(started));
+    assert.equal(started.body.instance.name, MODEL);
+    assert.equal(started.body.instance.data.days, 2);
+    assert.equal(started.body.task.elementId, 'Submit', 'staff take Submit');
+    const instance = await web.bpmnServer.dataStore.findInstance({ id: started.body.instance.id }, 'full');
+    assert.equal(instance.items.find(i => i.elementId === 'Requested').userName, 'sam', 'started as the acting user');
+
+    const asOutsider = await tasks('POST', `/start/${MODEL}`, { ...OUTSIDER, body: {} });
+    assert.equal(asOutsider.status, 200, 'anyone may start a model with no starter rule');
+    assert.equal(asOutsider.body.task, null, 'but the first task is not theirs');
+});
+
+test('bridge: only those the start event allows may start; others get 404', async () => {
+    await web.bpmnServer.definitions.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
+    const refused = await tasks('POST', `/start/${MANAGERS_ONLY}`, { ...STAFF, body: {} });
+    assert.equal(refused.status, 404, why(refused));
+    assert.equal(refused.body.code, 'NOT_STARTABLE');
+    assert.equal((await tasks('POST', '/start/no-such-model', { ...MANAGER, body: {} })).status, 404);
+    assert.equal((await tasks('POST', `/start/${MANAGERS_ONLY}`, { ...MANAGER, body: { data: [] } })).status, 400);
+    assert.equal((await tasks('POST', `/start/${MANAGERS_ONLY}`, { ...MANAGER, body: { startNodeId: 'Elsewhere' } })).status, 404);
 });

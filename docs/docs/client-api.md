@@ -74,7 +74,8 @@ The tenant is the service account's (`API_SERVICE_TENANT_ID`), never taken from 
 | Route | Does | Answers |
 | --- | --- | --- |
 | `GET /api2/tasks?limit=&after=` | The waiting user tasks this user can work on, oldest first; `after` is a list's `next`. `limit`: 1 to 200, default 50. | 200 `{ tasks, next }`, 400 |
-| `GET /api2/tasks/:id` | One task, with its instance's data. | 200, 404 |
+| `POST /api2/tasks/start/:name` | Body `{ data, startNodeId }` (both optional). Starts the process as this user, at a start event they may use (its lane, candidate users and groups decide; the first one, unless `startNodeId` names it). | 200 `{ instance, task }` (`task`: this user's first waiting task in it, or `null`), 400, 404 `NOT_STARTABLE` |
+| `GET /api2/tasks/:id` | One task, with its instance's data and its form: `form: { fields, formKey }`, each field `{ id, label, type, defaultValue, values, validation }` as the model has it; `formKey` when the model names the application's own form. | 200, 404 |
 | `POST /api2/tasks/:id/claim` | Assigns the task to this user. | 200 `{ task }`, 404, 409, 503 |
 | `POST /api2/tasks/:id/complete` | Body `{ data }`. Completes the task, recording this user. | 200 `{ task, instance }`, 400, 403, 404, 409, 503 |
 

@@ -208,9 +208,9 @@ flowchart LR
 
 - BPMN Server signs nobody in here: it trusts the user your application names, because your application holds its
   keys. Keep the keys on your application's server, and bpmn-web where only your application and your staff reach it.
-- Your application starts a process **for** one of its users with `/api` and `API_KEY`, so the user is the initiator;
-  `/api2` would start it as its service account. It lists, claims and completes the user's tasks with `/api2/tasks` and
-  `API_ACTING_USER_KEY`. [Integrate an existing application](integrate.md) has the steps.
+- Your application starts a process **for** one of its users, lists, claims and completes their tasks with
+  `/api2/tasks` and `API_ACTING_USER_KEY`: the user is the initiator, and each task comes with its form. `/api2` would
+  start it as its service account. [Integrate an existing application](integrate.md) has the steps.
 - Designers work on a design server of their own. A model reaches production as a file, tested, through Git: see
   [Release](tutorial/release.md).
 
