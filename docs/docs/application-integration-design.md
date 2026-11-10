@@ -191,7 +191,7 @@ sequenceDiagram
 
 Do **not** add a notification subsystem to the engine. Task events are a lifecycle subscriber in `bpmn-web`, and they call the application through a connector. A form reference is application metadata, not an instruction to open a browser remotely.
 
-For task assignment, optionally resolve a user or role through a connector operation (`HR/getManager`) while the engine remains responsible for assignment state and enforcement. The app may act on its own business transaction before completing the BPMN task, or the workflow may orchestrate the business API update; document idempotency/recovery for partial success in either mode.
+For task assignment, a task names a role (by default its lane) or an assignment policy, and the application resolves it to users with an optional `appDelegate.resolveAssignment(item, intent)`, which may call a connector operation (`hr/getEmployee`). The engine remains responsible for assignment state and enforcement: see [Business labels, task roles and assignment](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/business-labels-roles-assignment.md). The app may act on its own business transaction before completing the BPMN task, or the workflow may orchestrate the business API update; document idempotency/recovery for partial success in either mode.
 
 ## 7. Workflow data-store integration
 
@@ -228,27 +228,16 @@ A lifecycle subscriber hears of a task before the task is saved, and its failure
 
 ## 8. Configuration and multiple applications
 
-Separate installation/runtime settings from application configuration:
+Settings are split in two, as [Settings](settings.md) describes:
 
 ```text
-.env                         # server installation / secret references
-configuration.json           # proposed server-wide logical config
-apps/
-  hr/
-    configuration.json       # application identity and policies
-    connectors.json          # the connectors this application may use
-    webhooks.json            # inbound event mapping
-    models/                  # app-owned BPMN definitions
-  finance/
-    configuration.json
-    connectors.json
-    webhooks.json
-    models/
+.env                  # the installation: what differs per machine, and secrets
+settings/config.ts    # the application: how it behaves (typed, in Git)
 ```
 
-This is a **target layout**; the current repository uses `settings/config.ts`, `.env`, existing storage configuration and a connector registry. An implementation plan must migrate/bridge these without breaking current installations. Secrets remain outside checked-in JSON. Define schema validation, precedence and overrides before implementation; existing environment-based connector settings must continue working until migrated.
+There is no separate `configuration.json`. Application behaviour (label templates, list columns, default assignment policies, connector and hook settings) goes in the application's `settings/config.ts`. Code (resolvers, hooks) goes on its delegate. Secrets stay in `.env` or a secret store and are referenced, never checked in. New settings are read from the server's configuration object, not from module-level state or `process.env` at request time. See [Business labels, task roles and assignment](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/business-labels-roles-assignment.md).
 
-Future multi-app hosting requires namespaced routes, per-app models, tasks, workflow records, connector permissions, credentials, storage policies, audit and authorization boundaries. An installation must never access another application's data through shared registry names or guessed task IDs.
+Several applications on one server, and tenants, are planned for 3.8, in their own design note, [Several applications on one server, and tenants](https://github.com/bpmnServer/bpmn-server/blob/design-multi-app/docs/design/multi-app-tenants.md) (draft). Each application (a workspace) would have its own `settings/config.ts`, delegate, models, users and data. Until then this is a constraint: nothing added may be global in a way that would block it. An installation must never access another application's data through shared registry names or guessed task IDs.
 
 ## 9. Security and operational contract
 
@@ -291,7 +280,7 @@ Phases 1, 2 and 5 are expected to need no change to `bpmn-server`. If one turns 
 - Supported SQL engines, read/write policy and driver deployment.
 - Webhook naming and correlation schema and which existing API routes are reused.
 - Durable notification/replication delivery and reconciliation implementation.
-- Stable task projection schemas; exact per-app configuration JSON schema and migrations.
+- Stable task projection schemas.
 - Definition of application identity/user roles and task assignment resolution across apps.
 
 ## 12. Related documentation
