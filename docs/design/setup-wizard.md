@@ -79,9 +79,22 @@ Two faces, one definition: the schema's groups and steps.
 (§4: on, which levels, how long). Each step can be skipped, keeping today's default. A step's settings are written
 only when its check passes, or when the person says to keep them anyway.
 
-**Afterwards:** Administration ▸ Settings shows every setting by group, from the schema, with its value (secrets
-masked), its source (`.env`, `settings/config.ts`, default) and whether it waits for a restart; and runs the wizard
-again for one step.
+**Any time:** Administration ▸ Settings shows every setting by group, from the schema, with its value (secrets
+masked), its source (`.env`, `settings/config.ts`, default) and whether it waits for a restart; and runs the wizard,
+or one of its steps, again. `npm run setup` does the same in the terminal.
+
+### Profiles
+
+The wizard starts by asking for a profile. A profile pre-fills settings, so only what is left is asked; each
+pre-filled value can still be changed. The schema says each setting's value per profile (`x-profiles`).
+
+| Profile | For | Pre-fills (examples) |
+|---|---|---|
+| **Production** | a server people rely on | MongoDB required (no memory); sign-in and security on; `SECURE_COOKIES` with HTTPS; keys and the first password generated; `APP_ENV=production`; `API_TRACE` off |
+| **Development and test** | a developer's machine, a test server | memory or a local MongoDB; `APP_ENV=test` (the test services); design on; the sample models; `API_TRACE` on |
+| **Several tenants** | one site, many workspaces ([multi-app-tenants.md](multi-app-tenants.md)) | the host's settings, then each workspace's entry in `TENANTS_FILE` (its database, models folder, engine, keys); built with tenants, in 3.8 |
+
+A profile dictates nothing: it is a starting point, and `AI_ACCESS`, like every setting, is the installation's choice.
 
 ## 4. The AI, at three levels
 
@@ -95,7 +108,7 @@ operations; a link never has more than its level, even when its person has more.
 |---|---|---|---|
 | **Work** | everyone | start processes, list and complete their tasks, read their instances and the Rationale | 30 minutes |
 | **Design** | designers, administrators | as Work, and read, check, save and test models | 30 minutes |
-| **Administer** | administrators | as Work, and read the settings (secrets masked), propose changes, run the checks, read the logs and the health | 10 minutes |
+| **Administer** | administrators | as Work, and read the settings (secrets masked), run the checks, read the logs and the health, and advise | 10 minutes |
 
 - **The default is the lowest level that is enough**: an administrator who wants a workflow built makes a Design link;
   an Administer link is asked for on purpose.
@@ -107,29 +120,26 @@ operations; a link never has more than its level, even when its person has more.
 
 ## 5. What the AI may do as an administrator
 
-Setting a server up is where a mistake costs most, so the Administer level is narrower than an administrator:
+Kept simple: the agent advises; a person changes the settings.
 
 - **Read:** every setting from the schema, with its source and value; secrets as `***`, never their values.
-- **Check:** run a step's checks (the database reached, a test email to the administrator, the site's address).
-- **Propose, not apply:** a change is a proposal (the settings and their new values, and why), shown to the
-  administrator in Administration ▸ Settings, who applies or refuses it. Applied, it is written where the schema says
-  (`.env`, or for `settings/config.ts` a patch shown to copy), and logged with who proposed and who applied.
-- **Never:** see or set a secret's value (the wizard generates keys and passwords, and the administrator types any
-  other secret); delete data; change users' rights; turn its own level's limits off.
-- **Diagnose:** read the health (`/healthz`), the recent log, a failed start's message, and the schema's checks, to
-  say what is wrong and what to change.
+- **Check:** run the schema's checks (the database reached, a test email to the administrator, the site's address).
+- **Diagnose:** read the health (`/healthz`), the recent log and a failed start's message.
+- **Advise:** say which settings to change, to what, and why. Any setting that is not a secret may be advised; for a
+  secret, the agent asks the administrator to enter it themselves.
+- **The administrator applies** the change through the setup: Administration ▸ Settings, or `npm run setup`.
+- **Never:** change a setting, see or set a secret, delete data, change users' rights.
 
-The API (v3): `GET /settings` (by group, secrets masked), `GET /settings/schema`, `POST /settings/checks/{name}`,
-`POST /settings/proposals`, `GET /settings/proposals`; applying a proposal is a person's, in the page (or
-`POST /settings/proposals/{id}/apply` with a person's own token, never an agent's link).
+The API (v3): `GET /settings` (by group, secrets masked), `GET /settings/schema`, `POST /settings/checks/{name}`.
 
 ## 6. Security
 
 - Secrets never leave the server: not in answers (masked by the schema's `x-secret`), not in logs, not in the AI's
-  pages, not in proposals.
-- An Administer link is short-lived, revoked on sign-out, and every call it makes is logged with the person who made
+  pages.
+- An Administer link changes nothing (§5); it is short-lived, revoked on sign-out, and every call it makes is logged with the person who made
   it (the API trace, `API_TRACE`).
-- `AI_ACCESS` can turn levels off: a server may allow Work only, or no AI at all.
+- `AI_ACCESS` (optional, in `.env`) says which levels a server offers: all, some, or none. Nothing is dictated by
+  profile or environment.
 - The checks send nothing outside but a test email to the administrator's own address.
 
 ## 7. Steps
@@ -140,13 +150,14 @@ The API (v3): `GET /settings` (by group, secrets masked), `GET /settings/schema`
 3. **The wizard** in the terminal (`npm run setup`), then the browser's steps; Docker's and the native commands'
    `setup` call it.
 4. **Administration ▸ Settings**: the values, their sources, a step again.
-5. **AI levels**: the scopes on tokens, the level chosen on `/ai/key`, the agent's page by level.
-6. **The Administer level**: settings read, checks, proposals, applying them in the page.
+5. **Profiles**: production, development and test (several tenants with 3.8's tenants).
+6. **AI levels**: the scopes on tokens, the level chosen on `/ai/key`, the agent's page by level.
+7. **The Administer level**: settings read, checks, diagnosis.
 
-## 8. Questions
+## 8. Decisions (2026-11-10)
 
-1. The wizard in the browser: only at first start, or any time from Administration?
-2. Applying a proposal: in the page only, or also by the person's own command (`npm run setup -- --apply <id>`)?
-3. Which settings may the AI propose to change at all: every non-secret one, or a list (the schema's
-   `x-ai: "propose"`)?
-4. The Administer level on a production server: offered, or test environments only (`APP_ENV`)?
+1. The wizard runs any time: at first start, and from Administration ▸ Settings (or `npm run setup`).
+2. Kept simple: the agent applies nothing; it advises, and the administrator changes settings through the setup.
+3. The agent may advise on every setting that is not a secret; for a secret, it asks the administrator to enter it.
+4. `AI_ACCESS` is optional in `.env`: no level is dictated for production or any other environment.
+5. Three profiles pre-fill the setup: production; development and test; several tenants.
