@@ -28,7 +28,11 @@ declare class BPMNClient extends WebService {
 declare class ClientEngine {
     private client;
     constructor(client: any);
-    /** userId: the user it starts for (the server's userName), who becomes the instance's initiator. */
+    /**
+     * userId: the user it starts for, who becomes the instance's initiator, only on a server with API_IMPERSONATION=true;
+     * since 3.7 a server ignores it otherwise, and acts as its service account. To start for a user, use the task API
+     * (POST /api2/tasks/start/:name, with x-acting-user).
+     */
     start(name: any, data?: {}, startNodeId?: any, userId?: any, options?: {}): Promise<IInstanceData>;
     invoke(query: any, data: any, userId?: any, options?: {}): Promise<IInstanceData>;
     assign(query: any, data: any, userId: any, assignment: any): Promise<IInstanceData>;
