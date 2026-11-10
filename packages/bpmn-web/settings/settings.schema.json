@@ -1,0 +1,617 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bpmnserver.github.io/bpmn-server/settings.schema.json",
+  "title": "BPMN Server settings",
+  "description": "Every setting: .env (x-where env) and settings/config.ts (x-where config, named config:<path>). The x- keywords: docs/design/setup-wizard.md.",
+  "type": "object",
+  "properties": {
+    "ADMIN_PASSWORD": {
+      "description": "**A secret.** Set, a server with no users creates the user `admin` with it. Unset (the default), its first page asks for the administrator, with a setup token it prints: [The first start](setup.md#the-first-start). A server that has users already is not changed",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "password",
+      "x-restart": true
+    },
+    "ALLOW_INSECURE_NO_AUTH": {
+      "description": "`true` allows `REQUIRE_AUTHENTICATION=false` in production",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "AUTH_RATE_LIMIT": {
+      "description": "Sign-in attempts allowed in the rate window. Default `50`",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true,
+      "default": 50
+    },
+    "DISABLE_ADMIN": {
+      "description": "`true`: no administration pages or `/admin` APIs",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "DISABLE_DESIGN": {
+      "description": "`true`: no model editor or test runs, and **no test calls on the engine**. Set it on both for production",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "DISABLE_SIGNUP": {
+      "description": "`true`: no self-registration",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "ENFORCE_SECURITY": {
+      "description": "On unless set to `false` (`init` writes `true`). `false` turns off sign-in and the security rules: for development only",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "REQUIRE_AUTHENTICATION": {
+      "description": "On unless set to `false` (`init` writes `true`). `false` turns off sign-in and the security rules: for development only",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "SESSION_SECRET": {
+      "description": "**A secret, required in production.** Secures sessions and CSRF tokens",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "key",
+      "x-restart": true
+    },
+    "SIGNUP_GROUPS": {
+      "description": "Sign-up sends a verification email, and gives these groups once verified",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "x-restart": true
+    },
+    "SIGNUP_VERIFY_EMAIL": {
+      "description": "Sign-up sends a verification email, and gives these groups once verified",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "ADMIN_API_KEY": {
+      "description": "**A secret.** Also changes models",
+      "x-where": "env",
+      "x-group": "api",
+      "x-clients": true,
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "key",
+      "x-restart": true
+    },
+    "API_ACTING_USER_KEY": {
+      "description": "**A secret.** Turns on `/api2/tasks`. Must differ from `API_KEY`",
+      "x-where": "env",
+      "x-group": "api",
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "key",
+      "x-restart": true
+    },
+    "API_KEY": {
+      "description": "**A secret, required in production.** Runs processes",
+      "x-where": "env",
+      "x-group": "api",
+      "x-clients": true,
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "key",
+      "x-restart": true
+    },
+    "API_SERVICE_MODELS_OWNER": {
+      "description": "The tenant and models owner of that account",
+      "x-where": "env",
+      "x-group": "api",
+      "type": "string",
+      "x-restart": true
+    },
+    "API_SERVICE_TENANT_ID": {
+      "description": "The tenant and models owner of that account",
+      "x-where": "env",
+      "x-group": "api",
+      "type": "string",
+      "x-restart": true
+    },
+    "API_SERVICE_USER_GROUPS": {
+      "description": "Who `/api2` calls run as",
+      "x-where": "env",
+      "x-group": "api",
+      "type": "string",
+      "x-restart": true
+    },
+    "API_SERVICE_USER_NAME": {
+      "description": "Who `/api2` calls run as",
+      "x-where": "env",
+      "x-group": "api",
+      "type": "string",
+      "x-restart": true
+    },
+    "BPMN_ENV_FILE": {
+      "description": "`bpmn-mcp` only: another file to read in place of `.env`",
+      "x-where": "env",
+      "x-group": "clients",
+      "x-clients": true,
+      "type": "string",
+      "x-restart": true
+    },
+    "HOST": {
+      "description": "Where the server is. `HOST` defaults to `localhost` for `bpmn-mcp`",
+      "x-where": "env",
+      "x-group": "clients",
+      "x-clients": true,
+      "type": "string",
+      "x-restart": true
+    },
+    "DEFINITIONS_PATH": {
+      "description": "The models folder, in place of the one in `settings/config.ts`. Used for tests and separate deployments",
+      "x-where": "env",
+      "x-group": "database",
+      "type": "string",
+      "x-restart": true
+    },
+    "MONGO_DB_NAME": {
+      "description": "The database's name, when the URL has none",
+      "x-where": "env",
+      "x-group": "database",
+      "type": "string",
+      "x-restart": true
+    },
+    "MONGO_DB_URL": {
+      "description": "**Required.** The database, or `memory` to try without one",
+      "x-where": "env",
+      "x-group": "database",
+      "type": "string",
+      "x-restart": true,
+      "x-required": true,
+      "x-check": "database",
+      "examples": [
+        "mongodb://localhost:27017/bpmn",
+        "memory"
+      ]
+    },
+    "ENABLE_PROFILER": {
+      "description": "`true` turns on the database profiler for queries",
+      "x-where": "env",
+      "x-group": "diagnostics",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "MODELER": {
+      "description": "`classic` uses the old model editor",
+      "x-where": "env",
+      "x-group": "diagnostics",
+      "type": "string",
+      "x-restart": true
+    },
+    "EMAIL_ENABLE": {
+      "description": "`true` sends notifications",
+      "x-where": "env",
+      "x-group": "email",
+      "type": "boolean",
+      "x-restart": true,
+      "x-check": "email"
+    },
+    "EMAIL_FROM": {
+      "description": "The account they're sent through. The password is a secret",
+      "x-where": "env",
+      "x-group": "email",
+      "type": "string",
+      "x-restart": true
+    },
+    "EMAIL_LOG": {
+      "description": "A file that also gets each message",
+      "x-where": "env",
+      "x-group": "email",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "SMTP_PASSWORD": {
+      "description": "The account they're sent through. The password is a secret",
+      "x-where": "env",
+      "x-group": "email",
+      "type": "string",
+      "x-secret": true,
+      "x-restart": true
+    },
+    "SMTP_USER": {
+      "description": "The account they're sent through. The password is a secret",
+      "x-where": "env",
+      "x-group": "email",
+      "type": "string",
+      "x-restart": true
+    },
+    "DEMO_MODE": {
+      "description": "`true` gives the four settings above their public demo values, unless they are set",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "engine",
+      "type": "boolean",
+      "x-restart": true,
+      "default": false
+    },
+    "ENGINE_AT": {
+      "description": "The engine's address. Unset or `local`: in this process. `none`: no engine",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "host",
+      "type": "string",
+      "x-restart": true,
+      "x-check": "engine"
+    },
+    "ENGINE_KEY": {
+      "description": "**A secret.** Required for a separate engine",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "both",
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "key",
+      "x-restart": true
+    },
+    "ENGINE_LISTEN": {
+      "description": "Its port (`3001`) and listening address (`127.0.0.1`)",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "engine",
+      "type": "string",
+      "x-restart": true
+    },
+    "ENGINE_PORT": {
+      "description": "Its port (`3001`) and listening address (`127.0.0.1`)",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "engine",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true
+    },
+    "ENGINE_SHUTDOWN_TIMEOUT_MS": {
+      "description": "How long running executions get to finish on shutdown. Default `10000`",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "both",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true,
+      "default": 10000
+    },
+    "ENGINE_TIMEOUT_MS": {
+      "description": "How long to wait for an answer. Default and most `300000`, five minutes. The call isn't tried again: the engine may still be running it",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "host",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true,
+      "default": 300000
+    },
+    "LOCK_MAX_TRIES": {
+      "description": "Instance locks: time between tries, tries before giving up, and the age at which a lock is taken over",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "both",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true
+    },
+    "LOCK_RETRY_DELAY_MS": {
+      "description": "Instance locks: time between tries, tries before giving up, and the age at which a lock is taken over",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "both",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true
+    },
+    "LOCK_STALE_AFTER_MS": {
+      "description": "Instance locks: time between tries, tries before giving up, and the age at which a lock is taken over",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "both",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true
+    },
+    "PYTHON_CMD": {
+      "description": "The command that runs Python scripts. Default `python`",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "engine",
+      "type": "string",
+      "x-restart": true,
+      "default": "python"
+    },
+    "SCRIPT_SANDBOX": {
+      "description": "`true` runs scripts in a sandbox, and lets sandboxed scripts call services",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "engine",
+      "type": "boolean",
+      "x-restart": true,
+      "default": false
+    },
+    "SCRIPT_SANDBOX_SERVICES": {
+      "description": "`true` runs scripts in a sandbox, and lets sandboxed scripts call services",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "engine",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "SERVER_ID": {
+      "description": "This process's name in the locks it takes",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "both",
+      "type": "string",
+      "x-restart": true
+    },
+    "SERVICE_TASKS": {
+      "description": "`false` stops timers or service tasks from running",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "engine",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "TIMERS": {
+      "description": "`false` stops timers or service tasks from running",
+      "x-where": "env",
+      "x-group": "engine",
+      "x-reads": "engine",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "CATALOG_URL": {
+      "description": "The model catalog to browse",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "x-restart": true
+    },
+    "CONNECTORS_ALLOW_HOSTS": {
+      "description": "A comma list of the hosts connectors may call",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "x-restart": true
+    },
+    "CONNECTORS_KEY": {
+      "description": "**A secret.** Encrypts connectors' keys. Required to give a connector a key, and keep it: backups need the same one",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "key",
+      "x-restart": true
+    },
+    "CONNECTOR_CATALOG_URL": {
+      "description": "The connector catalog to offer",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "x-restart": true
+    },
+    "MODEL_HISTORY": {
+      "description": "`false` keeps no saved versions of models",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "VERIFY_MODELS_ON_IMPORT": {
+      "description": "`warn`, `enforce` or `off`, for models saved through the APIs",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "x-restart": true
+    },
+    "BODY_LIMIT": {
+      "description": "The largest request. Default `50mb`",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true,
+      "default": "50mb"
+    },
+    "DOCS_PATH": {
+      "description": "The folder of the docs pages the server shows",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true
+    },
+    "HTTPS": {
+      "description": "Serve HTTPS directly",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "ITSM_HOST": {
+      "description": "The origin allowed to call the server from a browser (CORS)",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true
+    },
+    "NODE_ENV": {
+      "description": "`production` stops the server from starting with unsafe settings: see [Security](security.md)",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true,
+      "enum": [
+        "production",
+        "development",
+        "test"
+      ]
+    },
+    "PORT": {
+      "description": "The web server's port. Default `3000`",
+      "x-where": "env",
+      "x-group": "server",
+      "x-clients": true,
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true,
+      "default": 3000
+    },
+    "RESTART_ON_EXIT": {
+      "description": "`true`: something restarts this process when it exits",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "SECURE_COOKIES": {
+      "description": "Cookies only over HTTPS, when something in front of the server handles it",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "boolean",
+      "x-restart": true
+    },
+    "SERVE": {
+      "description": "`both`, `api` (the REST APIs only) or `ui` (the web pages only)",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true,
+      "default": "both",
+      "enum": [
+        "both",
+        "api",
+        "ui"
+      ]
+    },
+    "SITE_NAME": {
+      "description": "The name and address used in emails",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true
+    },
+    "SITE_URL": {
+      "description": "The name and address used in emails",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true,
+      "format": "uri",
+      "x-check": "url"
+    },
+    "SSL_CERT_PATH": {
+      "description": "Serve HTTPS directly",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true
+    },
+    "SSL_KEY_PATH": {
+      "description": "Serve HTTPS directly",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true
+    },
+    "config:database.MongoDB": {
+      "type": "object",
+      "description": "`db_url`, `db`, and optionally the collections: `Locks_collection`, `Instance_collection`, `Archive_collection`",
+      "x-where": "config",
+      "x-group": "database",
+      "x-restart": true
+    },
+    "config:locks.maxTries": {
+      "type": "integer",
+      "description": "tries before a lock gives up (20)",
+      "x-where": "config",
+      "x-group": "engine",
+      "x-restart": true,
+      "default": 20
+    },
+    "config:locks.retryDelay": {
+      "type": "integer",
+      "description": "milliseconds between lock tries (1500)",
+      "x-where": "config",
+      "x-group": "engine",
+      "x-restart": true,
+      "default": 1500
+    },
+    "config:locks.staleAfter": {
+      "type": "integer",
+      "description": "milliseconds after which a lock or timer claim is stale and another server may take it (300000)",
+      "x-where": "config",
+      "x-group": "engine",
+      "x-restart": true,
+      "default": 300000
+    },
+    "config:serverId": {
+      "type": "string",
+      "description": "this server's identity as a lock owner (default `SERVER_ID`, else the host, the process id and a random suffix)",
+      "x-where": "config",
+      "x-group": "engine",
+      "x-restart": true
+    },
+    "config:shutdownTimeout": {
+      "type": "integer",
+      "description": "how long `shutdown()` waits for running executions, in milliseconds (10000)",
+      "x-where": "config",
+      "x-group": "engine",
+      "x-restart": true,
+      "default": 10000
+    },
+    "config:timers.forceTimersDelay": {
+      "type": "integer",
+      "description": "milliseconds; every timer fires after this delay (for testing). When `timers` is not given at all, the default is `{ forceTimersDelay: 1000, precision: 3000 }`: give `timers` in production",
+      "x-where": "config",
+      "x-group": "engine",
+      "x-restart": true
+    },
+    "config:timers.pollInterval": {
+      "type": "integer",
+      "description": "milliseconds between re-reads of waiting timers, so a timer another server scheduled fires here when that server is gone (default 60000; 0: never)",
+      "x-where": "config",
+      "x-group": "engine",
+      "x-restart": true
+    },
+    "config:timers.precision": {
+      "type": "integer",
+      "description": "milliseconds; timers due within it fire together",
+      "x-where": "config",
+      "x-group": "engine",
+      "x-restart": true
+    },
+    "config:definitionsPath": {
+      "type": "string",
+      "description": "the folder of model files",
+      "x-where": "config",
+      "x-group": "models",
+      "x-restart": true
+    }
+  }
+}
