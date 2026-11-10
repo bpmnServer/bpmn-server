@@ -34,11 +34,24 @@ test('engine.start, datastore.findItems, engine.invoke', { skip }, async () => {
   assert.equal(done.status, 'end');
 });
 
-test('the user given to engine.start and engine.invoke is the one the engine records', { skip }, async () => {
+test('the user given to engine.start and engine.invoke is ignored: /api acts as its service account (3.7)', { skip }, async () => {
   const instance = await client.engine.start(MODEL, {}, null, 'emp1');
-  assert.equal(instance.items.find(i => i.type === 'bpmn:StartEvent')?.userName, 'emp1');
+  assert.equal(instance.items.find(i => i.type === 'bpmn:StartEvent')?.userName, 'api-service');
   const done = await client.engine.invoke({ id: instance.id, 'items.elementId': 'Submit' }, { days: 1 }, 'emp2');
-  assert.equal(done.items.find(i => i.elementId === 'Submit').userName, 'emp2');
+  assert.equal(done.items.find(i => i.elementId === 'Submit').userName, 'api-service');
+});
+
+test('with API_IMPERSONATION=true (until 4.0), the user given is the one the engine records', { skip }, async () => {
+  // the server runs in this process, and reads the setting on each call
+  process.env.API_IMPERSONATION = 'true';
+  try {
+    const instance = await client.engine.start(MODEL, {}, null, 'emp1');
+    assert.equal(instance.items.find(i => i.type === 'bpmn:StartEvent')?.userName, 'emp1');
+    const done = await client.engine.invoke({ id: instance.id, 'items.elementId': 'Submit' }, { days: 1 }, 'emp2');
+    assert.equal(done.items.find(i => i.elementId === 'Submit').userName, 'emp2');
+  } finally {
+    delete process.env.API_IMPERSONATION;
+  }
 });
 
 test('engine.get returns an instance', { skip }, async () => {
