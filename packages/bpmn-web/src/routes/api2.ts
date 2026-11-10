@@ -22,7 +22,8 @@ import { Common } from './common.js';
 import { taskApi } from './taskApi.js';
 import { sendModelRejection } from '../runtime/modelVerification.js';
 import { Operations } from './api/operations.js';
-import { modelApi, openApiDocument } from './modelApi.js';
+import { modelApi, openApiDocument, originOf } from './modelApi.js';
+import { deprecate } from './api/legacyDocument.js';
 import { siteGuide } from './siteGuide.js';
 //////////////////////////////////////////////////////////////////////
 
@@ -60,7 +61,7 @@ export class API2 extends Common {
         // the task API has a key of its own, and API_KEY does not open it
         router.use('/tasks', taskApi(this.bpmnServer));
         // what a client can call, without a key: how an agent finds it
-        router.get('/openapi.json', (req, res) => res.json(openApiDocument(req)));
+        router.get('/openapi.json', (req, res) => res.json(deprecate(openApiDocument(req), originOf(req))));
         // /llms.txt as an operation: a client that only calls the API's operations (a ChatGPT action) reads it here
         router.get('/guide', (req, res, next) => siteGuide(this.webApp, req).then(text => res.type('text/markdown').send(text), next));
         router.use(door('v2'));

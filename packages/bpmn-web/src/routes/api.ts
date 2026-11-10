@@ -25,6 +25,7 @@ import { Common } from './common.js';
 import { sendModelRejection } from '../runtime/modelVerification.js';
 import { Operations } from './api/operations.js';
 import { door } from './api/door.js';
+import { legacyDocument } from './api/legacyDocument.js';
 
 export class API extends Common {
     get bpmnServer() { return this.webApp.bpmnServer; }
@@ -40,6 +41,12 @@ export class API extends Common {
         const userOf = request => request.apiUser;
 
         router.use(['/definitions', '/model'], modelNameGuard);
+
+        // its OpenAPI document, made from its routes (no key needed): every operation deprecated, the API its successor
+        router.get('/openapi.json', (req, res) => {
+            const origin = `${String(req.get('x-forwarded-proto') ?? req.protocol).split(',')[0].trim()}://${req.get('x-forwarded-host') ?? req.get('host')}`;
+            res.json(legacyDocument(router, { title: 'BPMN Server API v1 (deprecated)', base: '/api', origin }));
+        });
 
         // the models' names, read-only (as /api2/model/list), so a client can list them with administration
         // off (DISABLE_ADMIN); changing models stays under /admin/api

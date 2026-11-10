@@ -117,11 +117,33 @@ function v3Door(tokens: Tokens) {
 }
 
 /** The door for one way in: the key checked, then request.apiUser set. v3's needs the token store. */
+/** The address the client used (https behind a proxy). */
+const originOf = req => `${String(req.get('x-forwarded-proto') ?? req.protocol).split(',')[0].trim()}://${req.get('x-forwarded-host') ?? req.get('host')}`;
+
+/** The routes of /api and /api2 called since this process started: each is logged once, to see who still uses them. */
+const deprecatedSeen = new Set<string>();
+
+/**
+ * /api (v1) and /api2 (v2) are frozen (docs/design/api-v3.md): fixes only, through the shared operations, until they go
+ * (v1 at 4.0). Their answers say so (Deprecation, and the API's document as their successor), and each of their routes
+ * is logged once when it is first called.
+ */
+export function deprecated(req, res, next) {
+    res.set('Deprecation', 'true');
+    res.set('Link', `<${originOf(req)}/api/v3/openapi.json>; rel="successor-version"`);
+    const route = `${req.method} ${req.baseUrl}${req.path}`.replace(/\/[0-9a-f-]{16,}(?=\/|$)/gi, '/{id}');
+    if (!deprecatedSeen.has(route)) {
+        deprecatedSeen.add(route);
+        console.warn(`[api] ${route}: a deprecated API (until 4.0); the API is /api/v3`);
+    }
+    next();
+}
+
 export function door(way: Way, tokens?: Tokens) {
     if (way === 'v3')
         return v3Door(tokens);
     const checkKey = way === 'acting' ? actingKey : apiKeyAuth;
-    return (req, res, next) => checkKey(req, res, () => {
+    return (req, res, next) => deprecated(req, res, () => checkKey(req, res, () => {
         try {
             req.apiUser = userFor(way, req, res);
         }
@@ -131,5 +153,5 @@ export function door(way: Way, tokens?: Tokens) {
             return next(error);
         }
         next();
-    });
+    }));
 }

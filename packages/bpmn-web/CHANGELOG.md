@@ -27,6 +27,7 @@ and here
   (`POST /api2/tasks/start/:name`, `API_ACTING_USER_KEY`, `x-acting-user`); or set `API_IMPERSONATION=true` to keep the
   old behavior while you move (it goes at 4.0). A server without a service account answers 500 on `/api`, naming the
   settings to set.
+- **`/api` (v1) and `/api2` (v2) are deprecated**, frozen until they go (v1 at 4.0): fixes only, through the operations they share with the API (`/api/v3`). Their answers carry `Deprecation: true` and `Link: <…/api/v3/openapi.json>; rel="successor-version"`; the server logs each of their routes once, when first called, to see who still uses them. `/api/openapi.json` is new (made from its routes), and both documents mark every operation deprecated.
 - The API's key checks and users are decided in one place (`routes/api/door.ts`), and `/api`, `/api2` and the
   administration APIs share their operations (`routes/api/operations.ts`): no change to their URLs or answers.
 

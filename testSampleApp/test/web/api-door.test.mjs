@@ -55,3 +55,29 @@ test('no service account: /api and /api2 say which settings to set', async () =>
   }
   finally { process.env.API_SERVICE_USER_NAME = saved; }
 });
+
+// ---- /api and /api2 are frozen (docs/design/api-v3.md): their answers and documents say so
+
+test('/api and /api2 answer as deprecated, naming the API as their successor; the API does not', async () => {
+  for (const url of ['/api/status', '/api2/status']) {
+    const res = await web.api('GET', url);
+    assert.equal(res.status, 200, url);
+    assert.equal(res.headers.get('deprecation'), 'true', url);
+    assert.match(res.headers.get('link') ?? '', /\/api\/v3\/openapi\.json>; rel="successor-version"/, url);
+  }
+  const v3 = await web.api('GET', '/api/v3/me');
+  assert.equal(v3.status, 200);
+  assert.equal(v3.headers.get('deprecation'), null);
+});
+
+test('/api has an OpenAPI document of its routes, each deprecated; /api2\'s is marked too', async () => {
+  const v1 = await web.client().get('/api/openapi.json');
+  assert.equal(v1.status, 200, why(v1));
+  assert.match(v1.body.info.title, /deprecated/);
+  assert.equal(v1.body.servers[0].url, `${web.base}/api`);
+  assert.ok(v1.body.paths['/engine/start/{name}']?.post?.deprecated, 'its routes, as they are');
+  assert.ok(Object.values(v1.body.paths).every(ops => Object.values(ops).every(op => op.deprecated)));
+  const v2 = await web.client().get('/api2/openapi.json');
+  assert.match(v2.body.info.title, /deprecated/);
+  assert.ok(Object.values(v2.body.paths).every(ops => Object.values(ops).every(op => op.deprecated)));
+});

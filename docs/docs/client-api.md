@@ -88,6 +88,10 @@ The tenant is the service account's (`API_SERVICE_TENANT_ID`), never taken from 
 
 Anyone holding the key can act as any user, so it belongs on the application's server, never in a browser. The Test tab's instances are not listed.
 
+> **`/api` and `/api2` are deprecated** since 3.7: they keep working, with fixes only, until they go (v1 at 4.0). Their
+> answers say so (`Deprecation`, and a `Link` to the API's document); their documents are `/api/openapi.json` and
+> `/api2/openapi.json`. New work goes to the API, below.
+
 ## API v3: user tokens (in progress, 3.7)
 
 `/api/v3` is the API the next versions build on ([its design](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/api-v3.md)).
