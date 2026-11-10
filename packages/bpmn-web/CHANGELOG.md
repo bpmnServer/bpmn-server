@@ -15,6 +15,7 @@ and here
 ## [Unreleased]
 ### Added
 - **The task API starts processes, and gives each task its form** (`/api2/tasks`, with `API_ACTING_USER_KEY` and `x-acting-user`): `POST /api2/tasks/start/:name` starts a process as the acting user, at a start event they may use (its lane or candidates), and answers their first task; `GET /api2/tasks/:id` answers `form: { fields, formKey }`, each field with its options and validation. An application no longer needs `/api` to start a process for one of its users.
+- **API v3 begins: user tokens** (`/api/v3`). With the service key, an application's back end asks for a token for one of its users (`POST /api/v3/tokens`); each call with `Authorization: Bearer <token>` acts as that user, with their groups and the security rules. Tokens expire (15 minutes by default), are revoked per user (`DELETE /api/v3/tokens`), are kept hashed in `wf_tokens`, and can not have `SYSTEM`, `ADMIN` or `DESIGNER`. `GET /api/v3/me` says who a call acts as.
 
 ### Changed
 - **`/api` acts as its service account** (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`, which `init` sets), as `/api2`

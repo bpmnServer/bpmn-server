@@ -29,6 +29,7 @@ import { Model } from './routes/model.js';
 import { Dashboards } from './routes/dashboards.js';
 import { API } from './routes/api.js';
 import { API2 } from './routes/api2.js';
+import { v3Router } from './routes/api/v3.js';
 import { answerMessage } from './routes/common.js';
 import { errorDetailsHandler } from './routes/middleware/errorDetails.js';
 import { processRunErrorHandler } from './routes/runErrors.js';
@@ -230,6 +231,8 @@ export class WebApp {
 		// for every path it sees, which would send API-key callers to /login.
 		this.application.routes?.(this.app, this);
 		if (api) {
+			// v3 before v1: /api would take /api/v3 for one of its own paths
+			this.app.use('/api/v3', v3Router(this.bpmnServer));
 			this.app.use('/api', (new API(this)).config());
 			this.app.use('/api2', (new API2(this)).config());
 			if (!adminDisabled()) {

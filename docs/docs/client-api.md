@@ -85,3 +85,31 @@ The tenant is the service account's (`API_SERVICE_TENANT_ID`), never taken from 
 - Errors are `{ errors, code }`, with a real status. An instance still busy after the lock's retries is a 503: try again.
 
 Anyone holding the key can act as any user, so it belongs on the application's server, never in a browser. The Test tab's instances are not listed.
+
+## API v3: user tokens (in progress, 3.7)
+
+`/api/v3` is the API the next versions build on ([its design](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/api-v3.md)).
+Every call acts as one user, and says who in one of two ways:
+
+- **A user's token**, `Authorization: Bearer <token>`: the user it was issued for, with their groups and the models'
+  security rules.
+- **The service key**, `x-api-key: <API_KEY>`: the service account (`API_SERVICE_USER_NAME`), for the application's own
+  work, and for issuing tokens.
+
+A header naming a user is never trusted. How an application uses it:
+
+1. A user signs in to the application, the application's way: BPMN Server never sees their password.
+2. The application's back end asks for a token for them, with the service key.
+3. The application (its back end, or its pages) calls the API with that token, as that user.
+4. When the user signs out, or is disabled, the back end revokes their tokens.
+
+| Call | What it does | Answers |
+|---|---|---|
+| `POST /api/v3/tokens` | Service key only. Body `{ userName, groups, minutes }`: a token for that user, for `minutes` (default 15, at most 1440). `groups` can not have `SYSTEM`, `ADMIN` or `DESIGNER`. | 201 `{ token, expiresAt, userName, groups }`, 400, 403 |
+| `DELETE /api/v3/tokens?userName=` | Service key only. Revokes every token of that user, at once. | 200 `{ revoked }` |
+| `GET /api/v3/me` | Who this call acts as, and what they may do. | 200 `{ userName, groups, credential, may: { start, design, administer } }` |
+
+A token is random; the server keeps only its SHA-256 (in `wf_tokens`), so a token can not be read back, and it holds
+across a restart and for every server on the same database. Errors are `{ error: { code, message } }` with a real
+status: `UNAUTHORIZED`, `TOKEN_INVALID` (unknown, expired or revoked), `SERVICE_KEY_REQUIRED`, `GROUP_REFUSED`,
+`BAD_USER`, `BAD_GROUPS`, `BAD_MINUTES`. The processes, tasks and models follow on v3 in 3.7.

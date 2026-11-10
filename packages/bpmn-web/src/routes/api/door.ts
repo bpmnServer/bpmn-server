@@ -1,6 +1,7 @@
 import { SecureUser } from '../../index.js';
 import { apiKeyAuth, configuredApiUser, timingSafeEqualStr } from '../middleware/apiKeyAuth.js';
 import { unrestrictedUser } from './operations.js';
+import { Tokens, tokenUser } from './tokens.js';
 
 /*
  * The API's door (docs/design/api-v3.md): who is calling, once per request. It checks the credential and sets
@@ -13,8 +14,10 @@ import { unrestrictedUser } from './operations.js';
  *   v2-admin  /admin/api2    ADMIN_API_KEY: the service account
  *   acting    /api2/tasks    API_ACTING_USER_KEY: the user in x-acting-user, with x-acting-groups (never SYSTEM,
  *                            ADMIN or DESIGNER), security on
+ *   v3        /api/v3        Authorization: Bearer <token>: the user the token stands for, security on (tokens.ts);
+ *                            or x-api-key: API_KEY: the service account. Never a header naming a user
  */
-export type Way = 'v1' | 'v1-admin' | 'v2' | 'v2-admin' | 'acting';
+export type Way = 'v1' | 'v1-admin' | 'v2' | 'v2-admin' | 'acting' | 'v3';
 
 export const impersonationAllowed = () => process.env.API_IMPERSONATION?.toLowerCase() === 'true';
 
@@ -78,8 +81,45 @@ function actingKey(req, res, next) {
     next();
 }
 
-/** The door for one way in: the key checked, then request.apiUser set. */
-export function door(way: Way) {
+/** v3's door: a user's token, or the service key. request.apiCredential says which ('token' or 'service'). */
+function v3Door(tokens: Tokens) {
+    return async (req, res, next) => {
+        const bearer = /^Bearer\s+(\S+)$/i.exec(req.header('authorization') ?? '')?.[1];
+        if (bearer) {
+            try {
+                const holder = await tokens.holder(bearer);
+                if (!holder)
+                    return res.status(401).json({ error: { code: 'TOKEN_INVALID', message: 'The token is unknown, expired or revoked' } });
+                req.apiUser = tokenUser(holder);
+                req.apiCredential = 'token';
+                return next();
+            }
+            catch (error) {
+                return next(error);
+            }
+        }
+        const key = process.env.API_KEY, presented = req.header('x-api-key');
+        if (!key)
+            return res.status(500).json({ error: { code: 'NOT_CONFIGURED', message: 'server API_KEY is not configured' } });
+        if (typeof presented !== 'string' || !timingSafeEqualStr(presented, key))
+            return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: "Send a user's token (Authorization: Bearer) or the service key (x-api-key)" } });
+        try {
+            req.apiUser = serviceAccount();
+            req.apiCredential = 'service';
+        }
+        catch (error) {
+            if (error instanceof Refused)
+                return res.status(error.status).json({ error: { code: 'NOT_CONFIGURED', message: (error.body as any).errors } });
+            return next(error);
+        }
+        next();
+    };
+}
+
+/** The door for one way in: the key checked, then request.apiUser set. v3's needs the token store. */
+export function door(way: Way, tokens?: Tokens) {
+    if (way === 'v3')
+        return v3Door(tokens);
     const checkKey = way === 'acting' ? actingKey : apiKeyAuth;
     return (req, res, next) => checkKey(req, res, () => {
         try {
