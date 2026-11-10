@@ -189,8 +189,8 @@ test('globals: messages, signals and errors, each with what uses it; pools, lane
 });
 
 test('the report text holds the whole model: every value of every sample model, the layout aside', async () => {
-    // the report does not show all of these yet: some nested inputs of Check Input, a value in each of the others
-    const KNOWN_GAPS = ['Check Input.bpmn', 'test-escalation2.bpmn', 'Issue193.bpmn.txt.bpmn'];
+    // the report does not show all of these yet: a value in each of these
+    const KNOWN_GAPS = ['test-escalation2.bpmn', 'Issue193.bpmn.txt.bpmn'];
     const files = fs.readdirSync(SAMPLES).filter(f => f.endsWith('.bpmn') && !KNOWN_GAPS.includes(f));
     const missing = [];
     for (const file of files) {
