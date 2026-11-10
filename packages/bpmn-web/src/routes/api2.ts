@@ -1,7 +1,6 @@
 import express from 'express';
-import FS from 'node:fs';
 
-import { BPMNServer, BPMNAPI, BPMNAdminAPI, dateDiff, Behaviour_names, SecureUser } from '../index.js';
+import { SecureUser } from '../index.js';
 import { adminDisabled } from '../userAccess/roles.js';
 
 
@@ -20,10 +19,7 @@ import { apiKeyAuth as loggedIn, apiServiceAuth, configuredApiUser } from './mid
 import { modelNameGuard, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { taskApi } from './taskApi.js';
-import { invokeDecision } from './decisions.js';
-import { ViewHelper } from './ViewHelper.js';
-import { assertModelAcceptable, sendModelRejection } from '../runtime/modelVerification.js';
-import { json } from 'body-parser';
+import { sendModelRejection } from '../runtime/modelVerification.js';
 import { Operations } from './api/operations.js';
 //////////////////////////////////////////////////////////////////////
 
@@ -63,7 +59,6 @@ export class API2 extends Common {
         router.use(loggedIn, apiServiceAuth);
         router.use('/model', modelNameGuard);
         var bpmnServer = this.bpmnServer;
-        var api=new BPMNAPI(this.bpmnServer);
         const ops = new Operations(this.bpmnServer);
         let self = this;
 
@@ -398,7 +393,7 @@ export class API2 extends Common {
         const router = express.Router();
         guardModelParams(router);
         const bpmnServer = this.bpmnServer;
-        const api = new BPMNAdminAPI(this.bpmnServer);
+        const ops = new Operations(this.bpmnServer);
         const self = this;
 
         //// ---------------------  Model -----------------------
@@ -447,8 +442,7 @@ export class API2 extends Common {
                             svgFile= files[1];
 
                         try {
-                            await assertModelAcceptable(bpmnServer, name, bpmnFile);
-                            const saved = await api.model.save(name, bpmnFile,svgFile,self.getUser(request));
+                            const saved = await ops.saveModel(self.getUser(request), name, bpmnFile, svgFile);
                             if (saved === false) {
                                 response.status(403).json({ errors: 'Model modification denied' });
                                 return;
@@ -486,7 +480,7 @@ export class API2 extends Common {
             let newName = req.body.newName;
             //console.log('renaming ', name, newName);
             try {
-                var ret = await api.model.rename(name, newName,self.getUser(req));
+                var ret = await ops.renameModel(self.getUser(req), name, newName);
                 //console.log('ret:',ret);
                 response.json(ret);
             }
@@ -501,7 +495,7 @@ export class API2 extends Common {
             let name = req.body.name;
             //console.log('deleting ', name);
             try {
-                var ret = await api.model.delete(name,self.getUser(req));
+                var ret = await ops.deleteModel(self.getUser(req), name);
                 //console.log('ret: ',ret);
                 response.json(ret);
             }
@@ -515,20 +509,20 @@ export class API2 extends Common {
 
             let query=req.body?.query ?? {};   // GET requests may carry no body
             
-            let list = await api.model.list(query,self.getUser(req));
+            let list = await ops.listModels(self.getUser(req), query);
             //console.log(list);
             response.json(list);
         });
         router.get('/model/findEvents', loggedIn, async function (req, response) {
 
             let query=req.body?.query ?? {};   // GET requests may carry no body
-            let list = await api.model.findEvents(query,self.getUser(req));
+            let list = await ops.findEvents(self.getUser(req), query);
             response.json(list);
         });
         router.get('/model/findStartEvents', loggedIn, async function (req, response) {
 
             let query=req.body?.query ?? {};   // GET requests may carry no body
-            let list = await api.model.findStartEvents(query,self.getUser(req));
+            let list = await ops.findStartEvents(self.getUser(req), query);
             response.json(list);
         });
         router.get('/model/load{/:name}', loggedIn, self.requireSystem, async function (request, response) {
@@ -536,14 +530,13 @@ export class API2 extends Common {
             //console.log(request.params);
             let name = (request.params as any).name;
 
-            let definition = await bpmnServer.definitions.load(name);
-            response.json(JSON.parse(definition.getJson()));
+            response.json(await ops.modelJson(self.getUser(request), name));
         });
 
         router.put('/rules/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
             // evaluate a decision of the models folder: { decision, data } -> { decision, file, result }
             try {
-                response.json(await invokeDecision(this.bpmnServer, request.body));
+                response.json(await ops.invokeRules(self.getUser(request), request.body));
             }
             catch (exc) {
                 response.status(400).json({ errors: exc.message || String(exc) });

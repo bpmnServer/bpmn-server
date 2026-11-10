@@ -1,7 +1,6 @@
 import express from 'express';
 import FS from 'node:fs';
 
-import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 
 //const bpmnServer = new BPMNServer(config);
 
@@ -24,9 +23,7 @@ import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 import { apiKeyAuth as loggedIn } from './middleware/apiKeyAuth.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
-import { invokeDecision } from './decisions.js';
-import { ViewHelper } from './ViewHelper.js';
-import { assertModelAcceptable, checkModel, sendModelRejection } from '../runtime/modelVerification.js';
+import { sendModelRejection } from '../runtime/modelVerification.js';
 import { Operations, unrestrictedUser } from './api/operations.js';
 
 export class API extends Common {
@@ -46,7 +43,7 @@ export class API extends Common {
         // the models' names, read-only (as /api2/model/list), so a client can list them with administration
         // off (DISABLE_ADMIN); changing models stays under /admin/api
         router.get('/definitions/list', loggedIn, async function (req, response) {
-            response.json(await bpmnServer.definitions.getList());
+            response.json(await ops.listModels(userOf(req)));
         });
 
         // a model's BPMN XML, read-only: who may run a process may read what it does
@@ -59,7 +56,7 @@ export class API extends Common {
             }
             let source;
             try {
-                source = await bpmnServer.definitions.getSource(name);
+                source = await ops.modelSource(userOf(request), name);
             } catch {
                 response.status(404).json({ errors: `No process definition named ${name}` });
                 return;
@@ -505,6 +502,9 @@ export class API extends Common {
         guardModelParams(router);
         const bpmnServer = this.bpmnServer;
         const fsx = FS;
+        const ops = new Operations(bpmnServer);
+        // the administration key, with no security rules; a save records the signed-in user, if any
+        const adminUser = request => unrestrictedUser((request.user as any)?.userName);
 
             router.post('/definitions/import{/:name}', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
@@ -546,8 +546,7 @@ export class API extends Common {
                                 svgFile= files[1];
 
                             try {
-                                await assertModelAcceptable(bpmnServer, name, bpmnFile);
-                                await bpmnServer.definitions.save(name, bpmnFile, svgFile, null, request.user?.userName);
+                                await ops.saveModel(adminUser(request), name, bpmnFile, svgFile);
                             }
                             catch(exc)
                             {
@@ -581,7 +580,7 @@ export class API extends Common {
                 let newName = req.body.newName;
                 //console.log('renaming ', name, newName);
                 try {
-                    var ret = await bpmnServer.definitions.renameModel(name, newName);
+                    var ret = await ops.renameModel(adminUser(req), name, newName);
                     //console.log('ret:',ret);
                     response.json(ret);
                 }
@@ -596,7 +595,7 @@ export class API extends Common {
                 let name = req.body.name;
                 //console.log('deleting ', name);
                 try {
-                    var ret = await bpmnServer.definitions.deleteModel(name);
+                    var ret = await ops.deleteModel(adminUser(req), name);
                     //console.log('ret: ',ret);
                     response.json(ret);
                 }
@@ -608,7 +607,7 @@ export class API extends Common {
 
             router.get('/definitions/list', loggedIn, async function (req, response) {
 
-                let list = await bpmnServer.definitions.getList();
+                let list = await ops.listModels(adminUser(req));
                 //console.log(list);
                 response.json(list);
             });
@@ -622,7 +621,7 @@ export class API extends Common {
                 }
 
                 try {
-                    let definition = await bpmnServer.definitions.getSource(name);
+                    let definition = await ops.modelSource(adminUser(request), name);
                     response.send(definition);
                 } catch (error) {
                     response.status(404).send(error);
@@ -636,14 +635,13 @@ export class API extends Common {
                 const bpmn = request.body.xml;
                 const svg = '';
                 try {
-                    await assertModelAcceptable(bpmnServer, name, bpmn);
+                    await ops.saveModel(adminUser(request), name, bpmn, svg);
                 }
                 catch (exc) {
                     // the model editor's save: 422 (no bpmn-client caller)
                     if (sendModelRejection(response, exc, 422)) return;
                     throw exc;
                 }
-                await bpmnServer.definitions.save(name, bpmn, svg, null, (request.user as any)?.userName);
                 console.log(" save completed");
 
                 //        console.log(request);
@@ -661,7 +659,7 @@ export class API extends Common {
                 let xml = source;
                 if (!xml) {
                     try {
-                        xml = await bpmnServer.definitions.getSource(name);
+                        xml = await ops.modelSource(adminUser(request), name);
                     }
                     catch {
                         response.status(404).json({ errors: `No model ${name}` });
@@ -669,13 +667,7 @@ export class API extends Common {
                     }
                 }
                 // always verified here, whatever VERIFY_MODELS_ON_IMPORT says
-                const check = await checkModel(bpmnServer, name ?? 'model', xml, 'warn');
-                response.json({
-                    name: name ?? null,
-                    valid: check.errors.length === 0,
-                    errors: check.errors,
-                    warnings: check.warnings,
-                });
+                response.json(await ops.verifyModel(adminUser(request), name, xml));
             }));
 
             router.delete('/datastore/deleteInstances', loggedIn, awaitAppDelegateFactory(async (request, response) => {
@@ -692,7 +684,7 @@ export class API extends Common {
                 let errors;
                 let result;
                 try {
-                    result = await this.bpmnServer.engine.deleteInstances(query);
+                    result = await ops.deleteInstances(adminUser(request), query);
                 }
                 catch (exc) {
                     errors = exc.toString();
@@ -705,7 +697,7 @@ export class API extends Common {
             router.put('/rules/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
                 // evaluate a decision of the models folder: { decision, data } -> { decision, file, result }
                 try {
-                    response.json(await invokeDecision(this.bpmnServer, request.body));
+                    response.json(await ops.invokeRules(adminUser(request), request.body));
                 }
                 catch (exc) {
                     response.status(400).json({ errors: exc.message || String(exc) });

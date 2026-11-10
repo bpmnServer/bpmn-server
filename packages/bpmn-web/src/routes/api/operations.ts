@@ -1,5 +1,7 @@
-import { BPMNAPI, SecureUser } from '../../index.js';
+import { BPMNAdminAPI, SecureUser } from '../../index.js';
 import { ViewHelper } from '../ViewHelper.js';
+import { invokeDecision } from '../decisions.js';
+import { assertModelAcceptable, checkModel } from '../../runtime/modelVerification.js';
 
 /*
  * The API's operations, once (docs/design/api-v3.md): each takes the user it acts as and its input, and answers its
@@ -16,9 +18,10 @@ export function unrestrictedUser(userName?: string): SecureUser {
 export interface EngineInput { data?: any; options?: any }
 
 export class Operations {
-    readonly api: BPMNAPI;
+    // the administration API: reading and changing models; each change still asks the user (canModifyModel)
+    readonly api: BPMNAdminAPI;
     constructor(readonly server) {
-        this.api = new BPMNAPI(server);
+        this.api = new BPMNAdminAPI(server);
     }
 
     // ---- the server and its data
@@ -98,5 +101,39 @@ export class Operations {
     }
     findStartEvents(user: SecureUser, query = {}) {
         return this.api.model.findStartEvents(query, user);
+    }
+    /** A model's BPMN XML; throws when there is none. */
+    modelSource(user: SecureUser, name: string) {
+        return this.api.model.getSource(name, user);
+    }
+    /** A model as the engine reads it (JSON). */
+    async modelJson(user: SecureUser, name: string) {
+        const definition = await this.server.definitions.load(name);
+        return JSON.parse(definition.getJson());
+    }
+    /** A model checked, without saving it: errors and warnings. */
+    async verifyModel(user: SecureUser, name: string | undefined, source: string) {
+        const check = await checkModel(this.server, name ?? 'model', source, 'warn');
+        return { name: name ?? null, valid: check.errors.length === 0, errors: check.errors, warnings: check.warnings };
+    }
+
+    // ---- models, changed (a model with errors is refused: assertModelAcceptable throws, sendModelRejection answers it)
+
+    /** Saves a model; false when this user may not change it. */
+    async saveModel(user: SecureUser, name: string, source: string, svg = null) {
+        await assertModelAcceptable(this.server, name, source);
+        return this.api.model.save(name, source, svg, user);
+    }
+    renameModel(user: SecureUser, name: string, newName: string) {
+        return this.api.model.rename(name, newName, user);
+    }
+    deleteModel(user: SecureUser, name: string) {
+        return this.api.model.delete(name, user);
+    }
+
+    // ---- decisions
+
+    invokeRules(user: SecureUser, input) {
+        return invokeDecision(this.server, input);
     }
 }
