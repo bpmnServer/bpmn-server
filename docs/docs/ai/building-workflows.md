@@ -153,9 +153,11 @@ waiting, and each decision with the values it read.
 
 ## Working with a server
 
-A server's REST API takes its key in the `x-api-key` header (`API_KEY`; see [Security](../security.md)), and runs as
-its service account. Its OpenAPI document, `GET /api2/openapi.json`, needs no key: start there. The whole loop, with
-no editor:
+A server's REST API takes its key in the `x-api-key` header. Given a person's link (`https://<site>/ai/ai_…`), open it
+first: its key acts as that person on `/api2`, with their groups, for minutes; changing models needs a designer's or an
+administrator's link. Otherwise the site's key (`API_KEY`; see [Security](../security.md)) runs as its service account.
+Use curl or your own HTTP calls, never a browser: the site's pages need a sign-in. Its OpenAPI document,
+`GET /api2/openapi.json`, needs no key: start there. The whole loop, with no editor:
 
 | Step | Call |
 |---|---|
@@ -171,7 +173,7 @@ no editor:
 
 A failed scenario names its step and why; its instance's Rationale tells what happened before it. Correct the model or
 the test, save, and run again. Changing models and running tests is design: a server with `DISABLE_DESIGN=true`
-answers 404.
+answers 404, and a person's link without design rights 403.
 
 To let your users reach a server from ChatGPT or Claude, see [Chatting with your server](chat-assistants.md).
 

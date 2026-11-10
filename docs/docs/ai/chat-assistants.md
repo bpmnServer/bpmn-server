@@ -20,20 +20,40 @@ the operations its OpenAPI document describes, `/api2/openapi.json`. See [Buildi
 
 Restart the server after changing `.env`.
 
-## Today: with the API key
+## Today: a link for your agent
 
-Until 3.7 a client calls the API with the site's key, in the header `x-api-key` (`API_KEY` in `.env`), as the site's
-service account. Anyone with the key can change the site's models: give it only for a test site, and change it after.
+A signed-in user gets a link for their agent: **Link for an AI agent**, in the menu under their name (`/ai/key`). The
+page shows the link, with a Copy button and an example request:
+
+> Using https://your-site.example/ai/ai_… Use curl only, not a browser, and only its /api2 API.
+>
+> Build a workflow named "leave-request" for employee leave requests: ... Give me the model's link.
+
+What the link does:
+
+- **It acts as the user who got it**, on `/api2`, with their groups and no more: an agent with a staff member's link
+  can start and work on processes as they can, but can not change models; a designer's or an administrator's link can.
+- **It works on `/api2` only.** `/api` and the administration APIs refuse it.
+- **It expires**, after 30 minutes by default (`AI_KEY_TTL_GROUPS` sets minutes by group, the shortest wins), and goes
+  at once when the user signs out or presses **Revoke all my links**.
+- **The agent opens the link first.** The page there says whom it acts as, until when, and its rules: curl (or its own
+  HTTP calls) only, never a browser or computer use; `/api2` only; the key in the `x-api-key` header on every call;
+  start with `/llms.txt`.
+- **It stays out of the logs.** The server keeps only the key's hash; the request log shows `/ai/ai_***`, and
+  `API_TRACE` records the kind of credential, never its value.
+
+Whoever has the link acts as the user until it expires: keep it to the conversation with the agent.
+
+### The site's API key
+
+A client can also call the API with the site's key, `API_KEY` in `.env`, in the header `x-api-key`: it acts as the
+site's service account (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`). Anyone with that key can change the site's
+models: use it for the site's own integrations and for a test site, not for people's agents.
 
 ### ChatGPT, agent mode: no setup
 
-In a chat, choose **Agent** in the tools, and give it the site, the key and the request:
-
-> Using the BPMN Server at https://your-site.example (API key: *the key*, sent as the header `x-api-key` on every
-> call), start by reading /llms.txt. Then build an employee leave request workflow with manager approval, with tests
-> for approval and rejection. Deploy it, run the tests through the API until they pass, and give me the model's URL.
-
-The agent calls the API from its own computer. The key is in the conversation: use a test key.
+In a chat, choose **Agent** in the tools, and paste the request from the link's page. The agent calls the API from its
+own computer. ChatGPT without agent mode only browses pages, and can not send the key: it gets a sign-in page.
 
 ### Not a custom GPT
 
@@ -43,8 +63,8 @@ service as a remote MCP server: see below.
 
 ### Claude, and other agents that run commands
 
-Claude Code, Codex and other coding agents call the API themselves (`curl`): give them the site's address and the key,
-as in the agent-mode prompt above.
+Claude Code, Codex and other coding agents call the API themselves (`curl`): give them the link and the request, as
+the link's page shows.
 
 ## With 3.7: users sign in, and just chat
 
