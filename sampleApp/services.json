@@ -11,7 +11,7 @@
     "getCollection",
     "getTimerDelay",
     "greet",
-    "notify",
+    "notifyUsers",
     "notifyhead",
     "raiseBPMNError",
     "recordLeave",

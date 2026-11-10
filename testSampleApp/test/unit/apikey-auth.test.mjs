@@ -4,6 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { apiKeyAuth, timingSafeEqualStr } from '../../../packages/bpmn-web/dist/routes/middleware/apiKeyAuth.js';
+import { issueAiKey, aiKeyHolder, aiKeyTtlMs, revokeAiKeys } from '../../../packages/bpmn-web/dist/routes/aiAccess.js';
 
 function mockReqRes(headers = {}, query = {}, originalUrl = '/api/status') {
   const state = { statusCode: 200, body: undefined, nextCalled: false };
@@ -82,4 +83,44 @@ test('timingSafeEqualStr matches equal and rejects unequal/different-length', ()
   assert.equal(timingSafeEqualStr('abc', 'abc'), true);
   assert.equal(timingSafeEqualStr('abc', 'abd'), false);
   assert.equal(timingSafeEqualStr('abc', 'abcd'), false);
+});
+
+test('a person\'s AI key stands for them, works on /api2 only, and expires', () => {
+  process.env.API_KEY = KEY;
+  process.env.ADMIN_API_KEY = 'admin-key-456';
+  delete process.env.AI_KEY_TTL_GROUPS;
+  const now = Date.now();
+  const issued = issueAiKey({ userName: 'designer', userGroups: ['DESIGNER'] }, now);
+  assert.match(issued.key, /^ai_/);
+  assert.equal(aiKeyHolder(issued.key, now).userName, 'designer');
+  assert.deepEqual(aiKeyHolder(issued.key, now).groups, ['DESIGNER']);
+  assert.equal(aiKeyHolder(issued.key, now + issued.ttlMs), undefined, 'expired');
+
+  const fresh = issueAiKey({ userName: 'designer', userGroups: ['DESIGNER'] });
+  const api2 = mockReqRes({ 'x-api-key': fresh.key }, {}, '/api2/models');
+  apiKeyAuth(api2.req, api2.res, api2.next);
+  assert.equal(api2.state.nextCalled, true);
+  assert.equal(api2.req.aiKeyHolder.userName, 'designer');
+
+  for (const url of ['/api/status', '/admin/api2/model/list']) {
+    const other = mockReqRes({ 'x-api-key': fresh.key }, {}, url);
+    apiKeyAuth(other.req, other.res, other.next);
+    assert.equal(other.state.statusCode, 401, url);
+  }
+});
+
+test('revoking a person\'s keys stops them; other people\'s keys stay', () => {
+  const mine = issueAiKey({ userName: 'ann', userGroups: [] });
+  const theirs = issueAiKey({ userName: 'bob', userGroups: [] });
+  assert.equal(revokeAiKeys('ann'), 1);
+  assert.equal(aiKeyHolder(mine.key), undefined);
+  assert.equal(aiKeyHolder(theirs.key).userName, 'bob');
+});
+
+test('AI key limits vary by group and the shortest matching limit wins', () => {
+  process.env.AI_KEY_TTL_GROUPS = JSON.stringify({ employee: 45, manager: 20, AI: 60 });
+  assert.equal(aiKeyTtlMs(['employee']), 45 * 60 * 1000);
+  assert.equal(aiKeyTtlMs(['employee', 'manager']), 20 * 60 * 1000);
+  assert.equal(aiKeyTtlMs(['unknown']), 30 * 60 * 1000);
+  delete process.env.AI_KEY_TTL_GROUPS;
 });

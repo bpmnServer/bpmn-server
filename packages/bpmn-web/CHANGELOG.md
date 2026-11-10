@@ -16,6 +16,8 @@ and here
 ### Added
 - **The task API starts processes, and gives each task its form** (`/api2/tasks`, with `API_ACTING_USER_KEY` and `x-acting-user`): `POST /api2/tasks/start/:name` starts a process as the acting user, at a start event they may use (its lane or candidates), and answers their first task; `GET /api2/tasks/:id` answers `form: { fields, formKey }`, each field with its options and validation. An application no longer needs `/api` to start a process for one of its users.
 - **API v3 begins: user tokens** (`/api/v3`). With the service key, an application's back end asks for a token for one of its users (`POST /api/v3/tokens`); each call with `Authorization: Bearer <token>` acts as that user, with their groups and the security rules. Tokens expire (15 minutes by default), are revoked per user (`DELETE /api/v3/tokens`), are kept hashed in `wf_tokens`, and can not have `SYSTEM`, `ADMIN` or `DESIGNER`. `GET /api/v3/me` says who a call acts as. A user's processes and tasks on v3: what they may start (with the start forms), starting as them, their tasks a page at a time (`cursor`), one with its form, claim, complete; the same operations as `/api2/tasks`. Instances on v3: those a user may see (a page at a time), one with its items, its Rationale by step, a start event, a restart; deleting (administrators), messages and signals (the system). v3's OpenAPI document at `/api/v3/openapi.json` (no credential needed), checked against the routes.
+- **A link for an AI agent** (`/ai/key`, in the menu under your name): a signed-in person gets a link to hand to an agent (Codex, Claude Code). On `/api2` the agent acts as them, with their groups and no more (designing models needs a designer's or an administrator's link); not on `/api` or the administration APIs. The key is random, kept as its hash, masked in the request log; it expires after 30 minutes (`AI_KEY_TTL_GROUPS` sets minutes by group) and goes when they sign out or revoke it.
+- `/llms.txt` and the guide for agents advise a lane for each role, named as its user group.
 
 ### Changed
 - **`/api` acts as its service account** (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`, which `init` sets), as `/api2`
@@ -35,6 +37,21 @@ and here
   delete its guest users (group `GUEST`): a kept session would otherwise sign one in as a designer of the shared models.
 
 ### Added
+- **`/llms.txt`**: where an AI agent given only the site's address starts: the site's facts (its API and OpenAPI
+  document, whether design is on, the services, connectors and user groups a model can use), its own guide
+  (`AI_GUIDE`, default `settings/ai-guide.md`), then BPMN Server's guide for agents, shipped in the package.
+- **The test environment's services**: `/llms.txt` says which environment a site is (`APP_ENV`); the sample
+  application has `connectors/testServices.ts`, `TestServices`, the same service names with nothing sent or recorded,
+  used when `APP_ENV=test` (`npm test` runs as the test environment). Its `notify` service is now `notifyUsers`, whom
+  to tell given as `users` and `groups`.
+- **`API_TRACE`**: every API call and its answer, one JSON line each, secrets masked: what a client, an AI agent, did.
+- **`has ... items ... for me`** in a `.feature`: only the items the user of `@login` may take, to check who may do what
+  (an employee can not approve); `@invoke ... is refused` holds when the user can not do it.
+- **Models and their tests over the API**, for a client that builds workflows (an AI agent, a script), with the API
+  key: `GET`/`PUT /api2/models/:name` (created or changed from XML, checked first, refused with its errors), `POST
+  .../verify`, `GET`/`PUT .../feature`, `POST .../test` (each scenario's result, the failing step and why),
+  `GET /api2/instances/:id/rationale`; `GET /api2/openapi.json`, without a key, describes them. See
+  `docs/docs/ai/building-workflows.md`.
 - **Gherkin tests**: a model's tests as a `.feature` file, run whole in the engine (`POST /model/test/feature`), with `@login`, `@start`,
   `@find`, `@invoke`, `@check`, `@wait`, `@stub` and `@script`. A stub replaces a service or a timer for its own scenario's instances.
   The Test tab and the decision editor read and write them, and `*.tests.json` files are converted when the server starts. The Mocha scenarios are now `<model>.engine.feature`. See `docs/docs/testing.md`.

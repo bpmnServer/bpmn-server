@@ -8,7 +8,7 @@ import { ViewHelper } from './ViewHelper.js';
 
 import FS from 'node:fs';
 import path from 'node:path';
-import { layoutProcess } from 'bpmn-auto-layout';
+import { layoutModel } from './layout.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
 import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
@@ -159,7 +159,7 @@ export class Model extends Common {
                     // files without diagram information (BPMN DI) can't be drawn by the modeler
                     if (!/<(\w+:)?BPMNDiagram[\s>]/.test(source)) {
                         try {
-                            source = await layoutProcess(source);
+                            source = await layoutModel(source);
                         }
                         catch (exc) {
                             console.log('auto-layout error:', exc);
@@ -247,7 +247,7 @@ export class Model extends Common {
                 // drawn; it is saved with the layout only when the designer saves it
                 if (!/<(\w+:)?BPMNDiagram[\s>]/.test(xml)) {
                     try {
-                        xml = await layoutProcess(xml);
+                        xml = await layoutModel(xml);
                     } catch (exc) {
                         console.log('auto-layout error:', exc);
                     }

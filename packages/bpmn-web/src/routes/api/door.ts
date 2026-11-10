@@ -2,6 +2,7 @@ import { SecureUser } from '../../index.js';
 import { apiKeyAuth, configuredApiUser, timingSafeEqualStr } from '../middleware/apiKeyAuth.js';
 import { unrestrictedUser } from './operations.js';
 import { Tokens, tokenUser } from './tokens.js';
+import { aiKeyUser } from '../aiAccess.js';
 
 /*
  * The API's door (docs/design/api-v3.md): who is calling, once per request. It checks the credential and sets
@@ -10,7 +11,7 @@ import { Tokens, tokenUser } from './tokens.js';
  *   v1        /api           API_KEY: the service account. With API_IMPERSONATION=true (until 4.0), the user the
  *                            caller names (body.userName, body.options.userName), with no security rules, as before 3.7
  *   v1-admin  /admin/api     ADMIN_API_KEY: an administrator with no security rules; a save records the signed-in user
- *   v2        /api2          API_KEY: the service account
+ *   v2        /api2          API_KEY: the service account; a person's AI key (/ai/key): that person, with their groups
  *   v2-admin  /admin/api2    ADMIN_API_KEY: the service account
  *   acting    /api2/tasks    API_ACTING_USER_KEY: the user in x-acting-user, with x-acting-groups (never SYSTEM,
  *                            ADMIN or DESIGNER), security on
@@ -55,6 +56,8 @@ function userFor(way: Way, req, res): SecureUser {
         case 'v1-admin':
             return unrestrictedUser(req.user?.userName);
         case 'v2':
+            // a person's AI key: the key check (apiKeyAuth) found whose it is
+            return req.aiKeyHolder ? aiKeyUser(req.aiKeyHolder) : serviceAccount();
         case 'v2-admin':
             return serviceAccount();
         case 'acting': {

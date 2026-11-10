@@ -23,8 +23,14 @@ async recordLeave({ requester, LeaveType, StartDate, EndDate, days }, context) {
 }
 ```
 
-**Remind the managers** and **Tell the employee** call `notify` the same way, with a recipient and a subject. In the
-sample both only log what they would do: put your HR system and your email there. After adding a service, run
+**Remind the managers** and **Tell the employee** call `notifyUsers`: whom to tell (`users`, user names, or `groups`,
+group names: one or a list), a subject and a message. The model decides when and why; the service only sends. In the
+sample both services only log what they would do: put your HR system and your email there.
+
+**Test is an environment of its own:** its own configuration (`.env`), its own database, and its own services:
+`connectors/testServices.ts`, a class `TestServices` with the same service names, which answer as the real ones and
+send or record nothing. `APP_ENV=test` in the test environment's `.env` makes the application use it; production
+never loads it. `npm test` runs as the test environment. After adding a service, run
 `npm run services` so the editor knows it, and offers it under **Service name**.
 
 A service task can also call a **REST API** with no code, through a connector: [Connect external services](tutorial-connectors.md).

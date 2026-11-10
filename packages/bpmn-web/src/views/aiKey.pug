@@ -1,0 +1,73 @@
+extends layout
+
+//- /ai/key: a link for your AI agent. It acts as you on this site's API, for a short time.
+block content
+  .container.ai-key-page(style="max-width: 860px")
+    h2 A link for your AI agent
+    p.lead
+      | Give this link to an AI agent (Codex, Claude Code, ...) and it can build and test workflows on this site
+      | for you: it reads how, writes a model and its tests, saves them, runs the tests and fixes what fails.
+
+    if revoked !== undefined
+      .alert.alert-info= revoked === 1 ? 'One link was revoked: it no longer works.' : `${revoked} links were revoked: they no longer work.`
+
+    .panel.panel-default
+      .panel-body
+        h4(style="margin-top:0") Your link
+        .input-group
+          input#ai-link.form-control(type="text", readonly, value=url, aria-label="Your link for an AI agent", style="font-family: monospace")
+          span.input-group-btn
+            button.btn.btn-primary(type="button", data-copy="#ai-link") Copy
+        p.text-muted(style="margin-top:10px")
+          | It acts as #[strong= userName]
+          if groups.length
+            |  (#{groups.join(', ')})
+          | , with your rights and no more. It works until #[strong#ai-expires(data-at=expiresAt)= expiresAt]
+          | (#{minutes} minutes), or until you sign out.
+
+    h3 What to do
+    ol
+      li Copy the link.
+      li
+        | Open your AI agent, and give it the link with what you want built. For example:
+        .input-group(style="margin: 8px 0")
+          textarea#ai-prompt.form-control(rows="6", readonly, style="font-family: monospace; font-size: 13px")
+            | Using #{url}
+            | Use curl only, not a browser, and only its /api2 API.
+            |
+            | Build a workflow named "leave-request" for employee leave requests: an employee submits employeeId, startDate, endDate and reason; a manager approves or rejects it, and an employee must not be able to approve. Write its tests for approved, rejected, and an employee cannot approve. Check the model, save it, save its tests, run them, and fix what fails until they all pass. Give me the model's link.
+          span.input-group-btn(style="vertical-align: top")
+            button.btn.btn-default(type="button", data-copy="#ai-prompt") Copy
+      li
+        | The agent reads the link first: it says how to use this site, then works through its API. When it is done,
+        | open the model it gives you, from #[a(href="/") the Workbench].
+
+    h3 Good to know
+    ul
+      li The agent can do only what you may: if you can not design models here, neither can it.
+      li Keep the link to yourself: whoever has it acts as you until it expires.
+      li
+        | The agent must use curl, and the site's /api2 API: not a browser. The link tells it so. Use an agent that
+        | runs commands (Codex, Claude Code); a chat that only browses pages can not.
+      li
+        | To see what an agent did, open the model it saved and its test runs; on this site, each step is in the
+        | instance's Rationale.
+
+    form(method="post", action="/ai/revoke", style="margin-top: 24px")
+      input(type="hidden", name="_csrf", value=_csrf)
+      button.btn.btn-default(type="submit") Revoke all my links
+      span.text-muted(style="margin-left: 10px") Stops every link you got here, now. Signing out does too.
+
+  script.
+    document.querySelectorAll('[data-copy]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var field = document.querySelector(button.getAttribute('data-copy'));
+        var text = field.value;
+        (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).catch(function () { field.select(); document.execCommand('copy'); });
+        var label = button.textContent;
+        button.textContent = 'Copied';
+        setTimeout(function () { button.textContent = label; }, 1500);
+      });
+    });
+    var at = document.getElementById('ai-expires');
+    if (at) at.textContent = new Date(at.dataset.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

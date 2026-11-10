@@ -22,13 +22,16 @@ import { Common } from './common.js';
 import { taskApi } from './taskApi.js';
 import { sendModelRejection } from '../runtime/modelVerification.js';
 import { Operations } from './api/operations.js';
+import { modelApi, openApiDocument } from './modelApi.js';
+import { siteGuide } from './siteGuide.js';
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////
 
 export class API2 extends Common {
     getUser(request): SecureUser {
-        // the user the door set (routes/api/door.ts): the service account; a user named by the caller never is
+        // the user the door set (routes/api/door.ts): the service account, or a person's AI key's person (/ai/key);
+        // a user named by the caller never is
         return request.apiUser ?? configuredApiUser();
     }
     requireSystem = (req, res, next) => {
@@ -56,7 +59,13 @@ export class API2 extends Common {
         guardModelParams(router);
         // the task API has a key of its own, and API_KEY does not open it
         router.use('/tasks', taskApi(this.bpmnServer));
+        // what a client can call, without a key: how an agent finds it
+        router.get('/openapi.json', (req, res) => res.json(openApiDocument(req)));
+        // /llms.txt as an operation: a client that only calls the API's operations (a ChatGPT action) reads it here
+        router.get('/guide', (req, res, next) => siteGuide(this.webApp, req).then(text => res.type('text/markdown').send(text), next));
         router.use(door('v2'));
+        // models and their tests, for a client that builds workflows: JSON in and out
+        router.use(modelApi(this.bpmnServer));
         router.use('/model', modelNameGuard);
         var bpmnServer = this.bpmnServer;
         const ops = new Operations(this.bpmnServer);

@@ -489,6 +489,13 @@ features:
     docs: [docs/docs/testing.md, docs/docs/tutorial/tutorial-testing.md]
     code: [packages/bpmn-web/src/testing/gherkin.ts, packages/bpmn-web/src/testing/featureFiles.ts, packages/bpmn-web/src/testing/scenarios.ts, packages/bpmn-server/src/engine/TestStubs.ts]
     tests: [testSampleApp/test/web/gherkin.test.mjs, testSampleApp/test/web/gherkin-sandbox.test.mjs, testSampleApp/test/web/feature-files.test.mjs]
+  - id: ai-remote-development
+    area: pages
+    name: "Models and their tests over the API"
+    what: "For a client that builds workflows (an AI agent, a script), with the API key: read a model, check it, create or change it (refused with its errors), its .feature written and run (each scenario, where and why it failed), an instance's Rationale by step; GET /api2/openapi.json describes them."
+    docs: [docs/docs/ai/building-workflows.md]
+    code: [packages/bpmn-web/src/routes/modelApi.ts]
+    tests: [testSampleApp/test/web/model-api.test.mjs]
 # ----------------------------------------------------------------------------------------------
   - id: test-tab
     area: web

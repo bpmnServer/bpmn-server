@@ -10,7 +10,7 @@
     "getApprovers",
     "getCollection",
     "getTimerDelay",
-    "notify",
+    "notifyUsers",
     "notifyhead",
     "raiseBPMNError",
     "recordLeave",

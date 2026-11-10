@@ -44,8 +44,11 @@ class AppDelegate extends WebAppDelegate{
         }
     else
         {
+        // the environment's services: the test environment (APP_ENV=test) has its own; production never loads them
         if (this.appServices == null)
-        this.appServices = new AppServices(this);
+        this.appServices = process.env.APP_ENV === 'test'
+            ? new (await import('../connectors/testServices.js')).TestServices(this)
+            : new AppServices(this);
         return this.appServices
         }
         

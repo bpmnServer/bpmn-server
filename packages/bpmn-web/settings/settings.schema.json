@@ -14,6 +14,21 @@
       "x-generate": "password",
       "x-restart": true
     },
+    "AI_GUIDE": {
+      "description": "A Markdown file: this site's own guide for AI agents, in its `/llms.txt`. Default `settings/ai-guide.md`",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "x-restart": false,
+      "default": "settings/ai-guide.md"
+    },
+    "AI_KEY_TTL_GROUPS": {
+      "description": "How long a user's link for an AI agent (`/ai/key`) lasts, in minutes, by group: `{\"ADMIN\":10,\"staff\":60}`. A user in several of the groups gets the shortest; in none, 30 minutes. See [Chatting with your server](ai/chat-assistants.md)",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "x-restart": false
+    },
     "ALLOW_INSECURE_NO_AUTH": {
       "description": "`true` allows `REQUIRE_AUTHENTICATION=false` in production",
       "x-where": "env",
@@ -197,6 +212,22 @@
         "mongodb://localhost:27017/bpmn",
         "memory"
       ]
+    },
+    "API_TRACE": {
+      "description": "A file: every API call (`/api`, `/api2`) and its answer, one JSON line each (when, how long, method, path, status, the kind of credential, the bodies cut at `API_TRACE_MAX` characters, default 4000, with passwords, keys and tokens masked). To see what a client, an AI agent, did. Off by default",
+      "x-where": "env",
+      "x-group": "diagnostics",
+      "type": "string",
+      "x-restart": true
+    },
+    "API_TRACE_MAX": {
+      "description": "With API_TRACE: the most characters of a request or answer body kept. Default `4000`",
+      "x-where": "env",
+      "x-group": "diagnostics",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true,
+      "default": 4000
     },
     "ENABLE_PROFILER": {
       "description": "`true` turns on the database profiler for queries",
@@ -438,6 +469,18 @@
       "x-group": "models",
       "type": "string",
       "x-restart": true
+    },
+    "APP_ENV": {
+      "description": "The environment: `test` makes the sample application use its test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Default: production",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "x-restart": true,
+      "default": "production",
+      "examples": [
+        "production",
+        "test"
+      ]
     },
     "BODY_LIMIT": {
       "description": "The largest request. Default `50mb`",

@@ -22,7 +22,8 @@ function withEnv(vars, fn) {
 
 test('the application\'s routes are mounted before the APIs and the UI', () => {
   const mounted = [];
-  const app = { use: (path) => mounted.push(Array.isArray(path) ? path.join(',') : String(path)) };
+  // routes of its own (/llms.txt, /ai/key) are get and post: only what is mounted is recorded
+  const app = { use: (path) => mounted.push(Array.isArray(path) ? path.join(',') : String(path)), get: () => {}, post: () => {} };
   const fake = { app, bpmnServer: {}, application: { api: true, ui: false, routes: (a) => a.use('/api/instance') } };
   withEnv({ DISABLE_ADMIN: 'false' }, () => WebApp.prototype.setupRoutes.call(fake));
   assert.equal(mounted[0], '/api/instance');

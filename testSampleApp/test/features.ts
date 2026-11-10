@@ -5,6 +5,8 @@
 //
 //   npm test                        all of them; the exit code is 1 when one fails
 //   npm test -- "Leave Application" one model's
+// npm test is the test environment: its services (TestServices), in memory
+process.env.APP_ENV ??= 'test';
 import fs from 'node:fs';
 import path from 'node:path';
 import { BPMNServer, Logger, MemoryDocumentStore, webConfiguration, runFeature } from 'bpmn-web';

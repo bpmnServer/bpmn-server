@@ -96,11 +96,11 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
         <bpmn2:timeCycle xsi:type="bpmn2:tFormalExpression">R3/P2D</bpmn2:timeCycle>
       </bpmn2:timerEventDefinition>
     </bpmn2:boundaryEvent>
-    <bpmn2:serviceTask id="Remind" name="Remind the managers" camunda:delegateExpression="notify">
-      <bpmn2:documentation>Calls the application's notify service.</bpmn2:documentation>
+    <bpmn2:serviceTask id="Remind" name="Remind the managers" camunda:delegateExpression="notifyUsers">
+      <bpmn2:documentation>Calls the application's notifyUsers service: the Manager group.</bpmn2:documentation>
       <bpmn2:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="to">Manager</camunda:inputParameter>
+          <camunda:inputParameter name="groups">Manager</camunda:inputParameter>
           <camunda:inputParameter name="subject">A leave request waits for approval</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn2:extensionElements>
@@ -150,13 +150,13 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       <bpmn2:incoming>rejected</bpmn2:incoming>
       <bpmn2:outgoing>toTellTask</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
-    <bpmn2:serviceTask id="Tell" name="Tell the employee" camunda:delegateExpression="notify">
-      <bpmn2:documentation>Calls the application's notify service with the outcome and the manager's comment.</bpmn2:documentation>
+    <bpmn2:serviceTask id="Tell" name="Tell the employee" camunda:delegateExpression="notifyUsers">
+      <bpmn2:documentation>Calls the application's notifyUsers service: the requester, with the outcome and the manager's comment.</bpmn2:documentation>
       <bpmn2:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="to">${data.requester}</camunda:inputParameter>
+          <camunda:inputParameter name="users">${data.requester}</camunda:inputParameter>
           <camunda:inputParameter name="subject">Your leave request: ${data.approval == 'A' ? 'approved' : 'rejected'}</camunda:inputParameter>
-          <camunda:inputParameter name="comment">${data.comment ?? ''}</camunda:inputParameter>
+          <camunda:inputParameter name="message">${data.comment ?? ''}</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn2:extensionElements>
       <bpmn2:incoming>toTellTask</bpmn2:incoming>
