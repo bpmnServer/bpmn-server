@@ -104,6 +104,22 @@ export function openApiV3(origin: string) {
                 operationId: 'checkSettings', summary: 'Run a check: database, engine, url (SITE_URL) or email', parameters: [id('name', 'The check')],
                 responses: { 200: answer('Its result', { type: 'object', properties: { check: { type: 'string' }, ok: { type: 'boolean' }, message: { type: 'string' } } }), ...errors(401, 403, 404) },
             } },
+            '/users': {
+                get: { operationId: 'listUsers', summary: 'The users (an administrator; never an AI link)', responses: { 200: answer('A list', list(ref('User'))), ...errors(401, 403) } },
+                post: {
+                    operationId: 'addUser', summary: 'Add a user (an administrator)', requestBody: body({ type: 'object', required: ['userName', 'password'], properties: { userName: { type: 'string' }, email: { type: 'string' }, password: { type: 'string', minLength: 8 }, groups: { type: 'array', items: { type: 'string' } } } }, true),
+                    responses: { 201: answer('The user', ref('User')), ...errors(400, 401, 403, 409) },
+                },
+            },
+            '/users/{userName}': { delete: { operationId: 'deleteUser', summary: 'Delete a user, and end their tokens (an administrator; not themselves)', parameters: [id('userName', 'The user')], responses: { 200: answer('Deleted', { type: 'object', properties: { deleted: { type: 'string' } } }), ...errors(401, 403, 404, 409) } } },
+            '/users/{userName}/groups': { put: {
+                operationId: 'setUserGroups', summary: 'Set a user’s groups, and end their tokens (an administrator)', parameters: [id('userName', 'The user')],
+                requestBody: body({ type: 'object', required: ['groups'], properties: { groups: { type: 'array', items: { type: 'string' } } } }, true), responses: { 200: answer('The user', ref('User')), ...errors(400, 401, 403, 404) },
+            } },
+            '/users/{userName}/password': { post: {
+                operationId: 'setUserPassword', summary: 'Set a user’s password (an administrator)', parameters: [id('userName', 'The user')],
+                requestBody: body({ type: 'object', required: ['password'], properties: { password: { type: 'string', minLength: 8 } } }, true), responses: { 200: answer('Set', { type: 'object', properties: { userName: { type: 'string' }, passwordSet: { type: 'boolean' } } }), ...errors(400, 401, 403, 404) },
+            } },
             '/messages/{id}': { post: {
                 operationId: 'throwMessage', summary: 'A message, to what waits for it or starts on it (the system)', parameters: [id('id', 'The message')],
                 requestBody: body({ type: 'object', properties: { data, matchingKey: data } }), responses: { 200: answer('The instance it reached, or null', { type: 'object', properties: { instance: { oneOf: [ref('Instance'), { type: 'null' }] } } }), ...errors(401, 403, 422) },
@@ -138,6 +154,7 @@ export function openApiV3(origin: string) {
                 Task: { type: 'object', properties: { id: { type: 'string' }, instanceId: { type: 'string' }, processName: { type: 'string' }, elementId: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, assignee: { type: 'string' }, candidateUsers: {}, candidateGroups: {}, startedAt: { type: 'string' }, endedAt: { type: 'string' }, dueDate: { type: 'string' }, followUpDate: { type: 'string' }, priority: {}, completedBy: { type: 'string' } } },
                 TaskWithForm: { allOf: [ref('Task'), { type: 'object', properties: { data, form: ref('Form') } }] },
                 Instance: { type: 'object', properties: { id: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, startedAt: { type: 'string' }, endedAt: { type: ['string', 'null'] }, data } },
+                User: { type: 'object', properties: { userName: { type: 'string' }, email: { type: ['string', 'null'] }, groups: { type: 'array', items: { type: 'string' } } } },
                 Issue: { type: 'object', properties: { code: { type: 'string' }, element: { type: ['string', 'null'] }, message: { type: 'string' } } },
                 Check: { type: 'object', properties: { name: { type: 'string' }, valid: { type: 'boolean' }, errors: { type: 'array', items: ref('Issue') }, warnings: { type: 'array', items: ref('Issue') } } },
                 ModelSaved: { allOf: [ref('Check'), { type: 'object', properties: { created: { type: 'boolean' }, laidOut: { type: 'boolean' }, url: { type: 'string' } } }] },

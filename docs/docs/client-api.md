@@ -133,6 +133,8 @@ A header naming a user is never trusted. How an application uses it:
 | `GET`, `PUT /api/v3/models/{name}/feature` | Its tests: the `.feature`. Writing is design; `{ text, base }`. | 200, 403, 409 |
 | `POST /api/v3/models/{name}/test` | Design. Runs its tests (or `{ source }`, a `.feature` not saved). | 200 `{ passed, failed, skipped, scenarios }` |
 | `POST /api/v3/models/{name}/rename`, `DELETE /api/v3/models/{name}` | Design. | 200, 404, 409 |
+| `GET`, `POST /api/v3/users`; `PUT /api/v3/users/{name}/groups`; `POST /api/v3/users/{name}/password`; `DELETE /api/v3/users/{name}` | Administrators (their own token) or the service key; never an AI link. Changing a user's groups or deleting them ends their tokens. | 200, 201, 400, 403, 404, 409 |
+| `GET /api/v3/settings`, `GET /api/v3/settings/schema`, `POST /api/v3/settings/checks/{name}` | Administrators, or an AI link at the administer level: every setting with its value (secrets as `***`) and source; a check (`database`, `engine`, `url`). Nothing here changes a setting. | 200, 403 |
 | `POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}` | Body `{ data, matchingKey }`. The system only (a service account in `SYSTEM`). | 200, 403 `SYSTEM_REQUIRED` |
 
 A token is random; the server keeps only its SHA-256 (in `wf_tokens`), so a token can not be read back, and it holds

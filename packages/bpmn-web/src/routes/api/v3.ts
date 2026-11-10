@@ -7,6 +7,7 @@ import { v2TaskError } from '../taskApi.js';
 import { openApiV3 } from './openapi-v3.js';
 import { ModelOperations, ModelError } from './models.js';
 import { SettingsOperations, SettingsError, settingsSchema } from './settings.js';
+import { UserOperations, UserError } from './users.js';
 import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 
@@ -26,6 +27,7 @@ export function v3Router(server) {
     const instances = new InstanceOperations(server);
     const models = new ModelOperations(server);
     const settings = new SettingsOperations(server);
+    const users = new UserOperations(server);
     /** Where a person opens a model: the editor (signed in to the site; a token does not open it). */
     const editorUrl = (req, name: string) => `${originOf(req)}/model/edit/${encodeURIComponent(name)}`;
     /** Changing models and running tests: design on, and a designer's token or the service key. */
@@ -53,6 +55,12 @@ export function v3Router(server) {
     router.use('/settings', needs('administer'), (req: any, res, next) => req.apiCredential === 'service' || isAdminGroups(req.apiUser.userGroups) ? next()
         : res.status(403).json({ error: { code: 'ADMIN_REQUIRED', message: 'Only an administrator reads the settings' } }));
 
+    // the users: an administrator's own token or the service key; never an AI link, whatever its level
+    router.use('/users', (req: any, res, next) => req.apiScope
+        ? res.status(403).json({ error: { code: 'LEVEL_REFUSED', message: 'An AI link does not reach the users' } })
+        : req.apiCredential === 'service' || isAdminGroups(req.apiUser.userGroups) ? next()
+        : res.status(403).json({ error: { code: 'ADMIN_REQUIRED', message: 'Only an administrator manages the users' } }));
+
     /** Only with the service key: an application's back end, never a user's token. */
     const serviceOnly = (req, res, next) => req.apiCredential === 'service' ? next()
         : res.status(403).json({ error: { code: 'SERVICE_KEY_REQUIRED', message: 'Only the service key (x-api-key) may do this' } });
@@ -66,7 +74,7 @@ export function v3Router(server) {
         catch (error) {
             if (error instanceof ModelError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
-            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError)
+            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
@@ -144,6 +152,14 @@ export function v3Router(server) {
     router.get('/settings', handler(() => settings.list()));
     router.get('/settings/schema', handler(() => settingsSchema()));
     router.post('/settings/checks/:name', handler(req => settings.check(req.params.name)));
+
+    // ---- the users (an administrator's)
+
+    router.get('/users', handler(() => users.list()));
+    router.post('/users', handler(req => users.add(req.body ?? {}), 201));
+    router.put('/users/:userName/groups', handler(req => users.setGroups(req.params.userName, req.body?.groups)));
+    router.post('/users/:userName/password', handler(req => users.setPassword(req.params.userName, req.body?.password)));
+    router.delete('/users/:userName', handler((req, user) => users.remove(req.params.userName, user.userName)));
 
     // ---- messages and signals (the system's)
 
