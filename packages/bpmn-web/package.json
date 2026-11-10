@@ -119,6 +119,7 @@
     "src/userAccess/views",
     "public",
     "emailTemplates",
+    "settings",
     "README.md"
   ],
   "bin": {

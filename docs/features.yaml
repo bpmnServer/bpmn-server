@@ -628,8 +628,8 @@ features:
     name: "Setup and settings (.env)"
     what: "The application's settings from .env (database, models folder, keys, MODEL_HISTORY, DISABLE_*), checked at start."
     docs: [docs/docs/setup.md]
-    code: [packages/bpmn-web/src/start.ts, packages/bpmn-web/src/runtime/loadEnv.ts, packages/bpmn-web/src/runtime/bootConfig.ts]
-    tests: [testSampleApp/test/unit/app-hosting.test.mjs, packages/bpmn-server/test/database-name.test.mjs]
+    code: [packages/bpmn-web/src/start.ts, packages/bpmn-web/src/runtime/loadEnv.ts, packages/bpmn-web/src/runtime/bootConfig.ts, packages/bpmn-web/settings/settings.schema.json]
+    tests: [testSampleApp/test/unit/app-hosting.test.mjs, packages/bpmn-server/test/database-name.test.mjs, testSampleApp/test/unit/settings-schema.test.mjs]
   - id: new-app
     area: install
     name: "A new application"
