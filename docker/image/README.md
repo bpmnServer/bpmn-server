@@ -8,7 +8,7 @@ Run from `docker/image`:
 
 ```sh
 sh build.sh                 # latest published npm release
-sh build.sh 3.5.2           # a specific npm release
+sh build.sh 3.6.0           # a specific npm release (tagged latest too when it is npm's latest)
 node test.mjs               # test before publishing
 ```
 
@@ -30,7 +30,7 @@ After testing:
 ```sh
 docker login
 docker image ls bpmnserver/bpmn-server
-sh push.sh
+sh push.sh                   # npm's latest, as built (or: sh push.sh 3.6.0); latest too when it is the same image
 ```
 
 On Windows use `push.cmd`.

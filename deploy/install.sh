@@ -506,6 +506,7 @@ case "${1:-help}" in
     restart|stop|start) systemctl "$1" "$SERVICE" && echo "$1: done" ;;
     update) update ;;
     password)   # the first admin password: ADMIN_PASSWORD in the application's .env (until it is changed)
+        echo "Initial admin password (not a reset) of the native install, from $APP_DIR/.env:"
         sed -n 's/^ADMIN_PASSWORD=//p' "$APP_DIR/.env" 2>/dev/null | head -n 1 | grep . \
             || cat "$HOME_DIR/admin-password.txt" 2>/dev/null || echo "no ADMIN_PASSWORD in $APP_DIR/.env" ;;
     domain) shift; domain "$@" ;;
