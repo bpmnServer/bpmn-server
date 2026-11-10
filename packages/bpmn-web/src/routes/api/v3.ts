@@ -4,6 +4,7 @@ import { Tokens, TokenError } from './tokens.js';
 import { canDesign, isAdminGroups } from '../../userAccess/roles.js';
 import { TaskOperations, DEFAULT_LIMIT } from './tasks.js';
 import { v2TaskError } from '../taskApi.js';
+import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 
 /*
  * API v3, /api/v3 (docs/design/api-v3.md): every call through the door (a user's token, or the service key) and as
@@ -18,6 +19,7 @@ export function v3Router(server) {
     const router = express.Router();
     const tokens = new Tokens(server);
     const tasks = new TaskOperations(server);
+    const instances = new InstanceOperations(server);
     router.use(door('v3', tokens));
 
     /** Only with the service key: an application's back end, never a user's token. */
@@ -29,7 +31,7 @@ export function v3Router(server) {
             res.status(status).json(await fn(req, req.apiUser));
         }
         catch (error) {
-            if (error instanceof TokenError)
+            if (error instanceof TokenError || error instanceof InstanceError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
@@ -64,6 +66,29 @@ export function v3Router(server) {
     router.get('/tasks/:id', handler((req, user) => tasks.get(user, req.params.id)));
     router.post('/tasks/:id/claim', handler((req, user) => tasks.claim(user, req.params.id)));
     router.post('/tasks/:id/complete', handler((req, user) => tasks.complete(user, req.params.id, req.body?.data ?? {})));
+
+    // ---- instances: those this user may see; one; why it went the way it did; what moves it on
+
+    const limitOf = (req, fallback) => req.query.limit === undefined ? fallback : Number(req.query.limit);
+    router.get('/instances', handler(async (req, user) => {
+        const { instances: items, next } = await instances.list(user, {
+            status: typeof req.query.status === 'string' ? req.query.status : undefined,
+            name: typeof req.query.name === 'string' ? req.query.name : undefined,
+            limit: limitOf(req, INSTANCES_LIMIT),
+            after: fromCursor(req.query.cursor),
+        });
+        return { items, ...(next ? { next: toCursor(next) } : {}) };
+    }));
+    router.get('/instances/:id', handler((req, user) => instances.get(user, req.params.id)));
+    router.get('/instances/:id/rationale', handler((req, user) => instances.rationale(user, req.params.id)));
+    router.post('/instances/:id/events/:elementId', handler(async (req, user) => ({ instance: await instances.startEvent(user, req.params.id, req.params.elementId, req.body?.data ?? {}) })));
+    router.post('/instances/:id/restart', handler(async (req, user) => ({ instance: await instances.restart(user, req.params.id, req.body?.itemId, req.body?.data ?? {}) })));
+    router.delete('/instances/:id', handler((req, user) => instances.remove(user, req.params.id)));
+
+    // ---- messages and signals (the system's)
+
+    router.post('/messages/:id', handler((req, user) => instances.message(user, req.params.id, req.body?.data ?? {}, req.body?.matchingKey ?? {})));
+    router.post('/signals/:id', handler((req, user) => instances.signal(user, req.params.id, req.body?.data ?? {}, req.body?.matchingKey ?? {})));
 
     // ---- tokens
 

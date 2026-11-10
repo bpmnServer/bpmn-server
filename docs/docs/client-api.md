@@ -114,9 +114,16 @@ A header naming a user is never trusted. How an application uses it:
 | `GET /api/v3/tasks/{id}` | One task, with its instance's data and its form: `form: { fields, formKey }`. | 200, 404 |
 | `POST /api/v3/tasks/{id}/claim` | The task becomes this user's. | 200 `{ task }`, 404, 409 |
 | `POST /api/v3/tasks/{id}/complete` | Body `{ data }`. Completes it, recording this user. | 200 `{ task, instance }`, 400, 403, 404, 409 |
+| `GET /api/v3/instances?status=&name=&limit=&cursor=` | The instances this user may see (the models' rules: an instance with an item they have a part in, or one with no assignment), newest first. | 200 `{ items, next }`, 400 |
+| `GET /api/v3/instances/{id}` | One instance: its data and its items. | 200, 404 `INSTANCE_NOT_FOUND` |
+| `GET /api/v3/instances/{id}/rationale` | Why it went the way it did, step by step: each operation, its outcome, each decision. | 200 `{ id, name, status, data, steps }`, 404 |
+| `POST /api/v3/instances/{id}/events/{elementId}` | Body `{ data }`. A start event of the running instance. | 200 `{ instance }`, 404, 422 `ENGINE_ERROR` |
+| `POST /api/v3/instances/{id}/restart` | Body `{ itemId, data }`. Runs that item again, and the instance on from it. | 200 `{ instance }`, 400, 404, 422 |
+| `DELETE /api/v3/instances/{id}` | Administrators only. | 200 `{ deleted }`, 403 `ADMIN_REQUIRED`, 404 |
+| `POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}` | Body `{ data, matchingKey }`. The system only (a service account in `SYSTEM`). | 200, 403 `SYSTEM_REQUIRED` |
 
 A token is random; the server keeps only its SHA-256 (in `wf_tokens`), so a token can not be read back, and it holds
 across a restart and for every server on the same database. Errors are `{ error: { code, message } }` with a real
 status: `UNAUTHORIZED`, `TOKEN_INVALID` (unknown, expired or revoked), `SERVICE_KEY_REQUIRED`, `GROUP_REFUSED`,
 `BAD_USER`, `BAD_GROUPS`, `BAD_MINUTES`, and the task API's codes (`TASK_NOT_FOUND`, `TASK_ASSIGNED`, `ITEM_NOT_WAITING`,
-`NOT_STARTABLE`, `BAD_DATA`, `BAD_LIMIT`, `BAD_CURSOR`, `INSTANCE_BUSY`). Instances and models follow on v3 in 3.7.
+`NOT_STARTABLE`, `BAD_DATA`, `BAD_LIMIT`, `BAD_CURSOR`, `INSTANCE_BUSY`). Models follow on v3 in 3.7.
