@@ -109,6 +109,14 @@
       "x-generate": "key",
       "x-restart": true
     },
+    "API_IMPERSONATION": {
+      "description": "`true`: `/api` acts as the user a call names (`userName`, or `options.userName`), with no security rules, as before 3.7. Until 4.0. Default off: the name is ignored, with a `Warning` header",
+      "x-where": "env",
+      "x-group": "api",
+      "type": "boolean",
+      "x-restart": false,
+      "default": false
+    },
     "API_KEY": {
       "description": "**A secret, required in production.** Runs processes",
       "x-where": "env",

@@ -11,6 +11,9 @@ import { verifyModeFromEnv, checkModel, assertModelAcceptable, ModelRejectedErro
   from '../../../packages/bpmn-web/dist/runtime/modelVerification.js';
 import { parseUpgradeArgs, summarizeUpgrade, formatUpgradeReport } from '../../../packages/bpmn-web/dist/runtime/upgradeRunning.js';
 import { API } from '../../../packages/bpmn-web/dist/routes/api.js';
+import { unrestrictedUser } from '../../../packages/bpmn-web/dist/routes/api/operations.js';
+// the user /admin/api's door sets (routes/api/door.ts, way v1-admin): its handlers are called here without it
+const admin = () => unrestrictedUser();
 
 const quiet = { warn() {}, error() {}, log() {} };
 const NS = 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
@@ -157,15 +160,15 @@ test('admin model/save: enforce answers 422 with the errors and saves nothing', 
   try {
     process.env.VERIFY_MODELS_ON_IMPORT = 'enforce';
     let res = response();
-    await save({ body: { name: 'bad', xml: BROKEN } }, res, assert.fail);
+    await save({ apiUser: admin(), body: { name: 'bad', xml: BROKEN } }, res, assert.fail);
     assert.equal(res.statusCode, 422);
     assert.ok(res.body.issues.some(i => i.code === 'invalid-xml'));
     assert.deepEqual(server.saved, []);
     res = response();
-    await save({ body: { name: 'good', xml: VALID } }, res, assert.fail);
+    await save({ apiUser: admin(), body: { name: 'good', xml: VALID } }, res, assert.fail);
     assert.equal(res.statusCode, 200);
     process.env.VERIFY_MODELS_ON_IMPORT = 'warn';
-    await save({ body: { name: 'bad', xml: BROKEN } }, response(), assert.fail);
+    await save({ apiUser: admin(), body: { name: 'bad', xml: BROKEN } }, response(), assert.fail);
     assert.deepEqual(server.saved, ['good', 'bad']);
   }
   finally {
@@ -180,16 +183,16 @@ test('admin definitions/verify checks a saved model or a source without saving',
   const warn = console.warn; console.warn = () => {};
   try {
     let res = response();
-    await verify({ body: { name: 'bad' } }, res, assert.fail);
+    await verify({ apiUser: admin(), body: { name: 'bad' } }, res, assert.fail);
     assert.equal(res.body.valid, false);
     res = response();
-    await verify({ body: { source: VALID } }, res, assert.fail);
+    await verify({ apiUser: admin(), body: { source: VALID } }, res, assert.fail);
     assert.equal(res.body.valid, true);
     res = response();
-    await verify({ body: { name: 'missing' } }, res, assert.fail);
+    await verify({ apiUser: admin(), body: { name: 'missing' } }, res, assert.fail);
     assert.equal(res.statusCode, 404);
     res = response();
-    await verify({ body: {} }, res, assert.fail);
+    await verify({ apiUser: admin(), body: {} }, res, assert.fail);
     assert.equal(res.statusCode, 400);
     assert.deepEqual(server.saved, []);
   }
