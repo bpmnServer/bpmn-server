@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { apiKeyAuth, timingSafeEqualStr } from '../../../packages/bpmn-web/dist/routes/middleware/apiKeyAuth.js';
-import { issueAiKey, aiKeyHolder, aiKeyTtlMs, revokeAiKeys } from '../../../packages/bpmn-web/dist/routes/aiAccess.js';
+import { levelsFor, offeredLevels, linkMinutes } from '../../../packages/bpmn-web/dist/routes/aiAccess.js';
 
 function mockReqRes(headers = {}, query = {}, originalUrl = '/api/status') {
   const state = { statusCode: 200, body: undefined, nextCalled: false };
@@ -85,42 +85,40 @@ test('timingSafeEqualStr matches equal and rejects unequal/different-length', ()
   assert.equal(timingSafeEqualStr('abc', 'abcd'), false);
 });
 
-test('a person\'s AI key stands for them, works on /api2 only, and expires', () => {
+// a person's AI link is an API token with a level (routes/aiAccess.ts); its calls are tested in test/web/ai-key.test.mjs
+test("an AI link is never an /api or /api2 key: x-api-key takes the site's key only", () => {
   process.env.API_KEY = KEY;
-  process.env.ADMIN_API_KEY = 'admin-key-456';
-  delete process.env.AI_KEY_TTL_GROUPS;
-  const now = Date.now();
-  const issued = issueAiKey({ userName: 'designer', userGroups: ['DESIGNER'] }, now);
-  assert.match(issued.key, /^ai_/);
-  assert.equal(aiKeyHolder(issued.key, now).userName, 'designer');
-  assert.deepEqual(aiKeyHolder(issued.key, now).groups, ['DESIGNER']);
-  assert.equal(aiKeyHolder(issued.key, now + issued.ttlMs), undefined, 'expired');
+  const res = mockReqRes({ 'x-api-key': 'bpt_a-link-key' }, {}, '/api2/models');
+  apiKeyAuth(res.req, res.res, res.next);
+  assert.equal(res.state.statusCode, 401);
+});
 
-  const fresh = issueAiKey({ userName: 'designer', userGroups: ['DESIGNER'] });
-  const api2 = mockReqRes({ 'x-api-key': fresh.key }, {}, '/api2/models');
-  apiKeyAuth(api2.req, api2.res, api2.next);
-  assert.equal(api2.state.nextCalled, true);
-  assert.equal(api2.req.aiKeyHolder.userName, 'designer');
-
-  for (const url of ['/api/status', '/admin/api2/model/list']) {
-    const other = mockReqRes({ 'x-api-key': fresh.key }, {}, url);
-    apiKeyAuth(other.req, other.res, other.next);
-    assert.equal(other.state.statusCode, 401, url);
+test('a person is offered the levels their rights allow, as far as AI_ACCESS goes', () => {
+  const env = { AI_ACCESS: process.env.AI_ACCESS, DISABLE_DESIGN: process.env.DISABLE_DESIGN, DISABLE_ADMIN: process.env.DISABLE_ADMIN, REQUIRE_AUTHENTICATION: process.env.REQUIRE_AUTHENTICATION };
+  try {
+    for (const k of Object.keys(env)) delete process.env[k];
+    assert.deepEqual(levelsFor({ userName: 'sam', userGroups: ['staff'] }), ['work']);
+    assert.deepEqual(levelsFor({ userName: 'dee', userGroups: ['DESIGNER'] }), ['work', 'design']);
+    assert.deepEqual(levelsFor({ userName: 'ann', userGroups: ['ADMIN'] }), ['work', 'design', 'administer']);
+    process.env.AI_ACCESS = 'work, design';
+    assert.deepEqual(offeredLevels(), ['work', 'design']);
+    assert.deepEqual(levelsFor({ userName: 'ann', userGroups: ['ADMIN'] }), ['work', 'design']);
+    process.env.AI_ACCESS = 'off';
+    assert.deepEqual(levelsFor({ userName: 'ann', userGroups: ['ADMIN'] }), []);
+  }
+  finally {
+    for (const [k, v] of Object.entries(env)) if (v === undefined) delete process.env[k]; else process.env[k] = v;
   }
 });
 
-test('revoking a person\'s keys stops them; other people\'s keys stay', () => {
-  const mine = issueAiKey({ userName: 'ann', userGroups: [] });
-  const theirs = issueAiKey({ userName: 'bob', userGroups: [] });
-  assert.equal(revokeAiKeys('ann'), 1);
-  assert.equal(aiKeyHolder(mine.key), undefined);
-  assert.equal(aiKeyHolder(theirs.key).userName, 'bob');
-});
-
-test('AI key limits vary by group and the shortest matching limit wins', () => {
-  process.env.AI_KEY_TTL_GROUPS = JSON.stringify({ employee: 45, manager: 20, AI: 60 });
-  assert.equal(aiKeyTtlMs(['employee']), 45 * 60 * 1000);
-  assert.equal(aiKeyTtlMs(['employee', 'manager']), 20 * 60 * 1000);
-  assert.equal(aiKeyTtlMs(['unknown']), 30 * 60 * 1000);
-  delete process.env.AI_KEY_TTL_GROUPS;
+test('how long a link lasts: by group, the shortest matching; an administer link 10 minutes at most', () => {
+  process.env.AI_KEY_TTL_GROUPS = JSON.stringify({ employee: 45, manager: 20, ADMIN: 60 });
+  try {
+    assert.equal(linkMinutes(['employee']), 45);
+    assert.equal(linkMinutes(['employee', 'manager']), 20);
+    assert.equal(linkMinutes(['unknown']), 30);
+    assert.equal(linkMinutes(['ADMIN'], 'design'), 60);
+    assert.equal(linkMinutes(['ADMIN'], 'administer'), 10);
+  }
+  finally { delete process.env.AI_KEY_TTL_GROUPS; }
 });

@@ -1,5 +1,5 @@
 import { siteGuide } from './routes/siteGuide.js';
-import { issueAiKey, aiKeyHolder, revokeAiKeys } from './routes/aiAccess.js';
+import { levelsFor, issueAiLink, aiLinkHolder, revokeAiLinks } from './routes/aiAccess.js';
 import { originOf } from './routes/modelApi.js';
 import { apiTrace } from './routes/middleware/apiTrace.js';
 import fs from 'node:fs';
@@ -122,7 +122,7 @@ export class WebApp {
             origin: process.env.ITSM_HOST,
         }));
 		// an AI link's key is a credential: not in the request log
-		morgan.token('url', (req: any) => String(req.originalUrl || req.url).replace(/\/ai\/ai_[\w-]+/g, '/ai/ai_***'));
+		morgan.token('url', (req: any) => String(req.originalUrl || req.url).replace(/\/ai\/bpt_[\w-]+/g, '/ai/bpt_***'));
 		app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 		const bodyLimit = process.env.BODY_LIMIT || '50mb';
 		app.use(bodyParser.json({ limit: bodyLimit }));
@@ -240,57 +240,77 @@ export class WebApp {
 		this.application.routes?.(this.app, this);
 		// where an AI agent given this site's address starts; no sign-in
 		this.app.get('/llms.txt', (req, res, next) => siteGuide(this, req).then(text => res.type('text/markdown').send(text), next));
-		// a link for a person's AI agent: it acts as them on /api2, for minutes (routes/aiAccess.ts)
-		this.app.get('/ai/key', (req, res) => {
-			if (!req.user) {
-				req.session.returnTo = req.originalUrl;
-				return res.redirect('/login');
+		// a link for a person's AI agent: an API token that acts as them, at the level they choose (routes/aiAccess.ts)
+		this.app.get('/ai/key', async (req, res, next) => {
+			try {
+				if (!req.user) {
+					req.session.returnTo = req.originalUrl;
+					return res.redirect('/login');
+				}
+				const levels = levelsFor(req.user);
+				const revoked = req.query.revoked !== undefined ? Number(req.query.revoked) : undefined;
+				if (!levels.length)
+					return res.render('aiKey', { title: 'A link for your AI agent', levels, level: null, revoked });
+				// the level asked for, if theirs; else the lowest that lets an agent build workflows, if they design
+				const asked = String(req.query.level ?? '');
+				const level = levels.includes(asked as any) ? asked as any : levels.includes('design') ? 'design' : levels[0];
+				const issued = await issueAiLink(this.bpmnServer, req.user, level);
+				const url = `${originOf(req)}/ai/${issued.key}`;
+				if (req.query.format === 'json')
+					return res.json({ url, level, levels, expiresAt: issued.expiresAt, minutes: issued.minutes, userName: req.user.userName, groups: issued.groups });
+				res.render('aiKey', { title: 'A link for your AI agent', url, level, levels, userName: req.user.userName, groups: issued.groups,
+					expiresAt: issued.expiresAt, minutes: issued.minutes, revoked });
 			}
-			const issued = issueAiKey(req.user);
-			const url = `${originOf(req)}/ai/${issued.key}`;
-			if (req.query.format === 'json')
-				return res.json({ url, expiresAt: issued.expiresAt, expiresInSeconds: issued.ttlMs / 1000, userName: req.user.userName, groups: issued.groups });
-			res.render('aiKey', { title: 'A link for your AI agent', url, userName: req.user.userName, groups: issued.groups,
-				expiresAt: issued.expiresAt, minutes: Math.round(issued.ttlMs / 60000),
-				revoked: req.query.revoked !== undefined ? Number(req.query.revoked) : undefined });
+			catch (error) { next(error); }
 		});
-		this.app.post('/ai/revoke', (req, res) => {
+		this.app.post('/ai/revoke', async (req, res, next) => {
 			if (!req.user) return res.redirect('/login');
-			res.redirect(`/ai/key?revoked=${revokeAiKeys(req.user.userName)}`);
+			try { res.redirect(`/ai/key?revoked=${await revokeAiLinks(this.bpmnServer, req.user.userName)}`); }
+			catch (error) { next(error); }
 		});
-		// what the agent reads first: whom it acts as, until when, and where to start
-		this.app.get('/ai/:key', (req, res) => {
-			const holder = aiKeyHolder(req.params.key);
-			res.type('text/markdown');
-			if (!holder)
-				return res.status(401).send('# This link no longer works\n\nIt expired, was revoked, or is not a link of this site. '
-					+ 'Ask the person who gave it to you for a new one: they get it, signed in, at /ai/key.\n');
-			const origin = originOf(req);
-			res.send([
-				'# Access to this BPMN Server',
-				'',
-				`You act as **${holder.userName}**${holder.groups.length ? ` (groups: ${holder.groups.join(', ')})` : ''}, `
-					+ `until ${new Date(holder.expiresAt).toISOString()}: with their rights, no more.`,
-				'',
-				'## Rules',
-				'',
-				'1. Use curl only (or your own HTTP calls): never a browser, browser tool or computer use. The site\'s pages need a '
-					+ 'sign-in you do not have; you would only see a login page.',
-				`2. Use ${origin}/api2 only, never /api: this key works there and nowhere else.`,
-				`3. Send the header \`x-api-key: ${req.params.key}\` on every call to /api2.`,
-				'',
-				'## Start',
-				'',
-				`- Read ${origin}/llms.txt (no key needed): this site, and how to build workflows on it.`,
-				`- The operations: ${origin}/api2/openapi.json.`,
-				'',
-				'For example:',
-				'',
-				'```',
-				`curl -H "x-api-key: ${req.params.key}" ${origin}/api2/models`,
-				'```',
-				'',
-			].join('\n'));
+		// what the agent reads first: whom it acts as, at which level, until when, and where to start
+		this.app.get('/ai/:key', async (req, res, next) => {
+			try {
+				const holder = await aiLinkHolder(this.bpmnServer, req.params.key);
+				res.type('text/markdown');
+				if (!holder)
+					return res.status(401).send('# This link no longer works\n\nIt expired, was revoked, or is not a link of this site. '
+						+ 'Ask the person who gave it to you for a new one: they get it, signed in, at /ai/key.\n');
+				const origin = originOf(req), api = `${origin}/api/v3`;
+				const may = {
+					work: 'start processes, work on the tasks you have a part in, read the instances you may see and why they went their way (the Rationale)',
+					design: 'as work, and read, check, save and test models (their .feature)',
+					administer: 'as work, and read the settings (secrets show as ***) and run their checks, to advise the administrator: you change nothing, and never ask for or show a secret; the administrator enters secrets and makes changes themselves, through the setup',
+				};
+				res.send([
+					'# Access to this BPMN Server',
+					'',
+					`You act as **${holder.userName}**${holder.groups.length ? ` (groups: ${holder.groups.join(', ')})` : ''}, `
+						+ `at the **${holder.scope}** level, until ${new Date(holder.expiresAt).toISOString()}: with their rights, and no more than this level.`,
+					'',
+					`At this level you may ${may[holder.scope]}. Anything else answers 403.`,
+					'',
+					'## Rules',
+					'',
+					'1. Use curl only (or your own HTTP calls): never a browser, browser tool or computer use. The site\'s pages need a '
+						+ 'sign-in you do not have; you would only see a login page.',
+					`2. Use the API, ${api}, only.`,
+					`3. Send the header \`Authorization: Bearer ${req.params.key}\` on every call.`,
+					'',
+					'## Start',
+					'',
+					`- Read ${origin}/llms.txt (no key needed): this site, and how to build workflows on it.`,
+					`- The operations: ${api}/openapi.json (no key needed).`,
+					'',
+					'For example, who you are and what you may do:',
+					'',
+					'```',
+					`curl -H "Authorization: Bearer ${req.params.key}" ${api}/me`,
+					'```',
+					'',
+				].join('\n'));
+			}
+			catch (error) { next(error); }
 		});
 		if (api) {
 			// API_TRACE: every API call and its answer, to replay what a client did (v3's too)

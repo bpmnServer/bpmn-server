@@ -1,57 +1,65 @@
 extends layout
 
-//- /ai/key: a link for your AI agent. It acts as you on this site's API, for a short time.
+//- /ai/key: a link for your AI agent. It acts as you on this site's API, at the level you choose, for a short time.
 block content
+  - const about = { work: 'Start processes, work on your tasks, read your instances and why they went their way.', design: 'As Work, and build models: read, check, save and test them.', administer: 'As Work, and read this server\'s settings (secrets hidden) and run their checks, to advise you. It changes nothing.' }
+  - const prompts = { work: 'Start a leave request for 3 days from Monday, then show me my waiting tasks.', design: 'Build a workflow named "leave-request" for employee leave requests: an employee submits employeeId, startDate, endDate and reason; a manager approves or rejects it, and an employee must not be able to approve. Write its tests for approved, rejected, and an employee cannot approve. Check the model, save it, save its tests, run them, and fix what fails until they all pass. Give me the model\'s link.', administer: 'Check this server\'s settings and tell me what to fix for production: what is wrong or missing, and why. Do not change anything; ask me for any secret.' }
   .container.ai-key-page(style="max-width: 860px")
     h2 A link for your AI agent
     p.lead
-      | Give this link to an AI agent (Codex, Claude Code, ...) and it can build and test workflows on this site
-      | for you: it reads how, writes a model and its tests, saves them, runs the tests and fixes what fails.
+      | Give this link to an AI agent (Codex, Claude Code, ...) and it works on this site for you, through its API, as
+      | you: no more than you may, and no more than the level you choose.
 
     if revoked !== undefined
       .alert.alert-info= revoked === 1 ? 'One link was revoked: it no longer works.' : `${revoked} links were revoked: they no longer work.`
 
-    .panel.panel-default
-      .panel-body
-        h4(style="margin-top:0") Your link
-        .input-group
-          input#ai-link.form-control(type="text", readonly, value=url, aria-label="Your link for an AI agent", style="font-family: monospace")
-          span.input-group-btn
-            button.btn.btn-primary(type="button", data-copy="#ai-link") Copy
-        p.text-muted(style="margin-top:10px")
-          | It acts as #[strong= userName]
-          if groups.length
-            |  (#{groups.join(', ')})
-          | , with your rights and no more. It works until #[strong#ai-expires(data-at=expiresAt)= expiresAt]
-          | (#{minutes} minutes), or until you sign out.
+    if !levels.length
+      .alert.alert-warning AI links are turned off on this server (AI_ACCESS).
+    else
+      h4 The level
+      .btn-group(role="group", aria-label="The link's level", style="margin-bottom: 6px")
+        each l in levels
+          a.btn(class=l === level ? 'btn-primary' : 'btn-default', href=`/ai/key?level=${l}`)= l.charAt(0).toUpperCase() + l.slice(1)
+      p.text-muted= about[level]
 
-    h3 What to do
-    ol
-      li Copy the link.
-      li
-        | Open your AI agent, and give it the link with what you want built. For example:
-        .input-group(style="margin: 8px 0")
-          textarea#ai-prompt.form-control(rows="6", readonly, style="font-family: monospace; font-size: 13px")
-            | Using #{url}
-            | Use curl only, not a browser, and only its /api2 API.
-            |
-            | Build a workflow named "leave-request" for employee leave requests: an employee submits employeeId, startDate, endDate and reason; a manager approves or rejects it, and an employee must not be able to approve. Write its tests for approved, rejected, and an employee cannot approve. Check the model, save it, save its tests, run them, and fix what fails until they all pass. Give me the model's link.
-          span.input-group-btn(style="vertical-align: top")
-            button.btn.btn-default(type="button", data-copy="#ai-prompt") Copy
-      li
-        | The agent reads the link first: it says how to use this site, then works through its API. When it is done,
-        | open the model it gives you, from #[a(href="/") the Workbench].
+      .panel.panel-default
+        .panel-body
+          h4(style="margin-top:0") Your link
+          .input-group
+            input#ai-link.form-control(type="text", readonly, value=url, aria-label="Your link for an AI agent", style="font-family: monospace")
+            span.input-group-btn
+              button.btn.btn-primary(type="button", data-copy="#ai-link") Copy
+          p.text-muted(style="margin-top:10px")
+            | It acts as #[strong= userName]
+            if groups.length
+              |  (#{groups.join(', ')})
+            | , at the #[strong= level] level. It works until #[strong#ai-expires(data-at=expiresAt)= expiresAt]
+            | (#{minutes} minutes), or until you sign out.
 
-    h3 Good to know
-    ul
-      li The agent can do only what you may: if you can not design models here, neither can it.
-      li Keep the link to yourself: whoever has it acts as you until it expires.
-      li
-        | The agent must use curl, and the site's /api2 API: not a browser. The link tells it so. Use an agent that
-        | runs commands (Codex, Claude Code); a chat that only browses pages can not.
-      li
-        | To see what an agent did, open the model it saved and its test runs; on this site, each step is in the
-        | instance's Rationale.
+      h3 What to do
+      ol
+        li Copy the link.
+        li
+          | Open your AI agent, and give it the link with what you want done. For example:
+          .input-group(style="margin: 8px 0")
+            textarea#ai-prompt.form-control(rows="5", readonly, style="font-family: monospace; font-size: 13px")
+              | Using #{url}
+              | Use curl only, not a browser, and only its API.
+              |
+              | #{prompts[level]}
+            span.input-group-btn(style="vertical-align: top")
+              button.btn.btn-default(type="button", data-copy="#ai-prompt") Copy
+        li
+          | The agent reads the link first: it says what it may do and how to use this site's API.
+
+      h3 Good to know
+      ul
+        li The agent can do only what you may, and only what the link's level allows: anything else is refused.
+        li Keep the link to yourself: whoever has it acts as you, at its level, until it expires.
+        li
+          | The agent must use curl and the site's API: not a browser. The link tells it so. Use an agent that
+          | runs commands (Codex, Claude Code); a chat that only browses pages can not.
+        li To see what an agent did, open what it made: a model and its test runs, an instance and its Rationale.
 
     form(method="post", action="/ai/revoke", style="margin-top: 24px")
       input(type="hidden", name="_csrf", value=_csrf)

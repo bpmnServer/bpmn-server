@@ -1,58 +1,65 @@
-import crypto from 'node:crypto';
-import { SecureUser } from 'bpmn-server';
+import { Tokens, type TokenScope } from './api/tokens.js';
+import { canDesign, isAdminGroups } from '../userAccess/roles.js';
 
 /*
- * Keys for AI agents: a signed-in person gets a link (/ai/<key>) and hands it to their agent. The key stands for that
- * person, with their groups: on /api2 the agent acts as them, can do what they may, and no more; it expires (30 minutes,
- * or AI_KEY_TTL_GROUPS), and goes when they sign out or revoke it.
+ * A person's link for their AI agent (/ai/key): an API token (routes/api/tokens.ts) that stands for them, with their
+ * groups, and a level, chosen when the link is made, among those they have (docs/design/setup-wizard.md §4):
  *
- * A key is random; the server keeps its SHA-256, never the key. Kept in this process's memory: a restart drops the keys
- * (they last minutes), and several hosts behind one address would each need the agent's own key.
+ *   work         start processes, their tasks, their instances and the Rationale
+ *   design       and models and their tests (a designer's, an administrator's)
+ *   administer   and the settings, read (secrets masked), and their checks (an administrator's); it changes nothing
+ *
+ * A link never has more than its level, nor than its person. It expires (30 minutes, AI_KEY_TTL_GROUPS by group; an
+ * administer link 10 at most), and goes when its person signs out or revokes their links. AI_ACCESS, optional, says
+ * which levels this server offers: off, or some of work,design,administer (unset: all).
  */
-export interface AiKeyHolder { userName: string; groups: string[]; expiresAt: number; issuedAt: number }
+// written out, not tokens.ts's SCOPES: this module is loaded while tokens.ts may still be loading (index.js, app.ts)
+export const LEVELS: TokenScope[] = ['work', 'design', 'administer'];
+const ADMINISTER_MINUTES = 10;
 
-const held = new Map<string, AiKeyHolder>();
-const hash = (key: string) => crypto.createHash('sha256').update(key).digest('hex');
+/** The levels this server offers. */
+export function offeredLevels(): TokenScope[] {
+    const setting = process.env.AI_ACCESS?.trim().toLowerCase();
+    if (!setting) return LEVELS;
+    if (setting === 'off' || setting === 'none') return [];
+    const asked = setting.split(',').map(level => level.trim());
+    return LEVELS.filter(level => asked.includes(level));
+}
+
+/** The levels this person may give a link: as far as their rights go, and the server offers. */
+export function levelsFor(user: { userName: string, userGroups?: string[] }): TokenScope[] {
+    const theirs: TokenScope[] = ['work'];
+    if (canDesign(user)) theirs.push('design');
+    if (isAdminGroups(user.userGroups)) theirs.push('administer');
+    return theirs.filter(level => offeredLevels().includes(level));
+}
 
 /**
- * How long a key lasts, by the person's groups: AI_KEY_TTL_GROUPS='{"ADMIN":10,"staff":60}' (minutes); several
- * matching groups: the shortest; none: 30 minutes.
+ * How long a link lasts, in minutes: AI_KEY_TTL_GROUPS='{"ADMIN":10,"staff":60}' by group (several matching: the
+ * shortest; none: 30); an administer link 10 at most.
  */
-export function aiKeyTtlMs(groups: string[] = []): number {
+export function linkMinutes(groups: string[] = [], level: TokenScope = 'work'): number {
     let limits: Record<string, unknown> = {};
     try { limits = JSON.parse(process.env.AI_KEY_TTL_GROUPS ?? '{}'); } catch { /* the default */ }
     const matches = groups.map(group => Number(limits[group])).filter(value => Number.isFinite(value) && value > 0);
-    return (matches.length ? Math.min(...matches) : 30) * 60 * 1000;
+    const minutes = matches.length ? Math.min(...matches) : 30;
+    return level === 'administer' ? Math.min(minutes, ADMINISTER_MINUTES) : minutes;
 }
 
-/** A key for this person: it stands for them, with their groups. */
-export function issueAiKey(user: { userName: string; userGroups?: string[] }, now = Date.now()) {
-    for (const [h, k] of held) if (k.expiresAt <= now) held.delete(h);
+/** A link for this person at this level: { key, expiresAt, level, minutes, groups }; undefined if they may not have it. */
+export async function issueAiLink(server, user: { userName: string, userGroups?: string[] }, level: TokenScope) {
+    if (!levelsFor(user).includes(level)) return undefined;
     const groups = Array.isArray(user.userGroups) ? [...user.userGroups] : [];
-    const ttlMs = aiKeyTtlMs(groups);
-    const key = `ai_${crypto.randomBytes(32).toString('base64url')}`;
-    held.set(hash(key), { userName: user.userName, groups, issuedAt: now, expiresAt: now + ttlMs });
-    return { key, expiresAt: new Date(now + ttlMs).toISOString(), ttlMs, groups };
+    const minutes = linkMinutes(groups, level);
+    const issued = await new Tokens(server).issue({ userName: user.userName, groups, minutes }, user.userName, { own: true, scope: level });
+    return { key: issued.token, expiresAt: issued.expiresAt, level, minutes, groups };
 }
 
-/** Whom a key stands for, if it is one, and not expired or revoked. */
-export function aiKeyHolder(candidate: unknown, now = Date.now()): AiKeyHolder | undefined {
-    if (typeof candidate !== 'string' || !candidate.startsWith('ai_')) return undefined;
-    const h = hash(candidate);
-    const holder = held.get(h);
-    if (!holder) return undefined;
-    if (holder.expiresAt <= now) { held.delete(h); return undefined; }
-    return holder;
+/** Whom a link stands for, at which level, if it is one and has not expired or been revoked. */
+export async function aiLinkHolder(server, key: unknown) {
+    const holder = await new Tokens(server).holder(key);
+    return holder?.scope ? holder : undefined;
 }
 
-/** Every key of this person goes: they signed out, or asked. How many went. */
-export function revokeAiKeys(userName: string): number {
-    let n = 0;
-    for (const [h, k] of held) if (k.userName === userName) { held.delete(h); n++; }
-    return n;
-}
-
-/** The person a key stands for, as the API acts: their name and groups. */
-export function aiKeyUser(holder: AiKeyHolder): SecureUser {
-    return new SecureUser({ userName: holder.userName, userGroups: holder.groups, tenantId: null });
-}
+/** Every link of this person goes (they asked; signing out ends all their tokens). How many went. */
+export const revokeAiLinks = (server, userName: string) => new Tokens(server).revoke(userName, { scoped: true });

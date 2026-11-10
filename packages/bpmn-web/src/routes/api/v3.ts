@@ -6,6 +6,7 @@ import { TaskOperations, DEFAULT_LIMIT } from './tasks.js';
 import { v2TaskError } from '../taskApi.js';
 import { openApiV3 } from './openapi-v3.js';
 import { ModelOperations, ModelError } from './models.js';
+import { SettingsOperations, SettingsError, settingsSchema } from './settings.js';
 import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 
@@ -24,6 +25,7 @@ export function v3Router(server) {
     const tasks = new TaskOperations(server);
     const instances = new InstanceOperations(server);
     const models = new ModelOperations(server);
+    const settings = new SettingsOperations(server);
     /** Where a person opens a model: the editor (signed in to the site; a token does not open it). */
     const editorUrl = (req, name: string) => `${originOf(req)}/model/edit/${encodeURIComponent(name)}`;
     /** Changing models and running tests: design on, and a designer's token or the service key. */
@@ -40,6 +42,17 @@ export function v3Router(server) {
     });
     router.use(door('v3', tokens));
 
+    /**
+     * A person's AI link reaches only its level (aiAccess.ts): work everywhere but models and settings; design, models
+     * too; administer, the settings too. A token with no level (an application's, the pages') only its user's rights.
+     */
+    const needs = (level: 'design' | 'administer') => (req, res, next) => !req.apiScope || req.apiScope === level ? next()
+        : res.status(403).json({ error: { code: 'LEVEL_REFUSED', message: `This link's level is ${req.apiScope}: this needs a ${level} link` } });
+    router.use('/models', needs('design'));
+    // the settings: an administrator's (or the service key's), and an AI link's at the administer level
+    router.use('/settings', needs('administer'), (req: any, res, next) => req.apiCredential === 'service' || isAdminGroups(req.apiUser.userGroups) ? next()
+        : res.status(403).json({ error: { code: 'ADMIN_REQUIRED', message: 'Only an administrator reads the settings' } }));
+
     /** Only with the service key: an application's back end, never a user's token. */
     const serviceOnly = (req, res, next) => req.apiCredential === 'service' ? next()
         : res.status(403).json({ error: { code: 'SERVICE_KEY_REQUIRED', message: 'Only the service key (x-api-key) may do this' } });
@@ -53,7 +66,7 @@ export function v3Router(server) {
         catch (error) {
             if (error instanceof ModelError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
-            if (error instanceof TokenError || error instanceof InstanceError)
+            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
@@ -125,6 +138,12 @@ export function v3Router(server) {
     router.get('/models/:name/feature', handler(req => models.feature(req.params.name)));
     router.put('/models/:name/feature', designer, handler(req => models.saveFeature(req.params.name, req.body?.text, req.body?.base)));
     router.post('/models/:name/test', designer, handler(req => models.test(req.params.name, req.body?.source, { raw: req.query.raw === 'true' })));
+
+    // ---- the settings, read (secrets masked), and their checks; nothing here changes one
+
+    router.get('/settings', handler(() => settings.list()));
+    router.get('/settings/schema', handler(() => settingsSchema()));
+    router.post('/settings/checks/:name', handler(req => settings.check(req.params.name)));
 
     // ---- messages and signals (the system's)
 

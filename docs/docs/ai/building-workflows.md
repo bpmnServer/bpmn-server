@@ -153,27 +153,35 @@ waiting, and each decision with the values it read.
 
 ## Working with a server
 
-A server's REST API takes its key in the `x-api-key` header. Given a person's link (`https://<site>/ai/ai_…`), open it
-first: its key acts as that person on `/api2`, with their groups, for minutes; changing models needs a designer's or an
-administrator's link. Otherwise the site's key (`API_KEY`; see [Security](../security.md)) runs as its service account.
-Use curl or your own HTTP calls, never a browser: the site's pages need a sign-in. Its OpenAPI document,
-`GET /api2/openapi.json`, needs no key: start there. The whole loop, with no editor:
+A server's API is at `https://<site>/api/v3`. Given a person's link (`https://<site>/ai/bpt_…`), open it first: its key
+acts as that person, with their groups, at the link's level, for minutes. Send it on every call as
+`Authorization: Bearer <key>`. Use curl or your own HTTP calls, never a browser: the site's pages need a sign-in. The
+API's OpenAPI document, `GET /api/v3/openapi.json`, needs no key: start there. `GET /api/v3/me` says who you act as.
+
+| Level | What it allows |
+|---|---|
+| work | start processes, work on tasks, read instances and their Rationale |
+| design | as work, and models and their tests |
+| administer | as work, and read the settings (secrets as `***`) and run their checks: advise, change nothing |
+
+The whole loop, with no editor (a design link):
 
 | Step | Call |
 |---|---|
-| List models | `GET /api2/models` |
-| Read a model: its XML, its `.feature`, its editor URL | `GET /api2/models/<name>` |
-| Check a model, without saving it | `POST /api2/models/<name>/verify`, `{ "source": "<xml>" }` (or no body: the saved model) |
-| Create or change a model | `PUT /api2/models/<name>`, `{ "source": "<xml>" }`: checked first; with errors it is not saved (422, the errors) unless `?force=true`; a model without a diagram is laid out |
-| Write its tests | `PUT /api2/models/<name>/feature`, `{ "text": "Feature: ..." }` (with `base`, only over that text) |
-| Run them | `POST /api2/models/<name>/test` (or `{ "source": "..." }`, a `.feature` not saved): each scenario `passed` or `failed`, the failing step, the error, its instances |
-| Why an instance went the way it did | `GET /api2/instances/<id>/rationale`: its status, data and Rationale by step (each operation, its outcome, each decision) |
-| Start a process, complete a task | `POST /api2/engine/start/<name>`, `PUT /api2/engine/invoke` |
-| A user's tasks | `GET /api2/tasks`, with a key of its own (`API_ACTING_USER_KEY`, from the site) and `x-acting-user`: not needed to build and test a model |
+| List models | `GET /api/v3/models` |
+| Read a model: its XML, its `.feature`, its editor URL | `GET /api/v3/models/<name>` |
+| Check a model, without saving it | `POST /api/v3/models/<name>/verify`, `{ "source": "<xml>" }` (or no body: the saved model) |
+| Create or change a model | `PUT /api/v3/models/<name>`, `{ "source": "<xml>" }`: checked first; with errors it is not saved (`422 MODEL_INVALID`, the errors in `error.details`) unless `?force=true`; a model without a diagram is laid out |
+| One element: its form, its assignment | `GET /api/v3/models/<name>/elements/<id>` |
+| Write its tests | `PUT /api/v3/models/<name>/feature`, `{ "text": "Feature: ..." }` (with `base`, only over that text) |
+| Run them | `POST /api/v3/models/<name>/test` (or `{ "source": "..." }`, a `.feature` not saved): each scenario `passed` or `failed`, the failing step, the error, its instances |
+| Why an instance went the way it did | `GET /api/v3/instances/<id>/rationale`: its status, data and Rationale by step (each operation, its outcome, each decision) |
+| Start a process, work on a task | `POST /api/v3/processes/<name>/start`; `GET /api/v3/tasks`, `GET /api/v3/tasks/<id>` (with its form), `POST /api/v3/tasks/<id>/complete` |
 
 A failed scenario names its step and why; its instance's Rationale tells what happened before it. Correct the model or
 the test, save, and run again. Changing models and running tests is design: a server with `DISABLE_DESIGN=true`
-answers 404, and a person's link without design rights 403.
+answers 404; a link without design rights, or below the design level, 403. Errors are
+`{ "error": { "code", "message" } }` with a real status.
 
 To let your users reach a server from ChatGPT or Claude, see [Chatting with your server](chat-assistants.md).
 

@@ -38,6 +38,7 @@ All are optional unless marked.
 | `RESTART_ON_EXIT` | `true`: something restarts this process when it exits |
 | `API_TRACE` | A file: every API call (`/api`, `/api2`) and its answer, one JSON line each (when, how long, method, path, status, the kind of credential, the bodies cut at `API_TRACE_MAX` characters, default 4000, with passwords, keys and tokens masked). To see what a client, an AI agent, did. Off by default |
 | `APP_ENV` | The environment: `test` makes the sample application use its test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Default: production |
+| `AI_ACCESS` | The levels of AI links (`/ai/key`) this server offers: `off`, or some of `work`, `design`, `administer`, comma separated. Unset: all. A person is offered only the levels their rights allow. See [Chatting with your server](ai/chat-assistants.md) |
 | `AI_KEY_TTL_GROUPS` | How long a user's link for an AI agent (`/ai/key`) lasts, in minutes, by group: `{"ADMIN":10,"staff":60}`. A user in several of the groups gets the shortest; in none, 30 minutes. See [Chatting with your server](ai/chat-assistants.md) |
 | `AI_GUIDE` | A Markdown file: this site's own guide for AI agents, in its `/llms.txt`. Default `settings/ai-guide.md` |
 

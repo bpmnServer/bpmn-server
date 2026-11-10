@@ -50,7 +50,7 @@ async function facts(webApp, origin: string) {
     try { groups = [...new Set((await new UserService().listUsers()).flatMap(u => u.userGroups ?? []))].sort() as string[]; } catch { /* no users here */ }
     return [
         `- BPMN Server ${webApp.packageJson?.version ?? ''}`.trimEnd(),
-        `- API: ${origin}/api2, its key in the \`x-api-key\` header (or a person's link from ${origin}/ai/key: it acts as them, for minutes). The OpenAPI document: ${origin}/api2/openapi.json (no key needed)`,
+        `- API: ${origin}/api/v3. A person's link (from ${origin}/ai/key) is its key: \`Authorization: Bearer <key>\`; it acts as them, at its level (work, design, administer), for minutes. The OpenAPI document: ${origin}/api/v3/openapi.json (no key needed)`,
         `- Creating and changing models, running their tests: ${designDisabled() ? '**off** on this site (DISABLE_DESIGN)' : 'on'}`,
         `- Environment: ${environment()}`,
         `- Services a model can call (\`camunda:delegateExpression\` or \`implementation\`): ${list(services)}. Anything else is not on this site: use a script task`,

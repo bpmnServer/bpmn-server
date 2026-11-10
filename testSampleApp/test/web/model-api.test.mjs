@@ -110,7 +110,7 @@ test('/llms.txt: where an agent starts: this site\'s facts, then BPMN Server\'s 
   const text = res.text;
   assert.match(text, /^# .*BPMN Server, for AI agents/);
   assert.match(text, /## This site/);
-  assert.match(text, /\/api2\/openapi\.json/);
+  assert.match(text, /\/api\/v3\/openapi\.json/);
   assert.match(text, /Creating and changing models, running their tests: on/);
   assert.match(text, /Environment: \*\*production\*\*: services are real/, 'no APP_ENV: production');
   assert.match(text, /Services a model can call[^\n]*`notifyUsers`/, 'the services of services.json');

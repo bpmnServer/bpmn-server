@@ -14,6 +14,17 @@
       "x-generate": "password",
       "x-restart": true
     },
+    "AI_ACCESS": {
+      "description": "The levels of AI links (`/ai/key`) this server offers: `off`, or some of `work`, `design`, `administer`, comma separated. Unset: all. A person is offered only the levels their rights allow",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "x-restart": false,
+      "examples": [
+        "work,design",
+        "off"
+      ]
+    },
     "AI_GUIDE": {
       "description": "A Markdown file: this site's own guide for AI agents, in its `/llms.txt`. Default `settings/ai-guide.md`",
       "x-where": "env",

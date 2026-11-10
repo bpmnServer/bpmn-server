@@ -4,8 +4,8 @@ Your users can build and test workflows by chatting with an AI assistant (ChatGP
 BPMN Server for them: it reads the site's guide, writes the model and its tests, saves them, runs the tests, reads why
 one failed, and corrects it. This page says how to connect an assistant to a server, today and with 3.7.
 
-Today the assistant uses the same API as any client: the site's guide at `/llms.txt` (also `GET /api2/guide`), and
-the operations its OpenAPI document describes, `/api2/openapi.json`. See [Building workflows with AI](building-workflows.md).
+Today the assistant uses the same API as any client: the site's guide at `/llms.txt`, and
+the operations its OpenAPI document describes, `/api/v3/openapi.json`. See [Building workflows with AI](building-workflows.md).
 
 ## Before you start
 
@@ -22,25 +22,33 @@ Restart the server after changing `.env`.
 
 ## Today: a link for your agent
 
-A signed-in user gets a link for their agent: **Link for an AI agent**, in the menu under their name (`/ai/key`). The
-page shows the link, with a Copy button and an example request:
+A signed-in user gets a link for their agent: **Link for an AI agent**, in the menu under their name (`/ai/key`). They
+choose its **level**, among those their rights allow, and the page shows the link, with a Copy button and an example
+request for that level:
 
-> Using https://your-site.example/ai/ai_… Use curl only, not a browser, and only its /api2 API.
+> Using https://your-site.example/ai/bpt_… Use curl only, not a browser, and only its API.
 >
 > Build a workflow named "leave-request" for employee leave requests: ... Give me the model's link.
 
+| Level | Who may make it | The agent may |
+|---|---|---|
+| **Work** | everyone | start processes, work on their tasks, read their instances and the Rationale |
+| **Design** | designers, administrators | as Work, and read, check, save and test models |
+| **Administer** | administrators | as Work, and read the settings (secrets as `***`) and run their checks, to advise: it changes nothing |
+
 What the link does:
 
-- **It acts as the user who got it**, on `/api2`, with their groups and no more: an agent with a staff member's link
-  can start and work on processes as they can, but can not change models; a designer's or an administrator's link can.
-- **It works on `/api2` only.** `/api` and the administration APIs refuse it.
-- **It expires**, after 30 minutes by default (`AI_KEY_TTL_GROUPS` sets minutes by group, the shortest wins), and goes
-  at once when the user signs out or presses **Revoke all my links**.
-- **The agent opens the link first.** The page there says whom it acts as, until when, and its rules: curl (or its own
-  HTTP calls) only, never a browser or computer use; `/api2` only; the key in the `x-api-key` header on every call;
-  start with `/llms.txt`.
-- **It stays out of the logs.** The server keeps only the key's hash; the request log shows `/ai/ai_***`, and
+- **It acts as the user who got it**, through the API (`/api/v3`), with their groups, and no more than its level:
+  anything else answers 403.
+- **It is an API token** (`Authorization: Bearer <key>`), not a key of `/api` or `/api2`: those refuse it.
+- **It expires**, after 30 minutes by default (`AI_KEY_TTL_GROUPS` sets minutes by group, the shortest wins; an
+  Administer link 10 at most), and goes at once when the user presses **Revoke all my links** or signs out.
+- **The agent opens the link first.** The page there says whom it acts as, at which level, until when, and its rules:
+  curl (or its own HTTP calls) only, never a browser or computer use; the API only; the key on every call; start with
+  `/llms.txt`.
+- **It stays out of the logs.** The server keeps only the key's hash; the request log shows `/ai/bpt_***`, and
   `API_TRACE` records the kind of credential, never its value.
+- **The server chooses the levels it offers:** `AI_ACCESS` (`off`, or some of `work,design,administer`; unset: all).
 
 Whoever has the link acts as the user until it expires: keep it to the conversation with the agent.
 

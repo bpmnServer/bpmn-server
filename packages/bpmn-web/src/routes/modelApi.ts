@@ -18,10 +18,10 @@ const editorUrl = (req, name: string) => `${originOf(req)}/model/edit/${encodeUR
 export function modelApi(bpmnServer) {
     const router = express.Router();
     const models = new ModelOperations(bpmnServer);
-    // whom a call acts as: the door's (routes/api/door.ts): a person's AI key's person, else the service account
+    // whom a call acts as: the door's (routes/api/door.ts), the service account
     const userOf = req => req.apiUser;
-    // the service key is the installation's own: it designs; a person's AI key, if its person may
-    const designer = (req, res, next) => { try { models.assertDesign(userOf(req), { service: !req.aiKeyHolder }); next(); } catch (error) { answerError(res, error); } };
+    // the service key is the installation's own: it designs (when design is on)
+    const designer = (req, res, next) => { try { models.assertDesign(userOf(req), { service: true }); next(); } catch (error) { answerError(res, error); } };
     // /api2's errors: { error }, a model's refusal with its check
     const answerError = (res, error) => {
         if (!(error instanceof ModelError)) throw error;

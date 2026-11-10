@@ -1,6 +1,8 @@
 import crypto from 'node:crypto';
 import { SecureUser } from '../../index.js';
-import { REFUSED_GROUPS } from './door.js';
+
+/** The groups an application can not give its users (by a token, or the acting-user key): it can not make an administrator. */
+export const REFUSED_GROUPS = ['SYSTEM', 'ADMIN', 'DESIGNER'];
 
 /*
  * User tokens (docs/design/api-v3.md, decision 2): an application's back end asks, with the service key, for a token
@@ -11,7 +13,11 @@ import { REFUSED_GROUPS } from './door.js';
 const COLLECTION = 'wf_tokens';
 export const DEFAULT_MINUTES = 15, MAX_MINUTES = 24 * 60;
 
-export interface TokenHolder { userName: string; groups: string[]; issuedBy: string; issuedAt: string; expiresAt: string }
+/** What a token may do beyond its user's rights: nothing (no scope); a person's AI link has its level (aiAccess.ts). */
+export type TokenScope = 'work' | 'design' | 'administer';
+export const SCOPES: TokenScope[] = ['work', 'design', 'administer'];
+
+export interface TokenHolder { userName: string; groups: string[]; issuedBy: string; issuedAt: string; expiresAt: string; scope?: TokenScope }
 
 export class TokenError extends Error {
     constructor(readonly status: number, message: string, readonly code: string) { super(message); }
@@ -35,7 +41,7 @@ export class Tokens {
      * A token for this user: { token, expiresAt }. An application may not make an administrator: groups SYSTEM, ADMIN
      * and DESIGNER are refused, unless the token is a person's own (issuedBy their name, from a signed-in page).
      */
-    async issue({ userName, groups = [], minutes = DEFAULT_MINUTES }, issuedBy: string, { own = false, now = Date.now() } = {}) {
+    async issue({ userName, groups = [], minutes = DEFAULT_MINUTES }, issuedBy: string, { own = false, now = Date.now(), scope }: { own?: boolean, now?: number, scope?: TokenScope } = {}) {
         if (typeof userName !== 'string' || !userName.trim())
             throw new TokenError(400, 'userName is required', 'BAD_USER');
         if (!Array.isArray(groups) || groups.some(g => typeof g !== 'string'))
@@ -49,9 +55,9 @@ export class Tokens {
         const token = `bpt_${crypto.randomBytes(32).toString('base64url')}`;
         const expiresAt = nowIso(now + minutes * 60_000);
         await this.store.insert(this.database, COLLECTION, [{
-            hash: hash(token), userName: userName.trim(), groups, issuedBy, issuedAt: nowIso(now), expiresAt,
+            hash: hash(token), userName: userName.trim(), groups, issuedBy, issuedAt: nowIso(now), expiresAt, ...(scope ? { scope } : {}),
         }]);
-        return { token, expiresAt, userName: userName.trim(), groups };
+        return { token, expiresAt, userName: userName.trim(), groups, ...(scope ? { scope } : {}) };
     }
 
     /** Whom a token stands for, if it is one and has not expired or been revoked. */
@@ -63,8 +69,8 @@ export class Tokens {
             await this.store.remove(this.database, COLLECTION, { hash: found.hash });
             return undefined;
         }
-        const { userName, groups, issuedBy, issuedAt, expiresAt } = found;
-        return { userName, groups, issuedBy, issuedAt, expiresAt };
+        const { userName, groups, issuedBy, issuedAt, expiresAt, scope } = found;
+        return { userName, groups, issuedBy, issuedAt, expiresAt, ...(scope ? { scope } : {}) };
     }
 
     /** This token goes (a page's, when its person signs out). */
@@ -73,8 +79,10 @@ export class Tokens {
     }
 
     /** Every token of this user goes: they signed out, were disabled, or asked. How many went. */
-    async revoke(userName: string): Promise<number> {
-        return (await this.store.remove(this.database, COLLECTION, { userName })).deletedCount;
+    async revoke(userName: string, { scoped = false } = {}): Promise<number> {
+        // scoped: their AI links only (the tokens with a level), not the pages' or an application's
+        const query = scoped ? { userName, scope: { $in: SCOPES } } : { userName };
+        return (await this.store.remove(this.database, COLLECTION, query)).deletedCount;
     }
 }
 
