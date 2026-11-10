@@ -5,6 +5,8 @@ import { canDesign, isAdminGroups } from '../../userAccess/roles.js';
 import { TaskOperations, DEFAULT_LIMIT } from './tasks.js';
 import { v2TaskError } from '../taskApi.js';
 import { openApiV3 } from './openapi-v3.js';
+import { ModelOperations, ModelError } from './models.js';
+import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 
 /*
@@ -21,6 +23,14 @@ export function v3Router(server) {
     const tokens = new Tokens(server);
     const tasks = new TaskOperations(server);
     const instances = new InstanceOperations(server);
+    const models = new ModelOperations(server);
+    /** Where a person opens a model: the editor (signed in to the site; a token does not open it). */
+    const editorUrl = (req, name: string) => `${originOf(req)}/model/edit/${encodeURIComponent(name)}`;
+    /** Changing models and running tests: design on, and a designer's token or the service key. */
+    const designer = (req, res, next) => {
+        try { models.assertDesign(req.apiUser, { service: req.apiCredential === 'service' }); next(); }
+        catch (error) { res.status(error.status).json({ error: { code: error.code, message: error.message } }); }
+    };
 
     // the contract, with no credential: the address as the client used it (https behind a proxy)
     router.get('/openapi.json', (req, res) => {
@@ -34,11 +44,15 @@ export function v3Router(server) {
     const serviceOnly = (req, res, next) => req.apiCredential === 'service' ? next()
         : res.status(403).json({ error: { code: 'SERVICE_KEY_REQUIRED', message: 'Only the service key (x-api-key) may do this' } });
 
-    const handler = (fn, status = 200) => async (req, res, next) => {
+    /** An operation's answer, with its status (or the status its result gives: 201 for a model created), or its error. */
+    const handler = (fn, status: number | ((result) => number) = 200) => async (req, res, next) => {
         try {
-            res.status(status).json(await fn(req, req.apiUser));
+            const result = await fn(req, req.apiUser);
+            res.status(typeof status === 'function' ? status(result) : status).json(result);
         }
         catch (error) {
+            if (error instanceof ModelError)
+                return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
             if (error instanceof TokenError || error instanceof InstanceError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
@@ -95,6 +109,22 @@ export function v3Router(server) {
     router.post('/instances/:id/events/:elementId', handler(async (req, user) => ({ instance: await instances.startEvent(user, req.params.id, req.params.elementId, req.body?.data ?? {}) })));
     router.post('/instances/:id/restart', handler(async (req, user) => ({ instance: await instances.restart(user, req.params.id, req.body?.itemId, req.body?.data ?? {}) })));
     router.delete('/instances/:id', handler((req, user) => instances.remove(user, req.params.id)));
+
+    // ---- models and their tests: read by anyone the door lets in; changed and tested by design
+
+    router.get('/models', handler(async req => ({ items: (await models.list()).map(name => ({ name, url: editorUrl(req, name) })) })));
+    router.get('/models/:name', handler(async req => ({ ...await models.get(req.params.name), url: editorUrl(req, req.params.name) })));
+    router.put('/models/:name', designer, handler(async (req, user) => {
+        const saved = await models.save(user, req.params.name, req.body?.source, { force: req.query.force === 'true' });
+        return { ...saved, url: editorUrl(req, saved.name) };
+    }, saved => saved.created ? 201 : 200));
+    router.delete('/models/:name', designer, handler(req => models.remove(req.params.name)));
+    router.post('/models/:name/rename', designer, handler(req => models.rename(req.params.name, req.body?.newName)));
+    router.post('/models/:name/verify', handler(req => models.verify(req.params.name, req.body?.source)));
+    router.get('/models/:name/elements/:elementId', handler(req => models.element(req.params.name, req.params.elementId)));
+    router.get('/models/:name/feature', handler(req => models.feature(req.params.name)));
+    router.put('/models/:name/feature', designer, handler(req => models.saveFeature(req.params.name, req.body?.text, req.body?.base)));
+    router.post('/models/:name/test', designer, handler(req => models.test(req.params.name, req.body?.source, { raw: req.query.raw === 'true' })));
 
     // ---- messages and signals (the system's)
 

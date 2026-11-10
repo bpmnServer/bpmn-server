@@ -122,10 +122,17 @@ A header naming a user is never trusted. How an application uses it:
 | `POST /api/v3/instances/{id}/events/{elementId}` | Body `{ data }`. A start event of the running instance. | 200 `{ instance }`, 404, 422 `ENGINE_ERROR` |
 | `POST /api/v3/instances/{id}/restart` | Body `{ itemId, data }`. Runs that item again, and the instance on from it. | 200 `{ instance }`, 400, 404, 422 |
 | `DELETE /api/v3/instances/{id}` | Administrators only. | 200 `{ deleted }`, 403 `ADMIN_REQUIRED`, 404 |
+| `GET /api/v3/models`, `GET /api/v3/models/{name}` | The models; one with its BPMN XML, its `.feature`, and where a person opens it. | 200, 404 `MODEL_NOT_FOUND` |
+| `PUT /api/v3/models/{name}` | Design. Body `{ source }`: checked first, refused with its check (`422 MODEL_INVALID`, `details: { errors, warnings }`) unless `?force=true`; laid out when it has no diagram. | 201 created, 200 changed, `{ valid, errors, warnings, laidOut, url }` |
+| `POST /api/v3/models/{name}/verify` | Body `{ source }` (or none: the saved model). The check, without saving. | 200 `{ valid, errors, warnings }` |
+| `GET /api/v3/models/{name}/elements/{id}` | One element: type, name, documentation, lane, assignment, form. | 200, 404 |
+| `GET`, `PUT /api/v3/models/{name}/feature` | Its tests: the `.feature`. Writing is design; `{ text, base }`. | 200, 403, 409 |
+| `POST /api/v3/models/{name}/test` | Design. Runs its tests (or `{ source }`, a `.feature` not saved). | 200 `{ passed, failed, skipped, scenarios }` |
+| `POST /api/v3/models/{name}/rename`, `DELETE /api/v3/models/{name}` | Design. | 200, 404, 409 |
 | `POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}` | Body `{ data, matchingKey }`. The system only (a service account in `SYSTEM`). | 200, 403 `SYSTEM_REQUIRED` |
 
 A token is random; the server keeps only its SHA-256 (in `wf_tokens`), so a token can not be read back, and it holds
 across a restart and for every server on the same database. Errors are `{ error: { code, message } }` with a real
 status: `UNAUTHORIZED`, `TOKEN_INVALID` (unknown, expired or revoked), `SERVICE_KEY_REQUIRED`, `GROUP_REFUSED`,
 `BAD_USER`, `BAD_GROUPS`, `BAD_MINUTES`, and the task API's codes (`TASK_NOT_FOUND`, `TASK_ASSIGNED`, `ITEM_NOT_WAITING`,
-`NOT_STARTABLE`, `BAD_DATA`, `BAD_LIMIT`, `BAD_CURSOR`, `INSTANCE_BUSY`). Models follow on v3 in 3.7.
+`NOT_STARTABLE`, `BAD_DATA`, `BAD_LIMIT`, `BAD_CURSOR`, `INSTANCE_BUSY`). Changing models and running tests is design: a designer's token, or the service key (`403 DESIGN_REFUSED`; `404 DESIGN_OFF` with `DISABLE_DESIGN`).

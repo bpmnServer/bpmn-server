@@ -1,21 +1,13 @@
 /*
- * Models and their tests over the API, for a client that builds workflows (an AI agent, a script): read a model, check
- * it, create or change it, its tests as a .feature, run them, and read an instance's Rationale by step. Under /api2
- * with its key (the service account), JSON in and out. GET /api2/openapi.json describes these calls and the ones a
+ * Models and their tests over /api2, for a client that builds workflows (an AI agent, a script): the operations of
+ * routes/api/models.ts (v3 has them too), in /api2's shapes. Read a model, check it, create or change it, its tests as
+ * a .feature, run them, and read an instance's Rationale by step. JSON in and out. GET /api2/openapi.json describes these calls and the ones a
  * client needs with them (start, tasks, invoke).
  */
 import express from 'express';
-import FS from 'node:fs';
-import path from 'node:path';
-import { layoutModel } from './layout.js';
-import { bpmnToSvg } from './bpmnToSvg.js';
 import { isSafeModelName } from './middleware/modelName.js';
-import { checkModel } from '../runtime/modelVerification.js';
-import { loadFeatureText, saveFeatureText } from '../testing/scenarios.js';
 import { rationaleSteps } from '../testing/rationale.js';
-import { designDisabled, canDesign } from '../userAccess/roles.js';
-
-const handler = fn => (req, res, next) => fn(req, res).catch(next);
+import { ModelOperations, ModelError } from './api/models.js';
 
 /** This site's address as the client used it: behind a proxy (ngrok, nginx) its scheme is the proxy's, https. */
 export const originOf = req => `${String(req.get('x-forwarded-proto') ?? req.protocol).split(',')[0].trim()}://${req.get('x-forwarded-host') ?? req.get('host')}`;
@@ -23,132 +15,60 @@ export const originOf = req => `${String(req.get('x-forwarded-proto') ?? req.pro
 /** Where a person opens the model: the editor. */
 const editorUrl = (req, name: string) => `${originOf(req)}/model/edit/${encodeURIComponent(name)}`;
 
-/** A model's check, as the API answers it. */
-const answerCheck = check => ({
-    valid: check.errors.length === 0,
-    errors: check.errors.map(i => ({ code: i.code, element: i.elementId ?? null, message: i.message })),
-    warnings: check.warnings.map(i => ({ code: i.code, element: i.elementId ?? null, message: i.message })),
-});
-
-/** Cucumber's JSON of a run, as the API answers it: each scenario, passed or not, and where and why it stopped. */
-function summarize(results) {
-    const scenarios = [];
-    for (const feature of results ?? [])
-        for (const element of feature.elements ?? []) {
-            const failed = element.steps.find(step => step.result.status === 'failed');
-            const skipped = element.tags?.some(tag => tag.name === '@skip');
-            scenarios.push({
-                name: element.name,
-                status: skipped ? 'skipped' : failed ? 'failed' : 'passed',
-                ...(failed ? { failedStep: `${failed.keyword}${failed.name}`.trim(), error: failed.result.error_message } : {}),
-                instances: element.instances ?? [],
-            });
-        }
-    const count = status => scenarios.filter(s => s.status === status).length;
-    return { passed: count('passed'), failed: count('failed'), skipped: count('skipped'), scenarios };
-}
-
 export function modelApi(bpmnServer) {
     const router = express.Router();
-    const definitions = bpmnServer.definitions;
-    // whom a call acts as: the person of an AI key (/ai/key), else the API's service account
-    const userOf = req => req.aiKeyHolder
-        ? { userName: req.aiKeyHolder.userName, userGroups: req.aiKeyHolder.groups }
-        : { userName: process.env.API_SERVICE_USER_NAME || 'api', userGroups: (process.env.API_SERVICE_USER_GROUPS ?? '').split(',').map(g => g.trim()).filter(Boolean) };
+    const models = new ModelOperations(bpmnServer);
+    // whom a call acts as: the door's (routes/api/door.ts): a person's AI key's person, else the service account
+    const userOf = req => req.apiUser;
+    // the service key is the installation's own: it designs; a person's AI key, if its person may
+    const designer = (req, res, next) => { try { models.assertDesign(userOf(req), { service: !req.aiKeyHolder }); next(); } catch (error) { answerError(res, error); } };
+    // /api2's errors: { error }, a model's refusal with its check
+    const answerError = (res, error) => {
+        if (!(error instanceof ModelError)) throw error;
+        if (error.code === 'MODEL_INVALID') return res.status(422).json({ name: res.req.params.name, saved: false, ...error.details });
+        res.status(error.status).json({ error: error.message });
+    };
+    const handler = fn => (req, res, next) => fn(req, res).catch(error => { try { answerError(res, error); } catch (other) { next(other); } });
 
     router.param('name', (req, res, next, value) => isSafeModelName(value) ? next() : res.status(400).json({ error: 'Invalid model name' }));
-    // changing models and running their tests is design: off with DISABLE_DESIGN, as in the editor. A person's AI key
-    // designs only if they may; the site's API_KEY is the installation's own, as before
-    const design = (req, res, next) => designDisabled() ? res.status(404).json({ error: 'Design is turned off on this server (DISABLE_DESIGN)' })
-        : req.aiKeyHolder && !canDesign(userOf(req)) ? res.status(403).json({ error: `${userOf(req).userName} may not design models: ask a designer or an administrator for their link` })
-        : next();
-
-    const exists = async (name: string) => (await definitions.getList()).some(m => (typeof m === 'string' ? m : m.name) === name);
 
     router.get('/models', handler(async (req, res) => {
-        const names = (await definitions.getList()).map(m => (typeof m === 'string' ? m : m.name));
-        res.json(names.map(name => ({ name, url: editorUrl(req, name) })));
+        res.json((await models.list()).map(name => ({ name, url: editorUrl(req, name) })));
     }));
 
     router.get('/models/:name', handler(async (req, res) => {
-        const name = req.params.name;
-        if (!(await exists(name))) return res.status(404).json({ error: `No model ${name}` });
-        const featureFile = path.join(bpmnServer.configuration.definitionsPath, `${name}.feature`);
-        res.json({ name, source: await definitions.getSource(name), feature: FS.existsSync(featureFile) ? FS.readFileSync(featureFile, 'utf8') : null,
-            url: editorUrl(req, name) });
+        res.json({ ...await models.get(req.params.name), url: editorUrl(req, req.params.name) });
     }));
 
     /** Create or change a model: checked first; one with errors is not saved unless ?force=true. */
-    router.put('/models/:name', design, handler(async (req, res) => {
-        const name = req.params.name;
-        let source = req.body?.source;
-        if (typeof source !== 'string' || !source.trim()) return res.status(400).json({ error: 'source, the model\'s BPMN XML, is required' });
-        const check = await checkModel(bpmnServer, name, source, 'warn');
-        const answer = answerCheck(check);
-        if (!answer.valid && req.query.force !== 'true')
-            return res.status(422).json({ name, saved: false, ...answer });
-        // as the editor's import: a model without a diagram is laid out (its warning no longer holds); the picture is drawn
-        let laidOut = false;
-        if (!/<(\w+:)?BPMNDiagram[\s>]/.test(source)) {
-            try { source = await layoutModel(source); laidOut = true; } catch { /* saved as it is */ }
-        }
-        if (laidOut) answer.warnings = answer.warnings.filter(w => w.code !== 'no-diagram');
-        let svg = null;
-        try { svg = await bpmnToSvg(source); } catch { /* no picture */ }
-        const created = !(await exists(name));
-        await definitions.save(name, source, svg, null, userOf(req).userName);
-        res.status(created ? 201 : 200).json({ name, saved: true, created, laidOut, ...answer, url: editorUrl(req, name), urlOpensFor: 'a person signed in to the site (not the API key)' });
+    router.put('/models/:name', designer, handler(async (req, res) => {
+        const saved = await models.save(userOf(req), req.params.name, req.body?.source, { force: req.query.force === 'true' });
+        const { created, ...rest } = saved;
+        res.status(created ? 201 : 200).json({ ...rest, saved: true, created, url: editorUrl(req, saved.name), urlOpensFor: 'a person signed in to the site (not the API key)' });
     }));
 
     /** Check a model without saving it: the source given, else the saved model. */
     router.post('/models/:name/verify', handler(async (req, res) => {
-        const name = req.params.name;
-        let source = req.body?.source;
-        if (typeof source !== 'string') {
-            if (!(await exists(name))) return res.status(404).json({ error: `No model ${name}` });
-            source = await definitions.getSource(name);
-        }
-        const answer = answerCheck(await checkModel(bpmnServer, name, source, 'warn'));
-        // saved through this API, a model without a diagram is laid out: say so
-        for (const w of answer.warnings)
-            if (w.code === 'no-diagram') w.message += ' Saved with PUT /models/{name}, it is laid out: nothing to do.';
-        res.json({ name, ...answer });
+        res.json(await models.verify(req.params.name, req.body?.source));
     }));
 
     router.get('/models/:name/feature', handler(async (req, res) => {
-        res.json({ name: req.params.name, text: await loadFeatureText(req.params.name) });
+        res.json(await models.feature(req.params.name));
     }));
 
     /** The model's tests: a .feature that reads as tests; with base, only over the text it came from. */
-    router.put('/models/:name/feature', design, handler(async (req, res) => {
-        // text, or source as for a model
-        const { base } = req.body ?? {};
-        const text = req.body?.text ?? req.body?.source;
-        if (typeof text !== 'string') return res.status(400).json({ error: 'text (or source), the .feature file, is required' });
-        const stopped = await saveFeatureText(req.params.name, text, typeof base === 'string' ? base : await loadFeatureText(req.params.name));
-        if (stopped) return res.status(stopped.status).json({ error: stopped.error });
-        res.json({ name: req.params.name, saved: true });
+    router.put('/models/:name/feature', designer, handler(async (req, res) => {
+        res.json(await models.saveFeature(req.params.name, req.body?.text ?? req.body?.source, req.body?.base));
     }));
 
     /** Run the model's tests (its .feature, or the one given), in the engine; each scenario's result. */
-    router.post('/models/:name/test', design, handler(async (req, res) => {
-        const name = req.params.name;
-        const file = path.join(bpmnServer.configuration.definitionsPath, `${name}.feature`);
-        const given = req.body?.source ?? req.body?.text;
-        const source = typeof given === 'string' ? given : FS.existsSync(file) ? FS.readFileSync(file, 'utf8') : null;
-        if (source === null) return res.status(404).json({ error: `No ${name}.feature: write one (PUT /models/${name}/feature) or give it as source` });
-        try {
-            const results = await bpmnServer.engine.call('runFeature', source, `${name}.feature`);
-            res.json({ name, ...summarize(results), ...(req.query.raw === 'true' ? { results } : {}) });
-        }
-        catch (error) {
-            res.status(422).json({ error: String(error?.message ?? error) });
-        }
+    router.post('/models/:name/test', designer, handler(async (req, res) => {
+        res.json(await models.test(req.params.name, req.body?.source ?? req.body?.text, { raw: req.query.raw === 'true' }));
     }));
 
     /** An instance's status and its Rationale by step (the engine's log: each operation, its outcome, its decisions). */
     // a run's Rationale is the design's: test runs, and why a model went its way
-    router.get('/instances/:id/rationale', design, handler(async (req, res) => {
+    router.get('/instances/:id/rationale', designer, handler(async (req, res) => {
         const instance = await bpmnServer.dataStore.findInstance({ id: req.params.id }, 'full').catch(() => null);
         if (!instance) return res.status(404).json({ error: `No instance ${req.params.id}` });
         res.json({ id: instance.id, name: instance.name, status: instance.status, data: instance.data,

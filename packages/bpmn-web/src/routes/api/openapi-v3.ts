@@ -17,6 +17,7 @@ const page = [
 const list = (item: object) => ({ type: 'object', required: ['items'], properties: { items: { type: 'array', items: item }, next: { type: 'string', description: 'Absent on the last page' } } });
 const ref = (name: string) => ({ $ref: `#/components/schemas/${name}` });
 const data = { type: 'object', additionalProperties: true };
+const model = { name: 'name', in: 'path', required: true, schema: { type: 'string' }, description: 'The model' };
 
 export function openApiV3(origin: string) {
     return {
@@ -62,6 +63,41 @@ export function openApiV3(origin: string) {
                 operationId: 'restartInstance', summary: 'Run an item again, and the instance on from it', parameters: [id('id', 'The instance')],
                 requestBody: body({ type: 'object', required: ['itemId'], properties: { itemId: { type: 'string' }, data } }, true), responses: { 200: answer('The instance', { type: 'object', properties: { instance: ref('Instance') } }), ...errors(400, 401, 404, 422) },
             } },
+            '/models': { get: { operationId: 'listModels', summary: 'The models, with where a person opens each', responses: { 200: answer('A list', list({ type: 'object', properties: { name: { type: 'string' }, url: { type: 'string' } } })), ...errors(401) } } },
+            '/models/{name}': {
+                get: { operationId: 'getModel', summary: 'A model: its BPMN XML, its .feature, where a person opens it', parameters: [model], responses: { 200: answer('The model', { type: 'object', properties: { name: { type: 'string' }, source: { type: 'string' }, feature: { type: ['string', 'null'] }, url: { type: 'string' } } }), ...errors(400, 401, 404) } },
+                put: {
+                    operationId: 'saveModel', summary: 'Create or change a model: checked first (with errors, refused unless force=true); laid out when it has no diagram (design)', parameters: [model, { name: 'force', in: 'query', schema: { type: 'boolean' } }],
+                    requestBody: body({ type: 'object', required: ['source'], properties: { source: { type: 'string', description: 'The BPMN XML' } } }, true),
+                    responses: { 200: answer('Changed', ref('ModelSaved')), 201: answer('Created', ref('ModelSaved')), ...errors(400, 401, 403, 404, 422) },
+                },
+                delete: { operationId: 'deleteModel', summary: 'Delete a model (design)', parameters: [model], responses: { 200: answer('Deleted', { type: 'object', properties: { deleted: { type: 'string' } } }), ...errors(401, 403, 404) } },
+            },
+            '/models/{name}/rename': { post: {
+                operationId: 'renameModel', summary: 'Rename a model (design)', parameters: [model], requestBody: body({ type: 'object', required: ['newName'], properties: { newName: { type: 'string' } } }, true),
+                responses: { 200: answer('Renamed', { type: 'object', properties: { name: { type: 'string' }, renamedFrom: { type: 'string' } } }), ...errors(400, 401, 403, 404, 409) },
+            } },
+            '/models/{name}/verify': { post: {
+                operationId: 'verifyModel', summary: 'Check a model without saving it: the source given, else the saved model', parameters: [model],
+                requestBody: body({ type: 'object', properties: { source: { type: 'string' } } }), responses: { 200: answer('Its check', ref('Check')), ...errors(400, 401, 404) },
+            } },
+            '/models/{name}/elements/{elementId}': { get: {
+                operationId: 'getModelElement', summary: 'One element: its type, name, documentation, lane, assignment and form', parameters: [model, id('elementId', 'The element')],
+                responses: { 200: answer('The element', { type: 'object', properties: { id: { type: 'string' }, type: { type: 'string' }, name: { type: ['string', 'null'] }, documentation: { type: 'string' }, lane: { type: 'string' }, assignment: { type: 'object' }, form: ref('Form') } }), ...errors(400, 401, 404) },
+            } },
+            '/models/{name}/feature': {
+                get: { operationId: 'getModelTests', summary: 'The tests of the model: its .feature', parameters: [model], responses: { 200: answer('The text', { type: 'object', properties: { name: { type: 'string' }, text: { type: ['string', 'null'] } } }), ...errors(400, 401) } },
+                put: {
+                    operationId: 'saveModelTests', summary: 'Write the tests of the model: a .feature that reads as tests; with base, only over the text it came from (design)', parameters: [model],
+                    requestBody: body({ type: 'object', required: ['text'], properties: { text: { type: 'string' }, base: { type: 'string' } } }, true),
+                    responses: { 200: answer('Saved', { type: 'object', properties: { name: { type: 'string' }, saved: { type: 'boolean' } } }), ...errors(400, 401, 403, 409) },
+                },
+            },
+            '/models/{name}/test': { post: {
+                operationId: 'runModelTests', summary: 'Run the tests of the model (its .feature, or the one given), in the engine (design)', parameters: [model, { name: 'raw', in: 'query', schema: { type: 'boolean' } }],
+                requestBody: body({ type: 'object', properties: { source: { type: 'string', description: 'A .feature, not saved' } } }),
+                responses: { 200: answer('Each scenario', ref('TestRun')), ...errors(400, 401, 403, 404, 422) },
+            } },
             '/messages/{id}': { post: {
                 operationId: 'throwMessage', summary: 'A message, to what waits for it or starts on it (the system)', parameters: [id('id', 'The message')],
                 requestBody: body({ type: 'object', properties: { data, matchingKey: data } }), responses: { 200: answer('The instance it reached, or null', { type: 'object', properties: { instance: { oneOf: [ref('Instance'), { type: 'null' }] } } }), ...errors(401, 403, 422) },
@@ -96,6 +132,10 @@ export function openApiV3(origin: string) {
                 Task: { type: 'object', properties: { id: { type: 'string' }, instanceId: { type: 'string' }, processName: { type: 'string' }, elementId: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, assignee: { type: 'string' }, candidateUsers: {}, candidateGroups: {}, startedAt: { type: 'string' }, endedAt: { type: 'string' }, dueDate: { type: 'string' }, followUpDate: { type: 'string' }, priority: {}, completedBy: { type: 'string' } } },
                 TaskWithForm: { allOf: [ref('Task'), { type: 'object', properties: { data, form: ref('Form') } }] },
                 Instance: { type: 'object', properties: { id: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, startedAt: { type: 'string' }, endedAt: { type: ['string', 'null'] }, data } },
+                Issue: { type: 'object', properties: { code: { type: 'string' }, element: { type: ['string', 'null'] }, message: { type: 'string' } } },
+                Check: { type: 'object', properties: { name: { type: 'string' }, valid: { type: 'boolean' }, errors: { type: 'array', items: ref('Issue') }, warnings: { type: 'array', items: ref('Issue') } } },
+                ModelSaved: { allOf: [ref('Check'), { type: 'object', properties: { created: { type: 'boolean' }, laidOut: { type: 'boolean' }, url: { type: 'string' } } }] },
+                TestRun: { type: 'object', properties: { name: { type: 'string' }, passed: { type: 'integer' }, failed: { type: 'integer' }, skipped: { type: 'integer' }, scenarios: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, status: { enum: ['passed', 'failed', 'skipped'] }, failedStep: { type: 'string' }, error: { type: 'string' }, instances: { type: 'array', items: { type: 'string' } } } } } } },
                 InstanceWithItems: { allOf: [ref('Instance'), { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } } } }] },
             },
         },
