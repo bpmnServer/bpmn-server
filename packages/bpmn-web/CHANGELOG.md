@@ -13,6 +13,8 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+
+## Release 3.6.0 (2026-11-10)
 ### Removed
 - **Guest access**: `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone, and only signed-in
   users use a server. **An account made on a server with guests no longer has models of its own.** Before upgrading such a server,
