@@ -16,6 +16,17 @@ and here
 ### Added
 - **The task API starts processes, and gives each task its form** (`/api2/tasks`, with `API_ACTING_USER_KEY` and `x-acting-user`): `POST /api2/tasks/start/:name` starts a process as the acting user, at a start event they may use (its lane or candidates), and answers their first task; `GET /api2/tasks/:id` answers `form: { fields, formKey }`, each field with its options and validation. An application no longer needs `/api` to start a process for one of its users.
 
+### Changed
+- **`/api` acts as its service account** (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`, which `init` sets), as `/api2`
+  does: a user a call names (`userName`, `options.userName`; bpmn-client's `userId`) is ignored, and the answer has a
+  `Warning` header saying so. Before, `/api` acted as whatever user it was sent, with no security rules, so anyone with
+  `API_KEY` could act as anyone. **To upgrade:** start processes for a user with the task API
+  (`POST /api2/tasks/start/:name`, `API_ACTING_USER_KEY`, `x-acting-user`); or set `API_IMPERSONATION=true` to keep the
+  old behavior while you move (it goes at 4.0). A server without a service account answers 500 on `/api`, naming the
+  settings to set.
+- The API's key checks and users are decided in one place (`routes/api/door.ts`), and `/api`, `/api2` and the
+  administration APIs share their operations (`routes/api/operations.ts`): no change to their URLs or answers.
+
 ## Release 3.6.0 (2026-11-10)
 ### Removed
 - **Guest access**: `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone, and only signed-in

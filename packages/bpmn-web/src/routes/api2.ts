@@ -15,7 +15,8 @@ const awaitAppDelegateFactory = (middleware) => {
     }
 }
 
-import { apiKeyAuth as loggedIn, apiServiceAuth, configuredApiUser } from './middleware/apiKeyAuth.js';
+import { apiKeyAuth as loggedIn, configuredApiUser } from './middleware/apiKeyAuth.js';
+import { door } from './api/door.js';
 import { modelNameGuard, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { taskApi } from './taskApi.js';
@@ -27,9 +28,8 @@ import { Operations } from './api/operations.js';
 
 export class API2 extends Common {
     getUser(request): SecureUser {
-        // The API key authenticates one configured service account. Client-supplied
-        // user/group claims must never become an authorization principal.
-        return configuredApiUser();
+        // the user the door set (routes/api/door.ts): the service account; a user named by the caller never is
+        return request.apiUser ?? configuredApiUser();
     }
     requireSystem = (req, res, next) => {
         try {
@@ -56,7 +56,7 @@ export class API2 extends Common {
         guardModelParams(router);
         // the task API has a key of its own, and API_KEY does not open it
         router.use('/tasks', taskApi(this.bpmnServer));
-        router.use(loggedIn, apiServiceAuth);
+        router.use(door('v2'));
         router.use('/model', modelNameGuard);
         var bpmnServer = this.bpmnServer;
         const ops = new Operations(this.bpmnServer);
@@ -394,6 +394,8 @@ export class API2 extends Common {
         guardModelParams(router);
         const bpmnServer = this.bpmnServer;
         const ops = new Operations(this.bpmnServer);
+        // the door: ADMIN_API_KEY, the service account (routes/api/door.ts, way v2-admin)
+        const loggedIn = door('v2-admin');
         const self = this;
 
         //// ---------------------  Model -----------------------

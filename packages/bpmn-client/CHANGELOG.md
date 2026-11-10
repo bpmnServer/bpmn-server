@@ -14,6 +14,10 @@ and here
 -->
 ## [Unreleased]
 
+### Changed
+- A server since 3.7 ignores the `userId` of `start`, `invoke`, `assign`, `restart` and `startEvent` unless it sets
+  `API_IMPERSONATION=true`: it acts as its service account. See bpmn-web's changelog.
+
 ## Release 3.6.0 (2026-11-10)
 ### Changed
 - `definitions.load()` reads `/api` with `API_KEY`, so reading a model needs no administration; on an older server

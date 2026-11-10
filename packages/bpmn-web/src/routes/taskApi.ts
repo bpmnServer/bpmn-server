@@ -1,6 +1,6 @@
 import express from 'express';
 import { BPMNAPI, SecureUser } from '../index.js';
-import { timingSafeEqualStr } from './middleware/apiKeyAuth.js';
+import { door } from './api/door.js';
 import { notATest } from '../testing/scenarios.js';
 
 /*
@@ -12,8 +12,6 @@ import { notATest } from '../testing/scenarios.js';
  * see an item and the check that an item still waits, under the instance's lock; the assignee's rule is here.
  */
 
-/** The groups an application can not give its users: this key can not make an administrator. */
-const REFUSED_GROUPS = ['SYSTEM', 'ADMIN', 'DESIGNER'];
 const DEFAULT_LIMIT = 50, MAX_LIMIT = 200;
 
 /** An answer with a real status. */
@@ -68,24 +66,8 @@ export function taskApi(server) {
     const router = express.Router();
     const api = new BPMNAPI(server);
 
-    // who calls: the key, then the user it speaks for
-    router.use((req: any, res, next) => {
-        const key = process.env.API_ACTING_USER_KEY;
-        if (!key)
-            return res.status(404).json({ errors: 'The task API is not turned on: API_ACTING_USER_KEY', code: 'TASK_API_OFF' });
-        const presented = req.header('x-api-key');
-        if (typeof presented !== 'string' || !timingSafeEqualStr(presented, key))
-            return res.status(401).json({ errors: 'missing or invalid "x-api-key"', code: 'UNAUTHORIZED' });
-        const userName = req.header('x-acting-user')?.trim();
-        if (!userName)
-            return res.status(400).json({ errors: 'missing "x-acting-user"', code: 'ACTING_USER_MISSING' });
-        const userGroups = toList(req.header('x-acting-groups'));
-        if (userGroups.some(group => REFUSED_GROUPS.includes(group.toUpperCase())))
-            return res.status(403).json({ errors: `"x-acting-groups" can not have ${REFUSED_GROUPS.join(', ')}`, code: 'ACTING_GROUP_REFUSED' });
-        // the tenant is the service account's, never the caller's; the security rules hold whatever the environment says
-        req.actingUser = new SecureUser({ userName, userGroups, tenantId: process.env.API_SERVICE_TENANT_ID, modelsOwner: process.env.API_SERVICE_MODELS_OWNER }, { enforceSecurity: true });
-        next();
-    });
+    // who calls: the acting-user key, then the user it speaks for (routes/api/door.ts, way acting)
+    router.use(door('acting'));
 
     /** The task this user has a part in, or the same 404. */
     async function findTask(id: string, user: SecureUser) {
@@ -100,7 +82,7 @@ export function taskApi(server) {
     };
     const handler = fn => async (req, res) => {
         try {
-            res.json(await fn(req, req.actingUser));
+            res.json(await fn(req, req.apiUser));
         }
         catch (error) {
             if (error instanceof TaskError)

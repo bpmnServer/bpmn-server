@@ -105,7 +105,11 @@ class ClientEngine {
     constructor(client) {
         this.client = client;
     }
-    /** userId: the user it starts for (the server's userName), who becomes the instance's initiator. */
+    /**
+     * userId: the user it starts for, who becomes the instance's initiator, only on a server with API_IMPERSONATION=true;
+     * since 3.7 a server ignores it otherwise, and acts as its service account. To start for a user, use the task API
+     * (POST /api2/tasks/start/:name, with x-acting-user).
+     */
     async start(name, data = {}, startNodeId = null,  userId= null,options = {}): Promise<IInstanceData> {
         const ret = await this.client.post('engine/start',
             { name, data, startNodeId, userName: userId, options });

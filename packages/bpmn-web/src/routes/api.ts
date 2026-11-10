@@ -20,11 +20,11 @@ import FS from 'node:fs';
     }
 }
 
-import { apiKeyAuth as loggedIn } from './middleware/apiKeyAuth.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { sendModelRejection } from '../runtime/modelVerification.js';
-import { Operations, unrestrictedUser } from './api/operations.js';
+import { Operations } from './api/operations.js';
+import { door } from './api/door.js';
 
 export class API extends Common {
     get bpmnServer() { return this.webApp.bpmnServer; }
@@ -35,8 +35,9 @@ export class API extends Common {
         guardModelParams(router);
         var bpmnServer = this.bpmnServer;
         const ops = new Operations(bpmnServer);
-        // v1 acts as the user the caller names, with no security rules (docs/design/api-v3.md, decision 1 changes it)
-        const userOf = (request, userName = request.body?.userName) => unrestrictedUser(userName);
+        // the door: API_KEY, and the user every call acts as (routes/api/door.ts, way v1)
+        const loggedIn = door('v1');
+        const userOf = request => request.apiUser;
 
         router.use(['/definitions', '/model'], modelNameGuard);
 
@@ -218,7 +219,7 @@ export class API extends Common {
 
                 let context;
                 //console.log(data,userName);
-                context = await ops.start(userOf(request, userName), name, { data, options: startNodeId ? { ...options, startNodeId } : options });
+                context = await ops.start(userOf(request), name, { data, options: startNodeId ? { ...options, startNodeId } : options });
                 response.json(context.instance);
             }
             catch (exc) {
@@ -250,7 +251,7 @@ export class API extends Common {
             let errors;
             try {
 
-                context = await ops.assign(userOf(request, userName), query, data, assignment);
+                context = await ops.assign(userOf(request), query, data, assignment);
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -287,7 +288,7 @@ export class API extends Common {
             let errors;
             try {
 
-                context = await ops.invoke(userOf(request, userName), query, { data, options });
+                context = await ops.invoke(userOf(request), query, { data, options });
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -325,7 +326,7 @@ export class API extends Common {
             let instance;
             let errors;
             try {
-                context = await ops.startEvent(userOf(request, userName), instanceId, startNodeId, { data, options });
+                context = await ops.startEvent(userOf(request), instanceId, startNodeId, { data, options });
                 //context = await this.bpmnServer.engine.restart(query, data,userName,options );
                 instance = context.instance;
                 if (context && context.errors)
@@ -362,7 +363,7 @@ export class API extends Common {
             let instance;
             let errors;
             try {
-                context = await ops.restart(userOf(request, userName), query, { data, options });
+                context = await ops.restart(userOf(request), query, { data, options });
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -503,8 +504,9 @@ export class API extends Common {
         const bpmnServer = this.bpmnServer;
         const fsx = FS;
         const ops = new Operations(bpmnServer);
-        // the administration key, with no security rules; a save records the signed-in user, if any
-        const adminUser = request => unrestrictedUser((request.user as any)?.userName);
+        // the door: ADMIN_API_KEY, an administrator with no security rules (routes/api/door.ts, way v1-admin)
+        const loggedIn = door('v1-admin');
+        const adminUser = request => request.apiUser;
 
             router.post('/definitions/import{/:name}', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
