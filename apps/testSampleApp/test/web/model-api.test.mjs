@@ -97,6 +97,36 @@ test('@invoke ... is refused holds when the user may not do it, and fails when t
   assert.ok(verify.body.warnings.some(w => w.code === 'no-diagram' && /laid out/.test(w.message)), JSON.stringify(verify.body.warnings));
 });
 
+test('@start ... is refused holds when the start fails, and fails when it starts', async () => {
+  const xml = fail => `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="start-refused" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:executionListener event="start">
+        <camunda:script scriptFormat="JavaScript">${fail ? "throw new Error('no start');" : 'const ok = true;'}</camunda:script>
+      </camunda:executionListener>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="start"><bpmn:outgoing>f</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:sequenceFlow id="f" sourceRef="start" targetRef="end" />
+    <bpmn:endEvent id="end"><bpmn:incoming>f</bpmn:incoming></bpmn:endEvent>
+  </bpmn:process>
+</bpmn:definitions>`;
+  const feature = `Feature: start-refused
+  Scenario: it does not start
+    When @start process:start-refused as :r is refused
+`;
+  assert.equal((await api('PUT', '/models/start-refused', { source: xml(true) })).status, 201);
+  const refused = await api('POST', '/models/start-refused/test', { source: feature });
+  assert.equal(refused.body.passed, 1, JSON.stringify(refused.body));
+  assert.equal((await api('PUT', '/models/start-refused', { source: xml(false) })).status, 200);
+  const started = await api('POST', '/models/start-refused/test', { source: feature });
+  assert.equal(started.body.failed, 1, JSON.stringify(started.body));
+  assert.match(started.body.scenarios[0].error, /it started, not refused/);
+  // a model that is not there fails the step: its test does not pass without it
+  const missing = await api('POST', '/models/start-refused/test', { source: feature.replace('process:start-refused', 'process:no-such-model') });
+  assert.equal(missing.body.failed, 1, JSON.stringify(missing.body));
+});
+
 test('a feature that does not read as tests is refused, and the file stays', async () => {
   const res = await api('PUT', `/models/${MODEL}/feature`, { text: 'not gherkin' });
   assert.equal(res.status, 400, why(res));

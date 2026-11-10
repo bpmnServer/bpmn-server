@@ -60,7 +60,7 @@ A step is `[subject] @command [arguments] [as :name]`, followed by a table or a 
 | Command | Does |
 |---|---|
 | `user:<name> @login [with role of "<role>"]` | Acts as that user |
-| `@start process:<p> [at element:<e>] [only] as :i` | Starts an instance, with the table as its start data. `only` runs that element by itself |
+| `@start process:<p> [at element:<e>] [only] as :i` | Starts an instance, with the table as its start data. `only` runs that element by itself. `... is refused`: holds when it can not start (a listener or script throws, the engine refuses) |
 | `@find element:<e> [in :i] as :x`, `@find item ...` | Finds one item, filtered by the table |
 | `@invoke :x`, `@invoke [first] element:<e> [key "K"] in :i [as :x] [no wait]` | Completes an item with the table as its data. `... is refused`: holds when it can not be done (the user may not take it) |
 | `@check <statement>` | Checks something now |

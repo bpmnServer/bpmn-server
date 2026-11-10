@@ -197,7 +197,19 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
         scenario.user = { userName: who[1], ...(roles ? { secure: new SecureUser({ userName: who[1], userGroups: [roles[1]], tenantId: null }, { enforceSecurity: true }) } : {}) };
     },
 
-    async start(server, scenario, { rest, rows }) {
+    async start(server, scenario, step) {
+        const { rest, rows } = step;
+        // "... is refused": the step holds when the start fails (the engine refusing, a listener or script throwing)
+        const refused = / is refused$/.exec(rest);
+        if (refused) {
+            const asked = rest.slice(0, refused.index);
+            // a model that is not there is the step's failure, not a refusal
+            const named = new RegExp(`^process:${NAME}`).exec(asked);
+            if (named) await server.definitions.getSource(unquoted(named[1]));
+            try { await COMMANDS.start(server, scenario, { ...step, rest: asked }); }
+            catch { return; }
+            throw new Error(`@start ${asked}: it started, not refused${scenario.user ? ` (as ${scenario.user.userName})` : ''}`);
+        }
         const match = new RegExp(`^process:${NAME}(?: at element:${NAME})?( only)?(?: as :(\\w+))?$`).exec(rest);
         if (!match) throw new Error('@start: @start process:<name> as :<name>');
         const model = unquoted(match[1]);
