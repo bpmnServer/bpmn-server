@@ -24,6 +24,7 @@ import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
 import { assertModelAcceptable, sendModelRejection } from '../runtime/modelVerification.js';
 import { json } from 'body-parser';
+import { Operations } from './api/operations.js';
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////
@@ -63,6 +64,7 @@ export class API2 extends Common {
         router.use('/model', modelNameGuard);
         var bpmnServer = this.bpmnServer;
         var api=new BPMNAPI(this.bpmnServer);
+        const ops = new Operations(this.bpmnServer);
         let self = this;
 
 
@@ -70,13 +72,13 @@ export class API2 extends Common {
         // offer processes: the list, start events the service account may use, events. Changing
         // models stays under /admin/api2.
         router.get('/model/list', awaitAppDelegateFactory(async (request, response) => {
-            response.json(await api.model.list(request.body?.query ?? {}, self.getUser(request)));
+            response.json(await ops.listModels(self.getUser(request), request.body?.query ?? {}));
         }));
         router.get('/model/findEvents', awaitAppDelegateFactory(async (request, response) => {
-            response.json(await api.model.findEvents(request.body?.query ?? {}, self.getUser(request)));
+            response.json(await ops.findEvents(self.getUser(request), request.body?.query ?? {}));
         }));
         router.get('/model/findStartEvents', awaitAppDelegateFactory(async (request, response) => {
-            response.json(await api.model.findStartEvents(request.body?.query ?? {}, self.getUser(request)));
+            response.json(await ops.findStartEvents(self.getUser(request), request.body?.query ?? {}));
         }));
 
         router.get('/status', loggedIn, awaitAppDelegateFactory(async (request, response) => {
@@ -84,7 +86,7 @@ export class API2 extends Common {
             let status;
             let errors;
             try {
-                status = await this.bpmnServer.status();
+                status = await ops.status();
             }
             catch (exc) {
                 errors = exc.toString();
@@ -106,7 +108,7 @@ export class API2 extends Common {
             let items;
             let errors;
             try {
-                items = await api.data.findItems(query,self.getUser(request));
+                items = await ops.findItems(self.getUser(request), query);
             }
             catch (exc) {
                 errors = exc.toString();
@@ -129,7 +131,7 @@ export class API2 extends Common {
             let errors;
             try {
 
-                instances = await api.data.findInstances(query,self.getUser(request), 'full');
+                instances = await ops.findInstances(self.getUser(request), query);
             }
             catch (exc) {
                 errors = exc.toString();
@@ -155,8 +157,7 @@ export class API2 extends Common {
             
             try {
 
-                results = await this.bpmnServer.dataStore.find({ filter, projection, after, limit, sort,lastItem,
-                    latestItem,getTotalCount });
+                results = await ops.find(self.getUser(request), { filter, projection, after, limit, sort, lastItem, latestItem, getTotalCount });
                 
             }
             catch (exc) {
@@ -168,35 +169,7 @@ export class API2 extends Common {
         }));
         router.get('/data/fieldInfo', loggedIn, this.requireSystem, awaitAppDelegateFactory(async (request, response) => {
     
-                let id = request.query.id;
-                let processName = request.query.processName;
-                let elementId = request.query.elementId;
-                let errors;
-                
-                const instances = await api.data.findInstances({ "items.id": id }, self.getUser(request), 'full');
-                const instance = instances[0];
-    
-                let definition=await this.bpmnServer.definitions.loadFromInstance(instance);
-
-                let { node, fields } =definition.getNodeInfo(elementId);
-                
-                let cache=[];
-                let node2=
-                JSON.stringify(node, (key, value) => {
-                    if (typeof value === 'object' && value !== null) {
-                      // Duplicate reference found, discard key
-                      if (cache.includes(value)) return;
-                  
-                      // Store value in our collection
-                      cache.push(value);
-                    }
-                    return value;
-                  });
-                cache=null;
-
-                let data = ViewHelper.formatData(instance.data);
-    
-                response.json({ node: JSON.parse(node2),fields ,data });
+                response.json(await ops.fieldInfo(self.getUser(request), request.query.id as string, request.query.elementId as string));
             }));
         router.delete('/data/deleteInstances', loggedIn, this.requireAdmin, awaitAppDelegateFactory(async (request, response) => {
 
@@ -212,7 +185,7 @@ export class API2 extends Common {
             let errors;
             let result;
             try {
-                result = await api.data.deleteInstances(query, self.getUser(request));
+                result = await ops.deleteInstances(self.getUser(request), query);
             }
             catch (exc) {
                 errors = exc.toString();
@@ -239,7 +212,7 @@ export class API2 extends Common {
                 let context;
                 //console.log(data,userName);
 
-                context = await api.engine.start(name, data,self.getUser(request), options);
+                context = await ops.start(self.getUser(request), name, { data, options });
                 response.json(context.instance);
             }
             catch (exc) {
@@ -266,7 +239,7 @@ export class API2 extends Common {
             let errors;
             try {
 
-                context = await api.engine.assign(query, data, assignment, self.getUser(request));
+                context = await ops.assign(self.getUser(request), query, data, assignment);
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -299,7 +272,7 @@ export class API2 extends Common {
             let errors;
             try {
 
-                context = await api.engine.invoke(query, data,self.getUser(request),options );
+                context = await ops.invoke(self.getUser(request), query, { data, options });
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -332,8 +305,7 @@ export class API2 extends Common {
                     options = request.body.options;
                 }
     
-                context = await api.engine.throwMessage(messageId, data, messageMatchingKey,
-                    self.getUser(request),options);
+                context = await ops.throwMessage(self.getUser(request), messageId, data, messageMatchingKey, options);
                 if (context)
                     response.json(context.instance);
                 else
@@ -367,7 +339,7 @@ export class API2 extends Common {
             let instance;
             let errors;
             try {
-                context = await api.engine.startEvent(instanceId, startNodeId, data,self.getUser(request), options);
+                context = await ops.startEvent(self.getUser(request), instanceId, startNodeId, { data, options });
                 //context = await this.bpmnServer.engine.restart(query, data,userName,options );
                 instance = context.instance;
                 if (context && context.errors)
@@ -406,8 +378,7 @@ export class API2 extends Common {
                     options = request.body.options;
                 }
 
-                context = await api.engine.throwSignal(signalId, data, messageMatchingKey,
-                    self.getUser(request),options);
+                context = await ops.throwSignal(self.getUser(request), signalId, data, messageMatchingKey, options);
                 response.json(context);
             }
             catch (exc) {

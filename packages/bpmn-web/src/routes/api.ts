@@ -27,6 +27,7 @@ import { Common } from './common.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
 import { assertModelAcceptable, checkModel, sendModelRejection } from '../runtime/modelVerification.js';
+import { Operations, unrestrictedUser } from './api/operations.js';
 
 export class API extends Common {
     get bpmnServer() { return this.webApp.bpmnServer; }
@@ -36,6 +37,9 @@ export class API extends Common {
 
         guardModelParams(router);
         var bpmnServer = this.bpmnServer;
+        const ops = new Operations(bpmnServer);
+        // v1 acts as the user the caller names, with no security rules (docs/design/api-v3.md, decision 1 changes it)
+        const userOf = (request, userName = request.body?.userName) => unrestrictedUser(userName);
 
         router.use(['/definitions', '/model'], modelNameGuard);
 
@@ -68,7 +72,7 @@ export class API extends Common {
             let status;
             let errors;
             try {
-                status = await this.bpmnServer.status();
+                status = await ops.status();
             }
             catch (exc) {
                 errors = exc.toString();
@@ -91,7 +95,7 @@ export class API extends Common {
             let items;
             let errors;
             try {
-                items = await this.bpmnServer.dataStore.findItems(query);
+                items = await ops.findItems(userOf(request), query);
             }
             catch (exc) {
                 errors = exc.toString();
@@ -132,7 +136,7 @@ export class API extends Common {
             let errors;
             try {
 
-                instances = await this.bpmnServer.dataStore.findInstances(query,projection);
+                instances = await ops.findInstances(userOf(request), query, projection);
             }
             catch (exc) {
                 errors = exc.toString();
@@ -158,7 +162,7 @@ export class API extends Common {
             
             try {
 
-                results = await this.bpmnServer.dataStore.find({ filter, projection, after, limit, sort,lastItem,latestItem,getTotalCount});
+                results = await ops.find(userOf(request), { filter, projection, after, limit, sort, lastItem, latestItem, getTotalCount });
                 
             }
             catch (exc) {
@@ -170,35 +174,7 @@ export class API extends Common {
         }));
         router.get('/data/fieldInfo', loggedIn, awaitAppDelegateFactory(async (request, response) => {
     
-                let id = request.query.id;
-                let processName = request.query.processName;
-                let elementId = request.query.elementId;
-                let errors;
-                
-                const instances = await this.bpmnServer.dataStore.findInstances({ "items.id": id }, 'full');
-                const instance = instances[0];
-    
-                let definition=await this.bpmnServer.definitions.loadFromInstance(instance);
-
-                let { node, fields } =definition.getNodeInfo(elementId);
-
-                let cache=[];
-                let node2=
-                JSON.stringify(node, (key, value) => {
-                    if (typeof value === 'object' && value !== null) {
-                      // Duplicate reference found, discard key
-                      if (cache.includes(value)) return;
-                  
-                      // Store value in our collection
-                      cache.push(value);
-                    }
-                    return value;
-                  });
-                cache=null;
-
-                let data = ViewHelper.formatData(instance.data);
-    
-                response.json({ node: JSON.parse(node2),fields ,data });
+                response.json(await ops.fieldInfo(userOf(request), request.query.id as string, request.query.elementId as string));
             }));
 
         /*
@@ -245,7 +221,7 @@ export class API extends Common {
 
                 let context;
                 //console.log(data,userName);
-                context = await this.bpmnServer.engine.start(name, data, startNodeId, userName, options);
+                context = await ops.start(userOf(request, userName), name, { data, options: startNodeId ? { ...options, startNodeId } : options });
                 response.json(context.instance);
             }
             catch (exc) {
@@ -277,7 +253,7 @@ export class API extends Common {
             let errors;
             try {
 
-                context = await this.bpmnServer.engine.assign(query, data, assignment, userName);
+                context = await ops.assign(userOf(request, userName), query, data, assignment);
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -314,7 +290,7 @@ export class API extends Common {
             let errors;
             try {
 
-                context = await this.bpmnServer.engine.invoke(query, data,userName,options );
+                context = await ops.invoke(userOf(request, userName), query, { data, options });
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -352,7 +328,7 @@ export class API extends Common {
             let instance;
             let errors;
             try {
-                context = await this.bpmnServer.engine.startEvent(instanceId, startNodeId, data,userName, options);
+                context = await ops.startEvent(userOf(request, userName), instanceId, startNodeId, { data, options });
                 //context = await this.bpmnServer.engine.restart(query, data,userName,options );
                 instance = context.instance;
                 if (context && context.errors)
@@ -389,7 +365,7 @@ export class API extends Common {
             let instance;
             let errors;
             try {
-                context = await this.bpmnServer.engine.restart(query, data,userName,options );
+                context = await ops.restart(userOf(request, userName), query, { data, options });
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -418,7 +394,7 @@ export class API extends Common {
             let instance;
             let errors;
             try {
-                context = await this.bpmnServer.engine.get(query);
+                context = await ops.get(userOf(request), query);
                 instance = context.instance;
             }
             catch (exc) {
@@ -446,7 +422,7 @@ export class API extends Common {
                 let context;
                 //console.log(data);
 
-                context = await this.bpmnServer.engine.throwMessage(messageId, data, messageMatchingKey);
+                context = await ops.throwMessage(userOf(request), messageId, data, messageMatchingKey);
                 if (context)
                     response.json(context.instance);
                 else
@@ -481,7 +457,7 @@ export class API extends Common {
                     messageMatchingKey = request.body.messageMatchingKey;
                 let context;
 
-                context = await this.bpmnServer.engine.throwSignal(signalId, data, messageMatchingKey);
+                context = await ops.throwSignal(userOf(request), signalId, data, messageMatchingKey);
                 response.json(context);
             }
             catch (exc) {
@@ -505,7 +481,7 @@ export class API extends Common {
             let errors;
             try {
 
-                result = await this.bpmnServer.engine.upgrade(model, nodeIds );
+                result = await ops.upgrade(userOf(request), model, nodeIds);
                 if (result && result.errors)
                     errors = result.errors.toString();
             }
