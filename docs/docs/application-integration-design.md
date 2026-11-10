@@ -246,6 +246,43 @@ A model-form-key inventory/inspection operation would be useful for the AI; this
 - Users cannot impersonate another acting user, claim others' tasks, or access secret keys through browser requests.
 - Browser navigation, task completion and returned instance state are verified end-to-end.
 
+## 6.5 Reference implementation: React HR Demo and standalone OWF Demo (proposed)
+
+The **React HR Demo** is the primary acceptance/reference application for AI-assisted integration. It demonstrates a normal business application that owns its user interface, authentication, business data, and OWF installation. The complex BPMN/DMN Modeler is **not rewritten into React**: it is the existing OWF editor, served as part of the HR Demo under **`/modeler`**. The Modeler belongs to this demo installation and uses its models, workflow store, credentials, and role policy; it is not a global/shared modeler service.
+
+A **second, independent standalone OWF Demo** remains available in the style of the current `bpmn.omniworkflow.com`, including its own Modeler and workflow workbench. It does not share the HR Demo's workflow database or installation configuration.
+
+### 6.5.1 Public routes and local ports
+
+| Deployment | Route or URL | Responsibility |
+| --- | --- | --- |
+| HR Demo (proposed public) | `https://hr-demo.omniworkflow.com/` | React application and native operational pages |
+| HR Modeler | `https://hr-demo.omniworkflow.com/modeler` | Existing OWF modeler, *owned by this HR Demo* |
+| HR workflow API | `https://hr-demo.omniworkflow.com/api2` | HR Demo's OWF backend API |
+| HR business API | `https://hr-demo.omniworkflow.com/api/hr` | HR application's business operations (illustrative route) |
+| Independent OWF Demo | `https://bpmn.omniworkflow.com/` | Standalone OWF demonstration, its own workbench and Modeler |
+
+**Local development:** the React/Vite development server uses **port 5173**, proxying `/api2`, `/modeler`, its dependent assets/routes, and the HR backend API to the **Node/OWF backend on port 3100**. The backend owns both the workflow API and the Modeler; **no separate Modeler port is required**. For a built/production deployment, the same backend may serve the compiled React assets or a reverse proxy may join the services at a single origin.
+
+Expected local backend entry points: `http://localhost:3100/` (HR app when built/served by backend), `http://localhost:3100/modeler`, and `http://localhost:3100/api2`. During Vite development, the browser typically enters through `http://localhost:5173/` while API and Modeler requests are proxied to port 3100. These are target routes/ports, not claims that the demo is already deployed.
+
+### 6.5.2 UI boundary and AI portability
+
+- **Generate/adapt native host pages:** My Tasks, Start Workflow, My Workflows, ordinary task and workflow details, and basic history. These are relatively simple data-driven pages. Provide lightweight, versioned page specifications (required API data, actions, authorization, navigation, and form-key behavior) to guide AI conversion to the host's framework. **Do not introduce a general-purpose UI DSL or rewrite the current Pug pages wholesale.**
+- **Keep specialized tools intact:** BPMN Modeler, DMN editor, and advanced design/test workbench stay on existing OWF technology and are reached through the HR Demo's `/modeler` route (and any required subroutes). Complex execution diagrams can reuse an existing viewer rather than be reimplemented in React.
+- **Host owns look and feel:** React supplies the HR shell and workflow navigation; navigating to `/modeler` leaves the React UI and enters the Modeler under the *same host origin*. The user returns using an explicit HR Demo link.
+- **One installation per demo:** HR UI, HR Modeler, and HR `/api2` use the same OWF installation and models. The standalone demo is a distinct installation with independent state.
+
+### 6.5.3 Mounting and authentication considerations
+
+Keep the Modeler code largely intact, but make the host configurable for a `/modeler` base path. Audit existing absolute asset URLs, JavaScript API calls, editor/DMN routes, redirects, form actions, and links that assume `/` or an existing top-level modeler route. The HR backend must guard design and model-changing operations by the host's authenticated **Designer/Admin** permissions; don't rely on a visible navigation link alone. If the existing frontend needs its own session handling, bridge it securely to the HR host identity—no second login and no privileged API keys in the browser. Model save/read operations must remain scoped to the HR Demo installation.
+
+### 6.5.4 Reference integration proof
+
+The HR Demo should implement one complete employee-leave scenario: employee submits a leave request; OWF creates a manager task; manager opens the host form selected by BPMN `formKey`, approves it, and the employee sees the updated request and workflow history. Also test an OWF dynamic form when no form is declared. A Playwright end-to-end suite should cover React navigation, host identity, task authorization, form resolution, and `/modeler` access (authorized user allowed; non-designer denied). Gherkin covers the underlying workflow transitions. Document how the AI examines the React host, identifies form keys, generates native operational pages and API adapters, and verifies its changes.
+
+**Implementation status:** This section records the agreed architecture and reference-demo requirements; it does **not** assert that the React demo, mounted base path, or deployments already exist.
+
 ## 7. Workflow data-store integration
 
 Workflow records include instances, items (including waiting User Tasks), tokens, execution data, logs/history and event-related state. Four supported integration patterns should be available **per application**:
