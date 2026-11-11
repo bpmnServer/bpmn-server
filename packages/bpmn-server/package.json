@@ -13,7 +13,7 @@
     "build": "tsc --build",
     "template": "node scripts/template.mjs",
     "prepack": "npm run build && npm run template",
-    "postpack": "node -e \"require('fs').rmSync('templates/app',{recursive:true,force:true})\"",
+    "postpack": "node -e \"const fs=require('fs');fs.rmSync('templates/app',{recursive:true,force:true});fs.rmSync('templates/settings.schema.json',{force:true})\"",
     "test": "node --test --test-concurrency=1 \"test/*.test.mjs\"",
     "clean": "rimraf dist",
     "test:boundary": "node --test test/api-boundary.test.mjs",

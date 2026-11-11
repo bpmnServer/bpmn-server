@@ -658,6 +658,13 @@ features:
     docs: [docs/docs/setup.md, docs/docs/first-workflow.md]
     code: [packages/bpmn-server/src/init.ts]
     tests: [packages/bpmn-server/test/cli.test.mjs]
+  - id: setup-wizard
+    area: install
+    name: "Settings step by step"
+    what: "bpmn-server setup (and init at a terminal) asks for an application's .env settings step by step from the settings schema, with a profile (production, development), the database checked, and writes them once confirmed; it creates the application first if needed."
+    docs: [docs/docs/setup.md, docs/design/setup-wizard.md]
+    code: [packages/bpmn-server/src/setup.ts, packages/bpmn-server/src/init.ts]
+    tests: [packages/bpmn-server/test/setup.test.mjs]
   - id: server-install
     area: install
     name: "One-line server install"

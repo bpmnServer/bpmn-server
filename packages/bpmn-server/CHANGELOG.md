@@ -14,6 +14,20 @@ and here
 -->
 
 ## [Unreleased]
+### Added
+- **`bpmn-server setup [folder]`**: an application's `.env` settings step by step, from bpmn-web's settings schema:
+  the database (checked), the first administrator, the site, sign-in and design, email, the API keys, AI access, the
+  environment and API trace. A profile (production, development) suggests the values; nothing is written until the
+  summary is confirmed, and the `.env` before is kept as `.env.bak`. With no application in the folder it runs `init`
+  first. `--yes` for the profile's values, `--no-check`.
+- **`init` at a terminal asks setup's steps**: the folder and what it serves (both, api, ui), then the same steps as
+  `setup`, before `npm install`. `init --yes` and its options are unchanged, for scripts. The settings schema is packed
+  with bpmn-server (`templates/settings.schema.json`) so `npx bpmn-server init` has it before bpmn-web is installed;
+  without it, `init` asks its own questions, as before.
+- **An application's `npm run setup` runs `bpmn-server setup`, then prepares the database** as before. With no
+  terminal (`install.sh`, the Docker image, CI) setup asks nothing and changes nothing, so those are unchanged. `init`'s
+  next steps no longer list `npm run setup`: `npm start` prepares the database.
+
 ### Changed
 - In the repository, the sample application is at `apps/sampleApp` (was `sampleApp`): `npm run template` copies it from
   there, and `bpmn-server init` run from a checkout reads it there. The published package is unchanged.

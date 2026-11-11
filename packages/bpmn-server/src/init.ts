@@ -13,6 +13,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import readline from 'node:readline/promises';
 import { spawnSync } from 'node:child_process';
+import { configure, findSchema, terminalIO, type SetupIO } from './setup.js';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
 /** bpmn-web and bpmn-mcp, as published with this bpmn-server: they are released together, with the same version. */
@@ -37,6 +38,9 @@ export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
   delegate, settings and .env, with bpmn-server, bpmn-web and bpmn-mcp as its
   dependencies. .mcp.json registers bpmn-mcp for AI clients.
 
+  At a terminal it asks the folder and what to serve, then the settings step
+  by step, as bpmn-server setup does. The options below are for scripts.
+
   --minimal        a Hello application instead: one model, one service
   --mongo <url>    the MongoDB database (default mongodb://localhost:27017/<folder>)
   --memory         a MongoDB in the application's process, to try it without a
@@ -50,7 +54,7 @@ export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
   --yes            ask nothing; use the defaults`;
 
 /** The in-process MongoDB of --memory. */
-const MEMORY_SERVER_VERSION = '^10.4.3';
+export const MEMORY_SERVER_VERSION = '^10.4.3';
 
 interface InitOptions {
     folder: string; mongo: string; memory: boolean; port: string;
@@ -75,6 +79,7 @@ function parse(argv: string[]) {
 const randomKey = () => crypto.randomBytes(24).toString('hex');
 const ownVersion = () => JSON.parse(fs.readFileSync(path.join(PACKAGE_ROOT, 'package.json'), 'utf8')).version;
 
+/** init's own questions: when bpmn-web's settings schema is not found (setup's steps need it). */
 async function ask(options: InitOptions, folderGiven: boolean, flags: Map<string, string | true>) {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
     const question = async (q: string, def: string) => (await rl.question(`${q} (${def}): `)).trim() || def;
@@ -97,6 +102,23 @@ async function ask(options: InitOptions, folderGiven: boolean, flags: Map<string
     }
     finally {
         rl.close();
+    }
+}
+
+/** Before setup's steps: what shapes the files, the folder and what the application serves. */
+async function askShape(io: SetupIO, options: InitOptions, folderGiven: boolean, flags: Map<string, string | true>) {
+    const question = async (q: string, def: string) => (await io.question(`${q} [${def}]: `)).trim() || def;
+    if (!folderGiven)
+        options.folder = await question('Folder', options.folder);
+    if (!flags.has('--api-only') && !flags.has('--ui-only')) {
+        for (; ;) {
+            const parts = (await question('Serve: both, api (the REST APIs only) or ui (the web pages only)', 'both')).toLowerCase();
+            if (['both', 'api', 'ui'].includes(parts)) {
+                options.api = parts !== 'ui';
+                options.ui = parts !== 'api';
+                break;
+            }
+        }
     }
 }
 
@@ -145,7 +167,7 @@ function writeApplication(options: InitOptions) {
         scripts: {
             start: 'tsx src/index.ts',
             dev: 'tsx watch src/index.ts',
-            setup: 'tsx src/index.ts --setup',
+            setup: 'bpmn-server setup && tsx src/index.ts --setup',
             cli: 'tsx src/index.ts --cli',
             mcp: 'bpmn-mcp',
             verify: 'bpmn-server verify processes',
@@ -221,7 +243,8 @@ EMAIL_ENABLE=false
 `;
 }
 
-export async function init(argv: string[]): Promise<number> {
+/** quiet: no "Next:" steps (setup goes on to the settings). io: the answers (a test's), as if at a terminal. */
+export async function init(argv: string[], { quiet = false, io: given }: { quiet?: boolean, io?: SetupIO } = {}): Promise<number> {
     const { flags, positional } = parse(argv);
     if (flags.has('--help')) {
         console.log(INIT_USAGE);
@@ -246,17 +269,44 @@ export async function init(argv: string[]): Promise<number> {
         install: !flags.has('--no-install'),
         minimal: flags.has('--minimal'),
     };
-    if (!flags.has('--yes') && process.stdin.isTTY)
-        await ask(options, positional.length > 0, flags);
-    options.mongo ||= `mongodb://localhost:27017/${dbName(options.folder)}`;
+    // asked: setup's steps (setup.ts), from bpmn-web's settings schema; without the schema, init's own questions
+    const interactive = !!given || (!flags.has('--yes') && !!process.stdin.isTTY);
+    const io = interactive && findSchema(path.resolve(options.folder)) ? given ?? terminalIO() : null;
+    try {
+        if (io)
+            await askShape(io, options, positional.length > 0, flags);
+        else if (interactive)
+            await ask(options, positional.length > 0, flags);
+        options.mongo ||= `mongodb://localhost:27017/${dbName(options.folder)}`;
 
-    const dir = path.resolve(options.folder);
-    if (fs.existsSync(dir) && fs.readdirSync(dir).length) {
-        console.error(`${dir} is not empty: choose a new folder`);
+        const dir = path.resolve(options.folder);
+        if (fs.existsSync(dir) && fs.readdirSync(dir).length) {
+            console.error(`${dir} is not empty: choose a new folder`);
+            return 1;
+        }
+        writeApplication(options);
+        console.log(`created ${dir}`);
+        if (io) {
+            const { env } = await configure(dir, {
+                io, schema: findSchema(dir), created: true, keepDatabase: flags.has('--mongo') || flags.has('--memory'),
+            });
+            // what the steps chose: the next steps say it
+            options.memory = env.MONGO_DB_URL === 'memory';
+            options.mongo = env.MONGO_DB_URL ?? options.mongo;
+            options.port = env.PORT ?? options.port;
+            options.auth = env.REQUIRE_AUTHENTICATION !== 'false';
+            if (options.memory)
+                fs.rmSync(path.join(dir, 'docker-compose.yml'), { force: true });
+        }
+    }
+    catch (error) {
+        console.error(`\n${error?.message ?? error}`);
         return 1;
     }
-    writeApplication(options);
-    console.log(`created ${dir}`);
+    finally {
+        io?.close();
+    }
+    const dir = path.resolve(options.folder);
 
     if (options.install) {
         console.log('npm install ...');
@@ -267,6 +317,8 @@ export async function init(argv: string[]): Promise<number> {
             return 1;
         }
     }
+    if (quiet)
+        return 0;
     const cd = path.relative(process.cwd(), dir) || '.';
     console.log(`
 Next:
@@ -284,7 +336,6 @@ function runSteps(options: InitOptions): string[] {
         return [`${open}${signIn}; a MongoDB in memory, emptied when it stops`];
     return [
         `docker compose up -d     # a MongoDB at ${options.mongo}, if you do not have one`,
-        `npm run setup            # the database's indexes`,
         `${open}${signIn}`,
     ];
 }

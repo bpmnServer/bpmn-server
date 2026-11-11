@@ -3,7 +3,7 @@
 ## An application on bpmn-server and bpmn-web
 
 ```sh
-npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+npx bpmn-server init my-app      # asks for the settings step by step; --memory --yes to try it without MongoDB
 cd my-app
 npm start                        # http://localhost:3000: the first page asks for the administrator
 ```
@@ -13,8 +13,23 @@ employee-onboarding, Business Rules, GitHub repository),
 `connectors/` (the services the models call, `appServices.ts`, and element
 templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`), `settings/config.ts` (the settings
 you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead.
-`npm run setup` prepares the database and stops, `npm run cli` opens the console, `npm run verify` checks the
+`npm run setup` asks the settings step by step (below), then prepares the database and stops (with no terminal, as
+in a script, it only prepares the database); `npm run cli` opens the console, `npm run verify` checks the
 models. (`init` ships with bpmn-server 3.5.)
+
+### The settings, step by step
+
+```sh
+npx bpmn-server setup my-app     # a new application, then its settings; in an application's folder: npx bpmn-server setup
+```
+
+`init`, at a terminal, asks the same steps after the folder and what the application serves. `setup` asks for the
+settings in `.env` step by step: the database (checked: it answers), the first administrator,
+the site's address, sign-in and model design, email, the API keys, AI access, and the environment and API trace. It
+starts with a profile, **production** or **development**, which suggests the values; Enter keeps the value shown.
+Nothing is written until you confirm the summary (secrets shown as `***`), and the `.env` before is kept as `.env.bak`.
+Run it again any time to change them. `--yes` asks nothing: the profile's values and new keys where there are none
+(`--profile production|development`, `--no-check`). It reads the settings schema of bpmn-web 3.7 or later.
 
 ### The first start
 

@@ -124,7 +124,8 @@ test('init --minimal: a Hello application', () => {
   assert.equal(JSON.parse(app.read('package.json')).scripts.mcp, undefined);
   assert.ok(!fs.existsSync(path.join(app.dir, '.mcp.json')));
   assert.match(app.read('src/index.ts'), /api: false,[\s\S]*ui: true,/);
-  assert.match(app.read('README.md'), /npm run setup[\s\S]*http:\/\/localhost:3050/);
+  assert.match(app.read('README.md'), /docker compose up -d[\s\S]*npm start[^\n]*http:\/\/localhost:3050/);
+  assert.doesNotMatch(app.read('README.md'), /npm run setup/, 'npm start prepares the database: no separate step');
   assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the Hello model passes');
 });
 

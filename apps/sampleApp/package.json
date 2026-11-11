@@ -7,7 +7,7 @@
   "scripts": {
     "start": "tsx index.ts",
     "dev": "tsx watch index.ts",
-    "setup": "tsx index.ts --setup",
+    "setup": "bpmn-server setup && tsx index.ts --setup",
     "cli": "tsx index.ts --cli",
     "mcp": "bpmn-mcp",
     "verify": "bpmn-server verify processes",
