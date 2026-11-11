@@ -31,19 +31,14 @@
       <bpmn:errorEventDefinition errorRef="NotFoundError" />
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="Done">
-      <bpmn:incoming>Flow_0n1y7b6</bpmn:incoming>
+      <bpmn:incoming>toDone</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:endEvent id="NotFound" name="Not found">
       <bpmn:incoming>toNotFound</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="toGet" sourceRef="Asked" targetRef="GetRepo" />
-    <bpmn:sequenceFlow id="toDone" sourceRef="GetRepo" targetRef="test1" />
+    <bpmn:sequenceFlow id="toDone" sourceRef="GetRepo" targetRef="Done" />
     <bpmn:sequenceFlow id="toNotFound" sourceRef="NoSuchRepo" targetRef="NotFound" />
-    <bpmn:task id="test1">
-      <bpmn:incoming>toDone</bpmn:incoming>
-      <bpmn:outgoing>Flow_0n1y7b6</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_0n1y7b6" sourceRef="test1" targetRef="Done" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_GitHubRepo">
     <bpmndi:BPMNPlane id="BPMNPlane_GitHubRepo" bpmnElement="GitHubRepo">
@@ -56,11 +51,8 @@
       <bpmndi:BPMNShape id="NotFound_di" bpmnElement="NotFound">
         <dc:Bounds x="357" y="192" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0p38tyt_di" bpmnElement="test1">
-        <dc:Bounds x="410" y="30" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Done_di" bpmnElement="Done">
-        <dc:Bounds x="612" y="52" width="36" height="36" />
+        <dc:Bounds x="357" y="52" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="NoSuchRepo_di" bpmnElement="NoSuchRepo">
         <dc:Bounds x="207" y="92" width="36" height="36" />
@@ -71,16 +63,12 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toDone_di" bpmnElement="toDone">
         <di:waypoint x="275" y="70" />
-        <di:waypoint x="410" y="70" />
+        <di:waypoint x="357" y="70" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toNotFound_di" bpmnElement="toNotFound">
         <di:waypoint x="225" y="128" />
         <di:waypoint x="225" y="210" />
         <di:waypoint x="357" y="210" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0n1y7b6_di" bpmnElement="Flow_0n1y7b6">
-        <di:waypoint x="510" y="70" />
-        <di:waypoint x="612" y="70" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

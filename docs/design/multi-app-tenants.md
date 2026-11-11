@@ -117,6 +117,11 @@ Built in 3.8, but these hold for everything written in 3.7, so that nothing has 
 
 1. Rebase the `tenants` branch on 3.7: the door and user tokens per workspace; API v3 under `/<workspace>/api/v3`.
 2. The 3.7 leftovers of §8: the setup token and the AI link's keys per workspace.
-3. The console per workspace; per-workspace backup.
-4. Limits per workspace (§9.4), for the public demo.
-5. Docs: the draft page moved into Setup; this note's decisions.
+3. **The host reaches a workspace's data only through that workspace's engine.** In 3.7 a launched server's
+   `dataStore` and `definitions` are the engine's own objects (`server/LaunchedServer.ts`): the host reads and writes
+   the database directly, and their `.server` leads to the engine when it is in the same process (the `todo` test in
+   `bpmn-server/test/engine-results.test.mjs`). Give the launched server data-only stores, or engine calls for them,
+   and move bpmn-web's direct uses (dashboards, the API's operations) onto them.
+4. The console per workspace; per-workspace backup.
+5. Limits per workspace (§9.4), for the public demo.
+6. Docs: the draft page moved into Setup; this note's decisions.
