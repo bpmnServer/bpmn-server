@@ -15,8 +15,6 @@ import mongoose from 'mongoose';
 import fs from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import vm from 'node:vm';
-import { runSandboxed, SandboxScriptHandler } from 'bpmn-server';
 import { rationaleSteps } from './rationale.js';
 import { readFeature, sourceFeature, writeFeature } from './featureFiles.js';
 
@@ -499,45 +497,6 @@ export function checksAt(checks: Check[], at: 'start' | 'end' | { element: strin
 /** The older call: what `expect` and `checks` ask at the end. */
 export function checkExpectations(expect: Scenario['expect'], instance, checks: Check[] = []) {
     return checksAt([...expectChecks(expect), ...checks], 'end', instance);
-}
-
-/** A value as JSON can show it: undefined, functions, cycles and big values described instead. */
-function shown(value) {
-    if (value === undefined) return { type: 'undefined' };
-    if (typeof value === 'function') return { type: 'function', text: String(value).slice(0, 200) };
-    const seen = new WeakSet();
-    const text = JSON.stringify(value, (key, v) => {
-        if (typeof v === 'object' && v !== null) {
-            if (seen.has(v)) return '[circular]';
-            seen.add(v);
-        }
-        return typeof v === 'function' ? `[function ${v.name || ''}]` : v;
-    }, 2);
-    return text.length > 20000 ? { type: typeof value, text: text.slice(0, 20000) + '\n…' } : { type: Array.isArray(value) ? 'array' : typeof value, json: JSON.parse(text) };
-}
-
-/**
- * The debugger's Evaluate: a JavaScript expression run against a copy of a test instance, to look at its values:
- * `data` (its data), `items` (its items), `instance` (its summary). With `return`, statements (a function's body).
- * It gets copies, so it changes nothing, and stops after a second. node:vm is not a security boundary: this is for
- * designers (the /model routes), as the scripts in their models are; with scripts in a sandbox it runs in QuickJS.
- */
-export async function evaluateOnTest(server, instanceId: string, expression: string) {
-    if (typeof expression !== 'string' || !expression.trim())
-        throw new Error('an expression is required, e.g. data.amount * 2');
-    const instance = await findTest(server, instanceId);
-    if (!instance) throw new Error(`no test instance ${instanceId}`);
-    const summary = summarize(instance);
-    const sandbox = { data: clone(instance.data), items: clone(summary.items), instance: clone({ ...summary, logs: undefined }) };
-    const body = expression.trim().replace(/;\s*$/, '');
-    const code = /\breturn\b/.test(body) ? `(() => { ${body} })()` : `(${body})`;
-    if (server.scriptHandler instanceof SandboxScriptHandler) {
-        // in QuickJS, like the models' scripts (node:vm is not a security boundary)
-        const { result } = await runSandboxed(sandbox, /return/.test(body) ? body : `return (${body});`, { name: 'evaluate', timeLimit: 1000 });
-        return shown(result);
-    }
-    const value = vm.runInNewContext(code, sandbox, { timeout: 1000, filename: 'evaluate' });
-    return shown(await Promise.resolve(value));
 }
 
 /** Change a test instance's data (the Test tab's debugger): under its lock, saved as a new version. */
