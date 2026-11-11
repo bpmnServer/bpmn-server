@@ -28,7 +28,8 @@ test('queries mean what they mean on the in-memory store', async () => {
     assert.deepEqual(await ids(sqlite), await ids(memory), JSON.stringify(query));
     assert.equal(await sqlite.count('d', 'c', query), await memory.count('d', 'c', query), 'count ' + JSON.stringify(query));
   }
-  await assert.rejects(sqlite.find('d', 'c', { name: { $regex: 'cl' } }), /Unsupported query operator/);
+  // an operator neither store knows is refused, never ignored ($regex is known since 3.7)
+  await assert.rejects(sqlite.find('d', 'c', { name: { $where: 'cl' } }), /Unsupported query operator/);
   await sqlite.close();
 });
 
@@ -110,4 +111,16 @@ test('a server on a file; another server, on its own connection, continues the i
   const [seen] = await a.server.dataStore.findInstances({ id: started.id }, 'full');
   assert.ok(seen.items.some(i => i.elementId === 'PaymentConfirmed'), 'the first server reads what the second saved');
   await a.server.shutdown(); await b.server.shutdown();
+});
+
+test('$regex, with $options and under $not, on both stores: test instances are left out of the lists by it', async () => {
+  for (const store of [new SqliteDocumentStore(file()), new MemoryDocumentStore()]) {
+    await store.insert('d', 'r', [{ id: 'test-1', name: 'Claim' }, { id: 'i-2', name: 'claim' }, { id: 'i-3', items: [{ name: 'x-test' }] }]);
+    const ids = async q => (await store.find('d', 'r', q)).map(d => d.id).sort();
+    assert.deepEqual(await ids({ id: { $not: { $regex: '^test-' } } }), ['i-2', 'i-3']);
+    assert.deepEqual(await ids({ name: { $regex: '^claim$', $options: 'i' } }), ['i-2', 'test-1']);
+    assert.deepEqual(await ids({ name: { $regex: /^Cl/ } }), ['test-1']);
+    assert.deepEqual(await ids({ 'items.name': { $regex: 'test' } }), ['i-3']);
+    await assert.rejects(store.find('d', 'r', { name: { $options: 'i' } }), /\$options is for \$regex/);
+  }
 });

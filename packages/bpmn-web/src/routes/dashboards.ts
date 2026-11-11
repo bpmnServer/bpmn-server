@@ -71,8 +71,10 @@ function packageVersion(name: string): string {
     }
 }
 
-/** The database URL without its credentials. */
+/** The database URL without its credentials; a SQLite database's file. */
 function databaseName(): string {
+    if (process.env.DATABASE?.startsWith('sqlite:'))
+        return process.env.DATABASE;
     try {
         const url = new URL(process.env.MONGO_DB_URL);
         return `${url.host}${url.pathname}`;

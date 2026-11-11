@@ -7,6 +7,10 @@ Where instances, models and everything else are kept, and how to change it. The 
 Instances and models are kept in MongoDB by default. The configuration's `documentStore` replaces it, for both
 data stores:
 
+A bpmn-web application needs no code for SQLite: `DATABASE=sqlite:./data/bpmn.sqlite` in `.env` keeps everything in that
+file: instances, models, locks, and the users and sessions too (since 3.7, on the same store as the instances). `npx
+bpmn-server setup` offers it. A MongoDB server's users and sessions stay where they were.
+
 - `SqliteDocumentStore(file)` keeps everything in one SQLite file (Node's built-in `node:sqlite`, Node 22.5 or
   later): no database server, for small installs, demos and desktop use. Several servers may share the file.
 - `MemoryDocumentStore` keeps everything in memory, for tests and demos.

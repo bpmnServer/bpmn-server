@@ -35,7 +35,8 @@ test('queries: null matches an array element without the field, as in MongoDB; $
 });
 
 test('queries: an operator the store does not know is refused, not ignored', () => {
-  assert.throws(() => DocumentQuery.matches(doc, { name: { $regex: 'cl' } }), /Unsupported query operator \$regex/);
+  // $regex is known since 3.7 (sqlite-store.test.mjs); these are not
+  assert.throws(() => DocumentQuery.matches(doc, { name: { $where: 'cl' } }), /Unsupported query operator \$where/);
   assert.throws(() => DocumentQuery.matches(doc, { $where: 'true' }), /Unsupported/);
 });
 

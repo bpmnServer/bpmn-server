@@ -87,6 +87,14 @@ export class DocumentQuery {
                     return values.some(v => Array.isArray(v) && v.some(element =>
                         DocumentQuery.isOperatorObject(argument) ? DocumentQuery.matchCondition([element], argument) : DocumentQuery.matches(element, argument)));
                 case '$not': return !DocumentQuery.matchCondition(values, argument);
+                // a pattern (text, or a RegExp) that a text value matches; $options its flags, as MongoDB's
+                case '$regex': {
+                    const pattern = argument instanceof RegExp ? argument : new RegExp(String(argument), String(condition.$options ?? ''));
+                    return candidates.some(v => typeof v === 'string' && pattern.test(v));
+                }
+                case '$options':
+                    if (!('$regex' in condition)) throw new Error('$options is for $regex');
+                    return true;
                 default: throw new Error(`Unsupported query operator ${operator}`);
             }
         });

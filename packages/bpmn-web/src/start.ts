@@ -1,14 +1,34 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { Configuration, Logger, ModelsDatastore, DataStore, ScriptHandler, SandboxScriptHandler, NoCacheManager } from 'bpmn-server';
+import dotenv from 'dotenv';
+import { Configuration, Logger, ModelsDatastore, DataStore, ScriptHandler, SandboxScriptHandler, NoCacheManager, SqliteDocumentStore, settingsProblems } from 'bpmn-server';
 import type { IAppDelegate, BPMNServer } from 'bpmn-server';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import { WebAppDelegate } from './runtime/WebAppDelegate.js';
 import { engineSettingsFromEnv } from './runtime/engineEnv.js';
 import { runSetting } from './runtime/runSettings.js';
 import { checkBootConfig, reportBootConfig } from './runtime/bootConfig.js';
+import { settingsSchema } from './routes/api/settings.js';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
+
+/** DATABASE=sqlite:<file>: the file, relative to the application's folder; else undefined (MongoDB at MONGO_DB_URL). */
+export function sqliteFile(value = process.env.DATABASE): string | undefined {
+	if (!value?.startsWith('sqlite:')) return undefined;
+	const file = value.slice('sqlite:'.length).trim();
+	if (!file) throw new Error('DATABASE=sqlite: names no file: DATABASE=sqlite:./data/bpmn.sqlite');
+	return path.resolve(file);
+}
+
+/** One SQLite store per file in a process: the engine, the users and the sessions share it. */
+const sqliteStores = new Map<string, SqliteDocumentStore>();
+function sqliteStore(file: string) {
+	if (!sqliteStores.has(file)) {
+		fs.mkdirSync(path.dirname(file), { recursive: true });
+		sqliteStores.set(file, new SqliteDocumentStore(file));
+	}
+	return sqliteStores.get(file);
+}
 
 /** What an application gives start(): its settings, its delegate, and the parts it serves. */
 export interface StartOptions {
@@ -75,6 +95,8 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 		// MODEL_HISTORY=false: saves keep no versions, and the editor has no History tab
 		modelHistory: process.env.MODEL_HISTORY?.toLowerCase() !== 'false',
 		cacheManager: server => new NoCacheManager(server),
+		// DATABASE=sqlite:<file>: everything in one SQLite file (instances, models, locks, users, sessions)
+		...(sqliteFile() ? { documentStore: () => sqliteStore(sqliteFile()) } : {}),
 		...engineEnv,
 		...settings,
 	} as any);
@@ -94,7 +116,8 @@ export async function setup(server: BPMNServer) {
 	// the Test tabs' tests, kept in MongoDB before 3.5, become files beside the models
 	try {
 		const { migrateScenarioSets } = await import('./testing/scenarios.js');
-		const moved = await migrateScenarioSets();
+		const { onMongoDB } = await import('./userAccess/userStore.js');
+		const moved = onMongoDB() ? await migrateScenarioSets() : 0;
 		if (moved)
 			console.log(`${moved} test set(s) moved from the database to files beside the models (*.tests.json)`);
 	}
@@ -143,14 +166,29 @@ async function startMemoryDatabase() {
  *   await start({ config, appDelegate: AppDelegate, api: true, ui: true });
  */
 export async function start(options: StartOptions = {}) {
+	// each setting's value against the settings schema, and a name in .env that is close to a setting: one line each
+	try {
+		const envFile = path.resolve('.env');
+		const names = fs.existsSync(envFile) ? Object.keys(dotenv.parse(fs.readFileSync(envFile))) : [];
+		for (const problem of settingsProblems(process.env, settingsSchema(), names))
+			console.warn('[config] ' + problem);
+	}
+	catch (error) {
+		console.warn(`[config] the settings were not checked: ${error?.message ?? error}`);
+	}
 	// the web server: in production an unsafe setting stops it here, elsewhere it is a warning (runtime/bootConfig.ts)
 	if (!options.setupOnly && !options.console
 		&& !reportBootConfig(checkBootConfig(process.env, { api: options.api ?? true, ui: options.ui ?? true })))
 		throw new Error('bpmn-web refused to start: unsafe settings for production (see the [config] messages above)');
-	if (process.env.MONGO_DB_URL === 'memory')
+	if (options.setupOnly && process.env.MONGO_DB_URL === 'memory' && !sqliteFile()) {
+		// a database in memory is gone when this stops: nothing to prepare
+		console.log('setup done: the database is in memory, made at each start: npm start');
+		process.exit(0);
+	}
+	if (process.env.MONGO_DB_URL === 'memory' && !sqliteFile())
 		await startMemoryDatabase();
-	if (!process.env.MONGO_DB_URL)
-		throw new Error('MONGO_DB_URL is not set: name the MongoDB database in .env (MONGO_DB_URL=mongodb://localhost:27017/bpmn), or MONGO_DB_URL=memory to try without one');
+	if (!process.env.MONGO_DB_URL && !sqliteFile())
+		throw new Error('MONGO_DB_URL is not set: name the MongoDB database in .env (MONGO_DB_URL=mongodb://localhost:27017/bpmn), MONGO_DB_URL=memory to try without one, or DATABASE=sqlite:./data/bpmn.sqlite for one file');
 	const configuration = webConfiguration(options.config, options.appDelegate);
 	// an application without models yet starts with an empty models folder
 	if (configuration.definitionsPath)

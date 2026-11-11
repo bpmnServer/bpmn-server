@@ -384,10 +384,10 @@ features:
   - id: sqlite
     area: data
     name: "SQLite storage"
-    what: "A table per collection in one file (node:sqlite, Node 22.5 or later)."
-    docs: [docs/docs/setup.md]
-    code: [packages/bpmn-server/src/datastore/SqliteDocumentStore.ts]
-    tests: [packages/bpmn-server/test/sqlite-store.test.mjs]
+    what: "A table per collection in one file (node:sqlite, Node 22.5 or later). bpmn-web runs on it with DATABASE=sqlite:<file>: instances, models, locks, users and sessions in the one file, no database server."
+    docs: [docs/docs/setup.md, docs/docs/persistence.md, docs/docs/settings.md]
+    code: [packages/bpmn-server/src/datastore/SqliteDocumentStore.ts, packages/bpmn-web/src/start.ts, packages/bpmn-web/src/userAccess/userStore.ts, packages/bpmn-web/src/userAccess/models/User.ts]
+    tests: [packages/bpmn-server/test/sqlite-store.test.mjs, apps/testSampleApp/test/unit/user-store.test.mjs]
   - id: memory-store
     area: data
     name: "In-memory storage, custom stores"
@@ -647,9 +647,9 @@ features:
   - id: setup-env
     area: install
     name: "Setup and settings (.env)"
-    what: "The application's settings from .env (database, models folder, keys, MODEL_HISTORY, DISABLE_*), checked at start."
-    docs: [docs/docs/setup.md]
-    code: [packages/bpmn-web/src/start.ts, packages/bpmn-web/src/runtime/loadEnv.ts, packages/bpmn-web/src/runtime/bootConfig.ts, packages/bpmn-web/settings/settings.schema.json]
+    what: "The application's settings from .env (database, models folder, keys, MODEL_HISTORY, DISABLE_*), each described in one schema: checked at start against it (a wrong kind of value, a misspelt name), and the Settings page's tables made from it."
+    docs: [docs/docs/setup.md, docs/docs/settings.md]
+    code: [packages/bpmn-web/src/start.ts, packages/bpmn-web/src/runtime/loadEnv.ts, packages/bpmn-web/src/runtime/bootConfig.ts, packages/bpmn-web/settings/settings.schema.json, packages/bpmn-server/src/common/settingValue.ts, scripts/settings.mjs]
     tests: [apps/testSampleApp/test/unit/app-hosting.test.mjs, packages/bpmn-server/test/database-name.test.mjs, apps/testSampleApp/test/unit/settings-schema.test.mjs]
   - id: new-app
     area: install

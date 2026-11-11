@@ -1,5 +1,5 @@
 import { IUserService } from '../index.js';
-import mongoose from 'mongoose';
+import { connectMongoose } from './userStore.js';
 import User from './models/User.js';
 
 /** What a user name may be: what assignments, task lists, the APIs (x-acting-user) and the logs name a user by. */
@@ -95,15 +95,7 @@ export class UserService implements IUserService {
 	}
 
 	init() {
-		mongoose.set('strictQuery', false);
-		mongoose.connect(process.env.MONGO_DB_URL);
-		mongoose.connection.on('error', (err) => {
-			console.error(err);
-			console.log('%s MongoDB connection error. Please make sure MongoDB is running.');
-			process.exit();
-		});
-		mongoose.connection.on('connected',()=> {
-		});
+		connectMongoose();
 
 	}
 

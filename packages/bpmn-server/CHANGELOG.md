@@ -20,6 +20,18 @@ and here
   environment and API trace. A profile (production, development) suggests the values; nothing is written until the
   summary is confirmed, and the `.env` before is kept as `.env.bak`. With no application in the folder it runs `init`
   first. `--yes` for the profile's values, `--no-check`.
+- **`$regex` (with `$options`) in the in-memory and SQLite stores' queries** (`DocumentQuery`), as MongoDB has it: an
+  application's query, and bpmn-web's lists that leave test instances out, work on them. `$where` and other operators
+  they do not know are still refused.
+- **The in-memory and SQLite stores give a document stored without an `_id` one ordered by time** (`orderedId()`, 24
+  hex characters), as MongoDB's ObjectIds are: newest-first paging by `_id` (the instance lists, `find` with `after`)
+  now means the same on them. Documents stored before keep their ids; in a SQLite file made before, they sort among the
+  new ones by their text.
+- `settingProblem(value, entry)` and `settingsProblems(env, schema, names)`: settings checked against bpmn-web's
+  settings schema, one line each (a wrong kind of value; a name close to a setting's). `setup` and bpmn-web's start use
+  them.
+- `setup`'s database step offers SQLite (`sqlite:<file>`, written as `DATABASE`; its folder checked), beside MongoDB
+  and memory.
 - **`init` at a terminal asks setup's steps**: the folder and what it serves (both, api, ui), then the same steps as
   `setup`, before `npm install`. `init --yes` and its options are unchanged, for scripts. The settings schema is packed
   with bpmn-server (`templates/settings.schema.json`) so `npx bpmn-server init` has it before bpmn-web is installed;

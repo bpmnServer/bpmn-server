@@ -76,7 +76,8 @@ test('raw datastore queries page through instances', async () => {
 });
 
 test('a failing raw query answers { errors } rather than null', async () => {
-  const res = await getWithBody('/api2/datastore/find', { after: 'not-a-cursor' });
+  // a query no store reads (on MongoDB, a cursor that is not an ObjectId fails too; on SQLite any text is a cursor)
+  const res = await getWithBody('/api2/datastore/find', { filter: { name: { $where: 'x' } } });
   assert.notEqual(res.body, null);
   assert.equal(typeof res.body.errors, 'string', JSON.stringify(res.body));
 });

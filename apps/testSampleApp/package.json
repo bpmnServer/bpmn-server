@@ -20,6 +20,7 @@
     "test:client": "node --test \"test/client/*.test.mjs\"",
     "test:engine": "node --import tsx --test \"test/engine/*.test.mjs\"",
     "test:web": "node --import tsx --test --test-concurrency=1 \"test/web/*.test.mjs\"",
+    "test:web:sqlite": "node --env-file=test/sqlite.env --import tsx --test --test-concurrency=1 \"test/web/*.test.mjs\"",
     "test:mcp-prompts": "node --import tsx test/mcp-prompts/run.mjs",
     "test:features": "tsx test/features.ts",
     "test:scenarios": "node --import tsx --test --test-concurrency=1 test/scenarios/features.test.mjs",

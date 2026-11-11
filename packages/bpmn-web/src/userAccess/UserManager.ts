@@ -1,10 +1,9 @@
 import session from 'express-session';
 import flash from 'express-flash';
 import lusca from 'lusca';
-import mongoose from 'mongoose';
 import passport from 'passport';
 import { rateLimit } from 'express-rate-limit';
-import MongoStore from 'connect-mongo';
+import { DocumentSessionStore, connectMongoose } from './userStore.js';
 
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
@@ -44,9 +43,8 @@ export class UserManager {
 				// otherwise the browser drops them on a plain-HTTP internal deployment.
 				secure: process.env.HTTPS === 'true' || process.env.SECURE_COOKIES === 'true',
 			},
-			store: MongoStore.create({
-				mongoUrl: process.env.MONGO_DB_URL,
-			})
+			// on the engine's store, beside the users (userStore.ts)
+			store: new DocumentSessionStore(),
 		}));
 		app.use(flash());
 		app.use((req, res, next) => {
@@ -61,14 +59,7 @@ export class UserManager {
 	}
 	initMongo() {
 
-		console.log("MongoDB URL", process.env.MONGO_DB_URL)
-		mongoose.set('strictQuery', false);
-		mongoose.connect(process.env.MONGO_DB_URL);
-		mongoose.connection.on('error', (err) => {
-			console.error(err);
-			console.log('%s MongoDB connection error. Please make sure MongoDB is running.');
-			process.exit();
-		});
+		connectMongoose();
 	}
 	
 	initPassport() {

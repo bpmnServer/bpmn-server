@@ -1,5 +1,5 @@
 import { createRequire } from 'node:module';
-import { randomUUID } from 'node:crypto';
+import { orderedId } from './orderedId.js';
 import { DuplicateKeyError } from '../interfaces/storage.js';
 import type { IDocumentStore, StorageQuery, StorageProjection, StorageSort } from '../interfaces/storage.js';
 import { DocumentQuery } from './DocumentQuery.js';
@@ -154,7 +154,7 @@ export class SqliteDocumentStore implements IDocumentStore {
         const table = this.table(collection);
         return this.write(() => {
             for (const document of documents) {
-                const doc = { _id: document._id ?? randomUUID(), ...document };
+                const doc = { _id: document._id ?? orderedId(), ...document };
                 this.run(`INSERT INTO ${table} (_id, doc) VALUES (?, ?)`, [String(doc._id), JSON.stringify(doc, replacer)]);
             }
             return documents.length;
@@ -168,7 +168,7 @@ export class SqliteDocumentStore implements IDocumentStore {
             if (!found) {
                 if (!options.upsert) return 0;
                 const doc = DocumentQuery.apply(DocumentQuery.seed(query), update);
-                doc._id ??= randomUUID();
+                doc._id ??= orderedId();
                 this.run(`INSERT INTO ${table} (_id, doc) VALUES (?, ?)`, [String(doc._id), JSON.stringify(doc, replacer)]);
                 return 1;
             }

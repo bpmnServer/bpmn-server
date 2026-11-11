@@ -15,7 +15,7 @@
       "x-restart": true
     },
     "AI_ACCESS": {
-      "description": "The levels of AI links (`/ai/key`) this server offers: `off`, or some of `work`, `design`, `administer`, comma separated. Unset: all. A person is offered only the levels their rights allow",
+      "description": "The levels of AI links (`/ai/key`) this server offers: `off`, or some of `work`, `design`, `administer`, comma separated. Unset: all. A person is offered only the levels their rights allow. See [Chatting with your server](ai/chat-assistants.md)",
       "x-where": "env",
       "x-group": "access",
       "type": "string",
@@ -136,7 +136,7 @@
       "x-restart": true
     },
     "API_IMPERSONATION": {
-      "description": "`true`: `/api` acts as the user a call names (`userName`, or `options.userName`), with no security rules, as before 3.7. Until 4.0. Default off: the name is ignored, with a `Warning` header",
+      "description": "`true`: `/api` acts as the user a call names (`userName`, or `options.userName`), with no security rules, as before 3.7. For integrations that need time to move to `/api2/tasks`; goes at 4.0. Default off: the name is ignored, and the answer's `Warning` header says so",
       "x-where": "env",
       "x-group": "api",
       "type": "boolean",
@@ -168,14 +168,14 @@
       "x-restart": true
     },
     "API_SERVICE_USER_GROUPS": {
-      "description": "Who `/api2` calls run as",
+      "description": "Who `/api` and `/api2` calls run as. `init` sets `integration` and `SYSTEM`; without them, those APIs answer 500",
       "x-where": "env",
       "x-group": "api",
       "type": "string",
       "x-restart": true
     },
     "API_SERVICE_USER_NAME": {
-      "description": "Who `/api2` calls run as",
+      "description": "Who `/api` and `/api2` calls run as. `init` sets `integration` and `SYSTEM`; without them, those APIs answer 500",
       "x-where": "env",
       "x-group": "api",
       "type": "string",
@@ -197,6 +197,18 @@
       "type": "string",
       "x-restart": true
     },
+    "DATABASE": {
+      "description": "`sqlite:<file>` keeps everything (instances, models, users, sessions) in one SQLite file, such as `sqlite:./data/bpmn.sqlite`: no database server (Node 22.5 or later). Unset: MongoDB, at `MONGO_DB_URL`",
+      "x-where": "env",
+      "x-group": "database",
+      "type": "string",
+      "x-restart": true,
+      "x-check": "database",
+      "examples": [
+        "sqlite:./data/bpmn.sqlite"
+      ],
+      "pattern": "^sqlite:.+"
+    },
     "DEFINITIONS_PATH": {
       "description": "The models folder, in place of the one in `settings/config.ts`. Used for tests and separate deployments",
       "x-where": "env",
@@ -212,12 +224,12 @@
       "x-restart": true
     },
     "MONGO_DB_URL": {
-      "description": "**Required.** The database, or `memory` to try without one",
+      "description": "**Required, unless `DATABASE` is SQLite.** The MongoDB database, or `memory` to try without one",
       "x-where": "env",
       "x-group": "database",
       "type": "string",
       "x-restart": true,
-      "x-required": true,
+      "x-required": false,
       "x-check": "database",
       "examples": [
         "mongodb://localhost:27017/bpmn",
@@ -292,7 +304,7 @@
       "x-restart": true
     },
     "DEMO_MODE": {
-      "description": "`true` gives the four settings above their public demo values, unless they are set",
+      "description": "`true` gives `TIMERS`, `SERVICE_TASKS`, `SCRIPT_SANDBOX` and `SCRIPT_SANDBOX_SERVICES` their public demo values, unless they are set",
       "x-where": "env",
       "x-group": "engine",
       "x-reads": "engine",

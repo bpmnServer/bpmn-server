@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { orderedId } from './orderedId.js';
 import { DuplicateKeyError } from '../interfaces/storage.js';
 import type { IDocumentStore, StorageQuery, StorageProjection, StorageSort } from '../interfaces/storage.js';
 import { DocumentQuery } from './DocumentQuery.js';
@@ -31,7 +31,7 @@ export class MemoryDocumentStore implements IDocumentStore {
 
     async insert(database: string, collection: string, documents: any[]): Promise<number> {
         const docs = this.docs(database, collection);
-        const added = documents.map(d => ({ _id: d._id ?? randomUUID(), ...structuredClone(d) }));
+        const added = documents.map(d => ({ _id: d._id ?? orderedId(), ...structuredClone(d) }));
         for (let i = 0; i < added.length; i++) this.assertUnique(database, collection, [...docs, ...added.slice(0, i)], added[i]);
         docs.push(...added);
         return added.length;

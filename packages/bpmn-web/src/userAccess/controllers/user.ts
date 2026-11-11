@@ -205,8 +205,8 @@ export class UserController {
             if (err)
                 console.log('Error : Failed to destroy the session during logout.', err);
             req.user = null;
+            // answered: not next(), which went on to the next route and answered again (ERR_HTTP_HEADERS_SENT)
             res.redirect('/');
-            next();
         });
         /*
         req.logout(function (err) {

@@ -81,6 +81,7 @@ test('the last item, and the latest ended one, matching a condition', async () =
 test('an empty page, and a condition it can not read, are answers and not exceptions', async () => {
     const none = await find({ filter: { 'data.batch': 'no such batch' }, projection: { id: 1 } });
     assert.deepEqual([none.data, none.nextCursor, none.totalCount], [[], null, 0]);
-    const wrong = await find({ lastItem: { seq: { $regex: 'x' } }, projection: { id: 1 } });
-    assert.match(wrong.error, /Unsupported operator: \$regex/);
+    // an operator no store reads ($regex is read by the SQLite and memory stores, not by MongoDB's lastItem)
+    const wrong = await find({ lastItem: { seq: { $where: 'x' } }, projection: { id: 1 } });
+    assert.match(wrong.error, /Unsupported (query )?operator:? \$where/);
 });

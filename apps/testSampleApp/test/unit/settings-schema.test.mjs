@@ -63,3 +63,16 @@ test('the keys and passwords are secrets the wizard can make', () => {
     assert.ok(settings[name]['x-secret'] && settings[name]['x-generate'], name);
   assert.ok(settings.SMTP_PASSWORD['x-secret']);
 });
+
+test('at start, a value of the wrong kind and a misspelt name in .env are one line each; secrets masked', async () => {
+  const { settingsProblems } = await import('../../../../packages/bpmn-server/dist/index.js');
+  const problems = settingsProblems({
+    PORT: 'abc', SERVE: 'everything', REQUIRE_AUTHENTICATION: 'TRUE', DATABASE: 'postgres://x', API_KEY: 'short-but-fine',
+  }, schema, ['SESSON_SECRET', 'GITHUB_TOKEN', 'PORT']);
+  assert.ok(problems.includes('PORT=abc: PORT is a number'), problems.join('\n'));
+  assert.ok(problems.includes('SERVE=everything: SERVE is one of both, api, ui'), problems.join('\n'));
+  assert.ok(problems.some(p => p.startsWith('DATABASE=postgres://x: DATABASE is like sqlite:')), problems.join('\n'));
+  assert.ok(problems.includes('SESSON_SECRET: not a setting; SESSION_SECRET?'), problems.join('\n'));
+  assert.ok(!problems.some(p => /REQUIRE_AUTHENTICATION|GITHUB_TOKEN|API_KEY/.test(p)), 'TRUE is true; an application\'s own name is its own');
+  assert.deepEqual(settingsProblems({ PORT: '3000', DATABASE: 'sqlite:./data/bpmn.sqlite' }, schema, ['PORT']), []);
+});

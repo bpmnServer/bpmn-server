@@ -58,6 +58,8 @@ export const MEMORY_SERVER_VERSION = '^10.4.3';
 
 interface InitOptions {
     folder: string; mongo: string; memory: boolean; port: string;
+    /** DATABASE=sqlite:<file>, chosen in setup's steps. */
+    sqlite?: string;
     api: boolean; ui: boolean; auth: boolean; install: boolean; minimal: boolean;
 }
 
@@ -291,11 +293,12 @@ export async function init(argv: string[], { quiet = false, io: given }: { quiet
                 io, schema: findSchema(dir), created: true, keepDatabase: flags.has('--mongo') || flags.has('--memory'),
             });
             // what the steps chose: the next steps say it
-            options.memory = env.MONGO_DB_URL === 'memory';
+            options.sqlite = env.DATABASE?.startsWith('sqlite:') ? env.DATABASE.slice('sqlite:'.length) : undefined;
+            options.memory = !options.sqlite && env.MONGO_DB_URL === 'memory';
             options.mongo = env.MONGO_DB_URL ?? options.mongo;
             options.port = env.PORT ?? options.port;
             options.auth = env.REQUIRE_AUTHENTICATION !== 'false';
-            if (options.memory)
+            if (options.memory || options.sqlite)
                 fs.rmSync(path.join(dir, 'docker-compose.yml'), { force: true });
         }
     }
@@ -334,6 +337,8 @@ function runSteps(options: InitOptions): string[] {
     const signIn = options.auth ? ', then create the administrator (the setup token is printed there)' : '';
     if (options.memory)
         return [`${open}${signIn}; a MongoDB in memory, emptied when it stops`];
+    if (options.sqlite)
+        return [`${open}${signIn}; the database is the file ${options.sqlite}`];
     return [
         `docker compose up -d     # a MongoDB at ${options.mongo}, if you do not have one`,
         `${open}${signIn}`,

@@ -1,6 +1,7 @@
 // The feature catalog (docs/features.yaml): checks its references, tags the tests it names, writes the docs page.
 //
 //   node scripts/features.mjs            check, tag the tests ("// @features: a, b" at the top), write docs/docs/features.md
+//                                        and the settings page's tables (scripts/settings.mjs)
 //   node scripts/features.mjs --check    check only: a broken reference, or a test's tags out of date, fails
 //
 // A test is tagged by the catalog (its `tests`), so the tags and the catalog agree; a test may also name a feature
@@ -9,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
+import { run as settingsPage } from './settings.mjs';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG = path.join(ROOT, 'docs', 'features.yaml');
@@ -164,11 +166,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     if (process.argv.includes('--check')) {
         const stale = tagsUpToDate(byTest);
         for (const f of stale) console.error(`  ${f}: its "// @features:" line is not the catalog's (npm run features)`);
+        // the settings page's tables, from the settings schema (scripts/settings.mjs)
+        for (const p of settingsPage(true)) { console.error('  ' + p); stale.push(p); }
         console.log(`${catalog.features.length} features; ${problems.length + stale.length} problem(s)`);
         process.exit(problems.length + stale.length ? 1 : 0);
     }
     if (problems.length) process.exit(1);
     writeTags(byTest);
     fs.writeFileSync(PAGE, page(catalog, taggedTests()));
+    settingsPage();
     console.log(`${catalog.features.length} features; ${byTest.size} test files tagged; ${path.relative(ROOT, PAGE)} written`);
 }

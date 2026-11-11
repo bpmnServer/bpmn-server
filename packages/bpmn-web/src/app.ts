@@ -19,9 +19,10 @@ import helmet from 'helmet';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import multer from 'multer';
-import { BPMNServer, Logger } from 'bpmn-server';
+import { BPMNServer, Logger, databaseName } from 'bpmn-server';
 
 import { UserManager } from './userAccess/UserManager.js';
+import { useUserStore, isMongoStore } from './userAccess/userStore.js';
 import { useTestsFolder } from './testing/scenarios.js';
 import { engineTests } from './testing/engineTests.js';
 import { adminDisabled } from './userAccess/roles.js';
@@ -79,6 +80,11 @@ export class WebApp {
 			// where the engine is: ENGINE_AT=http://... (with ENGINE_KEY), or none: everything but running and testing models
 			{ ...application.serverOptions, calls: engineTests, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, ...(Number(process.env.ENGINE_TIMEOUT_MS) > 0 ? { engineTimeout: Number(process.env.ENGINE_TIMEOUT_MS) } : {}) } : {}) },
 		);
+		// users and sessions: on the engine's store (MongoDB, SQLite, memory). On MongoDB, in the database mongoose kept
+		// them in before 3.7: the one MONGO_DB_URL names (else test), whatever MONGO_DB_NAME says
+		const store = this.bpmnServer.documentStore ?? this.bpmnServer.dataStore?.db;
+		const mongo = (application.configuration.database as any)?.MongoDB;
+		useUserStore(store, isMongoStore(store) ? databaseName({ db_url: mongo?.db_url }) : databaseName(mongo));
 		application.initialize?.(this.bpmnServer);
 		// the Test tabs' tests are files beside the models
 		useTestsFolder(() => this.bpmnServer.configuration.definitionsPath);
@@ -132,13 +138,15 @@ export class WebApp {
 
 		// Unauthenticated health/readiness probe for load balancers (before auth).
 		app.get('/healthz', (req, res) => {
-			// mongo readyState: 0=disconnected 1=connected 2=connecting 3=disconnecting
-			const mongoState = mongoose.connection?.readyState ?? 0;
-			const ok = mongoState === 1;
+			// on MongoDB, mongoose's readyState: 0=disconnected 1=connected 2=connecting 3=disconnecting; another
+			// store (SQLite, memory) is a file or this process's memory, there when the server is
+			const onMongo = !process.env.DATABASE?.startsWith('sqlite:');
+			const mongoState = onMongo ? mongoose.connection?.readyState ?? 0 : undefined;
+			const ok = !onMongo || mongoState === 1;
 			res.status(ok ? 200 : 503).json({
 				status: ok ? 'ok' : 'degraded',
 				uptime: process.uptime(),
-				mongo: mongoState,
+				...(onMongo ? { mongo: mongoState } : { database: 'sqlite' }),
 			});
 		});
 

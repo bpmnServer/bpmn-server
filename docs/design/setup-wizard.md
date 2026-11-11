@@ -1,6 +1,6 @@
 # Setup: one schema for every setting, one wizard, and an AI that helps the administrator
 
-Status: draft for 3.7 (items 8 of the 3.7 plan). Built: step 1 (the schema), step 3's terminal wizard
+Status: draft for 3.7 (items 8 of the 3.7 plan). Built: step 1 (the schema), step 2 but `.env.example` (the settings page's tables, the start's checks), step 3's terminal wizard
 (`bpmn-server setup`, with the production and development profiles of step 5), steps 6 and 7 (the AI levels, the
 settings read and checked on API v3). Related: [API v3](api-v3.md) (the door, tokens),
 [several applications and tenants](multi-app-tenants.md) (a workspace's settings), PR #286 (application settings in

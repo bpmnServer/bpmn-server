@@ -24,7 +24,7 @@ npx bpmn-server setup my-app     # a new application, then its settings; in an a
 ```
 
 `init`, at a terminal, asks the same steps after the folder and what the application serves. `setup` asks for the
-settings in `.env` step by step: the database (checked: it answers), the first administrator,
+settings in `.env` step by step: the database (MongoDB, memory, or a SQLite file; checked), the first administrator,
 the site's address, sign-in and model design, email, the API keys, AI access, and the environment and API trace. It
 starts with a profile, **production** or **development**, which suggests the values; Enter keeps the value shown.
 Nothing is written until you confirm the summary (secrets shown as `***`), and the `.env` before is kept as `.env.bak`.

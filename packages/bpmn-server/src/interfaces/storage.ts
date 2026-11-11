@@ -5,7 +5,7 @@
  *
  * Documents are plain JSON objects. Queries, updates, projections and sorts use the subset of
  * MongoDB's query language the engine issues (equality, dotted paths into arrays, `$elemMatch`,
- * `$or`, `$nor`, `$and`, `$exists`, `$eq`, `$ne`, `$in`, `$nin`, `$lt`, `$lte`, `$gt`, `$gte`;
+ * `$or`, `$nor`, `$and`, `$exists`, `$eq`, `$ne`, `$in`, `$nin`, `$lt`, `$lte`, `$gt`, `$gte`, `$not`, `$regex`;
  * `$set` and whole-document updates, with `upsert`); an adapter that cannot evaluate a query
  * refuses it, never ignores part of it.
  */

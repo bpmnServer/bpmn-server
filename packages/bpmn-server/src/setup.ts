@@ -14,6 +14,7 @@ import crypto from 'node:crypto';
 import readline from 'node:readline';
 import { createRequire } from 'node:module';
 import { init, MEMORY_SERVER_VERSION } from './init.js';
+import { settingProblem } from './common/settingValue.js';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
 
@@ -144,17 +145,8 @@ export function findSchema(dir: string): any | null {
     return found ? JSON.parse(fs.readFileSync(found, 'utf8')) : null;
 }
 
-/** Why a value does not fit its schema entry, or null. */
-export function invalid(value: string, entry: any): string | null {
-    if (!entry || value === '') return null;
-    if (entry.type === 'boolean' && !/^(true|false)$/.test(value)) return 'true or false';
-    if ((entry.type === 'integer' || entry.type === 'number') && !/^-?\d+(\.\d+)?$/.test(value)) return 'a number';
-    if (entry.type === 'integer' && entry.minimum !== undefined && Number(value) < entry.minimum) return `at least ${entry.minimum}`;
-    if (entry.enum && !entry.enum.includes(value)) return `one of ${entry.enum.join(', ')}`;
-    if (entry.minLength && value.length < entry.minLength) return `at least ${entry.minLength} characters`;
-    if (entry.format === 'uri' && !/^https?:\/\/\S+$/.test(value)) return 'an http:// or https:// address';
-    return null;
-}
+/** Why a value does not fit its schema entry, or null (common/settingValue.ts). */
+export const invalid = settingProblem;
 
 const newKey = () => crypto.randomBytes(24).toString('hex');
 const newPassword = () => crypto.randomBytes(12).toString('base64url');
@@ -163,9 +155,23 @@ const yes = (answer: string) => /^y/i.test(answer.trim());
 const plain = (text = '') => text.replace(/\*\*/g, '').replace(/`/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
 
 /** Whether the database answers: memory always; a MongoDB URL, pinged. */
-export async function checkDatabase(url: string): Promise<{ ok: boolean, message: string }> {
+export async function checkDatabase(url: string, dir = process.cwd()): Promise<{ ok: boolean, message: string }> {
     if (url === 'memory')
         return { ok: true, message: 'memory: a MongoDB in the process, emptied when it stops' };
+    if (url.startsWith('sqlite:')) {
+        const [major, minor] = process.versions.node.split('.').map(Number);
+        if (major < 22 || (major === 22 && minor < 5))
+            return { ok: false, message: `SQLite needs Node 22.5 or later (node:sqlite); this is ${process.versions.node}` };
+        const file = path.resolve(dir, url.slice('sqlite:'.length).trim());
+        try {
+            fs.mkdirSync(path.dirname(file), { recursive: true });
+            fs.accessSync(path.dirname(file), fs.constants.W_OK);
+            return { ok: true, message: `${file}: its folder can be written` };
+        }
+        catch (error) {
+            return { ok: false, message: `${file} can not be written: ${error?.message ?? error}` };
+        }
+    }
     let client;
     try {
         const { MongoClient } = await import('mongodb');
@@ -187,6 +193,8 @@ export async function checkDatabase(url: string): Promise<{ ok: boolean, message
 interface Context {
     io: SetupIO; schema: any; env: Record<string, string>; changes: Record<string, string | null>;
     profile: Profile; auto: boolean; check: boolean; name: string;
+    /** The application's folder: a SQLite file is relative to it. */
+    dir: string;
     /** Created by this run: init's database is not a choice of the person's. */
     created: boolean;
     /** A new application: its keys are new already. */
@@ -232,23 +240,35 @@ function heading(c: Context, title: string, ...names: string[]) {
 
 const STEPS: Array<(c: Context) => Promise<void>> = [
     async function database(c) {
-        heading(c, '1. The database', 'MONGO_DB_URL');
-        const suggested = (c.created ? undefined : current(c, 'MONGO_DB_URL')) || PROFILES[c.profile].MONGO_DB_URL || `mongodb://localhost:27017/${c.name}`;
+        heading(c, '1. The database', 'MONGO_DB_URL', 'DATABASE');
+        // DATABASE=sqlite:<file> wins over MONGO_DB_URL
+        const now = current(c, 'DATABASE')?.startsWith('sqlite:') ? current(c, 'DATABASE') : current(c, 'MONGO_DB_URL');
+        const suggested = (c.created ? undefined : now) || PROFILES[c.profile].MONGO_DB_URL || `mongodb://localhost:27017/${c.name}`;
         for (; ;) {
             const url = await ask(c, 'MONGO_DB_URL', c.profile === 'production' && suggested === 'memory' ? `mongodb://localhost:27017/${c.name}` : suggested,
-                'MongoDB URL, or memory');
+                'a MongoDB URL, memory, or sqlite:<file> (one file, no database server)');
             if (c.profile === 'production' && url === 'memory') {
-                c.io.print('    production needs a database that keeps its data: a mongodb:// URL');
+                c.io.print('    production needs a database that keeps its data: a mongodb:// URL, or sqlite:<file>');
+                if (c.auto) return;
+                continue;
+            }
+            if (url !== 'memory' && !/^(mongodb(\+srv)?:\/\/\S+|sqlite:\S+)$/.test(url)) {
+                c.io.print('    a mongodb:// URL, memory, or sqlite:<file>, such as sqlite:./data/bpmn.sqlite');
                 if (c.auto) return;
                 continue;
             }
             if (c.check) {
-                const result = await checkDatabase(url);
+                const result = await checkDatabase(url, c.dir);
                 c.io.print(`    ${result.ok ? 'ok' : 'FAILED'}: ${result.message}`);
                 if (!result.ok && !c.auto && !(await confirm(c, 'Keep it anyway?', false)))
                     continue;
             }
-            set(c, 'MONGO_DB_URL', url);
+            if (url.startsWith('sqlite:'))
+                set(c, 'DATABASE', url);
+            else {
+                set(c, 'MONGO_DB_URL', url);
+                set(c, 'DATABASE', null);
+            }
             return;
         }
     },
@@ -377,7 +397,7 @@ export async function configure(dir: string, options: ConfigureOptions): Promise
         }
     }
     const c: Context = {
-        io, schema, env, changes: {}, profile, auto, check: options.check ?? true,
+        io, schema, env, changes: {}, profile, auto, check: options.check ?? true, dir,
         name: path.basename(dir).replace(/[^A-Za-z0-9_-]/g, '_') || 'bpmn', created: created && !options.keepDatabase, isNew: created,
     };
     for (const step of STEPS)
@@ -403,7 +423,7 @@ export async function configure(dir: string, options: ConfigureOptions): Promise
         fs.writeFileSync(envFile + '.bak', before);
     const text = renderEnv(before, c.changes);
     fs.writeFileSync(envFile, text);
-    if (c.changes.MONGO_DB_URL === 'memory') addMemoryServer(dir);
+    if (c.changes.MONGO_DB_URL === 'memory' && !parseEnv(text).DATABASE?.startsWith('sqlite:')) addMemoryServer(dir);
     io.print(`\nWrote ${envFile}${backup ? ' (the one before: .env.bak)' : ''}.`);
     return { code: 0, env: parseEnv(text) };
 }

@@ -162,3 +162,18 @@ test('checkDatabase: memory answers; a MongoDB that is not there does not', asyn
   assert.equal(missing.ok, false);
   assert.match(missing.message, /does not answer/);
 });
+
+test('setup: sqlite:<file> is a database too: DATABASE is set, its folder checked; a wrong answer is asked again', async () => {
+  const dir = app('MONGO_DB_URL=mongodb://h/a\nAPI_KEY=k\nADMIN_API_KEY=k\nSESSION_SECRET=k\n');
+  const { io, out } = scripted([
+    'production', 'postgres://x', 'sqlite:./data/app.sqlite',   // not a database setup knows; then SQLite
+    'none', '', '', '', '', '', '', 'no', 'no', 'no', '', '', '', 'yes',
+  ]);
+  assert.equal(await setup([dir], io), 0, out.join('\n'));
+  assert.match(out.join('\n'), /a mongodb:\/\/ URL, memory, or sqlite:<file>/);
+  assert.match(out.join('\n'), /ok: .*app\.sqlite: its folder can be written/);
+  const env = readEnv(dir);
+  assert.equal(env.DATABASE, 'sqlite:./data/app.sqlite');
+  assert.ok(fs.existsSync(path.join(dir, 'data')), 'its folder made');
+  assert.ok(!JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')).dependencies['mongodb-memory-server']);
+});

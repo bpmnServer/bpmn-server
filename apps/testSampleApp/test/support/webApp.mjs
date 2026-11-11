@@ -78,6 +78,8 @@ function startEngineProcess(port = '0') {
 
 export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true } = {}) {
     const dbUrl = testDatabaseUrl();
+    // TEST_DATABASE=sqlite: the same tests on a SQLite file of this app's own (DATABASE=sqlite:<file>)
+    const sqliteDir = process.env.TEST_DATABASE === 'sqlite' ? fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-sqlite-')) : null;
     const definitionsPath = definitionsFolder();
     // the app reads its settings from the environment; dotenv never overrides these
     Object.assign(process.env, {
@@ -96,6 +98,7 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
         ENFORCE_SECURITY: 'true',
         AUTH_RATE_LIMIT: '1000',
         SAVE_LOGS: 'true',
+        DATABASE: sqliteDir ? `sqlite:${path.join(sqliteDir, 'bpmn.sqlite')}` : '',
     }, env);
 
     let engineProcess;
@@ -188,6 +191,11 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
             } catch { /* best effort */ }
             await mongoose.disconnect().catch(() => { });
             fs.rmSync(definitionsPath, { recursive: true, force: true });
+            if (sqliteDir) {
+                // what the store's last writes started ends first: exiting on it crashes Node on Windows (UV_HANDLE_CLOSING)
+                await new Promise(resolve => setTimeout(resolve, 200));
+                fs.rmSync(sqliteDir, { recursive: true, force: true });
+            }
             restoreConsole();
         },
     };
