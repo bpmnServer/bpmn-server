@@ -11,18 +11,20 @@
 # DigitalOcean user data): paste this whole file, and set what you want in the settings below.
 #
 # It can be run again: what is there is kept (the application, its data, its .env, its admin password).
-# The admin password is ADMIN_PASSWORD in the application's .env (bpmn password); the log in /var/log/bpmn-install.log.
-# Afterwards, the `bpmn` command: bpmn status, logs, monitor, restart, update, domain, access, password (bpmn help).
+# The admin password is ADMIN_PASSWORD in the application's .env (owf password); the log in /var/log/owf-install.log.
+# Afterwards, the `owf` command: owf status, logs, monitor, restart, update, domain, access, password (owf help).
+# Since 3.7 the names are owf (the command, /opt/owf/<app>, the service owf-<app>); an install made before keeps its
+# bpmn names when this runs again, so nothing that runs moves; `bpmn` stays a name of the command until 4.0.
 set -euo pipefail
 
 # ---- settings: edit them here, or give them as options (--domain ...) or environment variables (DOMAIN=...)
-APP_NAME=${APP_NAME:-my-app}            # --app: the application's folder (/opt/bpmn/<app>) and its database
+APP_NAME=${APP_NAME:-my-app}            # --app: the application's folder (/opt/owf/<app>) and its database
 BPMN_VERSION=${BPMN_VERSION:-latest}    # --version: the bpmn-server version whose init makes the application
 DOMAIN=${DOMAIN:-}                      # --domain: the site's name, for HTTPS (its DNS pointing at this server)
 EMAIL=${EMAIL:-}                        # --email: where Let's Encrypt sends its notices
 ADMIN_PASSWORD=${ADMIN_PASSWORD:-}      # --admin-password: the first user's (admin); empty: one is generated
 PORT=${PORT:-3000}                      # --port: the application's own port, behind nginx
-BPMN_DIR=${BPMN_DIR:-/opt/bpmn}         # --dir: where the application's folder is made (/opt/bpmn/<app>)
+BPMN_DIR=${BPMN_DIR:-}                  # --dir: where the application's folder is made (/opt/owf/<app>)
 ACCESS_USER=${ACCESS_USER:-}            # --access: local editor (defaults to sudo-invoking user, else ubuntu)
 INTERACTIVE=auto                        # prompts on first interactive install; --interactive or --yes override
 INSTALL_MODE=${INSTALL_MODE:-production} # development for local use; production for public/cloud deployment
@@ -46,6 +48,16 @@ while [ $# -gt 0 ]; do
         *) echo "unknown option: $1"; exit 1 ;;
     esac
 done
+
+# the names: owf since 3.7; an install made before (its /etc/bpmn.conf) keeps its own, so nothing that runs moves
+if [ -f /etc/bpmn.conf ] && [ ! -f /etc/owf.conf ]; then
+    NAME=bpmn
+    [ -n "$BPMN_DIR" ] || BPMN_DIR=$(sed -n 's/^HOME_DIR=//p' /etc/bpmn.conf | head -n 1)
+else
+    NAME=owf
+fi
+BPMN_DIR=${BPMN_DIR:-/opt/$NAME}
+CONF=/etc/$NAME.conf
 
 # Prompt only on a first install from a terminal. Lightsail/user-data and piped installs remain unattended.
 # /dev/tty is used because 'curl ... | sudo bash' consumes standard input for the script.
@@ -78,7 +90,7 @@ if [ "$INTERACTIVE" = yes ]; then
     prompt BPMN_VERSION "BPMN Server npm version" "$BPMN_VERSION"
     prompt PORT "Application port behind nginx" "$PORT"
     prompt BPMN_DIR "Application root directory" "$BPMN_DIR"
-    prompt ACCESS_USER "Local user to add to bpmn group (none disables)" "$default_access"
+    prompt ACCESS_USER "Local user to add to the $NAME group (none disables)" "$default_access"
     prompt DOMAIN "Domain for HTTPS (none to skip)" "${DOMAIN:-none}"
     prompt EMAIL "Email for Let's Encrypt (none to skip)" "${EMAIL:-none}"
     [ "$DOMAIN" = none ] && DOMAIN=
@@ -90,8 +102,8 @@ if [ "$INTERACTIVE" = yes ]; then
 fi
 
 # the log holds the admin password: root's only
-touch /var/log/bpmn-install.log && chmod 600 /var/log/bpmn-install.log
-exec > >(tee -a /var/log/bpmn-install.log) 2>&1
+touch /var/log/$NAME-install.log && chmod 600 /var/log/$NAME-install.log
+exec > >(tee -a /var/log/$NAME-install.log) 2>&1
 echo "=== bpmn-server install, $(date -u +%FT%TZ)"
 case "$INSTALL_MODE" in
   development|production) ;;
@@ -101,10 +113,10 @@ if [ "$INSTALL_MODE" = development ] && [ -n "$DOMAIN" ]; then
     echo "Development mode is for local use only: omit --domain or choose --mode production" >&2
     exit 2
 fi
-APP_USER=bpmn
+APP_USER=$NAME
 HOME_DIR=${BPMN_DIR%/}
 APP_DIR=$HOME_DIR/$APP_NAME
-SERVICE=bpmn-$APP_NAME
+SERVICE=$NAME-$APP_NAME
 export DEBIAN_FRONTEND=noninteractive
 
 command -v apt-get >/dev/null || { echo "this installer is for Ubuntu (apt-get); see the install guide for other systems"; exit 1; }
@@ -217,7 +229,7 @@ elif [ ! -f "$APP_DIR/package.json" ]; then
     as_app "$HOME_DIR" "npx -y bpmn-server@$BPMN_VERSION init '$APP_NAME' --yes --mongo 'mongodb://localhost:27017/$APP_NAME' --port $PORT"
 fi
 
-# its files: the bpmn user's, and its group's (with ACCESS_USER in it): new files and folders stay the group's
+# its files: the application user's, and its group's (with ACCESS_USER in it): new files and folders stay the group's
 chgrp -R "$APP_USER" "$APP_DIR"
 chmod -R g+rwX "$APP_DIR"
 find "$APP_DIR" -type d -exec chmod g+s {} +
@@ -239,7 +251,7 @@ if [ -n "$ACCESS_USER" ]; then
             echo "ACCESS WARNING: $ACCESS_USER cannot yet read/write $APP_DIR; inspect: namei -l $APP_DIR"
         fi
     else
-        echo "no user $ACCESS_USER: nobody else may edit $APP_DIR (bpmn access <user> adds one)"
+        echo "no user $ACCESS_USER: nobody else may edit $APP_DIR (owf access <user> adds one)"
     fi
 fi
 
@@ -364,14 +376,15 @@ if command -v iptables >/dev/null && iptables -S INPUT 2>/dev/null | grep -q -- 
     echo "iptables: 80 and 443 open"
 fi
 
-# ---- the bpmn command: status, logs, monitor, restart, update, domain and HTTPS, access (bpmn help)
+# ---- the owf command: status, logs, monitor, restart, update, domain and HTTPS, access (owf help)
 
-# a domain set before (bpmn domain) stays
-KEPT_DOMAIN=$(grep -s '^DOMAIN=' /etc/bpmn.conf | cut -d= -f2- || true)
-KEPT_EMAIL=$(grep -s '^EMAIL=' /etc/bpmn.conf | cut -d= -f2- || true)
-rm -f /usr/local/sbin/bpmn-https      # the HTTPS script of an earlier install: bpmn https now
-cat > /etc/bpmn.conf <<EOF
-# the bpmn command's settings (written by install.sh; bpmn domain adds DOMAIN and EMAIL)
+# a domain set before (owf domain) stays
+KEPT_DOMAIN=$(grep -s '^DOMAIN=' "$CONF" | cut -d= -f2- || true)
+KEPT_EMAIL=$(grep -s '^EMAIL=' "$CONF" | cut -d= -f2- || true)
+rm -f /usr/local/sbin/bpmn-https      # the HTTPS script of an earlier install: owf https now
+cat > "$CONF" <<EOF
+# the owf command's settings (written by install.sh; owf domain adds DOMAIN and EMAIL)
+NAME=$NAME
 APP_NAME=$APP_NAME
 APP_USER=$APP_USER
 HOME_DIR=$HOME_DIR
@@ -383,17 +396,19 @@ DOMAIN=$KEPT_DOMAIN
 EMAIL=$KEPT_EMAIL
 EOF
 
-cat > /usr/local/bin/bpmn <<'BPMN'
+cat > /usr/local/bin/owf <<'BPMN'
 #!/usr/bin/env bash
-# bpmn: the bpmn-server application on this server (installed by bpmn-server's deploy/install.sh)
+# owf: the BPMN Server application on this server (installed by bpmn-server's deploy/install.sh); also named bpmn
 set -uo pipefail
-[ -f /etc/bpmn.conf ] || { echo "no /etc/bpmn.conf: bpmn-server's install.sh makes it"; exit 1; }
-. /etc/bpmn.conf
+CONF=/etc/owf.conf; [ -f "$CONF" ] || CONF=/etc/bpmn.conf       # an install made before 3.7 has its bpmn names
+[ -f "$CONF" ] || { echo "no /etc/owf.conf: bpmn-server's install.sh makes it"; exit 1; }
+. "$CONF"
+NAME=${NAME:-bpmn}
 # what needs root asks sudo for it
 [ "$(id -u)" = 0 ] || case "${1:-help}" in help|-h|--help) ;; *) exec sudo "$0" "$@" ;; esac
 
-conf() {        # a setting in /etc/bpmn.conf
-    if grep -q "^$1=" /etc/bpmn.conf; then sed -i "s|^$1=.*|$1=$2|" /etc/bpmn.conf; else echo "$1=$2" >> /etc/bpmn.conf; fi
+conf() {        # a setting in its configuration (/etc/owf.conf)
+    if grep -q "^$1=" "$CONF"; then sed -i "s|^$1=.*|$1=$2|" "$CONF"; else echo "$1=$2" >> "$CONF"; fi
 }
 envset() {      # a setting in the application's .env
     if grep -q "^$1=" "$APP_DIR/.env"; then sed -i "s|^$1=.*|$1=$2|" "$APP_DIR/.env"; else echo "$1=$2" >> "$APP_DIR/.env"; fi
@@ -411,9 +426,9 @@ status() {
     if [[ "$memory" =~ ^[0-9]+$ ]]; then memory="$((memory / 1048576)) MB"; else memory=?; fi
     echo "since ${since:-?}, memory $memory, restarts ${restarts:-0}"
     if [ -n "${DOMAIN:-}" ] && [ -d "/etc/letsencrypt/live/$DOMAIN" ]; then echo "https://$DOMAIN/"
-    elif [ -n "${DOMAIN:-}" ]; then echo "http://$(address)/   (https://$DOMAIN/ waits for its DNS: bpmn https)"
-    else echo "http://$(address)/   (no domain: bpmn domain <name> [email])"; fi
-    curl -fsS -o /dev/null --max-time 5 "http://127.0.0.1:$PORT/login" && echo "answering" || echo "!!! not answering on port $PORT: bpmn logs"
+    elif [ -n "${DOMAIN:-}" ]; then echo "http://$(address)/   (https://$DOMAIN/ waits for its DNS: owf https)"
+    else echo "http://$(address)/   (no domain: owf domain <name> [email])"; fi
+    curl -fsS -o /dev/null --max-time 5 "http://127.0.0.1:$PORT/login" && echo "answering" || echo "!!! not answering on port $PORT: owf logs"
 }
 
 monitor() {     # a live view, every 3 seconds, until Ctrl+C
@@ -421,7 +436,7 @@ monitor() {     # a live view, every 3 seconds, until Ctrl+C
     tput civis 2>/dev/null
     while true; do
         clear
-        echo "bpmn monitor  $(date '+%F %T')   (Ctrl+C to stop)"; echo
+        echo "owf monitor  $(date '+%F %T')   (Ctrl+C to stop)"; echo
         status; echo
         top -b -n 1 | sed -n '1,5p'; echo
         ps -o pid,pcpu,pmem,rss,etime,cmd -C node,mongod --sort=-pcpu | cut -c1-110 | head -6; echo
@@ -432,10 +447,10 @@ monitor() {     # a live view, every 3 seconds, until Ctrl+C
 }
 
 https_now() {   # a certificate for DOMAIN once it points here; then the cookies are Secure
-    [ -n "${DOMAIN:-}" ] || { echo "no domain: bpmn domain <name> [email]"; return 1; }
+    [ -n "${DOMAIN:-}" ] || { echo "no domain: owf domain <name> [email]"; return 1; }
     if [ -d "/etc/letsencrypt/live/$DOMAIN" ]; then
         echo "https://$DOMAIN/ has its certificate (renewed by certbot's own timer)"
-        systemctl disable --now bpmn-https.timer >/dev/null 2>&1 || true
+        systemctl disable --now $NAME-https.timer >/dev/null 2>&1 || true
         return 0
     fi
     local here there
@@ -451,13 +466,13 @@ https_now() {   # a certificate for DOMAIN once it points here; then the cookies
     certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos $contact --redirect || return 1
     envset SECURE_COOKIES true
     systemctl restart "$SERVICE"
-    systemctl disable --now bpmn-https.timer >/dev/null 2>&1 || true
+    systemctl disable --now $NAME-https.timer >/dev/null 2>&1 || true
     echo "https://$DOMAIN/ is ready"
 }
 
-domain() {      # bpmn domain <name> [email]
+domain() {      # owf domain <name> [email]
     local name=${1:-} email=${2:-${EMAIL:-}}
-    [[ "$name" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]] || { echo "usage: bpmn domain <name> [email]   e.g. bpmn domain bpmn.example.com you@example.com"; return 1; }
+    [[ "$name" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]] || { echo "usage: owf domain <name> [email]   e.g. owf domain bpmn.example.com you@example.com"; return 1; }
     conf DOMAIN "$name"; conf EMAIL "$email"; DOMAIN=$name; EMAIL=$email
     sed -i "0,/server_name .*;/s//server_name $name;/" "/etc/nginx/sites-available/$SERVICE"
     nginx -t -q && systemctl reload nginx
@@ -465,14 +480,14 @@ domain() {      # bpmn domain <name> [email]
         echo "installing certbot (Let's Encrypt)..."
         DEBIAN_FRONTEND=noninteractive apt-get install -y -qq certbot python3-certbot-nginx >/dev/null
     fi
-    cat > /etc/systemd/system/bpmn-https.service <<EOF
+    cat > /etc/systemd/system/$NAME-https.service <<EOF
 [Unit]
 Description=HTTPS for the bpmn-server site once its domain points here
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/bpmn https
+ExecStart=/usr/local/bin/owf https
 EOF
-    cat > /etc/systemd/system/bpmn-https.timer <<EOF
+    cat > /etc/systemd/system/$NAME-https.timer <<EOF
 [Unit]
 Description=Try HTTPS for the bpmn-server site every 5 minutes until it works
 [Timer]
@@ -483,17 +498,17 @@ WantedBy=timers.target
 EOF
     systemctl daemon-reload
     https_now
-    [ -d "/etc/letsencrypt/live/$name" ] || systemctl enable --now bpmn-https.timer >/dev/null 2>&1
+    [ -d "/etc/letsencrypt/live/$name" ] || systemctl enable --now $NAME-https.timer >/dev/null 2>&1
 }
 
-access() {      # bpmn access <user>
+access() {      # owf access <user>
     local user=${1:-${SUDO_USER:-}}
-    id "$user" >/dev/null 2>&1 || { echo "usage: bpmn access <user>"; return 1; }
+    id "$user" >/dev/null 2>&1 || { echo "usage: owf access <user>"; return 1; }
     usermod -aG "$APP_USER" "$user"
     echo "$user may edit $APP_DIR from its next sign-in (or now: newgrp $APP_USER)"
 }
 
-update() {      # bpmn update: the newest bpmn-server and bpmn-web, then a restart
+update() {      # owf update: the newest bpmn-server and bpmn-web, then a restart
     runuser -u "$APP_USER" -- env HOME="$HOME_DIR" bash -c "cd '$APP_DIR' && npm update bpmn-server bpmn-web" || return 1
     runuser -u "$APP_USER" -- env HOME="$HOME_DIR" bash -c "cd '$APP_DIR' && npm ls bpmn-server bpmn-web --depth=0" | tail -n +2
     systemctl restart "$SERVICE" && echo "restarted"
@@ -515,28 +530,29 @@ case "${1:-help}" in
     env) ${EDITOR:-nano} "$APP_DIR/.env" && systemctl restart "$SERVICE" ;;
     cli) shift; runuser -u "$APP_USER" -- env HOME="$HOME_DIR" bash -c 'cd "$0" && npm run --silent cli -- "$@"' "$APP_DIR" "$@" ;;
     *) cat <<EOF
-bpmn: the bpmn-server application in $APP_DIR (the service $SERVICE)
+owf: the BPMN Server application in $APP_DIR (the service $SERVICE); bpmn is another name for it
 
-  bpmn status                   the app, MongoDB and nginx; its address
-  bpmn logs                     its log, live (Ctrl+C); bpmn logs -n 200, bpmn logs --since "1 hour ago", bpmn logs -p err
-  bpmn monitor                  a live view: status, CPU and memory, the last log lines
-  bpmn restart | stop | start
-  bpmn update                   the newest bpmn-server and bpmn-web, then a restart
-  bpmn env                      edit its .env, then a restart
-  bpmn cli [command ...]        its console (npm run cli); with a command, just that: bpmn cli cod asana
-  bpmn domain <name> [email]    the site's domain name, and HTTPS for it once its DNS points here
-  bpmn https                    HTTPS now (or why not yet)
-  bpmn access <user>            let a user edit the application's files (the group $APP_USER)
-  bpmn password                 the first admin password (until it is changed)
+  owf status                   the app, MongoDB and nginx; its address
+  owf logs                     its log, live (Ctrl+C); owf logs -n 200, owf logs --since "1 hour ago", owf logs -p err
+  owf monitor                  a live view: status, CPU and memory, the last log lines
+  owf restart | stop | start
+  owf update                   the newest bpmn-server and bpmn-web, then a restart
+  owf env                      edit its .env, then a restart
+  owf cli [command ...]        its console (npm run cli); with a command, just that: owf cli cod asana
+  owf domain <name> [email]    the site's domain name, and HTTPS for it once its DNS points here
+  owf https                    HTTPS now (or why not yet)
+  owf access <user>            let a user edit the application's files (the group $APP_USER)
+  owf password                 the first admin password (until it is changed)
 EOF
     ;;
 esac
 BPMN
-chmod 755 /usr/local/bin/bpmn
+chmod 755 /usr/local/bin/owf
+ln -sf /usr/local/bin/owf /usr/local/bin/bpmn     # the command's name before 3.7, until 4.0
 
 # ---- the domain, and HTTPS for it as soon as it points here
 if [ -n "$DOMAIN" ]; then
-    /usr/local/bin/bpmn domain "$DOMAIN" "$EMAIL" || echo "HTTPS is not set yet: bpmn https tries again"
+    /usr/local/bin/owf domain "$DOMAIN" "$EMAIL" || echo "HTTPS is not set yet: owf https tries again"
 fi
 
 # ---- ready when the application answers
@@ -549,7 +565,7 @@ for _ in $(seq 90); do
         echo "=== bpmn-server is ready: http://$address/${DOMAIN:+  (https://$DOMAIN/ once $DOMAIN points at $address)}"
         echo "    sign in as admin, password $ADMIN_PASSWORD (ADMIN_PASSWORD in $APP_DIR/.env; change it: your profile, top right)"
         echo "    the application: $APP_DIR${ACCESS_USER:+ (editor $ACCESS_USER in group $APP_USER; re-login or newgrp $APP_USER)}"
-        echo "    bpmn status | logs | monitor | restart | update | domain <name> [email]   (bpmn help)"
+        echo "    owf status | logs | monitor | restart | update | domain <name> [email]   (owf help)"
         date -u +%FT%TZ > "$HOME_DIR/INSTALLED"
         exit 0
     fi

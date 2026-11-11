@@ -31,8 +31,8 @@ curl -fsSL https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/
 ```
 
 With `--domain`, it is served over HTTPS as soon as the domain points at the server. Then put your application on it
-(your `processes/`, `connectors/`, `delegates/` and `settings/`, from Git), in `/opt/bpmn/my-app`, and
-`bpmn restart`. Docker, and other ways: [Installation](../setup.md).
+(your `processes/`, `connectors/`, `delegates/` and `settings/`, from Git), in `/opt/owf/my-app`, and
+`owf restart`. Docker, and other ways: [Installation](../setup.md).
 
 ## Production settings
 
@@ -49,9 +49,9 @@ Every setting: [Settings](../settings.md).
 
 ## Running it
 
-- `bpmn status`, `bpmn logs`, `bpmn monitor`: the services, the log, and the server's load.
+- `owf status`, `owf logs`, `owf monitor`: the services, the log, and the server's load.
 - **Dashboard → Administration**: users, locked instances, and **Backup** of everything.
-- `bpmn update`: a new bpmn-server version, after its tests passed on yours.
+- `owf update`: a new bpmn-server version, after its tests passed on yours.
 
 ## What you have
 
