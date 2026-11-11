@@ -1,4 +1,6 @@
 import type { BPMNServer, IConfiguration, ILogger } from 'bpmn-server';
+import type { IUserManager } from '../userAccess/IUserManager.js';
+import type { HostSettingsSource } from './hostSettings.js';
 
 /**
  * Application-owned dependencies consumed by the reusable workflow web host.
@@ -24,6 +26,13 @@ export interface WorkflowApplication {
 	 * to extend the REST API; a path bpmn-web also serves answers from the application first.
 	 */
 	routes?: (app, webApp) => void;
+	/**
+	 * Who signs in: the application's own users, sessions and sign-in (IUserManager). Without it, bpmn-web's own:
+	 * its users and sessions on the engine's store, its sign-in pages and first-run page.
+	 */
+	userManager?: IUserManager;
+	/** The API's settings (keys, service account, impersonation) of this server; default `.env`'s (hostSettings.ts). */
+	hostSettings?: HostSettingsSource;
 }
 
 export function defineWorkflowApplication(application: WorkflowApplication): WorkflowApplication {

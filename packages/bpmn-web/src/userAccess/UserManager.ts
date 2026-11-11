@@ -1,36 +1,32 @@
 import session from 'express-session';
-import flash from 'express-flash';
-import lusca from 'lusca';
 import passport from 'passport';
 import { rateLimit } from 'express-rate-limit';
-import { DocumentSessionStore, connectMongoose } from './userStore.js';
+import { DocumentSessionStore } from './userStore.js';
 
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
-import { adminDisabled, canDesign, isAdminGroups, signupDisabled } from './roles.js';
-import { firstRunPending } from './firstRun.js';
+import type { IUserManager } from './IUserManager.js';
+import { UserService } from './UserService.js';
 
 
-export class UserManager {
+/**
+ * bpmn-web's own user manager (IUserManager), the default: its users and sessions on the engine's store
+ * (userStore.ts), signing in with Passport, its sign-in, sign-up and account pages, and the first-run page.
+ */
+export class UserManager implements IUserManager {
 	app;
 	passport;
 	passportConfig;
 
 	constructor(app) {
-
 		this.app = app;
 		this.passport = passport;
 		this.passportConfig = passportConfig;
-
 	}
-	/**
-	 * Create Express server.
-	 */
-	init() {
 
-		const app = this.app;
-
+	/** The sessions, on the engine's store; Passport puts the user on the request. */
+	init(app = this.app) {
 		app.use(session({
 			resave: false,
 			saveUninitialized: false,
@@ -46,62 +42,12 @@ export class UserManager {
 			// on the engine's store, beside the users (userStore.ts)
 			store: new DocumentSessionStore(),
 		}));
-		app.use(flash());
-		app.use((req, res, next) => {
-			res.locals.errors = req.flash("errors");
-			res.locals.successes = req.flash("success");
-			res.locals.info = req.flash("info");
-			next();
-		});
-
-		this.initMongo();
-		this.initPassport();
+		app.use(passport.initialize());
+		app.use(passport.session());
 	}
-	initMongo() {
 
-		connectMongoose();
-	}
-	
-	initPassport() {
-
-		this.app.use(passport.initialize());
-		this.app.use(passport.session());
-		this.app.use(flash());
-		
-		// CSRF protection for the session-authenticated UI. The API routers authenticate with an
-		// API key, not a cookie, so they are exempt. (The previous allowlist '/' exempted every path.)
-		// Forms send the token as _csrf; scripts as the X-CSRF-Token header (public/javascripts/csrf.js).
-		const csrf = lusca.csrf({
-			cookie: { name: '_csrf' },
-			secret: process.env.SESSION_SECRET,
-		});
-		const apiPath = /^\/(admin\/)?api2?(\/|$)/;
-		this.app.use((req, res, next) => apiPath.test(req.path) ? next() : csrf(req, res, next));
-
-	} 
-	setup() {
-
-		const app = this.app;
-
-		/*
-		app.use(lusca({
-			csrf:  {
-				cookie: { name: '_csrf' },
-				allowlist: '/',
-				secret: 'qwerty'
-			},
-			hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
-			nosniff: true,
-			referrerPolicy: "same-origin",
-			xframe: "SAMEORIGIN",
-			xssProtection: true,
-		}));
-		*/
-		app.use(lusca.xframe('SAMEORIGIN'));
-		app.use(lusca.xssProtection(true));
-		app.disable('x-powered-by');
-
-		// Brute-force protection on auth endpoints.
+	/** The sign-in, sign-up, setup and account pages, with brute-force protection. */
+	setup(app = this.app) {
 		const authLimiter = rateLimit({
 			windowMs: 15 * 60 * 1000,
 			limit: Number(process.env.AUTH_RATE_LIMIT) || 50,
@@ -110,60 +56,11 @@ export class UserManager {
 			message: { error: 'Too many attempts, please try again later.' },
 		});
 		app.use(['/login', '/signup', '/forgot', '/reset', '/account/verify', '/setup'], authLimiter);
-
-		// a server with no users yet: its pages ask for the administrator first (firstRun.ts)
-		app.use((req, res, next) => {
-			if (!firstRunPending() || req.path === '/setup' || /\./.test(req.path)
-				|| /^\/(api|api2|admin\/api|admin\/api2|healthz)(\/|$)/.test(req.path))
-				return next();
-			return res.redirect('/setup');
-		});
-
-		app.use((req, res, next) => {
-			res.locals.user = req.user;
-			// the menu goes by these: a page may pass its own `user` (the system user, with sign-in off)
-			res.locals.account = req.user;
-			res.locals.signInOff = process.env.REQUIRE_AUTHENTICATION === 'false';
-			// views show the model actions (new, import, open, rename, delete) to designers
-			res.locals.canDesign = canDesign(req.user);
-			res.locals.canSignup = !signupDisabled();
-			// the menu (views/includes/menu.pug): Administration for administrators; the page it is on
-			res.locals.canAdminister = !adminDisabled()
-				&& (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups));
-			res.locals.currentPath = req.path;
-			next();
-		});
-
-		
-		app.use((req, res, next) => {
-			// After successful login, redirect back to the intended page. Not for the APIs: they have no sign-in, and a
-			// session kept for each of their calls (the pages' own, through routes/api/pageClient.ts) is waste
-			if (/^\/(admin\/)?api(2|\/|$)|^\/api2/.test(req.path))
-				return next();
-			if (!req.user
-				&& req.path !== '/login'
-				&& req.path !== '/signup'
-				&& !req.path.match(/^\/auth/)
-				&& !req.path.match(/\./)) {
-				console.log("redirecting to:", req.originalUrl);
-				req.session.returnTo = req.originalUrl;
-			} else if (req.user
-				&& (req.path === '/account' || req.path.match(/^\/api/))) {
-				req.session.returnTo = req.originalUrl;
-			}
-			next();
-		});
-		
-
-		this.setupRoutes();
+		app.use('/', (new Account(this)).config());
 	}
 
-	setupRoutes() {
-
-		
-		this.app.use('/', (new Account(this)).config());
-
-	}
+	/** Its users, on the engine's store. */
+	users = new UserService();
 
 	isAuthenticated(req, res, next) {
 		if (req.isAuthenticated()) {
@@ -173,3 +70,13 @@ export class UserManager {
 	}
 }
 
+/** The users bpmn-web manages: its own user manager's; none when the application's user manager signs people in. */
+export function ownUsers(userManager: IUserManager | undefined): UserService | null {
+	return userManager instanceof UserManager ? userManager.users : null;
+}
+
+/** The application's user manager, when it is the one signing people in (not bpmn-web's own): none otherwise. */
+export function hostUserManager(req): IUserManager | null {
+	const userManager = req?.app?.get?.('userManager');
+	return userManager && !(userManager instanceof UserManager) ? userManager : null;
+}

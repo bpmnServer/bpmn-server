@@ -218,3 +218,16 @@ test('Run on a model with several start events, or a start form, asks first: the
   // one start, no form: Run starts at once, as before
   assert.match((await admin.get('/execute/' + MODEL)).location, /\/instanceDetails\?id=/);
 });
+
+test('My work and starting a process use API v3\'s operations in this process: no token is made for the page', async () => {
+  // a token held for the page kept the person's groups of when it was made, for an hour; and the call to this server's
+  // own address failed with HTTPS=true (Fable Review M1)
+  const { Tokens } = await import(new URL('../../../../packages/bpmn-web/dist/routes/api/tokens.js', import.meta.url).href);
+  const tokens = new Tokens(web.bpmnServer);
+  await tokens.revoke('staff');
+  const page = await staff.get('/dashboard');
+  assert.equal(page.status, 200, why(page));
+  const start = await staff.get(`/dashboard/start/${MODEL}`);
+  assert.equal(start.status, 200, why(start));
+  assert.equal(await tokens.revoke('staff'), 0, 'the pages made no token');
+});

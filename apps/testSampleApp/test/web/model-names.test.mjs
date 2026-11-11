@@ -26,7 +26,7 @@ test.after(async () => {
 const NAMES = ['..%2Foutside-the-models', '..%5Coutside-the-models'];
 
 for (const route of ['/model/edit', '/model/editNoProp', '/model/getSvg', '/model/add', '/model/addNoProp', '/model/delete', '/model/rename', '/model/download', '/model/scenarios',
-    '/execute', '/executeInput', '/run', '/user/execute', '/user/executeInput', '/user/select', '/user/run', '/dashboard/start'])
+    '/execute', '/executeInput', '/run', '/dashboard/start'])
     test(`GET ${route}/<a name that climbs out> is refused`, async () => {
         for (const name of NAMES) {
             const res = await designer.get(`${route}/${name}`);

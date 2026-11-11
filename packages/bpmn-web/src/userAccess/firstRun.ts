@@ -5,14 +5,21 @@
  */
 import crypto from 'node:crypto';
 
-let token: string | null = null;
+/**
+ * Each server's token (docs/design/multi-app-tenants.md §8.1: no process-wide state for what is a server's), by its
+ * Express app (`req.app`, `webApp.app`); one with none given, for a caller that has no app.
+ */
+const tokens = new WeakMap<object, string>();
+const NO_APP = {};
+const of = (app?: object) => app ?? NO_APP;
 
 /** Whether the server waits for its administrator. */
-export const firstRunPending = () => token !== null;
+export const firstRunPending = (app?: object) => tokens.has(of(app));
 
 /** The server has no users: from now on its pages ask for the administrator, with this token. */
-export function beginFirstRun(): string {
-    token = crypto.randomBytes(18).toString('base64url');
+export function beginFirstRun(app?: object): string {
+    const token = crypto.randomBytes(18).toString('base64url');
+    tokens.set(of(app), token);
     const port = process.env.PORT || '3000';
     console.log([
         '',
@@ -25,13 +32,14 @@ export function beginFirstRun(): string {
 }
 
 /** The token as given, compared in constant time. */
-export function isSetupToken(given: unknown): boolean {
-    if (token === null || typeof given !== 'string') return false;
+export function isSetupToken(given: unknown, app?: object): boolean {
+    const token = tokens.get(of(app));
+    if (token === undefined || typeof given !== 'string') return false;
     const hash = (text: string) => crypto.createHash('sha256').update(text).digest();
     return crypto.timingSafeEqual(hash(given.trim()), hash(token));
 }
 
 /** The administrator exists: the pages go back to signing in. */
-export function endFirstRun() {
-    token = null;
+export function endFirstRun(app?: object) {
+    tokens.delete(of(app));
 }

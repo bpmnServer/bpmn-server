@@ -76,7 +76,7 @@ function startEngineProcess(port = '0') {
     });
 }
 
-export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true } = {}) {
+export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true, userManager, hostSettings } = {}) {
     const dbUrl = testDatabaseUrl();
     // TEST_DATABASE=sqlite: the same tests on a SQLite file of this app's own (DATABASE=sqlite:<file>)
     const sqliteDir = process.env.TEST_DATABASE === 'sqlite' ? fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-sqlite-')) : null;
@@ -128,6 +128,10 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
         configuration: webConfiguration(config(), TestDelegate),
         elementTemplatesPath: connectorsPath,
         serverOptions: { cron: false },
+        // an application's own sign-in (IUserManager): bpmn-web then keeps no users of its own
+        userManager,
+        // the API's settings of this server (keys, service account), else .env's
+        hostSettings,
     });
     const bpmnServer = webApp.bpmnServer;
     await bpmnServer.ready;
@@ -135,7 +139,7 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     await bpmnServer.definitions.rebuild();
 
     // users: false, a server's first start: no users at all
-    for (const [userName, userGroups] of users ? Object.entries(USERS) : [])
+    for (const [userName, userGroups] of users && !userManager ? Object.entries(USERS) : [])
         await User.create({ userName, email: `${userName}@test.local`, password: PASSWORD, userGroups });
 
     webApp.start();

@@ -8,6 +8,8 @@ import { openApiV3 } from './openapi-v3.js';
 import { ModelOperations, ModelError } from './models.js';
 import { SettingsOperations, SettingsError, settingsSchema } from './settings.js';
 import { UserOperations, UserError } from './users.js';
+import type { UserService } from '../../userAccess/UserService.js';
+import { hostUserManager } from '../../userAccess/UserManager.js';
 import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 import { invokeDecision } from '../decisions.js';
@@ -26,14 +28,15 @@ class RuleError extends Error {
 /** A page's bookmark as the client sees it: opaque. */
 const toCursor = (position: string | null) => position ? Buffer.from(position).toString('base64url') : undefined;
 const fromCursor = (cursor: unknown) => typeof cursor === 'string' ? Buffer.from(cursor, 'base64url').toString() : undefined;
-export function v3Router(server) {
+/** API v3; `users`: the users bpmn-web manages (its own user manager's; null: the application manages them). */
+export function v3Router(server, { users: managed }: { users?: UserService | null } = {}) {
     const router = express.Router();
     const tokens = new Tokens(server);
     const tasks = new TaskOperations(server);
     const instances = new InstanceOperations(server);
     const models = new ModelOperations(server);
     const settings = new SettingsOperations(server);
-    const users = new UserOperations(server);
+    const users = managed === undefined ? new UserOperations(server) : new UserOperations(server, managed);
     /** Where a person opens a model: the editor (signed in to the site; a token does not open it). */
     const editorUrl = (req, name: string) => `${originOf(req)}/model/edit/${encodeURIComponent(name)}`;
     /** Changing models and running tests: design on, and a designer's token or the service key. */
@@ -189,10 +192,14 @@ export function v3Router(server) {
     // ---- tokens
 
     // a token for one of the application's users: { userName, groups, minutes }
-    router.post('/tokens', serviceOnly, handler(async req => tokens.issue(req.body ?? {}, req.apiUser.userName), 201));
+    // (none with the application's user manager: the application issues the credentials)
+    const ownTokens = (req, res, next) => hostUserManager(req)
+        ? res.status(409).json({ error: { code: 'TOKENS_ELSEWHERE', message: 'The application issues the credentials: ask it' } })
+        : next();
+    router.post('/tokens', serviceOnly, ownTokens, handler(async req => tokens.issue(req.body ?? {}, req.apiUser.userName), 201));
 
     // revoke a user's tokens: ?userName=
-    router.delete('/tokens', serviceOnly, handler(async req => {
+    router.delete('/tokens', serviceOnly, ownTokens, handler(async req => {
         const userName = req.query.userName;
         if (typeof userName !== 'string' || !userName)
             throw new TokenError(400, 'userName is required', 'BAD_USER');

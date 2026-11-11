@@ -173,7 +173,7 @@ test('candidates execute a task from every task list, assigned or not (assignmen
   const submit = await waitingItem(id, 'Submit');
 
   const staff = await signedIn('staff');
-  for (const url of ['/tasks', '/', '/user']) {
+  for (const url of ['/tasks', '/']) {
     await staff.page.goto(web.base + url);
     assert.equal(await staff.page.locator(`a[href*="invokeItem?id=${submit.id}"]`).count(), 1, `${url}: Execute`);
   }
@@ -197,7 +197,7 @@ test('tasks of other groups are not listed', async () => {
   const approve = await waitingItem(id, 'Approve');
   assert.ok(approve, 'waits for the manager');
   const staff = await signedIn('staff');
-  for (const url of ['/tasks', '/', '/user']) {
+  for (const url of ['/tasks', '/']) {
     await staff.page.goto(web.base + url);
     assert.equal(await staff.page.locator(`a[href*="id=${approve.id}"]`).count(), 0, `${url}: no manager task for staff`);
   }

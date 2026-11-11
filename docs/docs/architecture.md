@@ -4,7 +4,8 @@ BPMN Server has three layers: a **host** that people and other systems talk to, 
 
 The **workflow pages and security** are one part of their own (the dashed box): sign-in, users and groups, and the
 pages people work in. bpmn-web has a set, a skeleton to start from; your own application can be that part instead,
-with the same server behind it. The **model editor** is a separate application, for designers.
+with the same server behind it, or inside it (a user manager: [Your application with the server inside](#your-application-with-the-server-inside)).
+The **model editor** is a separate application, for designers.
 
 ```mermaid
 flowchart LR
@@ -86,7 +87,7 @@ Each zone of the diagram trusts the one inside it, and only that one:
 
 | Boundary | What crosses it | What guards it |
 |---|---|---|
-| Internet → host | Pages, the model editor, REST calls | Sign-in and sessions, CSRF, API keys, rate limits; every call then acts as a user, with that user's rights |
+| Internet → host | Pages, the model editor, REST calls | Sign-in and sessions (bpmn-web's, or your application's through its user manager), CSRF, API keys and tokens, rate limits; every call then acts as a user, with that user's rights |
 | Host → engine | Writes: starting, completing, assigning, tests | A private address (`ENGINE_AT`) and a key (`ENGINE_KEY`); nothing else reaches the engine |
 | Engine → your systems | What your services and connectors call | Your code, and the connectors' keys, which only the engine holds |
 
@@ -115,13 +116,14 @@ The host has three doors, and they meet at one API:
 
 | Door | Used by | Reaches the engine through |
 |---|---|---|
-| Pages: My work, task forms, the instance page | Browsers | `BPMNAPI`, as the signed-in user |
+| Pages: My work, task forms, the instance page | Browsers | API v3's operations (My work, starting a process), else `BPMNAPI`; as the signed-in user |
 | The model editor's routes (`/model/...`) | The model editor in the browser | The core, for models, checks and history; `BPMNAPI` for runs and tests |
-| REST: `/api`, `/api2`, `/api2/tasks` | Other applications | `BPMNAPI`, as the key's service account or as the acting user |
+| REST: `/api/v3` | Other applications, your pages, AI agents | `BPMNAPI`, as the user a token (or your application's own credential) stands for, or as the service account (`API_KEY`) |
+| REST: `/api`, `/api2`, `/api2/tasks` (frozen) | Older applications | `BPMNAPI`, as the key's service account or as the acting user |
 
-So the pages and the REST APIs share the API and its rules, but not the HTTP contract: each door says in its own way who the
-user is. A UI that is a client of the REST API, signed in with its session, would give one contract to secure and to
-test, and a UI that could run apart from the host. It is on the roadmap.
+The pages are becoming clients of API v3 like any other: My work and starting a process use its operations, in the
+host's process, as the person API v3 would take; the other pages still call `BPMNAPI` directly. One contract to secure and to test,
+and, once every page is on it, a UI that can run apart from the host. [API v3](api-v3.md) has the contract.
 
 ## From the skeleton to your application
 
@@ -129,7 +131,7 @@ bpmn-web is where an application starts, not necessarily where it ends. What you
 
 | Part of bpmn-web | In your application |
 |---|---|
-| Sign-in, users and groups, the setup page | **Replaced** by your own: your sign-in, your user directory, your roles. The engine needs only each call's user and groups |
+| Sign-in, users and groups, the setup page | **Replaced** by your own: your sign-in, your user directory, your roles. The engine needs only each call's user and groups (`IUserInfo`); bpmn-web takes them from your user manager when it runs inside your application |
 | My work, task forms, the start form, the instance page | **Replaced** by your pages, which call the REST APIs (or `BPMNAPI`, embedded). bpmn-web's are working examples to copy from |
 | The engine, `BPMNAPI`, your delegate and services | **Kept**: this is what runs your processes |
 | REST APIs | **Kept**, behind your application, on a private network |
@@ -214,6 +216,104 @@ flowchart LR
 - Designers work on a design server of their own. A model reaches production as a file, tested, through Git: see
   [Release](tutorial/release.md).
 
+### Your application with the server inside
+
+Your application and bpmn-web are one server: bpmn-web runs in your application's process, with your routes and pages
+mounted in it, and **your application signs people in**. bpmn-web keeps no users, sessions or credentials of its own:
+it takes the person from your application's **user manager**. Your pages show the workflow pages (My work, the
+Workbench, the model editor, Administration) in your own layout, and your models call your application's API through a
+connector. `apps/hrdemo` is this setup: an HR application with the server in it.
+
+```mermaid
+flowchart LR
+  subgraph Internet["Internet: your users"]
+    People["Browsers, phones"]
+  end
+
+  subgraph AppProcess["One server: your application, with bpmn-web in it"]
+    subgraph AppZone["Your application"]
+      UM["Your user manager<br/>sign-in, users, roles, sessions"]
+      AppPages["Your pages, your layout<br/>the workflow pages inside it,<br/>a To do panel"]
+      AppApi["Your REST API<br/>your records"]
+    end
+    subgraph HostZone["bpmn-web"]
+      WfPages["Workflow pages<br/>My work, task forms, Workbench,<br/>model editor, Administration"]
+      V3["API v3<br/>as the person your user manager names"]
+      API["BPMNAPI<br/>each call as a user"]
+      WfPages --> V3
+      V3 --> API
+    end
+    subgraph EngineZone["Engine"]
+      Engine["Engine<br/>executions, timers, decisions"]
+      Code["Your code, connectors"]
+      Engine --> Code
+    end
+  end
+
+  subgraph DataZone["Data"]
+    AppDb[("Your database<br/>users, sessions, records")]
+    Store[("Workflow store")]
+    Models["Models folder"]
+  end
+
+  People --> UM
+  UM -- "req.user, its session" --> WfPages
+  UM -- "apiUser" --> V3
+  AppPages -- "tasks, as the person" --> V3
+  UM --> AppDb
+  API == "writes" ==> Engine
+  Engine --> Store
+  Engine --> Models
+  Code -- "connector, its own key" --> AppApi
+
+  classDef outside fill:#f1f5f9,stroke:#64748b,stroke-width:1px
+  classDef data fill:#ecfdf5,stroke:#047857,stroke-width:1px
+  classDef public fill:#e0f2fe,stroke:#0369a1,stroke-width:2px
+  classDef inner fill:#fffbeb,stroke:#a16207,stroke-width:1px
+  class Internet outside
+  class AppProcess,AppZone public
+  class HostZone,EngineZone inner
+  class DataZone data
+```
+
+**Who signs people in: your user manager.** bpmn-web asks one thing of your application, an `IUserManager` given to
+`start({ userManager })`:
+
+| It does | When |
+|---|---|
+| `init(app)`: your sessions, and on each request `req.user` (the person: `userName`, `userGroups`) | First, before bpmn-web's middleware |
+| `setup(app)`: `/login` and `/logout`, your own pages or sending people to them | Before bpmn-web's routes |
+| `apiUser(req)` (optional): who a call to API v3 is from, by your own credential (your session, your token) | Each call to `/api/v3` |
+
+- **Your roles become groups.** The groups `req.user` carries are what the models name: a lane, a task's candidate
+  groups, `ADMIN` and `DESIGNER` for administering and designing. The HR demo's roles give `Employee`, `Manager`,
+  `HR` and `ADMIN`.
+- **Your application issues the credentials.** API v3 takes the person your `apiUser` names; bpmn-web issues no tokens
+  and no links for AI agents (`POST /api/v3/tokens` and `/ai/key` refuse). The service key (`API_KEY`) stays, for
+  server-to-server calls. Signing out of your application signs out of the workflow pages too: they have no session
+  of their own.
+- **bpmn-web manages no users.** No setup page at the first start, no sign-up; Administration and `/api/v3/users` say
+  your application manages them. bpmn-web's own sign-in is its default user manager, unchanged.
+- **The engine is unchanged.** It needs only each call's `IUserInfo`: task assignment is by name and group, checked
+  against that person. Finding people (a group's members, an email) is your application's, in its delegate.
+
+**Your pages and the workflow pages, one site.** Your routes are mounted in bpmn-web's server (`start({ routes })`),
+before its own, so your pages, your API and the workflow pages share one address and one sign-in:
+
+- The workflow pages open inside your layout, in a frame of the same site, with bpmn-web's menu bar hidden: the HR
+  demo's sidebar has a Workflow section, and `/hr/workflow/<page>` shows bpmn-web's `<page>`.
+- Your pages call API v3 with the person's session: the HR demo's **To do** panel lists their tasks (assigned to them,
+  available to them, recently done) on every page, and opens a task's form.
+- *Planned:* a task can name one of your forms instead of its fields (`camunda:formKey="app:<name>"`): see the design
+  note `docs/design/form-keys.md`.
+
+**Your models call your application.** A connector, made from your API's OpenAPI document, is how a model reaches your
+records: the HR demo's `hr` connector (Assign Employee reads an employee and creates an assignment). It calls with a
+key of its own (`HR_SERVICE_KEY`, kept encrypted with `CONNECTORS_KEY`); your API takes that key or a signed-in
+person, and nothing else.
+
+The design: `docs/design/host-users.md`.
+
 ### Embedded
 
 Your application holds the engine in its own process, with no HTTP between them: your pages call `BPMNAPI`.
@@ -260,13 +360,14 @@ flowchart LR
 The simplest, and the least isolated: a model's scripts run in your web application's process. See
 [Embedding the engine](embedding.md).
 
-### The three, side by side
+### The four, side by side
 
-| | Public door | Who signs users in | Model code runs |
-|---|---|---|---|
-| bpmn-web's pages and security | bpmn-web | bpmn-web | In the engine's process, private |
-| Your application in control | Your application | Your application | In the engine's process, private, behind bpmn-web |
-| Embedded | Your application | Your application | In your application's process |
+| | Public door | Who signs users in | Workflow pages | Model code runs |
+|---|---|---|---|---|
+| bpmn-web's pages and security | bpmn-web | bpmn-web | bpmn-web's | In the engine's process, private |
+| Your application with the server inside | Your application, bpmn-web in its server | Your application (its user manager) | bpmn-web's in your layout, and yours | In the engine's process |
+| Your application in control | Your application | Your application | Yours, through the REST APIs | In the engine's process, private, behind bpmn-web |
+| Embedded | Your application | Your application | Yours, through `BPMNAPI` | In your application's process |
 
 ## Ways to run it
 
@@ -282,7 +383,9 @@ Your application can also embed the engine with no host at all, using `new BPMNS
 
 ## Users
 
-Only signed-in users use a server. There is no guest access. Each person has an account, and their groups decide what they can do: see [Security](security.md).
+Only signed-in users use a server. There is no guest access. Each person has an account, and their groups decide what they can do: see
+[Security](security.md). The accounts are bpmn-web's own (its default user manager), or your application's when it
+signs people in ([Your application with the server inside](#your-application-with-the-server-inside)).
 
 ## Tests
 
@@ -296,7 +399,7 @@ Tests are Gherkin `.feature` files beside their models. A scenario's last run is
 |---|---|
 | Models, decisions, their tests and version history | Files in the models folder (`DEFINITIONS_PATH`) |
 | Instances, tasks, locks and test runs | The workflow store |
-| Users and sessions | The application's MongoDB database |
+| Users and sessions | bpmn-web's: the workflow store, beside the instances (MongoDB, SQLite or memory). Your application's, with its user manager: your database |
 | Your business records | Your own database. A process keeps an identifier and calls your services |
 
 ## Packages

@@ -20,7 +20,8 @@ import { modelDescription, modelElements, savedCoverage } from '../testing/model
 import { reachedIn } from '../testing/coverage.js';
 import { loadDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
 import { adminDisabled, afterWork, canDesign, isAdminGroups } from '../userAccess/roles.js';
-import { UserService, userNameProblem } from '../userAccess/UserService.js';
+import { userNameProblem } from '../userAccess/UserService.js';
+import { ownUsers } from '../userAccess/UserManager.js';
 import validator from 'validator';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
@@ -104,33 +105,31 @@ export class Dashboards extends Common {
             isAdmin: !adminDisabled() && (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups)),
             isDesigner: canDesign(req.user),
         });
-        // the person the pages act for, as pageApi's token says
-        const pageUserName = (req) => req.user?.userName ?? (process.env.REQUIRE_AUTHENTICATION === 'false' ? 'system' : undefined);
         // v3's startable processes as the start forms' views have them: their fields, from the form
         const startsOf = (items) => items.map(s => ({ processName: s.processName, startNodeId: s.startNodeId, name: s.name, fields: s.form?.fields ?? [] }));
         const render = (req, res, view, data) => res.render('dashboards/' + view, { ...data, ...roles(req), me: req.user?.userName, user: req.user, request: req });
 
         // ---- my work ----------------------------------------------------------------------------------------
-        // through API v3, as the person (routes/api/pageClient.ts): their waiting tasks, the ones they completed, what they may start
+        // through API v3's operations, as the person (routes/api/pageClient.ts): their waiting tasks, the ones they
+        // completed, what they may start
         router.get('/', handler(async (req, res) => {
             const api = await pageApi(req, server);
-            const me = pageUserName(req);
-            const [waiting, done, startable] = await Promise.all([
-                api.get('/tasks?limit=200'), api.get('/tasks?status=completed&limit=10'), api.get('/processes/startable')]);
+            const me = api.user.userName;
+            const [waiting, done, startable] = await Promise.all([api.waiting(200), api.completed(10), api.startable()]);
             const mine = [], available = [];
-            for (const task of waiting.items) {
+            for (const task of waiting as any[]) {
                 task.fromNow = dateDiff(task.startedAt);
                 (task.assignee === me ? mine : task.assignee ? [] : available).push(task);
             }
-            const completed = done.items.map(task => ({ ...task, fromNow: dateDiff(task.endedAt) }));
-            render(req, res, 'user', { title: 'My work', mine, available, completed, starts: startsOf(startable.items) });
+            const completed = done.map(task => ({ ...task, fromNow: dateDiff(task.endedAt) }));
+            render(req, res, 'user', { title: 'My work', mine, available, completed, starts: startsOf(startable) });
         }));
 
         // the start page of a model: its start events a user can start, each with its start form
         router.get('/start/:processName', handler(async (req, res) => {
             const processName = req.params.processName;
-            const startable = await (await pageApi(req, server)).get('/processes/startable');
-            render(req, res, 'start', { title: 'Start a process', processName, starts: startsOf(startable.items.filter(s => s.processName === processName)) });
+            const startable = await (await pageApi(req, server)).startable();
+            render(req, res, 'start', { title: 'Start a process', processName, starts: startsOf(startable.filter(s => s.processName === processName)) });
         }));
 
         // start a process at one of its start events, with the start form's fields
@@ -142,7 +141,7 @@ export class Dashboards extends Common {
                     data[key.substring(6)] = value;
             const api = await pageApi(req, server);
             const started = await runProcess(server, { processName }, () =>
-                api.post(`/processes/${encodeURIComponent(processName)}/start`, { data, startNodeId: startNodeId || undefined }));
+                api.start(processName, { data, startNodeId: startNodeId || undefined }));
             res.redirect(afterWork(req.user, started.instance.id));
         }));
 
@@ -254,7 +253,9 @@ export class Dashboards extends Common {
             locks.forEach(l => l.fromNow = dateDiff(l.time));
             const hung = await server.dataStore.findItems({ 'items.status': 'start' });
             hung.forEach(i => i.fromNow = dateDiff(i.startedAt));
-            const users = await new UserService().listUsers();
+            // the users bpmn-web manages; none (null) when the application manages its own (IUserManager)
+            const own = ownUsers(this.webApp.userManager);
+            const users = own ? await own.listUsers() : null;
             const connectorList = await server.connectors.list();
             render(req, res, 'admin', {
                 title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: canEncrypt(),
@@ -285,7 +286,9 @@ export class Dashboards extends Common {
                 ?? (password.length >= 4 ? null : 'The password needs at least 4 characters.');
             if (problem)
                 return back(res, problem);
-            const users = new UserService();
+            const users = ownUsers(this.webApp.userManager);
+            if (!users)
+                return back(res, 'The application manages its users: add them there.');
             if (await users.userNamed(userName) || await users.findUser({ email }))
                 return back(res, `A user named '${userName}' or with the email '${email}' already exists.`);
             await users.addUser(userName, email, password, groups);
@@ -529,7 +532,7 @@ export class Dashboards extends Common {
             () => server.dataStore.backup?.() ?? {},
             () => (server.definitions as any).backup?.() ?? {},
             () => server.connectors?.backup() ?? {},
-            () => new UserService().backup(),
+            () => ownUsers(this.webApp.userManager)?.backup() ?? {},
         ];
         let first = true;
         for (const store of stores)

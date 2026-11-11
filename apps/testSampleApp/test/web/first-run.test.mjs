@@ -10,7 +10,7 @@ const firstRun = await import(new URL('../../../../packages/bpmn-web/dist/userAc
 let web, token;
 test.before(async () => {
   web = await startWebApp({ users: false });
-  token = firstRun.beginFirstRun();
+  token = firstRun.beginFirstRun(web.webApp.app);
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
@@ -45,7 +45,7 @@ test('without the token, a weak password or a mismatch, nothing is made', async 
     assert.equal(res.status, 400, userName);
     assert.match(res.text, /A user name is 2 to 64 letters, digits or \. _ @ -/, userName);
   }
-  assert.equal(firstRun.firstRunPending(), true, 'still waiting');
+  assert.equal(firstRun.firstRunPending(web.webApp.app), true, 'still waiting');
 });
 
 test('the administrator and the sample users are made, the one who set it up is signed in, and setup is over', async () => {
@@ -53,7 +53,7 @@ test('the administrator and the sample users are made, the one who set it up is 
   await browser.get('/setup');
   const res = await browser.post('/setup', form({ sampleUsers: 'true', samplePassword: 'sample-pass' }));
   assert.equal(res.status, 302, why(res));
-  assert.equal(firstRun.firstRunPending(), false);
+  assert.equal(firstRun.firstRunPending(web.webApp.app), false);
   const home = await browser.get('/dashboard/admin');
   assert.equal(home.status, 200, 'signed in, as an administrator');
 

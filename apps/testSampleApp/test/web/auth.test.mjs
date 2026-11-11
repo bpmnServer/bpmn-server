@@ -10,7 +10,7 @@ test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0));
 
 test('UI pages redirect anonymous visitors to the login page', async () => {
   const anonymous = web.client();
-  for (const url of ['/', '/tasks', '/instanceDetails?id=x', '/model/list', '/user', '/account']) {
+  for (const url of ['/', '/tasks', '/instanceDetails?id=x', '/model/list', '/account']) {
     const res = await anonymous.get(url);
     assert.equal(res.status, 302, url);
     assert.match(res.location, /\/login$/, url);

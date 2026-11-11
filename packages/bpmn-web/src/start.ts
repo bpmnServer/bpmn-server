@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import { Configuration, Logger, ModelsDatastore, DataStore, ScriptHandler, SandboxScriptHandler, NoCacheManager, SqliteDocumentStore, settingsProblems } from 'bpmn-server';
 import type { IAppDelegate, BPMNServer } from 'bpmn-server';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
+import type { IUserManager } from './userAccess/IUserManager.js';
+import type { UserService } from './userAccess/UserService.js';
 import { WebAppDelegate } from './runtime/WebAppDelegate.js';
 import { engineSettingsFromEnv } from './runtime/engineEnv.js';
 import { runSetting } from './runtime/runSettings.js';
@@ -48,6 +50,13 @@ export interface StartOptions {
 	console?: boolean;
 	/** The application's own routes, mounted before bpmn-web's (WorkflowApplication.routes). */
 	routes?: WorkflowApplication['routes'];
+	/**
+	 * Who signs in: the application's own users, sessions and sign-in (IUserManager, WorkflowApplication.userManager).
+	 * Without it, bpmn-web's own.
+	 */
+	userManager?: IUserManager;
+	/** The API's settings (keys, service account, impersonation) of this server; default `.env`'s (runtime/hostSettings.ts). */
+	hostSettings?: WorkflowApplication['hostSettings'];
 }
 
 function isTrue(param) {
@@ -107,7 +116,7 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
  * The database's indexes, and the first user (admin, password ADMIN_PASSWORD) when there are no users at all; without
  * ADMIN_PASSWORD, the server's first page asks for the administrator.
  */
-export async function setup(server: BPMNServer) {
+export async function setup(server: BPMNServer, users: UserService | null = undefined) {
 	await server.dataStore.install();
 	await server.definitions.install();
 	await server.connectors?.install();
@@ -136,8 +145,9 @@ export async function setup(server: BPMNServer) {
 	catch (error) {
 		console.error('the test files were not converted:', error.message);
 	}
-	const { UserService } = await import('./userAccess/UserService.js');
-	return await new UserService().install();
+	// an application that manages its own users (start({ userManager }) without users): none to make here
+	if (users === null) return false;
+	return await (users ?? new (await import('./userAccess/UserService.js')).UserService()).install();
 }
 
 /**
@@ -200,16 +210,23 @@ export async function start(options: StartOptions = {}) {
 		ui: options.ui ?? true,
 		elementTemplatesPath: fs.existsSync(templates) ? templates : undefined,
 		routes: options.routes,
+		userManager: options.userManager,
+		hostSettings: options.hostSettings,
 		serverOptions: options.setupOnly || options.console ? { cron: false } : {},
 	};
 	const { WebApp } = await import('./app.js');
 	const webApp = new WebApp(application);
 	await webApp.bpmnServer.ready;
-	const madeAdmin = await setup(webApp.bpmnServer);
+	// the users bpmn-web manages: its own, the application's user manager's, or none (the application's own)
+	const { ownUsers } = await import('./userAccess/UserManager.js');
+	const users = ownUsers(webApp.userManager);
+	const madeAdmin = await setup(webApp.bpmnServer, users);
 	if (options.setupOnly) {
 		console.log(madeAdmin
 			? 'setup done: the database is ready; sign in as admin with the password ADMIN_PASSWORD gave'
-			: await usersNow() > 0
+			: !users
+				? 'setup done: the database is ready; the application manages its users'
+			: await usersNow(users) > 0
 				? 'setup done: the database is ready; it already has users, none was added'
 				: 'setup done: the database is ready; no users yet: start the server, and its first page asks for the administrator');
 		await webApp.bpmnServer.shutdown();
@@ -221,15 +238,14 @@ export async function start(options: StartOptions = {}) {
 		return webApp;
 	}
 	// no users, and sign-in on: the pages ask for the administrator, with a token printed here
-	if (process.env.REQUIRE_AUTHENTICATION !== 'false' && await usersNow() === 0) {
+	if (users && process.env.REQUIRE_AUTHENTICATION !== 'false' && await usersNow(users) === 0) {
 		const { beginFirstRun } = await import('./userAccess/firstRun.js');
-		beginFirstRun();
+		beginFirstRun(webApp.app);
 	}
 	webApp.start();
 	return webApp;
 }
 
-async function usersNow() {
-	const { UserService } = await import('./userAccess/UserService.js');
-	return new UserService().count();
+async function usersNow(users: UserService) {
+	return users.count();
 }

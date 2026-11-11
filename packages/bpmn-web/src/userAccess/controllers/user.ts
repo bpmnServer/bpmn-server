@@ -125,16 +125,16 @@ export class UserController {
      */
     /** The first start: the administrator, with the token the server printed; then, if asked, the tutorials' users. */
     static getSetup(req, res) {
-        if (!firstRunPending()) return res.redirect('/login');
+        if (!firstRunPending(req.app)) return res.redirect('/login');
         res.render(viewPath + 'setup', { title: 'Set up this server', token: req.query.token ?? '', values: {}, message: null, canSignup: false });
     }
 
     static async postSetup(req, res) {
-        if (!firstRunPending()) return answerMessage(req, res, 404, 'This server is set up already: sign in.');
+        if (!firstRunPending(req.app)) return answerMessage(req, res, 404, 'This server is set up already: sign in.');
         const { token, userName = '', email = '', password = '', confirmPassword = '', sampleUsers, samplePassword = '' } = req.body ?? {};
         const again = (status, message) => res.status(status).render(viewPath + 'setup', {
             title: 'Set up this server', token: '', values: { userName, email, sampleUsers }, message, canSignup: false });
-        if (!isSetupToken(token)) return again(403, 'That is not the setup token the server printed when it started.');
+        if (!isSetupToken(token, req.app)) return again(403, 'That is not the setup token the server printed when it started.');
         const nameProblem = userNameProblem(String(userName).trim());
         if (nameProblem) return again(400, nameProblem);
         if (!validator.isEmail(String(email))) return again(400, 'Give the administrator\'s email.');
@@ -147,7 +147,7 @@ export class UserController {
             await users.addUser('user1', 'user1@example.com', samplePassword, ['Employee']);
             await users.addUser('manager1', 'manager1@example.com', samplePassword, ['Employee', 'Manager']);
         }
-        endFirstRun();
+        endFirstRun(req.app);
         req.logIn(admin, error => error ? answerMessage(req, res, 500, 'The administrator was created: sign in.') : res.redirect('/'));
     }
 

@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { envHostSettings, type HostSettings } from '../../runtime/hostSettings.js';
 import { SecureUser } from '../../index.js';
 
 /** The groups an application can not give its users (by a token, or the acting-user key): it can not make an administrator. */
@@ -87,6 +88,7 @@ export class Tokens {
 }
 
 /** The user a token stands for, as the API acts: their name and groups, the security rules on. */
-export function tokenUser(holder: TokenHolder): SecureUser {
-    return new SecureUser({ userName: holder.userName, userGroups: holder.groups, tenantId: process.env.API_SERVICE_TENANT_ID, modelsOwner: process.env.API_SERVICE_MODELS_OWNER } as any, { enforceSecurity: true });
+export function tokenUser(holder: TokenHolder, settings: HostSettings = envHostSettings()): SecureUser {
+    const { tenantId, modelsOwner } = settings.serviceAccount;
+    return new SecureUser({ userName: holder.userName, userGroups: holder.groups, tenantId, modelsOwner } as any, { enforceSecurity: true });
 }

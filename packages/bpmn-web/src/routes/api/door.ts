@@ -2,6 +2,8 @@ import { SecureUser } from '../../index.js';
 import { apiKeyAuth, configuredApiUser, timingSafeEqualStr } from '../middleware/apiKeyAuth.js';
 import { unrestrictedUser } from './operations.js';
 import { Tokens, tokenUser, REFUSED_GROUPS } from './tokens.js';
+import { hostSettings } from '../../runtime/hostSettings.js';
+import { hostUserManager } from '../../userAccess/UserManager.js';
 
 /*
  * The API's door (docs/design/api-v3.md): who is calling, once per request. It checks the credential and sets
@@ -19,7 +21,8 @@ import { Tokens, tokenUser, REFUSED_GROUPS } from './tokens.js';
  */
 export type Way = 'v1' | 'v1-admin' | 'v2' | 'v2-admin' | 'acting' | 'v3';
 
-export const impersonationAllowed = () => process.env.API_IMPERSONATION?.toLowerCase() === 'true';
+/** API_IMPERSONATION, as the request's server has it (hostSettings). */
+export const impersonationAllowed = (req?) => hostSettings(req).impersonation;
 
 /** The user a v1 caller names, if any. */
 const namedUser = req => req.body?.options?.userName ?? req.body?.userName;
@@ -31,9 +34,9 @@ class Refused extends Error {
     constructor(readonly status: number, readonly body: object) { super(JSON.stringify(body)); }
 }
 
-function serviceAccount(): SecureUser {
+function serviceAccount(req): SecureUser {
     try {
-        return configuredApiUser();
+        return configuredApiUser(hostSettings(req));
     }
     catch {
         throw new Refused(500, { errors: 'API service principal is not configured: set API_SERVICE_USER_NAME and API_SERVICE_USER_GROUPS (for example integration and SYSTEM) in .env, then restart' });
@@ -44,17 +47,17 @@ function userFor(way: Way, req, res): SecureUser {
     switch (way) {
         case 'v1': {
             const named = namedUser(req);
-            if (impersonationAllowed())
+            if (impersonationAllowed(req))
                 return unrestrictedUser(named);
             if (named !== undefined)
                 res.set('Warning', '299 - "userName is ignored: /api acts as its service account (API_IMPERSONATION=true allows it until 4.0)"');
-            return serviceAccount();
+            return serviceAccount(req);
         }
         case 'v1-admin':
             return unrestrictedUser(req.user?.userName);
         case 'v2':
         case 'v2-admin':
-            return serviceAccount();
+            return serviceAccount(req);
         case 'acting': {
             const userName = req.header('x-acting-user')?.trim();
             if (!userName)
@@ -63,14 +66,15 @@ function userFor(way: Way, req, res): SecureUser {
             if (userGroups.some(group => REFUSED_GROUPS.includes(group.toUpperCase())))
                 throw new Refused(403, { errors: `"x-acting-groups" can not have ${REFUSED_GROUPS.join(', ')}`, code: 'ACTING_GROUP_REFUSED' });
             // the tenant is the service account's, never the caller's; the security rules hold whatever the environment says
-            return new SecureUser({ userName, userGroups, tenantId: process.env.API_SERVICE_TENANT_ID, modelsOwner: process.env.API_SERVICE_MODELS_OWNER }, { enforceSecurity: true });
+            const { tenantId, modelsOwner } = hostSettings(req).serviceAccount;
+            return new SecureUser({ userName, userGroups, tenantId, modelsOwner }, { enforceSecurity: true });
         }
     }
 }
 
 /** The acting-user key's own check: off unless API_ACTING_USER_KEY is set, and API_KEY does not open it. */
 function actingKey(req, res, next) {
-    const key = process.env.API_ACTING_USER_KEY;
+    const key = hostSettings(req).actingUserKey;
     if (!key)
         return res.status(404).json({ errors: 'The task API is not turned on: API_ACTING_USER_KEY', code: 'TASK_API_OFF' });
     const presented = req.header('x-api-key');
@@ -79,16 +83,60 @@ function actingKey(req, res, next) {
     next();
 }
 
-/** v3's door: a user's token, or the service key. request.apiCredential says which ('token' or 'service'). */
+const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS'];
+
+/**
+ * Why a call that changes something (POST, PUT, DELETE...) is refused as coming from another site, or null. A browser
+ * says where a request comes from (Sec-Fetch-Site, Origin); a form another site posts says another site. A call from
+ * no browser (a server, a script, the pages' own client) says neither, and is let through: it carries no visitor's
+ * cookie unless its caller gave it one.
+ */
+export function crossSiteWrite(req): string | null {
+    if (SAFE_METHODS.includes(req.method)) return null;
+    const site = req.header('sec-fetch-site');
+    if (site !== undefined && site !== 'same-origin' && site !== 'none')
+        return `A ${site} request may not change anything with this site's sign-in: send it from this site, or with a key`;
+    const origin = req.header('origin');
+    if (origin !== undefined && origin !== 'null' && origin !== originOf(req))
+        return `A request from ${origin} may not change anything with this site's sign-in: send it from this site, or with a key`;
+    if (origin === 'null')
+        return 'A request from no origin (a sandboxed page, a file) may not change anything with this site\'s sign-in';
+    return null;
+}
+
+/**
+ * v3's door: a user's token, or the service key; with the application's user manager, the application's credential
+ * (its apiUser) or the service key. request.apiCredential says which ('token', 'host' or 'service').
+ */
 function v3Door(tokens: Tokens) {
     return async (req, res, next) => {
-        const bearer = /^Bearer\s+(\S+)$/i.exec(req.header('authorization') ?? '')?.[1];
+        // the application's user manager: the application's credentials, and no tokens of bpmn-web's
+        const host = hostUserManager(req);
+        if (host && req.header('x-api-key') === undefined) {
+            // the application's credential may be its session cookie, which a browser sends with a form another site
+            // posts: a call that changes something comes from this site, or from no browser at all (CSRF)
+            const crossSite = crossSiteWrite(req);
+            if (crossSite)
+                return res.status(403).json({ error: { code: 'CROSS_SITE', message: crossSite } });
+            try {
+                const info = await host.apiUser?.(req);
+                if (!info?.userName)
+                    return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: "Send the application's credential, or the service key (x-api-key)" } });
+                req.apiUser = new SecureUser({ ...info, userGroups: info.userGroups ?? [] } as any, { enforceSecurity: true });
+                req.apiCredential = 'host';
+                return next();
+            }
+            catch (error) {
+                return next(error);
+            }
+        }
+        const bearer = host ? undefined : /^Bearer\s+(\S+)$/i.exec(req.header('authorization') ?? '')?.[1];
         if (bearer) {
             try {
                 const holder = await tokens.holder(bearer);
                 if (!holder)
                     return res.status(401).json({ error: { code: 'TOKEN_INVALID', message: 'The token is unknown, expired or revoked' } });
-                req.apiUser = tokenUser(holder);
+                req.apiUser = tokenUser(holder, hostSettings(req));
                 req.apiCredential = 'token';
                 // a person's AI link: its level (aiAccess.ts); v3's routes check it
                 req.apiScope = holder.scope;
@@ -98,13 +146,13 @@ function v3Door(tokens: Tokens) {
                 return next(error);
             }
         }
-        const key = process.env.API_KEY, presented = req.header('x-api-key');
+        const key = hostSettings(req).apiKey, presented = req.header('x-api-key');
         if (!key)
             return res.status(500).json({ error: { code: 'NOT_CONFIGURED', message: 'server API_KEY is not configured' } });
         if (typeof presented !== 'string' || !timingSafeEqualStr(presented, key))
             return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: "Send a user's token (Authorization: Bearer) or the service key (x-api-key)" } });
         try {
-            req.apiUser = serviceAccount();
+            req.apiUser = serviceAccount(req);
             req.apiCredential = 'service';
         }
         catch (error) {

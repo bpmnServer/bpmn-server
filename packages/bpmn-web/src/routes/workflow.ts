@@ -33,18 +33,25 @@ function awaitAppDelegateFactory (middleware) {
     }
 }
 //   
-var bpmnServer;
-var definitions;
-var bpmnAPI;
+
+/**
+ * The server a request came to, and its API (app.ts sets `bpmnServer` on the Express app): each request's own, no
+ * module-level server, so two servers in one process each keep theirs (docs/design/multi-app-tenants.md §8.1).
+ */
+const serverOf = (req) => req.app.get('bpmnServer');
+const apis = new WeakMap<object, BPMNAPI>();
+function apiOf(req): BPMNAPI {
+    const server = serverOf(req);
+    let api = apis.get(server);
+    if (!api) apis.set(server, api = new BPMNAPI(server));
+    return api;
+}
 
 export class Workflow extends Common {
     config() {
         var router = express.Router();
         guardModelParams(router);
 
-        bpmnServer = this.webApp.bpmnServer;
-        bpmnAPI = new BPMNAPI(bpmnServer);
-        definitions = bpmnServer.definitions;
 
         // Deny-by-default: every workflow UI route requires a session
         // (unless REQUIRE_AUTHENTICATION=false — the demo dev bypass).
@@ -106,11 +113,11 @@ export class Workflow extends Common {
             let processName = request.params.processName;
             request.session.processName = processName;
             // something to ask first (which start event, its start form): the start page
-            const definition = await bpmnServer.definitions.load(processName).catch(() => null);
+            const definition = await serverOf(request).definitions.load(processName).catch(() => null);
             const starts = definition?.getStartNodes(true) ?? [];
             if (starts.length > 1 || starts.some(node => (definition.getNodeInfo(node.id).fields ?? []).length))
                 return response.redirect('/dashboard/start/' + encodeURIComponent(processName));
-            let context = await runProcess(bpmnServer, { processName: processName }, () => bpmnAPI.engine.start(processName, { caseId: caseId++ },getSecureUser(request)));
+            let context = await runProcess(serverOf(request), { processName: processName }, () => apiOf(request).engine.start(processName, { caseId: caseId++ },getSecureUser(request)));
 
             if (context.errors) {
                 displayError(response, context.errors);
@@ -137,7 +144,7 @@ export class Workflow extends Common {
 
             data['caseId'] = caseId++;
 
-            let context = await runProcess(bpmnServer, { processName: process }, () => bpmnAPI.engine.start(process, data,getSecureUser(request), { startNodeId }));
+            let context = await runProcess(serverOf(request), { processName: process }, () => apiOf(request).engine.start(process, data,getSecureUser(request), { startNodeId }));
             if (context.errors) {
                 displayError(response, context.errors);
             }
@@ -156,7 +163,7 @@ export class Workflow extends Common {
         });
 
         router.post('/resetData', this.isAdmin, awaitAppDelegateFactory(async (request, response) => {
-            await bpmnServer.engine.deleteInstances({});
+            await serverOf(request).engine.deleteInstances({});
             let output = ['Data Reset'];
             output = show(output);
             return display(request,response, 'Show', output);
@@ -185,11 +192,11 @@ export class Workflow extends Common {
 
 
             // findItem authorizes the task; findInstances no longer returns data or items to non-admins
-            const item = await bpmnAPI.data.findItem({ "items.id": id }, getSecureUser(request));
+            const item = await apiOf(request).data.findItem({ "items.id": id }, getSecureUser(request));
             if (!item) return answerMessage(request, response, 403, 'Item not found or not authorized');
-            const instance = await bpmnServer.dataStore.findInstance({ id: item.instanceId }, 'full');
+            const instance = await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');
 
-            let definition=await bpmnServer.definitions.loadFromInstance(instance);
+            let definition=await serverOf(request).definitions.loadFromInstance(instance);
 
             let { node, fields } =definition.getNodeInfo(elementId);
 
@@ -202,7 +209,7 @@ export class Workflow extends Common {
                 });
                 return;
             }
-            let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.invoke({ "items.id": id }, {}, getSecureUser(request)));
+            let result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.invoke({ "items.id": id }, {}, getSecureUser(request)));
 
             return await afterOperation(request,response,result);
         }));
@@ -215,7 +222,7 @@ export class Workflow extends Common {
                 if (!FORM_ONLY.has(key)) data[key] = value;
 
 
-            let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.invoke({ "items.id": id }, data, getSecureUser(request)));
+            let result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.invoke({ "items.id": id }, data, getSecureUser(request)));
 
             return await afterOperation(request,response,result);
 
@@ -228,7 +235,7 @@ export class Workflow extends Common {
             let processName = request.query.processName;
             let elementId = request.query.elementId;
             let itemId = request.query.itemId;
-            let item = await bpmnAPI.data.findItem({"items.id": id},getSecureUser(request));
+            let item = await apiOf(request).data.findItem({"items.id": id},getSecureUser(request));
             //console.log('item:', item);
             if (!item) {
                 request.flash('errors', [{ msg: 'Item not found or not authorized' }]);
@@ -236,9 +243,9 @@ export class Workflow extends Common {
                 return;
             }
 
-            const instance = await bpmnServer.dataStore.findInstance({ id: item.instanceId }, 'full');   // item authorized above
+            const instance = await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');   // item authorized above
             const lastItem = instance.items[instance.items.length - 1];
-            let definition=await bpmnServer.definitions.loadFromInstance(instance);
+            let definition=await serverOf(request).definitions.loadFromInstance(instance);
 
             let { node, fields } =definition.getNodeInfo(elementId);
 
@@ -278,7 +285,7 @@ export class Workflow extends Common {
             assignment['candidateGroups'] = assignment['candidateGroups'].split(',');
 
             //console.log('data', data, 'assignment', assignment);
-            let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.assign({ "items.id": id }, data, assignment, getSecureUser(request)));
+            let result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.assign({ "items.id": id }, data, assignment, getSecureUser(request)));
 
             return await afterOperation(request,response,result);
 
@@ -287,7 +294,7 @@ export class Workflow extends Common {
         router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
             let process = request.params.process;
 
-            let exec = await runProcess(bpmnServer, { processName: process }, () => bpmnAPI.engine.start(process, { caseId: caseId++ }, getSecureUser(request)));
+            let exec = await runProcess(serverOf(request), { processName: process }, () => apiOf(request).engine.start(process, { caseId: caseId++ }, getSecureUser(request)));
             if (exec.errors) {
                 displayError(response, exec.errors);
             }
@@ -306,7 +313,7 @@ export class Workflow extends Common {
         router.post('/query', async (req, res) => {
             try {
                 const query = req.body.query;
-                var results = await bpmnAPI.data.findInstances(query, getSecureUser(req), {
+                var results = await apiOf(req).data.findInstances(query, getSecureUser(req), {
                     projection: { name: 1, status: 1, data: 1, items: 1 },
                     sort: { saved: -1 }
                 });
@@ -321,7 +328,7 @@ export class Workflow extends Common {
         // a failed item (status error): its work again
         router.post('/retryItem', this.isAdmin, awaitAppDelegateFactory(async (request, response) => {
             const id = request.body.itemId;
-            const result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.retry({ "items.id": id }, getSecureUser(request)));
+            const result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.retry({ "items.id": id }, getSecureUser(request)));
             return await afterOperation(request, response, result);
         }));
         return router;
@@ -329,14 +336,14 @@ export class Workflow extends Common {
     async tasks(request, response) {
 
 
-        let items = await bpmnAPI.data.findItems({ "items.type": "bpmn:UserTask", "items.status": "wait", ...notATest }, getSecureUser(request));
+        let items = await apiOf(request).data.findItems({ "items.type": "bpmn:UserTask", "items.status": "wait", ...notATest }, getSecureUser(request));
 
         items.forEach(item => {
             item['fromNow'] = dateDiff(item.startedAt);
             item['dueFrom'] = dateDiff(item.dueDate);
             item['followFrom'] = dateDiff(item.followUpDate);
         });
-        let starts = await bpmnAPI.model.findStartEvents({}, getSecureUser(request));
+        let starts = await apiOf(request).model.findStartEvents({}, getSecureUser(request));
 
 
         await response.render('tasks',
@@ -373,14 +380,14 @@ async function deleteInstance(req, res) {
 
     let instanceId = req.body.id;
 
-    await bpmnServer.engine.deleteInstances({ id: instanceId });
+    await serverOf(req).engine.deleteInstances({ id: instanceId });
 
     let output = ['Complete ' + instanceId];
     return display(req,res, 'Show', output);
 }
-async function getProcs() {
+async function getProcs(req) {
     let list=[];
-    let procs=await bpmnServer.definitions.getList();
+    let procs=await serverOf(req).definitions.getList();
     procs.forEach(p=>{list.push(p.name);});
     return list;
 }
@@ -447,14 +454,14 @@ async function display(req,res, title, output, logs = [], items = []) {
 
     let user = getSecureUser(req);
     
-    var instances = await bpmnAPI.data.findInstances({ ...notATest }, user,{sort:{saved:-1}});
-    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest }, getSecureUser(req)); 
+    var instances = await apiOf(req).data.findInstances({ ...notATest }, user,{sort:{saved:-1}});
+    let waiting = await apiOf(req).data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest }, getSecureUser(req));
 
     waiting.forEach(item => {
         item['fromNow'] = dateDiff(item.startedAt);
     });
 
-    let engines = await bpmnServer.engine.live();
+    let engines = await serverOf(req).engine.live();
 
     engines.forEach(engine => {
         engine.fromNow = dateDiff(engine.startedAt); 
@@ -474,7 +481,7 @@ async function display(req,res, title, output, logs = [], items = []) {
             title: title, output: output,
             engines,
             user, 
-            procs: await getProcs(),
+            procs: await getProcs(req),
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
             instances,
@@ -511,10 +518,10 @@ async function instanceDetails(request,response,instanceId,version) {
 
     let user = getSecureUser(request);
 
-    const visibleItems = await bpmnAPI.data.findItems({ id: instanceId }, user);
+    const visibleItems = await apiOf(request).data.findItems({ id: instanceId }, user);
     if (visibleItems.length === 0) return response.status(403).send('Instance access denied');
 
-    let instance = await bpmnServer.dataStore.findInstance({ id: instanceId }, 'Full');
+    let instance = await serverOf(request).dataStore.findInstance({ id: instanceId }, 'Full');
 
     let logs = instance.logs;
     if (!logs)
@@ -524,11 +531,11 @@ async function instanceDetails(request,response,instanceId,version) {
     try {
         svg= instance.svg;
         if (!svg)
-            svg = await definitions.getSVG(instance.name);
+            svg = await serverOf(request).definitions.getSVG(instance.name);
         // decorations and the replay animation find elements by data-element-id; older generated
         // previews lack it, so draw the diagram again from the instance's model
         if (!svg || !svg.includes('data-element-id'))
-            svg = (await bpmnToSvg(instance.source || await definitions.getSource(instance.name))) || svg;
+            svg = (await bpmnToSvg(instance.source || await serverOf(request).definitions.getSource(instance.name))) || svg;
     }
     catch (ex) {
 
@@ -544,7 +551,7 @@ async function instanceDetails(request,response,instanceId,version) {
     }
     let lastItem = items[items.length - 1];
 
-    const def = await bpmnServer.definitions.loadFromInstance(instance);     // loaded: loading again listed each flow twice
+    const def = await serverOf(request).definitions.loadFromInstance(instance);     // loaded: loading again listed each flow twice
     const defJson = def.getJson();
     let output = ['View Process Log'];
     output = show(output);
@@ -562,7 +569,7 @@ async function instanceDetails(request,response,instanceId,version) {
             decorations, definition: defJson, lastItem,
             rationale: rationaleSteps(logs, items, instance.startedAt),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
-            modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
+            modelJson: JSON.stringify(instance.source || await serverOf(request).definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });
 
 }//export default router;

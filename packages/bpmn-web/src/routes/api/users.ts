@@ -19,8 +19,13 @@ const groupsOf = (groups: unknown): string[] => {
 };
 
 export class UserOperations {
-    private readonly users = new UserService();
-    constructor(readonly server) { }
+    /** `managed`: the users bpmn-web manages, its own by default; null when the application manages them: refused. */
+    constructor(readonly server, private readonly managed: UserService | null = new UserService()) { }
+
+    private get users(): UserService {
+        if (!this.managed) throw new UserError(409, 'The application manages its users: change them there', 'USERS_ELSEWHERE');
+        return this.managed;
+    }
 
     private async find(userName: string) {
         const user = await this.users.userNamed(userName);

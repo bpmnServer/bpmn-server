@@ -54,8 +54,8 @@ test('no account with sign-in off: a page that says so, with the menu', async ()
     assert.notEqual(post.status, 500);
 });
 
-test('the user pages work with sign-in off', async () => {
-    for (const path of ['/user', '/user/home'])
+test('the pages work with sign-in off', async () => {
+    for (const path of ['/', '/home'])
         assert.match(await page(path), /href="\/dashboard\/design">Design</, path);
 });
 

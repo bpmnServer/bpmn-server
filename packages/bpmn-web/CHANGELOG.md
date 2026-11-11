@@ -14,6 +14,15 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **An application's own sign-in: `start({ userManager })`.** An application that signs people in itself gives
+  bpmn-web its user manager (`IUserManager`: `init(app)` for its sessions and `req.user`, `setup(app)` for `/login` and
+  `/logout`, optional `apiUser(req)` for its API credential). bpmn-web then keeps no users, sessions or credentials of
+  its own: the pages take the application's person; API v3 takes the application's credential, and refuses a change
+  posted from another site with its cookie (`CROSS_SITE`, by the browser's `Sec-Fetch-Site` and `Origin`;
+  `crossSiteWrite` is exported for the application's own routes); `POST`/`DELETE /api/v3/tokens` (`TOKENS_ELSEWHERE`)
+  and `/ai/key` are refused; Administration and `/api/v3/users` (`USERS_ELSEWHERE`) say the application manages the
+  users; no first-run page. bpmn-web's own sign-in is its default user manager (`UserManager`), unchanged.
+  `docs/design/host-users.md`; `apps/hrdemo` is an application with its own.
 - **The task API starts processes, and gives each task its form** (`/api2/tasks`, with `API_ACTING_USER_KEY` and `x-acting-user`): `POST /api2/tasks/start/:name` starts a process as the acting user, at a start event they may use (its lane or candidates), and answers their first task; `GET /api2/tasks/:id` answers `form: { fields, formKey }`, each field with its options and validation. An application no longer needs `/api` to start a process for one of its users.
 - **API v3 begins: user tokens** (`/api/v3`). With the service key, an application's back end asks for a token for one of its users (`POST /api/v3/tokens`); each call with `Authorization: Bearer <token>` acts as that user, with their groups and the security rules. Tokens expire (15 minutes by default), are revoked per user (`DELETE /api/v3/tokens`), are kept hashed in `wf_tokens`, and can not have `SYSTEM`, `ADMIN` or `DESIGNER`. `GET /api/v3/me` says who a call acts as. A user's processes and tasks on v3: what they may start (with the start forms), starting as them, their tasks a page at a time (`cursor`), one with its form, claim, complete; the same operations as `/api2/tasks`. Instances on v3: those a user may see (a page at a time), one with its items, its Rationale by step, a start event, a restart; deleting (administrators), messages and signals (the system). Models and their tests on v3: list, read, save (checked; laid out without a diagram), check, an element's details, the `.feature`, run it, rename, delete; the same operations as `/api2`'s. v3's OpenAPI document at `/api/v3/openapi.json` (no credential needed), checked against the routes.
 - **A link for an AI agent** (`/ai/key`, in the menu under your name): an API token that acts as its person, at the level they choose among those they have: **Work** (processes, tasks, instances), **Design** (and models and their tests), **Administer** (and the settings, read with secrets masked, and their checks; it changes nothing). It reaches no more than its level nor its person; it is not a key of `/api` or `/api2`. Kept as its hash in `wf_tokens`, masked in the request log; it expires (30 minutes, `AI_KEY_TTL_GROUPS` by group, an Administer link 10 at most) and goes when its person revokes their links or signs out. `AI_ACCESS` says which levels a server offers. The users on the API, for an administrator (never an AI link): `GET`, `POST /api/v3/users`, `PUT /users/{name}/groups`, `POST /users/{name}/password`, `DELETE /users/{name}`; changing a user's groups or deleting them ends their tokens. The settings on the API: `GET /api/v3/settings`, `/settings/schema`, `POST /settings/checks/{name}`.
@@ -28,6 +37,10 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **My work and the start page use API v3's operations in the server's process**, as the person API v3 would take
+  (`pageClient.ts`), instead of calling the server's own address with a token held in the session. They work with
+  `HTTPS=true` (the call to `http://127.0.0.1` failed there), and a person's groups changed apply at once (the token
+  kept them for an hour). No token is made for the pages any more.
 - **Users and sessions are kept on the engine's document store** (MongoDB, SQLite or memory), not through mongoose and
   connect-mongo. On MongoDB they stay where they were: users in `users`, in the database `MONGO_DB_URL` names (as
   mongoose had them), sessions in `sessions` in connect-mongo's shape, so nobody is signed out by the upgrade. The
@@ -60,6 +73,19 @@ and here
   administration APIs share their operations (`routes/api/operations.ts`): no change to their URLs or answers.
 - In the repository, the applications are under `apps/`: `apps/testSampleApp` (bpmn-web's tests, `npm test` here runs
   them) and `apps/sampleApp`. The published package is unchanged.
+- **A server's API settings and state are its own** (docs/design/multi-app-tenants.md §8, for 3.8's workspaces): the
+  keys, the service account and impersonation are read through the request's server (`start({ hostSettings })`,
+  `envHostSettings` by default: `.env`'s values when asked, as before, so a change still holds from the next call);
+  the first-run setup token is kept per server; the workflow pages reach their own server through the request, not a
+  module-level one. `configuredApiUser` and `tokenUser` take the settings, `.env`'s by default.
+- **The pages apply the security rules one way.** My work and the start page (API v3's operations) follow
+  `ENFORCE_SECURITY` as every other page does; before, they kept the rules on while the task forms and the instance
+  page turned them off with `ENFORCE_SECURITY=false`. API v3 keeps them on for its clients, as before.
+
+### Removed
+- **`/user`, a second copy of the workflow pages** (`routes/endUser.ts`, the `user/` views): nothing linked to it. Its
+  addresses go to the same page of the one set (`/user/tasks` to `/tasks`, a form posted to `/user/invokeItem` sent on
+  to `/invokeItem` with 307), so an old link still works.
 
 ## Release 3.6.0 (2026-11-10)
 ### Removed

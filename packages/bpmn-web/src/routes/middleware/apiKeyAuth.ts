@@ -1,22 +1,23 @@
 import crypto from 'node:crypto';
 import { SecureUser } from 'bpmn-server';
+import { hostSettings, envHostSettings, type HostSettings } from '../../runtime/hostSettings.js';
 
-export function configuredApiUser(): SecureUser {
-    const userName = process.env.API_SERVICE_USER_NAME;
-    const groups = process.env.API_SERVICE_USER_GROUPS?.split(',').map(g => g.trim()).filter(Boolean);
+/** The service account a key acts as, from a server's settings (hostSettings; `.env`'s by default). */
+export function configuredApiUser(settings: HostSettings = envHostSettings()): SecureUser {
+    const { userName, groups, tenantId, modelsOwner } = settings.serviceAccount;
     if (!userName || !groups?.length)
         throw new Error('API service principal is not configured: set API_SERVICE_USER_NAME and API_SERVICE_USER_GROUPS (for example integration and SYSTEM) in .env, then restart');
     return new SecureUser({
         userName,
         userGroups: groups,
-        tenantId: process.env.API_SERVICE_TENANT_ID,
-        modelsOwner: process.env.API_SERVICE_MODELS_OWNER,
+        tenantId,
+        modelsOwner,
     });
 }
 
 export function apiServiceAuth(req, res, next): void {
     try {
-        configuredApiUser();
+        configuredApiUser(hostSettings(req));
         next();
     } catch (error) {
         res.status(500).json({ errors: error.message });
@@ -50,7 +51,8 @@ export function timingSafeEqualStr(a: string, b: string): boolean {
  */
 export function apiKeyAuth(req, res, next): void {
     const adminRequest = typeof req.originalUrl === 'string' && req.originalUrl.startsWith('/admin/');
-    const configured = adminRequest ? process.env.ADMIN_API_KEY : process.env.API_KEY;
+    const settings = hostSettings(req);
+    const configured = adminRequest ? settings.adminApiKey : settings.apiKey;
     if (!configured) {
         const keyName = adminRequest ? 'ADMIN_API_KEY' : 'API_KEY';
         res.status(500).json({ errors: `server ${keyName} is not configured` });

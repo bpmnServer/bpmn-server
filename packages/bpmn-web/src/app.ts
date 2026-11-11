@@ -21,14 +21,15 @@ import morgan from 'morgan';
 import multer from 'multer';
 import { BPMNServer, Logger, databaseName } from 'bpmn-server';
 
-import { UserManager } from './userAccess/UserManager.js';
-import { useUserStore, isMongoStore } from './userAccess/userStore.js';
+import { UserManager, ownUsers, hostUserManager } from './userAccess/UserManager.js';
+import type { IUserManager } from './userAccess/IUserManager.js';
+import { pageSessions, pageLocals } from './userAccess/pages.js';
+import { useUserStore, isMongoStore, connectMongoose } from './userAccess/userStore.js';
 import { useTestsFolder } from './testing/scenarios.js';
 import { engineTests } from './testing/engineTests.js';
 import { adminDisabled } from './userAccess/roles.js';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import { Workflow } from './routes/workflow.js';
-import { EndUser } from './routes/endUser.js';
 import { Docs } from './routes/docs.js';
 import { Model } from './routes/model.js';
 import { Dashboards } from './routes/dashboards.js';
@@ -49,7 +50,8 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 export class WebApp {
 	app;
-	userManager;
+	/** Who signs in: the application's (WorkflowApplication.userManager), else bpmn-web's own. */
+	userManager: IUserManager;
 	bpmnServer;
 	packageJson;
 	server;
@@ -70,9 +72,16 @@ export class WebApp {
 
 		this.initExpress();
 
-		this.userManager = new UserManager(this.app);
+		this.userManager = application.userManager ?? new UserManager(this.app);
+		// for whoever asks who signs people in (the API's door, the pages' client): hostUserManager(req)
+		this.app.set('userManager', this.userManager);
+		// the API's settings of this server (runtime/hostSettings.ts): .env's, unless the application gives its own
+		if (application.hostSettings) this.app.set('hostSettings', application.hostSettings);
 
-		this.userManager.init();
+		// MongoDB through mongoose (on MongoDB only): bpmn-web's own users, and the test sets kept there before 3.5
+		connectMongoose();
+		this.userManager.init(this.app);
+		pageSessions(this.app);
 		const wflogger = application.logger ?? new Logger({ toConsole: true });
 		this.bpmnServer = BPMNServer.launch(
 			application.configuration,
@@ -155,7 +164,8 @@ export class WebApp {
 	setupExpress() {
 		const app = this.app;
 
-		this.userManager.setup();
+		pageLocals(app);
+		this.userManager.setup(app);
 
 		this.setupRoutes();
 
@@ -251,6 +261,9 @@ export class WebApp {
 		// a link for a person's AI agent: an API token that acts as them, at the level they choose (routes/aiAccess.ts)
 		this.app.get('/ai/key', async (req, res, next) => {
 			try {
+				// the application issues the credentials, an agent's too (docs/design/host-users.md)
+				if (hostUserManager(req))
+					return answerMessage(req, res, 404, 'Links for AI agents come from the application, not from this page.');
 				if (!req.user) {
 					req.session.returnTo = req.originalUrl;
 					return res.redirect('/login');
@@ -272,6 +285,7 @@ export class WebApp {
 			catch (error) { next(error); }
 		});
 		this.app.post('/ai/revoke', async (req, res, next) => {
+			if (hostUserManager(req)) return answerMessage(req, res, 404, 'Links for AI agents come from the application.');
 			if (!req.user) return res.redirect('/login');
 			try { res.redirect(`/ai/key?revoked=${await revokeAiLinks(this.bpmnServer, req.user.userName)}`); }
 			catch (error) { next(error); }
@@ -324,7 +338,7 @@ export class WebApp {
 			// API_TRACE: every API call and its answer, to replay what a client did (v3's too)
 			this.app.use(['/api', '/api2'], apiTrace());
 			// v3 before v1: /api would take /api/v3 for one of its own paths
-			this.app.use('/api/v3', v3Router(this.bpmnServer));
+			this.app.use('/api/v3', v3Router(this.bpmnServer, { users: ownUsers(this.userManager) }));
 			this.app.use('/api', (new API(this)).config());
 			this.app.use('/api2', (new API2(this)).config());
 			if (!adminDisabled()) {
@@ -360,8 +374,14 @@ export class WebApp {
 		this.app.use('/', router);
 
 		this.app.use('/dashboard', (new Dashboards(this)).config());
+		// /user was a second copy of the workflow pages (routes/endUser.ts, gone in 3.7: the Fable Review, M2): its
+		// addresses go to the one set; a form posted there is sent on as it was (307)
+		this.app.use('/user', (req, res) => {
+			const to = req.path === '/' || req.path.startsWith('/select/') ? '/' : req.path;
+			const query = to === '/' ? '' : req.originalUrl.slice(req.originalUrl.indexOf('?') >= 0 ? req.originalUrl.indexOf('?') : req.originalUrl.length);
+			res.redirect(['GET', 'HEAD'].includes(req.method) ? 302 : 307, to + query);
+		});
 		this.app.use('/', (new Workflow(this)).config());
-		this.app.use('/user', (new EndUser(this)).config());
 		this.app.use('/docs', (new Docs(this)).config());
 		this.app.use('/model', (new Model(this)).config());
 		// no such page: with the menu, as any other

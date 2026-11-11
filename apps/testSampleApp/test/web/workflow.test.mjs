@@ -135,20 +135,20 @@ test('a task is reassigned through the assign form', async () => {
   assert.equal(String(assigned.priority), '2');
 });
 
-test('the end-user pages start processes and complete tasks', async () => {
+test('a staff member starts a process and completes their task in the pages', async () => {
   const before = (await web.bpmnServer.dataStore.findInstances({ name: MODEL }, 'summary')).length;
-  const started = await staff.get('/user/execute/' + MODEL);
+  const started = await staff.get('/execute/' + MODEL);
   assert.ok([200, 302].includes(started.status), why(started));
   const all = await web.bpmnServer.dataStore.findInstances({ name: MODEL }, 'summary');
   assert.equal(all.length, before + 1);
   const id = all.sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt))[0].id;
 
   const item = await waitingAt(id, 'Submit');
-  const tasks = await staff.get('/user/tasks');
-  assert.ok(tasks.text.includes(item.id), 'listed in the end-user task list');
-  const form = await staff.get(`/user/invokeItem?id=${item.id}&processName=${MODEL}&elementId=Submit`);
+  const tasks = await staff.get('/tasks');
+  assert.ok(tasks.text.includes(item.id), 'listed in the task list');
+  const form = await staff.get(`/invokeItem?id=${item.id}&processName=${MODEL}&elementId=Submit`);
   assert.equal(form.status, 200, why(form));
-  await staff.post('/user/invokeItem', { itemId: item.id, days: '1', reason: 'appointment' });
+  await staff.post('/invokeItem', { itemId: item.id, days: '1', reason: 'appointment' });
   assert.equal((await instance(id)).status, 'end');
 });
 
@@ -205,4 +205,16 @@ test('an administrator forces a waiting event or receive task; others see no For
   const res = await admin.get(`/invokeItem?id=${payment.id}&processName=Invoice&elementId=task_got_payment`);
   assert.equal(res.status, 302, why(res));
   assert.equal((await instance(id)).status, 'end', 'paid: the gateway ends the timer and the cancel');
+});
+
+test('/user, the second copy of these pages (gone in 3.7), sends its addresses to the one set', async () => {
+  for (const [from, to] of [['/user', '/'], ['/user/', '/'], ['/user/tasks', '/tasks'], [`/user/invokeItem?id=x&elementId=Submit`, '/invokeItem?id=x&elementId=Submit'], ['/user/select/' + MODEL, '/']]) {
+    const res = await staff.get(from);
+    assert.equal(res.status, 302, from);
+    assert.equal(new URL(res.location, web.base).pathname + new URL(res.location, web.base).search, to, from);
+  }
+  // a form posted to the old address is sent on as it was posted
+  const posted = await staff.post('/user/invokeItem', { itemId: 'x' });
+  assert.equal(posted.status, 307);
+  assert.match(posted.location, /\/invokeItem$/);
 });

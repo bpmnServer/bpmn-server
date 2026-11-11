@@ -575,6 +575,13 @@ features:
     docs: [docs/docs/security.md, docs/docs/bpmn-web.md]
     code: [packages/bpmn-web/src/userAccess/UserService.ts, packages/bpmn-web/src/userAccess/UserManager.ts]
     tests: [apps/testSampleApp/test/web/users.test.mjs, apps/testSampleApp/test/web/auth.test.mjs, apps/testSampleApp/test/web/signup.test.mjs]
+  - id: host-user-manager
+    area: pages
+    name: "The application's own sign-in"
+    what: "An application that signs people in itself gives bpmn-web its user manager (start({ userManager }), IUserManager: init, setup, apiUser): the pages take its person, API v3 its credential (a change posted from another site with its cookie refused), bpmn-web keeps no users or sessions and issues no tokens or AI links."
+    docs: [docs/docs/architecture.md, docs/design/host-users.md]
+    code: [packages/bpmn-web/src/userAccess/IUserManager.ts, packages/bpmn-web/src/userAccess/pages.ts, packages/bpmn-web/src/routes/api/door.ts, packages/bpmn-web/src/routes/api/pageClient.ts, apps/hrdemo/server/userManager.js]
+    tests: [apps/testSampleApp/test/web/host-user-manager.test.mjs]
 # ---------------------------------------------------------------------------------------------------------- security
   - id: web-security
     area: security

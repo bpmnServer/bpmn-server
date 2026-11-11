@@ -105,31 +105,35 @@ block dash
 
 		section.dash-card#users
 			h2 Users
-				span.count= users.length
-			table
-				tr
-					th User
-					th Email
-					th Groups
-					th
-				each u in users
+				if users
+					span.count= users.length
+			if !users
+				p.dash-muted The application signs people in and manages its users: add and change them there.
+			else
+				table
 					tr
-						td= u.userName
-						td= u.email
-						td= (u.userGroups || []).join(', ')
-						td: a(href=`/account/edit/${u._id}`) Edit
-			h2(style='margin-top:18px') Add a user
-			form.dash-form#add-user(method='post', action='/dashboard/admin/users')
-				input(type='hidden', name='_csrf', value=_csrf)
-				label(for='new-userName') User name
-				input#new-userName(name='userName', required)
-				label(for='new-email') Email
-				input#new-email(name='email', type='email', required)
-				label(for='new-password') Password
-				input#new-password(name='password', type='password', required, minlength='4')
-				label(for='new-groups') Groups
-				input#new-groups(name='userGroups', placeholder='e.g. Employee, Manager, DESIGNER, ADMIN')
-				button.btn.btn-primary.btn-sm(type='submit') Add user
+						th User
+						th Email
+						th Groups
+						th
+					each u in users
+						tr
+							td= u.userName
+							td= u.email
+							td= (u.userGroups || []).join(', ')
+							td: a(href=`/account/edit/${u._id}`) Edit
+				h2(style='margin-top:18px') Add a user
+				form.dash-form#add-user(method='post', action='/dashboard/admin/users')
+					input(type='hidden', name='_csrf', value=_csrf)
+					label(for='new-userName') User name
+					input#new-userName(name='userName', required)
+					label(for='new-email') Email
+					input#new-email(name='email', type='email', required)
+					label(for='new-password') Password
+					input#new-password(name='password', type='password', required, minlength='4')
+					label(for='new-groups') Groups
+					input#new-groups(name='userGroups', placeholder='e.g. Employee, Manager, DESIGNER, ADMIN')
+					button.btn.btn-primary.btn-sm(type='submit') Add user
 
 		//- connectors: none passed (an older route) shows as none
 		- const connectorList = typeof connectors === 'undefined' || !connectors ? [] : connectors

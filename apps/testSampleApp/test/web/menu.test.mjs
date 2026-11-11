@@ -40,7 +40,7 @@ test('the whole bar is the same, page by page: their own links are in the page',
     assert.ok(expected.includes('/account'));
     const { instance } = await web.bpmnServer.engine.start('leave-request', {});
     for (const path of ['/', '/tasks', '/model/list', '/model/new', '/docs', '/account', '/admin', '/dashboard/design', '/dashboard/admin',
-        '/instanceDetails?id=' + instance.id, '/user', '/executeInput/leave-request']) {
+        '/instanceDetails?id=' + instance.id, '/executeInput/leave-request']) {
         const page = await admin.get(path);
         assert.equal(page.status, 200, path + ' ' + why(page));
         assert.deepEqual(bar(page.text), expected, path);

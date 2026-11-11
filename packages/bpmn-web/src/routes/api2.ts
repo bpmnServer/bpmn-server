@@ -16,6 +16,7 @@ const awaitAppDelegateFactory = (middleware) => {
 }
 
 import { apiKeyAuth as loggedIn, configuredApiUser } from './middleware/apiKeyAuth.js';
+import { hostSettings } from '../runtime/hostSettings.js';
 import { door } from './api/door.js';
 import { modelNameGuard, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
@@ -33,7 +34,7 @@ export class API2 extends Common {
     getUser(request): SecureUser {
         // the user the door set (routes/api/door.ts): the service account, or a person's AI key's person (/ai/key);
         // a user named by the caller never is
-        return request.apiUser ?? configuredApiUser();
+        return request.apiUser ?? configuredApiUser(hostSettings(request));
     }
     requireSystem = (req, res, next) => {
         try {

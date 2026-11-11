@@ -25,13 +25,8 @@ const userPages = () => [
   ['/tasks', /<html/i],
   [`/instanceDetails?id=${instanceId}`, /Instance Details/],
   [`/executeInput/${MODEL}`, /<form/i],
-  ['/user', /<html/i],
-  ['/user/tasks', /<html/i],
-  [`/user/instanceDetails?id=${instanceId}`, /<html/i],
-  [`/user/executeInput/${MODEL}`, /<form/i],
   ['/docs', /<html/i],
   ['/readme_md', /bpmn/i],
-  ['/user/readme_md', /bpmn/i],
   ['/account', /<form/i],
 ];
 

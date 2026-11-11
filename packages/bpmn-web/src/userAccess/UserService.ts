@@ -1,4 +1,3 @@
-import { IUserService } from '../index.js';
 import { connectMongoose } from './userStore.js';
 import User from './models/User.js';
 
@@ -9,7 +8,8 @@ export function userNameProblem(userName): string | null {
 	return typeof userName === 'string' && /^[A-Za-z0-9._@-]{2,64}$/.test(userName) ? null : USER_NAME_RULE;
 }
 
-export class UserService implements IUserService {
+/** bpmn-web's own users (its default user manager, UserManager): on the engine's store. */
+export class UserService {
 	static initialized = false;	
 	constructor() {
 

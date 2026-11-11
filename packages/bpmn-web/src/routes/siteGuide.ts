@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { designDisabled } from '../userAccess/roles.js';
-import { UserService } from '../userAccess/UserService.js';
+import { ownUsers } from '../userAccess/UserManager.js';
 import { originOf } from './modelApi.js';
 
 const PACKAGE = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -47,7 +47,7 @@ async function facts(webApp, origin: string) {
     let connectors: string[] = [];
     try { connectors = (await server.connectors?.list() ?? []).filter(c => c.enabled !== false).map(c => c.id); } catch { /* none */ }
     let groups: string[] = [];
-    try { groups = [...new Set((await new UserService().listUsers()).flatMap(u => u.userGroups ?? []))].sort() as string[]; } catch { /* no users here */ }
+    try { groups = [...new Set((await ownUsers(webApp.userManager)?.listUsers() ?? []).flatMap(u => u.userGroups ?? []))].sort() as string[]; } catch { /* no users here */ }
     return [
         `- BPMN Server ${webApp.packageJson?.version ?? ''}`.trimEnd(),
         `- API: ${origin}/api/v3. A person's link (from ${origin}/ai/key) is its key: \`Authorization: Bearer <key>\`; it acts as them, at its level (work, design, administer), for minutes. The OpenAPI document: ${origin}/api/v3/openapi.json (no key needed)`,
