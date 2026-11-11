@@ -19,6 +19,7 @@ Read [AI contributor instructions](AI-CONTRIBUTING.md) before using an AI assist
 | Feature catalog generator/check | `scripts/features.mjs` |
 | Examples and end-to-end tests | `apps/testSampleApp/` |
 | Sample host | `apps/sampleApp/` |
+| HR demo: an HR application (pages, API) with BPMN Server in it | `apps/hrdemo/` |
 | Package changelogs | `packages/*/CHANGELOG.md` |
 
 ## Work requests

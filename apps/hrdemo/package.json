@@ -1,0 +1,37 @@
+{
+  "name": "hrdemo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "The HR demo application with BPMN Server (owf): its pages (/hr) and REST API (/api/hr), and the workflows that call it",
+  "type": "module",
+  "scripts": {
+    "start": "vite build && tsx index.ts",
+    "dev": "vite",
+    "build": "vite build",
+    "hr": "vite build && node server/index.js",
+    "setup": "bpmn-server setup && tsx index.ts --setup",
+    "cli": "tsx index.ts --cli",
+    "mcp": "bpmn-mcp",
+    "verify": "bpmn-server verify processes",
+    "services": "bpmn-web-services delegates/appDelegate.ts services.json",
+    "test": "tsx test/features.ts"
+  },
+  "dependencies": {
+    "axios": "^1.18.1",
+    "bpmn-mcp": "file:../../packages/bpmn-mcp",
+    "bpmn-server": "file:../../packages/bpmn-server",
+    "bpmn-web": "file:../../packages/bpmn-web",
+    "dayjs": "^1.11.21",
+    "express": "^5.2.1",
+    "pug": "^3.0.4",
+    "tsx": "^4.23.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
+    "vite": "^5.4.2"
+  }
+}

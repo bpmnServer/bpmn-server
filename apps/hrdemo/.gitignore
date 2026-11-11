@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.env
+*.log
+# the Test tabs' runs: they point at instances of one server (the tests themselves, *.tests.json, are kept)

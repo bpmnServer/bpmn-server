@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="LeaveApplication_Definitions" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn2:collaboration id="LeaveCollaboration">
+    <bpmn2:participant id="LeaveParticipant" name="Leave Application" processRef="LeaveProcess" />
+  </bpmn2:collaboration>
+  <bpmn2:error id="RecordFailedError" name="Not recorded" errorCode="RecordFailed" />
+  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true">
+    <bpmn2:documentation>An employee asks for leave; a manager decides; HR's system records it; the employee is told.</bpmn2:documentation>
+    <bpmn2:laneSet id="LeaveLanes">
+      <bpmn2:lane id="EmployeeLane" name="Employee">
+        <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>MergeRequest</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Request</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>CheckDates</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>DatesOk</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>MergeTell</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Tell</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Done</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="ManagerLane" name="Manager">
+        <bpmn2:flowNodeRef>Approve</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ReminderTimer</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Remind</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Reminded</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Decision</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="HRLane" name="HR">
+        <bpmn2:flowNodeRef>MergeRecord</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Record</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>RecordFailed</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>FixRecord</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:startEvent id="StartEvent_1" name="Leave wanted" camunda:initiator="requester">
+      <bpmn2:documentation>Whoever starts it is kept as data.requester: the Request task is theirs.</bpmn2:documentation>
+      <bpmn2:outgoing>toRequest</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:exclusiveGateway id="MergeRequest">
+      <bpmn2:documentation>Joins the three ways to Request: the start, wrong dates, information required.</bpmn2:documentation>
+      <bpmn2:incoming>toRequest</bpmn2:incoming>
+      <bpmn2:incoming>datesWrong</bpmn2:incoming>
+      <bpmn2:incoming>needInformation</bpmn2:incoming>
+      <bpmn2:outgoing>toRequestTask</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="Request" name="Request" camunda:assignee="$(this.data.requester)">
+      <bpmn2:documentation>The employee's request: what kind of leave, when, and why. It comes back here when the dates are wrong or the manager needs more information.</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="LeaveType" label="Leave Type" type="enum">
+            <camunda:value id="Vacation" name="Vacation" />
+            <camunda:value id="Sick" name="Sick Leave" />
+            <camunda:value id="Study" name="Study" />
+            <camunda:value id="Parental" name="Parental" />
+          </camunda:formField>
+          <camunda:formField id="StartDate" label="Start Date" type="date" />
+          <camunda:formField id="EndDate" label="End Date" type="date" />
+          <camunda:formField id="RequestReason" label="Reason" type="string" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>toRequestTask</bpmn2:incoming>
+      <bpmn2:outgoing>toCheck</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:scriptTask id="CheckDates" name="Check the dates" scriptFormat="JavaScript">
+      <bpmn2:documentation>Counts the days asked for (data.days) and whether the dates make sense (data.datesValid): both given, the end not before the start.</bpmn2:documentation>
+      <bpmn2:incoming>toCheck</bpmn2:incoming>
+      <bpmn2:outgoing>toDatesOk</bpmn2:outgoing>
+      <bpmn2:script>const day = 24 * 60 * 60 * 1000;
+const days = Math.round((new Date(item.data.EndDate) - new Date(item.data.StartDate)) / day) + 1;
+item.data.days = Number.isNaN(days) ? 0 : days;
+item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:exclusiveGateway id="DatesOk" name="Dates valid?" default="datesRight">
+      <bpmn2:incoming>toDatesOk</bpmn2:incoming>
+      <bpmn2:outgoing>datesRight</bpmn2:outgoing>
+      <bpmn2:outgoing>datesWrong</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="Approve" name="Approve">
+      <bpmn2:documentation>In the Manager lane: offered to everyone in the Manager group. The outcome decides the path; the comment goes to the employee.</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="approval" label="Approval Outcome" type="enum">
+            <camunda:value id="A" name="Approve" />
+            <camunda:value id="Reject" name="Reject" />
+            <camunda:value id="InformationRequired" name="Information Required" />
+          </camunda:formField>
+          <camunda:formField id="comment" label="Comment" type="string" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>datesRight</bpmn2:incoming>
+      <bpmn2:outgoing>toDecision</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:boundaryEvent id="ReminderTimer" name="Every 2 days" cancelActivity="false" attachedToRef="Approve">
+      <bpmn2:documentation>While Approve waits: every 2 days, 3 times at most. It does not stop the task.</bpmn2:documentation>
+      <bpmn2:outgoing>toRemind</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="ReminderTimerDefinition">
+        <bpmn2:timeCycle xsi:type="bpmn2:tFormalExpression">R3/P2D</bpmn2:timeCycle>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:boundaryEvent>
+    <bpmn2:serviceTask id="Remind" name="Remind the managers" camunda:delegateExpression="notifyUsers">
+      <bpmn2:documentation>Calls the application's notifyUsers service: the Manager group.</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="groups">Manager</camunda:inputParameter>
+          <camunda:inputParameter name="subject">A leave request waits for approval</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>toRemind</bpmn2:incoming>
+      <bpmn2:outgoing>toReminded</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:endEvent id="Reminded" name="Reminder sent">
+      <bpmn2:incoming>toReminded</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:exclusiveGateway id="Decision" name="Outcome?" default="approved">
+      <bpmn2:incoming>toDecision</bpmn2:incoming>
+      <bpmn2:outgoing>approved</bpmn2:outgoing>
+      <bpmn2:outgoing>rejected</bpmn2:outgoing>
+      <bpmn2:outgoing>needInformation</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="MergeRecord">
+      <bpmn2:incoming>approved</bpmn2:incoming>
+      <bpmn2:incoming>retryRecord</bpmn2:incoming>
+      <bpmn2:outgoing>toRecordTask</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:serviceTask id="Record" name="Record the leave" camunda:delegateExpression="recordLeave">
+      <bpmn2:documentation>Calls the application's recordLeave service: HR's system keeps the approved leave, and answers its id. A refusal is the BPMN error RecordFailed.</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="requester">${data.requester}</camunda:inputParameter>
+          <camunda:inputParameter name="LeaveType">${data.LeaveType}</camunda:inputParameter>
+          <camunda:inputParameter name="StartDate">${data.StartDate}</camunda:inputParameter>
+          <camunda:inputParameter name="EndDate">${data.EndDate}</camunda:inputParameter>
+          <camunda:inputParameter name="days">$data.days</camunda:inputParameter>
+          <camunda:outputParameter name="recordId">${output.recordId}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>toRecordTask</bpmn2:incoming>
+      <bpmn2:outgoing>toTell</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:boundaryEvent id="RecordFailed" name="Not recorded" attachedToRef="Record">
+      <bpmn2:outgoing>toFix</bpmn2:outgoing>
+      <bpmn2:errorEventDefinition id="RecordFailedDefinition" errorRef="RecordFailedError" />
+    </bpmn2:boundaryEvent>
+    <bpmn2:userTask id="FixRecord" name="Fix the record">
+      <bpmn2:documentation>In the HR lane: someone in HR looks at why the record failed, then the process tries again.</bpmn2:documentation>
+      <bpmn2:incoming>toFix</bpmn2:incoming>
+      <bpmn2:outgoing>retryRecord</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="MergeTell">
+      <bpmn2:incoming>toTell</bpmn2:incoming>
+      <bpmn2:incoming>rejected</bpmn2:incoming>
+      <bpmn2:outgoing>toTellTask</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:serviceTask id="Tell" name="Tell the employee" camunda:delegateExpression="notifyUsers">
+      <bpmn2:documentation>Calls the application's notifyUsers service: the requester, with the outcome and the manager's comment.</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="users">${data.requester}</camunda:inputParameter>
+          <camunda:inputParameter name="subject">Your leave request: ${data.approval == 'A' ? 'approved' : 'rejected'}</camunda:inputParameter>
+          <camunda:inputParameter name="message">${data.comment ?? ''}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>toTellTask</bpmn2:incoming>
+      <bpmn2:outgoing>toDone</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:endEvent id="Done" name="Done">
+      <bpmn2:incoming>toDone</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="toRequest" sourceRef="StartEvent_1" targetRef="MergeRequest" />
+    <bpmn2:sequenceFlow id="toRequestTask" sourceRef="MergeRequest" targetRef="Request" />
+    <bpmn2:sequenceFlow id="toCheck" sourceRef="Request" targetRef="CheckDates" />
+    <bpmn2:sequenceFlow id="toDatesOk" sourceRef="CheckDates" targetRef="DatesOk" />
+    <bpmn2:sequenceFlow id="datesRight" name="Yes" sourceRef="DatesOk" targetRef="Approve" />
+    <bpmn2:sequenceFlow id="datesWrong" name="No: ask again" sourceRef="DatesOk" targetRef="MergeRequest">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">!data.datesValid</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="toDecision" sourceRef="Approve" targetRef="Decision" />
+    <bpmn2:sequenceFlow id="toRemind" sourceRef="ReminderTimer" targetRef="Remind" />
+    <bpmn2:sequenceFlow id="toReminded" sourceRef="Remind" targetRef="Reminded" />
+    <bpmn2:sequenceFlow id="approved" name="Approved" sourceRef="Decision" targetRef="MergeRecord" />
+    <bpmn2:sequenceFlow id="toRecordTask" sourceRef="MergeRecord" targetRef="Record" />
+    <bpmn2:sequenceFlow id="rejected" name="Rejected" sourceRef="Decision" targetRef="MergeTell">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.approval == 'Reject'</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="needInformation" name="Information required" sourceRef="Decision" targetRef="MergeRequest">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.approval == 'InformationRequired'</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="toTell" sourceRef="Record" targetRef="MergeTell" />
+    <bpmn2:sequenceFlow id="toTellTask" sourceRef="MergeTell" targetRef="Tell" />
+    <bpmn2:sequenceFlow id="toFix" sourceRef="RecordFailed" targetRef="FixRecord" />
+    <bpmn2:sequenceFlow id="retryRecord" sourceRef="FixRecord" targetRef="MergeRecord" />
+    <bpmn2:sequenceFlow id="toDone" sourceRef="Tell" targetRef="Done" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="LeaveDiagram">
+    <bpmndi:BPMNPlane id="LeavePlane" bpmnElement="LeaveCollaboration">
+      <bpmndi:BPMNShape id="LeaveParticipant_di" bpmnElement="LeaveParticipant" isHorizontal="true">
+        <dc:Bounds x="100" y="40" width="1220" height="620" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EmployeeLane_di" bpmnElement="EmployeeLane" isHorizontal="true">
+        <dc:Bounds x="130" y="40" width="1190" height="180" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ManagerLane_di" bpmnElement="ManagerLane" isHorizontal="true">
+        <dc:Bounds x="130" y="220" width="1190" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="HRLane_di" bpmnElement="HRLane" isHorizontal="true">
+        <dc:Bounds x="130" y="420" width="1190" height="240" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="147" y="165" width="66" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MergeRequest_di" bpmnElement="MergeRequest" isMarkerVisible="true">
+        <dc:Bounds x="220" y="115" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Request_di" bpmnElement="Request">
+        <dc:Bounds x="300" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckDates_di" bpmnElement="CheckDates">
+        <dc:Bounds x="440" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DatesOk_di" bpmnElement="DatesOk" isMarkerVisible="true">
+        <dc:Bounds x="585" y="115" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="645" y="133" width="64" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MergeTell_di" bpmnElement="MergeTell" isMarkerVisible="true">
+        <dc:Bounds x="1000" y="115" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Tell_di" bpmnElement="Tell">
+        <dc:Bounds x="1090" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Done_di" bpmnElement="Done">
+        <dc:Bounds x="1240" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1240" y="165" width="36" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve">
+        <dc:Bounds x="560" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Remind_di" bpmnElement="Remind">
+        <dc:Bounds x="370" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Reminded_di" bpmnElement="Reminded">
+        <dc:Bounds x="262" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="245" y="335" width="70" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Decision_di" bpmnElement="Decision" isMarkerVisible="true">
+        <dc:Bounds x="725" y="285" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="785" y="273" width="54" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MergeRecord_di" bpmnElement="MergeRecord" isMarkerVisible="true">
+        <dc:Bounds x="805" y="475" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Record_di" bpmnElement="Record">
+        <dc:Bounds x="890" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FixRecord_di" bpmnElement="FixRecord">
+        <dc:Bounds x="560" y="540" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReminderTimer_di" bpmnElement="ReminderTimer">
+        <dc:Bounds x="592" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="634" y="365" width="62" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RecordFailed_di" bpmnElement="RecordFailed">
+        <dc:Bounds x="922" y="522" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="960" y="560" width="64" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="toRequest_di" bpmnElement="toRequest">
+        <di:waypoint x="198" y="140" />
+        <di:waypoint x="220" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toRequestTask_di" bpmnElement="toRequestTask">
+        <di:waypoint x="270" y="140" />
+        <di:waypoint x="300" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toCheck_di" bpmnElement="toCheck">
+        <di:waypoint x="400" y="140" />
+        <di:waypoint x="440" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toDatesOk_di" bpmnElement="toDatesOk">
+        <di:waypoint x="540" y="140" />
+        <di:waypoint x="585" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="datesRight_di" bpmnElement="datesRight">
+        <di:waypoint x="610" y="165" />
+        <di:waypoint x="610" y="270" />
+        <bpmndi:BPMNLabel><dc:Bounds x="618" y="200" width="20" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="datesWrong_di" bpmnElement="datesWrong">
+        <di:waypoint x="610" y="115" />
+        <di:waypoint x="610" y="80" />
+        <di:waypoint x="245" y="80" />
+        <di:waypoint x="245" y="115" />
+        <bpmndi:BPMNLabel><dc:Bounds x="400" y="62" width="76" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toDecision_di" bpmnElement="toDecision">
+        <di:waypoint x="660" y="310" />
+        <di:waypoint x="725" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toRemind_di" bpmnElement="toRemind">
+        <di:waypoint x="610" y="368" />
+        <di:waypoint x="610" y="390" />
+        <di:waypoint x="420" y="390" />
+        <di:waypoint x="420" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toReminded_di" bpmnElement="toReminded">
+        <di:waypoint x="370" y="310" />
+        <di:waypoint x="298" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="approved_di" bpmnElement="approved">
+        <di:waypoint x="775" y="310" />
+        <di:waypoint x="830" y="310" />
+        <di:waypoint x="830" y="475" />
+        <bpmndi:BPMNLabel><dc:Bounds x="790" y="292" width="50" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toRecordTask_di" bpmnElement="toRecordTask">
+        <di:waypoint x="855" y="500" />
+        <di:waypoint x="890" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="rejected_di" bpmnElement="rejected">
+        <di:waypoint x="750" y="285" />
+        <di:waypoint x="750" y="240" />
+        <di:waypoint x="985" y="240" />
+        <di:waypoint x="985" y="140" />
+        <di:waypoint x="1000" y="140" />
+        <bpmndi:BPMNLabel><dc:Bounds x="760" y="243" width="46" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="needInformation_di" bpmnElement="needInformation">
+        <di:waypoint x="750" y="335" />
+        <di:waypoint x="750" y="405" />
+        <di:waypoint x="245" y="405" />
+        <di:waypoint x="245" y="165" />
+        <bpmndi:BPMNLabel><dc:Bounds x="260" y="388" width="104" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toTell_di" bpmnElement="toTell">
+        <di:waypoint x="990" y="500" />
+        <di:waypoint x="1025" y="500" />
+        <di:waypoint x="1025" y="165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toTellTask_di" bpmnElement="toTellTask">
+        <di:waypoint x="1050" y="140" />
+        <di:waypoint x="1090" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toFix_di" bpmnElement="toFix">
+        <di:waypoint x="940" y="558" />
+        <di:waypoint x="940" y="580" />
+        <di:waypoint x="660" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="retryRecord_di" bpmnElement="retryRecord">
+        <di:waypoint x="610" y="540" />
+        <di:waypoint x="610" y="500" />
+        <di:waypoint x="805" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toDone_di" bpmnElement="toDone">
+        <di:waypoint x="1190" y="140" />
+        <di:waypoint x="1240" y="140" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
