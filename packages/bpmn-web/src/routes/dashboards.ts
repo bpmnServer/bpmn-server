@@ -491,7 +491,7 @@ export class Dashboards extends Common {
             if (entry.sha256 && crypto.createHash('sha256').update(source).digest('hex') !== entry.sha256)
                 return again(`${entry.bpmn} is not the file the catalog describes (its checksum differs); nothing was imported.`);
             const svg = await bpmnToSvg(source).catch(() => null);
-            await server.definitions.save(name, source, svg, null, req.user?.userName);
+            await server.models.save(name, source, svg, req.user?.userName);
             this.verified.delete(name);
             res.redirect('/model/edit/' + encodeURIComponent(name));
         }));

@@ -77,6 +77,12 @@ export class LaunchedEngine {
     /** Claims a key for a moment (a task being claimed): whether this caller has it; releaseClaim gives it back. */
     claim(key: string): Promise<boolean> { return this.#ask('claim', [key]); }
     releaseClaim(key: string): Promise<boolean> { return this.#ask('releaseClaim', [key]); }
+    /** The engine's stores set up: their indexes (at setup, at start). */
+    install() { return this.#ask('install', []); }
+    /** The engine's index of the models, told what changed in their files. */
+    modelSaved(name: string) { return this.#ask('modelSaved', [name]); }
+    modelRemoved(name: string) { return this.#ask('modelRemoved', [name]); }
+    modelRenamed(name: string, newName: string) { return this.#ask('modelRenamed', [name, newName]); }
     /** A connector's key for this server, stored encrypted by the engine (CONNECTORS_KEY is the engine's). */
     setConnectorKey(id: string, key: string, userName?: string) { return this.#ask('setConnectorKey', [id, key, userName]); }
     clearConnectorKey(id: string) { return this.#ask('clearConnectorKey', [id]); }
@@ -181,6 +187,38 @@ export class LaunchedServer {
     get dataStore() { return this.#server.dataStore; }
     get definitions() { return this.#server.definitions; }
     get connectors() { return this.#server.connectors; }
+    /**
+     * The models, as the host changes them (docs/design/engine-isolation.md): model access writes their files, with no
+     * database, and the engine updates its index of them. Models kept in the database alone (no folder) are saved there.
+     */
+    get models() {
+        const definitions = this.#server.definitions as any;
+        const engine = this.engine;
+        const files = typeof definitions.saveFiles === 'function';
+        // with no engine, nothing runs, and nothing reads the index: the files are the models
+        const tell = async (call: () => Promise<any>) => { if (engine.running) await call(); };
+        return {
+            async save(name: string, source: string, svg?: string, savedBy?: string) {
+                if (!files) return definitions.save(name, source, svg, null, savedBy);
+                await definitions.saveFiles(name, source, svg, savedBy);
+                await tell(() => engine.modelSaved(name));
+                return true;
+            },
+            async rename(name: string, newName: string) {
+                if (!files) return definitions.renameModel(name, newName);
+                await definitions.renameFiles(name, newName);
+                await tell(() => engine.modelRenamed(name, newName));
+                return true;
+            },
+            async remove(name: string) {
+                if (!files) return definitions.deleteModel(name);
+                await definitions.deleteFiles(name);
+                await tell(() => engine.modelRemoved(name));
+            },
+            /** One saved version gone: the history is the files'. */
+            deleteVersion: (name: string, version: number) => definitions.deleteVersion?.(name, version),
+        };
+    }
     /** Which handler checks a model's scripts, and the variables it adds. */
     get scriptHandler() { return this.#server.scriptHandler; }
     status() { return this.#server.status(); }

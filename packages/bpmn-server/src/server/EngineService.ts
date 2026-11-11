@@ -81,6 +81,18 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         },
         /** A short claim of one key (a task being claimed through the API): whether this caller has it. */
         claim: async (key: string) => server.dataStore.locker.claim(key),
+        /** The engine's stores set up (their indexes; connectors kept whole before written out): at setup, and at start. */
+        install: async () => {
+            await server.dataStore.install();
+            await server.definitions.install();
+            await server.connectors?.install();
+            return true;
+        },
+        // the models' files are model access's; the engine's index of them (start events, timers, messages) is its own,
+        // told here what changed (docs/design/engine-isolation.md)
+        modelSaved: async (name: string) => { await (server.definitions as any).indexModel(name); return true; },
+        modelRemoved: async (name: string) => { await (server.definitions as any).unindexModel(name); return true; },
+        modelRenamed: async (name: string, newName: string) => { await (server.definitions as any).renameIndex(name, newName); return true; },
         // a connector's key and its test are this server's, the engine's: encrypted and kept here (CONNECTORS_KEY)
         setConnectorKey: async (id: string, key: string, userName?: string) => server.connectors.storeKey(id, key, userName),
         clearConnectorKey: async (id: string) => server.connectors.forgetKey(id),

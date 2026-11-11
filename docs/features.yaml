@@ -405,10 +405,10 @@ features:
   - id: models-files
     area: data
     name: "Models, tests and history as files"
-    what: "Each model, its diagram, its scenarios and its saved versions are files in the models folder, ready for Git."
+    what: "Each model, its diagram, its scenarios and its saved versions are files in the models folder, ready for Git; the host changes them with no database (model access), the engine keeping its index of them."
     docs: [docs/docs/modeler.md]
     code: [packages/bpmn-server/src/datastore/ModelsDatastore.ts, packages/bpmn-server/src/datastore/ModelHistory.ts]
-    tests: [packages/bpmn-server/test/model-history.test.mjs, apps/testSampleApp/test/web/scenarios.test.mjs]
+    tests: [packages/bpmn-server/test/model-history.test.mjs, packages/bpmn-server/test/model-access.test.mjs, apps/testSampleApp/test/web/scenarios.test.mjs]
   - id: backup
     area: data
     name: "Backup"

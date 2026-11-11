@@ -38,6 +38,8 @@ export class Model extends Common {
         const bpmnServer = this.webApp.bpmnServer;
 
         const definitions = bpmnServer.definitions;
+        // the host changes a model through model access, the engine told (docs/design/engine-isolation.md)
+        const models = bpmnServer.models;
         bpmnAPI = new BPMNAdminAPI(bpmnServer);   // the designer reads and saves models
 
 
@@ -175,7 +177,7 @@ export class Model extends Common {
                     }
 
                     try {
-                    await definitions.save(name, source, svg, null, req.user?.userName);
+                    await models.save(name, source, svg, req.user?.userName);
                     req.session.processName = name;     // focus the imported model on the home page
                     }
                     catch(exc)
@@ -199,7 +201,7 @@ export class Model extends Common {
         router.post('/delete', awaitHandlerFactory(async (request, response) => {
 
             let process = request.body.processName;
-            await definitions.deleteModel(process);
+            await models.remove(process);
             console.log('deleting ' + process);
             response.redirect('/');
 
@@ -208,7 +210,7 @@ export class Model extends Common {
 
             let process = request.body.processName;
             let newName = request.body.newName;
-            await definitions.renameModel(process, newName);
+            await models.rename(process, newName);
             console.log('renamed ' + process + " to " + newName);
             response.redirect('/');
 
@@ -285,7 +287,7 @@ export class Model extends Common {
             let bpmn = body.bpmn;
             let svg = body.svg;
 
-            await definitions.save(name, bpmn, svg, null, request.user?.userName);
+            await models.save(name, bpmn, svg, request.user?.userName);
             console.log(" save completed");
 
             //        console.log(request);
@@ -300,7 +302,7 @@ export class Model extends Common {
             let bpmn = body.bpmn;
             let svg = body.svg;
 
-            await definitions.save(name, bpmn, svg, null, request.user?.userName);
+            await models.save(name, bpmn, svg, request.user?.userName);
             console.log(" save completed");
 
             //        console.log(request);
@@ -316,7 +318,7 @@ export class Model extends Common {
             let bpmn = body.bpmn;
             let svg = body.svg;
 
-            await definitions.save(name, bpmn, svg, null, request.user?.userName);
+            await models.save(name, bpmn, svg, request.user?.userName);
             console.log(" save completed");
 
             //        console.log(request);
@@ -332,7 +334,7 @@ export class Model extends Common {
             let bpmn = body.bpmn;
             let svg = body.svg;
 
-            await definitions.save(name, bpmn, svg, null, request.user?.userName);
+            await models.save(name, bpmn, svg, request.user?.userName);
             console.log(" save completed");
 
             //        console.log(request);
@@ -606,7 +608,7 @@ export class Model extends Common {
             const version = Number(request.params.version);
             if (!isSafeModelName(request.params.process) || !Number.isInteger(version) || version < 1)
                 return response.status(400).json({ error: 'Invalid model name or version' });
-            if (!await definitions.deleteVersion?.(request.params.process, version))
+            if (!await models.deleteVersion(request.params.process, version))
                 return response.status(404).json({ error: `'${request.params.process}' has no version ${version}` });
             response.json({ deleted: version });
         }));
