@@ -142,7 +142,6 @@ bpmn-server
 - [IProcessData](interfaces/IProcessData.md)
 - [IUserInfo](interfaces/IUserInfo.md)
 - [ISecureUser](interfaces/ISecureUser.md)
-- [IUserService](interfaces/IUserService.md)
 - [IConfiguration](interfaces/IConfiguration.md)
 - [IConnectorsConfiguration](interfaces/IConnectorsConfiguration.md)
 - [ILogger](interfaces/ILogger.md)

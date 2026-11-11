@@ -6,10 +6,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import http from 'node:http';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { makeServer, quiet } from './helpers.mjs';
-import { ConnectorError, parseDocument, listOperations, resolveRefs, verifyModel } from '../dist/index.js';
+import { ConnectorError, MemoryDocumentStore, parseDocument, listOperations, resolveRefs, verifyModel } from '../dist/index.js';
 
 const FIXTURES = fileURLToPath(new URL('./fixtures/connectors/', import.meta.url));
 const SHOP = fs.readFileSync(path.join(FIXTURES, 'shop.openapi.yaml'), 'utf8');
@@ -105,6 +106,41 @@ test('a service task calls the connector: the inputs in the request, the answer 
   assert.ok(!missing.instance.items.some(i => i.elementId === 'Done'));
   const raised = missing.instance.logs.filter(l => l.type === 'decision').map(l => l.message);
   assert.ok(raised.some(d => /action: raises the BPMN error HTTP_404\nwhy:\n    the connector \S+ answered HTTP 404/.test(d)), raised.join('\n\n'));
+  await server.shutdown();
+});
+
+test('a connector call with output parameters and no inputs (a list, say): the output mapped at exit, never into itself', async () => {
+  // its outputs were made on entering, as a throw event's: ${output} was the item's own output, set inside itself. A
+  // save during the call (a boundary event waiting on the task saves the instance) met that circle: MongoDB refused it,
+  // "Cannot convert circular structure to BSON". This store converts what it saves, as a database has to.
+  class SavingStore extends MemoryDocumentStore {
+    async insert(db, col, docs) { return super.insert(db, col, JSON.parse(JSON.stringify(docs))); }
+    async update(db, col, query, update, options) { return super.update(db, col, query, JSON.parse(JSON.stringify(update)), options); }
+  }
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-defs-')) + path.sep;
+  fs.writeFileSync(path.join(dir, 'health-check.bpmn'), `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="t">
+  <bpmn:error id="Down" errorCode="HTTP_503" />
+  <bpmn:process id="HealthCheck" isExecutable="true">
+    <bpmn:startEvent id="S"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:serviceTask id="Check"><bpmn:extensionElements><camunda:connector><camunda:connectorId>shop/health</camunda:connectorId>
+      <camunda:inputOutput><camunda:outputParameter name="health">\${output}</camunda:outputParameter></camunda:inputOutput>
+    </camunda:connector></bpmn:extensionElements><bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:boundaryEvent id="IsDown" attachedToRef="Check"><bpmn:outgoing>f3</bpmn:outgoing><bpmn:errorEventDefinition errorRef="Down" /></bpmn:boundaryEvent>
+    <bpmn:endEvent id="E"><bpmn:incoming>f2</bpmn:incoming></bpmn:endEvent>
+    <bpmn:endEvent id="Failed"><bpmn:incoming>f3</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Check" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Check" targetRef="E" />
+    <bpmn:sequenceFlow id="f3" sourceRef="IsDown" targetRef="Failed" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  const { server } = await makeServer({ dir, store: new SavingStore(), extra: { connectors: { retryDelay: 1 } } });
+  await server.connectors.install();
+  await server.connectors.add({ id: 'shop', source: `${base}/openapi.yaml` });
+  const { instance } = await server.engine.start('health-check', {});
+  assert.equal(instance.status, 'end');
+  assert.deepEqual(instance.data.health, { ok: true });
+  assert.deepEqual(instance.items.find(i => i.elementId === 'Check').output, { ok: true }, 'the output is the answer, nothing set inside it');
   await server.shutdown();
 });
 

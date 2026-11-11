@@ -59,10 +59,4 @@ interface ISecureUser extends IUserInfo {
     canStart(name, startNodeId, user);
 }
 
-interface IUserService {
-    findUsers(query);
-    addUser(userName, email, password, userGroups);
-    setPassword(userName, password);
-    install();
-}
-export { IUserService,IUserInfo,ISecureUser}
+export { IUserInfo, ISecureUser }

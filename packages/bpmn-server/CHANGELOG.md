@@ -40,6 +40,11 @@ and here
   terminal (`install.sh`, the Docker image, CI) setup asks nothing and changes nothing, so those are unchanged. `init`'s
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
+### Removed
+- **`IUserService`**: the engine never used it (who acts is the `IUserInfo` each call carries; a task's assignee and
+  candidates are names it checks against that person). Finding and managing users is the host application's: bpmn-web's
+  own users are its `UserService`. An application that implemented `IUserService` keeps its class; only the type is gone.
+
 ### Changed
 - In the repository, the sample application is at `apps/sampleApp` (was `sampleApp`): `npm run template` copies it from
   there, and `bpmn-server init` run from a checkout reads it there. The published package is unchanged.
@@ -78,6 +83,11 @@ and here
   others keep their numbers. It takes its turn with the saves.
 
 ### Fixed
+- **A connector task with output parameters and no input parameters** (a list operation, `${output}` mapped to the
+  data) failed on MongoDB with "Cannot convert circular structure to BSON" when the instance was saved during the call
+  (a boundary event waiting on the task saves it). Its outputs were made on entering, as a throw event's are:
+  `${output}` was the task's own output, set inside itself, and made before the call answered. Only throw events make
+  their outputs on entering now; a task's are mapped at exit, from its result.
 - **An instance with a multi-instance loop, saved with save points (every test run), failed in the memory store** with
   "function ... could not be cloned": restoring it wrote the live execution into its stored loops, which a save point
   shares, so the next save carried the whole server. The stored loops stay as stored.

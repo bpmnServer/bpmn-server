@@ -181,8 +181,10 @@ class IOBehaviour extends Behaviour {
                 item.log('...set at enter data input : input.' + param.name + ' = ' + val);
             }
         }
-        // a call activity's output parameters are its result, read when the called process ends (Tasks.ts)
-        if (hasInput == false && item.node.type !== 'bpmn:CallActivity') {
+        // a throw event's output parameters are what it throws, made here. Not a task's: its output parameters map its
+        // result at exit (a call activity's when the called process ends, Tasks.ts). Made here, a task's `${output}`
+        // would be its own output, set inside itself: a circle no store can save (a connector with outputs only)
+        if (hasInput == false && /Event$/.test(item.node.type ?? '')) {
             /**
              * scenario for throw
              * */
