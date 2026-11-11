@@ -3,29 +3,34 @@
  * the server with an authorization key. A service task names one and an operation, `<connector>/<operationId>`
  * (camunda:connector); the server calls it.
  *
- * Kept in the `wf_connectors` collection through the storage port, so on MongoDB, SQLite or in memory alike.
- * The key is stored encrypted (Secrets.ts) and never leaves the server: `list` and `get` leave it out, and a call
- * only puts it in the request it sends.
+ * A connector is a file in the models folder, `<id>.connector.json`, as a model is (docs/design/connectors-as-files.md):
+ * its definition and its OpenAPI document, kept in Git and released with the models that call it, found by their tests.
+ * What is one server's alone stays in its `wf_connectors` collection (the storage port): the key, encrypted
+ * (Secrets.ts), and the last connection test. The key never leaves the server: not in the file, not in `list` or
+ * `get`; a call only puts it in the request it sends. A connector kept whole in the collection before (3.6) is written
+ * out to its file the first time it is read, its key kept in the collection.
  */
+import fs from 'node:fs';
+import path from 'node:path';
 import zlib from 'node:zlib';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { parseDocument, listOperations, type Operation } from './OpenAPI.js';
 import { encrypt, decrypt } from './Secrets.js';
 
 const COLLECTION = 'wf_connectors';
+/** A connector's file in the models folder: `<id>.connector.json`. */
+const FILE = '.connector.json';
 const ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 const IDEMPOTENT = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS'];
-/** The largest document kept, packed: under MongoDB's 16 MB for a document, with room for the rest */
-const MAX_PACKED = 12 * 1024 * 1024;
-
-/** The document as it is stored: its JSON, gzipped, in base64. */
-function pack(document: any): string {
-    const packed = zlib.gzipSync(JSON.stringify(document)).toString('base64');
-    if (packed.length > MAX_PACKED)
-        throw new Error(`The OpenAPI document is too large to keep (${Math.round(packed.length / 1e6)} MB packed, at most ${MAX_PACKED / 1e6})`);
-    return packed;
-}
+/** A document kept packed in the collection before (3.6): its JSON, gzipped, in base64. */
 const unpack = (packed: string) => JSON.parse(zlib.gunzipSync(Buffer.from(packed, 'base64')).toString('utf8'));
+
+/** What one server keeps of a connector in its collection: the key (encrypted) and the last connection test. */
+interface ServerState {
+    id: string;
+    key?: Pick<ConnectorAuth, 'secret' | 'last4' | 'setAt' | 'setBy'>;
+    test?: Connector['test'];
+}
 
 export interface ConnectorAuth {
     /** how the key is sent */
@@ -46,8 +51,8 @@ export interface Connector {
     id: string;
     name: string;
     description?: string;
-    /** the document, kept as it was read (packed: see `document(id)` to read it) */
-    openapi: { source?: string; version: string; title?: string; fetchedAt: string; packed: string; bytes: number };
+    /** where the document came from and what it is; the document itself in the file (`document(id)` reads it) */
+    openapi: { source?: string; version: string; title?: string; fetchedAt: string; bytes: number; document?: any };
     baseUrl: string;
     /** the operations designers may use, by operationId */
     operations: Record<string, boolean>;
@@ -104,15 +109,17 @@ const now = () => new Date().toISOString();
 export class Connectors {
     /** each connector's document and operations, read once and kept until the document changes */
     private readonly compiled = new Map<string, { stamp: string; document: any; operations: Map<string, Operation> }>();
+    /** each file as last read, kept while it is the same (its time and size) */
+    private readonly files = new Map<string, { stamp: string; definition: any }>();
 
     constructor(private readonly server: IBPMNServer) { }
 
     /** The connector's document and operations, from the cache while the document is the same. */
     private compile(connector: Connector) {
-        const stamp = `${connector.openapi.fetchedAt}:${connector.openapi.packed?.length}`;
+        const stamp = `${connector.openapi.fetchedAt}:${connector.openapi.bytes}`;
         const cached = this.compiled.get(connector.id);
         if (cached?.stamp === stamp) return cached;
-        const document = unpack(connector.openapi.packed);
+        const document = connector.openapi.document;
         const entry = { stamp, document, operations: listOperations(document).operations };
         this.compiled.set(connector.id, entry);
         return entry;
@@ -126,16 +133,72 @@ export class Connectors {
      */
     private get database() { return ((this.server.configuration.database as any)?.MongoDB ?? { db: 'bpmn' }).db; }
 
+    // ---- the files: the models folder's <id>.connector.json
+
+    /** The models folder, where the connectors' files are. */
+    private get folder(): string { return path.resolve(this.server.configuration.definitionsPath ?? 'processes'); }
+    private fileOf(id: string) { return path.join(this.folder, id + FILE); }
+
+    /** A connector's definition from its file, or undefined; read again only when the file changed. */
+    private readDefinition(id: string): any | undefined {
+        const file = this.fileOf(id);
+        let stat: fs.Stats;
+        try { stat = fs.statSync(file); }
+        catch { this.files.delete(id); return undefined; }
+        const stamp = `${stat.mtimeMs}:${stat.size}`;
+        const cached = this.files.get(id);
+        if (cached?.stamp === stamp) return cached.definition;
+        let definition;
+        try { definition = JSON.parse(fs.readFileSync(file, 'utf8')); }
+        catch (error) { throw new Error(`The connector file ${id}${FILE} can not be read: ${error.message}`); }
+        if (definition?.id !== id) throw new Error(`The connector file ${id}${FILE} names the connector '${definition?.id}': its id is its file's name`);
+        this.files.set(id, { stamp, definition });
+        return definition;
+    }
+
+    /** Writes a connector's definition to its file (as the models are written: by the server, into its folder). */
+    private writeDefinition(definition: any) {
+        fs.mkdirSync(this.folder, { recursive: true });
+        fs.writeFileSync(this.fileOf(definition.id), JSON.stringify(definition, null, 2) + '\n');
+        this.files.delete(definition.id);
+        this.compiled.delete(definition.id);
+    }
+
+    /** The ids of the connectors' files. */
+    private fileIds(): string[] {
+        try { return fs.readdirSync(this.folder).filter(f => f.endsWith(FILE)).map(f => f.slice(0, -FILE.length)); }
+        catch { return []; }
+    }
+
+    // ---- the server's own: wf_connectors
+
+    private async stateOf(id: string): Promise<any | undefined> {
+        const [found] = await this.store.find(this.database, COLLECTION, { id });
+        return found;
+    }
+
+    private async setState(id: string, set: Record<string, any>, unset?: Record<string, string>) {
+        await this.store.update(this.database, COLLECTION, { id }, { $set: { id, ...set }, ...(unset ? { $unset: unset } : {}) }, { upsert: true });
+    }
+
     async install() {
         await this.store.createIndex(this.database, COLLECTION, { id: 1 }, { unique: true });
+        // those kept whole in the collection before: written out to their files now
+        await this.list();
     }
 
     // ---- reading
 
     /** Every connector, without its key. */
     async list(): Promise<Connector[]> {
-        const all = await this.store.find(this.database, COLLECTION, {}, null, { id: 1 });
-        return (await Promise.all(all.map(c => this.upgrade(c)))).map(c => this.withoutSecret(c));
+        const kept = await this.store.find(this.database, COLLECTION, {});
+        const ids = new Set([...this.fileIds(), ...kept.filter(k => k.openapi).map(k => k.id)]);
+        const all = [];
+        for (const id of [...ids].sort()) {
+            const connector = await this.load(id);
+            if (connector) all.push(this.withoutSecret(connector));
+        }
+        return all;
     }
 
     /** One connector, without its key; undefined when there is none. */
@@ -156,25 +219,39 @@ export class Connectors {
         return this.compile(await this.required(id)).document;
     }
 
-    /** Every connector as stored (keys encrypted): for a backup. */
+    /** What this server keeps of its connectors (keys encrypted, tests): for a backup. The files are the models'. */
     async backup(): Promise<Record<string, any[]>> {
         return { [COLLECTION]: await this.store.find(this.database, COLLECTION, {}) };
     }
 
+    /** A connector: its file, with this server's key and test. One kept whole in the collection is written out first. */
     private async load(id: string): Promise<Connector | undefined> {
-        const [found] = await this.store.find(this.database, COLLECTION, { id });
-        return found && this.upgrade(found);
+        if (!ID.test(id ?? '')) return undefined;
+        let definition = this.readDefinition(id);
+        let state = await this.stateOf(id);
+        if (!definition && state?.openapi)
+            ({ definition, state } = await this.writeOut(state));
+        if (!definition) return undefined;
+        const auth = definition.auth ? { ...definition.auth, ...(state?.key ?? {}) } : undefined;
+        return { ...definition, ...(auth ? { auth } : {}), ...(state?.test ? { test: state.test } : {}) };
     }
 
-    /** A connector stored before documents were packed (openapi.document): packed now, and saved so. */
-    private async upgrade(connector: any): Promise<Connector> {
-        if (connector?.openapi?.packed || connector?.openapi?.document === undefined)
-            return connector;
-        const { document, ...rest } = connector.openapi;
-        const openapi = { ...rest, packed: pack(document), bytes: Buffer.byteLength(JSON.stringify(document)) };
-        await this.store.update(this.database, COLLECTION, { id: connector.id }, { $set: { openapi } });
-        this.server.logger.log(`connector '${connector.id}': its document is now kept packed`);
-        return { ...connector, openapi };
+    /** A connector kept whole in the collection (3.6): its definition to its file; its key and test stay, alone. */
+    private async writeOut(kept: any): Promise<{ definition: any; state: ServerState }> {
+        const { _id, auth, test, openapi, ...rest } = kept;
+        const document = openapi.document ?? unpack(openapi.packed);
+        const { secret, last4, setAt, setBy, ...scheme } = auth ?? {};
+        const definition = {
+            ...rest,
+            ...(auth ? { auth: scheme } : {}),
+            openapi: { source: openapi.source, version: openapi.version, title: openapi.title, fetchedAt: openapi.fetchedAt, bytes: openapi.bytes ?? Buffer.byteLength(JSON.stringify(document)), document },
+        };
+        this.writeDefinition(definition);
+        const state: ServerState = { id: kept.id, ...(secret ? { key: { secret, last4, setAt, setBy } } : {}), ...(test ? { test } : {}) };
+        await this.store.remove(this.database, COLLECTION, { id: kept.id });
+        await this.store.insert(this.database, COLLECTION, [state]);
+        this.server.logger.log(`connector '${kept.id}': written out to ${kept.id}${FILE} in the models folder; its key and test stay with this server`);
+        return { definition, state };
     }
 
     private async required(id: string): Promise<Connector> {
@@ -187,7 +264,7 @@ export class Connectors {
     private withoutSecret(connector: Connector): Connector {
         const { _id, ...rest } = connector as any;
         if (rest.openapi) {
-            const { packed, ...openapi } = rest.openapi;
+            const { document, packed, ...openapi } = rest.openapi;
             rest.openapi = openapi;
         }
         if (!rest.auth) return rest;
@@ -197,7 +274,7 @@ export class Connectors {
 
     // ---- administration
 
-    /** Adds a connector from its OpenAPI document (given, or fetched from `source`). */
+    /** Adds a connector from its OpenAPI document (given, or fetched from `source`): its file in the models folder. */
     async add(input: ConnectorInput, userName?: string): Promise<Connector> {
         if (!ID.test(input.id ?? ''))
             throw new Error(`'${input.id}' can not be a connector id: letters, digits, - and _, starting with a letter or digit`);
@@ -221,21 +298,24 @@ export class Connectors {
             retries: input.retries,
             createdAt: now(), updatedAt: now(),
         };
-        await this.store.insert(this.database, COLLECTION, [connector]);
+        this.writeDefinition(connector);
+        // a key or test left by a connector of that id removed before is not this one's
+        await this.store.remove(this.database, COLLECTION, { id: connector.id });
         this.server.logger.log(`connector '${connector.id}' added${userName ? ' by ' + userName : ''}: ${operations.size} operations, ${baseUrl}`);
         return this.withoutSecret(connector);
     }
 
     /** Changes a connector's name, description, base URL, operations, groups, enabled, timeout or retries. */
     async update(id: string, patch: Partial<Pick<Connector, 'name' | 'description' | 'baseUrl' | 'operations' | 'groups' | 'enabled' | 'timeout' | 'retries'>>): Promise<Connector> {
-        const connector = await this.required(id);
+        await this.required(id);
+        const definition = { ...this.readDefinition(id) };
         const allowed = ['name', 'description', 'baseUrl', 'operations', 'groups', 'enabled', 'timeout', 'retries'];
         const set: any = { updatedAt: now() };
         for (const key of allowed)
             if (patch[key] !== undefined) set[key] = patch[key];
         if (set.baseUrl !== undefined) set.baseUrl = this.checkBaseUrl(set.baseUrl);
-        if (set.operations) set.operations = { ...connector.operations, ...set.operations };
-        await this.store.update(this.database, COLLECTION, { id }, { $set: set });
+        if (set.operations) set.operations = { ...definition.operations, ...set.operations };
+        this.writeDefinition({ ...definition, ...set });
         return this.get(id);
     }
 
@@ -248,30 +328,33 @@ export class Connectors {
         const fresh = await this.readDocument(document ? { id, document } : { id, source: connector.openapi.source });
         const before = new Set(Object.keys(connector.operations));
         const after = [...listOperations(fresh).operations.keys()];
-        this.compiled.delete(id);
         const operations = Object.fromEntries(after.map(op => [op, connector.operations[op] ?? true]));
-        await this.store.update(this.database, COLLECTION, { id }, { $set: {
-            openapi: this.openapiOf(fresh, connector.openapi.source),
-            operations, updatedAt: now()
-        } });
+        this.writeDefinition({ ...this.readDefinition(id), openapi: this.openapiOf(fresh, connector.openapi.source), operations, updatedAt: now() });
         return { added: after.filter(op => !before.has(op)), removed: [...before].filter(op => !after.includes(op)) };
     }
 
-    /** What is stored of a document: where it came from, its version and title, and itself packed. */
+    /** What is kept of a document: where it came from, its version and title, and itself, as JSON. */
     private openapiOf(document: any, source?: string): Connector['openapi'] {
-        const packed = pack(document);
-        return { source, version: document.openapi, title: document.info?.title, fetchedAt: now(), packed, bytes: Buffer.byteLength(JSON.stringify(document)) };
+        return { source, version: document.openapi, title: document.info?.title, fetchedAt: now(), bytes: Buffer.byteLength(JSON.stringify(document)), document };
     }
 
+    /** Removes a connector: its file, and this server's key and test. */
     async remove(id: string): Promise<boolean> {
         this.compiled.delete(id);
+        await this.load(id);   // one kept whole in the collection: written out first, so it is removed as a file too
+        let existed = false;
+        if (ID.test(id ?? '')) {
+            try { fs.unlinkSync(this.fileOf(id)); existed = true; } catch { /* no file */ }
+            this.files.delete(id);
+        }
         const { deletedCount } = await this.store.remove(this.database, COLLECTION, { id });
-        return deletedCount > 0;
+        return existed || deletedCount > 0;
     }
 
     /**
-     * Sets (or replaces) the connector's authorization key, stored encrypted. `how` is a securitySchemes name of the
-     * document, or a scheme given here; none: the document's only scheme. For basic, the key is `user:password`.
+     * Sets (or replaces) the connector's authorization key, stored encrypted with this server. `how` is a securitySchemes
+     * name of the document, or a scheme given here; none: the document's only scheme. For basic, the key is
+     * `user:password`. The scheme goes in the file; the key stays with this server.
      */
     async setKey(id: string, key: string, how: string | Omit<ConnectorAuth, 'secret' | 'last4' | 'setAt' | 'setBy'> = undefined, userName?: string): Promise<Connector> {
         const connector = await this.required(id);
@@ -280,15 +363,19 @@ export class Connectors {
         const auth = this.authScheme(connector, how);
         if (auth.type === 'basic' && !key.includes(':'))
             throw new Error('A basic key is user:password');
-        const stored: ConnectorAuth = { ...auth, secret: encrypt(key), last4: key.slice(-4), setAt: now(), ...(userName ? { setBy: userName } : {}) };
-        await this.store.update(this.database, COLLECTION, { id }, { $set: { auth: stored, updatedAt: now() } });
+        const definition = this.readDefinition(id);
+        if (JSON.stringify(definition.auth ?? null) !== JSON.stringify(auth))
+            this.writeDefinition({ ...definition, auth, updatedAt: now() });
+        await this.setState(id, { key: { secret: encrypt(key), last4: key.slice(-4), setAt: now(), ...(userName ? { setBy: userName } : {}) } });
         return this.get(id);
     }
 
     /** Removes the connector's key: its calls go without authorization. */
     async clearKey(id: string): Promise<Connector> {
         await this.required(id);
-        await this.store.update(this.database, COLLECTION, { id }, { $unset: { auth: '' }, $set: { updatedAt: now() } });
+        const { auth, ...definition } = this.readDefinition(id);
+        if (auth) this.writeDefinition({ ...definition, updatedAt: now() });
+        await this.setState(id, {}, { key: '' });
         return this.get(id);
     }
 
@@ -336,7 +423,7 @@ export class Connectors {
         catch (error) {
             result = { at: now(), operation: op.operationId, ok: false, status: error.status, message: error.message };
         }
-        await this.store.update(this.database, COLLECTION, { id }, { $set: { test: result } });
+        await this.setState(id, { test: result });
         return result;
     }
 

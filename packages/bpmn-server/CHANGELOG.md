@@ -40,6 +40,14 @@ and here
   terminal (`install.sh`, the Docker image, CI) setup asks nothing and changes nothing, so those are unchanged. `init`'s
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
+### Changed
+- **Connectors are files in the models folder**, `<id>.connector.json`, beside the models that call them: the same
+  document the `wf_connectors` collection held (name, address, operations, groups, the key's scheme, the OpenAPI
+  document, now as JSON). Kept in Git and released with the models, found by their tests, copied with an application's
+  folder. Each server keeps its own key (encrypted with its `CONNECTORS_KEY`) and last connection test in
+  `wf_connectors`; a file holds no key. A connector kept whole in the collection before is written out to its file the
+  first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
+
 ### Fixed
 - `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
   `true`).

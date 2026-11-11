@@ -272,8 +272,11 @@ export function hrRoutes(app) {
  */
 export async function hrConnector(server) {
   const baseUrl = `http://localhost:${process.env.PORT || 3000}/api/hr`;
-  if (await server.connectors.get('hr')) await server.connectors.update('hr', { baseUrl });
-  else await server.connectors.add({ id: 'hr', document: openapi, baseUrl });
+  // the connector is a file beside the models (workflow/processes/hr.connector.json): written when it is new, or when
+  // this server's address is not the one it has, never at every start
+  const kept = await server.connectors.get('hr');
+  if (!kept) await server.connectors.add({ id: 'hr', document: openapi, baseUrl });
+  else if (kept.baseUrl !== baseUrl) await server.connectors.update('hr', { baseUrl });
   if (!process.env.HR_SERVICE_KEY || !process.env.CONNECTORS_KEY)
     return console.warn('HR: HR_SERVICE_KEY and CONNECTORS_KEY are needed in .env for the workflows to call the HR API');
   await server.connectors.setKey('hr', process.env.HR_SERVICE_KEY, { type: 'apiKey', in: 'header', name: 'x-hr-key' });

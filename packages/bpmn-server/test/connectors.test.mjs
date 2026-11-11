@@ -9,6 +9,7 @@ import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import zlib from 'node:zlib';
 import { makeServer, quiet } from './helpers.mjs';
 import { ConnectorError, MemoryDocumentStore, parseDocument, listOperations, resolveRefs, verifyModel } from '../dist/index.js';
 
@@ -65,7 +66,7 @@ test('an OpenAPI document: JSON or YAML, $refs resolved, operations by operation
 });
 
 test('added from its URL: the base URL from the document\'s server, the key stored encrypted and never shown', async () => {
-  const { server, store } = await shopServer();
+  const { server, store, dir } = await shopServer();
   const [listed] = await server.connectors.list();
   assert.equal(listed.id, 'shop');
   assert.equal(listed.name, 'Shop');
@@ -74,12 +75,17 @@ test('added from its URL: the base URL from the document\'s server, the key stor
   assert.equal(listed.operations.getCustomer, true, 'every operation enabled');
   assert.deepEqual({ ...listed.auth, setAt: undefined }, { type: 'bearer', scheme: 'bearerAuth', last4: '1234', setAt: undefined });
   assert.equal('secret' in listed.auth, false, 'the key is not listed');
+  // the connector is a file in the models folder; the key stays with this server, encrypted, never in the file
   const [stored] = await store.find('bpmn_test', 'wf_connectors', { id: 'shop' });
-  assert.match(stored.auth.secret, /^v1:/);
+  assert.match(stored.key.secret, /^v1:/);
   assert.ok(!JSON.stringify(stored).includes(TOKEN), 'the key is not stored in clear');
-  assert.equal(typeof stored.openapi.packed, 'string', 'the document kept packed');
-  assert.equal(stored.openapi.document, undefined);
-  assert.equal(listed.openapi.packed, undefined, 'not handed out');
+  assert.equal(stored.openapi, undefined, 'the definition is not in the collection');
+  const file = JSON.parse(fs.readFileSync(path.join(dir, 'shop.connector.json'), 'utf8'));
+  assert.equal(file.id, 'shop');
+  assert.equal(file.openapi.document.info.title, 'Shop', 'the document in the file, as JSON');
+  assert.deepEqual(file.auth, { type: 'bearer', scheme: 'bearerAuth' }, 'the key\'s scheme in the file');
+  assert.ok(!JSON.stringify(file).includes(TOKEN) && !JSON.stringify(file).includes('v1:'), 'no key in the file, not even encrypted');
+  assert.equal(listed.openapi.document, undefined, 'not handed out');
   assert.equal((await server.connectors.document('shop')).info.title, 'Shop', 'read back as it was');
 
   await assert.rejects(server.connectors.add({ id: 'shop', document: SHOP, baseUrl: base }), /A connector 'shop' exists/);
@@ -192,18 +198,47 @@ test('disabled connectors and operations are refused; the test of the connection
   await server.shutdown();
 });
 
-test('a connector stored before documents were packed is read, and packed once', async () => {
-  const { server, store } = await makeServer();
+test('a connector kept whole in the database before 3.7 (packed or not) is written out to its file; its key and test stay', async () => {
+  const { server, store, dir } = await makeServer();
   await server.connectors.install();
-  await store.insert('bpmn_test', 'wf_connectors', [{ id: 'old', name: 'Old', baseUrl: base + '/api', enabled: true, groups: [],
-    operations: { health: true }, openapi: { version: '3.1.0', fetchedAt: '2026-11-01T00:00:00.000Z', document: parseDocument(SHOP) }, createdAt: 'x', updatedAt: 'x' }]);
-  assert.deepEqual((await server.connectors.list()).map(c => c.id), ['old']);
+  const document = parseDocument(SHOP);
+  await store.insert('bpmn_test', 'wf_connectors', [
+    { id: 'old', name: 'Old', baseUrl: base + '/api', enabled: true, groups: [], operations: { health: true },
+      openapi: { version: '3.1.0', fetchedAt: '2026-11-01T00:00:00.000Z', document }, createdAt: 'x', updatedAt: 'x' },
+    { id: 'packed', name: 'Packed', baseUrl: base + '/api', enabled: true, groups: [], operations: { health: true },
+      openapi: { version: '3.1.0', fetchedAt: '2026-11-01T00:00:00.000Z', packed: zlib.gzipSync(JSON.stringify(document)).toString('base64'), bytes: 1 },
+      auth: { type: 'bearer', scheme: 'bearerAuth', secret: 'v1:kept', last4: 'abcd', setAt: 'y' },
+      test: { at: 'z', operation: 'health', ok: true, status: 200 }, createdAt: 'x', updatedAt: 'x' }]);
+  assert.deepEqual((await server.connectors.list()).map(c => c.id), ['old', 'packed']);
+  for (const id of ['old', 'packed']) {
+    const file = JSON.parse(fs.readFileSync(path.join(dir, `${id}.connector.json`), 'utf8'));
+    assert.equal(file.openapi.document.info.title, 'Shop', `${id}: its document in its file`);
+    assert.equal(file.openapi.packed, undefined);
+  }
+  const [packed] = await store.find('bpmn_test', 'wf_connectors', { id: 'packed' });
+  assert.deepEqual({ ...packed, _id: undefined }, { _id: undefined, id: 'packed', key: { secret: 'v1:kept', last4: 'abcd', setAt: 'y', setBy: undefined }, test: { at: 'z', operation: 'health', ok: true, status: 200 } }, 'the collection keeps the key and the test only');
+  const file = JSON.parse(fs.readFileSync(path.join(dir, 'packed.connector.json'), 'utf8'));
+  assert.deepEqual(file.auth, { type: 'bearer', scheme: 'bearerAuth' }, 'the scheme in the file, not the key');
+  assert.equal((await server.connectors.get('packed')).auth.last4, 'abcd', 'the key still this server\'s');
   assert.ok((await server.connectors.operations('old')).some(op => op.operationId === 'getCustomer'));
-  const [stored] = await store.find('bpmn_test', 'wf_connectors', { id: 'old' });
-  assert.equal(stored.openapi.document, undefined, 'the old form gone');
-  assert.equal(typeof stored.openapi.packed, 'string', 'packed instead');
   assert.equal((await server.connectors.call('old/health')).status, 200);
   await server.shutdown();
+});
+
+test('a connector is its file: copied into another server\'s models folder, that server has it; its key is that server\'s to set', async () => {
+  const { server, dir } = await shopServer();
+  const other = await makeServer({ extra: { connectors: { retryDelay: 1 } } });
+  fs.copyFileSync(path.join(dir, 'shop.connector.json'), path.join(other.dir, 'shop.connector.json'));
+  const copied = await other.server.connectors.get('shop');
+  assert.equal(copied.baseUrl, `${base}/api`);
+  assert.equal(copied.auth.last4, undefined, 'no key came with the file');
+  assert.equal((await other.server.connectors.call('shop/health')).status, 200, 'an operation that needs no key works at once');
+  await other.server.connectors.setKey('shop', TOKEN);
+  assert.equal((await other.server.connectors.call('shop/getCustomer', { id: 'C-1' })).output.tier, 'gold');
+  assert.equal(await other.server.connectors.remove('shop'), true);
+  assert.equal(fs.existsSync(path.join(other.dir, 'shop.connector.json')), false, 'removed: its file goes');
+  await server.shutdown();
+  await other.server.shutdown();
 });
 
 test('verify: a connector task is checked against the server\'s connectors, and is not "a service task that names no service"', async () => {
