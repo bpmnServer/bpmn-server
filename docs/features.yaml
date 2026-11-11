@@ -459,6 +459,13 @@ features:
     docs: [docs/docs/bpmn-client.md, docs/docs/client-api.md]
     code: [packages/bpmn-client/src/BPMNClient.ts, packages/bpmn-client/src/WebService.ts]
     tests: [apps/testSampleApp/test/client/processEditor.test.mjs]
+  - id: bpmn-client-v3
+    area: api
+    name: "bpmn-client for API v3"
+    what: "BPMNClient3: each call as one user; the service key issues and renews users' tokens (as, signOut); every v3 operation by area; paged lists; refusals with their code."
+    docs: [docs/docs/bpmn-client.md, docs/docs/client-api.md]
+    code: [packages/bpmn-client/src/BPMNClient3.ts]
+    tests: [packages/bpmn-client/test/unit/client3.test.mjs, packages/bpmn-client/test/contract/client3.test.mjs]
   - id: scenario-files
     area: api
     name: "Tests in code"

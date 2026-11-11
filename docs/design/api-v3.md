@@ -130,7 +130,8 @@ Each step ends with the full web suite passing.
 
 **Status (2026-11-10):** steps 0 to 6 are done on the 3.7 branch. Step 6 made v3's page (`docs/docs/api-v3.md`) from its
 document (`npm run api-docs`; a test fails while the page is out of date); v1's and v2's stay described by hand in the
-client API page, as they are frozen and their documents are made from the running routers. Next: a v3 bpmn-client.
+client API page, as they are frozen and their documents are made from the running routers. bpmn-client's `BPMNClient3`
+is v3's client (below).
 
 ## Decisions (2026-11-10)
 
@@ -149,3 +150,19 @@ client API page, as they are frozen and their documents are made from the runnin
    v3 takes both over unchanged in meaning.
 5. **Lists are paged by a bookmark**: `limit` and `cursor` in, `items` and `next` out (`next` absent on the last page).
    The cursor is opaque to the client (the last item's sort key and id). The dashboards keep their page numbers.
+
+## The v3 client (bpmn-client)
+
+`BPMNClient3` acts as one user per call, like the API. How it gets a user's token was the question:
+
+- **The application's back end holds the service key** (it never goes to a browser). `service.as(userName, groups)`
+  gives a client for that user: on its first call it asks `POST /tokens`, keeps the token in memory, and asks again a
+  minute before it expires, or once when a call answers `401 TOKEN_INVALID` (revoked, or groups changed). The same user
+  and groups give the same client, so an application keeps no tokens of its own. `signOut(userName)` revokes them.
+- **Or the application passes a token in** (`{ token }`, a string or a function giving one), when something else
+  issued it: an AI link, or a back end handing a token to another process.
+
+Calls are grouped by area (`processes`, `tasks`, `instances`, `models`, `rules`, `messages`, `signals`, `admin`,
+`tokens`), with `call(method, path, ...)` for anything newer than the client. A refusal is a `BPMNApiError` with the
+status and the error's code. It uses Node's `fetch`, not axios. `BPMNClient2` and `BPMNClient` stay, deprecated with
+their APIs.

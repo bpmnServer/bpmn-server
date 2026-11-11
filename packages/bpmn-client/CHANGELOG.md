@@ -14,9 +14,17 @@ and here
 -->
 ## [Unreleased]
 
+### Added
+- **`BPMNClient3`, the client of API v3** (`/api/v3`, bpmn-web 3.7 and later): every call acts as one user. With the
+  service key it acts as the service account, and `as(userName, groups)` gives a client acting as that user: the client
+  asks for the user's token, keeps it, renews it before it expires or when the server no longer knows it;
+  `signOut(userName)` revokes them. Or `{ token }`, a token the application got itself. Every v3 operation, by area;
+  lists page by page (`each`); refusals as `BPMNApiError` (`status`, `code`). Uses Node's `fetch`.
+
 ### Changed
 - A server since 3.7 ignores the `userId` of `start`, `invoke`, `assign`, `restart` and `startEvent` unless it sets
   `API_IMPERSONATION=true`: it acts as its service account. See bpmn-web's changelog.
+- `BPMNClient2` and `BPMNClient` are deprecated with `/api2` and `/api`: new work goes to `BPMNClient3`.
 
 ## Release 3.6.0 (2026-11-10)
 ### Changed
