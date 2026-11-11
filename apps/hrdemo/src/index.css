@@ -355,8 +355,10 @@ a:hover { color: var(--color-primary-dark); }
 }
 
 @media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main-content { margin-left: 0; }
+  /* the sidebar is a drawer, opened from the top bar (.mobile-bar) */
+  .sidebar { transform: translateX(-100%); transition: transform 0.2s ease; z-index: 120; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  .app-layout.menu-open .sidebar { transform: none; box-shadow: 4px 0 16px rgba(15, 23, 42, 0.25); }
+  .main-content { margin-left: 0; padding-top: calc(var(--mobile-bar-height) + env(safe-area-inset-top)); }
   .page-body { padding: 16px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -546,3 +548,93 @@ a:hover { color: var(--color-primary-dark); }
 
 /* BPMN Server's pages in the HR application (pages/Workflow.jsx) */
 .workflow-frame { display: block; width: 100%; height: 100vh; border: 0; background: #fff; }
+
+/* Signing in (pages/Login.jsx), and who is signed in (the sidebar's foot) */
+.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--color-sidebar); padding: 16px; }
+.login-card { width: 100%; max-width: 380px; padding: 28px; }
+.login-brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.login-intro { color: var(--color-text-secondary); margin: 0 0 18px; font-size: 14px; }
+.login-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; font-size: 14px; }
+.login-ok { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; font-size: 14px; }
+.login-submit { width: 100%; justify-content: center; margin-top: 6px; }
+.sidebar-user { border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sidebar-user-name { display: flex; flex-direction: column; color: #e2e8f0; font-size: 14px; font-weight: 500; text-decoration: none; min-width: 0; }
+.sidebar-user-name small { color: #94a3b8; font-size: 12px; font-weight: 400; }
+.sidebar-signout { background: none; border: 1px solid rgba(255, 255, 255, 0.15); color: #cbd5e1; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; }
+.sidebar-signout:hover { background: var(--color-sidebar-hover); color: #fff; }
+.login-more { text-align: center; margin: 16px 0 0; font-size: 13px; }
+
+/* The demo's home page (pages/Welcome.jsx) */
+.welcome { max-width: 1040px; margin: 0 auto; padding: 24px 16px 48px; }
+.welcome-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; }
+.welcome-intro h1 { font-size: 30px; line-height: 1.2; margin: 0 0 10px; }
+.welcome-intro p { font-size: 16px; color: var(--color-text-secondary); max-width: 760px; margin: 0 0 24px; }
+.welcome-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.welcome-card { padding: 18px 20px; }
+.welcome-card h3 { margin: 0 0 6px; font-size: 15px; }
+.welcome-card p { margin: 0; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.welcome-accounts, .welcome-try { margin-bottom: 20px; }
+.welcome-accounts .data-table { margin-top: 10px; }
+.welcome-accounts .card-body > p { margin: 0 0 6px; }
+.welcome-try ol.card-body { margin: 0; padding: 16px 20px 16px 40px; line-height: 1.7; }
+.welcome code { background: #f1f5f9; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+.welcome-foot { color: var(--color-text-secondary); font-size: 13px; text-align: center; margin-top: 8px; }
+@media (max-width: 700px) {
+  .welcome-accounts { overflow-x: auto; }
+  .welcome-intro h1 { font-size: 24px; }
+}
+
+/* The tasks to do, on the right (components/TaskPanel.jsx) */
+:root { --task-panel-width: 300px; }
+.main-content.with-tasks { margin-right: var(--task-panel-width); }
+.task-panel { position: fixed; top: 0; right: 0; bottom: 0; width: var(--task-panel-width); background: var(--color-surface); border-left: 1px solid var(--color-border); padding: 16px 16px 72px; overflow-y: auto; z-index: 90; }
+.task-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.task-panel-head h2 { font-size: 16px; margin: 0; }
+.task-panel h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-secondary); margin: 18px 0 6px; display: flex; align-items: center; gap: 6px; }
+.task-panel ul { list-style: none; margin: 0; padding: 0; }
+.task-item { display: block; width: 100%; text-align: left; background: none; border: 1px solid var(--color-border); border-radius: 8px; padding: 9px 11px; margin-bottom: 6px; cursor: pointer; font: inherit; color: inherit; }
+.task-item:hover { border-color: var(--color-primary-light, #3b82f6); background: rgba(37, 99, 235, 0.04); }
+.task-name { display: block; font-weight: 600; font-size: 14px; }
+.task-meta { display: block; font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.task-empty { font-size: 13px; color: var(--color-text-secondary); margin: 4px 0; }
+.task-hint { font-size: 12px; color: var(--color-text-secondary); margin: -2px 0 8px; }
+.task-count { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: 9px; background: #e2e8f0; color: #334155; font-size: 11px; font-weight: 600; text-align: center; line-height: 18px; }
+.task-all { width: 100%; margin-top: 16px; justify-content: center; }
+.task-toggle { position: fixed; right: 16px; bottom: 16px; z-index: 95; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 20px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; color: inherit; }
+.task-toggle.is-open { right: calc(var(--task-panel-width) + 16px); }
+.task-toggle .task-count { background: var(--color-primary, #2563eb); color: #fff; }
+@media (max-width: 900px) {
+  .main-content.with-tasks { margin-right: 0; }
+  .task-panel { width: min(340px, 100vw); box-shadow: -4px 0 16px rgba(15, 23, 42, 0.15); z-index: 130; padding-top: calc(16px + env(safe-area-inset-top)); padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+  .task-toggle.is-open { right: 16px; bottom: auto; top: 12px; }
+}
+.task-item.task-done { border-style: dashed; }
+.task-item.task-done .task-name { font-weight: 500; color: var(--color-text-secondary); }
+
+/* A phone (components/Layout.jsx): a top bar with the menu and the tasks, instead of the sidebar and the floating button */
+:root { --mobile-bar-height: 52px; }
+.mobile-bar, .menu-backdrop { display: none; }
+.task-close { display: none; }
+@media (max-width: 768px) {
+  .mobile-bar { display: flex; align-items: center; gap: 8px; position: fixed; top: 0; left: 0; right: 0; z-index: 110;
+    height: calc(var(--mobile-bar-height) + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 8px 0;
+    background: var(--color-sidebar); color: #e2e8f0; }
+  .mobile-bar-title { flex: 1; font-weight: 700; font-size: 16px; }
+  .mobile-bar-button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 10px; border: 0; border-radius: 8px;
+    background: transparent; color: inherit; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .mobile-bar-button:active { background: var(--color-sidebar-hover); }
+  .mobile-bar-tasks .task-count { background: var(--color-primary, #2563eb); color: #fff; }
+  .menu-backdrop { display: block; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); z-index: 115; }
+  .task-toggle { display: none; }
+  .task-close { display: inline-flex; font-size: 22px; }
+  .workflow-frame { height: calc(100dvh - var(--mobile-bar-height) - env(safe-area-inset-top)); }
+  .page-header { padding-left: 16px; padding-right: 16px; }
+}
+/* the page is never wider than the screen: a wide table scrolls inside its card (a phone would zoom the page out) */
+.main-content { min-width: 0; }
+@media (max-width: 768px) {
+  .card { overflow-x: auto; }
+  .toolbar { flex-wrap: wrap; }
+  .toolbar .search-input { width: 100%; }
+  .page-header-row { flex-wrap: wrap; gap: 12px; }
+}

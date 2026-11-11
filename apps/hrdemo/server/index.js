@@ -1,10 +1,14 @@
-// The HR application alone, without the workflow server: its REST API at /api/hr and its pages at /hr.
+// The HR application alone, without the workflow server: its sign-in, REST API at /api/hr and pages at /hr.
 // npm run hr; HR_PORT (default 3101). npm start runs both in one server instead (index.ts).
 import express from 'express';
 import { hrRoutes } from './routes.js';
 import { hrPages } from './pages.js';
+import { HrUserManager } from './userManager.js';
 
 const app = express();
+const userManager = new HrUserManager();
+userManager.init(app);
+userManager.setup(app);
 app.use(express.json());
 hrRoutes(app);
 hrPages(app);

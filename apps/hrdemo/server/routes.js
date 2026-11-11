@@ -5,8 +5,20 @@ import { employees, departments, clients, projects, assignments, reviews } from 
 
 const openapi = JSON.parse(fs.readFileSync(new URL('./openapi.json', import.meta.url), 'utf8'));
 
+/**
+ * Who may call the HR API: a person signed in to the HR application (its session), or the workflows, through the
+ * connector `hr`, with the key HR_SERVICE_KEY (header x-hr-key). Its document is open: a connector is made from it.
+ */
+export function hrGuard(req, res, next) {
+  if (req.path === '/openapi.json' || req.user) return next();
+  const key = process.env.HR_SERVICE_KEY;
+  if (key && req.get('x-hr-key') === key) return next();
+  res.status(401).json({ error: 'Sign in to the HR application' });
+}
+
 /** Adds the application's routes to the server's Express application. */
 export function hrRoutes(app) {
+  app.use('/api/hr', hrGuard);
   // What a connector is built from: the operations a model may call.
   app.get('/api/hr/openapi.json', (req, res) => res.json(openapi));
 
@@ -246,9 +258,15 @@ export function hrRoutes(app) {
   });
 }
 
-/** The connector models call this application through: added once, and pointed at this server whatever its port. */
+/**
+ * The connector models call this application through: added once, pointed at this server whatever its port, with the
+ * key HR_SERVICE_KEY (kept encrypted by the workflow server: CONNECTORS_KEY).
+ */
 export async function hrConnector(server) {
   const baseUrl = `http://localhost:${process.env.PORT || 3000}/api/hr`;
   if (await server.connectors.get('hr')) await server.connectors.update('hr', { baseUrl });
   else await server.connectors.add({ id: 'hr', document: openapi, baseUrl });
+  if (!process.env.HR_SERVICE_KEY || !process.env.CONNECTORS_KEY)
+    return console.warn('HR: HR_SERVICE_KEY and CONNECTORS_KEY are needed in .env for the workflows to call the HR API');
+  await server.connectors.setKey('hr', process.env.HR_SERVICE_KEY, { type: 'apiKey', in: 'header', name: 'x-hr-key' });
 }

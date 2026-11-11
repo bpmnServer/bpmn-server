@@ -1,5 +1,7 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import TaskPanel from './TaskPanel';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth, isHrAdmin } from '../auth';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> },
@@ -16,23 +18,52 @@ const navItems = [
   { to: '/workflow/dashboard', label: 'My Work', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
   { to: '/workflow/dashboard/design', label: 'Design', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> },
   { to: '/workflow/dashboard/admin', label: 'Administration', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.2 4.2l2.9 2.9M16.9 16.9l2.9 2.9M1 12h4M19 12h4M4.2 19.8l2.9-2.9M16.9 7.1l2.9-2.9"/></svg> },
-  { to: '/workflow/account', label: 'My Account', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
-  { href: '/logout', label: 'Sign Out', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> },
+];
+
+// for HR Administrators: who may sign in
+const adminItems = [
+  { section: 'Administration' },
+  { to: '/users', label: 'Users', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/></svg> },
 ];
 
 // the owf pages are under /workflow; a link is active on its own page only, but for the HR pages' sections
 const exact = to => to === '/' || to === '/workflow' || to === '/workflow/dashboard';
 
 export default function Layout({ children }) {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const items = isHrAdmin(user) ? [...navItems, ...adminItems] : navItems;
+  const [panelOpen, setPanelOpen] = useState(false);
+  // on a phone: the menu is a drawer, opened from the top bar, closed when a page opens
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [waiting, setWaiting] = useState(null);
+  const location = useLocation();
+  useEffect(() => setMenuOpen(false), [location]);
+  async function leave() {
+    await signOut();
+    navigate('/login');
+  }
   return (
-    <div className="app-layout">
+    <div className={`app-layout${menuOpen ? ' menu-open' : ''}`}>
+      <header className="mobile-bar">
+        <button className="mobile-bar-button" onClick={() => setMenuOpen(o => !o)} aria-label="Menu" aria-expanded={menuOpen}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span className="mobile-bar-title">HR System</span>
+        {waiting !== null && (
+          <button className="mobile-bar-button mobile-bar-tasks" onClick={() => window.dispatchEvent(new Event('task-panel-toggle'))} aria-label="Tasks to do">
+            To do{waiting > 0 && <span className="task-count">{waiting}</span>}
+          </button>
+        )}
+      </header>
+      {menuOpen && <div className="menu-backdrop" onClick={() => setMenuOpen(false)} />}
       <aside className="sidebar">
         <div className="sidebar-brand">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           HR System
         </div>
         <nav className="sidebar-nav">
-          {navItems.map((item, i) =>
+          {items.map((item, i) =>
             item.section
               ? <div key={i} className="sidebar-section">{item.section}</div>
               : item.href
@@ -42,10 +73,18 @@ export default function Layout({ children }) {
                 </NavLink>
           )}
         </nav>
+        <div className="sidebar-user">
+          <NavLink to="/account" className="sidebar-user-name">
+            <span>{user.name}</span>
+            <small>{user.role}</small>
+          </NavLink>
+          <button className="sidebar-signout" onClick={leave}>Sign out</button>
+        </div>
       </aside>
-      <main className="main-content">
+      <main className={`main-content${panelOpen ? ' with-tasks' : ''}`}>
         {children}
       </main>
+      <TaskPanel onToggle={setPanelOpen} onCount={setWaiting} />
     </div>
   );
 }

@@ -25,21 +25,41 @@ export default function Workflow() {
     }
   }, [location]);
 
-  function loaded() {
-    let doc, at;
+  /** The frame's page, when it is this site's: its document and address. */
+  function framePage() {
     try {
-      doc = frame.current.contentDocument;
-      at = frame.current.contentWindow.location;
+      const doc = frame.current?.contentDocument, at = frame.current?.contentWindow?.location;
+      return doc && at && at.href !== 'about:blank' ? { doc, at } : null;
     } catch {
-      return; // not the same site: shown as it is
+      return null; // not the same site: shown as it is
     }
-    if (!doc || !at) return;
+  }
+
+  /** owf's menu bar hidden (the sidebar has its places), once per page, as soon as its head is there. */
+  function dress(doc) {
+    if (!doc.head || doc.getElementById('hr-frame-style')) return;
+    const style = doc.createElement('style');
+    style.id = 'hr-frame-style';
+    style.textContent = 'body > header > nav.navbar { display: none !important; } body { padding-top: 0 !important; }';
+    doc.head.appendChild(style);
+  }
+
+  // a page loading in the frame is dressed before it has finished loading (a page's images and scripts can take a
+  // while), not only at its load event
+  useEffect(() => {
+    const timer = setInterval(() => { const page = framePage(); if (page) dress(page.doc); }, 50);
+    return () => clearInterval(timer);
+  }, []);
+
+  function loaded() {
+    const page = framePage();
+    if (!page) return;
+    const { doc, at } = page;
+    // the HR application's own page (its sign-in, its account): in the whole window, not in the frame
+    if (/^\/hr\/(login|account)/.test(at.pathname)) return window.location.assign(at.pathname + at.search);
     // no owf here (npm run dev without HR_API): its address came back to these pages
     if (at.pathname.startsWith('/hr')) return setMissing(true);
-    // owf's menu bar: the sidebar has its places
-    const style = doc.createElement('style');
-    style.textContent = 'body > header > nav.navbar { display: none !important; } body { padding-top: 0 !important; }';
-    doc.head?.appendChild(style);
+    dress(doc);
     // links that leave owf (to the HR pages) open in the whole window
     doc.querySelectorAll('a[href^="/hr"]').forEach(a => a.setAttribute('target', '_top'));
     const now = at.pathname + at.search;
@@ -48,6 +68,8 @@ export default function Workflow() {
       navigate(PREFIX + (now === '/' ? '' : now), { replace: true });
     }
     if (doc.title) document.title = `${doc.title} · HR System`;
+    // a task may have been completed, or a process started: the task panel reads them again
+    window.dispatchEvent(new Event('workflow-changed'));
   }
 
   if (missing)

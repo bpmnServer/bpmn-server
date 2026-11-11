@@ -71,7 +71,7 @@ export default function EmployeeDetail() {
         <div style={{ padding: '20px 32px 0', display: 'flex', alignItems: 'flex-start', gap: 20 }}>
           <Avatar name={fullName} />
           <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
               <div>
                 <h1 style={{ fontSize: 24, fontWeight: 700 }}>{fullName}</h1>
                 <p style={{ fontSize: 15, color: 'var(--color-text-secondary)', marginTop: 2 }}>
@@ -94,7 +94,7 @@ export default function EmployeeDetail() {
             </div>
 
             {/* Quick-stats strip */}
-            <div style={{ display: 'flex', gap: 32, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--color-border)' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 32px', marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--color-border)' }}>
               {[
                 { label: 'Active Projects', value: activeAssignments.length },
                 { label: 'Skills', value: emp.skills.length },
@@ -111,7 +111,7 @@ export default function EmployeeDetail() {
         </div>
 
         {/* Tab bar */}
-        <div style={{ display: 'flex', padding: '0 32px', marginTop: 16 }}>
+        <div style={{ display: 'flex', padding: '0 32px', marginTop: 16, overflowX: 'auto' }}>
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: '10px 20px', fontFamily: 'inherit', fontSize: 14, fontWeight: 600,
