@@ -123,7 +123,8 @@ export class TaskOperations {
         if (item.assignee)
             throw new TaskError(409, 'The task is assigned to someone else', 'TASK_ASSIGNED');
         const key = `task:${id}`;
-        if (!await this.server.dataStore.locker.claim(key))
+        // a moment's claim, by the engine that owns the locks (docs/design/engine-isolation.md)
+        if (!await this.server.engine.claim(key))
             throw new TaskError(409, 'The task is being claimed', 'TASK_ASSIGNED');
         try {
             const current = await this.find(id, user);
@@ -134,7 +135,7 @@ export class TaskOperations {
             return { task: asTask(await this.find(id, user)) };
         }
         finally {
-            await this.server.dataStore.locker.release(`claim:${key}`);
+            await this.server.engine.releaseClaim(key);
         }
     }
 

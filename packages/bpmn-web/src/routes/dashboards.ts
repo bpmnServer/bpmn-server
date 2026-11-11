@@ -296,18 +296,16 @@ export class Dashboards extends Common {
         }));
 
         router.post('/admin/locks/release', this.isAdmin, handler(async (req, res) => {
-            const locker = server.dataStore.locker as any;
-            if (typeof locker.delete !== 'function')
-                return back(res, 'This lock manager cannot release other servers\' locks.');
-            await locker.delete(req.body.id ? { id: req.body.id } : {});
+            // the locks are the engine's: released there (docs/design/engine-isolation.md)
+            try { await server.engine.releaseLocks(req.body.id || undefined); }
+            catch (error) { return back(res, `${error.message}.`); }
             back(res, req.body.id ? `Lock ${req.body.id} released.` : 'All locks released.');
         }));
 
         router.post('/admin/recover', this.isAdmin, handler(async (req, res) => {
             const { itemId, instanceId } = req.body;
-            const locker = server.dataStore.locker as any;
-            if (typeof locker.delete === 'function')
-                await locker.delete({ id: instanceId });
+            // its lock released by the engine, whose it is; a lock manager that can not leaves the invoke to say
+            await server.engine.releaseLocks(instanceId).catch(() => { });
             try {
                 await server.engine.invoke({ 'items.id': itemId }, {}, req.user?.userName, { recover: true });
                 back(res, `Item ${itemId} invoked again.`);

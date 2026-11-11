@@ -70,6 +70,17 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         status: async () => engine.status(),
         deleteInstances: async (query) => engine.deleteInstances(query),
         tagInstance: async (instanceId: string, tag) => engine.tagInstance(instanceId, tag),
+        // the locks are the engine's (docs/design/engine-isolation.md): released and claimed here, not by the host
+        /** An administrator's release: one instance's lock (`id`), or every lock (none). */
+        releaseLocks: async (id?: string) => {
+            const locker = server.dataStore.locker as any;
+            if (typeof locker.delete !== 'function') throw new Error("This lock manager cannot release other servers' locks");
+            await locker.delete(id ? { id } : {});
+            return true;
+        },
+        /** A short claim of one key (a task being claimed through the API): whether this caller has it. */
+        claim: async (key: string) => server.dataStore.locker.claim(key),
+        releaseClaim: async (key: string) => { await server.dataStore.locker.release(`claim:${key}`); return true; },
         /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
         invokeDecision: async (ref: string, data = {}) => {
             const found = await DMNEngine.find(server.configuration.definitionsPath, ref);

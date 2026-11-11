@@ -72,6 +72,11 @@ export class LaunchedEngine {
     throwSignal(...args: any[]) { return this.#ask('throwSignal', args); }
     deleteInstances(query) { return this.#ask('deleteInstances', [query]); }
     tagInstance(instanceId: string, tag) { return this.#ask('tagInstance', [instanceId, tag]); }
+    /** Releases one instance's lock (its id), or every lock: an administrator's. */
+    releaseLocks(id?: string): Promise<boolean> { return this.#ask('releaseLocks', [id]); }
+    /** Claims a key for a moment (a task being claimed): whether this caller has it; releaseClaim gives it back. */
+    claim(key: string): Promise<boolean> { return this.#ask('claim', [key]); }
+    releaseClaim(key: string): Promise<boolean> { return this.#ask('releaseClaim', [key]); }
     upgrade(...args: any[]) { return this.#ask('upgrade', args); }
     upgradeRunning(...args: any[]) { return this.#ask('upgradeRunning', args); }
     invokeDecision(...args: any[]) { return this.#ask('invokeDecision', args); }
