@@ -11,13 +11,15 @@ html(lang="en")
     //- before the modeler: it adds the token to the modeler's save request
     script(src="/javascripts/csrf.js")
     link(rel="stylesheet" href=asset("/modeler/modeler.css"))
-  body
+  body(class=(typeof framed !== 'undefined' && framed) ? 'framed' : undefined)
     #modeler-page(data-process-name=processName)
       header.modeler-header
-        a.brand(href="/" title="Home")
-          img(src="/images/omniworkflow_icon.png" alt="Home")
         include includes/editorMenu.pug
-        +editorMenu
+        //- framed in a page of this site: its layout has the places; the editor's own actions stay
+        unless typeof framed !== 'undefined' && framed
+          a.brand(href="/" title="Home")
+            img(src="/images/omniworkflow_icon.png" alt="Home")
+          +editorMenu
         h1= processName
         span#js-save-status.modeler-status(role="status")
         nav.modeler-actions

@@ -300,8 +300,9 @@ flowchart LR
 **Your pages and the workflow pages, one site.** Your routes are mounted in bpmn-web's server (`start({ routes })`),
 before its own, so your pages, your API and the workflow pages share one address and one sign-in:
 
-- The workflow pages open inside your layout, in a frame of the same site, with bpmn-web's menu bar hidden: the HR
-  demo's sidebar has a Workflow section, and `/hr/workflow/<page>` shows bpmn-web's `<page>`.
+- The workflow pages open inside your layout, in a frame of the same site: framed so, a page leaves out its own menu
+  bar (the browser says it is framed, on HTTPS and localhost; its body has the class `framed`). The HR demo's sidebar
+  has a Workflow section, and `/hr/workflow/<page>` shows bpmn-web's `<page>`.
 - Your pages call API v3 with the person's session: the HR demo's **To do** panel lists their tasks (assigned to them,
   available to them, recently done) on every page, and opens a task's form.
 - *Planned:* a task can name one of your forms instead of its fields (`camunda:formKey="app:<name>"`): see the design

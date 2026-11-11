@@ -55,6 +55,10 @@ export function pageLocals(app) {
 		res.locals.canAdminister = !adminDisabled()
 			&& (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups));
 		res.locals.currentPath = req.path;
+		// a page shown inside a page of this site (the application's own layout, `framed`): without its menu bar, as the
+		// application's layout has the places. Browsers say so on HTTPS and localhost (Sec-Fetch-Dest, Sec-Fetch-Site);
+		// a page opened by itself, or framed by another site, keeps its menu (the Fable Review, M7)
+		res.locals.framed = req.get('sec-fetch-dest') === 'iframe' && req.get('sec-fetch-site') === 'same-origin';
 		next();
 	});
 

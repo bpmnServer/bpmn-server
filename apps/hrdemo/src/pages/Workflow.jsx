@@ -35,9 +35,13 @@ export default function Workflow() {
     }
   }
 
-  /** owf's menu bar hidden (the sidebar has its places), once per page, as soon as its head is there. */
+  /**
+   * owf's menu bar hidden (the sidebar has its places), once per page, as soon as its head is there. bpmn-web leaves it
+   * out itself when the browser says the page is framed by this site (HTTPS, localhost: the body's class `framed`);
+   * this is for plain HTTP elsewhere, where browsers do not say so.
+   */
   function dress(doc) {
-    if (!doc.head || doc.getElementById('hr-frame-style')) return;
+    if (!doc.head || !doc.body || doc.body.classList.contains('framed') || doc.getElementById('hr-frame-style')) return;
     const style = doc.createElement('style');
     style.id = 'hr-frame-style';
     style.textContent = 'body > header > nav.navbar { display: none !important; } body { padding-top: 0 !important; }';

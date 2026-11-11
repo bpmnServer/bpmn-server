@@ -9,6 +9,10 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **A workflow page framed by a page of the same site leaves out its menu bar** (an application's own layout around
+  the workflow pages: `apps/hrdemo`), as the browser says it is framed (`Sec-Fetch-Dest: iframe`, `Sec-Fetch-Site:
+  same-origin`; on HTTPS and localhost). The body has the class `framed`, a hook for the application's styles; the
+  model and decision editors keep their actions. Opened by itself, or framed by another site, a page is as before.
 - **`API_RATE_LIMIT`**: calls a minute one address may make to the APIs (`/api`, `/api2`, `/api/v3`, the
   administration APIs); over it, `429` (`RATE_LIMITED`, with `RateLimit` headers). Unset, no limit, as before.
 

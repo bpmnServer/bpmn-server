@@ -5,14 +5,18 @@ html
       title= title
     include includes/head.pug
     block head
-  body
+  //- framed: shown inside a page of this site (userAccess/pages.ts), whose layout has the places: no menu bar, and
+  //- the body's class `framed` for the hosting application's own styles
+  - const inFrame = typeof framed !== 'undefined' && framed
+  body(class=inFrame ? 'framed' : undefined)
     header
-      nav.navbar.navbar-default(role="navigation")
-        .navbar-header
-          a.navbar-brand(href="/")
-            img(src="/images/omniworkflow_icon.png")
-        #navbarCollapse.collapse.navbar-collapse
-          block nav
+      unless inFrame
+        nav.navbar.navbar-default(role="navigation")
+          .navbar-header
+            a.navbar-brand(href="/")
+              img(src="/images/omniworkflow_icon.png")
+          #navbarCollapse.collapse.navbar-collapse
+            block nav
       .clearfix
       .col-10.ml-sm-auto.px-4
         include includes/flash.pug
