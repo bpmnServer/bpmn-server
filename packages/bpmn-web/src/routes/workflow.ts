@@ -119,9 +119,8 @@ export class Workflow extends Common {
                 return response.redirect('/dashboard/start/' + encodeURIComponent(processName));
             let context = await runProcess(serverOf(request), { processName: processName }, () => apiOf(request).engine.start(processName, { caseId: caseId++ },getSecureUser(request)));
 
-            if (context.errors) {
-                displayError(response, context.errors);
-            }
+            if (context.errors)
+                return displayError(request, response, context.errors);
 
 
             let execution = context.execution;
@@ -145,9 +144,8 @@ export class Workflow extends Common {
             data['caseId'] = caseId++;
 
             let context = await runProcess(serverOf(request), { processName: process }, () => apiOf(request).engine.start(process, data,getSecureUser(request), { startNodeId }));
-            if (context.errors) {
-                displayError(response, context.errors);
-            }
+            if (context.errors)
+                return displayError(request, response, context.errors);
             let instance = context.execution;
 
             return await afterOperation(request,response,context);
@@ -295,9 +293,8 @@ export class Workflow extends Common {
             let process = request.params.process;
 
             let exec = await runProcess(serverOf(request), { processName: process }, () => apiOf(request).engine.start(process, { caseId: caseId++ }, getSecureUser(request)));
-            if (exec.errors) {
-                displayError(response, exec.errors);
-            }
+            if (exec.errors)
+                return displayError(request, response, exec.errors);
 
             let output = ['run ' + process];
             output = show(output);
@@ -392,24 +389,14 @@ async function getProcs(req) {
     return list;
 }
 
-async function displayError(res, error) {
-    let msg = '';
-
-    if (typeof error === 'object') {
-        if (error.message) {
-//            msg += error.message;
-            msg += '<br/>Error Message: ' + error.message;
-        }
-        if (error.stack) {
-            msg += '<br/>Stacktrace:';
-            msg += '<br/>====================<br/>';
-            msg += error.stack.split('\n').join('<br/>');
-        }
-    } else {
-        msg +=error;
-    }
-    res.send(msg);
-
+/**
+ * An operation's error as a page: its message, escaped, with the menu (answerMessage). The stack goes to the server's
+ * log, never to the browser (the Fable Review, M6).
+ */
+function displayError(req, res, error) {
+    console.error('workflow page:', error);
+    const message = typeof error === 'object' ? (error?.message ?? 'The operation failed') : String(error);
+    return answerMessage(req, res, 500, message);
 }
 function getSecureUser(req) {
 //console.log('process.env.REQUIRE_AUTHENTICATION',process.env.REQUIRE_AUTHENTICATION);

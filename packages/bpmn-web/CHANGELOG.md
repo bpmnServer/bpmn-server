@@ -9,6 +9,8 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **`API_RATE_LIMIT`**: calls a minute one address may make to the APIs (`/api`, `/api2`, `/api/v3`, the
+  administration APIs); over it, `429` (`RATE_LIMITED`, with `RateLimit` headers). Unset, no limit, as before.
 
 ### Changed
 -->
@@ -37,6 +39,10 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **The log and the pages keep secrets in:** the MongoDB address is logged with its password as `***`; an operation's
+  error in the workflow pages is its message, escaped, with the menu (the stack goes to the server's log, no longer to
+  the browser), and the page no longer answers twice after it. A mongoose connection error is logged, and no longer
+  stops the server (mongoose is only the old test sets' move and the health check now).
 - **My work and the start page use API v3's operations in the server's process**, as the person API v3 would take
   (`pageClient.ts`), instead of calling the server's own address with a token held in the session. They work with
   `HTTPS=true` (the call to `http://127.0.0.1` failed there), and a person's groups changed apply at once (the token

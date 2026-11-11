@@ -153,6 +153,14 @@
       "x-generate": "key",
       "x-restart": true
     },
+    "API_RATE_LIMIT": {
+      "description": "Calls a minute one address may make to the APIs (`/api`, `/api2`, `/api/v3`, the administration APIs); over it, `429`. Unset, no limit",
+      "x-where": "env",
+      "x-group": "api",
+      "type": "integer",
+      "minimum": 0,
+      "x-restart": true
+    },
     "API_SERVICE_MODELS_OWNER": {
       "description": "The tenant and models owner of that account",
       "x-where": "env",

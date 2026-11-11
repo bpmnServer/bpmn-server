@@ -44,13 +44,14 @@ let mongooseConnected = false;
 export function connectMongoose() {
     if (mongooseConnected || !onMongoDB()) return;
     mongooseConnected = true;
-    console.log('MongoDB URL', process.env.MONGO_DB_URL);
+    // the address without its password: the log is no place for credentials
+    console.log('MongoDB URL', redactUrl(process.env.MONGO_DB_URL));
     mongoose.set('strictQuery', false);
-    mongoose.connect(process.env.MONGO_DB_URL);
+    mongoose.connect(process.env.MONGO_DB_URL).catch(() => { /* reported by the error listener below */ });
+    // mongoose is only the old test sets' move and the health check now: its trouble is reported, the server goes on
+    // (the engine's store has its own connection, and the health check says "degraded")
     mongoose.connection.on('error', (err) => {
-        console.error(err);
-        console.log('%s MongoDB connection error. Please make sure MongoDB is running.');
-        process.exit();
+        console.error('MongoDB (mongoose) connection error: make sure MongoDB is running.', err?.message ?? err);
     });
 }
 
@@ -115,5 +116,18 @@ export class DocumentSessionStore extends session.Store {
             const { store, database } = await userStore();
             await store.remove(database, SESSIONS, { _id: sid });
         })().then(() => callback?.(), callback);
+    }
+}
+
+/** A connection string with its password replaced by ***, for the log. */
+export function redactUrl(url: string | undefined): string | undefined {
+    if (!url) return url;
+    try {
+        const parsed = new URL(url);
+        if (parsed.password) parsed.password = '***';
+        return parsed.toString();
+    }
+    catch {
+        return url.replace(/\/\/([^:/@]+):[^@/]+@/, '//$1:***@');
     }
 }

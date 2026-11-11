@@ -40,6 +40,10 @@ and here
   terminal (`install.sh`, the Docker image, CI) setup asks nothing and changes nothing, so those are unchanged. `init`'s
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
+### Fixed
+- `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
+  `true`).
+
 ### Removed
 - **`IUserService`**: the engine never used it (who acts is the `IUserInfo` each call carries; a task's assignee and
   candidates are names it checks against that person). Finding and managing users is the host application's: bpmn-web's

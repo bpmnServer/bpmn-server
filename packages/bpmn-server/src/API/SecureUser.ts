@@ -168,7 +168,7 @@ class SecureUser implements ISecureUser {
      */
     qualifyModels(query) {
         if (this.#bypass)
-            return true;
+            return query;
         if (this.modelsOwner)
             query['owner'] = this.modelsOwner;
 
