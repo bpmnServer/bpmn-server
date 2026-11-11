@@ -529,3 +529,23 @@ test('OpenAPI documents: what is refused, references with siblings, in a loop an
   assert.equal(x.body.schema.description, 'with a sibling');
   assert.equal(x.body.schema.type, 'string');
 });
+
+test('a launched server (the host): the scheme into the file, the key and the test by engine calls (engine-isolation.md)', async () => {
+  const { server, store, dir } = await makeServer({ launched: true, extra: { connectors: { retryDelay: 1 } } });
+  await server.connectors.install();
+  await server.connectors.add({ id: 'shop', source: `${base}/openapi.yaml` });
+  assert.equal((await server.engine.facts()).connectorKeys, true, 'the engine says a key can be set (its CONNECTORS_KEY)');
+  await server.connectors.setScheme('shop');
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir, 'shop.connector.json'), 'utf8')).auth, { type: 'bearer', scheme: 'bearerAuth' });
+  assert.equal((await store.find('bpmn_test', 'wf_connectors', { id: 'shop' })).length, 0, 'the scheme is the file\'s: nothing kept yet');
+  const set = await server.engine.setConnectorKey('shop', TOKEN, 'admin');
+  assert.equal(set.auth.last4, '1234');
+  assert.equal(set.auth.secret, undefined, 'the engine answers without the key');
+  assert.equal((await server.engine.call('start', 'customer-lookup', { customerId: 'C-1' })).instance.data.tier, 'gold', 'a call with the key');
+  const tested = await server.engine.testConnector('shop', 'health');
+  assert.equal(tested.ok, true);
+  assert.equal((await server.connectors.get('shop')).test.ok, true, 'the test kept with this server');
+  await server.engine.clearConnectorKey('shop');
+  assert.equal((await server.connectors.get('shop')).auth.last4, undefined);
+  await server.shutdown();
+});

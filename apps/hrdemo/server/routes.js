@@ -279,5 +279,7 @@ export async function hrConnector(server) {
   else if (kept.baseUrl !== baseUrl) await server.connectors.update('hr', { baseUrl });
   if (!process.env.HR_SERVICE_KEY || !process.env.CONNECTORS_KEY)
     return console.warn('HR: HR_SERVICE_KEY and CONNECTORS_KEY are needed in .env for the workflows to call the HR API');
-  await server.connectors.setKey('hr', process.env.HR_SERVICE_KEY, { type: 'apiKey', in: 'header', name: 'x-hr-key' });
+  // how the key is sent, in the connector's file; the key itself kept by the engine, encrypted (engine-isolation.md)
+  await server.connectors.setScheme('hr', { type: 'apiKey', in: 'header', name: 'x-hr-key' });
+  await server.engine.setConnectorKey('hr', process.env.HR_SERVICE_KEY);
 }

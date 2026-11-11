@@ -10,7 +10,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
@@ -258,7 +258,7 @@ export class Dashboards extends Common {
             const users = own ? await own.listUsers() : null;
             const connectorList = await server.connectors.list();
             render(req, res, 'admin', {
-                title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: canEncrypt(),
+                title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: await keysSettable(),
                 serverInfo: {
                     bpmnWeb: this.webApp.packageJson?.version ?? packageVersion('bpmn-web'),
                     bpmnServer: packageVersion('bpmn-server'),
@@ -316,6 +316,8 @@ export class Dashboards extends Common {
         }));
 
         // ---- connectors: REST APIs (OpenAPI) that service tasks call, added with their keys (docs/docs/connectors.md)
+        /** Whether a key can be set: the engine says (CONNECTORS_KEY is its); no engine, none. */
+        const keysSettable = () => server.engine.facts().then(facts => facts.connectorKeys === true, () => false);
         const connectors = () => server.connectors;
         const backToConnectors = (res, message: string, id?: string) =>
             res.redirect(`/dashboard/admin/connectors${id ? '/' + encodeURIComponent(id) : ''}?message=` + encodeURIComponent(message));
@@ -344,7 +346,7 @@ export class Dashboards extends Common {
             render(req, res, 'connectors', {
                 title: 'Connectors', connectors: list.map(c => ({ ...c, models: used.get(c.id) ?? [] })),
                 catalog, catalogError, catalogLocation: connectorCatalogLocation(),
-                canEncrypt: canEncrypt(), message: req.query.message,
+                canEncrypt: await keysSettable(), message: req.query.message,
             });
         }));
 
@@ -366,7 +368,7 @@ export class Dashboards extends Common {
                 .map(([name, s]) => ({ name, text: `${name}: ${s.type}${s.scheme ? ' ' + s.scheme : ''}${s.in ? ` in ${s.in} ${s.name}` : ''}` }));
             render(req, res, 'connector', {
                 title: `Connector: ${connector.name}`, connector, operations: await connectors().operations(connector.id),
-                schemes, models: this.connectorUse().get(connector.id) ?? [], canEncrypt: canEncrypt(), message: req.query.message,
+                schemes, models: this.connectorUse().get(connector.id) ?? [], canEncrypt: await keysSettable(), message: req.query.message,
             });
         }));
 
@@ -396,13 +398,17 @@ export class Dashboards extends Common {
         router.post('/admin/connectors/:id/key', this.isAdmin, action(async (req, res) => {
             const { scheme, apiKeyName, apiKeyIn, key, clear } = req.body;
             if (clear) {
-                await connectors().clearKey(req.params.id);
+                // the scheme is the file's (model access); the key the engine's
+                await connectors().clearScheme(req.params.id);
+                await server.engine.clearConnectorKey(req.params.id);
                 return backToConnectors(res, 'Key removed: calls go without authorization.', req.params.id);
             }
             const how = scheme === 'bearer' || scheme === 'basic' ? { type: scheme }
                 : scheme === 'apiKey' ? { type: 'apiKey', in: apiKeyIn || 'header', name: String(apiKeyName ?? '').trim() }
                 : scheme || undefined;
-            const updated = await connectors().setKey(req.params.id, String(key ?? ''), how as any, req.user?.userName);
+            // how it is sent, into the connector's file (model access); the key itself to the engine, which encrypts it
+            await connectors().setScheme(req.params.id, how as any, String(key ?? ''));
+            const updated = await server.engine.setConnectorKey(req.params.id, String(key ?? ''), req.user?.userName);
             backToConnectors(res, `Key set (${updated.auth.type}, ending ${updated.auth.last4}).`, req.params.id);
         }));
 
@@ -416,7 +422,7 @@ export class Dashboards extends Common {
                     return backToConnectors(res, `The inputs are not JSON: ${exc.message}`, req.params.id);
                 }
             }
-            const result = await connectors().test(req.params.id, req.body.operation || undefined, input);
+            const result = await server.engine.testConnector(req.params.id, req.body.operation || undefined, input);
             backToConnectors(res, `Test of ${result.operation}: ${result.ok ? 'OK' : 'failed'}, ${result.message}`, req.params.id);
         }));
 

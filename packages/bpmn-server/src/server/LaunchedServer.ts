@@ -77,6 +77,11 @@ export class LaunchedEngine {
     /** Claims a key for a moment (a task being claimed): whether this caller has it; releaseClaim gives it back. */
     claim(key: string): Promise<boolean> { return this.#ask('claim', [key]); }
     releaseClaim(key: string): Promise<boolean> { return this.#ask('releaseClaim', [key]); }
+    /** A connector's key for this server, stored encrypted by the engine (CONNECTORS_KEY is the engine's). */
+    setConnectorKey(id: string, key: string, userName?: string) { return this.#ask('setConnectorKey', [id, key, userName]); }
+    clearConnectorKey(id: string) { return this.#ask('clearConnectorKey', [id]); }
+    /** A connector's connection tested, from the engine, which makes its calls; the result kept there. */
+    testConnector(id: string, operationId?: string, input = {}) { return this.#ask('testConnector', [id, operationId, input]); }
     upgrade(...args: any[]) { return this.#ask('upgrade', args); }
     upgradeRunning(...args: any[]) { return this.#ask('upgradeRunning', args); }
     invokeDecision(...args: any[]) { return this.#ask('invokeDecision', args); }

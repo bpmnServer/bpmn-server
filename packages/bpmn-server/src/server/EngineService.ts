@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import http from 'node:http';
 import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
+import { canEncrypt } from '../connectors/Secrets.js';
 import { Definition } from '../elements/Definition.js';
 import type { IExecutionResult } from '../interfaces/engine.js';
 import type { BPMNServer } from './BPMNServer.js';
@@ -80,6 +81,10 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         },
         /** A short claim of one key (a task being claimed through the API): whether this caller has it. */
         claim: async (key: string) => server.dataStore.locker.claim(key),
+        // a connector's key and its test are this server's, the engine's: encrypted and kept here (CONNECTORS_KEY)
+        setConnectorKey: async (id: string, key: string, userName?: string) => server.connectors.storeKey(id, key, userName),
+        clearConnectorKey: async (id: string) => server.connectors.forgetKey(id),
+        testConnector: async (id: string, operationId?: string, input = {}) => server.connectors.test(id, operationId, input),
         releaseClaim: async (key: string) => { await server.dataStore.locker.release(`claim:${key}`); return true; },
         /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
         invokeDecision: async (ref: string, data = {}) => {
@@ -100,7 +105,8 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
             let provider = null;
             try { provider = await server.appDelegate.getServicesProvider(null); }
             catch { /* a provider that needs a running execution */ }
-            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider) };
+            // connectorKeys: whether a connector's key can be stored here (CONNECTORS_KEY is the engine's)
+            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt() };
         },
         /** The application's own checks of a model (appDelegate.verifyModel): its code, so here. */
         checkModel: async (name: string, source: string) => {

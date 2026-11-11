@@ -354,27 +354,53 @@ export class Connectors {
     /**
      * Sets (or replaces) the connector's authorization key, stored encrypted with this server. `how` is a securitySchemes
      * name of the document, or a scheme given here; none: the document's only scheme. For basic, the key is
-     * `user:password`. The scheme goes in the file; the key stays with this server.
+     * `user:password`. Its two halves, for when the engine is elsewhere: `setScheme` (the file: model access) and
+     * `storeKey` (this server's key: the engine).
      */
     async setKey(id: string, key: string, how: string | Omit<ConnectorAuth, 'secret' | 'last4' | 'setAt' | 'setBy'> = undefined, userName?: string): Promise<Connector> {
+        await this.setScheme(id, how, key);
+        return this.storeKey(id, key, userName);
+    }
+
+    /** How the connector's key is sent, into its file (written only when it changes); the key, when given, checked against it. */
+    async setScheme(id: string, how: string | Omit<ConnectorAuth, 'secret' | 'last4' | 'setAt' | 'setBy'> = undefined, key?: string): Promise<ConnectorAuth> {
         const connector = await this.required(id);
-        if (typeof key !== 'string' || !key)
+        if (key !== undefined && (typeof key !== 'string' || !key))
             throw new Error('The key is empty');
         const auth = this.authScheme(connector, how);
-        if (auth.type === 'basic' && !key.includes(':'))
+        if (key !== undefined && auth.type === 'basic' && !key.includes(':'))
             throw new Error('A basic key is user:password');
         const definition = this.readDefinition(id);
         if (JSON.stringify(definition.auth ?? null) !== JSON.stringify(auth))
             this.writeDefinition({ ...definition, auth, updatedAt: now() });
+        return auth;
+    }
+
+    /** This server's key for the connector, stored encrypted (CONNECTORS_KEY): the engine's, where the calls are made. */
+    async storeKey(id: string, key: string, userName?: string): Promise<Connector> {
+        await this.required(id);
+        if (typeof key !== 'string' || !key)
+            throw new Error('The key is empty');
         await this.setState(id, { key: { secret: encrypt(key), last4: key.slice(-4), setAt: now(), ...(userName ? { setBy: userName } : {}) } });
         return this.get(id);
     }
 
-    /** Removes the connector's key: its calls go without authorization. */
+    /** Removes the connector's key: its calls go without authorization. Its halves: `clearScheme`, `forgetKey`. */
     async clearKey(id: string): Promise<Connector> {
+        await this.clearScheme(id);
+        return this.forgetKey(id);
+    }
+
+    /** No scheme in the connector's file. */
+    async clearScheme(id: string): Promise<void> {
         await this.required(id);
         const { auth, ...definition } = this.readDefinition(id);
         if (auth) this.writeDefinition({ ...definition, updatedAt: now() });
+    }
+
+    /** This server's key for the connector, gone. */
+    async forgetKey(id: string): Promise<Connector> {
+        await this.required(id);
         await this.setState(id, {}, { key: '' });
         return this.get(id);
     }
