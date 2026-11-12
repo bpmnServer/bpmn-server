@@ -85,7 +85,6 @@ and here
 - `@start ... is refused` in a model's tests: holds when the start fails (a listener or script throws, the engine
   refuses), as `@invoke ... is refused` does for an item.
 
-### Changed
 - **`/api` acts as its service account** (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`, which `init` sets), as `/api2`
   does: a user a call names (`userName`, `options.userName`; bpmn-client's `userId`) is ignored, and the answer has a
   `Warning` header saying so. Before, `/api` acted as whatever user it was sent, with no security rules, so anyone with
@@ -106,6 +105,12 @@ and here
 - **The pages apply the security rules one way.** My work and the start page (API v3's operations) follow
   `ENFORCE_SECURITY` as every other page does; before, they kept the rules on while the task forms and the instance
   page turned them off with `ENFORCE_SECURITY=false`. API v3 keeps them on for its clients, as before.
+
+### Fixed
+- **A sequence flow with no condition shows its Condition group as empty again** in the editor's panel: the Language
+  (JavaScript, the default) counted as a value; it counts only when it is not the default (FEEL).
+- **The Test tab's Run is offered for a scenario with no steps** (a start, then what is expected checked: a process that
+  runs to its end by itself, or stops at its first wait); it was greyed out until steps were recorded.
 
 ### Removed
 - **`/user`, a second copy of the workflow pages** (`routes/endUser.ts`, the `user/` views): nothing linked to it. Its
@@ -226,10 +231,6 @@ and here
   number by its seq. Decision entries in the logs keep their lines.
 
 ### Fixed
-- **A sequence flow with no condition shows its Condition group as empty again** in the editor's panel: the Language
-  (JavaScript, the default) counted as a value; it counts only when it is not the default (FEEL).
-- **The Test tab's Run is offered for a scenario with no steps** (a start, then what is expected checked: a process that
-  runs to its end by itself, or stops at its first wait); it was greyed out until steps were recorded.
 - **After starting a process or completing a task, a user goes back to My work**, where their next task is; only
   administrators and designers go to the instance's page. Users who are neither were sent to the Workbench (after a
   task) or to the instance's page (after a start from My work).
