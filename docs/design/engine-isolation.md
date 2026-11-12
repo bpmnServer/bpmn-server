@@ -1,6 +1,6 @@
 # The host writes nothing of the engine's
 
-Status: decided (2026-11-11), being built in 3.7. The Fable Review, H3; [multi-app-tenants.md](multi-app-tenants.md) §10 step 3, brought
+Status: built in 3.7 (2026-11-11), but for step 6 (the console on the API), left for later. The Fable Review, H3; [multi-app-tenants.md](multi-app-tenants.md) §10 step 3, brought
 before tenants. Related: [architecture.md](../docs/architecture.md) (Isolation), `server/LaunchedServer.ts`.
 
 ## 1. Why
@@ -95,5 +95,8 @@ workspaces, a workspace's models and instances each behind its own.
 4. **Tests**: what the Test tab and `/api/v3/models/{name}/test` write, written by the engine.
 5. **The instance viewer and model access**: `LaunchedServer.dataStore` becomes the instance viewer (reads only, a write throws naming the call);
    `definitions` model access; a test runs bpmn-web's suites with them so; the `todo` test passes.
-6. **The console** on the API.
+6. **The console** on the API. **Left for later** (2026-11-11): until then it runs in the host's process and uses
+   the engine calls (locks, a connector's key, test and removal, deleting instances). On the API it needs routes v3 does
+   not have (connectors, locks, items and recovering one, the models' events, a process's instances deleted), for an
+   administrator, and per workspace under `/<workspace>/api/v3` (multi-app-tenants.md).
 7. **Docs**: architecture.md's Isolation, setup.md (what a host needs with the engine elsewhere).

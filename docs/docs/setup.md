@@ -109,7 +109,8 @@ ENGINE_AT=http://127.0.0.1:3001 ENGINE_KEY=your-secret npm start
 | `ENGINE_PORT` | Engine | Its port. Default `3001` |
 | `ENGINE_LISTEN` | Engine | The address it listens on. Default `127.0.0.1`, this machine only |
 
-- **Give both processes the same database and models folder.** They read and write the same instances and models.
+- **Give both processes the same database and models folder.** The engine reads and writes the instances; the host only reads them, and writes its own users, sessions and API tokens there. The host writes the models' and the connectors' files, and tells the engine, which updates its index of them.
+- **`CONNECTORS_KEY` is the engine's only.** The connectors' keys are set, kept encrypted and used by the engine; the host needs no `CONNECTORS_KEY`.
 - **Keep the engine private.** Only the host should be able to reach it. Change `ENGINE_LISTEN` only if the host is on another machine, and then only on a private network.
 - **Turn design off, on both.** `DISABLE_DESIGN=true` removes the model editor, the Design dashboard and test runs from the host's pages, and the test calls from the engine. Without it, anyone with `ENGINE_KEY` can run a test's scripts on the engine. Models then arrive through the admin REST APIs, and the admin APIs stay on.
 - **Leave tests out of a deployment.** A production server doesn't run them, so don't deploy `*.feature` files.

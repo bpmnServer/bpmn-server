@@ -88,13 +88,19 @@ Each zone of the diagram trusts the one inside it, and only that one:
 | Boundary | What crosses it | What guards it |
 |---|---|---|
 | Internet → host | Pages, the model editor, REST calls | Sign-in and sessions (bpmn-web's, or your application's through its user manager), CSRF, API keys and tokens, rate limits; every call then acts as a user, with that user's rights |
-| Host → engine | Writes: starting, completing, assigning, tests | A private address (`ENGINE_AT`) and a key (`ENGINE_KEY`); nothing else reaches the engine |
+| Host → engine | Every write of the engine's data: starting, completing, assigning, tests, locks, the models' index, connector keys and tests | A private address (`ENGINE_AT`) and a key (`ENGINE_KEY`); nothing else reaches the engine |
 | Engine → your systems | What your services and connectors call | Your code, and the connectors' keys, which only the engine holds |
 
 The engine runs your code: delegates, services, and the scripts in models. Kept in a process of its own, a script that loops or a
 service that crashes stops the engine, not the pages. When it restarts, the waiting tasks and the timers are in the
 store as they were; a step it was in the middle of is recovered from **Administration** (see
-[Hung tasks](advanced.md#hung-tasks)). The host reads the store and the models folder directly, to show them, and writes only through the engine.
+[Hung tasks](advanced.md#hung-tasks)).
+
+The host reads instances, tasks and locks through a read-only view of the store, and the models through model access,
+which works on the models folder's files alone: it writes a model's files and a connector's file, and then tells the
+engine, which keeps its own index of the models. Everything else of the engine's (instances, locks, that index, the
+connectors' keys and tests) the host changes only by asking the engine; a write past it throws `ENGINE_ONLY`. The
+host keeps its own users, sessions and API tokens. See `docs/design/engine-isolation.md`.
 
 The engine can also run as a user of its own, or in a container of its own, with only its private address open: what the
 separation makes possible, not what a default install does.

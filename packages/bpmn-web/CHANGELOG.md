@@ -9,17 +9,18 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+
+
+### Changed
+-->
+## [Unreleased]
+### Added
 - **A workflow page framed by a page of the same site leaves out its menu bar** (an application's own layout around
   the workflow pages: `apps/hrdemo`), as the browser says it is framed (`Sec-Fetch-Dest: iframe`, `Sec-Fetch-Site:
   same-origin`; on HTTPS and localhost). The body has the class `framed`, a hook for the application's styles; the
   model and decision editors keep their actions. Opened by itself, or framed by another site, a page is as before.
 - **`API_RATE_LIMIT`**: calls a minute one address may make to the APIs (`/api`, `/api2`, `/api/v3`, the
   administration APIs); over it, `429` (`RATE_LIMITED`, with `RateLimit` headers). Unset, no limit, as before.
-
-### Changed
--->
-## [Unreleased]
-### Added
 - **An application's own sign-in: `start({ userManager })`.** An application that signs people in itself gives
   bpmn-web its user manager (`IUserManager`: `init(app)` for its sessions and `req.user`, `setup(app)` for `/login` and
   `/logout`, optional `apiUser(req)` for its API credential). bpmn-web then keeps no users, sessions or credentials of
@@ -43,6 +44,12 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **The host changes nothing of the engine's but by asking it** (docs/design/engine-isolation.md): Administration
+  releases locks, sets, tests and removes a connector's key through engine calls; claiming a task (`/api/v3`,
+  `/api2/tasks`) takes the engine's claim; the model editor, the APIs and the catalog save, rename and delete models
+  through model access (`server.models`: the files, then the engine told); the console uses the engine calls for locks,
+  connector keys and tests, and deleting instances. The host needs no `CONNECTORS_KEY`. The console still runs in the
+  host's process; moving it onto the API is left for later.
 - **The log and the pages keep secrets in:** the MongoDB address is logged with its password as `***`; an operation's
   error in the workflow pages is its message, escaped, with the menu (the stack goes to the server's log, no longer to
   the browser), and the page no longer answers twice after it. A mongoose connection error is logged, and no longer

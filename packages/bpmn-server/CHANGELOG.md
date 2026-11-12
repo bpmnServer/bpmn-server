@@ -41,6 +41,17 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
+- **A launched server's host writes nothing of the engine's** (docs/design/engine-isolation.md). Its `dataStore` is a
+  read-only instance viewer, `definitions` model access (the models' files, no database), and `connectors` keeps the
+  connectors' files; a write of the engine's data through them (an instance, a lock, the models' index, a connector's
+  key or test, `install`) throws `ENGINE_ONLY`, naming the call to use, and `server`, `db` and `monitor` are not
+  there. New: `server.models` (`save`, `rename`, `remove`, `deleteVersion`: the files, then the engine told);
+  `server.documentStore`, the host's own store; engine calls `releaseLocks`, `claim`, `releaseClaim`,
+  `install({ rebuild })`, `modelSaved`, `modelRenamed`, `modelRemoved`, `setConnectorKey`, `clearConnectorKey`,
+  `testConnector`, `connectorRemoved`; `ModelsDatastore.saveFiles`, `renameFiles`, `deleteFiles` (files only) and
+  `indexModel`, `unindexModel`, `renameIndex` (the index only); `Connectors.setScheme`, `storeKey`, `clearScheme`,
+  `forgetKey`, `removeFile`, `forget`, the halves of `setKey`, `clearKey`, `remove`. An embedded server
+  (`new BPMNServer`) is as before.
 - **Connectors are files in the models folder**, `<id>.connector.json`, beside the models that call them: the same
   document the `wf_connectors` collection held (name, address, operations, groups, the key's scheme, the OpenAPI
   document, now as JSON). Kept in Git and released with the models, found by their tests, copied with an application's
