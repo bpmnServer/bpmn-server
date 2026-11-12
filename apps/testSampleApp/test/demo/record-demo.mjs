@@ -23,7 +23,7 @@ process.prependListener('unhandledRejection', fail);
 process.prependListener('uncaughtException', fail);
 const web = await startWebApp();
 fs.copyFileSync(path.join(webRoot, 'processes', MODEL + '.bpmn'), path.join(web.definitionsPath, MODEL + '.bpmn'));
-await web.bpmnServer.definitions.rebuild();
+await web.bpmnServer.engine.install({ rebuild: true });
 
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: SIZE, recordVideo: { dir: outDir, size: SIZE } });

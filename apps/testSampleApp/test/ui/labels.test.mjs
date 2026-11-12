@@ -35,7 +35,7 @@ test.before(async () => {
     web = await startWebApp();
     browser = await chromium.launch();
     fs.writeFileSync(path.join(web.definitionsPath, 'Claim.bpmn'), MODEL);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => {
     await browser?.close();

@@ -132,7 +132,7 @@ test('a joining gateway: its behaviour follows its flows', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
     fs.writeFileSync(path.join(web.definitionsPath, 'join-behaviour.bpmn'), await layoutProcess(xml));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const { page, errors, close } = await openEditor('join-behaviour');
     await page.selectOption('#js-element-picker', 'Join');
     const join = await behaviour(page);

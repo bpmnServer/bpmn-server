@@ -410,7 +410,7 @@ class ModelVerifier {
         definition.processes.forEach(proc => {
             this.processId = proc.id;
             this.checkLabel(proc.def || proc);
-            if (checkScripts) proc.scripts.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `process '${event}' script`, proc.def || proc)));
+            if (checkScripts) proc.scripts?.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `process '${event}' script`, proc.def || proc)));
         });
 
         const lanes = new Map<string, any>();
@@ -419,7 +419,7 @@ class ModelVerifier {
             const def = node.def || {};
             this.checkLabel(def);
             if (checkScripts) {
-                node.scripts.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `'${event}' script`, def)));
+                node.scripts?.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `'${event}' script`, def)));
                 if (node.type == 'bpmn:ScriptTask' && def.script)
                     this.checkScript(def.script, 'script', def);
                 const attrs = def.$attrs || {};

@@ -140,6 +140,57 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         }
     }
 
+    // ---- model access: the models' files, no database (docs/design/engine-isolation.md). The engine keeps its index of
+    // ---- them (the database's records: start events, timers, messages): indexModel, unindexModel, renameIndex.
+
+    /** The model's files written, after it is checked (it must load): no database. `savedBy` kept with the version. */
+    async saveFiles(name, bpmn, svg?, savedBy?: string): Promise<boolean> {
+        await new Definition(name, bpmn, this.server).load();
+        const before = await this.before(this.getPath(name, 'bpmn'));
+        await this.saveFile(name, 'bpmn', bpmn);
+        if (svg)
+            await this.saveFile(name, 'svg', svg);
+        await this.keepVersion(this.modelHistory, name, bpmn, savedBy, before);
+        return true;
+    }
+
+    /** The model's files gone, its tests and history too: no database. */
+    async deleteFiles(name): Promise<void> {
+        const fs = require('fs');
+        for (const extension of MODEL_FILES) {
+            try { await fs.promises.unlink(this.definitionsPath + name + '.' + extension); }
+            catch (error) { if (error.code !== 'ENOENT') throw error; }
+        }
+        await this.modelHistory.purge(name);
+    }
+
+    /** The model's files renamed, its tests calling it by its new name, its history moved: no database. */
+    async renameFiles(name, newName): Promise<boolean> {
+        const fs = require('fs');
+        for (const extension of MODEL_FILES) {
+            const from = this.definitionsPath + name + '.' + extension, to = this.definitionsPath + newName + '.' + extension;
+            try { await fs.promises.rename(from, to); }
+            catch (error) { if (error.code !== 'ENOENT') throw error; continue; }
+            if (extension.endsWith('feature'))
+                await fs.promises.writeFile(to, renamedInFeature(await fs.promises.readFile(to, 'utf8'), name, newName));
+        }
+        await this.modelHistory.rename(name, newName);
+        return true;
+    }
+
+    /** The engine's index of a model, from its file as it is now. */
+    async indexModel(name): Promise<void> {
+        await this.rebuildModel(name);
+    }
+    /** A model gone from the engine's index. */
+    async unindexModel(name): Promise<void> {
+        await super.deleteModel(name);
+    }
+    /** A model renamed in the engine's index. */
+    async renameIndex(name, newName): Promise<void> {
+        await super.renameModel(name, newName);
+    }
+
     /** Saves the model; `savedBy` (a user name) is kept with the version in its history. */
     async save(name, bpmn, svg?,owner=null, savedBy?: string): Promise<boolean> {
 
@@ -244,7 +295,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             throw exc;
         }
     }
-    private async rebuildModel(name) {
+    protected async rebuildModel(name) {
         this.logger.log("rebuilding " + name);
         let source = await this.getSource(name);
         const svg = await this.getSVG(name);

@@ -10,6 +10,7 @@ and here
 ## [Unreleased]
 ### Added
 
+
 ### Changed
 -->
 ## [Unreleased]
@@ -44,6 +45,16 @@ and here
 - **The model editor's Label group:** *Case label* on the process, *Label* and *Label once done* on any element of
   the diagram; a template checked as it is typed (`camunda:label`, `camunda:endLabel` declared in the editor's
   descriptor).
+- **The Design dashboard finds the models that use a feature**: beside the search, **Any feature** lists the features
+  the models use (user tasks, timers, connectors, forms, ...: docs/features.yaml's `xml` markers), with how many models
+  use each; one chosen, only those models are listed, each with the elements where, a link that opens the model at the
+  element. The editor opens at an element named in its address: `/model/edit/<model>#element=<id>`.
+- **A workflow page framed by a page of the same site leaves out its menu bar** (an application's own layout around
+  the workflow pages: `apps/hrdemo`), as the browser says it is framed (`Sec-Fetch-Dest: iframe`, `Sec-Fetch-Site:
+  same-origin`; on HTTPS and localhost). The body has the class `framed`, a hook for the application's styles; the
+  model and decision editors keep their actions. Opened by itself, or framed by another site, a page is as before.
+- **`API_RATE_LIMIT`**: calls a minute one address may make to the APIs (`/api`, `/api2`, `/api/v3`, the
+  administration APIs); over it, `429` (`RATE_LIMITED`, with `RateLimit` headers). Unset, no limit, as before.
 - **An application's own sign-in: `start({ userManager })`.** An application that signs people in itself gives
   bpmn-web its user manager (`IUserManager`: `init(app)` for its sessions and `req.user`, `setup(app)` for `/login` and
   `/logout`, optional `apiUser(req)` for its API credential). bpmn-web then keeps no users, sessions or credentials of
@@ -65,6 +76,22 @@ and here
 - The Settings page's tables are made from the settings schema (`npm run features`), so the two can not drift; some
   descriptions in the schema now say what the page said.
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
+
+### Changed
+- **Lists read less.** `/api/v3/instances` filters, sorts and cuts its page in the database, reading only the fields
+  it shows; the task lists (`/api/v3/tasks`, `/api2/tasks`, My work) read the tasks without their instances' data. The
+  answers are as before. The HR demo's To do panel no longer reads the tasks every 30 seconds and on each return to the
+  window: on the page's load, its Refresh button, and a task completed in the workflow pages.
+- **The host changes nothing of the engine's but by asking it** (docs/design/engine-isolation.md): Administration
+  releases locks, sets, tests and removes a connector's key through engine calls; claiming a task (`/api/v3`,
+  `/api2/tasks`) takes the engine's claim; the model editor, the APIs and the catalog save, rename and delete models
+  through model access (`server.models`: the files, then the engine told); the console uses the engine calls for locks,
+  connector keys and tests, and deleting instances. The host needs no `CONNECTORS_KEY`. The console still runs in the
+  host's process; moving it onto the API is left for later.
+- **The log and the pages keep secrets in:** the MongoDB address is logged with its password as `***`; an operation's
+  error in the workflow pages is its message, escaped, with the menu (the stack goes to the server's log, no longer to
+  the browser), and the page no longer answers twice after it. A mongoose connection error is logged, and no longer
+  stops the server (mongoose is only the old test sets' move and the health check now).
 - **My work and the start page use API v3's operations in the server's process**, as the person API v3 would take
   (`pageClient.ts`), instead of calling the server's own address with a token held in the session. They work with
   `HTTPS=true` (the call to `http://127.0.0.1` failed there), and a person's groups changed apply at once (the token
@@ -88,7 +115,6 @@ and here
 - `@start ... is refused` in a model's tests: holds when the start fails (a listener or script throws, the engine
   refuses), as `@invoke ... is refused` does for an item.
 
-### Changed
 - **`/api` acts as its service account** (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`, which `init` sets), as `/api2`
   does: a user a call names (`userName`, `options.userName`; bpmn-client's `userId`) is ignored, and the answer has a
   `Warning` header saying so. Before, `/api` acted as whatever user it was sent, with no security rules, so anyone with
@@ -109,6 +135,12 @@ and here
 - **The pages apply the security rules one way.** My work and the start page (API v3's operations) follow
   `ENFORCE_SECURITY` as every other page does; before, they kept the rules on while the task forms and the instance
   page turned them off with `ENFORCE_SECURITY=false`. API v3 keeps them on for its clients, as before.
+
+### Fixed
+- **A sequence flow with no condition shows its Condition group as empty again** in the editor's panel: the Language
+  (JavaScript, the default) counted as a value; it counts only when it is not the default (FEEL).
+- **The Test tab's Run is offered for a scenario with no steps** (a start, then what is expected checked: a process that
+  runs to its end by itself, or stops at its first wait); it was greyed out until steps were recorded.
 
 ### Removed
 - **`/user`, a second copy of the workflow pages** (`routes/endUser.ts`, the `user/` views): nothing linked to it. Its

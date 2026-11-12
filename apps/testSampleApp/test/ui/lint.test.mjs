@@ -34,7 +34,7 @@ const errors = [];
 test.before(async () => {
     web = await startWebApp();
     fs.writeFileSync(path.join(web.definitionsPath, 'lint-split.bpmn'), MODEL);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     browser = await chromium.launch();
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());

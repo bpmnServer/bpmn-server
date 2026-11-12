@@ -153,6 +153,12 @@ Test tab's rules. What a run reached is saved on its test instance, so deleting 
 coverage; it says how many scenarios have not run, and *out of date* when the model was saved after them. A **Run** here keeps each scenario's
 run, as the Test tab does.
 
+Beside the search of the models, **Any feature** lists the [features](features.md) the models use (user tasks, timers,
+connectors, forms, ...), each with how many models use it. Choose one, and only the models that use it are listed, each
+with where: the elements, each a link that opens the model at that element (`/model/edit/<model>#element=<id>`). What
+shows a feature in a model's XML is the catalog's (its **In the model** column); from the command line,
+`npm run features -- --models <folder> --feature <id>`.
+
 The scenarios are saved in the models folder, beside the model, as Gherkin: `<model>.feature` (see below).
 
 **Edit as text**, in the list's **⋯** menu, opens the whole `.feature` file in the tab, with its comments. **Save** keeps it only if

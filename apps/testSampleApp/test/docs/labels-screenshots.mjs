@@ -21,7 +21,7 @@ fs.writeFileSync(path.join(web.definitionsPath, MODEL + '.feature'), `Feature: $
       | carModel | "Porsche 911" |
       | starterUserId | "staff" |
 `);
-await web.bpmnServer.definitions.rebuild();
+await web.bpmnServer.engine.install({ rebuild: true });
 const engine = web.bpmnServer.engine;
 const wait = (run, id) => run.instance.items.find(i => i.elementId === id && i.status === 'wait');
 

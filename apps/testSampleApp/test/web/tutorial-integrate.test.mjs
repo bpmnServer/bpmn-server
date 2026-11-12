@@ -15,7 +15,7 @@ let web;
 test.before(async () => {
   web = await startWebApp({ env: { APP_ENV: 'production', API_TRACE: '' } });
   fs.copyFileSync(MODEL, path.join(web.definitionsPath, 'Leave Application.bpmn'));
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 

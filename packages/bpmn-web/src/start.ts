@@ -117,9 +117,15 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
  * ADMIN_PASSWORD, the server's first page asks for the administrator.
  */
 export async function setup(server: BPMNServer, users: UserService | null = undefined) {
-	await server.dataStore.install();
-	await server.definitions.install();
-	await server.connectors?.install();
+	// the engine's stores are the engine's to set up (docs/design/engine-isolation.md); an embedded server, here
+	const engine = (server as any).engine;
+	if (typeof engine?.install === 'function' && engine.running)
+		await engine.install();
+	else if (!engine || typeof engine.install !== 'function') {
+		await server.dataStore.install();
+		await server.definitions.install();
+		await server.connectors?.install();
+	}
 	const { installTokens } = await import('./routes/api/v3.js');
 	await installTokens(server);
 	// the Test tabs' tests, kept in MongoDB before 3.5, become files beside the models

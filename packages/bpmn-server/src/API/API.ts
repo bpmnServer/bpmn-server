@@ -173,7 +173,7 @@ export interface IAPIData {
 /**
     returns list of `item`s
 */
-     findItems(query, user?: ISecureUser): Promise<IItemData[]>;
+     findItems(query, user?: ISecureUser, options?: { lean?: boolean }): Promise<IItemData[]>;
      findItem(query, user?: ISecureUser): Promise<IItemData>;
 /**
     returns list of `instance`s
@@ -301,10 +301,11 @@ class APIData extends APIComponent {
         return this.findItems(query, user);
     }
 
-    public async findItems(query, user?: ISecureUser): Promise<IItemData[]> {
+    /** `lean`: without the instances' data (for lists): see IDataStore.findItems. */
+    public async findItems(query, user?: ISecureUser, options?: { lean?: boolean }): Promise<IItemData[]> {
         user=this.getUser(user);
         query = user.qualifyInstances(query);
-        return await this.server.dataStore.findItems(query);
+        return await this.server.dataStore.findItems(query, options);
     }
     public async findItem(query, user?: ISecureUser): Promise<IItemData> {
         user=this.getUser(user);
@@ -393,23 +394,33 @@ class APIModelReader extends APIComponent {
 /** Changing models: deployment and model-management tooling only (BPMNAdminAPI). */
 class APIModel extends APIModelReader {
 
+    /**
+     * The host's models (a launched server's `models`: model access writes the files, the engine is told;
+     * docs/design/engine-isolation.md); an embedded server, or a model with an owner (tenants: the owner is in the
+     * index), as before.
+     */
+    private modelsOf(user: ISecureUser) {
+        const models = (this.server as any).models;
+        return models && !user.modelsOwner ? models : null;
+    }
+
     public async save(name, source, svg, user?: ISecureUser) {
         user=this.getUser(user);
         if (await user.canModifyModel(name))
-            return await this.server.definitions.save(name, source, svg, user.modelsOwner, user.userName);
+            return await (this.modelsOf(user)?.save(name, source, svg, user.userName) ?? this.server.definitions.save(name, source, svg, user.modelsOwner, user.userName));
         else
             return false;
     }
     public async delete(name, user?: ISecureUser) {
         user=this.getUser(user);
         if (await user.canDeleteModel(name))
-            return await this.server.definitions.deleteModel(name, user.modelsOwner);
+            return await (this.modelsOf(user)?.remove(name) ?? this.server.definitions.deleteModel(name, user.modelsOwner));
         return false;
     }
     public async rename(name, newName, user?: ISecureUser) {
         user=this.getUser(user);
         if (await user.canModifyModel(name))
-            return await this.server.definitions.renameModel(name, newName, user.modelsOwner);
+            return await (this.modelsOf(user)?.rename(name, newName) ?? this.server.definitions.renameModel(name, newName, user.modelsOwner));
         return false;
     }
     public async export(query, folder, user?: ISecureUser) {

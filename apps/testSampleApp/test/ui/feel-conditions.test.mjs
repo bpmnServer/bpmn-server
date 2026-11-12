@@ -34,7 +34,7 @@ let web, browser;
 test.before(async () => {
   web = await startWebApp();
   fs.writeFileSync(path.join(web.definitionsPath, 'feel-model.bpmn'), MODEL);
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
   browser = await chromium.launch();
 });
 test.after(async () => {

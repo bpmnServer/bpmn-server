@@ -10,11 +10,13 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
+import { modelFeatures } from '../modelFeatures.js';
+import { MODEL_FEATURES } from '../modelFeatureCatalog.js';
 import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
 import { reachedIn } from '../testing/coverage.js';
@@ -104,7 +106,7 @@ export class Dashboards extends Common {
     }
 
     /** verifyModel's counts per model, kept while the file is unchanged */
-    verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string }>();
+    verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string; features?: { id: string; name: string; at: string[] }[] }>();
 
     config() {
         const router = express.Router();
@@ -180,10 +182,12 @@ export class Dashboards extends Common {
                     try {
                         const source = FS.readFileSync(path.join(dir, file), 'utf8');
                         const result = await verifyModel(source, server, name);
-                        checked = { mtime, errors: result.errors, warnings: result.warnings, description: await modelDescription(source).catch(() => '') };
+                        checked = { mtime, errors: result.errors, warnings: result.warnings, description: await modelDescription(source).catch(() => ''),
+                            // the features it uses, and where (docs/features.yaml's markers): the Feature filter
+                            features: modelFeatures(source, MODEL_FEATURES) };
                     }
                     catch {
-                        checked = { mtime, errors: 1, warnings: 0 };
+                        checked = { mtime, errors: 1, warnings: 0, features: [] };
                     }
                     this.verified.set(name, checked);
                 }
@@ -204,8 +208,11 @@ export class Dashboards extends Common {
                 return { name, tests: decisionTests.get(name) ?? 0 };
             });
             const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, undefined);
+            // the features some model uses, with how many: the Feature filter's choices, by the catalog's order
+            const featureUse = MODEL_FEATURES.map(f => ({ id: f.id, name: f.name, models: models.filter(m => m.features?.some(u => u.id === f.id)).length }))
+                .filter(f => f.models > 0);
             render(req, res, 'design', {
-                title: 'Design', models, recent, decisions, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
+                title: 'Design', models, recent, decisions, featureUse, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
                 message: req.query.message,
                 templates: catalog.templates ?? [], rejectedTemplates: catalog.rejected ?? [],
                 problems: { errors: models.filter(m => m.errors).length, warnings: models.filter(m => !m.errors && m.warnings).length },
@@ -280,7 +287,7 @@ export class Dashboards extends Common {
             const users = own ? await own.listUsers() : null;
             const connectorList = await server.connectors.list();
             render(req, res, 'admin', {
-                title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: canEncrypt(),
+                title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: await keysSettable(),
                 roles: await this.roles(folder(), users),
                 serverInfo: {
                     bpmnWeb: this.webApp.packageJson?.version ?? packageVersion('bpmn-web'),
@@ -347,18 +354,16 @@ export class Dashboards extends Common {
         }));
 
         router.post('/admin/locks/release', this.isAdmin, handler(async (req, res) => {
-            const locker = server.dataStore.locker as any;
-            if (typeof locker.delete !== 'function')
-                return back(res, 'This lock manager cannot release other servers\' locks.');
-            await locker.delete(req.body.id ? { id: req.body.id } : {});
+            // the locks are the engine's: released there (docs/design/engine-isolation.md)
+            try { await server.engine.releaseLocks(req.body.id || undefined); }
+            catch (error) { return back(res, `${error.message}.`); }
             back(res, req.body.id ? `Lock ${req.body.id} released.` : 'All locks released.');
         }));
 
         router.post('/admin/recover', this.isAdmin, handler(async (req, res) => {
             const { itemId, instanceId } = req.body;
-            const locker = server.dataStore.locker as any;
-            if (typeof locker.delete === 'function')
-                await locker.delete({ id: instanceId });
+            // its lock released by the engine, whose it is; a lock manager that can not leaves the invoke to say
+            await server.engine.releaseLocks(instanceId).catch(() => { });
             try {
                 await server.engine.invoke({ 'items.id': itemId }, {}, req.user?.userName, { recover: true });
                 back(res, `Item ${itemId} invoked again.`);
@@ -369,6 +374,8 @@ export class Dashboards extends Common {
         }));
 
         // ---- connectors: REST APIs (OpenAPI) that service tasks call, added with their keys (docs/docs/connectors.md)
+        /** Whether a key can be set: the engine says (CONNECTORS_KEY is its); no engine, none. */
+        const keysSettable = () => server.engine.facts().then(facts => facts.connectorKeys === true, () => false);
         const connectors = () => server.connectors;
         const backToConnectors = (res, message: string, id?: string) =>
             res.redirect(`/dashboard/admin/connectors${id ? '/' + encodeURIComponent(id) : ''}?message=` + encodeURIComponent(message));
@@ -397,7 +404,7 @@ export class Dashboards extends Common {
             render(req, res, 'connectors', {
                 title: 'Connectors', connectors: list.map(c => ({ ...c, models: used.get(c.id) ?? [] })),
                 catalog, catalogError, catalogLocation: connectorCatalogLocation(),
-                canEncrypt: canEncrypt(), message: req.query.message,
+                canEncrypt: await keysSettable(), message: req.query.message,
             });
         }));
 
@@ -419,7 +426,7 @@ export class Dashboards extends Common {
                 .map(([name, s]) => ({ name, text: `${name}: ${s.type}${s.scheme ? ' ' + s.scheme : ''}${s.in ? ` in ${s.in} ${s.name}` : ''}` }));
             render(req, res, 'connector', {
                 title: `Connector: ${connector.name}`, connector, operations: await connectors().operations(connector.id),
-                schemes, models: this.connectorUse().get(connector.id) ?? [], canEncrypt: canEncrypt(), message: req.query.message,
+                schemes, models: this.connectorUse().get(connector.id) ?? [], canEncrypt: await keysSettable(), message: req.query.message,
             });
         }));
 
@@ -449,13 +456,17 @@ export class Dashboards extends Common {
         router.post('/admin/connectors/:id/key', this.isAdmin, action(async (req, res) => {
             const { scheme, apiKeyName, apiKeyIn, key, clear } = req.body;
             if (clear) {
-                await connectors().clearKey(req.params.id);
+                // the scheme is the file's (model access); the key the engine's
+                await connectors().clearScheme(req.params.id);
+                await server.engine.clearConnectorKey(req.params.id);
                 return backToConnectors(res, 'Key removed: calls go without authorization.', req.params.id);
             }
             const how = scheme === 'bearer' || scheme === 'basic' ? { type: scheme }
                 : scheme === 'apiKey' ? { type: 'apiKey', in: apiKeyIn || 'header', name: String(apiKeyName ?? '').trim() }
                 : scheme || undefined;
-            const updated = await connectors().setKey(req.params.id, String(key ?? ''), how as any, req.user?.userName);
+            // how it is sent, into the connector's file (model access); the key itself to the engine, which encrypts it
+            await connectors().setScheme(req.params.id, how as any, String(key ?? ''));
+            const updated = await server.engine.setConnectorKey(req.params.id, String(key ?? ''), req.user?.userName);
             backToConnectors(res, `Key set (${updated.auth.type}, ending ${updated.auth.last4}).`, req.params.id);
         }));
 
@@ -469,7 +480,7 @@ export class Dashboards extends Common {
                     return backToConnectors(res, `The inputs are not JSON: ${exc.message}`, req.params.id);
                 }
             }
-            const result = await connectors().test(req.params.id, req.body.operation || undefined, input);
+            const result = await server.engine.testConnector(req.params.id, req.body.operation || undefined, input);
             backToConnectors(res, `Test of ${result.operation}: ${result.ok ? 'OK' : 'failed'}, ${result.message}`, req.params.id);
         }));
 
@@ -480,7 +491,9 @@ export class Dashboards extends Common {
         }));
 
         router.post('/admin/connectors/:id/delete', this.isAdmin, action(async (req, res) => {
-            const removed = await connectors().remove(req.params.id);
+            // its file (model access), then its key and test (the engine's)
+            const removed = connectors().removeFile(req.params.id);
+            await server.engine.connectorRemoved(req.params.id);
             backToConnectors(res, removed ? `Connector '${req.params.id}' deleted.` : `No connector '${req.params.id}'.`);
         }));
 
@@ -538,7 +551,7 @@ export class Dashboards extends Common {
             if (entry.sha256 && crypto.createHash('sha256').update(source).digest('hex') !== entry.sha256)
                 return again(`${entry.bpmn} is not the file the catalog describes (its checksum differs); nothing was imported.`);
             const svg = await bpmnToSvg(source).catch(() => null);
-            await server.definitions.save(name, source, svg, null, req.user?.userName);
+            await server.models.save(name, source, svg, req.user?.userName);
             this.verified.delete(name);
             res.redirect('/model/edit/' + encodeURIComponent(name));
         }));

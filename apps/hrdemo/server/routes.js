@@ -1,9 +1,17 @@
 // The HR demo application's REST API, under /api/hr, and the connector `hr` models call it through. Its data is in
 // memory, reset on every start.
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { employees, departments, clients, projects, assignments, reviews } from './data.js';
 
 const openapi = JSON.parse(fs.readFileSync(new URL('./openapi.json', import.meta.url), 'utf8'));
+
+/** Two keys compared in constant time (hashed first: any length), so a wrong key's answer time says nothing. */
+function sameKey(given, key) {
+  if (typeof given !== 'string') return false;
+  const hash = text => crypto.createHash('sha256').update(text).digest();
+  return crypto.timingSafeEqual(hash(given), hash(key));
+}
 
 /**
  * Who may call the HR API: a person signed in to the HR application (its session), or the workflows, through the
@@ -12,7 +20,7 @@ const openapi = JSON.parse(fs.readFileSync(new URL('./openapi.json', import.meta
 export function hrGuard(req, res, next) {
   if (req.path === '/openapi.json' || req.user) return next();
   const key = process.env.HR_SERVICE_KEY;
-  if (key && req.get('x-hr-key') === key) return next();
+  if (key && sameKey(req.get('x-hr-key'), key)) return next();
   res.status(401).json({ error: 'Sign in to the HR application' });
 }
 
@@ -264,9 +272,14 @@ export function hrRoutes(app) {
  */
 export async function hrConnector(server) {
   const baseUrl = `http://localhost:${process.env.PORT || 3000}/api/hr`;
-  if (await server.connectors.get('hr')) await server.connectors.update('hr', { baseUrl });
-  else await server.connectors.add({ id: 'hr', document: openapi, baseUrl });
+  // the connector is a file with the models (workflow/processes/connectors/hr.connector.json): written when it is new, or when
+  // this server's address is not the one it has, never at every start
+  const kept = await server.connectors.get('hr');
+  if (!kept) await server.connectors.add({ id: 'hr', document: openapi, baseUrl });
+  else if (kept.baseUrl !== baseUrl) await server.connectors.update('hr', { baseUrl });
   if (!process.env.HR_SERVICE_KEY || !process.env.CONNECTORS_KEY)
     return console.warn('HR: HR_SERVICE_KEY and CONNECTORS_KEY are needed in .env for the workflows to call the HR API');
-  await server.connectors.setKey('hr', process.env.HR_SERVICE_KEY, { type: 'apiKey', in: 'header', name: 'x-hr-key' });
+  // how the key is sent, in the connector's file; the key itself kept by the engine, encrypted (engine-isolation.md)
+  await server.connectors.setScheme('hr', { type: 'apiKey', in: 'header', name: 'x-hr-key' });
+  await server.engine.setConnectorKey('hr', process.env.HR_SERVICE_KEY);
 }

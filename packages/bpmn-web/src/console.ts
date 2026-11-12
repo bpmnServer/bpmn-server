@@ -255,6 +255,17 @@ async function completeUserTask() {
 	process.exit();
 
 }
+/**
+ * The engine's own calls, where it has them (a launched server: docs/design/engine-isolation.md): a connector's key,
+ * test and removal, locks, instances deleted. An embedded server has none: its own objects do it.
+ */
+const engineCalls = () => typeof (server.engine as any).releaseLocks === 'function' ? server.engine as any : null;
+async function releaseLocks(instanceId?: string) {
+	const engine = engineCalls();
+	if (engine) return engine.releaseLocks(instanceId);
+	await (server.dataStore.locker as any).delete(instanceId ? { id: instanceId } : {});
+}
+
 /** Connectors (docs/docs/connectors.md): REST APIs described by OpenAPI, which service tasks call. */
 async function connectorCommand(option: string) {
 	const connectors = server.connectors;
@@ -286,7 +297,11 @@ async function connectorCommand(option: string) {
 			const key = await question('Key (basic: user:password): ');
 			const how = scheme === 'bearer' || scheme === 'basic' ? { type: scheme as any }
 				: scheme.startsWith('apiKey:') ? { type: 'apiKey' as const, in: 'header' as const, name: scheme.slice(7) } : scheme || undefined;
-			const updated = await connectors.setKey(id, key.trim(), how);
+			const engine = engineCalls();
+			// how it is sent, into the connector's file; the key itself to the engine, which encrypts it
+			const updated = engine
+				? (await connectors.setScheme(id, how as any, key.trim()), await engine.setConnectorKey(id, key.trim()))
+				: await connectors.setKey(id, key.trim(), how);
 			console.log(`key set for '${id}': ${updated.auth.type} ...${updated.auth.last4}`);
 			break;
 		}
@@ -298,7 +313,8 @@ async function connectorCommand(option: string) {
 		}
 		case 'cot': {
 			const operation = (await question('Operation (empty: a GET that needs no input): ')).trim();
-			const result = await connectors.test(id, operation || undefined);
+			const engine = engineCalls();
+			const result = engine ? await engine.testConnector(id, operation || undefined) : await connectors.test(id, operation || undefined);
 			console.log(`${result.ok ? 'ok' : 'failed'}: ${result.operation}: ${result.message}`);
 			break;
 		}
@@ -310,7 +326,16 @@ async function connectorCommand(option: string) {
 		}
 		case 'cod': {
 			if (!await confirm(`Delete the connector '${id}'? (y/n): `)) break;
-			console.log(await connectors.remove(id) ? `'${id}' deleted` : `no connector '${id}'`);
+			const engine = engineCalls();
+			// its file, then its key and test, the engine's
+			let removed: boolean;
+			if (engine) {
+				const file = connectors.removeFile(id);
+				removed = (await engine.connectorRemoved(id)) || file;
+			}
+			else
+				removed = await connectors.remove(id);
+			console.log(removed ? `'${id}' deleted` : `no connector '${id}'`);
 			break;
 		}
 		case 'coc': {
@@ -520,7 +545,7 @@ async function checkLocks() {
 		}
 		const response = await question('delete all(Y/N?')
 		if (response == 'Y' || response == 'y') {
-			await (server.dataStore.locker as any).delete({});
+			await releaseLocks();
 		}
 	}
 
@@ -548,8 +573,8 @@ async function recover() {
 					console.log('deleting ',item.id);
 
 					try {
-						await (server.dataStore.locker as any).delete({id: item.instanceId});
-						await server.dataStore.deleteInstances({id: item.instanceId});
+						await releaseLocks(item.instanceId);
+						await server.engine.deleteInstances({id: item.instanceId});
 					}
 					catch(exc) {
 						console.log(exc);
@@ -564,7 +589,7 @@ async function recover() {
 
 					try {
 
-					await (server.dataStore.locker as any).delete({id: item.instanceId});
+					await releaseLocks(item.instanceId);
 
 					let ret = await server.engine.invoke({ "items.id": item.id }, {}, null, { recover: true });
 					console.log('done');

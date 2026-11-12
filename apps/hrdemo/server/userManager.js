@@ -36,6 +36,19 @@ function crossSiteWrite(req) {
   return null;
 }
 
+/**
+ * The sessions' secret: SESSION_SECRET (or HR_SESSION_SECRET). Without one, a fixed demo secret on a developer's
+ * machine only: in production (NODE_ENV=production) the server refuses to start, as anyone could sign their cookies.
+ */
+function sessionSecret() {
+  const secret = process.env.SESSION_SECRET || process.env.HR_SESSION_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === 'production')
+    throw new Error('HR: SESSION_SECRET is not set; in production the sessions need a secret of their own (.env)');
+  console.warn('HR: SESSION_SECRET is not set: a demo secret signs the sessions (development only)');
+  return 'hr-demo-only';
+}
+
 /** Where a person goes after signing in: a page of this site only. */
 const safeReturn = to => (typeof to === 'string' && to.startsWith('/') && !to.startsWith('//') ? to : '/hr/');
 
@@ -50,7 +63,7 @@ export class HrUserManager {
   init(app) {
     app.use(session({
       name: 'hr.sid',
-      secret: process.env.SESSION_SECRET || process.env.HR_SESSION_SECRET || 'hr-demo-only',
+      secret: sessionSecret(),
       resave: false,
       saveUninitialized: false,
       store: this.hr.sessionStore(),

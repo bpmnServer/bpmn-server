@@ -66,6 +66,39 @@ and here
   terminal (`install.sh`, the Docker image, CI) setup asks nothing and changes nothing, so those are unchanged. `init`'s
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
+### Changed
+- **A page of a list is cut in the database.** The storage port's `find` takes an optional `limit` (the first that
+  many after sorting: MongoDB's `limit`; the in-memory and SQLite stores the same), and `findInstances(query, {
+  projection, sort, limit })` passes it. `findItems(query, { lean: true })` (and `BPMNAPI.data.findItems(query, user,
+  { lean: true })`) reads each item's instance without its data and tokens, for lists: the items have no `data` or
+  `instanceData`. An adapter written before `limit` still works: the data store cuts what it returns.
+- **A launched server's host writes nothing of the engine's** (docs/design/engine-isolation.md). Its `dataStore` is a
+  read-only instance viewer, `definitions` model access (the models' files, no database), and `connectors` keeps the
+  connectors' files; a write of the engine's data through them (an instance, a lock, the models' index, a connector's
+  key or test, `install`) throws `ENGINE_ONLY`, naming the call to use, and `server`, `db` and `monitor` are not
+  there. New: `server.models` (`save`, `rename`, `remove`, `deleteVersion`: the files, then the engine told);
+  `server.documentStore`, the host's own store; engine calls `releaseLocks`, `claim`, `releaseClaim`,
+  `install({ rebuild })`, `modelSaved`, `modelRenamed`, `modelRemoved`, `setConnectorKey`, `clearConnectorKey`,
+  `testConnector`, `connectorRemoved`; `ModelsDatastore.saveFiles`, `renameFiles`, `deleteFiles` (files only) and
+  `indexModel`, `unindexModel`, `renameIndex` (the index only); `Connectors.setScheme`, `storeKey`, `clearScheme`,
+  `forgetKey`, `removeFile`, `forget`, the halves of `setKey`, `clearKey`, `remove`. An embedded server
+  (`new BPMNServer`) is as before.
+- **Connectors are files in the models folder's `connectors` folder**, `connectors/<id>.connector.json` (one written
+  beside the models by an earlier 3.7 build is moved in the first time it is read), near the models that call them: the same
+  document the `wf_connectors` collection held (name, address, operations, groups, the key's scheme, the OpenAPI
+  document, now as JSON). Kept in Git and released with the models, found by their tests, copied with an application's
+  folder. Each server keeps its own key (encrypted with its `CONNECTORS_KEY`) and last connection test in
+  `wf_connectors`; a file holds no key. A connector kept whole in the collection before is written out to its file the
+  first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
+
+### Fixed
+- **Checking a model with a compensation association** (a compensation boundary event to its handler) no longer fails
+  (`Cannot read properties of undefined (reading 'forEach')`); the editor's Problems list stayed empty for it.
+- `scheduling process <model> at ...` is logged once for a process timer: the timers read again (at start, by the
+  re-read) logged it each time, though it was scheduled only once.
+- `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
+  `true`).
+
 ### Removed
 - **`IUserService`**: the engine never used it (who acts is the `IUserInfo` each call carries; a task's assignee and
   candidates are names it checks against that person). Finding and managing users is the host application's: bpmn-web's

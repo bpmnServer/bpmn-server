@@ -193,8 +193,20 @@ command line. A model imported from elsewhere that names a connector this server
 | `connectors.retryDelay` | The first wait before a retry in ms, doubled each time. Default 200. |
 | `connectors.maxResponseBytes` | The largest answer read. Default 5 MB. |
 
-Connectors are kept in the `wf_connectors` collection of the server's storage (MongoDB, SQLite or memory), and are
-in the administration backup.
+## Where a connector is kept
+
+**A connector is a file in the models folder's `connectors` folder**, `connectors/<id>.connector.json`, near the models that call it: its name, its
+address, its operations and groups, how its key is sent, and its OpenAPI document (as JSON). Like a model, it is kept in
+Git and released with the models, and a model's tests find it (`npm test`, the editor's Test tab). Copy an application's
+folder, and its connectors come with it.
+
+**What is one server's stays with that server**, in its storage (the `wf_connectors` collection, MongoDB, SQLite or
+memory): the key, encrypted with that server's `CONNECTORS_KEY`, and the last connection test. A file never holds a
+key; a connector copied to another server has none until it is set there.
+
+Adding, changing, refreshing or deleting a connector in Administration writes its file. A connector kept whole in the
+storage before 3.7 is written out to its file the first time the server reads it, its key kept where it was. The
+administration backup has the files (with the models) and the keys (encrypted).
 
 ## Example
 

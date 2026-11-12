@@ -89,7 +89,8 @@ export class TaskOperations {
             throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new TaskError(400, 'after is a list\'s next', 'BAD_AFTER');
-        const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest, ...query }, user))
+        // lean: the instances' data is not read for a list (fable-review.md H5); the labels read it for the page's tasks
+        const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest, ...query }, user, { lean: true }))
             .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && hasPart(item, user) && (after === undefined || isAfter(item, String(after))))
             .sort((a, b) => new Date(a.startedAt ?? 0).getTime() - new Date(b.startedAt ?? 0).getTime() || (a.id < b.id ? -1 : 1));
         const page = waiting.slice(0, limit);
@@ -100,7 +101,7 @@ export class TaskOperations {
     async completed(user: SecureUser, { limit = 10, query = {} }: { limit?: number, query?: object } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
-        const ended = await this.api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': user.userName, ...notATest, ...query }, user);
+        const ended = await this.api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': user.userName, ...notATest, ...query }, user, { lean: true });
         return ended
             .filter(item => item.userName === user.userName && item.status === 'end' && item.type === 'bpmn:UserTask')
             .sort((a, b) => new Date(b.endedAt ?? 0).getTime() - new Date(a.endedAt ?? 0).getTime())
@@ -124,7 +125,8 @@ export class TaskOperations {
         if (item.assignee)
             throw new TaskError(409, 'The task is assigned to someone else', 'TASK_ASSIGNED');
         const key = `task:${id}`;
-        if (!await this.server.dataStore.locker.claim(key))
+        // a moment's claim, by the engine that owns the locks (docs/design/engine-isolation.md)
+        if (!await this.server.engine.claim(key))
             throw new TaskError(409, 'The task is being claimed', 'TASK_ASSIGNED');
         try {
             const current = await this.find(id, user);
@@ -135,7 +137,7 @@ export class TaskOperations {
             return { task: asTask(await this.find(id, user)) };
         }
         finally {
-            await this.server.dataStore.locker.release(`claim:${key}`);
+            await this.server.engine.releaseClaim(key);
         }
     }
 

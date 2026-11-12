@@ -10,13 +10,15 @@ html(lang="en")
     meta(name="csrf-token" content=_csrf)
     script(src="/javascripts/csrf.js")
     link(rel="stylesheet" href=asset("/modeler/decision.css"))
-  body
+  body(class=(typeof framed !== 'undefined' && framed) ? 'framed' : undefined)
     #decision-page(data-name=name data-exists=exists ? 'true' : 'false')
       header.modeler-header
-        a.brand(href="/" title="Home")
-          img(src="/images/omniworkflow_icon.png" alt="Home")
         include includes/editorMenu.pug
-        +editorMenu
+        //- framed in a page of this site: its layout has the places; the editor's own actions stay
+        unless typeof framed !== 'undefined' && framed
+          a.brand(href="/" title="Home")
+            img(src="/images/omniworkflow_icon.png" alt="Home")
+          +editorMenu
         h1= name
         span.decision-file= file || `${name}.dmn.xml`
         span#js-save-status.modeler-status(role="status")

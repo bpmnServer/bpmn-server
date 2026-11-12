@@ -130,10 +130,16 @@ block dash
 			a#tests
 			h2 Models
 				span.count= models.length
-			p.dash-muted Models with errors first; search, or click a heading to sort. Run a model's tests here, or open it to see its Problems list and its tests (the Test tab).
+			p.dash-muted Models with errors first; search, choose a feature to see the models that use it and where, or click a heading to sort. Run a model's tests here, or open it to see its Problems list and its tests (the Test tab).
 			if models.length
 				//- search by name or description; click a heading to sort by it, again to reverse
-				input#model-search.form-control.input-sm(type='search', placeholder='Search models', aria-label='Search models', style='max-width:280px; margin:6px 0 10px')
+				.model-filters(style='display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 10px')
+					input#model-search.form-control.input-sm(type='search', placeholder='Search models', aria-label='Search models', style='max-width:280px')
+					//- the features the models use (docs/features.yaml's markers): the models that use one, and where
+					select#feature-filter.form-control.input-sm(aria-label='Models that use a feature', style='max-width:280px')
+						option(value='') Any feature
+						each f in featureUse
+							option(value=f.id)= `${f.name} (${f.models})`
 				table#models-table
 					tr.sort-head
 						th(data-sort='name') Model
@@ -149,11 +155,13 @@ block dash
 						tr.model-row(data-name=m.name.toLowerCase(), data-text=(m.name + ' ' + (m.description || '')).toLowerCase(),
 							data-checks=(m.errors || 0) * 1000 + (m.warnings || 0), data-tests=m.tests || 0,
 							data-coverage=m.coverage ? m.coverage.percent : -1, data-run=r ? (r.failed ? -r.failed : r.passed) : -1000,
-							data-versions=m.versions || 0, data-changed=m.saved ? new Date(m.saved).getTime() : 0)
+							data-versions=m.versions || 0, data-changed=m.saved ? new Date(m.saved).getTime() : 0,
+							data-where=JSON.stringify(Object.fromEntries((m.features || []).map(f => [f.id, f.at]))))
 							td
 								a(href=`/model/edit/${encodeURIComponent(m.name)}`)= m.name
 								if m.description
 									.dash-muted.model-description(title=m.description)= m.description
+								.model-feature-where.dash-muted(hidden)
 							td: +checks(m)
 							td= m.tests ? m.tests + ' scenario' + (m.tests === 1 ? '' : 's') : ''
 							td: +coverage(m)
@@ -167,16 +175,35 @@ block dash
 				script.
 					(function () {
 						var table = document.getElementById('models-table'), search = document.getElementById('model-search');
+						var feature = document.getElementById('feature-filter');
 						var rows = function () { return Array.prototype.slice.call(table.querySelectorAll('tr.model-row')); };
-						search.addEventListener('input', function () {
-							var words = search.value.toLowerCase().split(/\s+/).filter(Boolean), shown = 0;
+						// the words searched, and the feature chosen: a model that uses it shows where, each a link into the editor
+						var filter = function () {
+							var words = search.value.toLowerCase().split(/\s+/).filter(Boolean), chosen = feature.value, shown = 0;
 							rows().forEach(function (row) {
-								var match = words.every(function (w) { return row.dataset.text.indexOf(w) >= 0; });
+								var where = JSON.parse(row.dataset.where || '{}')[chosen];
+								var match = words.every(function (w) { return row.dataset.text.indexOf(w) >= 0; }) && (!chosen || !!where);
 								row.hidden = !match;
 								if (match) shown++;
+								var box = row.querySelector('.model-feature-where');
+								box.textContent = '';
+								box.hidden = !chosen || !where;
+								if (!chosen || !where) return;
+								var name = row.querySelector('a').getAttribute('href');
+								box.appendChild(document.createTextNode('At: '));
+								where.forEach(function (id, i) {
+									if (i) box.appendChild(document.createTextNode(', '));
+									var link = document.createElement('a');
+									link.href = name + '#element=' + encodeURIComponent(id);
+									link.textContent = id;
+									link.title = 'Open the model at ' + id;
+									box.appendChild(link);
+								});
 							});
 							document.getElementById('model-search-none').hidden = shown > 0;
-						});
+						};
+						search.addEventListener('input', filter);
+						feature.addEventListener('change', filter);
 						var current = null, ascending = true;
 						table.querySelectorAll('th[data-sort]').forEach(function (th) {
 							th.style.cursor = 'pointer';

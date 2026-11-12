@@ -20,10 +20,13 @@ const notFound = () => new InstanceError(404, 'No such instance', 'INSTANCE_NOT_
 /** Newest first: a page's bookmark is where its last instance is, by when it started. */
 const time = i => new Date(i.startedAt ?? 0).getTime();
 const position = i => `${time(i)}_${i.id}`;
-function isAfter(i, after: string) {
-    const at = after.indexOf('_'), [t, id] = [Number(after.slice(0, at)), after.slice(at + 1)];
-    return time(i) < t || (time(i) === t && i.id < id);
+/** The instances after a bookmark, as a condition of the store's query: older, or as old with a smaller id. */
+function afterCondition(after: string) {
+    const at = after.indexOf('_'), startedAt = new Date(Number(after.slice(0, at))), id = after.slice(at + 1);
+    return { $or: [{ startedAt: { $lt: startedAt } }, { startedAt, id: { $lt: id } }] };
 }
+/** What a list shows of an instance, and its data for its label (engine/Labels.ts): not its items, logs or source. */
+const SUMMARY = { id: 1, name: 1, status: 1, startedAt: 1, endedAt: 1, data: 1 };
 
 /** Its label, once labeled (labels.ts): nothing when it was not. */
 const labelOf = i => i.label === undefined ? {} : { label: i.label, labelValues: i.labelValues };
@@ -49,19 +52,22 @@ export class InstanceOperations {
     /**
      * The instances this user may see, newest first, a page at a time: { instances, next } (next: the bookmark, or
      * undefined on the last page). `status` and `name` narrow it, and `query`: more conditions (a filter by label,
-     * labels.ts). Through BPMNAPI, so the user's rules apply to the items. Each is labeled.
+     * labels.ts). Through BPMNAPI, so the user's rules apply to the items. Each is labeled. The store filters, sorts
+     * and cuts the page (fable-review.md H5), reading only what the list and the labels need.
      */
     async list(user: SecureUser, { status, name, limit = DEFAULT_LIMIT, after, query: more = {} }: { status?: string, name?: string, limit?: number, after?: string, query?: object } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new InstanceError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new InstanceError(400, 'cursor is a page\'s next', 'BAD_CURSOR');
-        const query = { ...notATest, ...(status ? { status } : {}), ...(name ? { name } : {}), ...more };
-        const all = (await this.api.data.findInstances(query, user, 'summary'))
-            .sort((a, b) => time(b) - time(a) || (a.id < b.id ? 1 : -1))
-            .filter(i => after === undefined || isAfter(i, String(after)));
-        const page = await labeledInstances(this.server, all.slice(0, limit));
-        return { instances: page.map(summary), next: all.length > limit ? position(page.at(-1)) : undefined };
+        const query: any = { ...notATest, ...(status ? { status } : {}), ...(name ? { name } : {}) };
+        // $and: the user's rules put their own $or on the query, and a filter by label may have its own
+        const conditions = [...(Object.keys(more).length ? [more] : []), ...(after !== undefined ? [afterCondition(String(after))] : [])];
+        if (conditions.length) query.$and = conditions;
+        // one more than the page: whether there is a next
+        const found = await this.api.data.findInstances(query, user, { projection: SUMMARY, sort: { startedAt: -1, id: -1 }, limit: limit + 1 });
+        const page = await labeledInstances(this.server, found.slice(0, limit));
+        return { instances: page.map(summary), next: found.length > limit ? position(page.at(-1)) : undefined };
     }
 
     /** The instance, if this user may see it; never a test run's (notATest is a condition on the id). */

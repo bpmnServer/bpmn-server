@@ -40,6 +40,23 @@ test('scenarios are kept per model', async () => {
     assert.match(JSON.parse(res.text).error, /has no name.*step 1: no element/);
 });
 
+test('a scenario with a start and no steps runs: started, then what is expected checked; saved and read back as it was', async () => {
+    const STARTED = { name: 'Started, waiting for the request', start: { data: { requester: 'sam' } }, steps: [], expect: { status: 'running' } };
+    const res = await run({ scenario: STARTED });
+    assert.equal(res.status, 200, why(res));
+    const [result] = JSON.parse(res.text).results;
+    assert.equal(result.ok, true, JSON.stringify(result));
+    assert.ok(result.instance?.id, 'an instance was started');
+
+    const saved = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [STARTED] } });
+    assert.equal(saved.status, 200, why(saved));
+    const [back] = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
+    assert.equal(back.source, undefined, 'read back as a recorded scenario, which the Test tab runs');
+    assert.deepEqual(back.steps ?? [], []);
+    assert.ok(back.start, 'with its start: what makes it runnable');
+    await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [] } });
+});
+
 test('scenarios are files beside the model; a run is a tag on its test instance, kept by its saves; none left: no file', async () => {
     const file = path.join(web.definitionsPath, 'leave-request.feature');
     const started = JSON.parse((await designer.request('POST', '/model/test/start', { json: { processName: 'leave-request' } })).text).instance;
@@ -214,7 +231,7 @@ const PARALLEL = `<?xml version="1.0" encoding="UTF-8"?>
 test('a joining gateway is not a step: it completes when its branches arrive', async () => {
     const fs = await import('node:fs'), path = await import('node:path');
     fs.writeFileSync(path.join(web.definitionsPath, 'parallel.bpmn'), PARALLEL);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const post = (url, json) => designer.request('POST', url, { json }).then(r => ({ status: r.status, body: JSON.parse(r.text) }));
     let { body: { instance } } = await post('/model/test/start', { processName: 'parallel' });
     const item = id => instance.items.find(i => i.elementId === id && i.status === 'wait');
@@ -248,7 +265,7 @@ test('steps are user tasks, receive tasks and events: a timer is forced, a recei
     <bpmn:sequenceFlow id="f3" sourceRef="Receive" targetRef="End" />
   </bpmn:process>
 </bpmn:definitions>`);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const [result] = JSON.parse((await run({ processName: 'timer', scenario: { name: 'timer', steps: [{ element: 'Wait' }, { element: 'Receive' }] } })).text).results;
     assert.equal(result.steps[0].ok, true, 'the timer is forced');
     assert.equal(result.steps[1].ok, true, 'a receive task is a step');

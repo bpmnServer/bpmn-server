@@ -28,7 +28,7 @@ const ofModel = items => items.filter(i => (i.processName ?? i.name) === MODEL);
 
 test.before(async () => {
     web = await startWebApp();
-    await web.bpmnServer.definitions.save(MODEL, SOURCE());
+    await web.bpmnServer.models.save(MODEL, SOURCE());
     const issued = await new WebClient(web.base).request('POST', '/api/v3/tokens', { json: { userName: 'ann', groups: ['staff'] }, headers: { 'x-api-key': API_KEY } });
     assert.equal(issued.status, 201, why(issued));
     ann = issued.body.token;
@@ -105,14 +105,14 @@ test("a case's label follows the model it runs: its own with SAVE_SOURCE, else t
     ds.saveSource = true;
     try {
         const kept = (await v3('POST', `/processes/${MODEL}/start`, ann, { data: { clientId: 'kept', orderNo: 5 } })).body.instance.id;
-        await web.bpmnServer.definitions.save(MODEL, SOURCE('Customer ${Customer = data.customer}'));
+        await web.bpmnServer.models.save(MODEL, SOURCE('Customer ${Customer = data.customer}'));
         const labels = Object.fromEntries((await v3('GET', `/instances?name=${MODEL}`, ann)).body.items.map(i => [i.id, i.label]));
         assert.equal(labels[kept], 'Client: kept · Order: 5', 'the source it started with, read for the list');
         assert.equal(labels[zeta.instance.id], MODEL, 'no source kept: the current model (its values missing: the default)');
     }
     finally {
         ds.saveSource = saveSource;
-        await web.bpmnServer.definitions.save(MODEL, SOURCE());
+        await web.bpmnServer.models.save(MODEL, SOURCE());
     }
 });
 

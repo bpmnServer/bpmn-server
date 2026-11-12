@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import http from 'node:http';
 import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
+import { canEncrypt } from '../connectors/Secrets.js';
 import { Definition } from '../elements/Definition.js';
 import type { IExecutionResult } from '../interfaces/engine.js';
 import type { BPMNServer } from './BPMNServer.js';
@@ -70,6 +71,39 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         status: async () => engine.status(),
         deleteInstances: async (query) => engine.deleteInstances(query),
         tagInstance: async (instanceId: string, tag) => engine.tagInstance(instanceId, tag),
+        // the locks are the engine's (docs/design/engine-isolation.md): released and claimed here, not by the host
+        /** An administrator's release: one instance's lock (`id`), or every lock (none). */
+        releaseLocks: async (id?: string) => {
+            const locker = server.dataStore.locker as any;
+            if (typeof locker.delete !== 'function') throw new Error("This lock manager cannot release other servers' locks");
+            await locker.delete(id ? { id } : {});
+            return true;
+        },
+        /** A short claim of one key (a task being claimed through the API): whether this caller has it. */
+        claim: async (key: string) => server.dataStore.locker.claim(key),
+        /**
+         * The engine's stores set up (their indexes; connectors kept whole before written out), and with `rebuild` its
+         * index of the models made again from their files (a model changed since it was indexed): at setup, at start.
+         */
+        install: async ({ rebuild = false }: { rebuild?: boolean } = {}) => {
+            await server.dataStore.install();
+            await server.definitions.install();
+            await server.connectors?.install();
+            if (rebuild) await server.definitions.rebuild();
+            return true;
+        },
+        // the models' files are model access's; the engine's index of them (start events, timers, messages) is its own,
+        // told here what changed (docs/design/engine-isolation.md)
+        modelSaved: async (name: string) => { await (server.definitions as any).indexModel(name); return true; },
+        modelRemoved: async (name: string) => { await (server.definitions as any).unindexModel(name); return true; },
+        modelRenamed: async (name: string, newName: string) => { await (server.definitions as any).renameIndex(name, newName); return true; },
+        // a connector's key and its test are this server's, the engine's: encrypted and kept here (CONNECTORS_KEY)
+        setConnectorKey: async (id: string, key: string, userName?: string) => server.connectors.storeKey(id, key, userName),
+        clearConnectorKey: async (id: string) => server.connectors.forgetKey(id),
+        /** A connector removed (its file, by model access): its key and test here go too. */
+        connectorRemoved: async (id: string) => server.connectors.forget(id),
+        testConnector: async (id: string, operationId?: string, input = {}) => server.connectors.test(id, operationId, input),
+        releaseClaim: async (key: string) => { await server.dataStore.locker.release(`claim:${key}`); return true; },
         /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
         invokeDecision: async (ref: string, data = {}) => {
             const found = await DMNEngine.find(server.configuration.definitionsPath, ref);
@@ -89,7 +123,8 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
             let provider = null;
             try { provider = await server.appDelegate.getServicesProvider(null); }
             catch { /* a provider that needs a running execution */ }
-            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider) };
+            // connectorKeys: whether a connector's key can be stored here (CONNECTORS_KEY is the engine's)
+            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt() };
         },
         /** The application's own checks of a model (appDelegate.verifyModel): its code, so here. */
         checkModel: async (name: string, source: string) => {

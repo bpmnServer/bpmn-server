@@ -88,6 +88,18 @@ test('design: every model with its checks and the decisions', async () => {
   assert.match(card(page, 'models'), /dash-badge/);
 });
 
+test('design: a Feature filter of what the models use; each model says where it uses each (docs/features.yaml\'s markers)', async () => {
+  const models = card((await designer.get('/dashboard/design')).text, 'models');
+  assert.match(models, /<select[^>]* id="feature-filter"/);
+  assert.match(models, /<option value="user-task">User task \(\d+\)<\/option>/, 'a feature some model uses, with how many');
+  assert.doesNotMatch(models, /<option value="mongodb"/, 'not a feature that does not show in models');
+  const at = models.indexOf(`/model/edit/${MODEL}`);
+  const tr = models.lastIndexOf('<tr', at);
+  const where = JSON.parse(/data-where="([^"]*)"/.exec(models.slice(tr, at))[1].replaceAll('&quot;', '"').replaceAll('&amp;', '&'));
+  assert.deepEqual(where['user-task'], ['Submit', 'Approve'], 'the elements, by id: where the links open the model');
+  assert.ok(where['start-events']?.length && where['exclusive-gateway']?.length, JSON.stringify(where));
+});
+
 test('design: a model\'s description, its saved versions, and what its scenarios cover, saved with the runs', async () => {
   const row = html => { const models = card(html, 'models'); const at = models.indexOf(`/model/edit/${MODEL}`); return models.slice(at, models.indexOf('</tr>', at)); };
   const before = row((await designer.get('/dashboard/design')).text);
@@ -120,12 +132,12 @@ test('design: a model\'s description, its saved versions, and what its scenarios
 
   const file = path.join(web.definitionsPath, `${MODEL}.bpmn`);
   const source = fs.readFileSync(file, 'utf8');
-  await web.bpmnServer.definitions.save(MODEL, source.replace('name="Submit request"', 'name="Submit it"'), null, null, 'designer');
+  await web.bpmnServer.models.save(MODEL, source.replace('name="Submit request"', 'name="Submit it"'), null, 'designer');
   const edited = row((await designer.get('/dashboard/design')).text);
   assert.match(edited, /out of date/, 'the model changed since its runs');
   assert.match(edited, /<td>[1-9]\d*<\/td>/, 'its saved versions');
   await designer.request('PUT', `/model/scenarios/${MODEL}`, { json: { scenarios: [] } });
-  await web.bpmnServer.definitions.save(MODEL, source, null, null, 'designer');
+  await web.bpmnServer.models.save(MODEL, source, null, 'designer');
 });
 
 test('design: coverage counts as the Test tab does: an event sub-process is not an element, what is inside it is', async () => {
@@ -197,7 +209,7 @@ test('Run on a model with several start events, or a start form, asks first: the
     <bpmn:sequenceFlow id="f3" sourceRef="Quick" targetRef="FromQuick" />
   </bpmn:process>
 </bpmn:definitions>`);
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
 
   const run = await admin.get('/execute/multi-start');
   assert.equal(run.status, 302);

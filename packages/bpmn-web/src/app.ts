@@ -1,4 +1,5 @@
 import { siteGuide } from './routes/siteGuide.js';
+import { rateLimit } from 'express-rate-limit';
 import { levelsFor, issueAiLink, aiLinkHolder, revokeAiLinks } from './routes/aiAccess.js';
 import { originOf } from './routes/modelApi.js';
 import { apiTrace } from './routes/middleware/apiTrace.js';
@@ -335,6 +336,14 @@ export class WebApp {
 			catch (error) { next(error); }
 		});
 		if (api) {
+			// API_RATE_LIMIT: calls a minute from one address, on every API (/api, /api2, /api/v3, /admin/...); unset, no
+			// limit, as before. A client over it is answered 429 with Retry-After (the Fable Review, M6)
+			const perMinute = Number(process.env.API_RATE_LIMIT);
+			if (perMinute > 0)
+				this.app.use(['/api', '/api2', '/admin/api', '/admin/api2'], rateLimit({
+					windowMs: 60_000, limit: perMinute, standardHeaders: true, legacyHeaders: false,
+					message: { error: { code: 'RATE_LIMITED', message: `More than ${perMinute} calls a minute: wait and try again` } },
+				}));
 			// API_TRACE: every API call and its answer, to replay what a client did (v3's too)
 			this.app.use(['/api', '/api2'], apiTrace());
 			// v3 before v1: /api would take /api/v3 for one of its own paths

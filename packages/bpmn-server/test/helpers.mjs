@@ -61,8 +61,14 @@ export async function makeServer({ store = newStore(), dir = definitionsFolder()
   });
   const server = launched ? BPMNServer.launch(configuration, logger, { cron, engine }) : new BPMNServer(configuration, logger, { cron });
   await server.ready;
-  await server.dataStore.install();
-  if (!cron) await server.definitions.rebuild();   // the cron's start does it otherwise
+  if (launched) {
+    // the engine sets up its own stores and index (docs/design/engine-isolation.md); with none, nothing is set up
+    if (server.engine.running) await server.engine.install({ rebuild: !cron });
+  }
+  else {
+    await server.dataStore.install();
+    if (!cron) await server.definitions.rebuild();   // the cron's start does it otherwise
+  }
   return { server, store, dir };
 }
 

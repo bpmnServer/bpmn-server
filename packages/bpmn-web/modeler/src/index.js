@@ -304,10 +304,30 @@ async function open() {
         if (warnings.length)
             console.warn('import warnings', warnings);
         fitDiagram();
+        showElementOfAddress();
     } catch (err) {
         showStatus('Could not open the model: ' + err.message, true);
         console.error(err);
     }
+}
+
+/**
+ * The address's `#element=<id>` (the Design dashboard's links to where a model uses a feature): that element selected
+ * and shown, in the sub-process it is drawn in.
+ */
+function showElementOfAddress() {
+    const id = /^#element=(.+)$/.exec(window.location.hash)?.[1];
+    if (!id) return;
+    const elementId = decodeURIComponent(id);
+    const element = modeler.get('elementRegistry').get(elementId);
+    if (!element) return showStatus(`No element '${elementId}' in this model`, true);
+    const canvas = modeler.get('canvas');
+    try {
+        const root = canvas.findRoot?.(element);
+        if (root && root !== canvas.getRootElement()) canvas.setRootElement(root);
+        if (element !== canvas.getRootElement()) canvas.scrollToElement(element);
+    } catch { /* shown where it is drawn; the selection says which it is */ }
+    modeler.get('selection').select(element);
 }
 
 async function saveDiagram(option) {

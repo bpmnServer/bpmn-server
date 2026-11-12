@@ -56,7 +56,7 @@ test.before(async () => {
     fs.writeFileSync(path.join(web.definitionsPath, 'Leave.feature'), FEATURE);
     fs.mkdirSync(path.join(web.definitionsPath, 'policies'), { recursive: true });
     fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'LeaveApproval.dmn.xml'), POLICY);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => {
     await browser?.close();

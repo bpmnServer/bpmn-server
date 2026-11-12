@@ -90,6 +90,7 @@ by `npm run features`: edit the schema, not these tables.
 | `API_ACTING_USER_KEY` | **A secret.** Turns on `/api2/tasks`. Must differ from `API_KEY` |
 | `API_IMPERSONATION` | `true`: `/api` acts as the user a call names (`userName`, or `options.userName`), with no security rules, as before 3.7. For integrations that need time to move to `/api2/tasks`; goes at 4.0. Default off: the name is ignored, and the answer's `Warning` header says so |
 | `API_KEY` | **A secret, required in production.** Runs processes |
+| `API_RATE_LIMIT` | Calls a minute one address may make to the APIs (`/api`, `/api2`, `/api/v3`, the administration APIs); over it, `429`. Unset, no limit |
 | `API_SERVICE_MODELS_OWNER`, `API_SERVICE_TENANT_ID` | The tenant and models owner of that account |
 | `API_SERVICE_USER_GROUPS`, `API_SERVICE_USER_NAME` | Who `/api` and `/api2` calls run as. `init` sets `integration` and `SYSTEM`; without them, those APIs answer 500 |
 

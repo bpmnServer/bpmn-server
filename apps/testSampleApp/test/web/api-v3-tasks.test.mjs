@@ -34,7 +34,7 @@ test.before(async () => {
   web = await startWebApp();
   sam = await tokenFor('sam', ['staff']);
   mia = await tokenFor('mia', ['manager']);
-  await web.bpmnServer.definitions.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
+  await web.bpmnServer.models.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
 });
 
 test('what a user may start: the start events their lanes and candidates allow, with their forms', async () => {

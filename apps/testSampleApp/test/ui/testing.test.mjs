@@ -253,7 +253,7 @@ const PARALLEL = `<?xml version="1.0" encoding="UTF-8"?>
 
 test('a joining gateway waits by itself: it is shown, but is not a step to run', async () => {
     fs.writeFileSync(path.join(web.definitionsPath, 'parallel-ui.bpmn'), PARALLEL);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const { page, errors, close } = await openTestTab('parallel-ui');
     await newScenario(page);
     await startRun(page);

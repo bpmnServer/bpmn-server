@@ -18,7 +18,7 @@ test.before(async () => {
     web = await startWebApp();
     fs.copyFileSync(path.join(SAMPLES, 'loan_approval.dmn.xml'), path.join(web.definitionsPath, 'loan_approval.dmn.xml'));
     fs.copyFileSync(path.join(SAMPLES, 'Business Rules.bpmn'), path.join(web.definitionsPath, 'rules.bpmn'));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     browser = await chromium.launch();
     context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());

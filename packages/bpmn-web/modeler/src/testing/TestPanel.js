@@ -975,8 +975,11 @@ export default class TestPanel {
         return el('div', { class: 'test-editor' },
             el('div', { class: 'test-editor-actions' },
                 el('input', { class: 'test-name', 'aria-label': 'Scenario name', value: scenario.name, disabled: scenario.source !== undefined, oninput: e => { scenario.name = e.target.value; changed(); } }),
-                el('button', { type: 'button', class: 'test-replay primary', onclick: () => this.replay(scenario), disabled: !scenario.steps.length && scenario.source === undefined,
-                    title: scenario.steps.length || scenario.source !== undefined ? 'Repeat the steps on a new instance without stopping, and check what is expected' : 'Record the steps first' }, '▶ Run'),
+                // a scenario with a start and no steps is a test too: started, then what is expected checked (a process
+                // that runs to its end by itself, or stops at its first wait)
+                el('button', { type: 'button', class: 'test-replay primary', onclick: () => this.replay(scenario), disabled: !scenario.start && scenario.source === undefined,
+                    title: scenario.steps.length || scenario.source !== undefined ? 'Repeat the steps on a new instance without stopping, and check what is expected'
+                        : 'Start it on a new instance, and check what is expected (no steps recorded: Record adds them)' }, '▶ Run'),
                 scenario.source !== undefined ? null : live && !live.debugOnly ? el('button', { type: 'button', class: 'test-stop-recording', onclick: () => this.stop(),
                     title: 'End this: the steps done so far stay the scenario\'s' }, '■ Stop')
                     : el('button', { type: 'button', class: `test-run${this._starting === scenario ? ' active' : ''}`, onclick: () => this.openStart(scenario),

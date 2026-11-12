@@ -6,6 +6,6 @@
     "esModuleInterop": true, "skipLibCheck": true, "strict": false,
     "rootDir": "./src", "outDir": "./dist", "types": ["node"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/modelFeatures.js"],
   "exclude": ["node_modules","dist","src/scripts"]
 }

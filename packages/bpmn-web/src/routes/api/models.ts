@@ -101,7 +101,7 @@ export class ModelOperations {
         let svg = null;
         try { svg = await bpmnToSvg(xml); } catch { /* no picture */ }
         const created = !(await this.exists(name));
-        await this.definitions.save(name, xml, svg, null, user.userName);
+        await this.server.models.save(name, xml, svg, user.userName);
         return { name, created, laidOut, ...check };
     }
 
@@ -152,13 +152,13 @@ export class ModelOperations {
         if (typeof newName !== 'string') throw new ModelError(400, 'newName is required', 'BAD_NAME');
         this.assertName(newName);
         if (await this.exists(newName)) throw new ModelError(409, `There is a model ${newName} already`, 'MODEL_EXISTS');
-        await this.definitions.renameModel(name, newName);
+        await this.server.models.rename(name, newName);
         return { name: newName, renamedFrom: name };
     }
 
     async remove(name: string) {
         await this.assertExists(name);
-        await this.definitions.deleteModel(name);
+        await this.server.models.remove(name);
         return { deleted: name };
     }
 
