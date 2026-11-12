@@ -2,48 +2,34 @@
 // addresses (/hr/employees/EMP-001).
 //
 // With HR_LIVE_RELOAD=1 (npm start: scripts/start.mjs), an open page reloads by itself: when the pages are built again
-// (dist changes), and when the server comes back after a restart (its code changed). Off otherwise.
+// (dist's index.html changes), and when the server comes back after a restart (its code changed). Off otherwise.
 import fs from 'node:fs';
 import path from 'node:path';
 
 const dist = path.join(import.meta.dirname, '..', 'dist');
 const live = () => process.env.HR_LIVE_RELOAD === '1';
 
-// the page's side: reload when told to, and when the server is back after it went away
+// the page's side: asks now and then (a short request, never a connection held open: a browser allows six to a site
+// over HTTP, and a page per tab held them all, so a seventh tab or a refresh waited forever) whether the server
+// restarted or the pages were built again, and reloads if so. Only while it is shown.
 const RELOADER = `<script>(() => {
-  let lost = false;
-  const source = new EventSource('/hr/__reload');
-  source.onmessage = () => location.reload();
-  source.onerror = () => { lost = true; };
-  source.onopen = () => { if (lost) location.reload(); };
+  let seen = null;
+  const check = () => {
+    if (document.hidden) return setTimeout(check, 1500);
+    fetch('/hr/__reload', { cache: 'no-store' }).then(r => r.json()).then(now => {
+      const key = now.server + ':' + now.build;
+      if (seen !== null && key !== seen && now.build) return location.reload();
+      seen = key;
+    }, () => { /* the server is restarting: asked again */ }).finally(() => setTimeout(check, 1500));
+  };
+  check();
 })();</script>`;
 
-/** The pages open now, told when dist changes (a build), once the build has settled. */
+/** What a page compares: this server's start, and the pages' build (index.html's time, once it is written). */
 function reloads(app) {
-  const pages = new Set();
-  let timer;
-  const tell = () => {
-    clearTimeout(timer);
-    // once the build has written its index.html: a page reloaded before that would find none
-    timer = setTimeout(() => (fs.existsSync(path.join(dist, 'index.html'))
-      ? pages.forEach(res => { res.write('data: reload\n\n'); res.flush?.(); })
-      : tell()), 300);
-  };
-  try {
-    fs.mkdirSync(dist, { recursive: true });
-    fs.watch(dist, { recursive: true }, tell);
-  } catch (error) {
-    console.warn('HR: the pages do not reload by themselves:', error.message);
-  }
-  app.get('/hr/__reload', (req, res) => {
-    // no-transform: not compressed (bpmn-web compresses its answers), so each message goes at once
-    res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive' });
-    res.flushHeaders();
-    res.write(': open\n\n');
-    res.flush?.();
-    pages.add(res);
-    req.on('close', () => pages.delete(res));
-  });
+  const server = Date.now().toString(36);
+  const build = () => { try { return String(fs.statSync(path.join(dist, 'index.html')).mtimeMs); } catch { return ''; } };
+  app.get('/hr/__reload', (req, res) => res.set('Cache-Control', 'no-store').json({ server, build: build() }));
 }
 
 /** Adds the pages to an Express application. */

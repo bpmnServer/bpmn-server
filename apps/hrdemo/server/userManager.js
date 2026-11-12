@@ -50,7 +50,10 @@ function sessionSecret() {
 }
 
 /** Where a person goes after signing in: a page of this site only. */
-const safeReturn = to => (typeof to === 'string' && to.startsWith('/') && !to.startsWith('//') ? to : '/hr/');
+// where to go after signing in: a page of this site, never the sign-in, welcome or sign-out pages themselves (a
+// returnTo kept from an earlier visit to them sent a person back to the form, signed in, as if it hung)
+const safeReturn = to => (typeof to === 'string' && to.startsWith('/') && !to.startsWith('//')
+  && !/^\/(hr\/)?(login|welcome|logout)(\/|\?|$)/.test(to) ? to : '/hr/');
 
 export class HrUserManager {
   /** @param {object} [options] @param {HrUsers} [options.users] the users and sessions (default: data/hr.sqlite) */
@@ -140,8 +143,21 @@ export class HrUserManager {
     // the workflow pages' sign-in, sign-out and account pages: the HR application's
     const toLogin = (req, res) => res.redirect('/hr/login?returnTo=' + encodeURIComponent(safeReturn(req.query.returnTo ?? req.session?.returnTo)));
     app.get('/login', toLogin);
-    // the site's address, before signing in: the demo's home page
-    app.get('/', (req, res, next) => (req.user ? next() : res.redirect('/hr/welcome')));
+    // the site's address: before signing in, the demo's welcome page; after, the HR home page when opened in the
+    // window itself. In the HR layout's frame (Sec-Fetch-Dest: iframe), owf's Workbench, as /hr/workflow shows it.
+    app.get('/', (req, res, next) => {
+      if (!req.user) return res.redirect('/hr/welcome');
+      // the Workbench, asked for by the HR layout's frame (src/pages/Workflow.jsx)
+      if (req.query.owf !== undefined) return next();
+      if (req.get('sec-fetch-dest') === 'document') return res.redirect('/hr/');
+      // in a frame, or a browser that does not say which: the page finds out. In the HR layout's frame, the
+      // Workbench; anywhere else (a whole window, an editor's browser pane), the HR home page
+      res.type('html').send(`<!doctype html><meta charset="utf-8"><title>HR System</title><script>
+        var inHr = false;
+        try { inHr = window.parent !== window && window.parent.location.origin === location.origin && window.parent.location.pathname.indexOf('/hr') === 0; } catch (e) { }
+        location.replace(inHr ? '/?owf' : '/hr/');
+      </script>`);
+    });
     app.get('/logout', (req, res) => signOut(req, res, () => res.redirect('/hr/login')));
     for (const page of ['/signup', '/setup', '/forgot', '/reset/:token'])
       app.all(page, (req, res) => res.redirect('/hr/login'));
