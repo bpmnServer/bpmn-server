@@ -138,7 +138,7 @@ block dash
 					//- the features the models use (docs/features.yaml's markers): the models that use one, and where
 					select#feature-filter.form-control.input-sm(aria-label='Models that use a feature', style='max-width:280px')
 						option(value='') Any feature
-						each f in featureUse
+						each f in (featureUse || [])
 							option(value=f.id)= `${f.name} (${f.models})`
 				table#models-table
 					tr.sort-head
