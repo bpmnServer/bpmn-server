@@ -54,7 +54,7 @@ test('the administration API refuses one too', async () => {
 
 test('a model named properly still opens, spaces and all', async () => {
     fs.copyFileSync(path.join(web.definitionsPath, 'leave-request.bpmn'), path.join(web.definitionsPath, 'leave request (copy).bpmn'));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     for (const route of ['/model/edit', '/model/getSvg', '/model/download'])
         assert.equal((await designer.get(`${route}/${encodeURIComponent(route.endsWith('download') ? 'leave request (copy).bpmn' : 'leave request (copy)')}`)).status, 200, route);
     assert.equal((await designer.get('/model/edit/leave-request')).status, 200);

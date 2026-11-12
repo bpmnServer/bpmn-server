@@ -16,8 +16,7 @@ test.before(async () => {
     process.env.CONNECTORS_KEY ??= 'a test encryption key';
     web = await startWebApp();
     fs.copyFileSync(path.join(APP, 'processes', MODEL + '.bpmn'), path.join(web.definitionsPath, MODEL + '.bpmn'));
-    await web.bpmnServer.definitions.rebuild();
-    await web.bpmnServer.connectors.install();
+    await web.bpmnServer.engine.install({ rebuild: true });
     try {
         const probe = await fetch('https://api.github.com/rate_limit', { signal: AbortSignal.timeout(5000) });
         reachable = probe.ok && Number((await probe.json())?.resources?.core?.remaining ?? 0) >= 2;

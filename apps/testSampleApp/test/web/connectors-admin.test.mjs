@@ -41,7 +41,7 @@ test.before(async () => {
     ]));
     web = await startWebApp();
     fs.copyFileSync(path.join(APP, 'processes', 'GitHub repository.bpmn'), path.join(web.definitionsPath, 'GitHub repository.bpmn'));
-    await web.bpmnServer.connectors.install();
+    await web.bpmnServer.engine.install();
     [admin, designer] = await Promise.all([web.login('admin'), web.login('designer')]);
 });
 test.after(async () => { api?.close(); await web?.stop(); setImmediate(() => process.exit(0)); });

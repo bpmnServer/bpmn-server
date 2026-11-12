@@ -16,7 +16,7 @@ let web, designer;
 test.before(async () => {
   web = await startWebApp({ remoteEngine: true });
   designer = await web.login('designer');
-  await web.bpmnServer.definitions.save(MODEL, SOURCE);
+  await web.bpmnServer.models.save(MODEL, SOURCE);
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 

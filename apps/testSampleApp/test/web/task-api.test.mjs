@@ -49,7 +49,7 @@ test.before(async () => {
     web = await startWebApp({ env: { API_ACTING_USER_KEY: ACTING_KEY } });
     for (const [name, xml] of Object.entries(MODELS))
         fs.writeFileSync(path.join(web.definitionsPath, name + '.bpmn'), xml);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
@@ -396,7 +396,7 @@ test('bridge: a task comes with its form: fields, options, validation', async ()
     const submitted = await tasks('GET', `/${await approveId(id)}`, MANAGER);
     assert.deepEqual(submitted.body.form, { fields: [] }, 'Approve has no form');
 
-    await web.bpmnServer.definitions.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
+    await web.bpmnServer.models.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
     const started = await tasks('POST', `/start/${MANAGERS_ONLY}`, { ...MANAGER, body: {} });
     assert.equal(started.status, 200, why(started));
     const task = await tasks('GET', `/${started.body.task.id}`, MANAGER);
@@ -421,7 +421,7 @@ test('bridge: the acting user starts a process, and gets their first task in it'
 });
 
 test('bridge: only those the start event allows may start; others get 404', async () => {
-    await web.bpmnServer.definitions.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
+    await web.bpmnServer.models.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
     const refused = await tasks('POST', `/start/${MANAGERS_ONLY}`, { ...STAFF, body: {} });
     assert.equal(refused.status, 404, why(refused));
     assert.equal(refused.body.code, 'NOT_STARTABLE');

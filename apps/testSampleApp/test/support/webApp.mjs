@@ -135,8 +135,8 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     });
     const bpmnServer = webApp.bpmnServer;
     await bpmnServer.ready;
-    await bpmnServer.dataStore.install?.();
-    await bpmnServer.definitions.rebuild();
+    // the engine sets up its own stores and its index of the models (docs/design/engine-isolation.md)
+    if (bpmnServer.engine.running) await bpmnServer.engine.install({ rebuild: true });
 
     // users: false, a server's first start: no users at all
     for (const [userName, userGroups] of users && !userManager ? Object.entries(USERS) : [])

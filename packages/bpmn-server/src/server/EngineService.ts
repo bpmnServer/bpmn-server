@@ -81,11 +81,15 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         },
         /** A short claim of one key (a task being claimed through the API): whether this caller has it. */
         claim: async (key: string) => server.dataStore.locker.claim(key),
-        /** The engine's stores set up (their indexes; connectors kept whole before written out): at setup, and at start. */
-        install: async () => {
+        /**
+         * The engine's stores set up (their indexes; connectors kept whole before written out), and with `rebuild` its
+         * index of the models made again from their files (a model changed since it was indexed): at setup, at start.
+         */
+        install: async ({ rebuild = false }: { rebuild?: boolean } = {}) => {
             await server.dataStore.install();
             await server.definitions.install();
             await server.connectors?.install();
+            if (rebuild) await server.definitions.rebuild();
             return true;
         },
         // the models' files are model access's; the engine's index of them (start events, timers, messages) is its own,
@@ -96,6 +100,8 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         // a connector's key and its test are this server's, the engine's: encrypted and kept here (CONNECTORS_KEY)
         setConnectorKey: async (id: string, key: string, userName?: string) => server.connectors.storeKey(id, key, userName),
         clearConnectorKey: async (id: string) => server.connectors.forgetKey(id),
+        /** A connector removed (its file, by model access): its key and test here go too. */
+        connectorRemoved: async (id: string) => server.connectors.forget(id),
         testConnector: async (id: string, operationId?: string, input = {}) => server.connectors.test(id, operationId, input),
         releaseClaim: async (key: string) => { await server.dataStore.locker.release(`claim:${key}`); return true; },
         /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */

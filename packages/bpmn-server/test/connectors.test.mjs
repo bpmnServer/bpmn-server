@@ -532,7 +532,6 @@ test('OpenAPI documents: what is refused, references with siblings, in a loop an
 
 test('a launched server (the host): the scheme into the file, the key and the test by engine calls (engine-isolation.md)', async () => {
   const { server, store, dir } = await makeServer({ launched: true, extra: { connectors: { retryDelay: 1 } } });
-  await server.connectors.install();
   await server.connectors.add({ id: 'shop', source: `${base}/openapi.yaml` });
   assert.equal((await server.engine.facts()).connectorKeys, true, 'the engine says a key can be set (its CONNECTORS_KEY)');
   await server.connectors.setScheme('shop');

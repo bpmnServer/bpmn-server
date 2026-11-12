@@ -123,10 +123,18 @@ test('the application is known by the names its scan left in a file, not by its 
   await missing.shutdown();
 });
 
-test('a launched server still has a way in: dataStore and definitions are the engine\'s own objects', { todo: 'until the engine runs elsewhere, and they are core\'s' }, async () => {
+test('a launched server has no way in: its dataStore, definitions and connectors read, and refuse the engine\'s writes (engine-isolation.md)', async () => {
   const server = await makeLaunched();
+  assert.equal(server.dataStore.server, undefined, 'no way back to the engine');
+  assert.equal(server.dataStore.db, undefined, 'no raw store: documentStore is the host\'s own');
+  assert.equal(server.definitions.server, undefined);
+  assert.ok(Array.isArray(await server.dataStore.findInstances({}, 'summary')), 'the instance viewer reads');
+  assert.ok(Array.isArray(await server.dataStore.locker.list()), 'and lists the locks');
+  for (const write of [() => server.dataStore.saveInstance({}), () => server.dataStore.deleteInstances({}), () => server.dataStore.locker.delete({}),
+    () => server.definitions.save('x', '<x/>'), () => server.definitions.deleteModel('x'), () => server.connectors.setKey('x', 'k'), () => server.connectors.remove('x')])
+    assert.throws(write, error => error.code === 'ENGINE_ONLY' && /engine-isolation/.test(error.message));
+  assert.ok(server.documentStore, 'the host\'s own store, for its own data');
   await server.shutdown();
-  assert.equal(server.dataStore.server, undefined);
 });
 
 test('embedding stays as it was: the running execution', async () => {

@@ -120,12 +120,12 @@ test('design: a model\'s description, its saved versions, and what its scenarios
 
   const file = path.join(web.definitionsPath, `${MODEL}.bpmn`);
   const source = fs.readFileSync(file, 'utf8');
-  await web.bpmnServer.definitions.save(MODEL, source.replace('name="Submit request"', 'name="Submit it"'), null, null, 'designer');
+  await web.bpmnServer.models.save(MODEL, source.replace('name="Submit request"', 'name="Submit it"'), null, 'designer');
   const edited = row((await designer.get('/dashboard/design')).text);
   assert.match(edited, /out of date/, 'the model changed since its runs');
   assert.match(edited, /<td>[1-9]\d*<\/td>/, 'its saved versions');
   await designer.request('PUT', `/model/scenarios/${MODEL}`, { json: { scenarios: [] } });
-  await web.bpmnServer.definitions.save(MODEL, source, null, null, 'designer');
+  await web.bpmnServer.models.save(MODEL, source, null, 'designer');
 });
 
 test('design: coverage counts as the Test tab does: an event sub-process is not an element, what is inside it is', async () => {
@@ -197,7 +197,7 @@ test('Run on a model with several start events, or a start form, asks first: the
     <bpmn:sequenceFlow id="f3" sourceRef="Quick" targetRef="FromQuick" />
   </bpmn:process>
 </bpmn:definitions>`);
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
 
   const run = await admin.get('/execute/multi-start');
   assert.equal(run.status, 302);

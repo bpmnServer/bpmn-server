@@ -299,8 +299,6 @@ export class Connectors {
             createdAt: now(), updatedAt: now(),
         };
         this.writeDefinition(connector);
-        // a key or test left by a connector of that id removed before is not this one's
-        await this.store.remove(this.database, COLLECTION, { id: connector.id });
         this.server.logger.log(`connector '${connector.id}' added${userName ? ' by ' + userName : ''}: ${operations.size} operations, ${baseUrl}`);
         return this.withoutSecret(connector);
     }
@@ -338,17 +336,25 @@ export class Connectors {
         return { source, version: document.openapi, title: document.info?.title, fetchedAt: now(), bytes: Buffer.byteLength(JSON.stringify(document)), document };
     }
 
-    /** Removes a connector: its file, and this server's key and test. */
+    /** Removes a connector: its file, and this server's key and test. Its halves: `removeFile`, `forget`. */
     async remove(id: string): Promise<boolean> {
-        this.compiled.delete(id);
         await this.load(id);   // one kept whole in the collection: written out first, so it is removed as a file too
-        let existed = false;
-        if (ID.test(id ?? '')) {
-            try { fs.unlinkSync(this.fileOf(id)); existed = true; } catch { /* no file */ }
-            this.files.delete(id);
-        }
+        const existed = this.removeFile(id);
+        return (await this.forget(id)) || existed;
+    }
+
+    /** The connector's file gone (model access's). */
+    removeFile(id: string): boolean {
+        this.compiled.delete(id);
+        if (!ID.test(id ?? '')) return false;
+        this.files.delete(id);
+        try { fs.unlinkSync(this.fileOf(id)); return true; } catch { return false; }
+    }
+
+    /** This server's key and test for the connector gone (the engine's). */
+    async forget(id: string): Promise<boolean> {
         const { deletedCount } = await this.store.remove(this.database, COLLECTION, { id });
-        return existed || deletedCount > 0;
+        return deletedCount > 0;
     }
 
     /**

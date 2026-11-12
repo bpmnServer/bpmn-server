@@ -433,7 +433,9 @@ export class Dashboards extends Common {
         }));
 
         router.post('/admin/connectors/:id/delete', this.isAdmin, action(async (req, res) => {
-            const removed = await connectors().remove(req.params.id);
+            // its file (model access), then its key and test (the engine's)
+            const removed = connectors().removeFile(req.params.id);
+            await server.engine.connectorRemoved(req.params.id);
             backToConnectors(res, removed ? `Connector '${req.params.id}' deleted.` : `No connector '${req.params.id}'.`);
         }));
 

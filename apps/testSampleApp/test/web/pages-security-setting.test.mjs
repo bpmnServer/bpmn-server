@@ -22,7 +22,7 @@ let web, staff;
 test.before(async () => {
   web = await startWebApp({ env: { ENFORCE_SECURITY: 'false' } });
   fs.writeFileSync(path.join(web.definitionsPath, 'managers-only.bpmn'), MANAGERS_ONLY);
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
   staff = await web.login('staff');
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });

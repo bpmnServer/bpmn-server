@@ -214,7 +214,7 @@ const PARALLEL = `<?xml version="1.0" encoding="UTF-8"?>
 test('a joining gateway is not a step: it completes when its branches arrive', async () => {
     const fs = await import('node:fs'), path = await import('node:path');
     fs.writeFileSync(path.join(web.definitionsPath, 'parallel.bpmn'), PARALLEL);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const post = (url, json) => designer.request('POST', url, { json }).then(r => ({ status: r.status, body: JSON.parse(r.text) }));
     let { body: { instance } } = await post('/model/test/start', { processName: 'parallel' });
     const item = id => instance.items.find(i => i.elementId === id && i.status === 'wait');
@@ -248,7 +248,7 @@ test('steps are user tasks, receive tasks and events: a timer is forced, a recei
     <bpmn:sequenceFlow id="f3" sourceRef="Receive" targetRef="End" />
   </bpmn:process>
 </bpmn:definitions>`);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const [result] = JSON.parse((await run({ processName: 'timer', scenario: { name: 'timer', steps: [{ element: 'Wait' }, { element: 'Receive' }] } })).text).results;
     assert.equal(result.steps[0].ok, true, 'the timer is forced');
     assert.equal(result.steps[1].ok, true, 'a receive task is a step');

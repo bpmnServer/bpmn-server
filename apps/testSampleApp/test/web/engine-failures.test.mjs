@@ -35,7 +35,7 @@ async function until(what, check, ms = 30_000) {
 test.before(async () => {
   // a lock left by a killed engine is taken over soon, for the test
   web = await startWebApp({ remoteEngine: true, env: { LOCK_STALE_AFTER_MS: '2000' } });
-  for (const [name, source] of Object.entries(MODELS)) await web.bpmnServer.definitions.save(name, source);
+  for (const [name, source] of Object.entries(MODELS)) await web.bpmnServer.models.save(name, source);
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
