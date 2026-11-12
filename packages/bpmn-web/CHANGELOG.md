@@ -44,6 +44,10 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **Lists read less.** `/api/v3/instances` filters, sorts and cuts its page in the database, reading only the fields
+  it shows; the task lists (`/api/v3/tasks`, `/api2/tasks`, My work) read the tasks without their instances' data. The
+  answers are as before. The HR demo's To do panel no longer reads the tasks every 30 seconds and on each return to the
+  window: on the page's load, its Refresh button, and a task completed in the workflow pages.
 - **The host changes nothing of the engine's but by asking it** (docs/design/engine-isolation.md): Administration
   releases locks, sets, tests and removes a connector's key through engine calls; claiming a task (`/api/v3`,
   `/api2/tasks`) takes the engine's claim; the model editor, the APIs and the catalog save, rename and delete models

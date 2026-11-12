@@ -34,6 +34,24 @@ test('a timer start event starts at itself, on the path it begins, and not as a 
   } finally { await server.shutdown(); }
 });
 
+test('a process timer is scheduled, and said to be, once: the timers read again schedule nothing more', async () => {
+  const dir = definitionsFolder();
+  fs.writeFileSync(path.join(dir, 'later.bpmn'), TWO_STARTS.replace('PT1S', 'PT1H'));
+  const lines = [];
+  const logger = quiet();
+  const log = logger.log.bind(logger);
+  logger.log = (...args) => { lines.push(args.join(' ')); return log(...args); };
+  const { server } = await makeServer({ dir, cron: true, logger });
+  try {
+    await until(async () => lines.some(line => line.startsWith('scheduling process later')), 6000, 'the timer scheduled');
+    const scheduled = server.cron.counters.scheduled;
+    await server.cron.checkTimers();
+    await server.cron.checkTimers();
+    assert.equal(server.cron.counters.scheduled, scheduled, 'nothing scheduled again');
+    assert.equal(lines.filter(line => line.startsWith('scheduling process later')).length, 1, lines.join('\n'));
+  } finally { await server.shutdown(); }
+});
+
 test('a lock is kept for as long as its holder lives, however long that is; only a dead holder\'s goes stale', async () => {
   const store = newStore();
   const options = { database: 'd', retryDelay: 5, maxTries: 2, staleAfter: 300 };

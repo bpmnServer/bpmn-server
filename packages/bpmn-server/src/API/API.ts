@@ -173,7 +173,7 @@ export interface IAPIData {
 /**
     returns list of `item`s
 */
-     findItems(query, user?: ISecureUser): Promise<IItemData[]>;
+     findItems(query, user?: ISecureUser, options?: { lean?: boolean }): Promise<IItemData[]>;
      findItem(query, user?: ISecureUser): Promise<IItemData>;
 /**
     returns list of `instance`s
@@ -301,10 +301,11 @@ class APIData extends APIComponent {
         return this.findItems(query, user);
     }
 
-    public async findItems(query, user?: ISecureUser): Promise<IItemData[]> {
+    /** `lean`: without the instances' data (for lists): see IDataStore.findItems. */
+    public async findItems(query, user?: ISecureUser, options?: { lean?: boolean }): Promise<IItemData[]> {
         user=this.getUser(user);
         query = user.qualifyInstances(query);
-        return await this.server.dataStore.findItems(query);
+        return await this.server.dataStore.findItems(query, options);
     }
     public async findItem(query, user?: ISecureUser): Promise<IItemData> {
         user=this.getUser(user);

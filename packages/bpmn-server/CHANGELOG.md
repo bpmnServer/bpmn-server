@@ -41,6 +41,11 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
+- **A page of a list is cut in the database.** The storage port's `find` takes an optional `limit` (the first that
+  many after sorting: MongoDB's `limit`; the in-memory and SQLite stores the same), and `findInstances(query, {
+  projection, sort, limit })` passes it. `findItems(query, { lean: true })` (and `BPMNAPI.data.findItems(query, user,
+  { lean: true })`) reads each item's instance without its data and tokens, for lists: the items have no `data` or
+  `instanceData`. An adapter written before `limit` still works: the data store cuts what it returns.
 - **A launched server's host writes nothing of the engine's** (docs/design/engine-isolation.md). Its `dataStore` is a
   read-only instance viewer, `definitions` model access (the models' files, no database), and `connectors` keeps the
   connectors' files; a write of the engine's data through them (an instance, a lock, the models' index, a connector's
@@ -60,6 +65,8 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- `scheduling process <model> at ...` is logged once for a process timer: the timers read again (at start, by the
+  re-read) logged it each time, though it was scheduled only once.
 - `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
   `true`).
 

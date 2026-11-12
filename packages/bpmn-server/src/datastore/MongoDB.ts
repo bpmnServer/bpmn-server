@@ -53,7 +53,7 @@ class MongoDB implements IDocumentStore {
         return this.connecting;
     }
 
-    async find(dbName, collName, qry, projection = null, sort = null) {
+    async find(dbName, collName, qry, projection = null, sort = null, limit?: number) {
         const client = await this.getClient();
         const collection = client.db(dbName).collection(collName);
 
@@ -61,6 +61,7 @@ class MongoDB implements IDocumentStore {
         let cursor = collection.find(qry);
         if (projection) cursor = cursor.project(projection) as any;
         if (sort) cursor = cursor.sort(sort);
+        if (limit > 0) cursor = cursor.limit(limit);
 
         try {
             return await cursor.toArray();

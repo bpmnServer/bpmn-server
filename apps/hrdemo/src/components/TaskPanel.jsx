@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
 
 // The right-hand panel: the person's tasks waiting in the workflows (BPMN Server's API v3, with the HR session), on
-// every HR page. A task opens in the workflow pages (pages/Workflow.jsx). It refreshes now and then, when the window
-// comes back, and when a workflow page loads (a task completed there): the event 'workflow-changed'.
-const REFRESH_MS = 30_000;
+// every HR page. A task opens in the workflow pages (pages/Workflow.jsx). It reads the tasks when the page loads, when the
+// person asks (its Refresh button), and when a workflow page loads (a task completed there): the event 'workflow-changed'. It
+// does not poll: each read is a query of the tasks (fable-review.md H5).
 const KEY = 'hr.taskPanel';
 const RECENT = 5;
 
@@ -57,10 +57,8 @@ export default function TaskPanel({ onToggle, onCount }) {
 
   useEffect(() => {
     load();
-    const timer = setInterval(load, REFRESH_MS);
-    window.addEventListener('focus', load);
     window.addEventListener('workflow-changed', load);
-    return () => { clearInterval(timer); window.removeEventListener('focus', load); window.removeEventListener('workflow-changed', load); };
+    return () => window.removeEventListener('workflow-changed', load);
   }, [load]);
 
   useEffect(() => { onToggle?.(open && tasks !== false); }, [open, tasks, onToggle]);

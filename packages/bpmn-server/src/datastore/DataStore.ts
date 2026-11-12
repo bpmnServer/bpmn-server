@@ -95,7 +95,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 				if (pass) {
 					let data;
-					if (instance.tokens[i.tokenId]) {
+					if (instance.tokens?.[i.tokenId]) {
 						let dp=instance.tokens[i.tokenId].dataPath;
 						if (dp!=='')
 							data=DataHandler.getData(instance.data,dp);
@@ -237,9 +237,11 @@ class DataStore extends ServerComponent  implements IDataStore {
 			projection = option['projection'];
 		if (option['sort'])
 			sort=option['sort'];
+		// at most `limit`, the first after sorting: in the database where the adapter can (a page of a list)
+		const limit = Number.isInteger(option?.['limit']) && option['limit'] > 0 ? option['limit'] : undefined;
 
-		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, query, projection,sort);
-		return records;
+		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, query, projection, sort, limit);
+		return limit && records.length > limit ? records.slice(0, limit) : records;
 	}
 	/**
 		* scenario:
@@ -267,11 +269,13 @@ class DataStore extends ServerComponent  implements IDataStore {
 	 *
 	 * @param query
 	 */
-	async findItems(query) : Promise<IItemData[]> {
+	async findItems(query, options: { lean?: boolean } = {}) : Promise<IItemData[]> {
 		// let us rebuild the query form {status: value} to >  "tokens.items.status": "wait" 
 		const trans = new QueryTranslator('items');
 		const result = trans.translateCriteria(query);
-		const projection = { id: 1, data: 1, name: 1, version:1, "items": 1 , "tokens":1};
+		// lean, for a list: the instances' data and tokens are not read (data, instanceData absent)
+		const projection = options.lean ? { id: 1, name: 1, version: 1, items: 1 }
+			: { id: 1, data: 1, name: 1, version:1, "items": 1 , "tokens":1};
 		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, result, projection);
 		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 
