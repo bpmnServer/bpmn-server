@@ -11,3 +11,6 @@ work/
 # the editor's saved versions of models and its deleted runs
 **/processes/.history/
 **/processes/.runs.del/
+
+# API_TRACE: every API call and its answer, written while the app runs (bpmn-server setup turns it on)
+api-trace.jsonl

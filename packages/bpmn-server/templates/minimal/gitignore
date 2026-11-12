@@ -1,3 +1,5 @@
 node_modules/
 .env
 *.log
+# API_TRACE: every API call and its answer, written while the app runs
+api-trace.jsonl

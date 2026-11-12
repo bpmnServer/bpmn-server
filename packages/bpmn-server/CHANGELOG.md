@@ -41,6 +41,8 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
+- **A new application's `.gitignore` leaves out `api-trace.jsonl`**, the API trace `bpmn-server setup` turns on
+  (`API_TRACE`): what the running app writes is not committed.
 - **A page of a list is cut in the database.** The storage port's `find` takes an optional `limit` (the first that
   many after sorting: MongoDB's `limit`; the in-memory and SQLite stores the same), and `findInstances(query, {
   projection, sort, limit })` passes it. `findItems(query, { lean: true })` (and `BPMNAPI.data.findItems(query, user,
