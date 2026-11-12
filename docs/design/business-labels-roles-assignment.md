@@ -10,7 +10,7 @@ specified and built. The parts have their own design notes:
   ([user guide](https://github.com/bpmnServer/bpmn-server/blob/3.7.1/docs/docs/assignment-policies.md)).
 
 Both are built on branch `3.7.1`, which carries all of 3.7. Assignment policies are a first try, open to change once
-they've been used.
+they've been used. The HR demo's Leave Application uses both.
 
 **Related:** [API v3](api-v3.md); [Several applications on one server, and tenants](multi-app-tenants.md);
 [Application integration](../docs/application-integration-design.md); [Settings](../docs/settings.md).
@@ -35,7 +35,7 @@ It asked three questions, answered here:
 |---|---|---|
 | Installation | Port, database, logging, secrets, what differs per machine | `.env` / environment |
 | Model | Its case's and its elements' labels; which assignment policy a user task uses | `camunda:label`, `camunda:endLabel`, `camunda:assignmentPolicy`, lanes |
-| Application | Its roles; its assignment policies; code that finds a person or labels a case | The models folder: `roles.json`, `policies/<name>.dmn.xml`. The delegate: `instanceLabel`. Its services: what a policy's `$(...)` calls |
+| Application | Its roles; its assignment policies; code that finds a person or labels a case | The models folder: `roles.json`, `policies/assignment/<name>.dmn.xml`. The delegate: `instanceLabel`. Its services: what a policy's `$(...)` calls |
 | Engine | Fills in labels when they're shown; evaluates a policy when a task starts and saves the result; enforces lifecycle and permissions | bpmn-server |
 
 Rules:
@@ -46,6 +46,8 @@ Rules:
 - **Nothing is global.** Labels belong to models, and roles and policies to the application's models folder, so the
   design fits a later multi-application server (§7).
 - **No `configuration.json`.**
+- **Security policies** are a separate design, with their own folder beside the assignment policies
+  (`policies/security/`): [security policies](https://github.com/bpmnServer/bpmn-server/blob/3.7.1/docs/design/security-policies.md).
 
 ## 3. Display label
 
@@ -99,8 +101,8 @@ Built on `3.7.1`, as its assignment policies design says. It replaces this note'
 `assignmentPolicy` in `camunda:properties`, a lane as the default role, an `assignment` setting in
 `settings/config.ts`, and an `appDelegate.resolveAssignment()` hook.
 
-- **A user task names a policy:** `camunda:assignmentPolicy="Approval"` names `processes/policies/Approval.dmn.xml`,
-  a DMN decision table.
+- **A user task names a policy:** `camunda:assignmentPolicy="Approval"` names `processes/policies/assignment/Approval.dmn.xml`,
+  a DMN decision table. A policy still kept directly in `policies/` is moved there on first use.
 - **The policy's rules:**
   - Inputs are FEEL on the case's data, as a business rule task's are.
   - Hit policy FIRST: the first rule that matches sets `assignee`, `candidateUsers` and `candidateGroups`.
@@ -114,7 +116,12 @@ Built on `3.7.1`, as its assignment policies design says. It replaces this note'
 - **No match, no policy, or a failing policy** assigns nobody. The task keeps what its attributes and lane gave, and
   isn't failed.
 - **What decided is kept:** the item keeps `assignment: { policy, rule }`, and the instance's Rationale says who was
-  assigned and why.
+  assigned and why. API v3's Task returns it as `assignedBy`: v3's Element already uses `assignment` for the
+  model's assignee and candidates. `assignedBy` is absent when nothing decided.
+- **A claim** writes *is claimed by dora* in the Rationale, with what offered her the task, and `assignedBy` keeps
+  the policy.
+- **A reassignment by someone else** writes *is reassigned by mgr: assigned to ed*, with what it was and what
+  decided it, and `assignedBy` becomes `{ userName: 'mgr' }`.
 - **Roles:** `processes/roles.json` lists the roles. A role is the user group of the same name. Administrators edit
   them on the Administration page, which shows where each is used and how many users are in its group.
 - **`verifyModel`** checks the policy is there and readable, its outputs, and that lanes and assigned groups are
@@ -139,9 +146,9 @@ here may add something global that would block it.
 This design fits that note's workspaces, each with its own database, models folder, code and engine:
 
 - **Labels** belong to a workspace's models, and are filled in from the case's own model and data.
-- **Roles and policies** are files in the workspace's models folder (`roles.json`, `policies/`), and a policy's
+- **Roles and policies** are files in the workspace's models folder (`roles.json`, `policies/assignment/`), and a policy's
   `$(...)` calls that workspace's services. `Manager` in two workspaces are two different roles.
-- **What's saved** is the task's usual fields and `assignment: { policy, rule }`, in the workspace's database. The
+- **What's saved** is the task's usual fields and what decided them (`assignment`), in the workspace's database. The
   host's pages and APIs show it without running any workspace's code.
 - **No global state:** no `.env` option or module-level state is added.
 
@@ -171,13 +178,12 @@ Decided:
 2. No `.env` option moves in 3.7, and this design adds none.
 3. Labels are computed when shown, never stored. API v3's tasks carry their own label and their case's.
 4. Missing values: none, `null`, empty or only spaces is missing; `0` and `false` are values.
-5. Assignment is by DMN policies and `roles.json`, not settings or a delegate hook.
+5. Assignment is by DMN policies (`policies/assignment/`) and `roles.json`, not settings or a delegate hook.
+6. API v3's Task returns what decided as `assignedBy`, absent when nothing did.
 
 Still open:
 
 1. **Named values as list columns** (§4), once labels have been tried.
-2. **What decided an assignment, in API v3:** v3's `Task` doesn't return the item's `assignment: { policy, rule }`.
-   Should it, so a client can show *why* a task came to someone, as the Rationale does?
 
 ## 11. Status
 
@@ -187,12 +193,12 @@ Still open:
 | Labels: model, pages, filters, editor, API v3 | Built on `3.7.1` |
 | Assignment policies and roles: engine, editor, Administration page, checks | Built on `3.7.1` (a first try) |
 | Named values as list columns | Open (§4) |
-| The reassignment log line (below) | Not yet fixed |
+| `assignedBy` in API v3; claim and reassignment in the Rationale; the reassignment log line | Built on `3.7.1` |
 
 PR #281 can close once this PR is merged: its need is met by labels, and its code lives on in the label code.
 
 ## 12. Found while writing this
 
-**The reassignment log line** (`Execution.assign`) prints the assignment as `[object Object]` and doesn't name the
-previous assignee. It is still so on `3.7.1`. I can fix it separately: name the previous and the new assignee and
-candidates, and write a Rationale entry as a policy's assignment does.
+**The reassignment log line** (`Execution.assign`) printed the assignment as `[object Object]` and didn't name the
+previous assignee. Fixed on `3.7.1`: it prints the assignment and what it was before. Claims and reassignments
+also write Rationale entries (§5).
