@@ -506,7 +506,7 @@ class ModelVerifier {
     #roles: string[] | null | undefined = undefined;
 
     /**
-     * A user task's assignment policy (engine/AssignmentPolicy.ts): in policies/, a readable decision whose outputs
+     * A user task's assignment policy (engine/AssignmentPolicy.ts): in policies/assignment/, a readable decision whose outputs
      * are the assignment's fields; the groups it names, roles of roles.json (when there is one).
      */
     async checkPolicy(policy: string, def) {

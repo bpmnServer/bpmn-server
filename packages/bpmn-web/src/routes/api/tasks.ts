@@ -1,5 +1,6 @@
 import { BPMNAPI, SecureUser } from '../../index.js';
 import { notATest } from '../../testing/scenarios.js';
+import { CaseAccess } from '../caseAccess.js';
 
 /*
  * The task operations, once (docs/design/api-v3.md): what an application does for one of its users. /api2/tasks (v2)
@@ -29,8 +30,10 @@ export function hasPart(item, user: SecureUser): boolean {
 
 /** What an application sees of a task: not the engine's own fields. */
 export function asTask(item) {
-    const { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, userName } = item;
-    return { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, completedBy: endedAt ? userName : undefined };
+    const { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, userName, assignment } = item;
+    return { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, completedBy: endedAt ? userName : undefined,
+        // what decided who works on it: { policy, rule }, or { userName } of who reassigned it
+        assignedBy: assignment ?? undefined };
 }
 
 /** A form field as the model has it (camunda:formField), as plain JSON: its options and validation too. */
@@ -70,8 +73,17 @@ const assertData = data => {
 
 export class TaskOperations {
     readonly api: BPMNAPI;
+    readonly access: CaseAccess;
     constructor(readonly server) {
         this.api = new BPMNAPI(server);
+        this.access = new CaseAccess(server);
+    }
+
+    /** What this user may do with a task, by its case's security policy (caseAccess.ts); all of it when they are off. */
+    private async taskAccess(user: SecureUser, item, instance?) {
+        if (!this.access.on) return null;
+        instance ??= (await this.access.casesOf([item])).get(item.instanceId);
+        return { access: await this.access.decide(user, instance, { elementId: item.elementId }), instance };
     }
 
     /** The task this user has a part in, or the same 404. */
@@ -93,6 +105,14 @@ export class TaskOperations {
         const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest, ...query }, user, { lean: true }))
             .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && hasPart(item, user) && (after === undefined || isAfter(item, String(after))))
             .sort((a, b) => new Date(a.startedAt ?? 0).getTime() - new Date(b.startedAt ?? 0).getTime() || (a.id < b.id ? -1 : 1));
+        // a task the case's policy doesn't let this user complete is not theirs to see here (the requester's approval)
+        if (this.access.on) {
+            const cases = await this.access.casesOf(waiting);
+            const shown = [];
+            for (const item of waiting)
+                if ((await this.access.decide(user, cases.get(item.instanceId), { elementId: item.elementId })).complete !== false) shown.push(item);
+            waiting.splice(0, waiting.length, ...shown);
+        }
         const page = waiting.slice(0, limit);
         return { tasks: page.map(asTask), next: waiting.length > limit ? position(page.at(-1)) : null };
     }
@@ -112,14 +132,20 @@ export class TaskOperations {
     /** One task, with its instance's data and its form. */
     async get(user: SecureUser, id: string) {
         const item = await this.find(id, user);
+        const decided = await this.taskAccess(user, item);
+        // not theirs to complete: the same 404; their data, what the policy lets them read and the task's own fields
+        if (decided?.access.complete === false) throw notFound();
+        const data = decided ? this.access.data({ ...decided.instance, data: (item as any).instanceData }, decided.access, item.elementId) : (item as any).instanceData;
         const definition = await this.server.definitions.load(item.processName).catch(() => null);
-        return { ...asTask(item), data: (item as any).instanceData, form: definition ? formOf(definition, item.elementId) : { fields: [] } };
+        return { ...asTask(item), data, form: definition ? formOf(definition, item.elementId) : { fields: [] } };
     }
 
     /** The task becomes this user's: { task }. Two claims at the same moment can not both win. */
     async claim(user: SecureUser, id: string) {
         const item = await this.find(id, user);
         assertWaiting(item);
+        const decided = await this.taskAccess(user, item);
+        if (decided) CaseAccess.require(decided.access, 'claim', true);
         if (item.assignee === user.userName)
             return { task: asTask(item) };
         if (item.assignee)
@@ -146,6 +172,8 @@ export class TaskOperations {
         assertData(data);
         const item = await this.find(id, user);
         assertWaiting(item);
+        const decided = await this.taskAccess(user, item);
+        if (decided) CaseAccess.require(decided.access, 'complete', true);
         if (item.assignee && item.assignee !== user.userName)
             throw new TaskError(403, 'The task is assigned to someone else', 'TASK_ASSIGNED');
         const { instance } = await this.api.engine.invoke({ id: item.instanceId, 'items.id': id }, data, user);

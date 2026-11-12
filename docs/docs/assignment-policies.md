@@ -5,7 +5,7 @@ first matching rule assigns the task when it starts. A rule written once, *over 
 to the IT manager, else the requester's manager*, serves every task that names it.
 
 The design: `docs/design/assignment.md`. *A first try:* it may change as it is tried. The HR demo's Leave
-Application uses one: `apps/hrdemo/workflow/processes/policies/LeaveApproval.dmn.xml`.
+Application uses one: `apps/hrdemo/workflow/processes/policies/assignment/LeaveApproval.dmn.xml`.
 
 ## The task
 
@@ -21,7 +21,9 @@ shown as written: it is worked out when the task starts.
 
 ## The policy
 
-A DMN decision table in the models folder, `policies/<name>.dmn.xml`: `processes/policies/Approval.dmn.xml`. Edit it
+A DMN decision table in the models folder, `policies/assignment/<name>.dmn.xml`:
+`processes/policies/assignment/Approval.dmn.xml`. A policy kept directly in `policies/` (as at first) is moved into
+`assignment/` when it is read. Edit it
 as any other decision.
 
 | amount | department | assignee | candidateGroups |
@@ -56,6 +58,15 @@ because of its policy.
 
 The policy runs once, when the task starts: not when it is claimed, and not when the data changes later.
 
+**API v3** returns what decided as the task's `assignedBy`: `{ policy: 'Approval', rule: 1 }`, so a client can show
+why a task came to someone.
+
+**Claimed, or reassigned by hand.** Someone taking a task they were offered keeps what offered it, and the Rationale
+says *is claimed by dora — it was offered to Director (policy Approval, rule 1)*. Any other change of its assignee or
+candidates is that person's: the task's `assignment` (and `assignedBy`) becomes `{ userName: 'mgr' }`, and the
+Rationale says what it was and what it is now: *is reassigned by mgr: assigned to ed — it was assigned to dora (policy
+Approval, rule 1)*.
+
 ## Roles
 
 `processes/roles.json` lists the application's roles: `["Manager", "Director", "ITManager"]`. A role is the user
@@ -73,7 +84,7 @@ isn't one of them.
 
 | Code | Severity | When |
 |---|---|---|
-| `assignment-policy-not-found` | error | a task's policy isn't in `policies/` |
+| `assignment-policy-not-found` | error | a task's policy isn't in `policies/assignment/` |
 | `assignment-policy-invalid` | error | the policy's file can't be read as a decision |
 | `assignment-policy-output` | warning | an output that isn't `assignee`, `candidateUsers` or `candidateGroups` |
 | `role-unknown` | warning | a lane, or a group a policy assigns, not in `roles.json` |

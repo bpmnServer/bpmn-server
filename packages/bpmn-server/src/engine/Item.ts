@@ -22,8 +22,8 @@ class Item implements IItem {
     assignee;
     candidateGroups;
     candidateUsers;
-    /** what decided the assignment: the task's policy and its rule (engine/AssignmentPolicy.ts) */
-    assignment?: { policy: string; rule?: number };
+    /** what decided the assignment: the task's policy and its rule, or who reassigned it (engine/AssignmentPolicy.ts) */
+    assignment?: { policy?: string; rule?: number; userName?: string };
     dueDate;
     followUpDate;
     priority;

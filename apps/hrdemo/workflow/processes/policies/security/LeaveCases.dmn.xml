@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="LeaveCases_definitions" name="Leave cases" namespace="http://bpmn-server/dmn">
+  <decision id="LeaveCases" name="Leave cases">
+    <decisionTable id="LeaveCases_table" hitPolicy="COLLECT">
+      <input id="LeaveCases_relation" label="Relation">
+        <inputExpression id="LeaveCases_relationExpression" typeRef="string">
+          <text>relation</text>
+        </inputExpression>
+      </input>
+      <input id="LeaveCases_groups" label="Groups">
+        <inputExpression id="LeaveCases_groupsExpression" typeRef="string">
+          <text>groups</text>
+        </inputExpression>
+      </input>
+      <input id="LeaveCases_task" label="Task">
+        <inputExpression id="LeaveCases_taskExpression" typeRef="string">
+          <text>task</text>
+        </inputExpression>
+      </input>
+      <output id="LeaveCases_see" label="See" name="see" typeRef="string" />
+      <output id="LeaveCases_data" label="Data" name="data" typeRef="string" />
+      <output id="LeaveCases_claim" label="Claim" name="claim" typeRef="string" />
+      <output id="LeaveCases_complete" label="Complete" name="complete" typeRef="string" />
+      <output id="LeaveCases_restart" label="Restart" name="restart" typeRef="string" />
+      <rule id="LeaveCases_hr">
+        <description>HR sees every leave case and all its data, and may restart a step</description>
+        <inputEntry id="LeaveCases_hr_relation"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_hr_groups"><text>"HR"</text></inputEntry>
+        <inputEntry id="LeaveCases_hr_task"><text>-</text></inputEntry>
+        <outputEntry id="LeaveCases_hr_see"><text>"full"</text></outputEntry>
+        <outputEntry id="LeaveCases_hr_data"><text>"all"</text></outputEntry>
+        <outputEntry id="LeaveCases_hr_claim"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_hr_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_hr_restart"><text>"allow"</text></outputEntry>
+      </rule>
+      <rule id="LeaveCases_requester">
+        <description>Whoever asked sees their request, and what the forms entered (the decision and its comment too)</description>
+        <inputEntry id="LeaveCases_requester_relation"><text>"initiator"</text></inputEntry>
+        <inputEntry id="LeaveCases_requester_groups"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_requester_task"><text>-</text></inputEntry>
+        <outputEntry id="LeaveCases_requester_see"><text>"full"</text></outputEntry>
+        <outputEntry id="LeaveCases_requester_data"><text>"forms"</text></outputEntry>
+        <outputEntry id="LeaveCases_requester_claim"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_requester_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_requester_restart"><text></text></outputEntry>
+      </rule>
+      <rule id="LeaveCases_manager">
+        <description>A manager it is offered to sees the request: its dates, type and reason</description>
+        <inputEntry id="LeaveCases_manager_relation"><text>"candidate","assignee"</text></inputEntry>
+        <inputEntry id="LeaveCases_manager_groups"><text>"Manager"</text></inputEntry>
+        <inputEntry id="LeaveCases_manager_task"><text>-</text></inputEntry>
+        <outputEntry id="LeaveCases_manager_see"><text>"full"</text></outputEntry>
+        <outputEntry id="LeaveCases_manager_data"><text>["LeaveType","StartDate","EndDate","RequestReason","requester","days"]</text></outputEntry>
+        <outputEntry id="LeaveCases_manager_claim"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_manager_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_manager_restart"><text></text></outputEntry>
+      </rule>
+      <rule id="LeaveCases_participant">
+        <description>Anyone who worked on it sees it as a line</description>
+        <inputEntry id="LeaveCases_participant_relation"><text>"participant"</text></inputEntry>
+        <inputEntry id="LeaveCases_participant_groups"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_participant_task"><text>-</text></inputEntry>
+        <outputEntry id="LeaveCases_participant_see"><text>"summary"</text></outputEntry>
+        <outputEntry id="LeaveCases_participant_data"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_participant_claim"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_participant_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_participant_restart"><text></text></outputEntry>
+      </rule>
+      <rule id="LeaveCases_own">
+        <description>Separation of duties: whoever asked may not approve their own leave, even as a manager</description>
+        <inputEntry id="LeaveCases_own_relation"><text>"initiator"</text></inputEntry>
+        <inputEntry id="LeaveCases_own_groups"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_own_task"><text>"Approve"</text></inputEntry>
+        <outputEntry id="LeaveCases_own_see"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_own_data"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_own_claim"><text>"deny"</text></outputEntry>
+        <outputEntry id="LeaveCases_own_complete"><text>"deny"</text></outputEntry>
+        <outputEntry id="LeaveCases_own_restart"><text></text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="LeaveCases_diagram">
+      <dmndi:DMNShape id="LeaveCases_shape" dmnElementRef="LeaveCases">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

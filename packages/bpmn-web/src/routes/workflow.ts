@@ -11,6 +11,7 @@ import { rationaleSteps } from '../testing/rationale.js';
 import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
 import { labelFilterOf } from './labelFilter.js';
+import { CaseAccess } from './caseAccess.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import { guardModelParams } from './middleware/modelName.js';
 import { afterWork } from '../userAccess/roles.js';
@@ -194,13 +195,17 @@ export class Workflow extends Common {
             const item = await apiOf(request).data.findItem({ "items.id": id }, getSecureUser(request));
             if (!item) return answerMessage(request, response, 403, 'Item not found or not authorized');
             const instance = await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');
+            // the case's security policy (caseAccess.ts): completing it may be refused; its data, what it lets them read
+            const caseAccess = new CaseAccess(serverOf(request));
+            const access = await caseAccess.decide(getSecureUser(request), instance, { elementId: item.elementId });
+            if (access.complete === false) return answerMessage(request, response, 403, 'This task is not yours to complete (security policy)');
 
             let definition=await serverOf(request).definitions.loadFromInstance(instance);
 
             let { node, fields } =definition.getNodeInfo(elementId);
 
             
-            let vars = ViewHelper.formatData(instance.data || {});
+            let vars = ViewHelper.formatData(caseAccess.data(instance, access, item.elementId) || {});
 
             if (fields && fields.length > 0) {
                 response.render('invokeItem', { node,
@@ -219,6 +224,15 @@ export class Workflow extends Common {
             
             for (const [key, value] of Object.entries(request.body))
                 if (!FORM_ONLY.has(key)) data[key] = value;
+
+            // the case's security policy may refuse completing it (caseAccess.ts)
+            const caseAccess = new CaseAccess(serverOf(request));
+            if (caseAccess.on) {
+                const item = await apiOf(request).data.findItem({ "items.id": id }, getSecureUser(request));
+                const instance = item && await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');
+                if (!item || (await caseAccess.decide(getSecureUser(request), instance, { elementId: item.elementId })).complete === false)
+                    return answerMessage(request, response, 403, 'This task is not yours to complete (security policy)');
+            }
 
 
             let result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.invoke({ "items.id": id }, data, getSecureUser(request)));
@@ -447,6 +461,12 @@ async function display(req,res, title, output, logs = [], items = []) {
     const taskFilter = await labelFilterOf(serverOf(req), req, '/#tasks', { prefix: 'task_', other: '' });
     var instances = await apiOf(req).data.findInstances({ ...notATest, ...(labelFilter.query ?? {}) }, user,{sort:{saved:-1}});
     let waiting = await apiOf(req).data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest, ...(taskFilter.query ?? {}) }, getSecureUser(req));
+    // the cases' security policies (caseAccess.ts): the cases this user sees, the tasks they may complete
+    const caseAccess = new CaseAccess(serverOf(req));
+    if (caseAccess.on) {
+        instances = await caseAccess.seen(user, instances);
+        waiting = await caseAccess.tasksAllowed(user, waiting);
+    }
     // labels, filled in from each case's model (engine/Labels.ts)
     await labelInstances(serverOf(req), instances);
     await labelItems(serverOf(req), waiting);
@@ -514,10 +534,20 @@ async function instanceDetails(request,response,instanceId,version) {
 
     let user = getSecureUser(request);
 
-    const visibleItems = await apiOf(request).data.findItems({ id: instanceId }, user);
-    if (visibleItems.length === 0) return response.status(403).send('Instance access denied');
+    // the case's security policy decides, when there are policies (caseAccess.ts): its page is for `see: full`
+    const caseAccess = new CaseAccess(serverOf(request));
+    if (!caseAccess.on) {
+        const visibleItems = await apiOf(request).data.findItems({ id: instanceId }, user);
+        if (visibleItems.length === 0) return response.status(403).send('Instance access denied');
+    }
 
     let instance = await serverOf(request).dataStore.findInstance({ id: instanceId }, 'Full');
+    if (caseAccess.on) {
+        const access = instance && await caseAccess.decide(user, instance);
+        if (!instance || access.see !== 'full')
+            return answerMessage(request, response, 403, 'This case is not yours to open (security policy)');
+        if (!access.data.all) instance.data = caseAccess.data(instance, access);
+    }
     await labelInstances(serverOf(request), [instance]);
 
     let logs = instance.logs;

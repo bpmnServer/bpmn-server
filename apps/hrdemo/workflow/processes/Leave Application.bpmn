@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="LeaveApplication_Definitions" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:owf="http://omniworkflow.com/schema/owf/1.0" id="LeaveApplication_Definitions" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn2:collaboration id="LeaveCollaboration">
     <bpmn2:participant id="LeaveParticipant" name="Leave Application" processRef="LeaveProcess" />
   </bpmn2:collaboration>
   <bpmn2:error id="RecordFailedError" name="Not recorded" errorCode="RecordFailed" />
-  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true" camunda:label="Leave by ${data.requester}">
+  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true" owf:securityPolicy="LeaveCases" camunda:label="Leave by ${data.requester}">
     <bpmn2:documentation>An employee asks for leave; a manager decides; HR's system records it; the employee is told.</bpmn2:documentation>
     <bpmn2:laneSet id="LeaveLanes">
       <bpmn2:lane id="EmployeeLane" name="Employee">

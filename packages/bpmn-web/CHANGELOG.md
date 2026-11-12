@@ -15,6 +15,15 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **API v3's Task says what decided who works on it:** `assignedBy`, its assignment policy and rule (`{ policy,
+  rule }`), or who reassigned it (`{ userName }`); absent when nothing did (PR #286's question).
+- **Security policies**, a first slice (docs/design/security-policies.md, `routes/caseAccess.ts`), when an application
+  has `policies/security/` (or `SECURITY_POLICY=default`): API v3's instance list and one instance, its Rationale,
+  restart and start events, and its task list, one task, claim and complete ask the case's policy, as do the
+  Workbench's Instances and Pending Tasks, the instance page and the task form. A case not seen is left out (one
+  asked for is the same 404 as an unknown one); its data is what the policy lets the person read (a task's own form
+  fields always); a refused action is a 403 `POLICY_DENIED` naming the rule; a task the person may not complete is
+  not listed, nor theirs to claim. Off, nothing changes. The HR demo's Leave Application has one (`LeaveCases`).
 - **In place of PR #281's `.env` columns** (`INSTANCE_COLUMNS`, `TASK_COLUMNS`: not added) **and PR #286's
   proposals:** a case's label says what its values are, and the lists' filter by label finds any value it shows; #281's
   safe reading and display of values is kept in `engine/LabelTemplate.ts`. Whether named values also become columns is
@@ -22,7 +31,7 @@ and here
 - **Roles on the Administration page** (docs/docs/assignment-policies.md#roles): `roles.json`'s roles, each with
   where it is used and its users; add and remove; the names lanes and policies use that it doesn't list, to add.
 - **Assignment policies in the editor** (docs/docs/assignment-policies.md): a user task's **Assignment policy**, in
-  User assignment, chosen from the models folder's `policies/`; Open and New policy; a preview with the Test tab's
+  User assignment, chosen from the models folder's `policies/assignment/`; Open and New policy; a preview with the Test tab's
   scenario. `/model/policy/<name>` edits a policy in the decision editor, with its tests; `GET /model/policies`,
   `POST /model/policy/<name>/preview`. The decision editor's Test tab asks its own page's tests.
 - **Labels in API v3** (docs/docs/labels.md#in-api-v3, `routes/api/labels.ts`): tasks answer `label`,

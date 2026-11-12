@@ -763,6 +763,7 @@ Credential: The service key (API_KEY): the service account only.
 | `followUpDate` | string |  |  |
 | `priority` | any |  |  |
 | `completedBy` | string |  |  |
+| `assignedBy` | { policy, rule, userName } |  | What decided who works on it, when something did: its assignment policy and rule, or who reassigned it |
 | `label` | string |  | Its own label, else its name and its case's; filled in when answered |
 | `labelValues` | list of [LabelValue](#labelvalue) |  |  |
 | `caseLabel` | string |  | Its case's label |

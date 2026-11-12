@@ -1,5 +1,5 @@
 // A user task's assignment policy (docs/docs/assignment-policies.md): camunda:assignmentPolicy names a decision table
-// of the models folder, policies/<name>.dmn.xml, whose first matching rule assigns the task when it starts. The list
+// of the models folder, policies/assignment/<name>.dmn.xml, whose first matching rule assigns the task when it starts. The list
 // of policies, a link to open (or make) one in the decision editor, and a preview with the Test tab's data.
 import { SelectEntry, isSelectEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
@@ -47,7 +47,7 @@ function PolicyField({ element, id }) {
         element={element}
         id={id}
         label={translate('Assignment policy')}
-        description={translate('A policy of the models folder (policies/<name>.dmn.xml): its first matching rule assigns the task when it starts, over the fields above')}
+        description={translate('A policy of the models folder (policies/assignment/<name>.dmn.xml): its first matching rule assigns the task when it starts, over the fields above')}
         getValue={getValue}
         setValue={value => modeling.updateProperties(element, { [ATTRIBUTE]: value || undefined })}
         getOptions={() => {
@@ -97,7 +97,7 @@ function PolicySummary({ element, id }) {
     const policy = bo.get(ATTRIBUTE) || '';
     const { preview, answer } = usePolicyPreview(list?.includes(policy) ? policy : '');
     const create = () => {
-        const name = (window.prompt('Name of the new policy (policies/<name>.dmn.xml):', policy || 'Approval') || '').trim();
+        const name = (window.prompt('Name of the new policy (policies/assignment/<name>.dmn.xml):', policy || 'Approval') || '').trim();
         if (!name) return;
         if (name !== policy) modeling.updateProperties(element, { [ATTRIBUTE]: name });
         openPolicy(name);

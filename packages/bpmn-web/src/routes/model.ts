@@ -489,7 +489,7 @@ export class Model extends Common {
             response.json({ saved: decisionFile(name) });
         }));
 
-        // ---- assignment policies (docs/docs/assignment-policies.md): decision tables `policies/<name>.dmn.xml` of the
+        // ---- assignment policies (docs/docs/assignment-policies.md): decision tables `policies/assignment/<name>.dmn.xml` of the
         // models folder, edited in the decision editor; their tests kept as a decision's, under `<name>.policy`
         const policiesFolder = () => path.join(bpmnServer.configuration.definitionsPath, POLICIES_FOLDER);
         const policyPath = (name: string) => path.join(policiesFolder(), `${name}.dmn.xml`);

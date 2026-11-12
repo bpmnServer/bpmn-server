@@ -10,3 +10,4 @@ export * from './DataHandler.js';
 export * from './TestStubs.js';
 export * from './Labels.js';
 export * from './AssignmentPolicy.js';
+export * from './SecurityPolicy.js';

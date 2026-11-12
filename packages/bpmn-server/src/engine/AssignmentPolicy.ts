@@ -1,7 +1,7 @@
 /**
  * Assignment policies (docs/design/assignment.md): a user task names one, `camunda:assignmentPolicy="Approval"`, and
  * when it starts the policy says who works on it. A policy is a DMN decision table in the models folder,
- * `policies/<name>.dmn.xml`: conditions on the case's data in FEEL, the first rule that matches assigns. Its outputs
+ * `policies/assignment/<name>.dmn.xml`: conditions on the case's data in FEEL, the first rule that matches assigns. Its outputs
  * are the task's usual fields, `assignee`, `candidateUsers` and `candidateGroups`; a cell is a FEEL value, or a model
  * expression `$(...)` evaluated as the model's other expressions are (it can call appServices).
  *
@@ -15,25 +15,50 @@ import { expressionScript } from './Expressions.js';
 import { label } from '../elements/Flow.js';
 
 export const POLICY_FIELDS = ['assignee', 'candidateUsers', 'candidateGroups'] as const;
-export const POLICIES_FOLDER = 'policies';
+/** The models folder's policies, one folder per kind: assignment here, security in policies/security (to come). */
+export const POLICIES_FOLDER = 'policies/assignment';
+/** Where assignment policies were at first (3.7.1's first try): moved into POLICIES_FOLDER when read. */
+const EARLIER_FOLDER = 'policies';
 
-/** What decided a task's assignment, kept on the item. */
+/**
+ * Policies written directly in policies/ (before the kinds had folders of their own) moved into policies/assignment.
+ * Their tests (`<name>.policy.dmn.feature`, beside the models) stay as they are. One already there is kept, and the
+ * other left where it is.
+ */
+function moveEarlierPolicies(definitionsPath: string) {
+    const earlier = path.join(definitionsPath, EARLIER_FOLDER);
+    let files: string[];
+    try { files = fs.readdirSync(earlier, { withFileTypes: true }).filter(e => e.isFile() && /\.dmn\.xml$/i.test(e.name)).map(e => e.name); }
+    catch { return; }
+    if (!files.length) return;
+    const folder = path.join(definitionsPath, POLICIES_FOLDER);
+    fs.mkdirSync(folder, { recursive: true });
+    for (const name of files)
+        if (!fs.existsSync(path.join(folder, name))) fs.renameSync(path.join(earlier, name), path.join(folder, name));
+}
+
+/** What decided a task's assignment, kept on the item: its policy and rule, or the person who reassigned it. */
 export interface IItemAssignment {
-    policy: string;
+    policy?: string;
     rule?: number;
+    /** who reassigned it by hand (Execution.assign), replacing what its policy decided */
+    userName?: string;
 }
 
 /** A policy's file in a models folder, or null when it isn't there. */
 export function policyFile(definitionsPath: string, name: string): string | null {
     if (!definitionsPath || !name || /[\\/]|\.\./.test(name)) return null;
+    moveEarlierPolicies(definitionsPath);
     const file = path.join(definitionsPath, POLICIES_FOLDER, `${name}.dmn.xml`);
     return fs.existsSync(file) ? file : null;
 }
 
 /** The policies of a models folder, by name. */
 export function policyNames(definitionsPath: string): string[] {
-    const folder = definitionsPath && path.join(definitionsPath, POLICIES_FOLDER);
-    if (!folder || !fs.existsSync(folder)) return [];
+    if (!definitionsPath) return [];
+    moveEarlierPolicies(definitionsPath);
+    const folder = path.join(definitionsPath, POLICIES_FOLDER);
+    if (!fs.existsSync(folder)) return [];
     return fs.readdirSync(folder).filter(f => /\.dmn\.xml$/i.test(f)).map(f => f.replace(/\.dmn\.xml$/i, '')).sort();
 }
 
@@ -94,15 +119,40 @@ export async function applyPolicy(node, item, policy: string): Promise<void> {
         Object.assign(item, set);
         item.assignment = { policy, rule } as IItemAssignment;
         token.log(`..assignment policy ${policy}, rule ${rule}: ${JSON.stringify(set)}`);
-        const who = [
-            set.assignee ? `is assigned to ${set.assignee}` : null,
-            set.candidateUsers || set.candidateGroups ? `is offered to ${[...(set.candidateUsers ?? []), ...(set.candidateGroups ?? [])].join(', ')}` : null,
-        ].filter(Boolean).join(', and ');
-        decide(who, [`policy ${policy}, rule ${rule}`]);
+        decide(`is ${whom(set)}`, [`policy ${policy}, rule ${rule}`]);
     }
     catch (exc) {
         unassigned([`the policy failed: ${exc?.message ?? exc}`]);
     }
+}
+
+/** An assignment in words: `assigned to ann, and offered to bob, Manager`, or `assigned to no one`. */
+function whom(fields: { assignee?: any; candidateUsers?: any; candidateGroups?: any }): string {
+    const offered = [...asList(fields.candidateUsers ?? []), ...asList(fields.candidateGroups ?? [])];
+    return [
+        fields.assignee ? `assigned to ${fields.assignee}` : null,
+        offered.length ? `offered to ${offered.join(', ')}` : null,
+    ].filter(Boolean).join(', and ') || 'assigned to no one';
+}
+
+/**
+ * A person changed a waiting task's assignee or candidates (Execution.assign), and the Rationale says what it was and
+ * what it is now. `before`: its fields beforehand; `changed`: the assignment's fields given.
+ *
+ * Taking an unassigned task oneself (a claim: only `assignee`, one's own name) keeps what decided it was offered to
+ * them; any other change is that person's, in place of the policy that decided before.
+ */
+export function reassigned(execution, item, before: Record<string, any>, changed: Record<string, any>, userName: string): void {
+    const now = Object.fromEntries(POLICY_FIELDS.map(f => [f, item[f]]));
+    const earlier = item.assignment?.policy ? `policy ${item.assignment.policy}, rule ${item.assignment.rule}` : item.assignment?.userName;
+    const was = `it was ${whom(before)}${earlier ? ` (${earlier})` : ''}`;
+    const element = `user task ${label(item.node)}`;
+    const claim = userName && !before.assignee && changed.assignee === userName
+        && !POLICY_FIELDS.some(f => f !== 'assignee' && f in changed);
+    if (claim)
+        return execution.decision({ seq: item.seq, element, action: `is claimed by ${userName}`, why: [was] });
+    item.assignment = { userName } as IItemAssignment;
+    execution.decision({ seq: item.seq, element, action: `is reassigned by ${userName ?? 'the system'}: ${whom(now)}`, why: [was] });
 }
 
 /** Why a role name can't be used, or null: a name of letters, digits, spaces, `_`, `-` or `.`, at most 64. */

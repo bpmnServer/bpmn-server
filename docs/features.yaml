@@ -295,11 +295,23 @@ features:
   - id: assignment-policies
     area: modeling
     name: "Assignment policies"
-    what: "A user task names a policy (camunda:assignmentPolicy): a DMN table in policies/<name>.dmn.xml whose first matching rule sets assignee, candidateUsers and candidateGroups when the task starts, an output a FEEL value or a $(...) expression; the policy wins; no match assigns nothing, the Rationale says why; roles.json lists the roles; verifyModel checks; chosen and previewed in the editor, edited and tested in the decision editor; roles edited on the Administration page."
+    what: "A user task names a policy (camunda:assignmentPolicy): a DMN table in policies/assignment/<name>.dmn.xml whose first matching rule sets assignee, candidateUsers and candidateGroups when the task starts, an output a FEEL value or a $(...) expression; the policy wins; no match assigns nothing, the Rationale says why; roles.json lists the roles; verifyModel checks; chosen and previewed in the editor, edited and tested in the decision editor; roles edited on the Administration page."
+    xml: ["[camunda:assignmentPolicy]"]
     docs: [docs/docs/assignment-policies.md, docs/design/assignment.md]
     code: [packages/bpmn-server/src/engine/AssignmentPolicy.ts, packages/bpmn-server/src/elements/Tasks.ts, packages/bpmn-server/src/elements/verifyModel.ts, packages/bpmn-web/modeler/src/properties/PolicyEntries.jsx, packages/bpmn-web/src/routes/model.ts, packages/bpmn-web/src/routes/dashboards.ts]
-    examples: [apps/hrdemo/workflow/processes/policies/LeaveApproval.dmn.xml]
+    examples: [apps/hrdemo/workflow/processes/policies/assignment/LeaveApproval.dmn.xml]
     tests: [packages/bpmn-server/test/assignment.test.mjs, apps/testSampleApp/test/web/assignment-policies.test.mjs, apps/testSampleApp/test/ui/assignment-policies.test.mjs]
+  - id: security-policies
+    area: security
+    name: "Security policies"
+    status: partial
+    what: "A process (and a user task, for its actions) names a security policy (owf:securityPolicy): a DMN table in policies/security/<name>.dmn.xml, hit policy COLLECT, every matching rule counted and a denial winning. Inputs: the person (groups), their relation to the case (initiator, assignee, candidate, participant), the task, the case's data; actions: see (summary, full), data (all, forms, paths), claim, complete, restart, events. Without one, the application's policies/security/default.dmn.xml, else a built-in default. Asked by API v3 (instances, tasks, claim, complete, restart, start events) and the pages (the Workbench's lists, the instance page, the task form); a refused action is a 403 POLICY_DENIED naming the rule. Off until an application has policies/security/ or SECURITY_POLICY=default."
+    note: "A first slice: not yet in the editor (owf:securityPolicy is written in the XML), not checked by verifyModel, no As whom preview; a policy can deny claim and complete but not yet give them to someone the assignment doesn't offer the task to."
+    xml: ["[owf:securityPolicy]"]
+    docs: [docs/design/security-policies.md]
+    code: [packages/bpmn-server/src/engine/SecurityPolicy.ts, packages/bpmn-web/src/routes/caseAccess.ts, packages/bpmn-web/src/routes/api/instances.ts, packages/bpmn-web/src/routes/api/tasks.ts, packages/bpmn-web/src/routes/workflow.ts]
+    examples: [apps/hrdemo/workflow/processes/policies/security/LeaveCases.dmn.xml]
+    tests: [packages/bpmn-server/test/security-policy.test.mjs, apps/testSampleApp/test/web/security-policies.test.mjs]
   - id: expressions
     area: modeling
     name: "Expressions and conditions"
@@ -401,6 +413,7 @@ features:
     area: application
     name: "Labels of cases and tasks"
     what: "camunda:label (and camunda:endLabel) templates in the model, their values named (Client: ${Client = data.clientId}); filled in when shown, from the case's own model; the lists, My work, the instance page; filters by named value; the editor's Label group; labels and their filter in API v3."
+    xml: ["[camunda:label]", "[camunda:endLabel]"]
     docs: [docs/docs/labels.md, docs/design/labels.md]
     code: [packages/bpmn-server/src/engine/Labels.ts, packages/bpmn-server/src/engine/LabelTemplate.ts, packages/bpmn-web/modeler/src/properties/LabelGroup.jsx, packages/bpmn-web/src/routes/labelFilter.ts, packages/bpmn-web/src/routes/api/labels.ts]
     examples: [apps/testSampleApp/processes/Buy Used Car.bpmn]

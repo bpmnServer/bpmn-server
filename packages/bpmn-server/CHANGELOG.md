@@ -15,12 +15,19 @@ and here
 
 ## [Unreleased]
 ### Added
+- **Security policies**, a first slice (docs/design/security-policies.md, `engine/SecurityPolicy.ts`): who sees a
+  case, which of its data, and what they may do with it and its tasks. A process names one (`owf:securityPolicy`), a
+  user task may too, for its actions: a DMN table in `policies/security/<name>.dmn.xml`, hit policy COLLECT, a denial
+  winning. `new SecurityPolicy(definitionsPath)`: `decide(user, instance, task?)`, `relationsOf`, `combine`, `data`,
+  `visibleData`, `model`, `on` (an application may subclass it and override a step: `context`, `builtInDefault`); `on` when the
+  application has `policies/security/`, or `SECURITY_POLICY=default`, and off otherwise. `DMNEngine`'s `listInputs`: an input whose value is a list matches a test when one of its values does.
 - **In place of PR #286's proposals:** labels are templates in the model, filled in when shown and never stored (no
   `display` settings, no label saved at each save); roles and assignment are `roles.json` and DMN policies in
-  `policies/` (no `resolveAssignment` hook, no `camunda:properties`, no `assignment` settings): a policy's output
+  `policies/assignment/` (no `resolveAssignment` hook, no `camunda:properties`, no `assignment` settings): a policy's output
   can be a `$(...)` expression to reach the application's code. The delegate's optional `instanceLabel` stays.
 - **Assignment policies** (docs/docs/assignment-policies.md, `engine/AssignmentPolicy.ts`), a first try: a user task's
-  `camunda:assignmentPolicy` names a DMN table in `policies/<name>.dmn.xml`; when the task starts, its first matching
+  `camunda:assignmentPolicy` names a DMN table in `policies/assignment/<name>.dmn.xml` (one written directly in
+  `policies/` is moved there when read); when the task starts, its first matching
   rule sets `assignee`, `candidateUsers` and `candidateGroups` (a FEEL value, or a `$(...)` model expression), over the
   task's attributes and lane. The item keeps `assignment: { policy, rule }`; the Rationale says who and why, or why
   nobody (no match, no policy, a failing one: the task is not failed). `roles.json` lists the roles (`roleNames`, `saveRoleNames`, `roleUses`: where each is used). `verifyModel`:
@@ -94,6 +101,11 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- `Execution.assign`'s log line says to whom a task was assigned (`to:{"assignee":"agent-1"}`), not
+  `to:[object Object]`, and what it was before (reported on PR #286). A claim or a reassignment now writes a Rationale
+  entry (*is claimed by dora*; *is reassigned by mgr: assigned to ed*, why: what it was and what decided it). A
+  reassignment by someone other than the one taking it replaces `item.assignment` with `{ userName }`, now one of
+  `{ policy, rule }` or `{ userName }`; a claim keeps the policy that offered it.
 - **Checking a model with a compensation association** (a compensation boundary event to its handler) no longer fails
   (`Cannot read properties of undefined (reading 'forEach')`); the editor's Problems list stayed empty for it.
 - `scheduling process <model> at ...` is logged once for a process timer: the timers read again (at start, by the

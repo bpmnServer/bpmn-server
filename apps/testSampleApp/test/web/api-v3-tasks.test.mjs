@@ -4,6 +4,8 @@
 // task API's (routes/api/tasks.ts); v3 answers { items, next } with an opaque cursor, and errors as { error }.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 import { startWebApp, why, WebClient, API_KEY } from '../support/webApp.mjs';
 
 let web;
@@ -101,4 +103,44 @@ test('the task list comes a page at a time, by an opaque cursor; next is absent 
   assert.equal((await v3('GET', '/tasks?cursor=nonsense', sam)).body.error.code, 'BAD_CURSOR');
   assert.equal((await v3('GET', '/tasks?limit=0', sam)).body.error.code, 'BAD_LIMIT');
   assert.equal((await v3('POST', '/processes/leave-request/start', sam, { data: [] })).body.error.code, 'BAD_DATA');
+});
+
+const ASSIGNED = 'v3-assigned-by-policy';
+const ASSIGNED_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="urn:test">
+  <bpmn:process id="AssignedByPolicy" isExecutable="true">
+    <bpmn:startEvent id="Begin" />
+    <bpmn:userTask id="Review" name="Review" camunda:assignmentPolicy="V3Review" />
+    <bpmn:endEvent id="Done" />
+    <bpmn:sequenceFlow id="f1" sourceRef="Begin" targetRef="Review" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Review" targetRef="Done" />
+  </bpmn:process>
+</bpmn:definitions>`;
+const REVIEW_POLICY = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="p" name="V3Review" namespace="t">
+  <decision id="V3Review" name="V3Review"><decisionTable id="t" hitPolicy="FIRST">
+    <input id="i1" label="amount"><inputExpression id="e1" typeRef="number"><text>amount</text></inputExpression></input>
+    <output id="o1" name="candidateGroups" typeRef="string" />
+    <rule id="r1"><inputEntry id="r1a"><text>&gt; 1000</text></inputEntry><outputEntry id="r1o"><text>"director"</text></outputEntry></rule>
+    <rule id="r2"><inputEntry id="r2a"><text>-</text></inputEntry><outputEntry id="r2o"><text>"manager"</text></outputEntry></rule>
+  </decisionTable></decision>
+</definitions>`;
+
+test('a task says what decided who works on it: its policy and rule; a claim keeps it', async () => {
+  fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'assignment'), { recursive: true });
+  fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'assignment', 'V3Review.dmn.xml'), REVIEW_POLICY);
+  await web.bpmnServer.models.save(ASSIGNED, ASSIGNED_XML);
+  const started = await v3('POST', `/processes/${ASSIGNED}/start`, sam, { data: { amount: 50 } });
+  assert.equal(started.status, 201, why(started));
+
+  const listed = (await v3('GET', '/tasks?limit=200', mia)).body.items.find(t => t.instanceId === started.body.instance.id);
+  assert.deepEqual(listed?.assignedBy, { policy: 'V3Review', rule: 2 }, 'in the list');
+  const one = await v3('GET', `/tasks/${listed.id}`, mia);
+  assert.deepEqual(one.body.assignedBy, { policy: 'V3Review', rule: 2 }, 'and on its own');
+  const claimed = await v3('POST', `/tasks/${listed.id}/claim`, mia);
+  assert.equal(claimed.body.task.assignee, 'mia');
+  assert.deepEqual(claimed.body.task.assignedBy, { policy: 'V3Review', rule: 2 }, 'she took what the policy offered her');
+
+  const manual = (await v3('GET', '/tasks?limit=200', sam)).body.items.find(t => t.elementId === 'Submit');
+  assert.equal(manual?.assignedBy, undefined, 'no policy decided: none');
 });

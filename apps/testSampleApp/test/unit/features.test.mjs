@@ -45,3 +45,12 @@ test('a feature\'s xml markers find it in a model: elements, attributes, childre
         ['timers', ['Asked']], ['connectors', ['Call']], ['forms', ['Asked']], ['expressions', ['F1']],
     ], 'where: the element a person sees (the event, not its definition; the flow, not its condition)');
 });
+
+test('a marker\'s prefixed attribute is an extension\'s: [camunda:label] is not a plain label="..." (a DMN input\'s, a form field\'s)', async () => {
+    const { parseXml, find } = await import('../../../../scripts/features.mjs');
+    const tree = parseXml(`<definitions xmlns:camunda="http://camunda.org/schema/1.0/bpmn">
+      <process id="P" camunda:label="Leave by \${data.requester}"><userTask id="T"><formField id="F" label="Days" /></userTask></process>
+      <decision id="D"><input id="In" label="Amount" /></decision></definitions>`);
+    assert.deepEqual(find(tree, '[camunda:label]').map(e => e.attrs.id), ['P']);
+    assert.deepEqual(find(tree, '[label]').map(e => e.attrs.id), ['P', 'F', 'In'], 'unprefixed: by its local name, prefixed or not');
+});

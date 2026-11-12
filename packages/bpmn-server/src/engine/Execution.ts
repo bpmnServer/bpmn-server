@@ -9,6 +9,7 @@ import type { IDefinition } from '../interfaces/elements.js';
 import type { IInstanceData } from '../interfaces/DataObjects.js';
 import type { IExecution } from '../interfaces/engine.js';
 import { DataHandler } from './DataHandler.js';
+import { POLICY_FIELDS, reassigned } from './AssignmentPolicy.js';
 import { ServerComponent } from '../server/ServerComponent.js';
 import { InstanceObject } from './Model.js';
 
@@ -208,16 +209,21 @@ class Execution extends ServerComponent implements IExecution {
                 this.item=i;
             }
         });
+        // a change of who works on it is said in the Rationale, and replaces what its policy decided
+        const reassigning = POLICY_FIELDS.some(f => f in assignment);
+        const before = Object.fromEntries(POLICY_FIELDS.map(f => [f, this.item[f]]));
         Object.keys(assignment).forEach(key => {
             this.item[key]=assignment[key];
         });
+        if (reassigning) reassigned(this, this.item, before, assignment, this.userName);
 
         this.appendData(inputData, this.item, null, assignment);
 
         await this.item.node.doEvent(this.item, EXECUTION_EVENT.node_assign);
 
         await this.item.node.validate(this.item);
-        this.info(`Task ${this.item.node.name} -${this.item.node.id} Assigned by ${this.userName} to:${assignment}`);
+        this.info(`Task ${this.item.node.name} -${this.item.node.id} Assigned by ${this.userName} to:${JSON.stringify(assignment)}`
+            + (reassigning ? ` (it was ${JSON.stringify(before)})` : ''));
         await this.save();
         this.log('Execution('+this.name+').assign: finished!');
     }

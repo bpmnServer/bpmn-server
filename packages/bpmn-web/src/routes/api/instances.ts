@@ -2,12 +2,14 @@ import { BPMNAPI, SecureUser } from '../../index.js';
 import { rationaleSteps } from '../../testing/rationale.js';
 import { notATest } from '../../testing/scenarios.js';
 import { labeledInstances } from './labels.js';
+import { CaseAccess } from '../caseAccess.js';
 
 /*
  * The instance operations, once (docs/design/api-v3.md): the instances a user may see, one with its items, why it went
  * the way it did (the Rationale by step), and what moves it on: a start event, a restart, messages and signals. Every
- * query goes through the user's security rules (BPMNAPI, qualifyInstances); an instance they may not see is the same
- * 404 as one that does not exist.
+ * query goes through the user's security rules (BPMNAPI, qualifyInstances), or, with security policies on, the case's
+ * policy (caseAccess.ts: what they see of it, which of its data, restart and start events); an instance they may not
+ * see is the same 404 as one that does not exist.
  */
 
 export const DEFAULT_LIMIT = 50, MAX_LIMIT = 200;
@@ -27,6 +29,8 @@ function afterCondition(after: string) {
 }
 /** What a list shows of an instance, and its data for its label (engine/Labels.ts): not its items, logs or source. */
 const SUMMARY = { id: 1, name: 1, status: 1, startedAt: 1, endedAt: 1, data: 1 };
+/** With security policies, its items too: the person's relation to the case is in them. */
+const SUMMARY_AND_ITEMS = { ...SUMMARY, items: 1, userName: 1 };
 
 /** Its label, once labeled (labels.ts): nothing when it was not. */
 const labelOf = i => i.label === undefined ? {} : { label: i.label, labelValues: i.labelValues };
@@ -45,8 +49,16 @@ function executed(context) {
 
 export class InstanceOperations {
     readonly api: BPMNAPI;
+    readonly access: CaseAccess;
     constructor(readonly server) {
         this.api = new BPMNAPI(server);
+        this.access = new CaseAccess(server);
+    }
+
+    /** The store's instances: through the user's rules, or, with security policies, as they are (the policy decides). */
+    private findInstances(query, user: SecureUser, options) {
+        if (!this.access.on) return this.api.data.findInstances(query, user, options);
+        return this.server.dataStore.findInstances({ ...query, ...(user?.tenantId ? { tenantId: user.tenantId } : {}) }, options);
     }
 
     /**
@@ -60,12 +72,28 @@ export class InstanceOperations {
             throw new InstanceError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new InstanceError(400, 'cursor is a page\'s next', 'BAD_CURSOR');
-        const query: any = { ...notATest, ...(status ? { status } : {}), ...(name ? { name } : {}) };
-        // $and: the user's rules put their own $or on the query, and a filter by label may have its own
-        const conditions = [...(Object.keys(more).length ? [more] : []), ...(after !== undefined ? [afterCondition(String(after))] : [])];
-        if (conditions.length) query.$and = conditions;
+        /** The query from a bookmark on. $and: the user's rules put their own $or on it, and a filter by label may have its own. */
+        const from = (bookmark?: string) => {
+            const query: any = { ...notATest, ...(status ? { status } : {}), ...(name ? { name } : {}) };
+            const conditions = [...(Object.keys(more).length ? [more] : []), ...(bookmark !== undefined ? [afterCondition(String(bookmark))] : [])];
+            if (conditions.length) query.$and = conditions;
+            return query;
+        };
+        const read = (bookmark: string | undefined, count: number) => this.findInstances(from(bookmark), user,
+            { projection: this.access.on ? SUMMARY_AND_ITEMS : SUMMARY, sort: { startedAt: -1, id: -1 }, limit: count });
         // one more than the page: whether there is a next
-        const found = await this.api.data.findInstances(query, user, { projection: SUMMARY, sort: { startedAt: -1, id: -1 }, limit: limit + 1 });
+        let found = await read(after, limit + 1);
+        if (this.access.on) {
+            // the policy hides some: read on past them, a few times at most, until the page is full or there are no more
+            const seen = await this.access.seen(user, found);
+            let batch = found, size = limit + 1;
+            for (let reads = 1; seen.length <= limit && batch.length === size && reads < 5; reads++) {
+                size = 2 * (limit + 1);
+                batch = await read(position(batch.at(-1)), size);
+                seen.push(...await this.access.seen(user, batch));
+            }
+            found = seen;
+        }
         const page = await labeledInstances(this.server, found.slice(0, limit));
         return { instances: page.map(summary), next: found.length > limit ? position(page.at(-1)) : undefined };
     }
@@ -73,32 +101,45 @@ export class InstanceOperations {
     /** The instance, if this user may see it; never a test run's (notATest is a condition on the id). */
     private async find(user: SecureUser, id: string) {
         if (typeof id !== 'string' || id.startsWith('test-')) throw notFound();
-        const [instance] = await this.api.data.findInstances({ id }, user, 'full');
+        const [instance] = await this.findInstances({ id }, user, 'full');
         if (!instance) throw notFound();
         return instance;
     }
 
-    /** One instance: its data and its items, labeled. */
+    /** The instance and what this user may do with it; not seen at all is the same 404 as no such instance. */
+    private async findWithAccess(user: SecureUser, id: string) {
+        const instance = await this.find(user, id);
+        const access = await this.access.decide(user, instance);
+        if (access.see === 'none') throw notFound();
+        return { instance, access };
+    }
+
+    /** One instance: its data and its items, labeled; as a line only when the policy shows it so (`summary`). */
     async get(user: SecureUser, id: string) {
-        const [instance] = await labeledInstances(this.server, [await this.find(user, id)]);
-        return { ...summary(instance), data: instance.data, items: (instance.items ?? []).map(asItem) };
+        const { instance: found, access } = await this.findWithAccess(user, id);
+        const [instance] = await labeledInstances(this.server, [found]);
+        if (access.see === 'summary') return summary(instance);
+        return { ...summary(instance), data: this.access.data(instance, access), items: (instance.items ?? []).map(asItem) };
     }
 
     /** Why it went the way it did: the Rationale, step by step (each operation, its outcome, each decision). */
     async rationale(user: SecureUser, id: string) {
-        const instance = await this.find(user, id);
-        return { ...summary(instance), data: instance.data, steps: rationaleSteps(instance.logs ?? [], instance.items ?? [], instance.startedAt) };
+        const { instance, access } = await this.findWithAccess(user, id);
+        if (access.see !== 'full') throw notFound();
+        return { ...summary(instance), data: this.access.data(instance, access), steps: rationaleSteps(instance.logs ?? [], instance.items ?? [], instance.startedAt) };
     }
 
     /** A start event of a running instance (an event sub-process, a second start), with this data. */
     async startEvent(user: SecureUser, id: string, elementId: string, data = {}) {
-        await this.find(user, id);
+        const { access } = await this.findWithAccess(user, id);
+        CaseAccess.require(access, 'events');
         return executed(await this.api.engine.startEvent(id, elementId, data, user));
     }
 
     /** Runs an item of the instance again, from it on, with this data. */
     async restart(user: SecureUser, id: string, itemId: string, data = {}) {
-        await this.find(user, id);
+        const { access } = await this.findWithAccess(user, id);
+        CaseAccess.require(access, 'restart');
         if (typeof itemId !== 'string' || !itemId)
             throw new InstanceError(400, 'itemId is required', 'BAD_ITEM');
         return executed(await this.api.engine.restart({ id, 'items.id': itemId }, data, user));

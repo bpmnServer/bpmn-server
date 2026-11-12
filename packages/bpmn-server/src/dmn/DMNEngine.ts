@@ -20,6 +20,8 @@ type DMNOptions = {
     log?: (message: string) => void;
     /** an output cell to keep as its text, not evaluated as FEEL (an assignment policy's `$(...)`: engine/AssignmentPolicy.ts) */
     keepOutput?: (cell: string) => boolean;
+    /** an input whose value is a list matches a rule's test when one of its values does (security/SecurityPolicy.ts) */
+    listInputs?: boolean;
 };
 
 /** Where a decision was found. */
@@ -224,6 +226,10 @@ class DMNEngine {
         const source = legacyTest(cell);
         if (source === '' || source === '-')
             return true;
+        // an input whose value is a list (a person's groups, their relations to a case): a test holds when it holds for
+        // one of its values ("HR" matches ["Employee", "HR"]), with listInputs (security policies)
+        if (this.options.listInputs && Array.isArray(value))
+            return value.some(one => this.test(cell, one, context));
         const result = unaryTest(source, { ...context, '?': value });
         // a bare word no data names: a string, as bpmn-server's earlier evaluator read it
         if (BARE_WORD.test(source) && !(source in context) && missingVariable(result.warnings))

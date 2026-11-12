@@ -54,8 +54,8 @@ test.before(async () => {
     browser = await chromium.launch();
     fs.writeFileSync(path.join(web.definitionsPath, 'Leave.bpmn'), MODEL);
     fs.writeFileSync(path.join(web.definitionsPath, 'Leave.feature'), FEATURE);
-    fs.mkdirSync(path.join(web.definitionsPath, 'policies'), { recursive: true });
-    fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'LeaveApproval.dmn.xml'), POLICY);
+    fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'assignment'), { recursive: true });
+    fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'assignment', 'LeaveApproval.dmn.xml'), POLICY);
     await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => {

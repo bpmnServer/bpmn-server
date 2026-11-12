@@ -272,6 +272,22 @@ export const MODEL_FEATURES: { id: string, name: string, area: string, xml: stri
         ]
     },
     {
+        "id": "assignment-policies",
+        "name": "Assignment policies",
+        "area": "modeling",
+        "xml": [
+            "[camunda:assignmentPolicy]"
+        ]
+    },
+    {
+        "id": "security-policies",
+        "name": "Security policies",
+        "area": "security",
+        "xml": [
+            "[owf:securityPolicy]"
+        ]
+    },
+    {
         "id": "expressions",
         "name": "Expressions and conditions",
         "area": "modeling",
@@ -286,6 +302,15 @@ export const MODEL_FEATURES: { id: string, name: string, area: string, xml: stri
         "xml": [
             "dmn:decisionTable",
             "dmn:literalExpression"
+        ]
+    },
+    {
+        "id": "labels",
+        "name": "Labels of cases and tasks",
+        "area": "application",
+        "xml": [
+            "[camunda:label]",
+            "[camunda:endLabel]"
         ]
     },
     {

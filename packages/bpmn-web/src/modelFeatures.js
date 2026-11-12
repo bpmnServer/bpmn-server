@@ -17,8 +17,13 @@ export function parseXml(xml) {
     for (const [, closing, name, attrText, selfClosing] of text.matchAll(/<(\/?)([\w.:-]+)((?:\s+[^\s=\/>]+\s*=\s*(?:"[^"]*"|'[^']*'))*)\s*(\/?)>/g)) {
         if (closing) { if (at.parent) at = at.parent; continue; }
         const attrs = {};
-        for (const [, key, , value] of attrText.matchAll(/([^\s=]+)\s*=\s*("|')([\s\S]*?)\2/g)) attrs[local(key)] = value;
-        const element = { name: local(name), attrs, children: [], parent: at };
+        // each attribute by its local name; those written with a prefix (an extension's: camunda:label) known as such
+        const prefixed = new Set();
+        for (const [, key, , value] of attrText.matchAll(/([^\s=]+)\s*=\s*("|')([\s\S]*?)\2/g)) {
+            attrs[local(key)] = value;
+            if (key.includes(':')) prefixed.add(local(key));
+        }
+        const element = { name: local(name), attrs, prefixed, children: [], parent: at };
         at.children.push(element);
         if (!selfClosing) at = element;
     }
@@ -31,11 +36,14 @@ function step(text) {
     if (!parsed || (!parsed[1] && !parsed[2])) throw new Error(`'${text}' is not a marker's step: an element, [an attribute], or both`);
     const [, name, attrText] = parsed;
     const attrs = [...attrText.matchAll(/\[([^\]=]+)(?:=([^\]]*))?\]/g)]
-        .map(([, key, value]) => ({ key: local(key.trim()), value: value?.trim().replace(/^["']|["']$/g, '') }));
+        .map(([, key, value]) => ({ key: local(key.trim()), prefixed: key.includes(':'), value: value?.trim().replace(/^["']|["']$/g, '') }));
     return { name: !name || name === '*' ? '*' : local(name), attrs };
 }
 const fits = (element, { name, attrs }) => (name === '*' || element.name === name)
-    && attrs.every(({ key, value }) => key in element.attrs && (value === undefined || element.attrs[key] === value));
+    && attrs.every(({ key, prefixed, value }) => key in element.attrs
+        // [camunda:label] is an extension's attribute: not a plain label="..." (a DMN input's, a form field's)
+        && (!prefixed || element.prefixed.has(key))
+        && (value === undefined || element.attrs[key] === value));
 
 /** A marker's steps, each with how it joins the one before: ' ' (inside it) or '>' (directly inside it). */
 export function parseMarker(marker) {

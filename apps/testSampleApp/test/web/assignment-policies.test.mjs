@@ -1,6 +1,6 @@
 // @features: assignment-policies
 // Assignment policies in the editor (docs/docs/assignment-policies.md): the policies listed, a new one offered as a
-// FIRST table with the assignment's outputs, saved in policies/, previewed with data, and tested as a decision is.
+// FIRST table with the assignment's outputs, saved in policies/assignment/, previewed with data, and tested as a decision is.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -27,17 +27,17 @@ test.before(async () => {
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
-test('a new policy: offered as a FIRST table with the assignment outputs; saved in policies/; listed', async () => {
+test('a new policy: offered as a FIRST table with the assignment outputs; saved in policies/assignment/; listed', async () => {
     const page = await designer.get('/model/policy/Approval');
     assert.equal(page.status, 200, why(page));
-    assert.match(page.text, /policies\/Approval\.dmn\.xml/);
+    assert.match(page.text, /policies\/assignment\/Approval\.dmn\.xml/);
     assert.match(page.text, /Assignment policy editor/);
     assert.match(page.text, /hitPolicy=\\"FIRST\\"/);
     assert.match(page.text, /name=\\"candidateGroups\\"/);
 
     const saved = await designer.request('POST', '/model/policy/Approval', { json: { xml: POLICY } });
     assert.equal(saved.status, 200, why(saved));
-    assert.ok(fs.existsSync(path.join(web.definitionsPath, 'policies', 'Approval.dmn.xml')));
+    assert.ok(fs.existsSync(path.join(web.definitionsPath, 'policies', 'assignment', 'Approval.dmn.xml')));
     const listed = await designer.get('/model/policies');
     assert.deepEqual(listed.body.policies.map(p => p.name), ['Approval']);
     assert.equal((await designer.get('/model/decisions')).body.decisions.some(d => d.name === 'Approval'), false, 'not a business rule');

@@ -15,7 +15,8 @@ it, as code a report or the editor can't read.
 1. **The application holds its roles and its policies,** in its models folder, next to its models:
    - `processes/roles.json`: the roles' names, `["Manager", "Director", "ITManager", "HR"]`. A role is the user
      group of the same name.
-   - `processes/policies/<name>.dmn.xml`: a policy, as a DMN decision table.
+   - `processes/policies/assignment/<name>.dmn.xml`: a policy, as a DMN decision table. Each kind of policy has
+     its folder in `policies/`: `assignment/`, and `security/` ([security-policies.md](security-policies.md)).
 2. **A task picks a policy,** by its name: `camunda:assignmentPolicy="Approval"`.
 3. **A policy is a decision table** (DMN, hit policy FIRST): conditions on the case's data in FEEL, the first rule
    that matches assigns. The DMN support already there evaluates it (`dmn/DMNEngine.ts`).
@@ -28,7 +29,7 @@ it, as code a report or the editor can't read.
 
 ## A policy
 
-`processes/policies/Approval.dmn.xml`:
+`processes/policies/assignment/Approval.dmn.xml`:
 
 | amount | department | assignee | candidateGroups |
 |---|---|---|---|
@@ -64,10 +65,24 @@ preview with the Test tab's data, as labels have: *offered to Director (rule 1)*
    unassigned** (what its own attributes or lane gave, if any, stays), and a Rationale entry says why. A task never
    fails because of its policy. The Test tab's scenarios explore what that means for a process.
 
+## Afterwards: a claim, a reassignment
+
+`Execution.assign` (claim, and a reassignment through any API) changes the fields, and says so in the Rationale
+(`reassigned` in `engine/AssignmentPolicy.ts`):
+
+- **A claim**, a person taking an unassigned task as its assignee and changing nothing else, keeps `item.assignment`:
+  the policy still explains why it was offered to them. Entry: `is claimed by dora`, why: what it was, and what decided.
+- **Any other change** of `assignee`, `candidateUsers` or `candidateGroups` is that person's: `item.assignment =
+  { userName }`. Entry: `is reassigned by mgr: assigned to ed`, why: what it was, and what decided it before.
+- A change of other fields (a due date) is not a reassignment.
+
+API v3's Task returns `item.assignment` as `assignedBy`. (Not `assignment`: v3's Element uses that name for the
+model's assignee and candidates.)
+
 ## Checks
 
 `verifyModel`:
-- a task's policy that isn't in `processes/policies/` is an error;
+- a task's policy that isn't in `processes/policies/assignment/` is an error;
 - a group a policy assigns that isn't in `roles.json` is a warning (when the file exists);
 - a lane whose name isn't in `roles.json` is a warning (when the file exists).
 
@@ -86,7 +101,8 @@ preview with the Test tab's data, as labels have: *offered to Director (rule 1)*
 
 ## Settled in discussion
 
-1. **The file name** is `policies/<name>.dmn.xml`, which the DMN editor and the models page already know.
+1. **The file name** is `policies/assignment/<name>.dmn.xml` (2026-11-12: a folder per kind of policy; at first
+   `policies/<name>.dmn.xml`, moved into `assignment/` when read).
 2. **A policy and explicit attributes on the same task:** the policy wins, for each field its rule sets.
 3. **No match:** the task stays unassigned; no fallback. The tests explore it.
 
@@ -95,5 +111,5 @@ preview with the Test tab's data, as labels have: *offered to Director (rule 1)*
 1. This note.
 2. The engine: `camunda:assignmentPolicy`, the evaluation, `item.assignment`, the Rationale entries; `verifyModel`'s
    checks. Engine scenarios: each rule, no match, a failing policy, an explicit attribute, a `$(...)` output.
-3. The editor: the Assignment policy list, the preview; the DMN editor opens `policies/`.
+3. The editor: the Assignment policy list, the preview; the DMN editor opens `policies/assignment/`.
 4. The HR demo's Leave Application with a policy, to try.

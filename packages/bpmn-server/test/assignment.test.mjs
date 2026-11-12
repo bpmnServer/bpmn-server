@@ -49,8 +49,8 @@ async function server({ model = MODEL(), policy = APPROVAL, roles } = {}) {
     const dir = definitionsFolder();
     fs.writeFileSync(path.join(dir, 'Request.bpmn'), model);
     if (policy) {
-        fs.mkdirSync(path.join(dir, 'policies'), { recursive: true });
-        fs.writeFileSync(path.join(dir, 'policies', 'Approval.dmn.xml'), policy);
+        fs.mkdirSync(path.join(dir, 'policies', 'assignment'), { recursive: true });
+        fs.writeFileSync(path.join(dir, 'policies', 'assignment', 'Approval.dmn.xml'), policy);
     }
     if (roles) fs.writeFileSync(path.join(dir, 'roles.json'), JSON.stringify(roles));
     const made = await makeServer({ dir, services: { managerOf: id => `manager-of-${id}` } });
@@ -79,6 +79,17 @@ test('the first matching rule assigns; the policy wins over the lane; what decid
     ({ task } = await approve(srv, { amount: 50, department: 'IT' }));
     assert.deepEqual(task.candidateGroups, ['ITManager', 'Admins'], 'text with commas is a list');
     assert.deepEqual(task.assignment, { policy: 'Approval', rule: 2 });
+    await srv.shutdown();
+});
+
+test('a policy in policies/ itself (where 3.7.1 kept them at first) is moved into policies/assignment, and assigns', async () => {
+    const { server: srv, dir } = await server({ policy: null });
+    fs.mkdirSync(path.join(dir, 'policies'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'policies', 'Approval.dmn.xml'), APPROVAL);
+    const { task } = await approve(srv, { amount: 20000, department: 'IT' });
+    assert.deepEqual(task.assignment, { policy: 'Approval', rule: 1 });
+    assert.ok(fs.existsSync(path.join(dir, 'policies', 'assignment', 'Approval.dmn.xml')), 'moved');
+    assert.equal(fs.existsSync(path.join(dir, 'policies', 'Approval.dmn.xml')), false);
     await srv.shutdown();
 });
 
@@ -117,7 +128,7 @@ test('no rule matches, no policy, a failing policy: nothing assigned by it, the 
     ({ server: srv } = await server({ policy: null }));
     ({ task, why } = await approve(srv, { amount: 50 }));
     assert.equal(task.status, 'wait');
-    assert.match(why, /there is no policies\/Approval\.dmn\.xml/);
+    assert.match(why, /there is no policies\/assignment\/Approval\.dmn\.xml/);
     await srv.shutdown();
 
     ({ server: srv } = await server({ policy: POLICY([['-', '-', '$(appServices.noSuchService(1))', '']]) }));
@@ -125,6 +136,37 @@ test('no rule matches, no policy, a failing policy: nothing assigned by it, the 
     assert.equal(task.status, 'wait');
     assert.equal(task.assignee, undefined);
     assert.match(why, /the policy failed/);
+    await srv.shutdown();
+});
+
+test('a claim keeps what offered the task; a reassignment by someone else is theirs, and the Rationale says from what', async () => {
+    const { server: srv } = await server();
+    const { task } = await approve(srv, { amount: 20000 });
+    const saved = async () => {
+        const [instance] = await srv.dataStore.findInstances({ 'items.id': task.id }, 'full');
+        const item = instance.items.find(i => i.id === task.id);
+        const entries = instance.logs.filter(l => l.type === 'decision' && l.seq === item.seq && /^is (claimed|reassigned)/.test(l.action ?? ''));
+        return { item, entries, lines: instance.logs.map(l => l.message).join('\n') };
+    };
+
+    await srv.engine.assign({ 'items.id': task.id }, {}, { assignee: 'dora' }, 'dora');
+    let { item, entries } = await saved();
+    assert.equal(item.assignee, 'dora');
+    assert.deepEqual(item.assignment, { policy: 'Approval', rule: 1 }, 'claimed: what offered it to her still explains it');
+    assert.equal(entries.at(-1).action, 'is claimed by dora');
+    assert.match(entries.at(-1).message, /it was offered to Director \(policy Approval, rule 1\)/);
+
+    await srv.engine.assign({ 'items.id': task.id }, {}, { assignee: 'ed', candidateGroups: ['Board'] }, 'mgr');
+    let lines;
+    ({ item, entries, lines } = await saved());
+    assert.deepEqual(item.assignment, { userName: 'mgr' }, 'reassigned: his, in place of the policy');
+    assert.equal(entries.at(-1).action, 'is reassigned by mgr: assigned to ed, and offered to Board');
+    assert.match(entries.at(-1).message, /it was assigned to dora, and offered to Director \(policy Approval, rule 1\)/);
+    assert.match(lines, /Assigned by mgr to:\{"assignee":"ed","candidateGroups":\["Board"\]\} \(it was \{"assignee":"dora"/);
+
+    await srv.engine.assign({ 'items.id': task.id }, {}, { dueDate: '2030-01-01' }, 'mgr');
+    ({ entries } = await saved());
+    assert.equal(entries.length, 2, 'a due date is not a reassignment');
     await srv.shutdown();
 });
 
