@@ -14,7 +14,7 @@
 import { Definition } from '../elements/Definition.js';
 import { moddleOptions as defaultModdleOptions } from '../elements/js-bpmn-moddle.js';
 import { DataHandler } from './DataHandler.js';
-import { fillTemplate, namedValues } from './LabelTemplate.js';
+import { fillTemplate, parseTemplate, pathProblem } from './LabelTemplate.js';
 import type { ILabel, ILabelValue } from './LabelTemplate.js';
 export * from './LabelTemplate.js';
 
@@ -189,14 +189,18 @@ export async function labelItems(server, items: any[]): Promise<any[]> {
 
 // ---- filters: on the data paths the labels' named values read (docs/design/labels.md, Mixed lists and filters)
 
-/** A named value a model's case label offers: its name, the model, and the data path it reads. */
+/**
+ * A value a model's case label shows, as the filters offer it: its name, the model, and the data path it reads. Every
+ * `${data.…}` placeholder is one: a named one by its name, a plain one by its path's last name (`${data.caseId}` is
+ * caseId). A model with no case label shows `<model> #<caseId>`, so it offers caseId.
+ */
 export interface ILabelField {
     name: string;
     model: string;
     path: string;
 }
 
-/** A filter of cases by their labels: a model; a named value that contains, or is, a value; or any named value. */
+/** A filter of cases by their labels: a model; a value of a label (`field`, or any) that contains, or is, `value`; a search of them all. */
 export interface ILabelFilter {
     model?: string;
     field?: string;
@@ -205,16 +209,30 @@ export interface ILabelFilter {
     search?: string;
 }
 
-/** The named values of the models' case labels (their current versions), for the lists' filters. */
+/** The values the models' case labels (their current versions) show, for the lists' filters. */
 export async function labelFields(server, models?: string[]): Promise<ILabelField[]> {
     const moddleOptions = server?.appDelegate?.moddleOptions ?? defaultModdleOptions;
     const names = models ?? (await server.definitions.getList()).map(m => m?.name ?? m);
+    // without a template, the label is the application's hook's when it has one: nothing known to filter on
+    const hook = typeof server?.appDelegate?.instanceLabel === 'function';
     const fields: ILabelField[] = [];
     for (const model of [...new Set<string>(names)]) {
         const source = await sourceOf(server, model);
         const labels = source ? await modelLabels(source, moddleOptions) : undefined;
-        for (const { name, path } of namedValues(labels?.process ?? ''))
-            fields.push({ name, model, path });
+        const template = labels?.process;
+        if (!template) {
+            if (!hook) fields.push({ name: 'caseId', model, path: 'data.caseId' });
+            continue;
+        }
+        const seen = new Set<string>();
+        for (const part of parseTemplate(template)) {
+            // the case's data only (a case label's scope is its data and its model's name)
+            if ('text' in part || pathProblem(part.path) || !part.path.startsWith('data.')) continue;
+            const name = part.name ?? part.path.slice(part.path.lastIndexOf('.') + 1);
+            if (seen.has(`${name}=${part.path}`)) continue;
+            seen.add(`${name}=${part.path}`);
+            fields.push({ name, model, path: part.path });
+        }
     }
     return fields;
 }
@@ -238,8 +256,9 @@ export function labelQuery(fields: ILabelField[], filter: ILabelFilter = {}): Re
     if (filter.model) and.push({ name: filter.model });
     const byPath = (list: ILabelField[], make: (path: string) => any) =>
         list.map(f => ({ name: f.model, ...make(f.path) }));
-    if (filter.field && filter.value?.trim()) {
-        const named = scope.filter(f => f.name === filter.field);
+    if (filter.value?.trim()) {
+        // a field's paths; with no field, every field's
+        const named = filter.field ? scope.filter(f => f.name === filter.field) : scope;
         and.push(named.length ? { $or: byPath(named, condition(filter.op ?? 'contains', filter.value.trim())) } : { id: { $in: [] } });
     }
     if (filter.search?.trim())

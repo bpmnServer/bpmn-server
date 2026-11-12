@@ -110,7 +110,7 @@ The waiting tasks this user has a part in, oldest first; with status=completed, 
 | `cursor` | query | string |  | A page's `next` |
 | `status` | query | `"waiting"` or `"completed"` |  | completed: the latest this user completed (limit, default 10) |
 | `model` | query | string |  | Only this model's tasks; its named values for field and search |
-| `field` | query | string |  | A named value of the models' case labels (`${Client = data.clientId}` names Client); with value |
+| `field` | query | string |  | A value the models' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path's last name (`${data.caseId}` is caseId); none: any of them |
 | `op` | query | `"contains"` or `"is"` |  | contains: any case; is: exactly (a number also matches as a number); default "contains" |
 | `value` | query | string |  |  |
 | `search` | query | string |  | Contained in any named value |
@@ -185,7 +185,7 @@ The instances this user may see, newest first.
 | `name` | query | string |  | Only this model's instances; its named values for field and search |
 | `limit` | query | integer |  | default 50, at least 1, at most 200 |
 | `cursor` | query | string |  | A page's `next` |
-| `field` | query | string |  | A named value of the models' case labels (`${Client = data.clientId}` names Client); with value |
+| `field` | query | string |  | A value the models' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path's last name (`${data.caseId}` is caseId); none: any of them |
 | `op` | query | `"contains"` or `"is"` |  | contains: any case; is: exactly (a number also matches as a number); default "contains" |
 | `value` | query | string |  |  |
 | `search` | query | string |  | Contained in any named value |

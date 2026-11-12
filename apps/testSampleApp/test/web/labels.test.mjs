@@ -82,6 +82,10 @@ test('the filter by label: the bar offers the named values; Instances and My wor
     const mine = (await manager.get('/dashboard?field=Order&op=is&value=77')).text;
     assert.match(mine, /Client: zeta · Order: 77/);
     assert.doesNotMatch(mine, /Client: abc · Order: 1234/);
+    // Field Any: the value is looked for in every field
+    const any = (await manager.get('/dashboard?field=&op=contains&value=77')).text;
+    assert.match(any, /Client: zeta · Order: 77/);
+    assert.doesNotMatch(any, /Client: abc · Order: 1234/, 'Any with a value filters too');
 });
 
 test("the instance page: the case's label, and an ended task's end label under its name", async () => {

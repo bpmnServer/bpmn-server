@@ -46,14 +46,9 @@ Any element on the diagram may have its own, in the **Label** group:
 
 ### In the editor
 
-Under each label field:
-
-- **A preview:** the label filled in from the Test tab's scenario: its last run's data, else its start data
-  (*Client: acme · Order: 1234 · Acme claim's start data*). An element's label sees its fields from that run, and
-  the case's named values as `instance.*`. With no scenario open in the Test tab, it says so.
-- **Its named values**, a row each: change a name (a caption that says the old name, `Order: `, follows) or a path
-  in place; × removes one with its caption; *Add* appends one, captioned (`· Amount: ${Amount = data.amount}`). A
-  name used twice, or a path that isn't one, is marked before it can be added.
+Under each label field, a **preview**: the label filled in from the Test tab's scenario, its last run's data, else
+its start data (*Client: acme · Order: 1234 · Acme claim's start data*). An element's label sees its fields from that
+run, and the case's named values as `instance.*`. With no scenario open in the Test tab, it says so.
 
 ### Where labels are shown
 
@@ -135,9 +130,13 @@ list, and using one doesn't clear the other. Tasks are filtered by the named val
 ![The filter bar: Car contains porsche](images/labels/filter-bar.png)
 
 - **Model:** only that model's cases.
-- **Field:** a named value of the models' case labels (*Car*, *Buyer*), which **contains** or **is** a value. Its
-  tooltip says where each model reads it from (`Buy Used Car: data.carModel`).
-- **Search everything:** any named value of any model.
+- **Field:** a value the models' case labels show, which **contains** or **is** a value. A named value is offered by
+  its name (`${Car = data.carModel}` is *Car*), a plain one by its path's last name (`${data.caseId}` is *caseId*); a
+  model with no case label offers *caseId*, the value its default label shows. Its tooltip says where each model
+  reads it from (`Buy Used Car: data.carModel`). **Any** looks for the value in every field.
+- **Search everything:** any field of any model.
+
+*Contains* is on text: a number matches when it's typed whole (*caseId contains 4772*), not part of it (*477*).
 
 The filter is a database query on the data paths the named values read: *Car contains porsche* is `data.carModel`
 contains "porsche" (any case) for Buy Used Car's cases, and on each model's own path when several models name a

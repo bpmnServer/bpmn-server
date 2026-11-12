@@ -1,14 +1,12 @@
 // The Label group (docs/design/labels.md): on the process, the case's label; on any element of the diagram, its
 // label and its label once done. A label is a template: `${Name = data.path}` names a value (the lists offer it as a
-// column and a filter), `${data.path}` is plain text. Checked as it is typed, as the engine reads it; previewed with
-// the Test tab's data; its named values in a table, for those who would rather not write `${Name = path}`.
+// filter), `${data.path}` is plain text. Checked as it is typed, as the engine reads it; previewed with the Test
+// tab's data.
 import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import {
-    templateProblems, fillTemplate, parseTemplate, pathProblem, setNamedValue, addNamedValue, removeNamedValue,
-} from 'bpmn-server/dist/engine/LabelTemplate.js';
+import { templateProblems, fillTemplate } from 'bpmn-server/dist/engine/LabelTemplate.js';
 
 const CASE_HELP = 'What a case is called in the lists: text, with values named, e.g. Client: ${Client = data.clientId}';
 const ELEMENT_HELP = 'Shown in the lists and on the instance page, e.g. Approve ${Amount = data.amount} for ${instance.Client}';
@@ -71,43 +69,6 @@ function Preview({ id, template, bo, attribute }) {
     </div>;
 }
 
-/** The template's named values, a row each: its name and its path, changed in place; removed; one added. */
-function NamedValues({ id, template, write }) {
-    const named = parseTemplate(template ?? '').filter(p => !('text' in p) && p.name !== undefined);
-    const [adding, setAdding] = useState({ name: '', path: 'data.' });
-    const name = adding.name.trim(), path = adding.path.trim();
-    const problem = !name ? null : named.some(n => n.name === name) ? `'${name}' is named twice` : path ? pathProblem(path) : null;
-    const add = () => {
-        if (!name || problem) return;
-        write(addNamedValue(template, name, path));
-        setAdding({ name: '', path: 'data.' });
-    };
-    return <div class="bpmn-server-label-values" data-values-for={id}>
-        <table>
-            <thead><tr><th>Named value</th><th>Data path</th><th /></tr></thead>
-            <tbody>
-                {named.map((value, index) => <tr key={`${index}-${value.name}`}>
-                    <td><input class="label-value-name" value={value.name} aria-label="Name"
-                        onChange={e => e.target.value.trim() && write(setNamedValue(template, index, { name: e.target.value.trim() }))} /></td>
-                    <td><input class="label-value-path" value={value.path} aria-label="Data path"
-                        onChange={e => e.target.value.trim() && write(setNamedValue(template, index, { path: e.target.value.trim() }))} /></td>
-                    <td><button type="button" class="label-value-remove" title={`Remove ${value.name}`}
-                        onClick={() => write(removeNamedValue(template, index))}>×</button></td>
-                </tr>)}
-                <tr class="label-value-new">
-                    <td><input class="label-value-name" placeholder="Name" value={adding.name} aria-label="New name"
-                        onInput={e => setAdding({ ...adding, name: e.target.value })} /></td>
-                    <td><input class="label-value-path" value={adding.path} aria-label="New data path"
-                        onInput={e => setAdding({ ...adding, path: e.target.value })}
-                        onKeyDown={e => e.key === 'Enter' && add()} /></td>
-                    <td><button type="button" class="label-value-add" disabled={!name || !!problem} onClick={add}>Add</button></td>
-                </tr>
-            </tbody>
-        </table>
-        {problem ? <div class="bio-properties-panel-error">{problem}</div> : null}
-    </div>;
-}
-
 function LabelField({ element, id, attribute, label, description }) {
     const modeling = useService('modeling');
     const debounce = useService('debounceInput');
@@ -131,7 +92,6 @@ function LabelField({ element, id, attribute, label, description }) {
             validate={value => (value ? templateProblems(value)[0] : undefined)}
         />
         <Preview id={id} template={template} bo={bo} attribute={attribute} />
-        <NamedValues id={id} template={template} write={write} />
     </>;
 }
 

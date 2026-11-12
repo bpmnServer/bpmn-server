@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { parseTemplate, fillTemplate, templateProblems, formatTemplate, setNamedValue, addNamedValue, removeNamedValue, modelLabels, labelInstances, labelItems, labelFields, labelQuery, verifyModel } from '../dist/index.js';
+import { parseTemplate, fillTemplate, templateProblems, modelLabels, labelInstances, labelItems, labelFields, labelQuery, verifyModel } from '../dist/index.js';
 import { makeServer, definitionsFolder } from './helpers.mjs';
 
 const EXPENSE = (caseLabel = 'Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}') => `<?xml version="1.0" encoding="UTF-8"?>
@@ -50,22 +50,6 @@ test('a template: text, named values, plain placeholders; a missing value takes 
   assert.equal(fillTemplate('Client: ${Client = data.clientId} · Order: ${Order = data.none}', scope).text, 'Client: abc');
   assert.equal(fillTemplate('Due ${data.when}, items ${data.list}', scope).text, 'Due 2026-01-02T00:00:00.000Z, items 1, 2');
   assert.deepEqual(fillTemplate('${data.toString}${data.constructor}', scope), { text: '', values: [] }, 'own fields only, never internals');
-});
-
-test("a template edited by its named values (the editor's table): rename, change a path, add, remove", () => {
-  const t = 'Client: ${Client = data.clientId} · Order: ${Order = data.orderNo} (${data.note})';
-  assert.equal(formatTemplate(parseTemplate(t)), t, 'parts and back');
-  assert.equal(setNamedValue(t, 0, { name: 'Customer' }), 'Customer: ${Customer = data.clientId} · Order: ${Order = data.orderNo} (${data.note})', 'its caption follows');
-  assert.equal(setNamedValue(t, 1, { path: 'data.order.no' }), 'Client: ${Client = data.clientId} · Order: ${Order = data.order.no} (${data.note})');
-  assert.equal(setNamedValue('Ref ${Order = data.no}', 0, { name: 'No' }), 'Ref ${No = data.no}', 'a caption of its own stays');
-  assert.equal(setNamedValue(t, 5, { name: 'X' }), t, 'no such value');
-  assert.equal(addNamedValue(t, 'Amount', 'data.amount'), t + ' · Amount: ${Amount = data.amount}');
-  assert.equal(addNamedValue('', 'Client', 'data.clientId'), 'Client: ${Client = data.clientId}');
-  assert.equal(removeNamedValue(t, 1), 'Client: ${Client = data.clientId} (${data.note})', 'with its caption');
-  assert.equal(removeNamedValue(t, 0), 'Order: ${Order = data.orderNo} (${data.note})', 'the separator left trimmed');
-  assert.equal(removeNamedValue('Client: ${Client = data.clientId}', 0), '');
-  for (const edited of [setNamedValue(t, 0, { name: 'Customer' }), addNamedValue(t, 'Amount', 'data.amount'), removeNamedValue(t, 0)])
-    assert.deepEqual(templateProblems(edited), [], edited);
 });
 
 test('a template is checked: data paths only, a name once', () => {
@@ -188,6 +172,30 @@ test('filters: the named values the models offer, as queries on their data paths
   const items = await srv.dataStore.findItems({ 'items.status': 'wait', ...labelQuery(fields, { field: 'Client', value: 'zeta' }) });
   assert.deepEqual([...new Set(items.map(i => i.instanceData.clientId))], ['zeta']);
   await srv.shutdown();
+});
+
+test('filters: a plain placeholder is a field too, by its last name; a model with no case label offers caseId; any field', async () => {
+  const { server: srv, dir } = await server(EXPENSE('Case Id :${data.caseId} for ${data.customer.name} (${model})'));
+  fs.writeFileSync(path.join(dir, 'Plain.bpmn'), EXPENSE('').replace(' camunda:label=""', '').replace('id="Expense"', 'id="Plain"'));
+  await srv.definitions.rebuild();
+  assert.deepEqual(await labelFields(srv, ['Expense', 'Plain']), [
+    { name: 'caseId', model: 'Expense', path: 'data.caseId' }, { name: 'name', model: 'Expense', path: 'data.customer.name' },
+    { name: 'caseId', model: 'Plain', path: 'data.caseId' }], 'data paths only: not ${model}');
+  for (const caseId of [4772, 4773]) await srv.engine.start('Expense', { caseId, customer: { name: 'acme' }, levels: [] }, null, 'ann');
+  await srv.engine.start('Plain', { caseId: 9001, levels: [] }, null, 'ann');
+  const fields = await labelFields(srv, ['Expense', 'Plain']);
+  const found = async filter => (await srv.dataStore.findInstances(labelQuery(fields, filter) ?? {}, 'summary')).map(i => i.data.caseId).sort();
+  assert.deepEqual(await found({ field: 'caseId', op: 'is', value: '4772' }), [4772], 'a plain placeholder, a number');
+  assert.deepEqual(await found({ op: 'contains', value: '4772' }), [4772], 'any field: the value alone (a number, whole)');
+  assert.deepEqual(await found({ op: 'contains', value: '477' }), [], 'contains is on text: part of a number does not match');
+  assert.deepEqual(await found({ op: 'is', value: '9001' }), [9001], "the default label's caseId");
+  assert.deepEqual(await found({ value: 'ACME' }), [4772, 4773]);
+  await srv.shutdown();
+
+  // the application labels cases in code: nothing known to filter on for a model with no template
+  const hooked = await server(EXPENSE('').replace(' camunda:label=""', ''), { instanceLabel: () => 'x' });
+  assert.deepEqual(await labelFields(hooked.server, ['Expense']), []);
+  await hooked.server.shutdown();
 });
 
 test('verifyModel: a label that is not a template of data paths is an error', async () => {

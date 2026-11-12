@@ -1,7 +1,7 @@
 /**
  * The lists' filter by label (docs/design/labels.md): read from the request's query (?model=&field=&op=&value=&search=),
  * turned into a query on the cases' data paths (engine/Labels.ts labelQuery), and the filter bar's choices: the
- * models, and the named values their case labels offer (views/includes/labelFilter.pug).
+ * models, and the values their case labels show (views/includes/labelFilter.pug).
  *
  * A page with two lists gives each its own: `prefix` names this filter's parameters (task_field=...), and `other` the
  * other filter's, which this bar keeps, so that using one does not clear the other.
@@ -20,7 +20,7 @@ export async function labelFilterOf(server, request, action: string, { prefix = 
     };
     const fields = await labelFields(server);
     const models = [...new Set<string>((await server.definitions.getList()).map(m => m?.name ?? m))].sort();
-    // the named values offered: the chosen model's, else every model's, each name once, with where it is read
+    // the fields offered: the chosen model's, else every model's, each name once, with where it is read
     const groups = new Map<string, string[]>();
     for (const f of filter.model ? fields.filter(f => f.model === filter.model) : fields)
         groups.set(f.name, [...(groups.get(f.name) ?? []), `${f.model}: ${f.path}`]);
@@ -35,7 +35,7 @@ export async function labelFilterOf(server, request, action: string, { prefix = 
             action, filter, models, prefix, keep,
             clear: path + (kept ? '?' + kept : '') + (hash ? '#' + hash : ''),
             groups: [...groups].map(([name, where]) => ({ name, where: where.join('; ') })),
-            active: !!(filter.model || (filter.field && filter.value) || filter.search),
+            active: !!(filter.model || filter.value || filter.search),
         },
     };
 }

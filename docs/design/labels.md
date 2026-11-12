@@ -206,8 +206,9 @@ One box, matching any named value's path of any model listed:
 - **Where it is:** on the Workbench, one bar in the Instances section and one in Pending Tasks, each filtering its
   own list, each kept in the URL under its own names; on My work, a bar for the tasks listed. Tasks are filtered by
   their cases' named values; a task's own (*Task: Amount*) are not offered yet.
-- **Text-only labels** (Onboarding) have no named values; they are found by the model filter and by
-  *search everything* only if they name a value.
+- **Every value a label shows is a field,** text-only labels (Onboarding) too: the field filter and *search
+  everything* reach any `${data.…}` placeholder: a named one by its name, a plain one by its path's last
+  name; a model with no case label through *caseId*. Field *Any* with a value looks in every field.
 - **Filters combine,** with each other and with the model filter, and become one database query on the cases'
   data (per model, on its own paths), with paging.
 - **The URL keeps the filter** (`?field=Client&op=contains&value=ab`), so a filtered list can be bookmarked and
@@ -224,8 +225,6 @@ of this design.
 
 On the process and on any activity, a **Label** group:
 - the template, with a **preview** filled from the Test tab's data;
-- a table of its named values (name, path), kept in step with the template, for those who don't want to write
-  `${Name = path}`;
 - a bad path, or a name used twice, marked as you type.
 
 ## Security and data
@@ -273,5 +272,5 @@ before named-value columns can be added there.
    queries on the named paths; the filter in the URL.
 3. The APIs: labels in results, the same filters. *Done in API v3* (`routes/api/labels.ts`); `/api` and `/api2`
    stay as they are.
-4. The editor's Label group. *Done:* the template checked as typed, its preview from the Test tab's scenario, and
-   the table of its named values.
+4. The editor's Label group. *Done:* the template checked as typed, and its preview from the Test tab's scenario.
+   A table of named values was tried and left out: a label is one expression.

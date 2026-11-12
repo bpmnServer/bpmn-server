@@ -16,7 +16,7 @@ const page = [
 ];
 /** The pages' filter by label (docs/design/labels.md): on the data paths the models' case labels name. */
 const byLabel = [
-    { name: 'field', in: 'query', schema: { type: 'string' }, description: 'A named value of the models\' case labels (`${Client = data.clientId}` names Client); with value' },
+    { name: 'field', in: 'query', schema: { type: 'string' }, description: 'A value the models\' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path\'s last name (`${data.caseId}` is caseId); none: any of them' },
     { name: 'op', in: 'query', schema: { enum: ['contains', 'is'], default: 'contains' }, description: 'contains: any case; is: exactly (a number also matches as a number)' },
     { name: 'value', in: 'query', schema: { type: 'string' } },
     { name: 'search', in: 'query', schema: { type: 'string' }, description: 'Contained in any named value' },

@@ -4,7 +4,7 @@ import type { ILabelFilter } from '../../index.js';
 /*
  * Labels in API v3 (docs/design/labels.md, phase 3): each task and instance it answers carries its label, filled in
  * from its case's own model when it is answered (nothing is stored), and its lists take the pages' filter by label
- * (routes/labelFilter.ts): ?field=&op=&value=&search=, on the data paths the models' named values read.
+ * (routes/labelFilter.ts): ?field=&op=&value=&search=, on the data paths the models' case labels show.
  */
 
 /** A filter that can not be used: an op other than contains or is. */
@@ -21,7 +21,7 @@ export async function labelFilterQuery(server, query: Record<string, unknown>, m
     if (op !== 'contains' && op !== 'is')
         throw new LabelFilterError(`op is contains or is, not ${String(op)}`);
     const filter: ILabelFilter = { model: text(model), field: text(query.field), op, value: text(query.value), search: text(query.search) };
-    if (!(filter.field && filter.value) && !filter.search)
+    if (!filter.value && !filter.search)
         return filter.model ? { name: filter.model } : undefined;
     return labelQuery(await labelFields(server, filter.model ? [filter.model] : undefined), filter);
 }

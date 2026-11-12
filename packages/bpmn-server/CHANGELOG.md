@@ -24,9 +24,9 @@ and here
 - **Filters by label:** `labelFields(server)` (the named values the models' case labels offer, with their data
   paths) and `labelQuery(fields, { model, field, op, value, search })`: a query on those paths, for `findInstances`
   and `findItems` (contains in any case, or is; a number as a number too; search everything).
-- **Editing a template by its named values** (`engine/LabelTemplate.ts`): `formatTemplate(parts)`,
-  `setNamedValue(template, index, { name, path })` (a caption saying the old name follows a rename),
-  `addNamedValue(template, name, path)` and `removeNamedValue(template, index)` (with its caption).
+- **Filters by label work on what a label shows:** `labelFields` offers every `${data.…}` placeholder of a case
+  label, a plain one under its path's last name (`${data.caseId}` is caseId), and `caseId` for a model with no case
+  label (unless the delegate's `instanceLabel` labels it); `labelQuery` with a value and no field looks in every field.
 - `labelInstances` reads the sources of cases given without one (a summary, an API's answer) in one query, so they
   are labeled by the model they run; a value that is only spaces is missing, like an empty one; an end label's
   `${completedBy}` is filled from a task's `completedBy` when it has no `userName` (an API's task).
