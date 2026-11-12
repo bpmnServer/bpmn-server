@@ -138,7 +138,7 @@ async function recordStart(page, name, data) {
 
 test('on the diagram: taken is green, not taken is marked, nodes and flows; a gap says where it goes, and is selected; it stays until asked otherwise', async () => {
     fs.writeFileSync(path.join(web.definitionsPath, 'drawn-flows.bpmn'), drawnFlows());
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const { page, errors, close } = await openTestTab('drawn-flows');
     await recordStart(page, 'Small', { amount: 5 });
 

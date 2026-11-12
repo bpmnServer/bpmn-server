@@ -17,7 +17,7 @@ async function report() {
     const web = await startWebApp();
     for (const file of fs.readdirSync(PROCESSES, { withFileTypes: true }))
         if (file.isFile()) fs.copyFileSync(path.join(PROCESSES, file.name), path.join(web.definitionsPath, file.name));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const { loadScenarios, runScenario } = await import(dist('scenarios.js'));
     const { modelElements } = await import(dist('modelCoverage.js'));
     const { coverageOf } = await import(dist('coverage.js'));

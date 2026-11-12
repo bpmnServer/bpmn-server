@@ -15,7 +15,7 @@ test.before(async () => {
     browser = await chromium.launch();
     fs.copyFileSync(path.join(process.cwd(), 'processes', 'Error events.bpmn'), path.join(web.definitionsPath, 'Error events.bpmn'));
     fs.writeFileSync(path.join(web.definitionsPath, 'branches.bpmn'), branches());
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => {
     await browser?.close();
@@ -211,7 +211,7 @@ test('a receive task is a step: recorded, repeated by Run, and Test all paths go
 <bpmndi:BPMNDiagram id="dia"><bpmndi:BPMNPlane id="plane" bpmnElement="Receives">
   ${shape('s1', 'start', 100)}${shape('s2', 'payment', 200, 100, 36)}${shape('s3', 'end', 350)}${edge('e0', 'f0', 136, 200)}${edge('e1', 'f1', 300, 350)}
 </bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>`);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 
     const { page, errors, close } = await openTestTab('receives');
     await page.click('.test-new-menu summary');

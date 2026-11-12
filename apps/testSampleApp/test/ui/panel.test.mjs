@@ -41,7 +41,7 @@ test.after(async () => {
 async function addModel(name, { sample, xml }) {
     xml ??= fs.readFileSync(path.join(SAMPLES, sample + '.bpmn'), 'utf8');
     fs.writeFileSync(path.join(web.definitionsPath, name + '.bpmn'), xml);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     return name;
 }
 

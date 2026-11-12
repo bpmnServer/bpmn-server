@@ -88,6 +88,18 @@ test('design: every model with its checks and the decisions', async () => {
   assert.match(card(page, 'models'), /dash-badge/);
 });
 
+test('design: a Feature filter of what the models use; each model says where it uses each (docs/features.yaml\'s markers)', async () => {
+  const models = card((await designer.get('/dashboard/design')).text, 'models');
+  assert.match(models, /<select[^>]* id="feature-filter"/);
+  assert.match(models, /<option value="user-task">User task \(\d+\)<\/option>/, 'a feature some model uses, with how many');
+  assert.doesNotMatch(models, /<option value="mongodb"/, 'not a feature that does not show in models');
+  const at = models.indexOf(`/model/edit/${MODEL}`);
+  const tr = models.lastIndexOf('<tr', at);
+  const where = JSON.parse(/data-where="([^"]*)"/.exec(models.slice(tr, at))[1].replaceAll('&quot;', '"').replaceAll('&amp;', '&'));
+  assert.deepEqual(where['user-task'], ['Submit', 'Approve'], 'the elements, by id: where the links open the model');
+  assert.ok(where['start-events']?.length && where['exclusive-gateway']?.length, JSON.stringify(where));
+});
+
 test('design: a model\'s description, its saved versions, and what its scenarios cover, saved with the runs', async () => {
   const row = html => { const models = card(html, 'models'); const at = models.indexOf(`/model/edit/${MODEL}`); return models.slice(at, models.indexOf('</tr>', at)); };
   const before = row((await designer.get('/dashboard/design')).text);

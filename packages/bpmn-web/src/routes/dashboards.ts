@@ -15,6 +15,8 @@ import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
+import { modelFeatures } from '../modelFeatures.js';
+import { MODEL_FEATURES } from '../modelFeatureCatalog.js';
 import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
 import { reachedIn } from '../testing/coverage.js';
@@ -87,7 +89,7 @@ function databaseName(): string {
 
 export class Dashboards extends Common {
     /** verifyModel's counts per model, kept while the file is unchanged */
-    verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string }>();
+    verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string; features?: { id: string; name: string; at: string[] }[] }>();
 
     config() {
         const router = express.Router();
@@ -158,10 +160,12 @@ export class Dashboards extends Common {
                     try {
                         const source = FS.readFileSync(path.join(dir, file), 'utf8');
                         const result = await verifyModel(source, server, name);
-                        checked = { mtime, errors: result.errors, warnings: result.warnings, description: await modelDescription(source).catch(() => '') };
+                        checked = { mtime, errors: result.errors, warnings: result.warnings, description: await modelDescription(source).catch(() => ''),
+                            // the features it uses, and where (docs/features.yaml's markers): the Feature filter
+                            features: modelFeatures(source, MODEL_FEATURES) };
                     }
                     catch {
-                        checked = { mtime, errors: 1, warnings: 0 };
+                        checked = { mtime, errors: 1, warnings: 0, features: [] };
                     }
                     this.verified.set(name, checked);
                 }
@@ -182,8 +186,11 @@ export class Dashboards extends Common {
                 return { name, tests: decisionTests.get(name) ?? 0 };
             });
             const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, undefined);
+            // the features some model uses, with how many: the Feature filter's choices, by the catalog's order
+            const featureUse = MODEL_FEATURES.map(f => ({ id: f.id, name: f.name, models: models.filter(m => m.features?.some(u => u.id === f.id)).length }))
+                .filter(f => f.models > 0);
             render(req, res, 'design', {
-                title: 'Design', models, recent, decisions, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
+                title: 'Design', models, recent, decisions, featureUse, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
                 message: req.query.message,
                 templates: catalog.templates ?? [], rejectedTemplates: catalog.rejected ?? [],
                 problems: { errors: models.filter(m => m.errors).length, warnings: models.filter(m => !m.errors && m.warnings).length },

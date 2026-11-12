@@ -19,8 +19,7 @@ test.before(async () => {
     process.env.CONNECTORS_KEY ??= 'a test encryption key';
     web = await startWebApp();
     fs.copyFileSync(path.join(APP, 'processes', 'GitHub repository.bpmn'), path.join(web.definitionsPath, 'GitHub repository.bpmn'));
-    await web.bpmnServer.definitions.rebuild();
-    await web.bpmnServer.connectors.install();
+    await web.bpmnServer.engine.install({ rebuild: true });
     await web.bpmnServer.connectors.add({ id: 'github', document: fs.readFileSync(path.join(APP, 'connectors', 'openapi', 'github.json'), 'utf8') });
     browser = await chromium.launch();
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });

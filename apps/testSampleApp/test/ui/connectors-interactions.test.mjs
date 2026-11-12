@@ -46,7 +46,7 @@ test.before(async () => {
 
     web = await startWebApp();
     const connectors = web.bpmnServer.connectors;
-    await connectors.install();
+    await web.bpmnServer.engine.install();
     await connectors.add({ id: 'shop', document: SHOP_DOC, baseUrl: base });
     await connectors.add({ id: 'finance', document: SHOP_DOC, baseUrl: base, groups: ['FINANCE'] });      // not the designer's
     await connectors.add({ id: 'off', document: SHOP_DOC, baseUrl: base, enabled: false });
@@ -55,7 +55,7 @@ test.before(async () => {
         <camunda:outputParameter name="tier">\${output.tier}</camunda:outputParameter>
         <camunda:outputParameter name="custom">\${output.tier + '!'}</camunda:outputParameter>`));
     fs.writeFileSync(path.join(web.definitionsPath, 'gone-connector.bpmn'), model('gone/someOperation', ''));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 
     browser = await chromium.launch();
     context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });

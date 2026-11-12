@@ -51,7 +51,7 @@ const SERVICE_MODEL = `<?xml version="1.0" encoding="UTF-8"?>
 
 async function addModel(name, xml) {
     fs.writeFileSync(path.join(web.definitionsPath, name + '.bpmn'), xml);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     return name;
 }
 

@@ -28,7 +28,7 @@ async function brokenModel(name) {
         .replace('<camunda:formData>',
             '<camunda:executionListener event="start"><camunda:script scriptFormat="JavaScript">this.data.x = (;</camunda:script></camunda:executionListener><camunda:formData>');
     fs.writeFileSync(path.join(web.definitionsPath, name + '.bpmn'), xml);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     return name;
 }
 
@@ -109,7 +109,7 @@ test('condition and timer issues open their fields', async () => {
     for (const [file, change, message, element, field] of cases) {
         const name = 'broken-' + element;
         fs.writeFileSync(path.join(web.definitionsPath, name + '.bpmn'), change(fs.readFileSync(path.isAbsolute(file) ? file : path.join(SAMPLES, file), 'utf8')));
-        await web.bpmnServer.definitions.rebuild();
+        await web.bpmnServer.engine.install({ rebuild: true });
         const { page, close } = await openEditor(name);
         await errorItem(page, message).click();
         await page.waitForFunction(id => document.activeElement?.id === id, field);

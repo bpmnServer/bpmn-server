@@ -17,7 +17,8 @@ What differs per server is the key, and the last connection test.
 
 ## 2. Decided (2026-11-11)
 
-- **One file per connector, in the models folder**: `<id>.connector.json`, the same document the collection held
+- **One file per connector, in the models folder's `connectors` folder**: `connectors/<id>.connector.json` (at first
+  beside the models: a file left there is moved in when read), the same document the collection held
   (id, name, description, base URL, operations, groups, enabled, timeout, retries, the key's scheme, created and
   changed), with its OpenAPI document as JSON (no longer gzipped: readable in a diff).
 - **Not in the file**: the key (encrypted with one server's `CONNECTORS_KEY`; another server could not read it, and a

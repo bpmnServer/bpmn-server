@@ -7,6 +7,9 @@
 #
 # status: supported | partial (works, with limits: see `note`) | not-supported (loads, does not run: see `note`)
 # paths are from the repository's root; a doc may name a heading (#its-anchor).
+# xml: where the feature shows in a model's XML, to find the models that use it (npm run features -- --models <folder>
+#   --feature <id>): an element (bpmn:userTask), [an attribute] or [an attribute=its value], one inside another
+#   (a b), or directly inside it (a > b); names by their local part, whatever a model's prefixes.
 
 areas:
   modeling: Modeling — BPMN elements and their settings
@@ -29,6 +32,7 @@ features:
     area: modeling
     name: "User task"
     what: "Waits for a user; assignee, candidate users and groups, due and follow-up dates, priority, a form."
+    xml: ["bpmn:userTask"]
     docs: [docs/docs/data.md, docs/docs/modeler.md, docs/docs/security.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts]
     tests: [packages/bpmn-server/test/engine.test.mjs, apps/testSampleApp/test/custom/buy-used-car.test.ts, apps/testSampleApp/test/custom/leave-application.test.ts]
@@ -37,6 +41,7 @@ features:
     area: modeling
     name: "Service task"
     what: "Calls a service of the application (delegateExpression, implementation) with inputs and outputs, or a connector."
+    xml: ["bpmn:serviceTask"]
     docs: [docs/docs/customization.md, docs/docs/examples/serviceTask.md, docs/docs/connectors.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts, packages/bpmn-server/src/elements/behaviours/IOBehaviour.ts]
     tests: [packages/bpmn-server/test/engine-basics.test.mjs, apps/testSampleApp/test/custom/services.test.ts, apps/testSampleApp/processes/serviceTask.engine.feature]
@@ -44,6 +49,7 @@ features:
     area: modeling
     name: "Script task"
     what: "Runs JavaScript on the instance's data, compiled under a name the debugger shows."
+    xml: ["bpmn:scriptTask"]
     docs: [docs/docs/scripting.md, docs/docs/examples/scriptTask.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts, packages/bpmn-server/src/engine/ScriptHandler.ts]
     tests: [packages/bpmn-server/test/script-names.test.mjs, packages/bpmn-server/test/sandbox.test.mjs]
@@ -51,6 +57,7 @@ features:
     area: modeling
     name: "Send and receive tasks"
     what: "A send task throws a message; a receive task waits for one."
+    xml: ["bpmn:sendTask", "bpmn:receiveTask"]
     docs: [docs/docs/examples/msg-throw-catch.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts, packages/bpmn-server/src/elements/behaviours/MessageSignal.ts]
     tests: [apps/testSampleApp/processes/messageFlow.engine.feature, apps/testSampleApp/test/custom/messages-and-signals.test.ts]
@@ -59,6 +66,7 @@ features:
     area: modeling
     name: "Business rule task"
     what: "Evaluates a decision (DMN) with the instance's data, and maps its result."
+    xml: ["bpmn:businessRuleTask"]
     docs: [docs/docs/decisions.md, docs/docs/examples/Business Rules.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts, packages/bpmn-server/src/dmn/DMNEngine.ts]
     tests: [packages/bpmn-server/test/dmn.test.mjs]
@@ -66,6 +74,7 @@ features:
     area: modeling
     name: "Call activity"
     what: "Starts another model as a child instance and waits for it."
+    xml: ["bpmn:callActivity"]
     docs: [docs/docs/examples/callProcess.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts]
     tests: [apps/testSampleApp/processes/CallTask.engine.feature]
@@ -73,6 +82,7 @@ features:
     area: modeling
     name: "Manual task, plain task"
     what: "Work done outside the system; the engine passes through."
+    xml: ["bpmn:manualTask"]
     status: partial
     note: "Loaded as a plain node; passes through. Not tested."
     code: [packages/bpmn-server/src/elements/NodeLoader.ts]
@@ -80,6 +90,7 @@ features:
     area: modeling
     name: "Embedded sub-process"
     what: "A part of the process with its own data scope (data.<id>)."
+    xml: ["bpmn:subProcess"]
     docs: [docs/docs/examples/subProcess.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts]
     tests: [apps/testSampleApp/test/custom/subprocess.test.ts, apps/testSampleApp/processes/SubProcess-engine-test.engine.feature]
@@ -87,6 +98,7 @@ features:
     area: modeling
     name: "Event sub-process"
     what: "Starts on an event (error, message, timer, escalation) while its process runs."
+    xml: ["bpmn:subProcess[triggeredByEvent=true]"]
     docs: [docs/docs/examples/error_events.md]
     code: [packages/bpmn-server/src/elements/Process.ts]
     tests: [apps/testSampleApp/processes/Error events.engine.feature]
@@ -94,6 +106,7 @@ features:
     area: modeling
     name: "Transaction, compensation and cancel"
     what: "A transaction sub-process; compensation handlers; a cancel end event and boundary."
+    xml: ["bpmn:transaction", "bpmn:compensateEventDefinition", "bpmn:cancelEventDefinition"]
     docs: [docs/docs/examples/transactions.md]
     code: [packages/bpmn-server/src/elements/Transaction.ts, packages/bpmn-server/src/elements/behaviours/TransEvents.ts]
     tests: [apps/testSampleApp/processes/Trans.engine.feature, packages/bpmn-server/test/transactions.test.mjs]
@@ -101,6 +114,7 @@ features:
     area: modeling
     name: "Ad hoc sub-process"
     what: "Its tasks run in any order, until its completion condition holds."
+    xml: ["bpmn:adHocSubProcess"]
     docs: [docs/docs/examples/adHoc.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts]
     tests: [apps/testSampleApp/test/issues/github-issues.test.ts]
@@ -108,6 +122,7 @@ features:
     area: modeling
     name: "Exclusive gateway, conditions, default flow"
     what: "Takes one flow, the first whose condition holds, else the default flow."
+    xml: ["bpmn:exclusiveGateway"]
     docs: [docs/docs/examples/gateways.md, docs/docs/examples/conditionalFlow.md, docs/docs/execution.md]
     code: [packages/bpmn-server/src/elements/Gateway.ts, packages/bpmn-server/src/elements/Flow.ts]
     tests: [apps/testSampleApp/processes/Event Based Gateway.engine.feature, apps/testSampleApp/processes/test_gateway1.engine.feature]
@@ -115,6 +130,7 @@ features:
     area: modeling
     name: "Parallel gateway"
     what: "Splits into all its flows; a join waits for every branch, as one item."
+    xml: ["bpmn:parallelGateway"]
     docs: [docs/docs/examples/gateways.md]
     code: [packages/bpmn-server/src/elements/Gateway.ts]
     tests: [packages/bpmn-server/test/engine.test.mjs, apps/testSampleApp/processes/test_gateway2.engine.feature, apps/testSampleApp/test/web/scenarios.test.mjs]
@@ -122,6 +138,7 @@ features:
     area: modeling
     name: "Inclusive gateway"
     what: "Takes every flow whose condition holds; its join waits for the branches taken."
+    xml: ["bpmn:inclusiveGateway"]
     docs: [docs/docs/examples/gateways.md]
     code: [packages/bpmn-server/src/elements/Gateway.ts]
     tests: [apps/testSampleApp/test/custom/buy-used-car.test.ts, apps/testSampleApp/processes/test_gateway3.engine.feature]
@@ -129,6 +146,7 @@ features:
     area: modeling
     name: "Event-based gateway"
     what: "Waits for the first of its events; the others are cancelled."
+    xml: ["bpmn:eventBasedGateway"]
     docs: [docs/docs/examples/ebg.md]
     code: [packages/bpmn-server/src/elements/Gateway.ts]
     tests: [apps/testSampleApp/processes/Event Based Gateway.engine.feature]
@@ -137,6 +155,7 @@ features:
     area: modeling
     name: "Complex gateway"
     what: "A gateway with its own activation condition."
+    xml: ["bpmn:complexGateway"]
     status: not-supported
     note: "Loaded as a plain node. Problems should say so."
     code: [packages/bpmn-server/src/elements/NodeLoader.ts]
@@ -144,6 +163,7 @@ features:
     area: modeling
     name: "Start events, several per model"
     what: "None, message, signal and timer starts; with several, the one a user can start is used unless one is named."
+    xml: ["bpmn:startEvent"]
     docs: [docs/docs/examples/multiStartEvent.md, docs/docs/invokation.md]
     code: [packages/bpmn-server/src/elements/Events.ts, packages/bpmn-server/src/elements/Definition.ts]
     tests: [packages/bpmn-server/test/engine.test.mjs, apps/testSampleApp/test/web/dashboards.test.mjs]
@@ -151,6 +171,7 @@ features:
     area: modeling
     name: "End events, terminate"
     what: "A path ends; a terminate end event ends the whole instance."
+    xml: ["bpmn:endEvent"]
     docs: [docs/docs/executionStructure.md]
     code: [packages/bpmn-server/src/elements/Events.ts, packages/bpmn-server/src/elements/behaviours/Terminate.ts]
     tests: [apps/testSampleApp/processes/Event Based Gateway.engine.feature]
@@ -159,6 +180,7 @@ features:
     area: modeling
     name: "Boundary events, interrupting or not"
     what: "Timer, message, signal, error and escalation events on a task; a non-interrupting one leaves the task running."
+    xml: ["bpmn:boundaryEvent"]
     docs: [docs/docs/examples/boundary-events.md]
     code: [packages/bpmn-server/src/elements/Events.ts]
     tests: [apps/testSampleApp/processes/boundary-event-engine-test.engine.feature, apps/testSampleApp/processes/test-boundary-timer.engine.feature, apps/testSampleApp/test/custom/leave-application.test.ts]
@@ -166,6 +188,7 @@ features:
     area: modeling
     name: "Timers — duration, cycle, date"
     what: "ISO 8601 durations, repeating cycles (R3/PT1H) and dates; long timers waited out in steps."
+    xml: ["bpmn:timerEventDefinition"]
     docs: [docs/docs/timers.md]
     code: [packages/bpmn-server/src/elements/behaviours/Timer.ts, packages/bpmn-server/src/server/Cron.ts]
     tests: [packages/bpmn-server/test/timers-long.test.mjs, apps/testSampleApp/processes/timer-sample.engine.feature]
@@ -173,6 +196,7 @@ features:
     area: modeling
     name: "Messages and signals"
     what: "Thrown and caught by events and tasks; a message starts a model or reaches the instance waiting for it."
+    xml: ["bpmn:messageEventDefinition", "bpmn:signalEventDefinition"]
     docs: [docs/docs/examples/msg-throw-catch.md, docs/docs/examples/signal-throw-catch.md]
     code: [packages/bpmn-server/src/elements/behaviours/MessageSignal.ts]
     tests: [apps/testSampleApp/test/custom/messages-and-signals.test.ts, apps/testSampleApp/processes/t-throw-signals.engine.feature, apps/testSampleApp/processes/test-throw.engine.feature]
@@ -180,6 +204,7 @@ features:
     area: modeling
     name: "Errors and escalations"
     what: "A BPMN error caught by its error event; an escalation, interrupting or not."
+    xml: ["bpmn:errorEventDefinition", "bpmn:escalationEventDefinition"]
     docs: [docs/docs/execution.md, docs/docs/examples/error_events.md]
     code: [packages/bpmn-server/src/elements/behaviours/Error.ts, packages/bpmn-server/src/elements/behaviours/Escalation.ts]
     tests: [apps/testSampleApp/processes/Error events.engine.feature, apps/testSampleApp/test/issues/github-issues.test.ts]
@@ -188,6 +213,7 @@ features:
     area: modeling
     name: "Conditional event"
     what: "An event that happens when a condition on the data holds."
+    xml: ["bpmn:conditionalEventDefinition"]
     status: not-supported
     note: "Loaded as a plain node. Problems should say so."
     code: [packages/bpmn-server/src/elements/NodeLoader.ts]
@@ -195,6 +221,7 @@ features:
     area: modeling
     name: "Link events"
     what: "A link throw continues at the link catch of the same name (a jump in a large diagram)."
+    xml: ["bpmn:linkEventDefinition"]
     status: not-supported
     note: "Loaded as plain nodes, so a link throw ends its path. To implement."
     code: [packages/bpmn-server/src/elements/NodeLoader.ts]
@@ -202,6 +229,7 @@ features:
     area: modeling
     name: "Multi-instance, parallel and sequential"
     what: "A task or sub-process once per item of a collection, all at once or one after another."
+    xml: ["bpmn:multiInstanceLoopCharacteristics"]
     docs: [docs/docs/examples/loop.md]
     code: [packages/bpmn-server/src/engine/Loop.ts, packages/bpmn-server/src/elements/behaviours/Loop.ts]
     tests: [apps/testSampleApp/processes/loop-engine-test.engine.feature, apps/testSampleApp/processes/Issue197.engine.feature, apps/testSampleApp/test/issues/github-issues.test.ts]
@@ -210,6 +238,7 @@ features:
     area: modeling
     name: "Standard loop"
     what: "A task repeated until its loop condition no longer holds."
+    xml: ["bpmn:standardLoopCharacteristics"]
     status: partial
     note: "In the code and the docs; not tested."
     docs: [docs/docs/examples/loop.md]
@@ -218,6 +247,7 @@ features:
     area: modeling
     name: "Pools, lanes and message flows"
     what: "Several processes in a collaboration; lanes; message flows between pools."
+    xml: ["bpmn:participant", "bpmn:lane", "bpmn:messageFlow"]
     docs: [docs/docs/modeler.md]
     code: [packages/bpmn-server/src/elements/Definition.ts]
     tests: [apps/testSampleApp/processes/messageFlow.engine.feature]
@@ -225,6 +255,7 @@ features:
     area: modeling
     name: "Data objects and data stores"
     what: "A data object fills a field of the instance data from the application (loadDataObject)."
+    xml: ["bpmn:dataObjectReference", "bpmn:dataStoreReference"]
     docs: [docs/docs/data-objects.md]
     code: [packages/bpmn-server/src/engine/DataHandler.ts]
     tests: [packages/bpmn-server/test/data-objects.test.mjs, apps/testSampleApp/test/ui/data-objects.test.mjs]
@@ -232,6 +263,7 @@ features:
     area: modeling
     name: "Forms"
     what: "Form fields on user tasks and start events (string, long, boolean, date, enum), with default values."
+    xml: ["camunda:formData", "[camunda:formKey]"]
     docs: [docs/docs/examples/inputFields.md, docs/docs/modeler.md]
     code: [packages/bpmn-server/src/elements/behaviours/Form.ts]
     tests: [apps/testSampleApp/test/web/dashboards.test.mjs, apps/testSampleApp/test/ui/testing.test.mjs]
@@ -239,6 +271,7 @@ features:
     area: modeling
     name: "Input and output mapping"
     what: "A task's inputs from the data, and its outputs back into it (camunda:inputOutput)."
+    xml: ["camunda:inputOutput"]
     docs: [docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/behaviours/IOBehaviour.ts]
     tests: [apps/testSampleApp/processes/test-service-input.engine.feature, packages/bpmn-server/test/element-paths.test.mjs]
@@ -246,6 +279,7 @@ features:
     area: modeling
     name: "Scripts on events (listeners)"
     what: "Scripts on an element's or the process's events (enter, start, wait, end, assign, validate, take ...)."
+    xml: ["camunda:executionListener", "camunda:taskListener"]
     docs: [docs/docs/scripting.md, docs/docs/examples/scriptEvents.md]
     code: [packages/bpmn-server/src/elements/behaviours/Script.ts]
     tests: [apps/testSampleApp/test/web/script-events.test.mjs, packages/bpmn-server/test/script-names.test.mjs]
@@ -253,6 +287,7 @@ features:
     area: modeling
     name: "Assignment and access"
     what: "Assignee and candidates as values or expressions; who can start a model (candidate starters)."
+    xml: ["[camunda:assignee]", "[camunda:candidateUsers]", "[camunda:candidateGroups]", "[camunda:candidateStarterUsers]", "[camunda:candidateStarterGroups]"]
     docs: [docs/docs/security.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/Process.ts, packages/bpmn-server/src/API/SecureUser.ts]
     tests: [packages/bpmn-server/test/api-security.test.mjs, apps/testSampleApp/test/custom/buy-used-car.test.ts]
@@ -260,6 +295,7 @@ features:
     area: modeling
     name: "Expressions and conditions"
     what: "JavaScript expressions in conditions and attributes ($(...), data.x, item, services); FEEL conditions (language=\"FEEL\"); next(error, value) in JavaScript conditions; variables the application adds to scripts' scope."
+    xml: ["bpmn:conditionExpression"]
     docs: [docs/docs/scripting.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/engine/Expressions.ts, packages/bpmn-server/src/engine/ScriptHandler.ts]
     tests: [packages/bpmn-server/test/expressions.test.mjs, packages/bpmn-server/test/feel-conditions.test.mjs, packages/bpmn-server/test/script-context.test.mjs, apps/testSampleApp/test/ui/feel-conditions.test.mjs]
@@ -340,6 +376,7 @@ features:
     area: decisions
     name: "Decision tables (DMN)"
     what: "DMN decision tables, literal expressions and requirements; hit policies; FEEL."
+    xml: ["dmn:decisionTable", "dmn:literalExpression"]
     docs: [docs/docs/decisions.md]
     code: [packages/bpmn-server/src/dmn/DMNEngine.ts, packages/bpmn-server/src/dmn/DMNParser.ts]
     tests: [packages/bpmn-server/test/dmn.test.mjs, apps/testSampleApp/test/web/decisions.test.mjs, apps/testSampleApp/test/web/api-v3-rules.test.mjs]
@@ -355,6 +392,7 @@ features:
     area: connectors
     name: "REST connectors (OpenAPI)"
     what: "An API added from its OpenAPI document; its key encrypted; a service task calls an operation; a non-2xx status is the BPMN error HTTP_<status>."
+    xml: ["bpmn:serviceTask camunda:connector"]
     docs: [docs/docs/connectors.md]
     code: [packages/bpmn-server/src/connectors/Connectors.ts, packages/bpmn-server/src/connectors/OpenAPI.ts, packages/bpmn-server/src/connectors/Secrets.ts]
     tests: [packages/bpmn-server/test/connectors.test.mjs, apps/testSampleApp/test/web/connectors.test.mjs]

@@ -195,7 +195,7 @@ command line. A model imported from elsewhere that names a connector this server
 
 ## Where a connector is kept
 
-**A connector is a file in the models folder**, `<id>.connector.json`, beside the models that call it: its name, its
+**A connector is a file in the models folder's `connectors` folder**, `connectors/<id>.connector.json`, near the models that call it: its name, its
 address, its operations and groups, how its key is sent, and its OpenAPI document (as JSON). Like a model, it is kept in
 Git and released with the models, and a model's tests find it (`npm test`, the editor's Test tab). Copy an application's
 folder, and its connectors come with it.

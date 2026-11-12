@@ -15,6 +15,10 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The Design dashboard finds the models that use a feature**: beside the search, **Any feature** lists the features
+  the models use (user tasks, timers, connectors, forms, ...: docs/features.yaml's `xml` markers), with how many models
+  use each; one chosen, only those models are listed, each with the elements where, a link that opens the model at the
+  element. The editor opens at an element named in its address: `/model/edit/<model>#element=<id>`.
 - **A workflow page framed by a page of the same site leaves out its menu bar** (an application's own layout around
   the workflow pages: `apps/hrdemo`), as the browser says it is framed (`Sec-Fetch-Dest: iframe`, `Sec-Fetch-Site:
   same-origin`; on HTTPS and localhost). The body has the class `framed`, a hook for the application's styles; the
@@ -222,6 +226,8 @@ and here
   number by its seq. Decision entries in the logs keep their lines.
 
 ### Fixed
+- **The Test tab's Run is offered for a scenario with no steps** (a start, then what is expected checked: a process that
+  runs to its end by itself, or stops at its first wait); it was greyed out until steps were recorded.
 - **After starting a process or completing a task, a user goes back to My work**, where their next task is; only
   administrators and designers go to the instance's page. Users who are neither were sent to the Workbench (after a
   task) or to the instance's page (after a start from My work).

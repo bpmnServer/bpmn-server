@@ -25,7 +25,7 @@ test.after(async () => {
 
 async function openReport(model, xml) {
     fs.writeFileSync(path.join(web.definitionsPath, model + '.bpmn'), xml);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());
     const page = await context.newPage();

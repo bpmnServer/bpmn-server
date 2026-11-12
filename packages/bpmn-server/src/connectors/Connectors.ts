@@ -3,8 +3,8 @@
  * the server with an authorization key. A service task names one and an operation, `<connector>/<operationId>`
  * (camunda:connector); the server calls it.
  *
- * A connector is a file in the models folder, `<id>.connector.json`, as a model is (docs/design/connectors-as-files.md):
- * its definition and its OpenAPI document, kept in Git and released with the models that call it, found by their tests.
+ * A connector is a file in the models folder's `connectors` folder, `<id>.connector.json`, as a model is a file
+ * (docs/design/connectors-as-files.md): its definition and its OpenAPI document, kept in Git and released with the models that call it, found by their tests.
  * What is one server's alone stays in its `wf_connectors` collection (the storage port): the key, encrypted
  * (Secrets.ts), and the last connection test. The key never leaves the server: not in the file, not in `list` or
  * `get`; a call only puts it in the request it sends. A connector kept whole in the collection before (3.6) is written
@@ -18,8 +18,9 @@ import { parseDocument, listOperations, type Operation } from './OpenAPI.js';
 import { encrypt, decrypt } from './Secrets.js';
 
 const COLLECTION = 'wf_connectors';
-/** A connector's file in the models folder: `<id>.connector.json`. */
+/** A connector's file: `<id>.connector.json`, in the models folder's `connectors` folder. */
 const FILE = '.connector.json';
+const FOLDER = 'connectors';
 const ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 const IDEMPOTENT = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS'];
 /** A document kept packed in the collection before (3.6): its JSON, gzipped, in base64. */
@@ -133,14 +134,38 @@ export class Connectors {
      */
     private get database() { return ((this.server.configuration.database as any)?.MongoDB ?? { db: 'bpmn' }).db; }
 
-    // ---- the files: the models folder's <id>.connector.json
+    // ---- the files: the models folder's connectors/<id>.connector.json
 
-    /** The models folder, where the connectors' files are. */
-    private get folder(): string { return path.resolve(this.server.configuration.definitionsPath ?? 'processes'); }
+    private get modelsFolder(): string { return path.resolve(this.server.configuration.definitionsPath ?? 'processes'); }
+    /** The connectors' folder, in the models folder. */
+    private get folder(): string { return path.join(this.modelsFolder, FOLDER); }
     private fileOf(id: string) { return path.join(this.folder, id + FILE); }
+
+    private looseChecked = false;
+    /**
+     * Connector files beside the models (where 3.7 wrote them at first) moved into the connectors folder: at a list,
+     * and before the first read. One already in the folder is kept; the other is left where it is, and said so.
+     */
+    private moveLoose() {
+        this.looseChecked = true;
+        let loose: string[];
+        try { loose = fs.readdirSync(this.modelsFolder).filter(f => f.endsWith(FILE)); }
+        catch { return; }
+        for (const name of loose) {
+            const from = path.join(this.modelsFolder, name), to = path.join(this.folder, name);
+            if (fs.existsSync(to)) {
+                this.server.logger.log(`connector file ${name}: one is in ${FOLDER}/ already; the one beside the models is left out`);
+                continue;
+            }
+            fs.mkdirSync(this.folder, { recursive: true });
+            fs.renameSync(from, to);
+            this.server.logger.log(`connector file ${name}: moved into the models folder's ${FOLDER}/`);
+        }
+    }
 
     /** A connector's definition from its file, or undefined; read again only when the file changed. */
     private readDefinition(id: string): any | undefined {
+        if (!this.looseChecked) this.moveLoose();
         const file = this.fileOf(id);
         let stat: fs.Stats;
         try { stat = fs.statSync(file); }
@@ -166,6 +191,7 @@ export class Connectors {
 
     /** The ids of the connectors' files. */
     private fileIds(): string[] {
+        this.moveLoose();
         try { return fs.readdirSync(this.folder).filter(f => f.endsWith(FILE)).map(f => f.slice(0, -FILE.length)); }
         catch { return []; }
     }
@@ -250,7 +276,7 @@ export class Connectors {
         const state: ServerState = { id: kept.id, ...(secret ? { key: { secret, last4, setAt, setBy } } : {}), ...(test ? { test } : {}) };
         await this.store.remove(this.database, COLLECTION, { id: kept.id });
         await this.store.insert(this.database, COLLECTION, [state]);
-        this.server.logger.log(`connector '${kept.id}': written out to ${kept.id}${FILE} in the models folder; its key and test stay with this server`);
+        this.server.logger.log(`connector '${kept.id}': written out to ${FOLDER}/${kept.id}${FILE} in the models folder; its key and test stay with this server`);
         return { definition, state };
     }
 
@@ -348,7 +374,11 @@ export class Connectors {
         this.compiled.delete(id);
         if (!ID.test(id ?? '')) return false;
         this.files.delete(id);
-        try { fs.unlinkSync(this.fileOf(id)); return true; } catch { return false; }
+        let removed = false;
+        // its file, and one still beside the models (not moved yet)
+        for (const file of [this.fileOf(id), path.join(this.modelsFolder, id + FILE)])
+            try { fs.unlinkSync(file); removed = true; } catch { /* not there */ }
+        return removed;
     }
 
     /** This server's key and test for the connector gone (the engine's). */

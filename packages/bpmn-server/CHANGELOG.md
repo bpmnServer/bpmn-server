@@ -57,7 +57,8 @@ and here
   `indexModel`, `unindexModel`, `renameIndex` (the index only); `Connectors.setScheme`, `storeKey`, `clearScheme`,
   `forgetKey`, `removeFile`, `forget`, the halves of `setKey`, `clearKey`, `remove`. An embedded server
   (`new BPMNServer`) is as before.
-- **Connectors are files in the models folder**, `<id>.connector.json`, beside the models that call them: the same
+- **Connectors are files in the models folder's `connectors` folder**, `connectors/<id>.connector.json` (one written
+  beside the models by an earlier 3.7 build is moved in the first time it is read), near the models that call them: the same
   document the `wf_connectors` collection held (name, address, operations, groups, the key's scheme, the OpenAPI
   document, now as JSON). Kept in Git and released with the models, found by their tests, copied with an application's
   folder. Each server keeps its own key (encrypted with its `CONNECTORS_KEY`) and last connection test in

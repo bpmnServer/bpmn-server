@@ -272,7 +272,7 @@ export function hrRoutes(app) {
  */
 export async function hrConnector(server) {
   const baseUrl = `http://localhost:${process.env.PORT || 3000}/api/hr`;
-  // the connector is a file beside the models (workflow/processes/hr.connector.json): written when it is new, or when
+  // the connector is a file with the models (workflow/processes/connectors/hr.connector.json): written when it is new, or when
   // this server's address is not the one it has, never at every start
   const kept = await server.connectors.get('hr');
   if (!kept) await server.connectors.add({ id: 'hr', document: openapi, baseUrl });
