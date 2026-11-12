@@ -77,6 +77,7 @@ test('init: the sample application, on MongoDB with sign-in, by default', () => 
   // the sample's tests come with it (npm test: every model's .feature); nothing installed
   assert.ok(app.exists('test/features.ts'), "the models' tests");
   assert.ok(!app.exists('node_modules'), 'no node_modules');
+  assert.match(app.read('.gitignore'), /^api-trace\.jsonl$/m, 'the API trace (API_TRACE) is not committed');
   const env = app.read('.env');
   assert.match(env, /^MONGO_DB_URL=mongodb:\/\/localhost:27017\/app$/m);
   assert.match(env, /^SERVE=both$/m);

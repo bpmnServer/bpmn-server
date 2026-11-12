@@ -1,4 +1,5 @@
 node_modules/
 .env
 *.log
-# the Test tabs' runs: they point at instances of one server (the tests themselves, *.tests.json, are kept)
+# API_TRACE: every API call and its answer, written while the app runs
+api-trace.jsonl
