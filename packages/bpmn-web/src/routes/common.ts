@@ -1,4 +1,5 @@
 import { adminDisabled, designDisabled, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
+import { rememberPage } from '../userAccess/pages.js';
 
 /**
  * An answer that is only a message (refused, not found): a page with the menu when a browser opens it, the plain text
@@ -26,6 +27,8 @@ export class Common {
     isAuthenticated(req, res, next) {
         if (process.env.REQUIRE_AUTHENTICATION === 'false') return next();
         if (typeof req.isAuthenticated !== 'function' || req.isAuthenticated() !== true || !req.user) {
+            // back here after signing in
+            rememberPage(req);
             return res.redirect('/login');
         }
         req.isAdmin = isAdminGroups(req.user.userGroups);

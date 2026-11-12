@@ -7,6 +7,7 @@ import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
 import type { IUserManager } from './IUserManager.js';
+import { rememberPage } from './pages.js';
 import { UserService } from './UserService.js';
 
 
@@ -66,6 +67,8 @@ export class UserManager implements IUserManager {
 		if (req.isAuthenticated()) {
 			return next();
 		}
+		// back here after signing in
+		rememberPage(req);
 		res.redirect('/login');
 	}
 }

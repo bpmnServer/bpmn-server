@@ -9,6 +9,18 @@ import { firstRunPending } from './firstRun.js';
  * user manager keeps.
  */
 
+/**
+ * The page to go back to after signing in: the one that asked for it (a page of bpmn-web's that needs a person, at the
+ * moment it sends them to /login). Only a page to look at (GET), never the sign-in pages themselves. Not every page
+ * asked for while signed out: an application's own pages (its sign-in, its welcome page) were kept too, and signing in
+ * then went back to the sign-in form.
+ */
+export function rememberPage(req) {
+	if (!req.session || (req.method !== 'GET' && req.method !== 'HEAD')) return;
+	if (/^\/(login|logout|signup|setup|forgot|reset)(\/|$)|^\/auth\//.test(req.path) || /\./.test(req.path)) return;
+	req.session.returnTo = req.originalUrl;
+}
+
 /** After the user manager's init: messages and CSRF protection. */
 export function pageSessions(app) {
 	app.use(flash());
@@ -67,14 +79,8 @@ export function pageLocals(app) {
 		// session kept for each of their calls (the pages' own, through routes/api/pageClient.ts) is waste
 		if (/^\/(admin\/)?api(2|\/|$)|^\/api2/.test(req.path) || !req.session)
 			return next();
-		if (!req.user
-			&& req.path !== '/login'
-			&& req.path !== '/signup'
-			&& !req.path.match(/^\/auth/)
-			&& !req.path.match(/\./)) {
-			req.session.returnTo = req.originalUrl;
-		} else if (req.user
-			&& (req.path === '/account' || req.path.match(/^\/api/))) {
+		// signed out, a page that needs a person keeps itself (rememberPage, where it sends them to /login)
+		if (req.user && (req.path === '/account' || req.path.match(/^\/api/))) {
 			req.session.returnTo = req.originalUrl;
 		}
 		next();

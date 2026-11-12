@@ -137,6 +137,10 @@ and here
   page turned them off with `ENFORCE_SECURITY=false`. API v3 keeps them on for its clients, as before.
 
 ### Fixed
+- **Signing in goes back to the page that asked for it**, and only to it: the page is kept where a page that needs a
+  person sends them to `/login` (`rememberPage`), not on every page asked for while signed out. An application's own
+  sign-in or welcome page (apps/hrdemo's `/hr/login`), or a page such as `/forgot`, was kept too, and signing in then
+  went back there: to the sign-in form, signed in, as if it hung.
 - **A sequence flow with no condition shows its Condition group as empty again** in the editor's panel: the Language
   (JavaScript, the default) counted as a value; it counts only when it is not the default (FEEL).
 - **The Test tab's Run is offered for a scenario with no steps** (a start, then what is expected checked: a process that

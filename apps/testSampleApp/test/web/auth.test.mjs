@@ -26,6 +26,29 @@ test('public account pages render', async () => {
   assert.match((await anonymous.get('/login')).text, /name=["']?userName/);
 });
 
+test('signing in goes back to the page that asked for it, not to a page seen since that did not need a person', async () => {
+  const client = web.client();
+  // the page that needs a person: sends to /login, and is where signing in goes back to
+  const asked = await client.get('/dashboard/design?tab=models');
+  assert.equal(asked.status, 302);
+  assert.match(asked.location, /\/login$/);
+  // a page that needs nobody (an application's own sign-in or welcome page is one too): not kept
+  await client.get('/forgot');
+  await client.get('/login');
+  const signedIn = await client.post('/login', { userName: 'designer', password: PASSWORD });
+  assert.equal(signedIn.status, 302);
+  const back = new URL(signedIn.location, web.base);
+  assert.equal(back.pathname + back.search, '/dashboard/design?tab=models');
+
+  // nothing asked for: the person's home, not the last page seen signed out
+  const other = web.client();
+  await other.get('/forgot');
+  await other.get('/login');
+  const home = await other.post('/login', { userName: 'designer', password: PASSWORD });
+  assert.equal(home.status, 302);
+  assert.doesNotMatch(home.location, /forgot|login/);
+});
+
 test('a wrong password does not log in', async () => {
   const client = web.client();
   await client.get('/login');
