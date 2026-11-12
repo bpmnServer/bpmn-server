@@ -4,7 +4,7 @@
     <bpmn2:participant id="LeaveParticipant" name="Leave Application" processRef="LeaveProcess" />
   </bpmn2:collaboration>
   <bpmn2:error id="RecordFailedError" name="Not recorded" errorCode="RecordFailed" />
-  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true">
+  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true" camunda:label="Leave by ${data.requester}">
     <bpmn2:documentation>An employee asks for leave; a manager decides; HR's system records it; the employee is told.</bpmn2:documentation>
     <bpmn2:laneSet id="LeaveLanes">
       <bpmn2:lane id="EmployeeLane" name="Employee">
