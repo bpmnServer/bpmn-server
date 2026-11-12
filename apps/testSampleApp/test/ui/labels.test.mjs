@@ -1,6 +1,7 @@
 // @features: labels
 // The model editor's Label group (docs/design/labels.md): the case's label on the process, an element's label and
-// its label once done; a template checked as it is typed; saved in the model, and shown in the lists.
+// its label once done; a template checked as it is typed; previewed with the Test tab's data; its named values
+// edited in a table; saved in the model, and shown in the lists.
 //   npm run test:ui
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -110,4 +111,64 @@ test('the Label group: the case label on the process, a label and a label once d
     assert.match(home, /<td>Client: abc · Order: 7<\/td>/);
     assert.match(home, /<td>Approve 90 — Client: abc · Order: 7<\/td>/);
     assert.ok(run.id);
+});
+
+const FEATURE = `Feature: Claim
+
+  Scenario: Acme claim
+    When @start process:"Claim" as :instance
+      | clientId | "acme" |
+      | orderNo | 1234 |
+      | amount | 90 |
+`;
+
+const value = (page, entryId) => page.locator(`[data-entry-id="${entryId}"] input`).inputValue();
+
+test("a label's preview from the Test tab's scenario, and its named values edited in the table", async () => {
+    fs.writeFileSync(path.join(web.definitionsPath, 'Claim.feature'), FEATURE);
+    const { page, errors, close } = await openEditor('Claim');
+
+    await select(page, null);
+    await openGroup(page, 'Label');
+    const casePreview = page.locator('[data-preview-for="case-label"]');
+    assert.match(await casePreview.innerText(), /Open a scenario in the Test tab/, 'no scenario shown yet');
+    await page.click('#js-tab-test');
+    await page.waitForSelector('#js-test .test-panel');
+    await page.waitForFunction(() => /Client: acme · Order: 1234/.test(document.querySelector('[data-preview-for="case-label"]')?.textContent ?? ''));
+    assert.match(await casePreview.innerText(), /Acme claim's start data/);
+
+    // the table: a row per named value; rename one (its caption follows), add one, remove one
+    const rows = page.locator('[data-values-for="case-label"] tbody tr:not(.label-value-new)');
+    assert.equal(await rows.count(), 2);
+    assert.deepEqual(await rows.locator('.label-value-name').evaluateAll(inputs => inputs.map(i => i.value)), ['Client', 'Order']);
+    await rows.nth(1).locator('.label-value-name').fill('No');
+    await rows.nth(1).locator('.label-value-name').press('Tab');
+    await page.waitForTimeout(300);
+    assert.equal(await value(page, 'case-label'), 'Client: ${Client = data.clientId} · No: ${No = data.orderNo}');
+
+    const adding = page.locator('[data-values-for="case-label"] .label-value-new');
+    await adding.locator('.label-value-name').fill('Amount');
+    await adding.locator('.label-value-path').fill('data.amount');
+    await adding.locator('.label-value-add').click();
+    await page.waitForTimeout(300);
+    assert.equal(await value(page, 'case-label'), 'Client: ${Client = data.clientId} · No: ${No = data.orderNo} · Amount: ${Amount = data.amount}');
+    assert.match(await casePreview.innerText(), /Client: acme · No: 1234 · Amount: 90/, 'the preview follows');
+
+    await adding.locator('.label-value-name').fill('Client');
+    assert.match(await page.locator('[data-values-for="case-label"] .bio-properties-panel-error').innerText(), /'Client' is named twice/);
+    assert.ok(await adding.locator('.label-value-add').isDisabled());
+    await adding.locator('.label-value-name').fill('');
+
+    await rows.nth(0).locator('.label-value-remove').click();
+    await page.waitForTimeout(300);
+    assert.equal(await value(page, 'case-label'), 'No: ${No = data.orderNo} · Amount: ${Amount = data.amount}');
+
+    // an element's label sees the case's named values as instance.*
+    await select(page, 'Approve');
+    await openGroup(page, 'Label');
+    await type(page, 'element-label', 'Approve ${Amount = data.amount} for order ${instance.No}');
+    assert.match(await page.locator('[data-preview-for="element-label"]').innerText(), /Approve 90 for order 1234/);
+
+    assert.deepEqual(errors, []);
+    await close();
 });

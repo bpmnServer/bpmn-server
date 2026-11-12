@@ -11,7 +11,16 @@ fs.mkdirSync(OUT, { recursive: true });
 const MODEL = 'Buy Used Car';
 
 const web = await startWebApp();
-fs.copyFileSync(path.join(import.meta.dirname, '..', '..', 'processes', MODEL + '.bpmn'), path.join(web.definitionsPath, MODEL + '.bpmn'));
+// the labeled sample is the HR demo's (apps/hrdemo/workflow/processes)
+fs.copyFileSync(path.join(import.meta.dirname, '..', '..', '..', 'hrdemo', 'workflow', 'processes', MODEL + '.bpmn'), path.join(web.definitionsPath, MODEL + '.bpmn'));
+// a scenario for the Test tab, so the editor's Label group previews its labels with its start data
+fs.writeFileSync(path.join(web.definitionsPath, MODEL + '.feature'), `Feature: ${MODEL}
+
+  Scenario: A Porsche
+    When @start process:"${MODEL}" as :instance
+      | carModel | "Porsche 911" |
+      | starterUserId | "staff" |
+`);
 await web.bpmnServer.definitions.rebuild();
 const engine = web.bpmnServer.engine;
 const wait = (run, id) => run.instance.items.find(i => i.elementId === id && i.status === 'wait');
@@ -37,11 +46,13 @@ async function signedIn(user) {
 }
 const shot = (page, name, options = {}) => page.screenshot({ path: path.join(OUT, name + '.png'), ...options });
 
-// the editor: the case label on the pool, the labels of Drive
+// the editor: the case label on the pool, the labels of Drive, previewed with the Test tab's scenario
 {
     const { page, close } = await signedIn('designer');
     await page.goto(`${web.base}/model/edit/${encodeURIComponent(MODEL)}`);
     await page.waitForSelector('#js-canvas .djs-shape');
+    await page.click('#js-tab-test');
+    await page.waitForSelector('#js-test .test-panel');
     const select = id => page.evaluate(id => { document.activeElement?.blur(); const m = window.bpmnModeler; m.get('selection').select(m.get('elementRegistry').get(id)); }, id);
     const openLabel = async () => {
         const header = page.locator('.bio-properties-panel-group-header', { hasText: 'Label' }).first();

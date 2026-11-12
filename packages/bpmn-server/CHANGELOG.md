@@ -24,6 +24,12 @@ and here
 - **Filters by label:** `labelFields(server)` (the named values the models' case labels offer, with their data
   paths) and `labelQuery(fields, { model, field, op, value, search })`: a query on those paths, for `findInstances`
   and `findItems` (contains in any case, or is; a number as a number too; search everything).
+- **Editing a template by its named values** (`engine/LabelTemplate.ts`): `formatTemplate(parts)`,
+  `setNamedValue(template, index, { name, path })` (a caption saying the old name follows a rename),
+  `addNamedValue(template, name, path)` and `removeNamedValue(template, index)` (with its caption).
+- `labelInstances` reads the sources of cases given without one (a summary, an API's answer) in one query, so they
+  are labeled by the model they run; a value that is only spaces is missing, like an empty one; an end label's
+  `${completedBy}` is filled from a task's `completedBy` when it has no `userName` (an API's task).
 - **`bpmn-server setup [folder]`**: an application's `.env` settings step by step, from bpmn-web's settings schema:
   the database (checked), the first administrator, the site, sign-in and design, email, the API keys, AI access, the
   environment and API trace. A profile (production, development) suggests the values; nothing is written until the

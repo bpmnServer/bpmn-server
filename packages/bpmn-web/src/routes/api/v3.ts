@@ -13,6 +13,7 @@ import { hostUserManager } from '../../userAccess/UserManager.js';
 import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 import { invokeDecision } from '../decisions.js';
+import { labelFilterQuery, labeledTasks, labeledInstances, LabelFilterError } from './labels.js';
 
 /*
  * API v3, /api/v3 (docs/design/api-v3.md): every call through the door (a user's token, or the service key) and as
@@ -83,7 +84,7 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         catch (error) {
             if (error instanceof ModelError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
-            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError)
+            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError || error instanceof LabelFilterError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
@@ -104,33 +105,46 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
     // ---- processes: what this user may start, and starting one as them
 
     router.get('/processes/startable', handler(async (req, user) => ({ items: await tasks.startable(user) })));
-    router.post('/processes/:name/start', handler((req, user) => tasks.start(user, req.params.name, { data: req.body?.data ?? {}, startNodeId: req.body?.startNodeId }), 201));
+    router.post('/processes/:name/start', handler(async (req, user) => {
+        const { instance, task } = await tasks.start(user, req.params.name, { data: req.body?.data ?? {}, startNodeId: req.body?.startNodeId });
+        return { instance: (await labeledInstances(server, [instance]))[0], task: task ? (await labeledTasks(server, [task]))[0] : null };
+    }, 201));
 
-    // ---- tasks: the waiting tasks this user has a part in; one with its form; claim; complete
+    // ---- tasks: the waiting tasks this user has a part in; one with its form; claim; complete. Each labeled (labels.ts).
 
+    const oneTask = async task => (await labeledTasks(server, [task]))[0];
     router.get('/tasks', handler(async (req, user) => {
+        // a filter by label: ?model=&field=&op=&value=&search=
+        const query = await labelFilterQuery(server, req.query, typeof req.query.model === 'string' ? req.query.model : undefined) ?? {};
         // the ones this user completed, newest first
         if (req.query.status === 'completed')
-            return { items: await tasks.completed(user, { limit: req.query.limit === undefined ? 10 : Number(req.query.limit) }) };
+            return { items: await labeledTasks(server, await tasks.completed(user, { limit: req.query.limit === undefined ? 10 : Number(req.query.limit), query })) };
         const { tasks: items, next } = await tasks.list(user, {
             limit: req.query.limit === undefined ? DEFAULT_LIMIT : Number(req.query.limit),
             after: fromCursor(req.query.cursor),
+            query,
         });
-        return { items, ...(next ? { next: toCursor(next) } : {}) };
+        return { items: await labeledTasks(server, items), ...(next ? { next: toCursor(next) } : {}) };
     }));
-    router.get('/tasks/:id', handler((req, user) => tasks.get(user, req.params.id)));
-    router.post('/tasks/:id/claim', handler((req, user) => tasks.claim(user, req.params.id)));
-    router.post('/tasks/:id/complete', handler((req, user) => tasks.complete(user, req.params.id, req.body?.data ?? {})));
+    router.get('/tasks/:id', handler(async (req, user) => oneTask(await tasks.get(user, req.params.id))));
+    router.post('/tasks/:id/claim', handler(async (req, user) => ({ task: await oneTask((await tasks.claim(user, req.params.id)).task) })));
+    router.post('/tasks/:id/complete', handler(async (req, user) => {
+        const { task, instance } = await tasks.complete(user, req.params.id, req.body?.data ?? {});
+        return { task: await oneTask(task), instance: (await labeledInstances(server, [instance]))[0] };
+    }));
 
     // ---- instances: those this user may see; one; why it went the way it did; what moves it on
 
     const limitOf = (req, fallback) => req.query.limit === undefined ? fallback : Number(req.query.limit);
     router.get('/instances', handler(async (req, user) => {
+        const name = typeof req.query.name === 'string' ? req.query.name : undefined;
         const { instances: items, next } = await instances.list(user, {
             status: typeof req.query.status === 'string' ? req.query.status : undefined,
-            name: typeof req.query.name === 'string' ? req.query.name : undefined,
+            name,
             limit: limitOf(req, INSTANCES_LIMIT),
             after: fromCursor(req.query.cursor),
+            // a filter by label, within the model named: ?field=&op=&value=&search=
+            query: await labelFilterQuery(server, req.query, name),
         });
         return { items, ...(next ? { next: toCursor(next) } : {}) };
     }));

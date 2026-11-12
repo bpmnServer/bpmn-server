@@ -182,6 +182,7 @@ class Processes3 extends Area3 {
 /** This user's tasks. */
 class Tasks3 extends Area3 {
     /** Waiting tasks this user has a part in (oldest first), or with status 'completed' the ones they completed. */
+    /** Each with its `label` and its case's `caseLabel`; `model` and a LabelFilter narrow it. */
     list(options = {}) {
         return this.client.call('GET', '/tasks', { query: options });
     }
@@ -200,7 +201,7 @@ class Tasks3 extends Area3 {
 }
 /** The instances this user may see. */
 class Instances3 extends Area3 {
-    /** Newest first: { items, next }. */
+    /** Newest first: { items, next }, each with its `label`; `name` (the model) and a LabelFilter narrow it. */
     list(options = {}) {
         return this.client.call('GET', '/instances', { query: options });
     }

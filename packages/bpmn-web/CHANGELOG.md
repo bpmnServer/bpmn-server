@@ -14,6 +14,15 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Labels in API v3** (docs/docs/labels.md#in-api-v3, `routes/api/labels.ts`): tasks answer `label`,
+  `labelValues`, `caseLabel` and `caseLabelValues`; instances `label` and `labelValues` (and their items, on
+  `GET /instances/{id}`). `GET /tasks` and `GET /instances` take the filter by label (`field`, `op`, `value`,
+  `search`; `model` on `/tasks`); a wrong `op` is a 400 `BAD_FILTER`. Fields added only: nothing removed or renamed.
+  `/api` and `/api2` are unchanged.
+- **The Label group's preview and named values** (`properties/LabelGroup.jsx`): under each label, the label filled
+  in from the Test tab's scenario (its last run, else its start data); and a table of its named values, renamed,
+  re-pathed, removed and added in place. The Test tab offers its data with `labelPreview()` and fires
+  `testPanel.changed` when it is drawn.
 - **Labels in the pages** (docs/docs/labels.md): the Instances list's Case column, the Pending Tasks table's Label
   column, My work (under each task's name), and the instance page (the case's label; each element's under its
   name), filled in from each case's model when shown.

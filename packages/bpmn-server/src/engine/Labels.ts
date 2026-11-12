@@ -99,7 +99,8 @@ export function activityLabel(item, labels: IModelLabels | undefined, caseValues
     const scope = {
         data: item.data ?? instance?.data ?? {},
         name: item.name, elementId: item.elementId, status: item.status, assignee: item.assignee,
-        userName: item.userName, completedBy: item.status === 'end' && item.endedAt ? item.userName : undefined,
+        // an API's task has completedBy in place of userName
+        userName: item.userName, completedBy: item.completedBy ?? (item.status === 'end' && item.endedAt ? item.userName : undefined),
         startedAt: item.startedAt, endedAt: item.endedAt, model: instance?.name ?? item.processName,
         instance: Object.fromEntries(caseValues.map(v => [v.name, v.value])),
     };
@@ -123,8 +124,18 @@ function itemData(instance, item) {
  */
 export async function labelInstances(server, instances: any[]): Promise<any[]> {
     const moddleOptions = server?.appDelegate?.moddleOptions ?? defaultModdleOptions;
+    // cases read without their source (a summary, an API's answer): their own sources, in one query
+    const sources = new Map<string, string>();
+    const missing = [...new Set(instances.filter(i => i.source === undefined && i.id).map(i => i.id))];
+    if (missing.length && server?.dataStore?.findInstances) {
+        try {
+            for (const found of await server.dataStore.findInstances({ id: { $in: missing } }, { projection: { id: 1, source: 1 } }))
+                if (found.source) sources.set(found.id, found.source);
+        }
+        catch { /* without the sources, the models' current templates */ }
+    }
     for (const instance of instances) {
-        const source = await sourceOf(server, instance.name, instance.source);
+        const source = await sourceOf(server, instance.name, instance.source ?? sources.get(instance.id));
         const labels = source ? await modelLabels(source, moddleOptions) : undefined;
         const label = await caseLabel(server, instance, labels);
         instance.label = label.text;

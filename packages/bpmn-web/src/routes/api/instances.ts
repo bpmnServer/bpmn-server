@@ -1,6 +1,7 @@
 import { BPMNAPI, SecureUser } from '../../index.js';
 import { rationaleSteps } from '../../testing/rationale.js';
 import { notATest } from '../../testing/scenarios.js';
+import { labeledInstances } from './labels.js';
 
 /*
  * The instance operations, once (docs/design/api-v3.md): the instances a user may see, one with its items, why it went
@@ -24,10 +25,12 @@ function isAfter(i, after: string) {
     return time(i) < t || (time(i) === t && i.id < id);
 }
 
-const summary = i => ({ id: i.id, name: i.name, status: i.status, startedAt: i.startedAt, endedAt: i.endedAt ?? null });
+/** Its label, once labeled (labels.ts): nothing when it was not. */
+const labelOf = i => i.label === undefined ? {} : { label: i.label, labelValues: i.labelValues };
+const summary = i => ({ id: i.id, name: i.name, status: i.status, startedAt: i.startedAt, endedAt: i.endedAt ?? null, ...labelOf(i) });
 const asItem = i => ({
     id: i.id, elementId: i.elementId, name: i.name, type: i.type, status: i.status, startedAt: i.startedAt, endedAt: i.endedAt ?? null,
-    userName: i.userName, assignee: i.assignee, candidateUsers: i.candidateUsers, candidateGroups: i.candidateGroups,
+    userName: i.userName, assignee: i.assignee, candidateUsers: i.candidateUsers, candidateGroups: i.candidateGroups, ...labelOf(i),
 });
 
 /** What an engine call answers: its instance, or the engine's errors as a 422. */
@@ -45,18 +48,19 @@ export class InstanceOperations {
 
     /**
      * The instances this user may see, newest first, a page at a time: { instances, next } (next: the bookmark, or
-     * undefined on the last page). `status` and `name` narrow it. Through BPMNAPI, so the user's rules apply to the items.
+     * undefined on the last page). `status` and `name` narrow it, and `query`: more conditions (a filter by label,
+     * labels.ts). Through BPMNAPI, so the user's rules apply to the items. Each is labeled.
      */
-    async list(user: SecureUser, { status, name, limit = DEFAULT_LIMIT, after }: { status?: string, name?: string, limit?: number, after?: string } = {}) {
+    async list(user: SecureUser, { status, name, limit = DEFAULT_LIMIT, after, query: more = {} }: { status?: string, name?: string, limit?: number, after?: string, query?: object } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new InstanceError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new InstanceError(400, 'cursor is a page\'s next', 'BAD_CURSOR');
-        const query = { ...notATest, ...(status ? { status } : {}), ...(name ? { name } : {}) };
+        const query = { ...notATest, ...(status ? { status } : {}), ...(name ? { name } : {}), ...more };
         const all = (await this.api.data.findInstances(query, user, 'summary'))
             .sort((a, b) => time(b) - time(a) || (a.id < b.id ? 1 : -1))
             .filter(i => after === undefined || isAfter(i, String(after)));
-        const page = all.slice(0, limit);
+        const page = await labeledInstances(this.server, all.slice(0, limit));
         return { instances: page.map(summary), next: all.length > limit ? position(page.at(-1)) : undefined };
     }
 
@@ -68,9 +72,9 @@ export class InstanceOperations {
         return instance;
     }
 
-    /** One instance: its data and its items. */
+    /** One instance: its data and its items, labeled. */
     async get(user: SecureUser, id: string) {
-        const instance = await this.find(user, id);
+        const [instance] = await labeledInstances(this.server, [await this.find(user, id)]);
         return { ...summary(instance), data: instance.data, items: (instance.items ?? []).map(asItem) };
     }
 

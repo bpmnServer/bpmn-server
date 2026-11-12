@@ -109,6 +109,11 @@ The waiting tasks this user has a part in, oldest first; with status=completed, 
 | `limit` | query | integer |  | default 50, at least 1, at most 200 |
 | `cursor` | query | string |  | A page's `next` |
 | `status` | query | `"waiting"` or `"completed"` |  | completed: the latest this user completed (limit, default 10) |
+| `model` | query | string |  | Only this model's tasks; its named values for field and search |
+| `field` | query | string |  | A named value of the models' case labels (`${Client = data.clientId}` names Client); with value |
+| `op` | query | `"contains"` or `"is"` |  | contains: any case; is: exactly (a number also matches as a number); default "contains" |
+| `value` | query | string |  |  |
+| `search` | query | string |  | Contained in any named value |
 
 | Answer | Means | Body |
 |---|---|---|
@@ -177,9 +182,13 @@ The instances this user may see, newest first.
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
 | `status` | query | string |  |  |
-| `name` | query | string |  |  |
+| `name` | query | string |  | Only this model's instances; its named values for field and search |
 | `limit` | query | integer |  | default 50, at least 1, at most 200 |
 | `cursor` | query | string |  | A page's `next` |
+| `field` | query | string |  | A named value of the models' case labels (`${Client = data.clientId}` names Client); with value |
+| `op` | query | `"contains"` or `"is"` |  | contains: any case; is: exactly (a number also matches as a number); default "contains" |
+| `value` | query | string |  |  |
+| `search` | query | string |  | Contained in any named value |
 
 | Answer | Means | Body |
 |---|---|---|
@@ -754,6 +763,18 @@ Credential: The service key (API_KEY): the service account only.
 | `followUpDate` | string |  |  |
 | `priority` | any |  |  |
 | `completedBy` | string |  |  |
+| `label` | string |  | Its own label, else its name and its case's; filled in when answered |
+| `labelValues` | list of [LabelValue](#labelvalue) |  |  |
+| `caseLabel` | string |  | Its case's label |
+| `caseLabelValues` | list of [LabelValue](#labelvalue) |  |  |
+
+### LabelValue
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string |  |  |
+| `path` | string |  | The data path it reads |
+| `value` | any |  |  |
 
 ### TaskWithForm
 
@@ -774,6 +795,8 @@ Everything of [Task](#task), and:
 | `startedAt` | string |  |  |
 | `endedAt` | string or null |  |  |
 | `data` | object |  |  |
+| `label` | string |  | Its label (the model's camunda:label, the application's, else &lt;model> #&lt;caseId>): on the lists, one instance, a start and a completion |
+| `labelValues` | list of [LabelValue](#labelvalue) |  |  |
 
 ### User
 
@@ -834,4 +857,4 @@ Everything of [Instance](#instance), and:
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `items` | list of object |  |  |
+| `items` | list of { label, labelValues } |  |  |

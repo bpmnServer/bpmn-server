@@ -14,6 +14,13 @@ const page = [
     { name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 200, default: 50 } },
     { name: 'cursor', in: 'query', schema: { type: 'string' }, description: 'A page\'s `next`' },
 ];
+/** The pages' filter by label (docs/design/labels.md): on the data paths the models' case labels name. */
+const byLabel = [
+    { name: 'field', in: 'query', schema: { type: 'string' }, description: 'A named value of the models\' case labels (`${Client = data.clientId}` names Client); with value' },
+    { name: 'op', in: 'query', schema: { enum: ['contains', 'is'], default: 'contains' }, description: 'contains: any case; is: exactly (a number also matches as a number)' },
+    { name: 'value', in: 'query', schema: { type: 'string' } },
+    { name: 'search', in: 'query', schema: { type: 'string' }, description: 'Contained in any named value' },
+];
 const list = (item: object) => ({ type: 'object', required: ['items'], properties: { items: { type: 'array', items: item }, next: { type: 'string', description: 'Absent on the last page' } } });
 const ref = (name: string) => ({ $ref: `#/components/schemas/${name}` });
 const data = { type: 'object', additionalProperties: true };
@@ -37,7 +44,7 @@ export function openApiV3(origin: string) {
                 requestBody: body({ type: 'object', properties: { data, startNodeId: { type: 'string' } } }),
                 responses: { 201: answer('The instance, and this user\'s first task in it', { type: 'object', properties: { instance: ref('Instance'), task: { oneOf: [ref('Task'), { type: 'null' }] } } }), ...errors(400, 401, 404) },
             } },
-            '/tasks': { get: { operationId: 'listTasks', summary: 'The waiting tasks this user has a part in, oldest first; with status=completed, the ones they completed, newest first', parameters: [...page, { name: 'status', in: 'query', schema: { enum: ['waiting', 'completed'] }, description: 'completed: the latest this user completed (limit, default 10)' }], responses: { 200: answer('A page', list(ref('Task'))), ...errors(400, 401) } } },
+            '/tasks': { get: { operationId: 'listTasks', summary: 'The waiting tasks this user has a part in, oldest first; with status=completed, the ones they completed, newest first', parameters: [...page, { name: 'status', in: 'query', schema: { enum: ['waiting', 'completed'] }, description: 'completed: the latest this user completed (limit, default 10)' }, { name: 'model', in: 'query', schema: { type: 'string' }, description: 'Only this model\'s tasks; its named values for field and search' }, ...byLabel], responses: { 200: answer('A page', list(ref('Task'))), ...errors(400, 401) } } },
             '/tasks/{id}': { get: { operationId: 'getTask', summary: 'One task, with its instance\'s data and its form', parameters: [id('id', 'The task')], responses: { 200: answer('The task', ref('TaskWithForm')), ...errors(401, 404) } } },
             '/tasks/{id}/claim': { post: { operationId: 'claimTask', summary: 'The task becomes this user\'s', parameters: [id('id', 'The task')], responses: { 200: answer('The task', { type: 'object', properties: { task: ref('Task') } }), ...errors(401, 404, 409) } } },
             '/tasks/{id}/complete': { post: {
@@ -47,7 +54,7 @@ export function openApiV3(origin: string) {
             } },
             '/instances': { get: {
                 operationId: 'listInstances', summary: 'The instances this user may see, newest first',
-                parameters: [{ name: 'status', in: 'query', schema: { type: 'string' } }, { name: 'name', in: 'query', schema: { type: 'string' } }, ...page],
+                parameters: [{ name: 'status', in: 'query', schema: { type: 'string' } }, { name: 'name', in: 'query', schema: { type: 'string' }, description: 'Only this model\'s instances; its named values for field and search' }, ...page, ...byLabel],
                 responses: { 200: answer('A page', list(ref('Instance'))), ...errors(400, 401) },
             } },
             '/instances/{id}': {
@@ -156,16 +163,20 @@ export function openApiV3(origin: string) {
                 Me: { type: 'object', properties: { userName: { type: 'string' }, groups: { type: 'array', items: { type: 'string' } }, credential: { enum: ['token', 'service'] }, may: { type: 'object', properties: { start: { type: 'boolean' }, design: { type: 'boolean' }, administer: { type: 'boolean' } } } } },
                 Form: { type: 'object', properties: { fields: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, label: { type: 'string' }, type: { type: 'string' }, defaultValue: {}, values: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, name: { type: 'string' } } } }, validation: { type: 'array', items: { type: 'object' } } } } }, formKey: { type: 'string' } } },
                 Startable: { type: 'object', properties: { processName: { type: 'string' }, startNodeId: { type: 'string' }, name: { type: 'string' }, documentation: { type: 'string' }, form: ref('Form') } },
-                Task: { type: 'object', properties: { id: { type: 'string' }, instanceId: { type: 'string' }, processName: { type: 'string' }, elementId: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, assignee: { type: 'string' }, candidateUsers: {}, candidateGroups: {}, startedAt: { type: 'string' }, endedAt: { type: 'string' }, dueDate: { type: 'string' }, followUpDate: { type: 'string' }, priority: {}, completedBy: { type: 'string' } } },
+                Task: { type: 'object', properties: { id: { type: 'string' }, instanceId: { type: 'string' }, processName: { type: 'string' }, elementId: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, assignee: { type: 'string' }, candidateUsers: {}, candidateGroups: {}, startedAt: { type: 'string' }, endedAt: { type: 'string' }, dueDate: { type: 'string' }, followUpDate: { type: 'string' }, priority: {}, completedBy: { type: 'string' },
+                    label: { type: 'string', description: 'Its own label, else its name and its case\'s; filled in when answered' }, labelValues: { type: 'array', items: ref('LabelValue') },
+                    caseLabel: { type: 'string', description: 'Its case\'s label' }, caseLabelValues: { type: 'array', items: ref('LabelValue') } } },
+                LabelValue: { type: 'object', description: 'A named value of a label', properties: { name: { type: 'string' }, path: { type: 'string', description: 'The data path it reads' }, value: {} } },
                 TaskWithForm: { allOf: [ref('Task'), { type: 'object', properties: { data, form: ref('Form') } }] },
-                Instance: { type: 'object', properties: { id: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, startedAt: { type: 'string' }, endedAt: { type: ['string', 'null'] }, data } },
+                Instance: { type: 'object', properties: { id: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, startedAt: { type: 'string' }, endedAt: { type: ['string', 'null'] }, data,
+                    label: { type: 'string', description: 'Its label (the model\'s camunda:label, the application\'s, else <model> #<caseId>): on the lists, one instance, a start and a completion' }, labelValues: { type: 'array', items: ref('LabelValue') } } },
                 User: { type: 'object', properties: { userName: { type: 'string' }, email: { type: ['string', 'null'] }, groups: { type: 'array', items: { type: 'string' } } } },
                 Issue: { type: 'object', properties: { code: { type: 'string' }, element: { type: ['string', 'null'] }, message: { type: 'string' } } },
                 Check: { type: 'object', properties: { name: { type: 'string' }, valid: { type: 'boolean' }, errors: { type: 'array', items: ref('Issue') }, warnings: { type: 'array', items: ref('Issue') } } },
                 ModelSaved: { allOf: [ref('Check'), { type: 'object', properties: { created: { type: 'boolean' }, laidOut: { type: 'boolean' }, url: { type: 'string' } } }] },
                 TestRun: { type: 'object', properties: { name: { type: 'string' }, passed: { type: 'integer' }, failed: { type: 'integer' }, skipped: { type: 'integer' }, scenarios: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, status: { enum: ['passed', 'failed', 'skipped'] }, failedStep: { type: 'string' }, error: { type: 'string' }, instances: { type: 'array', items: { type: 'string' } } } } } } },
                 RuleResult: { type: 'object', properties: { decision: { type: 'string', description: 'The decision\'s id' }, file: { type: 'string' }, result: { description: 'Its output: an object, or a list of them for a table with several hits' } } },
-                InstanceWithItems:{ allOf: [ref('Instance'), { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } } } }] },
+                InstanceWithItems:{ allOf: [ref('Instance'), { type: 'object', properties: { items: { type: 'array', items: { type: 'object', properties: { label: { type: 'string', description: 'When its element has a label' }, labelValues: { type: 'array', items: ref('LabelValue') } } } } } }] },
             },
         },
     };

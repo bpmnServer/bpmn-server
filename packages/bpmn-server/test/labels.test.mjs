@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { parseTemplate, fillTemplate, templateProblems, modelLabels, labelInstances, labelItems, labelFields, labelQuery, verifyModel } from '../dist/index.js';
+import { parseTemplate, fillTemplate, templateProblems, formatTemplate, setNamedValue, addNamedValue, removeNamedValue, modelLabels, labelInstances, labelItems, labelFields, labelQuery, verifyModel } from '../dist/index.js';
 import { makeServer, definitionsFolder } from './helpers.mjs';
 
 const EXPENSE = (caseLabel = 'Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}') => `<?xml version="1.0" encoding="UTF-8"?>
@@ -50,6 +50,22 @@ test('a template: text, named values, plain placeholders; a missing value takes 
   assert.equal(fillTemplate('Client: ${Client = data.clientId} · Order: ${Order = data.none}', scope).text, 'Client: abc');
   assert.equal(fillTemplate('Due ${data.when}, items ${data.list}', scope).text, 'Due 2026-01-02T00:00:00.000Z, items 1, 2');
   assert.deepEqual(fillTemplate('${data.toString}${data.constructor}', scope), { text: '', values: [] }, 'own fields only, never internals');
+});
+
+test("a template edited by its named values (the editor's table): rename, change a path, add, remove", () => {
+  const t = 'Client: ${Client = data.clientId} · Order: ${Order = data.orderNo} (${data.note})';
+  assert.equal(formatTemplate(parseTemplate(t)), t, 'parts and back');
+  assert.equal(setNamedValue(t, 0, { name: 'Customer' }), 'Customer: ${Customer = data.clientId} · Order: ${Order = data.orderNo} (${data.note})', 'its caption follows');
+  assert.equal(setNamedValue(t, 1, { path: 'data.order.no' }), 'Client: ${Client = data.clientId} · Order: ${Order = data.order.no} (${data.note})');
+  assert.equal(setNamedValue('Ref ${Order = data.no}', 0, { name: 'No' }), 'Ref ${No = data.no}', 'a caption of its own stays');
+  assert.equal(setNamedValue(t, 5, { name: 'X' }), t, 'no such value');
+  assert.equal(addNamedValue(t, 'Amount', 'data.amount'), t + ' · Amount: ${Amount = data.amount}');
+  assert.equal(addNamedValue('', 'Client', 'data.clientId'), 'Client: ${Client = data.clientId}');
+  assert.equal(removeNamedValue(t, 1), 'Client: ${Client = data.clientId} (${data.note})', 'with its caption');
+  assert.equal(removeNamedValue(t, 0), 'Order: ${Order = data.orderNo} (${data.note})', 'the separator left trimmed');
+  assert.equal(removeNamedValue('Client: ${Client = data.clientId}', 0), '');
+  for (const edited of [setNamedValue(t, 0, { name: 'Customer' }), addNamedValue(t, 'Amount', 'data.amount'), removeNamedValue(t, 0)])
+    assert.deepEqual(templateProblems(edited), [], edited);
 });
 
 test('a template is checked: data paths only, a name once', () => {
@@ -97,6 +113,28 @@ test("a case is labeled by its own model's template: a later model doesn't relab
   const [instance] = await labelInstances(srv, [await load(srv, run.id)]);
   assert.equal(instance.label, 'Client: abc · Order: 1', 'the source it kept');
   await srv.shutdown();
+});
+
+test("a case read without its source (a summary, an API's) is still labeled by its own model's template", async () => {
+  const { server: srv, dir } = await server();
+  const run = await srv.engine.start('Expense', { clientId: 'abc', orderNo: 1, amount: 5, levels: [] }, null, 'ann');
+  fs.writeFileSync(path.join(dir, 'Expense.bpmn'), EXPENSE('Customer ${Customer = data.customer}'));
+  await srv.definitions.rebuild();
+  const [summary] = await srv.dataStore.findInstances({ id: run.id }, 'summary');
+  assert.equal(summary.source, undefined, 'a summary has no source');
+  const [instance] = await labelInstances(srv, [summary]);
+  assert.equal(instance.label, 'Client: abc · Order: 1', 'its source, read for it');
+  await srv.shutdown();
+});
+
+test('missing values: none, null, empty or only spaces take their caption along; a partial label keeps the rest', () => {
+  const template = 'Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}';
+  for (const clientId of [undefined, null, '', '   ', '	'])
+    assert.deepEqual(fillTemplate(template, { data: { clientId, orderNo: 1 } }), { text: 'Order: 1', values: [{ name: 'Order', path: 'data.orderNo', value: 1 }] }, JSON.stringify(clientId));
+  assert.equal(fillTemplate(template, { data: { clientId: 'abc' } }).text, 'Client: abc', 'the last one missing');
+  assert.equal(fillTemplate(template, { data: { nested: {} } }).text, '', 'all missing: empty, so the default applies');
+  assert.equal(fillTemplate('Client: ${data.customer.name}', { data: { customer: null } }).text, '', 'a missing parent');
+  assert.equal(fillTemplate(template, { data: { clientId: 0, orderNo: false } }).text, 'Client: 0 · Order: false', 'zero and false are values');
 });
 
 test("tasks: their label and their case's, from the cases' own sources", async () => {

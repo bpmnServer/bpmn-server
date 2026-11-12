@@ -72,6 +72,7 @@ function expectChecks(expect) {
 export default class TestPanel {
     constructor(config, eventBus, bpmnjs, elementRegistry, canvas, overlays, selection) {
         this._config = config || {};
+        this._eventBus = eventBus;
         this._selection = selection;
         this._overlays = overlays;
         this._simulation = null;        // a simulation: { frames, index, timer, paused }
@@ -893,6 +894,21 @@ export default class TestPanel {
                     el('p', { class: 'test-hint' }, 'A scenario tests the process: add one with New, then Record it by doing its steps.'))));
         const main = this._root.querySelector('.test-main');
         if (main) main.scrollTop = scrolled;
+        // what the Label group previews may have changed (labelPreview)
+        this._eventBus.fire('testPanel.changed');
+    }
+
+    /**
+     * The data the Label group previews labels with (properties/LabelGroup.jsx): the scenario shown's last run (its
+     * instance's data and items), else its start data; null when no scenario is shown.
+     */
+    labelPreview() {
+        const scenario = this._current;
+        if (!scenario) return null;
+        const instance = this._lastRun(scenario);
+        const model = this._config.processName;
+        if (instance) return { data: instance.data ?? {}, items: instance.items ?? [], scenario: scenario.name, run: true, model };
+        return { data: scenario.start?.data ?? {}, items: [], scenario: scenario.name, run: false, model };
     }
 
     /** The list's width, on the tab's root: it stays when the panel is drawn again. */

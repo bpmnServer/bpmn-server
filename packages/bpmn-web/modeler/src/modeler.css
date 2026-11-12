@@ -1427,3 +1427,15 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .test-step > .test-steps-rows, .test-step > .test-steps-head { grid-column: 1 / -1; }
 .test-steps-rows > summary .test-steps-status { margin-left: 12px; }
 .test-steps-rows > summary .test-step-add-check { margin-left: 12px; }
+
+/* the Label group (properties/LabelGroup.jsx): a label's preview, and its named values */
+.bpmn-server-label-preview { margin: -4px 12px 6px; font-size: 12px; color: var(--color-grey-225-10-35, #444); }
+.bpmn-server-label-preview.muted, .bpmn-server-label-preview-from { color: var(--color-grey-225-10-55, #888); }
+.bpmn-server-label-preview-text { font-weight: 600; }
+.bpmn-server-label-values { margin: 0 12px 10px; font-size: 12px; }
+.bpmn-server-label-values table { width: 100%; border-collapse: collapse; }
+.bpmn-server-label-values th { text-align: left; font-weight: 500; color: var(--color-grey-225-10-55, #888); padding: 2px 4px; }
+.bpmn-server-label-values td { padding: 2px 4px; }
+.bpmn-server-label-values td:last-child { width: 1%; white-space: nowrap; }
+.bpmn-server-label-values input { width: 100%; box-sizing: border-box; font: inherit; padding: 2px 4px; }
+.bpmn-server-label-values button { font: inherit; padding: 1px 6px; }

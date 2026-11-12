@@ -271,5 +271,7 @@ before named-value columns can be added there.
    `verifyModel` checks; the stored labels, `app.config.json` and `views` out of the labels PR.
 2. The lists: the Case and Label columns, per-model columns, the filter bar and search everything, as database
    queries on the named paths; the filter in the URL.
-3. The APIs: labels in results, the same filters.
-4. The editor's Label group.
+3. The APIs: labels in results, the same filters. *Done in API v3* (`routes/api/labels.ts`); `/api` and `/api2`
+   stay as they are.
+4. The editor's Label group. *Done:* the template checked as typed, its preview from the Test tab's scenario, and
+   the table of its named values.

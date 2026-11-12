@@ -31,8 +31,9 @@ On the process, in the editor's **Label** group (*Case label*), or in the XML:
 
 A case with `{ clientId: 'abc', orderNo: 1234 }` is shown as `Client: abc · Order: 1234`.
 
-**A missing value takes its name along.** If `data.clientId` is empty, `Client: ` goes too, and the case is shown
-as `Order: 1234`. When every value is missing, the default applies.
+**A missing value takes its name along.** If `data.clientId` is missing (none, null, empty, or only spaces),
+`Client: ` goes too, and the case is shown as `Order: 1234`. Zero and `false` are values. When every value is
+missing, the default applies.
 
 ## An element's label
 
@@ -42,6 +43,17 @@ Any element on the diagram may have its own, in the **Label** group:
 - **Label once done**, once it has ended: `Approved by ${completedBy}`.
 
 ![Drive selected: its Label and Label once done](images/labels/editor-element-label.png)
+
+### In the editor
+
+Under each label field:
+
+- **A preview:** the label filled in from the Test tab's scenario: its last run's data, else its start data
+  (*Client: acme · Order: 1234 · Acme claim's start data*). An element's label sees its fields from that run, and
+  the case's named values as `instance.*`. With no scenario open in the Test tab, it says so.
+- **Its named values**, a row each: change a name (a caption that says the old name, `Order: `, follows) or a path
+  in place; × removes one with its caption; *Add* appends one, captioned (`· Amount: ${Amount = data.amount}`). A
+  name used twice, or a path that isn't one, is marked before it can be added.
 
 ### Where labels are shown
 
@@ -85,8 +97,9 @@ A value is shown as text: a date in ISO form, a list joined with commas, an obje
 
 ## When labels are filled in
 
-When they are shown, from the case's data and from **the case's own model**: a case keeps the model it started
-with, so a later version of the model doesn't relabel it. Nothing is stored. An element that has ended shows its
+When they are shown, from the case's data and from **the model the case runs**: with `SAVE_SOURCE=true` a case
+keeps the model it started with, so a later version of the model doesn't relabel it; without it, a case runs (and
+is labeled by) the model's current version. Nothing is stored. An element that has ended shows its
 *Label once done* filled from its data as it is now; a label that must stay as it was should use the element's own
 fields (`completedBy`).
 
@@ -143,4 +156,24 @@ but indexing is configuration, apart from labels.
 In code: `labelFields(server)` lists the named values the models offer, and `labelQuery(fields, filter)` makes the
 query (`{ model, field, op, value, search }`), to add to `findInstances` or `findItems`.
 
-Columns of named values in the lists, and filters in the APIs, are next. See the design, `docs/design/labels.md`.
+## In API v3
+
+Every task and instance API v3 answers carries its label, filled in the same way when it is answered:
+
+- **A task** (`GET /tasks`, `GET /tasks/{id}`, a claim, a completion, a start's first task): `label` (its own, else
+  its name, then its case's), `labelValues` (its own named values), `caseLabel` and `caseLabelValues`.
+- **An instance** (`GET /instances`, `GET /instances/{id}`, a start's and a completion's): `label` and
+  `labelValues`; on `GET /instances/{id}`, each item with a label of its own has `label` and `labelValues` too.
+
+A named value is `{ name, path, value }`. `GET /tasks` and `GET /instances` take the lists' filter:
+`field`, `op` (`contains`, the default, or `is`), `value`, and `search`; `model` on `/tasks` and `name` on
+`/instances` limit it to one model. An `op` other than those two is a 400 `BAD_FILTER`.
+
+```
+GET /api/v3/tasks?field=Client&op=is&value=acme
+GET /api/v3/instances?name=Buy%20Used%20Car&search=porsche
+```
+
+`/api` and `/api2` are unchanged: they answer no labels.
+
+Columns of named values in the lists are next. See the design, `docs/design/labels.md`.
