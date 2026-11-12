@@ -226,6 +226,8 @@ and here
   number by its seq. Decision entries in the logs keep their lines.
 
 ### Fixed
+- **A sequence flow with no condition shows its Condition group as empty again** in the editor's panel: the Language
+  (JavaScript, the default) counted as a value; it counts only when it is not the default (FEEL).
 - **The Test tab's Run is offered for a scenario with no steps** (a start, then what is expected checked: a process that
   runs to its end by itself, or stops at its first wait); it was greyed out until steps were recorded.
 - **After starting a process or completing a task, a user goes back to My work**, where their next task is; only

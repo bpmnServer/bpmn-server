@@ -103,7 +103,9 @@ export function ConditionGroup(element, translate) {
         shouldOpen: true,     // what decides whether the flow is taken is not left folded away
         entries: [
             // the language first: FEEL can be picked before the condition is written
-            { id: 'conditionLanguage', element, component: ConditionLanguageField, isEdited: isSelectEntryEdited },
+            // the language is a value of its own only when it is not the default (JavaScript): a flow with no
+            // condition keeps its group shown as empty
+            { id: 'conditionLanguage', element, component: ConditionLanguageField, isEdited: node => isSelectEntryEdited(node) && node.value !== 'JavaScript' },
             codeEntry(element, {
                 id: 'conditionExpression', label: 'Condition', mode: feel ? 'feel' : statements ? 'script' : 'expression', rows: 2,
                 description: isDefault
