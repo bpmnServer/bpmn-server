@@ -74,8 +74,8 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       <bpmn2:outgoing>datesRight</bpmn2:outgoing>
       <bpmn2:outgoing>datesWrong</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
-    <bpmn2:userTask id="Approve" name="Approve">
-      <bpmn2:documentation>In the Manager lane: offered to everyone in the Manager group. The outcome decides the path; the comment goes to the employee.</bpmn2:documentation>
+    <bpmn2:userTask id="Approve" name="Approve" camunda:assignmentPolicy="LeaveApproval">
+      <bpmn2:documentation>Assigned by the policy LeaveApproval (policies/LeaveApproval.dmn.xml): over 10 days to HR, else to the Manager group. The outcome decides the path; the comment goes to the employee.</bpmn2:documentation>
       <bpmn2:extensionElements>
         <camunda:formData>
           <camunda:formField id="approval" label="Approval Outcome" type="enum">
@@ -195,18 +195,20 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       <bpmndi:BPMNShape id="LeaveParticipant_di" bpmnElement="LeaveParticipant" isHorizontal="true">
         <dc:Bounds x="100" y="40" width="1220" height="620" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EmployeeLane_di" bpmnElement="EmployeeLane" isHorizontal="true">
-        <dc:Bounds x="130" y="40" width="1190" height="180" />
+      <bpmndi:BPMNShape id="HRLane_di" bpmnElement="HRLane" isHorizontal="true">
+        <dc:Bounds x="130" y="420" width="1190" height="240" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ManagerLane_di" bpmnElement="ManagerLane" isHorizontal="true">
         <dc:Bounds x="130" y="220" width="1190" height="200" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="HRLane_di" bpmnElement="HRLane" isHorizontal="true">
-        <dc:Bounds x="130" y="420" width="1190" height="240" />
+      <bpmndi:BPMNShape id="EmployeeLane_di" bpmnElement="EmployeeLane" isHorizontal="true">
+        <dc:Bounds x="130" y="40" width="1190" height="180" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="162" y="122" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="147" y="165" width="66" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="147" y="165" width="66" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="MergeRequest_di" bpmnElement="MergeRequest" isMarkerVisible="true">
         <dc:Bounds x="220" y="115" width="50" height="50" />
@@ -219,17 +221,9 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DatesOk_di" bpmnElement="DatesOk" isMarkerVisible="true">
         <dc:Bounds x="585" y="115" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="645" y="133" width="64" height="14" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="MergeTell_di" bpmnElement="MergeTell" isMarkerVisible="true">
-        <dc:Bounds x="1000" y="115" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Tell_di" bpmnElement="Tell">
-        <dc:Bounds x="1090" y="100" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Done_di" bpmnElement="Done">
-        <dc:Bounds x="1240" y="122" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1240" y="165" width="36" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="645" y="133" width="64" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve">
         <dc:Bounds x="560" y="270" width="100" height="80" />
@@ -239,11 +233,15 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Reminded_di" bpmnElement="Reminded">
         <dc:Bounds x="262" y="292" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="245" y="335" width="70" height="27" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="245" y="335" width="70" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Decision_di" bpmnElement="Decision" isMarkerVisible="true">
         <dc:Bounds x="725" y="285" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="785" y="273" width="54" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="785" y="273" width="54" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="MergeRecord_di" bpmnElement="MergeRecord" isMarkerVisible="true">
         <dc:Bounds x="805" y="475" width="50" height="50" />
@@ -254,13 +252,29 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       <bpmndi:BPMNShape id="FixRecord_di" bpmnElement="FixRecord">
         <dc:Bounds x="560" y="540" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ReminderTimer_di" bpmnElement="ReminderTimer">
-        <dc:Bounds x="592" y="332" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="634" y="365" width="62" height="14" /></bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="MergeTell_di" bpmnElement="MergeTell" isMarkerVisible="true">
+        <dc:Bounds x="1000" y="115" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Tell_di" bpmnElement="Tell">
+        <dc:Bounds x="1090" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Done_di" bpmnElement="Done">
+        <dc:Bounds x="1240" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1240" y="165" width="36" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="RecordFailed_di" bpmnElement="RecordFailed">
         <dc:Bounds x="922" y="522" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="960" y="560" width="64" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="960" y="560" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReminderTimer_di" bpmnElement="ReminderTimer">
+        <dc:Bounds x="592" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="634" y="365" width="62" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="toRequest_di" bpmnElement="toRequest">
         <di:waypoint x="198" y="140" />
@@ -281,14 +295,18 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       <bpmndi:BPMNEdge id="datesRight_di" bpmnElement="datesRight">
         <di:waypoint x="610" y="165" />
         <di:waypoint x="610" y="270" />
-        <bpmndi:BPMNLabel><dc:Bounds x="618" y="200" width="20" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="618" y="200" width="20" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="datesWrong_di" bpmnElement="datesWrong">
         <di:waypoint x="610" y="115" />
         <di:waypoint x="610" y="80" />
         <di:waypoint x="245" y="80" />
         <di:waypoint x="245" y="115" />
-        <bpmndi:BPMNLabel><dc:Bounds x="400" y="62" width="76" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="400" y="62" width="76" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toDecision_di" bpmnElement="toDecision">
         <di:waypoint x="660" y="310" />
@@ -308,7 +326,9 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
         <di:waypoint x="775" y="310" />
         <di:waypoint x="830" y="310" />
         <di:waypoint x="830" y="475" />
-        <bpmndi:BPMNLabel><dc:Bounds x="790" y="292" width="50" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="790" y="292" width="50" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toRecordTask_di" bpmnElement="toRecordTask">
         <di:waypoint x="855" y="500" />
@@ -320,14 +340,18 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
         <di:waypoint x="985" y="240" />
         <di:waypoint x="985" y="140" />
         <di:waypoint x="1000" y="140" />
-        <bpmndi:BPMNLabel><dc:Bounds x="760" y="243" width="46" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="760" y="243" width="46" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="needInformation_di" bpmnElement="needInformation">
         <di:waypoint x="750" y="335" />
         <di:waypoint x="750" y="405" />
         <di:waypoint x="245" y="405" />
         <di:waypoint x="245" y="165" />
-        <bpmndi:BPMNLabel><dc:Bounds x="260" y="388" width="104" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="260" y="388" width="104" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toTell_di" bpmnElement="toTell">
         <di:waypoint x="990" y="500" />

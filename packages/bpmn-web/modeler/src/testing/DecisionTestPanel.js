@@ -29,7 +29,8 @@ export default class DecisionTestPanel {
         window.addEventListener('pagehide', () => { if (this._saveTimer) this._save({ keepalive: true }); });
     }
 
-    get url() { return `/model/decision/${encodeURIComponent(this._config.name)}/tests`; }
+    /** The tests of this page's decision: a decision's (/model/decision/<name>) or an assignment policy's (/model/policy/<name>). */
+    get url() { return `${window.location.pathname.replace(/\/$/, '')}/tests`; }
 
     /** Edits not saved yet. */
     get pending() { return Boolean(this._saveTimer); }

@@ -79,6 +79,9 @@ The following properties can be defined for each `User Task`
 
 Values provided in the model editor, can be static string or an [Model Expressions](scripting.md#ModelExpressions)
 
+A task can instead name an [assignment policy](assignment-policies.md): a decision table, kept with the models,
+whose first matching rule assigns it when it starts.
+
 #### Process Initiator
 You can define the variable name for the instance initiator 
 

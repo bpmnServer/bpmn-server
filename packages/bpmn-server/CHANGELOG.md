@@ -15,6 +15,17 @@ and here
 
 ## [Unreleased]
 ### Added
+- **In place of PR #286's proposals:** labels are templates in the model, filled in when shown and never stored (no
+  `display` settings, no label saved at each save); roles and assignment are `roles.json` and DMN policies in
+  `policies/` (no `resolveAssignment` hook, no `camunda:properties`, no `assignment` settings): a policy's output
+  can be a `$(...)` expression to reach the application's code. The delegate's optional `instanceLabel` stays.
+- **Assignment policies** (docs/docs/assignment-policies.md, `engine/AssignmentPolicy.ts`), a first try: a user task's
+  `camunda:assignmentPolicy` names a DMN table in `policies/<name>.dmn.xml`; when the task starts, its first matching
+  rule sets `assignee`, `candidateUsers` and `candidateGroups` (a FEEL value, or a `$(...)` model expression), over the
+  task's attributes and lane. The item keeps `assignment: { policy, rule }`; the Rationale says who and why, or why
+  nobody (no match, no policy, a failing one: the task is not failed). `roles.json` lists the roles (`roleNames`, `saveRoleNames`, `roleUses`: where each is used). `verifyModel`:
+  `assignment-policy-not-found`, `assignment-policy-invalid`, `assignment-policy-output`, `role-unknown`,
+  `roles-invalid`. `DMNEngine` keeps output cells a caller names as text (`keepOutput`) and the rules matched (`matched`).
 - **Labels** (docs/docs/labels.md, `engine/Labels.ts`): `camunda:label` on the process, `camunda:label` and
   `camunda:endLabel` on any element, templates with their values named (`Client: ${Client = data.clientId}`);
   filled in when shown, from the case's data and its own model, nothing stored: `labelInstances`, `labelItems`,

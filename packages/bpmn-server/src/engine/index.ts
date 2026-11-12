@@ -9,3 +9,4 @@ export * from './SandboxScriptHandler.js';
 export * from './DataHandler.js';
 export * from './TestStubs.js';
 export * from './Labels.js';
+export * from './AssignmentPolicy.js';

@@ -14,6 +14,16 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **In place of PR #281's `.env` columns** (`INSTANCE_COLUMNS`, `TASK_COLUMNS`: not added) **and PR #286's
+  proposals:** a case's label says what its values are, and the lists' filter by label finds any value it shows; #281's
+  safe reading and display of values is kept in `engine/LabelTemplate.ts`. Whether named values also become columns is
+  open until the labels are tried. Roles and assignment policies are kept with the models (see bpmn-server's changelog).
+- **Roles on the Administration page** (docs/docs/assignment-policies.md#roles): `roles.json`'s roles, each with
+  where it is used and its users; add and remove; the names lanes and policies use that it doesn't list, to add.
+- **Assignment policies in the editor** (docs/docs/assignment-policies.md): a user task's **Assignment policy**, in
+  User assignment, chosen from the models folder's `policies/`; Open and New policy; a preview with the Test tab's
+  scenario. `/model/policy/<name>` edits a policy in the decision editor, with its tests; `GET /model/policies`,
+  `POST /model/policy/<name>/preview`. The decision editor's Test tab asks its own page's tests.
 - **Labels in API v3** (docs/docs/labels.md#in-api-v3, `routes/api/labels.ts`): tasks answer `label`,
   `labelValues`, `caseLabel` and `caseLabelValues`; instances `label` and `labelValues` (and their items, on
   `GET /instances/{id}`). `GET /tasks` and `GET /instances` take the filter by label (`field`, `op`, `value`,
@@ -34,8 +44,6 @@ and here
 - **The model editor's Label group:** *Case label* on the process, *Label* and *Label once done* on any element of
   the diagram; a template checked as it is typed (`camunda:label`, `camunda:endLabel` declared in the editor's
   descriptor).
-- PR #281 (extra columns from `INSTANCE_COLUMNS` / `TASK_COLUMNS`) is superseded by labels: its safe reading and
-  display of values is kept in `engine/LabelTemplate.ts`; columns from labels' named values come next.
 - **An application's own sign-in: `start({ userManager })`.** An application that signs people in itself gives
   bpmn-web its user manager (`IUserManager`: `init(app)` for its sessions and `req.user`, `setup(app)` for `/login` and
   `/logout`, optional `apiUser(req)` for its API credential). bpmn-web then keeps no users, sessions or credentials of
@@ -57,14 +65,6 @@ and here
 - The Settings page's tables are made from the settings schema (`npm run features`), so the two can not drift; some
   descriptions in the schema now say what the page said.
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
-- **Extra columns in the Instances list and the Pending Tasks table:** `INSTANCE_COLUMNS` and `TASK_COLUMNS`
-  (`Label:field` pairs, comma-separated; `field` is a path in the instance data, e.g. `customer.name`), or
-  `start({ listColumns: { instances, tasks } })`, which wins for a table it names. They follow Case Id; a task's
-  values come from its instance's data. A missing field is empty, a list or object is shown as text, values are
-  escaped, and an entry that is not `Label:field` is left out with a `[config]` warning. Without them the tables
-  are as before (`runtime/listColumns.ts`; the types `IListColumn` and `IListColumns` are exported).
-
-### Changed
 - **My work and the start page use API v3's operations in the server's process**, as the person API v3 would take
   (`pageClient.ts`), instead of calling the server's own address with a token held in the session. They work with
   `HTTPS=true` (the call to `http://127.0.0.1` failed there), and a person's groups changed apply at once (the token

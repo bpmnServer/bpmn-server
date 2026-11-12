@@ -27,6 +27,8 @@ interface IItemData {
     assignee;
     candidateGroups;
     candidateUsers;
+    /** what decided the assignment: the task's policy and its rule (engine/AssignmentPolicy.ts) */
+    assignment?: { policy: string; rule?: number };
     dueDate;
     followUpDate;
     priority;

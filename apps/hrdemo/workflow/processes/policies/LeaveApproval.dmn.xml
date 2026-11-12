@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="LeaveApproval_definitions" name="Leave approval" namespace="http://bpmn-server/dmn">
+  <decision id="LeaveApproval" name="Leave approval">
+    <decisionTable id="LeaveApproval_table" hitPolicy="FIRST">
+      <input id="LeaveApproval_days" label="Days">
+        <inputExpression id="LeaveApproval_daysExpression" typeRef="number">
+          <text>days</text>
+        </inputExpression>
+      </input>
+      <output id="LeaveApproval_assignee" label="Assignee" name="assignee" typeRef="string" />
+      <output id="LeaveApproval_candidateGroups" label="Candidate groups" name="candidateGroups" typeRef="string" />
+      <rule id="LeaveApproval_long">
+        <description>A long leave: HR approves it</description>
+        <inputEntry id="LeaveApproval_long_days"><text>&gt; 10</text></inputEntry>
+        <outputEntry id="LeaveApproval_long_assignee"><text></text></outputEntry>
+        <outputEntry id="LeaveApproval_long_groups"><text>"HR"</text></outputEntry>
+      </rule>
+      <rule id="LeaveApproval_other">
+        <description>Any other: a manager approves it</description>
+        <inputEntry id="LeaveApproval_other_days"><text>-</text></inputEntry>
+        <outputEntry id="LeaveApproval_other_assignee"><text></text></outputEntry>
+        <outputEntry id="LeaveApproval_other_groups"><text>"Manager"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="LeaveApproval_diagram">
+      <dmndi:DMNShape id="LeaveApproval_shape" dmnElementRef="LeaveApproval">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

@@ -22,6 +22,8 @@ class Item implements IItem {
     assignee;
     candidateGroups;
     candidateUsers;
+    /** what decided the assignment: the task's policy and its rule (engine/AssignmentPolicy.ts) */
+    assignment?: { policy: string; rule?: number };
     dueDate;
     followUpDate;
     priority;
@@ -79,6 +81,7 @@ class Item implements IItem {
             assignee:this.assignee,
             candidateGroups:this.candidateGroups,
             candidateUsers:this.candidateUsers,
+            ...(this.assignment ? { assignment: this.assignment } : {}),
             dueDate:this.dueDate,
             followUpDate:this.followUpDate,
             timerCount: this.timerCount, timerRepeat: this['timerRepeat'],
@@ -105,6 +108,7 @@ class Item implements IItem {
         item.assignee= dataObject.assignee;
         item.candidateGroups=dataObject.candidateGroups;
         item.candidateUsers=dataObject.candidateUsers;
+        item.assignment=dataObject.assignment;
         item.dueDate=dataObject.dueDate;
         item.followUpDate=dataObject.followUpDate;
         item.priority=dataObject.priority;

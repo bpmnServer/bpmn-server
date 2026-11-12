@@ -15,7 +15,12 @@ import { evaluate as feelEvaluate, unaryTest } from 'feelin';
 import { DMNParser, legacyTest } from './DMNParser.js';
 import type { DMNDefinitions, Decision, DecisionTable } from './DMNParser.js';
 
-type DMNOptions = { debug?: boolean; log?: (message: string) => void };
+type DMNOptions = {
+    debug?: boolean;
+    log?: (message: string) => void;
+    /** an output cell to keep as its text, not evaluated as FEEL (an assignment policy's `$(...)`: engine/AssignmentPolicy.ts) */
+    keepOutput?: (cell: string) => boolean;
+};
 
 /** Where a decision was found. */
 type FoundDecision = { filePath: string; definitions: DMNDefinitions; decision: Decision };
@@ -28,6 +33,8 @@ class DMNEngine {
     definitions: DMNDefinitions;
     decision: Decision;
     private options: DMNOptions;
+    /** the rules the last table evaluated matched, numbered from 1 */
+    matched: number[] = [];
 
     constructor(options: DMNOptions = { debug: false }) {
         this.options = options;
@@ -142,6 +149,7 @@ class DMNEngine {
             const record = {};
             table.outputs.forEach((o, c) => {
                 const cell = table.rules[r].outputEntries[c];
+                if (this.options.keepOutput?.(cell)) { record[o.name] = cell.trim(); return; }
                 try {
                     record[o.name] = coerce(this.value(cell, context), o.typeRef);
                 }
@@ -151,6 +159,7 @@ class DMNEngine {
             });
             return record;
         };
+        this.matched = matched.map(r => r + 1);
         const inputsText = table.inputs.map((i, c) => `${i.expression}=${JSON.stringify(values[c])}`).join(', ');
         this.log(`..decision ${decision.name} (${table.hitPolicy}${table.aggregation ? ' ' + table.aggregation : ''}): ${inputsText}; rules matched: ${matched.length ? matched.map(r => r + 1).join(', ') : 'none'}`);
 

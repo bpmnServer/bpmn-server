@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="Approval_definitions" name="Approval" namespace="http://bpmn-server/dmn">
+  <decision id="Approval" name="Approval">
+    <decisionTable id="Approval_table" hitPolicy="FIRST">
+      <input id="Approval_input1" label="Priority">
+        <inputExpression id="Approval_inputExpression1" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_08wnrs1" label="Size">
+        <inputExpression id="LiteralExpression_09nh05k" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Approval_assignee" label="Assignee" name="assignee" typeRef="string" />
+      <output id="Approval_candidateGroups" label="Candidate groups" name="candidateGroups" typeRef="string" />
+      <rule id="DecisionRule_0efophl">
+        <inputEntry id="UnaryTests_08qekb3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vdl9i2">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0d7aa1j">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yi2or2">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="Approval_diagram">
+      <dmndi:DMNShape id="Approval_shape" dmnElementRef="Approval">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

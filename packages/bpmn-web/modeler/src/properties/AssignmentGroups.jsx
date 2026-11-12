@@ -3,6 +3,7 @@
 import { Group } from '@bpmn-io/properties-panel';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
+import { policyEntries } from './PolicyEntries.jsx';
 
 const VALUE_HELP = 'A name, a comma-separated list, or an expression such as $data.manager';
 const DATE_HELP = 'An ISO date (2026-06-26T09:54:00) or an expression such as $data.dueDate';
@@ -20,6 +21,7 @@ export function UserAssignmentGroup(element, translate) {
             entry('assignee', 'Assignee', 'A user name or an expression such as $data.requester'),
             entry('candidateUsers', 'Candidate users', VALUE_HELP),
             entry('candidateGroups', 'Candidate groups', VALUE_HELP),
+            ...policyEntries(element),
             entry('dueDate', 'Due date', DATE_HELP),
             entry('followUpDate', 'Follow up date', DATE_HELP),
             entry('priority', 'Priority', 'A number or an expression such as $data.priority')

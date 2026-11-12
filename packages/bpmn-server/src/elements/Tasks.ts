@@ -1,5 +1,6 @@
 
 import { Node } from './Node.js';
+import { applyPolicy } from '../engine/AssignmentPolicy.js';
 
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
 import { BPMN_TYPE, ITEM_STATUS, NODE_ACTION, TOKEN_STATUS } from '../interfaces/Enums.js'
@@ -291,6 +292,10 @@ class UserTask extends Node {
                 groups.push(this.lane);
             item.candidateGroups = groups;
             }
+        // its assignment policy, last: it wins over the attributes and the lane (engine/AssignmentPolicy.ts)
+        const policy = this.def.$attrs?.['camunda:assignmentPolicy'];
+        if (policy)
+            await applyPolicy(this, item, String(policy).trim());
 
         return await super.start(item);
     }
@@ -322,7 +327,7 @@ class UserTask extends Node {
         //console.log('----setAttVal', attr, exp, val);
     }
     describe() {
-        let attrs = ["assignee","candidateGroups", "candidateUsers", "label", "endLabel", "dueDate", "followUpDate", "priority"];
+        let attrs = ["assignee","candidateGroups", "candidateUsers", "assignmentPolicy", "label", "endLabel", "dueDate", "followUpDate", "priority"];
         let desc = super.describe();
 
         attrs.forEach(attr => {

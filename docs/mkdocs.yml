@@ -122,6 +122,7 @@ nav:
 - Reference:
   - Features: features.md
   - Labels: labels.md
+  - 'Assignment policies': assignment-policies.md
   - Advanced Topics: advanced.md
   - Frequently Asked Questions: faq/index.md
   - Site Map: map.md

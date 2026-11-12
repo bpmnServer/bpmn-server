@@ -10,7 +10,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt, labelItems } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
@@ -87,6 +87,22 @@ function databaseName(): string {
 }
 
 export class Dashboards extends Common {
+    /**
+     * The roles for the Administration page: roles.json's names, each with where it is used and how many users are in
+     * its group; the names used (lanes, policies) that it doesn't list; or its error.
+     */
+    async roles(definitionsPath: string, users: any[] | null) {
+        let names: string[] | null;
+        try { names = roleNames(definitionsPath); }
+        catch (exc) { return { error: exc.message, list: [], unlisted: [] }; }
+        const uses = await roleUses(definitionsPath);
+        const members = (role: string) => users ? users.filter(u => (u.userGroups || []).includes(role)).length : null;
+        const list = (names ?? []).map(name => ({ name, uses: uses.get(name) ?? [], members: members(name) }));
+        const unlisted = [...uses.keys()].filter(name => !(names ?? []).includes(name) && !roleNameProblem(name)).sort()
+            .map(name => ({ name, uses: uses.get(name) }));
+        return { file: names !== null, list, unlisted };
+    }
+
     /** verifyModel's counts per model, kept while the file is unchanged */
     verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string }>();
 
@@ -265,6 +281,7 @@ export class Dashboards extends Common {
             const connectorList = await server.connectors.list();
             render(req, res, 'admin', {
                 title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: canEncrypt(),
+                roles: await this.roles(folder(), users),
                 serverInfo: {
                     bpmnWeb: this.webApp.packageJson?.version ?? packageVersion('bpmn-web'),
                     bpmnServer: packageVersion('bpmn-server'),
@@ -299,6 +316,34 @@ export class Dashboards extends Common {
                 return back(res, `A user named '${userName}' or with the email '${email}' already exists.`);
             await users.addUser(userName, email, password, groups);
             back(res, `User '${userName}' added.`);
+        }));
+
+        // ---- the roles (docs/docs/assignment-policies.md#roles): roles.json of the models folder
+        const rolesBack = (res, message: string) => res.redirect('/dashboard/admin?message=' + encodeURIComponent(message) + '#roles');
+        const currentRoles = (): string[] => roleNames(folder()) ?? [];
+        router.post('/admin/roles', this.isAdmin, handler(async (req, res) => {
+            const name = String(req.body.name ?? '').trim();
+            const problem = roleNameProblem(name);
+            if (problem)
+                return rolesBack(res, problem + '.');
+            let roles: string[];
+            try { roles = currentRoles(); }
+            catch (exc) { return rolesBack(res, `roles.json can not be read: ${exc.message}`); }
+            if (roles.includes(name))
+                return rolesBack(res, `'${name}' is a role already.`);
+            saveRoleNames(folder(), [...roles, name]);
+            rolesBack(res, `Role '${name}' added.`);
+        }));
+        router.post('/admin/roles/delete', this.isAdmin, handler(async (req, res) => {
+            const name = String(req.body.name ?? '').trim();
+            let roles: string[];
+            try { roles = currentRoles(); }
+            catch (exc) { return rolesBack(res, `roles.json can not be read: ${exc.message}`); }
+            if (!roles.includes(name))
+                return rolesBack(res, `'${name}' is not a role.`);
+            saveRoleNames(folder(), roles.filter(r => r !== name));
+            const used = (await roleUses(folder())).get(name);
+            rolesBack(res, `Role '${name}' removed.` + (used?.length ? ` It is still used (${used.join('; ')}): the models' checks warn about it.` : ''));
         }));
 
         router.post('/admin/locks/release', this.isAdmin, handler(async (req, res) => {

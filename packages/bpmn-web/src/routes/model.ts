@@ -11,7 +11,7 @@ import path from 'node:path';
 import { layoutModel } from './layout.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
-import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
+import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
@@ -487,6 +487,87 @@ export class Model extends Common {
             response.json({ saved: decisionFile(name) });
         }));
 
+        // ---- assignment policies (docs/docs/assignment-policies.md): decision tables `policies/<name>.dmn.xml` of the
+        // models folder, edited in the decision editor; their tests kept as a decision's, under `<name>.policy`
+        const policiesFolder = () => path.join(bpmnServer.configuration.definitionsPath, POLICIES_FOLDER);
+        const policyPath = (name: string) => path.join(policiesFolder(), `${name}.dmn.xml`);
+        const policyTests = (name: string) => `${name}.policy`;
+
+        router.get('/policies', awaitHandlerFactory(async (request, response) => {
+            const folder = bpmnServer.configuration.definitionsPath;
+            response.json({ policies: policyNames(folder).map(name => ({ name, xml: FS.readFileSync(policyPath(name), 'utf8') })) });
+        }));
+
+        router.get('/policy/:policy', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.policy;
+            if (!isSafeModelName(name))
+                return response.status(400).send('Invalid policy name');
+            const exists = FS.existsSync(policyPath(name));
+            const xml = exists ? FS.readFileSync(policyPath(name), 'utf8') : newPolicy(name);
+            response.render('decision', {
+                name, exists, file: `${POLICIES_FOLDER}/${name}.dmn.xml`, kind: 'Assignment policy',
+                modelJson: JSON.stringify(xml).replace(/</g, '\\u003c'),
+                cspHost: process.env.ITSM_HOST,
+            });
+        }));
+
+        router.post('/policy/:policy', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.policy;
+            const xml = request.body && request.body.xml;
+            if (!isSafeModelName(name))
+                return response.status(400).json({ errors: 'Invalid policy name' });
+            if (typeof xml !== 'string' || !/<(\w+:)?definitions[\s>]/.test(xml))
+                return response.status(400).json({ errors: 'Not a DMN file' });
+            FS.mkdirSync(policiesFolder(), { recursive: true });
+            FS.writeFileSync(policyPath(name), xml);
+            response.json({ saved: `${POLICIES_FOLDER}/${name}.dmn.xml` });
+        }));
+
+        /** Who a policy gives a task to, with this data: { rule, outputs } (a $(...) output as written: it runs in a task). */
+        router.post('/policy/:policy/preview', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.policy;
+            if (!isSafeModelName(name))
+                return response.status(400).json({ error: 'Invalid policy name' });
+            if (!FS.existsSync(policyPath(name)))
+                return response.status(404).json({ error: `No ${POLICIES_FOLDER}/${name}.dmn.xml` });
+            const data = request.body?.data;
+            try {
+                const { rule, outputs } = await evaluatePolicy(policyPath(name), data && typeof data === 'object' ? data : {});
+                const fields = outputs ? Object.fromEntries(POLICY_FIELDS.filter(f => outputs[f] != null && outputs[f] !== '')
+                    .map(f => [f, outputs[f]])) : null;
+                response.json({ rule: rule ?? null, outputs: fields, expressions: fields ? Object.keys(fields).filter(f => isExpression(fields[f])) : [] });
+            }
+            catch (exc) {
+                response.json({ error: exc?.message ?? String(exc) });
+            }
+        }));
+
+        router.get('/policy/:policy/tests', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.policy))
+                return response.status(400).json({ error: 'Invalid policy name' });
+            response.json({ tests: await loadDecisionTests(policyTests(request.params.policy)) });
+        }));
+        router.put('/policy/:policy/tests', awaitHandlerFactory(async (request, response) => {
+            const tests = request.body?.tests;
+            const problems = isSafeModelName(request.params.policy) ? checkDecisionTests(tests) : ['Invalid policy name'];
+            if (problems.length)
+                return response.status(400).json({ error: problems.join('; ') });
+            await saveDecisionTests(policyTests(request.params.policy), tests, request.user?.userName);
+            response.json({ saved: tests.length });
+        }));
+        router.post('/policy/:policy/tests/run', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.policy;
+            if (!isSafeModelName(name))
+                return response.status(400).json({ error: 'Invalid policy name' });
+            if (!FS.existsSync(policyPath(name)))
+                return response.status(404).json({ error: `No ${POLICIES_FOLDER}/${name}.dmn.xml: save the policy first` });
+            const tests = request.body?.tests ?? await loadDecisionTests(policyTests(name));
+            const problems = checkDecisionTests(tests);
+            if (problems.length)
+                return response.status(400).json({ error: problems.join('; ') });
+            response.json({ results: await runDecisionTestsInEngine(bpmnServer, `${POLICIES_FOLDER}/${name}.dmn.xml`, tests) });
+        }));
+
         // ---- the connectors a designer may use (enabled, for the designer's groups), with their enabled operations:
         // what a service task's Connector fields offer (docs/docs/connectors.md)
         router.get('/connectors', awaitHandlerFactory(async (request, response) => {
@@ -783,6 +864,33 @@ export class Model extends Common {
 }
 
 /** A new decision file: one decision table, named for the file, with an input, an output and a rule to start from. */
+/** A new policy: a FIRST table on one input, its outputs the assignment's fields. */
+function newPolicy(name: string): string {
+    const id = /^[A-Za-z_]/.test(name) ? name.replace(/[^\w.-]/g, '_') : 'policy_' + name.replace(/[^\w.-]/g, '_');
+    const label = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="${id}_definitions" name="${label}" namespace="http://bpmn-server/dmn">
+  <decision id="${id}" name="${label}">
+    <decisionTable id="${id}_table" hitPolicy="FIRST">
+      <input id="${id}_input1" label="Input">
+        <inputExpression id="${id}_inputExpression1" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="${id}_assignee" label="Assignee" name="assignee" typeRef="string" />
+      <output id="${id}_candidateGroups" label="Candidate groups" name="candidateGroups" typeRef="string" />
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="${id}_diagram">
+      <dmndi:DMNShape id="${id}_shape" dmnElementRef="${id}">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>`;
+}
+
 function newDecision(name: string): string {
     const id = /^[A-Za-z_]/.test(name) ? name.replace(/[^\w.-]/g, '_') : 'decision_' + name.replace(/[^\w.-]/g, '_');
     const label = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');

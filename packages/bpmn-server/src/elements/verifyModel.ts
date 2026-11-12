@@ -10,6 +10,7 @@ import { templateProblems } from '../engine/Labels.js';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { DMNParser } from '../dmn/DMNParser.js';
+import { policyFile, roleNames, POLICY_FIELDS, POLICIES_FOLDER } from '../engine/AssignmentPolicy.js';
 
 /**
  * Static verification of a BPMN model: reports what would stop the engine from loading or
@@ -412,6 +413,7 @@ class ModelVerifier {
             if (checkScripts) proc.scripts.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `process '${event}' script`, proc.def || proc)));
         });
 
+        const lanes = new Map<string, any>();
         for (const node of definition.nodes.values()) {
             this.processId = node.processId;
             const def = node.def || {};
@@ -462,9 +464,20 @@ class ModelVerifier {
             if (node instanceof BusinessRuleTask)
                 await this.checkDecision(node, def);
 
+            const policy = def.$attrs?.['camunda:assignmentPolicy'];
+            if (typeof policy == 'string' && policy.trim())
+                await this.checkPolicy(policy.trim(), def);
+            if (node.lane) lanes.set(node.lane, def);
+
             if (node instanceof CallActivity && node.calledElement && knownModels && !knownModels.has(node.calledElement))
                 this.add('warning', 'called-model-missing', `Called process '${node.calledElement}' is not a saved model.`, def);
         }
+        // a lane is a role: one roles.json doesn't name
+        const roles = this.roles();
+        if (roles)
+            for (const [lane, def] of lanes)
+                if (!roles.includes(lane))
+                    this.add('warning', 'role-unknown', `Lane '${lane}' is not a role of roles.json (${roles.join(', ')}).`, def);
 
         if (checkScripts) {
             definition.flows.forEach(flow => {
@@ -481,6 +494,54 @@ class ModelVerifier {
             });
         }
         this.processId = undefined;
+    }
+
+    /** The roles of the models folder's roles.json; null without one (or a folder); a bad file is an error. */
+    roles(): string[] | null {
+        if (this.#roles !== undefined) return this.#roles;
+        try { this.#roles = this.decisionsFolder ? roleNames(this.decisionsFolder) : null; }
+        catch (exc) { this.add('error', 'roles-invalid', exc.message); this.#roles = null; }
+        return this.#roles;
+    }
+    #roles: string[] | null | undefined = undefined;
+
+    /**
+     * A user task's assignment policy (engine/AssignmentPolicy.ts): in policies/, a readable decision whose outputs
+     * are the assignment's fields; the groups it names, roles of roles.json (when there is one).
+     */
+    async checkPolicy(policy: string, def) {
+        const folder = this.decisionsFolder;
+        if (!folder) return;
+        const file = policyFile(folder, policy);
+        if (!file) {
+            this.add('error', 'assignment-policy-not-found', `Assignment policy '${policy}': there is no ${POLICIES_FOLDER}/${policy}.dmn.xml.`, def);
+            return;
+        }
+        let definitions;
+        try { definitions = await DMNParser.loadFile(file); }
+        catch (exc) {
+            this.add('error', 'assignment-policy-invalid', `Assignment policy '${policy}': ${exc.message}`, def);
+            return;
+        }
+        for (const issue of DMNParser.check(definitions))
+            this.add('error', 'assignment-policy-invalid', `Assignment policy '${policy}': ${issue.message}`, def);
+        const table = DMNEngine.topDecision(definitions)?.table;
+        if (!table) return;
+        const fields: readonly string[] = POLICY_FIELDS;
+        for (const output of table.outputs)
+            if (!fields.includes(output.name))
+                this.add('warning', 'assignment-policy-output', `Assignment policy '${policy}': output '${output.name}' is not ${POLICY_FIELDS.join(', ')}; it is not used.`, def);
+        const roles = this.roles();
+        const groups = table.outputs.findIndex(o => o.name === 'candidateGroups');
+        if (!roles || groups < 0) return;
+        for (const [r, rule] of table.rules.entries()) {
+            const cell = (rule.outputEntries[groups] ?? '').trim();
+            // a literal: "Director", or "A,B"; an expression is known only when it runs
+            const literal = /^"([^"]*)"$/.exec(cell);
+            for (const group of literal ? literal[1].split(',').map(g => g.trim()).filter(Boolean) : [])
+                if (!roles.includes(group))
+                    this.add('warning', 'role-unknown', `Assignment policy '${policy}', rule ${r + 1}: '${group}' is not a role of roles.json (${roles.join(', ')}).`, def);
+        }
     }
 
     /**

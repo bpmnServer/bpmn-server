@@ -1432,3 +1432,10 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .bpmn-server-label-preview { margin: -4px 12px 6px; font-size: 12px; color: var(--color-grey-225-10-35, #444); }
 .bpmn-server-label-preview.muted, .bpmn-server-label-preview-from { color: var(--color-grey-225-10-55, #888); }
 .bpmn-server-label-preview-text { font-weight: 600; }
+
+/* a user task's assignment policy (properties/PolicyEntries.jsx): open or make it, and its preview */
+.bpmn-server-policy { padding-top: 0; }
+.bpmn-server-policy-actions { display: flex; gap: 6px; margin: 0 0 4px; }
+.bpmn-server-policy-actions button { font: inherit; font-size: 12px; padding: 1px 8px; }
+.bpmn-server-policy .bpmn-server-label-preview { margin: 0; }
+.bpmn-server-policy .muted { color: var(--color-grey-225-10-55, #888); }

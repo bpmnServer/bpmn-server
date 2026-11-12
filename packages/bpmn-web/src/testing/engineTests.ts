@@ -19,6 +19,8 @@ export function engineTests(server) {
         runFeature: async (source: string, uri?: string) => runFeature(inside, source, uri),
         setTestData: async (instanceId: string, data) => { await setTestData(inside, instanceId, data); },
         // a file's name, in this engine's own folder of models: where the host keeps its copy is not for here
-        runDecisionTests: async (file: string, tests) => runDecisionTests(path.join(server.configuration.definitionsPath, path.basename(file)), tests, inside),
+        // (an assignment policy's: policies/<name>.dmn.xml)
+        runDecisionTests: async (file: string, tests) => runDecisionTests(path.join(server.configuration.definitionsPath,
+            /^policies[\\/][^\\/]+$/.test(file) ? path.join('policies', path.basename(file)) : path.basename(file)), tests, inside),
     };
 }

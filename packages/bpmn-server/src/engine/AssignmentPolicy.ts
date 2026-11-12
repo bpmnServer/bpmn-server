@@ -1,0 +1,156 @@
+/**
+ * Assignment policies (docs/design/assignment.md): a user task names one, `camunda:assignmentPolicy="Approval"`, and
+ * when it starts the policy says who works on it. A policy is a DMN decision table in the models folder,
+ * `policies/<name>.dmn.xml`: conditions on the case's data in FEEL, the first rule that matches assigns. Its outputs
+ * are the task's usual fields, `assignee`, `candidateUsers` and `candidateGroups`; a cell is a FEEL value, or a model
+ * expression `$(...)` evaluated as the model's other expressions are (it can call appServices).
+ *
+ * The policy wins: each field its rule sets replaces what the model and the lane gave. No rule, no policy, or a
+ * failing one: it assigns nothing, and the Rationale says why. A task never fails because of its policy.
+ */
+import * as fs from 'fs';
+import * as path from 'path';
+import { DMNEngine } from '../dmn/DMNEngine.js';
+import { expressionScript } from './Expressions.js';
+import { label } from '../elements/Flow.js';
+
+export const POLICY_FIELDS = ['assignee', 'candidateUsers', 'candidateGroups'] as const;
+export const POLICIES_FOLDER = 'policies';
+
+/** What decided a task's assignment, kept on the item. */
+export interface IItemAssignment {
+    policy: string;
+    rule?: number;
+}
+
+/** A policy's file in a models folder, or null when it isn't there. */
+export function policyFile(definitionsPath: string, name: string): string | null {
+    if (!definitionsPath || !name || /[\\/]|\.\./.test(name)) return null;
+    const file = path.join(definitionsPath, POLICIES_FOLDER, `${name}.dmn.xml`);
+    return fs.existsSync(file) ? file : null;
+}
+
+/** The policies of a models folder, by name. */
+export function policyNames(definitionsPath: string): string[] {
+    const folder = definitionsPath && path.join(definitionsPath, POLICIES_FOLDER);
+    if (!folder || !fs.existsSync(folder)) return [];
+    return fs.readdirSync(folder).filter(f => /\.dmn\.xml$/i.test(f)).map(f => f.replace(/\.dmn\.xml$/i, '')).sort();
+}
+
+/** The roles of a models folder (`roles.json`, a list of names), or null when it has none. */
+export function roleNames(definitionsPath: string): string[] | null {
+    const file = definitionsPath && path.join(definitionsPath, 'roles.json');
+    if (!file || !fs.existsSync(file)) return null;
+    const roles = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (!Array.isArray(roles) || roles.some(r => typeof r !== 'string'))
+        throw new Error('roles.json is a list of role names: ["Manager", "Director"]');
+    return roles;
+}
+
+export const isExpression = (cell: string) => typeof cell === 'string' && /^\$[({]/.test(cell.trim());
+const asList = (value): string[] => (Array.isArray(value) ? value : String(value).split(','))
+    .map(v => String(v ?? '').trim()).filter(Boolean);
+
+/**
+ * A policy evaluated with this data: the first matching rule's number and its outputs (a `$(...)` cell as its text,
+ * for the caller to evaluate), or no rule. Throws when the file can't be read or a cell isn't FEEL.
+ */
+export async function evaluatePolicy(file: string, data: Record<string, any>, log?: (message: string) => void): Promise<{ rule?: number; outputs: Record<string, any> | null }> {
+    const dmn = await new DMNEngine({ log, keepOutput: isExpression }).load(file);
+    const result = dmn.evaluate({ ...(data || {}) });
+    const outputs = (Array.isArray(result) ? result[0] : result) ?? null;
+    return { rule: outputs ? dmn.matched[0] : undefined, outputs };
+}
+
+/**
+ * Evaluates the task's policy and sets its assignment: what the matching rule's outputs give, each field it sets
+ * replacing the model's. Writes a Rationale entry either way; never throws.
+ */
+export async function applyPolicy(node, item, policy: string): Promise<void> {
+    const token = item.token;
+    const element = `user task ${label(node)}`;
+    const decide = (action: string, why: string[]) => token.decision({ seq: item.seq, element, action, why });
+    const unassigned = (why: string[]) => decide('is not assigned by its policy', [`policy ${policy}`, ...why]);
+    try {
+        const file = policyFile(token.execution.server.configuration.definitionsPath, policy);
+        if (!file)
+            return unassigned([`there is no ${POLICIES_FOLDER}/${policy}.dmn.xml`]);
+        const { rule, outputs } = await evaluatePolicy(file, token.data, message => token.log(message));
+        if (!outputs)
+            return unassigned(['no rule matched']);
+
+        const set: Partial<Record<typeof POLICY_FIELDS[number], any>> = {};
+        for (const field of POLICY_FIELDS) {
+            let value = outputs[field];
+            if (value == null || value === '') continue;
+            if (isExpression(value) && expressionScript(value) !== null)
+                value = await item.context.scriptHandler.evaluateExpression(item, value, field);
+            if (value == null || value === '' || (Array.isArray(value) && !value.length)) continue;
+            set[field] = field === 'assignee' ? String(value) : asList(value);
+        }
+        if (!Object.keys(set).length)
+            return unassigned([`rule ${rule} matched, and gave no one`]);
+
+        Object.assign(item, set);
+        item.assignment = { policy, rule } as IItemAssignment;
+        token.log(`..assignment policy ${policy}, rule ${rule}: ${JSON.stringify(set)}`);
+        const who = [
+            set.assignee ? `is assigned to ${set.assignee}` : null,
+            set.candidateUsers || set.candidateGroups ? `is offered to ${[...(set.candidateUsers ?? []), ...(set.candidateGroups ?? [])].join(', ')}` : null,
+        ].filter(Boolean).join(', and ');
+        decide(who, [`policy ${policy}, rule ${rule}`]);
+    }
+    catch (exc) {
+        unassigned([`the policy failed: ${exc?.message ?? exc}`]);
+    }
+}
+
+/** Why a role name can't be used, or null: a name of letters, digits, spaces, `_`, `-` or `.`, at most 64. */
+export function roleNameProblem(name: unknown): string | null {
+    if (typeof name !== 'string' || !name.trim()) return 'A role needs a name';
+    if (name.trim().length > 64) return 'A role name is at most 64 characters';
+    if (!/^[\p{L}\p{N}][\p{L}\p{N} _.-]*$/u.test(name.trim())) return `'${name}' is not a role name: letters, digits, spaces, _ - . (no commas)`;
+    return null;
+}
+
+/** Writes roles.json: the names, each once, in the order given. */
+export function saveRoleNames(definitionsPath: string, roles: string[]): string[] {
+    const names = [...new Set(roles.map(r => String(r).trim()))];
+    for (const name of names) {
+        const problem = roleNameProblem(name);
+        if (problem) throw new Error(problem);
+    }
+    fs.writeFileSync(path.join(definitionsPath, 'roles.json'), JSON.stringify(names, null, 2) + '\n');
+    return names;
+}
+
+/**
+ * Where each name is used as a role in a models folder: the lanes of its models (`<model>: lane`), and the groups its
+ * policies assign as literals (`policy <name>, rule <n>`). By name.
+ */
+export async function roleUses(definitionsPath: string): Promise<Map<string, string[]>> {
+    const uses = new Map<string, string[]>();
+    const add = (name: string, where: string) => uses.set(name, [...(uses.get(name) ?? []), where]);
+    if (!definitionsPath || !fs.existsSync(definitionsPath)) return uses;
+    for (const file of fs.readdirSync(definitionsPath).filter(f => /\.bpmn$/i.test(f))) {
+        const source = fs.readFileSync(path.join(definitionsPath, file), 'utf8');
+        for (const m of source.matchAll(/<(?:\w+:)?lane\b[^>]*?\bname="([^"]*)"/g))
+            add(m[1].trim(), `${file.replace(/\.bpmn$/i, '')}: lane`);
+    }
+    const { DMNParser } = await import('../dmn/DMNParser.js');
+    for (const policy of policyNames(definitionsPath)) {
+        try {
+            const definitions = await DMNParser.loadFile(path.join(definitionsPath, POLICIES_FOLDER, `${policy}.dmn.xml`));
+            const table = DMNEngine.topDecision(definitions)?.table;
+            const groups = table ? table.outputs.findIndex(o => o.name === 'candidateGroups') : -1;
+            if (groups < 0) continue;
+            table.rules.forEach((rule, r) => {
+                const literal = /^"([^"]*)"$/.exec((rule.outputEntries[groups] ?? '').trim());
+                for (const group of literal ? literal[1].split(',').map(g => g.trim()).filter(Boolean) : [])
+                    add(group, `policy ${policy}, rule ${r + 1}`);
+            });
+        }
+        catch { /* a policy that can't be read: verifyModel says so */ }
+    }
+    return uses;
+}

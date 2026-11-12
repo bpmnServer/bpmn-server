@@ -127,7 +127,9 @@ export async function runDecisionTests(filePath: string, tests: DecisionTest[], 
             }
             // the engine's lines on what each decision matched (not that the file was loaded)
             const keep = line => { if (!/ loaded from /.test(line)) log.push(String(line).replace(/^\.+/, '')); };
-            const engine = await new DMNEngine({ log: keep }).load(filePath, test.decision);
+            // an assignment policy's $(...) outputs run in a task, not here: their text is the result
+            const policy = /[\\/]policies[\\/][^\\/]+$/.test(filePath);
+            const engine = await new DMNEngine({ log: keep, ...(policy ? { keepOutput: (bpmnServerPackage as any).isExpression } : {}) }).load(filePath, test.decision);
             if (test.decision && engine.decision.id !== test.decision)
                 throw new Error(`no decision '${test.decision}' in the file`);
             const result = engine.evaluate(test.data ?? {});

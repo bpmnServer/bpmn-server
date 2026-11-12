@@ -23,7 +23,7 @@ function processOf(bo) {
 }
 
 /** The Test tab's data for previews, again whenever the tab changes; null without a scenario (or a Test tab). */
-function usePreview() {
+export function usePreview() {
     const testPanel = useService('testPanel', false);
     const eventBus = useService('eventBus');
     const [, setVersion] = useState(0);

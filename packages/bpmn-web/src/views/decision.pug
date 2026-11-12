@@ -6,7 +6,7 @@ html(lang="en")
     if cspHost
       //- allow rendering inside the ITSM host iframe
       meta(http-equiv="Content-Security-Policy" content=`frame-ancestors 'self' ${cspHost}`)
-    title= `${name} - Decision editor`
+    title= `${name} - ${kind || 'Decision'} editor`
     meta(name="csrf-token" content=_csrf)
     script(src="/javascripts/csrf.js")
     link(rel="stylesheet" href=asset("/modeler/decision.css"))
@@ -18,7 +18,7 @@ html(lang="en")
         include includes/editorMenu.pug
         +editorMenu
         h1= name
-        span.decision-file= `${name}.dmn.xml`
+        span.decision-file= file || `${name}.dmn.xml`
         span#js-save-status.modeler-status(role="status")
         nav#js-views.decision-views(aria-label="Decisions")
         nav.modeler-actions

@@ -27,6 +27,19 @@ Feature: Leave Application
       And @check :leave data.recordId is "LV-1"
       And @check :leave passed element:Tell 1 times
 
+  Scenario: A long leave goes to HR, not to a manager (the policy LeaveApproval)
+    When user:user1 @login with role of "Employee"
+      And @start process:"Leave Application" as :leave
+      And @invoke element:Request in :leave
+        | LeaveType     | Vacation   |
+        | StartDate     | 2026-12-01 |
+        | EndDate       | 2026-12-20 |
+        | RequestReason | Travel     |
+      And user:manager1 @login with role of "Manager"
+    Then @check :leave has 0 items of element:Approve with status "wait" for me
+    When user:hr1 @login with role of "HR"
+    Then @check :leave has 1 items of element:Approve with status "wait" for me
+
   Scenario: Wrong dates go back to the employee
     When user:user1 @login with role of "Employee"
       And @start process:"Leave Application" as :leave
