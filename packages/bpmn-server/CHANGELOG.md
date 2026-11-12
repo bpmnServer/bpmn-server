@@ -66,6 +66,8 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **Checking a model with a compensation association** (a compensation boundary event to its handler) no longer fails
+  (`Cannot read properties of undefined (reading 'forEach')`); the editor's Problems list stayed empty for it.
 - `scheduling process <model> at ...` is logged once for a process timer: the timers read again (at start, by the
   re-read) logged it each time, though it was scheduled only once.
 - `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
