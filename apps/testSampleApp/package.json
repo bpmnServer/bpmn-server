@@ -35,7 +35,8 @@
   },
   "dependencies": {
     "axios": "^1.18.1",
-    "bpmn-web": "*",
+    "bpmn-server": "file:../../packages/bpmn-server",
+    "bpmn-web": "file:../../packages/bpmn-web",
     "dayjs": "^1.11.21",
     "pug": "^3.0.4"
   },
