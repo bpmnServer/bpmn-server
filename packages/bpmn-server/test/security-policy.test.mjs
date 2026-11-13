@@ -13,15 +13,20 @@ const decideAccess = (dir, ...args) => policies(dir).decide(...args);
 const anyFolder = new SecurityPolicy('');
 
 const cell = text => `<text>${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>`;
-/** A COLLECT table: inputs relation, groups, task; outputs see, data, complete. Rules: [relation, groups, task, see, data, complete]. */
+/**
+ * A COLLECT table: inputs actors.initiator, actors.noter (the model's owf:actor), user.userGroups, task; outputs see,
+ * data, complete. Rules: [initiator, noter, groups, task, see, data, complete]; `user.userName` in an actor's column:
+ * "this user is that actor".
+ */
 const policy = (rules, hit = 'COLLECT') => `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="P" namespace="t">
   <decision id="P" name="P"><decisionTable id="t" hitPolicy="${hit}">
-    <input id="i1" label="relation"><inputExpression id="e1" typeRef="string"><text>relation</text></inputExpression></input>
-    <input id="i2" label="groups"><inputExpression id="e2" typeRef="string"><text>groups</text></inputExpression></input>
+    <input id="i0" label="initiator"><inputExpression id="e0" typeRef="string"><text>actors.initiator</text></inputExpression></input>
+    <input id="i1" label="noter"><inputExpression id="e1" typeRef="string"><text>actors.noter</text></inputExpression></input>
+    <input id="i2" label="groups"><inputExpression id="e2" typeRef="string"><text>user.userGroups</text></inputExpression></input>
     <input id="i3" label="task"><inputExpression id="e3" typeRef="string"><text>task</text></inputExpression></input>
     <output id="o1" name="see" typeRef="string" /><output id="o2" name="data" typeRef="string" /><output id="o3" name="complete" typeRef="string" />
-    ${rules.map((r, n) => `<rule id="r${n}">${r.slice(0, 3).map((c, i) => `<inputEntry id="r${n}i${i}">${cell(c)}</inputEntry>`).join('')}${r.slice(3).map((c, i) => `<outputEntry id="r${n}o${i}">${cell(c)}</outputEntry>`).join('')}</rule>`).join('\n')}
+    ${rules.map((r, n) => `<rule id="r${n}">${r.slice(0, 4).map((c, i) => `<inputEntry id="r${n}i${i}">${cell(c)}</inputEntry>`).join('')}${r.slice(4).map((c, i) => `<outputEntry id="r${n}o${i}">${cell(c)}</outputEntry>`).join('')}</rule>`).join('\n')}
   </decisionTable></decision>
 </definitions>`;
 
@@ -30,7 +35,7 @@ const MODEL = (policyAttr = 'owf:securityPolicy="Cases"', taskAttr = '') => `<?x
   <bpmn:process id="P" isExecutable="true" ${policyAttr}>
     <bpmn:startEvent id="S"><bpmn:extensionElements><camunda:formData><camunda:formField id="reason" /></camunda:formData></bpmn:extensionElements></bpmn:startEvent>
     <bpmn:userTask id="Approve" ${taskAttr}><bpmn:extensionElements><camunda:formData><camunda:formField id="approved" /></camunda:formData></bpmn:extensionElements></bpmn:userTask>
-    <bpmn:userTask id="Notes" />
+    <bpmn:userTask id="Notes" owf:actor="noter" />
   </bpmn:process>
 </bpmn:definitions>`;
 
@@ -56,13 +61,12 @@ const mia = { userName: 'mia', userGroups: ['Employee', 'Manager'] };
 const bob = { userName: 'bob', userGroups: ['Employee'] };
 const eve = { userName: 'eve', userGroups: ['Employee'] };
 
-test('a person\'s relations to a case: who started it, whose task waits, who worked on it', () => {
-  assert.deepEqual(anyFolder.relationsOf(ann, CASE).sort(), ['candidate', 'initiator', 'participant']);
-  assert.deepEqual(anyFolder.relationsOf(bob, CASE), ['participant']);
-  assert.deepEqual(anyFolder.relationsOf(eve, CASE), []);
+test('an instance\'s actors: who started it, who did what the model names (owf:actor), whose task waits', () => {
+  const dir = policies(folder());
+  assert.deepEqual(dir.actorsOf(CASE), { initiator: 'ann', noter: 'bob', assignee: null, candidate: 'Manager' });
   const assigned = { ...CASE, items: CASE.items.map(i => i.elementId === 'Approve' ? { ...i, assignee: 'mia' } : i) };
-  assert.deepEqual(anyFolder.relationsOf(mia, assigned).sort(), ['assignee', 'candidate', 'participant']);
-  assert.ok(!anyFolder.relationsOf(ann, assigned).includes('candidate'), 'assigned to someone else: no longer offered to her');
+  assert.deepEqual(dir.actorsOf(assigned), { initiator: 'ann', noter: 'bob', assignee: 'mia', candidate: null }, 'assigned: no longer offered');
+  assert.deepEqual(anyFolder.actorsOf(CASE), { initiator: 'ann', assignee: null, candidate: 'Manager' }, 'no model: the built-in actors');
 });
 
 test('every matching rule counts, and a denial wins wherever it is in the table', () => {
@@ -82,17 +86,17 @@ test('every matching rule counts, and a denial wins wherever it is in the table'
 
 test('a policy decides: a list input matches one of its values; the requester may not approve their own', async () => {
   const dir = folder({ policies: { Cases: policy([
-    ['', '"Manager"', '', '"full"', '["reason","approved"]', ''],
-    ['"initiator"', '', '', '"full"', '"forms"', ''],
-    ['"participant"', '', '', '"summary"', '', ''],
-    ['"initiator"', '', '"Approve"', '', '', '"deny"'],
+    ['', '', '"Manager"', '', '"full"', '["reason","approved"]', ''],
+    ['user.userName', '', '', '', '"full"', '"forms"', ''],
+    ['', 'user.userName', '', '', '"summary"', '', ''],
+    ['user.userName', '', '', '"Approve"', '', '', '"deny"'],
   ]) } });
   const mias = await decideAccess(dir, mia, CASE, { elementId: 'Approve' });
   assert.equal(mias.see, 'full');
   assert.equal(mias.complete, null, 'hers to complete, as the assignment offers it');
   const anns = await decideAccess(dir, ann, CASE, { elementId: 'Approve' });
   assert.equal(anns.complete, false, 'a manager, but she asked for it');
-  assert.deepEqual(anns.rules.map(r => r.rule).sort(), [1, 2, 3, 4]);
+  assert.deepEqual(anns.rules.map(r => r.rule).sort(), [1, 2, 4], 'a manager, she started it, and asked for it; not the noter');
   assert.equal((await decideAccess(dir, ann, CASE)).complete, null, 'the case itself: no task, the last rule does not match');
   assert.equal((await decideAccess(dir, bob, CASE)).see, 'summary');
   assert.equal((await decideAccess(dir, eve, CASE)).see, 'none', 'no rule: not seen');
@@ -107,7 +111,7 @@ test('without the process naming one: the application\'s default, else bpmn-web\
   assert.equal((await decideAccess(noName, { userName: 'dee', userGroups: ['DESIGNER'] }, CASE)).see, 'full', 'built in: designers see every case');
   assert.equal(builtIn.rules[0].policy, 'built-in default');
 
-  const ownDefault = folder({ model: MODEL(''), policies: { default: policy([['', '"Employee"', '', '"summary"', '', '']]) } });
+  const ownDefault = folder({ model: MODEL(''), policies: { default: policy([['', '', '"Employee"', '', '"summary"', '', '']]) } });
   assert.equal((await decideAccess(ownDefault, eve, CASE)).see, 'summary', 'the application\'s default');
 
   const errors = [];
@@ -118,8 +122,8 @@ test('without the process naming one: the application\'s default, else bpmn-web\
 
 test('a task names its own policy too: asked with the process\'s, a denial in either wins', async () => {
   const dir = folder({ model: MODEL('owf:securityPolicy="Cases"', 'owf:securityPolicy="Approvals"'), policies: {
-    Cases: policy([['', '"Manager"', '', '"full"', '', '']]),
-    Approvals: policy([['', '', '"Approve"', '', '', '"deny"']]),
+    Cases: policy([['', '', '"Manager"', '', '"full"', '', '']]),
+    Approvals: policy([['', '', '', '"Approve"', '', '', '"deny"']]),
   } });
   const access = await decideAccess(dir, mia, CASE, { elementId: 'Approve' });
   assert.equal(access.see, 'full');

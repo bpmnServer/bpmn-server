@@ -83,7 +83,7 @@ export class TaskOperations {
     private async taskAccess(user: SecureUser, item, instance?) {
         if (!this.access.on) return null;
         instance ??= (await this.access.casesOf([item])).get(item.instanceId);
-        return { access: await this.access.decide(user, instance, { elementId: item.elementId }), instance };
+        return { access: await this.access.decide(user, instance, { elementId: item.elementId, itemId: item.id }), instance };
     }
 
     /** The task this user has a part in, or the same 404. */
@@ -110,7 +110,7 @@ export class TaskOperations {
             const cases = await this.access.casesOf(waiting);
             const shown = [];
             for (const item of waiting)
-                if ((await this.access.decide(user, cases.get(item.instanceId), { elementId: item.elementId })).complete !== false) shown.push(item);
+                if ((await this.access.decide(user, cases.get(item.instanceId), { elementId: item.elementId, itemId: item.id })).complete !== false) shown.push(item);
             waiting.splice(0, waiting.length, ...shown);
         }
         const page = waiting.slice(0, limit);

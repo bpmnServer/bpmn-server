@@ -10,18 +10,18 @@ import { startWebApp, why, WebClient, API_KEY } from '../support/webApp.mjs';
 const POLICY = `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="default" namespace="t">
   <decision id="default" name="Leave cases"><decisionTable id="t" hitPolicy="COLLECT">
-    <input id="i1" label="relation"><inputExpression id="e1" typeRef="string"><text>relation</text></inputExpression></input>
-    <input id="i2" label="groups"><inputExpression id="e2" typeRef="string"><text>groups</text></inputExpression></input>
+    <input id="i1" label="initiator"><inputExpression id="e1" typeRef="string"><text>actors.initiator</text></inputExpression></input>
+    <input id="i2" label="groups"><inputExpression id="e2" typeRef="string"><text>user.userGroups</text></inputExpression></input>
     <input id="i3" label="task"><inputExpression id="e3" typeRef="string"><text>task</text></inputExpression></input>
     <output id="o1" name="see" typeRef="string" /><output id="o2" name="data" typeRef="string" /><output id="o3" name="complete" typeRef="string" /><output id="o4" name="assign" typeRef="string" />
     <rule id="r1"><description>whoever asked: their case, what the forms entered</description>
-      <inputEntry id="a1"><text>"initiator"</text></inputEntry><inputEntry id="a2"><text>-</text></inputEntry><inputEntry id="a3"><text>-</text></inputEntry>
+      <inputEntry id="a1"><text>user.userName</text></inputEntry><inputEntry id="a2"><text>-</text></inputEntry><inputEntry id="a3"><text>-</text></inputEntry>
       <outputEntry id="a4"><text>"full"</text></outputEntry><outputEntry id="a5"><text>"forms"</text></outputEntry><outputEntry id="a6"><text></text></outputEntry><outputEntry id="a7"><text></text></outputEntry></rule>
     <rule id="r2"><description>managers: every case, all of it</description>
       <inputEntry id="b1"><text>-</text></inputEntry><inputEntry id="b2"><text>"manager"</text></inputEntry><inputEntry id="b3"><text>-</text></inputEntry>
       <outputEntry id="b4"><text>"full"</text></outputEntry><outputEntry id="b5"><text>"all"</text></outputEntry><outputEntry id="b6"><text></text></outputEntry><outputEntry id="b7"><text></text></outputEntry></rule>
     <rule id="r3"><description>separation of duties: not your own approval, nor giving it to someone else</description>
-      <inputEntry id="c1"><text>"initiator"</text></inputEntry><inputEntry id="c2"><text>-</text></inputEntry><inputEntry id="c3"><text>"Approve"</text></inputEntry>
+      <inputEntry id="c1"><text>user.userName</text></inputEntry><inputEntry id="c2"><text>-</text></inputEntry><inputEntry id="c3"><text>"Approve"</text></inputEntry>
       <outputEntry id="c4"><text></text></outputEntry><outputEntry id="c5"><text></text></outputEntry><outputEntry id="c6"><text>"deny"</text></outputEntry><outputEntry id="c7"><text>"deny"</text></outputEntry></rule>
   </decisionTable></decision>
 </definitions>`;

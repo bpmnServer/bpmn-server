@@ -18,7 +18,7 @@ and here
 - **Security policies**, a first slice (docs/design/security-policies.md, `engine/SecurityPolicy.ts`): who sees a
   case, which of its data, and what they may do with it and its tasks. A process names one (`owf:securityPolicy`), a
   user task may too, for its actions: a DMN table in `policies/security/<name>.dmn.xml`, hit policy COLLECT, a denial
-  winning. `new SecurityPolicy(definitionsPath)`: `decide(user, instance, task?)`, `relationsOf`, `combine`, `data`,
+  winning. `new SecurityPolicy(definitionsPath)`: `decide(user, instance, task?)`, `actorsOf`, `combine`, `data`,
   `visibleData`, `model`, `on` (an application may subclass it and override a step: `context`, `builtInDefault`); `on` when the
   application has `policies/security/`, or `SECURITY_POLICY=default`, and off otherwise. Its actions: `see`, `data`,
   `claim`, `complete`, `assign` (giving a task to someone else), `restart`, `events`. `DMNEngine`'s `listInputs`: an input whose value is a list matches a test when one of its values does.
@@ -26,13 +26,23 @@ and here
   `owf:endLabel`, `owf:exceptionsAsErrors`, in `xmlns:owf="http://omniworkflow.com/schema/owf/1.0"`; `camunda:` is
   only for what Camunda defines. The old `camunda:` names are still read, and `verifyModel` warns of them
   (`owf-attribute-legacy`). `owfAttribute(def, name)`, `legacyAttributes(def)`, `OWF_NAMESPACE`.
-- **One protocol for every decision table** (docs/design/decision-context.md, `engine/DecisionContext.ts`): a business
-  rule task's decision, an assignment policy and a security policy read the same context: the case data by name and
-  as `data`, the task's prepared inputs (its `camunda:inputOutput`, which may call `appServices`), and `user`,
-  `groups`, `relation`, `initiator`, `task`, `decision`, which the case data can't set; then the application's facts,
-  from the new optional `appDelegate.decisionContext(context, about)`. A list input matches when the list or one of
-  its values does, in every table. `SecurityPolicy.whoMay(instance, { users, roles, admins })`: the reverse of a
-  security policy, who may do what with a case.
+- **One set of names for every expression** (docs/design/expressions.md, `engine/DecisionContext.ts`): JavaScript
+  and FEEL, conditions, scripts, a business rule task's decision, an assignment policy and a security policy see the
+  same names: `data` (the item's, in its scope), `instance`, `item` and `this` (FEEL too: `this.data.amount` is no
+  longer a silent null), `input`, `output`, `user` (the application's, as it gives it), `actors`, `task`,
+  `appServices`; a decision table also reads the data's fields and its task's prepared inputs by name, then the
+  application's facts from the new optional `appDelegate.decisionContext(context, about)`. A process's own script
+  reads `data`. A list input matches when the list or one of its values does, in every table.
+- **Actors:** who did what in an instance, worked out from its items, nothing stored: `actors.initiator`,
+  `actors.assignee`, `actors.candidate`, and `actors.<name>` for the elements a model names so
+  (`owf:actor="approver"`): who completed them, a list when several, latest first; in a multi-instance, those of the
+  item's branch. A rule asks "is this user the approver" with an `actors.approver` column and `user.userName` in its
+  cell. `verifyModel` warns of an actor no element is (`actor-unknown`). A security policy deciding about a task reads
+  its item's actors and data.
+- **FEEL calls the application's services:** `appServices.regionOf(data.requester)` in a condition or a decision
+  table's input; an async one is awaited (`DMNEngine.evaluateAsync`).
+- `SecurityPolicy.whoMay(instance, { users, roles, admins })`: the reverse of a security policy, who may do what with
+  an instance, and the actors each person is.
 - **In place of PR #286's proposals:** labels are templates in the model, filled in when shown and never stored (no
   `display` settings, no label saved at each save); roles and assignment are `roles.json` and DMN policies in
   `policies/assignment/` (no `resolveAssignment` hook, no `camunda:properties`, no `assignment` settings): a policy's output

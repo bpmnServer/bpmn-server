@@ -275,8 +275,8 @@ test('the report says bpmn-server\'s own settings: labels, a task\'s assignment 
     fs.mkdirSync(path.join(folder, 'policies', 'security'), { recursive: true });
     fs.writeFileSync(path.join(folder, 'policies', 'assignment', 'ReportApproval.dmn.xml'), POLICY_XML('ReportApproval', 'FIRST', ['amount'], ['candidateGroups'],
         [{ why: 'a large one: the directors', in: ['&gt; 1000'], out: ['"Director"'] }, { why: 'any other', in: ['-'], out: ['"Manager"'] }]));
-    fs.writeFileSync(path.join(folder, 'policies', 'security', 'ReportCases.dmn.xml'), POLICY_XML('ReportCases', 'COLLECT', ['relation'], ['see'],
-        [{ why: 'whoever asked sees it', in: ['"initiator"'], out: ['"full"'] }]));
+    fs.writeFileSync(path.join(folder, 'policies', 'security', 'ReportCases.dmn.xml'), POLICY_XML('ReportCases', 'COLLECT', ['actors.initiator'], ['see'],
+        [{ why: 'whoever asked sees it', in: ['user.userName'], out: ['"full"'] }]));
     try {
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:owf="http://omniworkflow.com/schema/owf/1.0" id="d" targetNamespace="t">
@@ -295,7 +295,7 @@ test('the report says bpmn-server\'s own settings: labels, a task\'s assignment 
         assert.match(processSettings, /^label: Request \$\{Amount = data\.amount\}$/m);
         assert.match(processSettings, /^securityPolicy: ReportCases$/m);
         assert.match(await process.locator('> .report-decision .report-decision-title').innerText(), /^Security policy ReportCases · policies\/security\/ReportCases\.dmn\.xml$/);
-        assert.match(await process.locator('> .report-decision table').innerText(), /COLLECT[^]*relation[^]*see[^]*"initiator"[^]*"full"[^]*whoever asked sees it/);
+        assert.match(await process.locator('> .report-decision table').innerText(), /COLLECT[^]*actors\.initiator[^]*see[^]*user\.userName[^]*"full"[^]*whoever asked sees it/);
 
         const approve = section(page, 'Approve');
         const settings = await approve.locator('.report-settings').first().innerText();

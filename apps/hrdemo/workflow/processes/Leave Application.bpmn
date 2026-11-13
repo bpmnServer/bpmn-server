@@ -74,7 +74,7 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       <bpmn2:outgoing>datesRight</bpmn2:outgoing>
       <bpmn2:outgoing>datesWrong</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
-    <bpmn2:userTask id="Approve" name="Approve" owf:assignmentPolicy="LeaveApproval">
+    <bpmn2:userTask id="Approve" name="Approve" owf:assignmentPolicy="LeaveApproval" owf:actor="approver">
       <bpmn2:documentation>Assigned by the policy LeaveApproval (policies/LeaveApproval.dmn.xml): over 10 days to HR, else to the Manager group. The outcome decides the path; the comment goes to the employee.</bpmn2:documentation>
       <bpmn2:extensionElements>
         <camunda:formData>

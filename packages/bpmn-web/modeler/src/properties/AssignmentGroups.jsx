@@ -22,6 +22,9 @@ export function UserAssignmentGroup(element, translate) {
             entry('candidateUsers', 'Candidate users', VALUE_HELP),
             entry('candidateGroups', 'Candidate groups', VALUE_HELP),
             ...policyEntries(element),
+            // who completes it is this actor of the instance: actors.<name> in every expression (docs/design/expressions.md)
+            attributeEntry(element, { id: 'assignment-actor', attribute: 'owf:actor', label: 'Actor',
+                description: 'Who completes it is this actor of the instance (approver): actors.approver in conditions, scripts and policies' }),
             entry('dueDate', 'Due date', DATE_HELP),
             entry('followUpDate', 'Follow up date', DATE_HELP),
             entry('priority', 'Priority', 'A number or an expression such as $data.priority')

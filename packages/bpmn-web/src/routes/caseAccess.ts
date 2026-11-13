@@ -39,7 +39,7 @@ export class CaseAccess {
     get on(): boolean { return this.policy.on; }
 
     /** What this user may do with the case, or with one of its tasks (`task.elementId`). */
-    async decide(user: SecureUser, instance, task?: { elementId: string }): Promise<IAccess> {
+    async decide(user: SecureUser, instance, task?: { elementId: string; itemId?: string }): Promise<IAccess> {
         if (!this.on) return FULL_ACCESS;
         const errors: string[] = [];
         const access = await this.policy.decide(securityUser(user), instance, task, errors);
@@ -60,17 +60,17 @@ export class CaseAccess {
     async casesOf(items: any[]): Promise<Map<string, any>> {
         const ids = [...new Set(items.map(i => i.instanceId).filter(Boolean))];
         if (!ids.length) return new Map();
-        const found = await this.server.dataStore.findInstances({ id: { $in: ids } }, { projection: { id: 1, name: 1, data: 1, items: 1, userName: 1 } });
+        const found = await this.server.dataStore.findInstances({ id: { $in: ids } }, { projection: { id: 1, name: 1, data: 1, items: 1, tokens: 1, userName: 1 } });
         return new Map(found.map(i => [i.id, i]));
     }
 
     /** The waiting tasks this user may complete, as their cases' policies say (a task they are refused is left out). */
-    async tasksAllowed<T extends { instanceId?: string; elementId?: string }>(user: SecureUser, items: T[]): Promise<T[]> {
+    async tasksAllowed<T extends { id?: string; instanceId?: string; elementId?: string }>(user: SecureUser, items: T[]): Promise<T[]> {
         if (!this.on) return items;
         const cases = await this.casesOf(items);
         const allowed = [];
         for (const item of items)
-            if ((await this.decide(user, cases.get(item.instanceId), { elementId: item.elementId })).complete !== false) allowed.push(item);
+            if ((await this.decide(user, cases.get(item.instanceId), { elementId: item.elementId, itemId: item.id })).complete !== false) allowed.push(item);
         return allowed;
     }
 
@@ -92,7 +92,7 @@ export class CaseAccess {
         const items = (await this.server.dataStore.findItems(query)).filter(i => i.status === 'wait');
         const cases = await this.casesOf(items);
         for (const item of items)
-            CaseAccess.require(await this.decide(user, cases.get(item.instanceId), { elementId: item.elementId }), claim ? 'claim' : 'assign', true);
+            CaseAccess.require(await this.decide(user, cases.get(item.instanceId), { elementId: item.elementId, itemId: item.id }), claim ? 'claim' : 'assign', true);
     }
 
     /**

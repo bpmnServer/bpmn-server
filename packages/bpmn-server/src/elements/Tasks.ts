@@ -1,5 +1,5 @@
 
-import { decisionContext } from '../engine/DecisionContext.js';
+import { runningDecisionContext } from '../engine/DecisionContext.js';
 import { owfAttribute } from './owfAttributes.js';
 import { Node } from './Node.js';
 import { applyPolicy } from '../engine/AssignmentPolicy.js';
@@ -216,14 +216,10 @@ class BusinessRuleTask extends ServiceTask {
         token.log(`..invoking business rule ${ref}: decision '${found.decision.name}' in ${found.filePath}`);
         const dmn = await new DMNEngine({ log: message => token.log(message), listInputs: true }).load(found.filePath, found.decision.id);
 
-        // the one context every decision reads (engine/DecisionContext.ts): the data, the task's prepared inputs, who acts
-        const execution = token.execution;
-        const context = await decisionContext({
-            kind: 'decision', name: ref, data: token.data, input: item.input, task: this.id,
-            user: { userName: execution.userName ?? null }, instance: execution.instance, appDelegate: execution.appDelegate,
-            log: message => token.log(message),
-        });
-        const result = dmn.evaluate(context);
+        // the names every expression reads (engine/DecisionContext.ts): the data in its scope, the task's prepared inputs,
+        // who acts, the actors, the application's services and facts
+        const context = await runningDecisionContext(item, { kind: 'decision', name: ref, task: this.id });
+        const result = await dmn.evaluateAsync(context);
         item.output = this.mapResult(result);
         if (this.resultVariable)
             token.data[this.resultVariable] = item.output;

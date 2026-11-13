@@ -8,6 +8,10 @@ import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
 import { templateProblems } from '../engine/Labels.js';
 import { owfAttribute, legacyAttributes } from './owfAttributes.js';
+import { actorElements, BUILT_IN_ACTORS } from '../engine/DecisionContext.js';
+import { SECURITY_FOLDER, DEFAULT_SECURITY_POLICY } from '../engine/SecurityPolicy.js';
+import fs from 'node:fs';
+import path from 'node:path';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { DMNParser } from '../dmn/DMNParser.js';
@@ -152,6 +156,7 @@ class ModelVerifier {
             const definition = await this.loadDefinition(name, source);
             if (definition) {
                 await this.verifyExecutables(definition);
+                await this.verifyActors(source, definition);
                 await this.verifyApplication(name, source, definition);
             }
         }
@@ -500,6 +505,44 @@ class ModelVerifier {
             });
         }
         this.processId = undefined;
+    }
+
+    /**
+     * The actors its expressions read (docs/design/expressions.md): an `actors.<name>` in the model, in the policies
+     * it names (assignment, security) or in its business rules' decisions that no element of it is (owf:actor), and
+     * not one every instance has (initiator, assignee, candidate).
+     */
+    async verifyActors(source: string, definition) {
+        const known = new Set<string>([...BUILT_IN_ACTORS, ...actorElements(source).values()]);
+        const places: [string, string][] = [['the model', source]];
+        const folder = this.decisionsFolder;
+        const read = (file: string | null) => { try { return file ? fs.readFileSync(file, 'utf8') : null; } catch { return null; } };
+        if (folder) {
+            const named = new Map<string, string>();     // a file, and what it is
+            for (const node of definition.nodes.values()) {
+                const policy = owfAttribute(node.def, 'assignmentPolicy');
+                if (typeof policy == 'string' && policy.trim()) named.set(policyFile(folder, policy.trim()) ?? '', `assignment policy ${policy.trim()}`);
+                const security = node.def?.$attrs?.['owf:securityPolicy'];
+                if (security) named.set(path.join(folder, SECURITY_FOLDER, `${security}.dmn.xml`), `security policy ${security}`);
+                if (node instanceof BusinessRuleTask && node.decisionRef)
+                    try { named.set((await DMNEngine.find(folder, node.decisionRef)).filePath, `decision ${node.decisionRef}`); } catch { }
+            }
+            for (const proc of definition.processes.values()) {
+                const security = (proc.def || proc)?.$attrs?.['owf:securityPolicy'] || DEFAULT_SECURITY_POLICY;
+                named.set(path.join(folder, SECURITY_FOLDER, `${security}.dmn.xml`), `security policy ${security}`);
+            }
+            for (const [file, what] of named) {
+                const text = read(file);
+                if (text) places.push([what, text]);
+            }
+        }
+        const unknown = new Map<string, string[]>();
+        for (const [what, text] of places)
+            for (const [, actor] of text.matchAll(/\bactors\.([A-Za-z_]\w*)/g))
+                if (!known.has(actor) && !(unknown.get(actor) ?? []).includes(what))
+                    unknown.set(actor, [...(unknown.get(actor) ?? []), what]);
+        for (const [actor, where] of unknown)
+            this.add('warning', 'actor-unknown', `actors.${actor} (${where.join(', ')}): no element of the model is the actor '${actor}' (owf:actor); its actors are ${[...known].join(', ')}.`);
     }
 
     /** The roles of the models folder's roles.json; null without one (or a folder); a bad file is an error. */

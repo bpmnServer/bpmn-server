@@ -1,4 +1,4 @@
-// @features: assignment-policies, labels
+// @features: assignment-policies, labels, security-policies
 // OWF's own model attributes are in the owf: namespace (docs/design/owf-namespace.md): owf:assignmentPolicy,
 // owf:label, owf:endLabel, owf:exceptionsAsErrors. A model saved before, with them as camunda:, works the same, and
 // verifyModel warns that the editor saves them as owf:.
@@ -82,5 +82,19 @@ test('owf: is read first; verifyModel warns of each OWF attribute still under ca
     const current = await verifyModel(MODEL('owf'), srv, 'Request');
     assert.deepEqual(current.issues.filter(i => i.code === 'owf-attribute-legacy'), []);
     assert.ok(!current.issues.some(i => i.code === 'assignment-policy-not-found'), 'owf:assignmentPolicy is checked as before');
+    await srv.shutdown();
+});
+
+test('verifyModel: an actor the model, its policies or its decisions read that no element is (owf:actor)', async () => {
+    const model = MODEL('owf').replace('<bpmn:userTask id="Approve" name="Approve"', '<bpmn:userTask id="Approve" name="Approve" owf:actor="approver"')
+        .replace('throw new RangeError("too much");', 'data.who = actors.approver + actors.aprover;');
+    const srv = await server(model);
+    fs.writeFileSync(path.join(srv.configuration.definitionsPath, 'policies', 'assignment', 'Approval.dmn.xml'),
+        POLICY.replace('<text>amount</text>', '<text>actors.reviewer</text>'));
+    const { issues } = await verifyModel(model, srv, 'Request');
+    const unknown = issues.filter(i => i.code === 'actor-unknown').map(i => i.message);
+    assert.equal(unknown.length, 2, unknown.join('\n'));
+    assert.match(unknown.join('\n'), /actors\.aprover \(the model\): no element of the model is the actor 'aprover'.*its actors are initiator, assignee, candidate, approver/);
+    assert.match(unknown.join('\n'), /actors\.reviewer \(assignment policy Approval\)/);
     await srv.shutdown();
 });

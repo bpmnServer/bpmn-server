@@ -29,8 +29,8 @@ function afterCondition(after: string) {
 }
 /** What a list shows of an instance, and its data for its label (engine/Labels.ts): not its items, logs or source. */
 const SUMMARY = { id: 1, name: 1, status: 1, startedAt: 1, endedAt: 1, data: 1 };
-/** With security policies, its items too: the person's relation to the case is in them. */
-const SUMMARY_AND_ITEMS = { ...SUMMARY, items: 1, userName: 1 };
+/** With security policies, its items and tokens too: the instance's actors are in them, in their branches. */
+const SUMMARY_AND_ITEMS = { ...SUMMARY, items: 1, tokens: 1, userName: 1 };
 
 /** Its label, once labeled (labels.ts): nothing when it was not. */
 const labelOf = i => i.label === undefined ? {} : { label: i.label, labelValues: i.labelValues };

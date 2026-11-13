@@ -47,11 +47,18 @@ export class SandboxScriptHandler extends ScriptHandler {
         return this.run(scope, script.replace('#', ''), label);
     }
 
+    /** The standard names (ScriptHandler.standardValues) the script reads, as plain values. */
+    private standardFor(scope, body: string): Record<string, any> {
+        const reads = ScriptHandler.namesRead(body);
+        if (![...Object.keys(this.standardValues(scope))].some(name => reads.has(name))) return {};
+        return Object.fromEntries(Object.entries(this.standardValues(scope, true)).filter(([name]) => reads.has(name)));
+    }
+
     /** Runs a function body against copies of the scope's values; copies back what it changed; returns its value. */
     async run(scope, body: string, label: string) {
         const name = ScriptHandler.scriptName(scope, label);
         const view = scopeView(scope);
-        const { result, back, calls } = await runSandboxed({ ...view.values, ...this.contextValues(scope) }, body, {
+        const { result, back, calls } = await runSandboxed({ ...view.values, ...this.standardFor(scope, body), ...this.contextValues(scope) }, body, {
             name, timeLimit: this.timeLimit, memoryLimit: this.memoryLimit, log: text => scope.log?.(text),
             services: this.callServices ? view.services : undefined,
             self: 'item ?? instance',
@@ -245,8 +252,8 @@ function scopeView(scope) {
         return {
             services,
             // a process's own script has no item; the sandbox's own code reads these whatever the scope
-            values: { instance: instanceView, item: undefined, data: undefined, input: undefined, output: undefined },
-            copyBack(back) { mergeChanges(instance.data, back.instance?.data); },
+            values: { instance: instanceView, item: undefined, data: instance.data ?? {}, input: undefined, output: undefined },
+            copyBack(back) { mergeChanges(instance.data, back.instance?.data); mergeChanges(instance.data, back.data); },
         };
     }
     const item = isToken ? undefined : Object.fromEntries(ITEM_READABLE.map(key => [key, scope[key]]));

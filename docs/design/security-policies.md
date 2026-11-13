@@ -40,13 +40,14 @@ give it to others.
 4. **Every matching rule counts, and a denial wins.** Hit policy COLLECT: the server reads all the rules that match;
    for each action, any `deny` refuses it; else any `allow` allows it; else the action's default (below). The rules'
    order doesn't matter, so a rule added at the end can't open what another closes.
-5. **Inputs are about the person, the case and the task,** in FEEL: who they are (`user.userName`, `groups`), their
-   relation to the case (worked out by the server), the task asked about (`task`: its element id, empty for the
-   case), and the case's data (`data.amount`).
+5. **Inputs are about the user, the instance and the task,** in FEEL, with the names every expression reads
+   ([expressions.md](expressions.md)): who they are (`user.userName`, `user.userGroups`), the instance's actors
+   (`actors.initiator`, `actors.approver`), the task asked about (`task`: its element id, empty for the instance),
+   and the data (`data.amount`: the instance's; for a task, its item's, in its branch).
 6. **FEEL only, no `$(...)`:** unlike an assignment policy's outputs, a security policy can't call the application's
-   code. The host asks it on every list and page, and the application's code runs only in the engine
-   ([engine-isolation.md](engine-isolation.md)). What the code would know goes into the case's data or the person's
-   groups.
+   services. The host asks it on every list and page, and the application's services run in the engine
+   ([engine-isolation.md](engine-isolation.md)). What they would know comes from the application's
+   `decisionContext` hook, the instance's data, or the user's groups.
 7. **The platform's security is not the policy's:** signing in, administering users and the server, designing and
    deploying models, the tenants, and deleting cases stay with roles in code. Administrators and the system are not
    asked: they see and do everything, as today. A policy decides only about cases and their tasks, for everyone else.
@@ -80,46 +81,50 @@ give it to others.
 
 ## Its inputs, and its reverse
 
-A security policy reads what every decision table reads: [one protocol](decision-context.md), the case data by name
-and as `data`, the person (`user`, `groups`), their `relation` to the case, the `task`, and the application's facts.
-Its reverse, who may do what with a case, is in the same note, and shown under the Rationale on the instance page.
+A security policy reads what every expression reads ([expressions.md](expressions.md)): the data by name and as
+`data`, the `user`, the instance's `actors`, the `task`, and the application's facts. Its reverse, who may do what
+with an instance ([decision-context.md](decision-context.md)), is shown under the Rationale on the instance page.
 
 ## A policy
 
 `processes/policies/security/LeaveCases.dmn.xml`, hit policy COLLECT:
 
-| relation | groups | task | see | data | claim | complete | assign | restart |
-|---|---|---|---|---|---|---|---|---|
-| | `list contains(groups, "HR")` | | `"full"` | `"all"` | | | `"allow"` | `"allow"` |
-| `"initiator"` | | | `"full"` | `"forms"` | | | | |
-| `"candidate"`, `"assignee"` | `list contains(groups, "Manager")` | | `"full"` | `["LeaveType", "StartDate", "EndDate", "RequestReason"]` | | | | |
-| `"participant"` | | | `"summary"` | | | | | |
-| `"initiator"` | | `"Approve"` | | | `"deny"` | `"deny"` | `"deny"` | |
+| actors.initiator | actors.approver | actors.assignee | actors.candidate | user.userGroups | task | see | data | claim | complete | assign | restart |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | `"HR"` | | `"full"` | `"all"` | | | `"allow"` | `"allow"` |
+| `user.userName` | | | | | | `"full"` | `"forms"` | | | | |
+| | | | `"Manager"` | `"Manager"` | | `"full"` | `["LeaveType", "StartDate", "EndDate", "RequestReason"]` | | | | |
+| | | `user.userName` | | | | `"full"` | `["LeaveType", "StartDate", "EndDate", "RequestReason"]` | | | | |
+| | `user.userName` | | | | | `"summary"` | | | | | |
+| `user.userName` | | | | | `"Approve"` | | | `"deny"` | `"deny"` | `"deny"` | |
+
+An actor's column with `user.userName` in a rule: "this user is that actor". `actors.approver` is the Leave
+Application's own: its Approve says `owf:actor="approver"`. The third rule: while the request waits for the managers
+(its Approve offered to the Manager group), a manager sees it.
 
 The last rule is separation of duties: whoever asked for the leave may not claim or approve it, even as a manager,
 nor give its approval to someone of their choosing, whatever the task's candidates say. It doesn't matter where the rule is in the table.
 
-## The person's relation to a case
+## The instance's actors
 
-Worked out by the server from the case's items, before the policy is asked. A person has every relation that holds,
-and `relation` is a list: an input entry `"initiator"` matches when the list contains it, as `groups` does.
-
-| relation | holds when |
-|---|---|
-| `initiator` | they started the case (its first item's `userName`, or `data.requester` from `camunda:initiator`) |
-| `assignee` | a task waiting in the case is assigned to them |
-| `candidate` | a task waiting in the case is offered to them or one of their groups |
-| `participant` | they completed a task in it, or are its assignee or candidate |
+Worked out by the server from the instance's items and its model, before the policy is asked
+([expressions.md](expressions.md)): `actors.initiator` (who started it: its start event's user, which no form can
+change), `actors.<name>` (who completed the elements the model names so, `owf:actor`), `actors.assignee` and
+`actors.candidate` (the waiting user tasks'). An actor of several people is a list, and a cell matches when the user is
+in it. For a task, the actors of its item's branch (a multi-instance's line).
 
 ## The default policy (bpmn-web's, built in)
 
-H2's rule, as a table an application can copy into `policies/security/default.dmn.xml` and change:
+H2's rule (in code; as a table an application can copy into `policies/security/default.dmn.xml` and change):
 
-| relation | groups | see | data |
-|---|---|---|---|
-| | `list contains(groups, "DESIGNER")` | `"full"` | `"all"` |
-| `"assignee"`, `"candidate"` | | `"summary"` | `"forms"` |
-| `"participant"`, `"initiator"` | | `"summary"` | |
+| actors.initiator | actors.assignee | actors.candidate | user.userGroups | see | data |
+|---|---|---|---|---|---|
+| | | | `"DESIGNER"` | `"full"` | `"all"` |
+| | `user.userName` | | | `"summary"` | `"forms"` |
+| | | the user, or one of `user.userGroups` | | `"summary"` | `"forms"` |
+| `user.userName` | | | | `"summary"` | |
+
+and whoever completed a step of it, as a line (the built-in one knows it from the items; a table names the actors).
 
 `claim` and `complete` keep their defaults (the assignment's); `restart` and `events` stay refused but for
 administrators. So an end user sees, in My work and the lists, the cases they started or work on, as a line; opening
@@ -146,9 +151,8 @@ engine is asked to act: the engine runs nothing new and stores nothing new.
 A policy is asked per case, and API v3's lists page in the store (Fable Review H5). So that a page isn't emptied by
 cases the policy hides afterwards:
 
-- the relations are conditions the store can ask (`items.userName`, `items.assignee`, `items.candidateGroups`); the
-  server asks the store for the cases where the person has a relation some rule allowing `see` names (a rule that
-  allows `see` with no `relation` matches any case, and then nothing is narrowed);
+- *not built:* narrowing the store's query by the actors a rule allowing `see` names (`items.userName` of the
+  actor's elements, `items.assignee`, `items.candidateGroups`). Today every instance of a page is asked;
 - the policy is asked for each case of the page; the page is read again past what it hid, until it is full or there
   is no more (a bound on the reads; a page can be short when reached).
 
@@ -167,13 +171,14 @@ doc's §6 asks: a `security-policies` feature with `[owf:securityPolicy]` once b
 | `security-policy-not-found` | error | a process's or task's policy isn't in `policies/security/` |
 | `security-policy-invalid` | error | it can't be read as a decision, isn't COLLECT, or has `$(...)` in a cell |
 | `security-policy-output` | warning | an output that isn't one of the actions, or a value its action doesn't take |
-| `security-policy-input` | warning | an input that isn't `relation`, `groups`, `user...`, `task` or the case's `data...` |
+| `security-policy-input` | warning | an input that isn't `actors...`, `user...`, `task` or the instance's `data...` |
+| `actor-unknown` | warning | an `actors.<name>` that no element of the model is (`owf:actor`); **built** |
 | `security-policy-task` | warning | a rule's `task` that isn't a user task of the process |
 | `role-unknown` | warning | a group a rule names that isn't in `roles.json` (as for assignment) |
 
 ## Trying it
 
-- **The decision editor's Test tab**, as for any decision: a person (user name, groups), a relation, a task, data;
+- **The decision editor's Test tab**, as for any decision: a user (name, groups), the actors, a task, data;
   every rule that matches, and what each action comes to.
 - **"As whom" on the instance page**, for administrators: the case as a given user sees it, and the rules that decided.
 - **Tests:** a model's `.feature` with `@login` already acts as a person; steps that a case is or isn't seen, which
@@ -195,17 +200,17 @@ doc's §6 asks: a `security-policies` feature with `[owf:securityPolicy]` once b
 1. **Data paths in `data`:** a path shows a whole branch (`customer` shows `customer.address`); is finer needed, or a
    `deny` of paths?
 2. **A task's own form fields** are always shown to whoever may complete it: could a policy need to hide one?
-3. **The relation `manager-of`** (the employee's manager, whoever has the task) needs the application's code, which a
-   security policy can't call. Kept as data (`data.managerId`, set when the case starts) for now.
+3. **"The employee's manager"**, whoever has the task, needs the application's code: the `decisionContext` hook's
+   fact (`managerOf`), or data (`data.managerId`, set when the instance starts).
 4. **Moving the `camunda:` OWF attributes to `owf:`**: with this note, or apart (the work doc's question).
 5. **Notifications** (the work doc's `@notify`) are not this note.
 
 ## Increments
 
 1. This note, discussed.
-2. The server: the `owf` namespace, the relation, the policy's evaluation (DMNEngine, COLLECT, FEEL only), the
+2. The server: the `owf` namespace, the actors, the policy's evaluation (DMNEngine, COLLECT, FEEL only), the
    built-in default, behind `SECURITY_POLICY`; asked in API v3's instance and task routes, claim and complete
-   included. Tests: each action, each relation, deny over allow, no rule, a missing policy; one person can't see
+   included. Tests: each action, each actor, deny over allow, no rule, a missing policy; one person can't see
    another's case, and the requester can't approve their own (the negative tests H2 asked for).
 3. The pages: the Workbench, the instance page, My work, the task form.
 4. The editor: `owf:securityPolicy` on a process and a task, the policy list, a preview; `verifyModel`'s checks; the

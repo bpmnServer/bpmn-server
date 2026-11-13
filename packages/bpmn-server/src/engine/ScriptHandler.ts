@@ -2,8 +2,9 @@ import { Execution } from './Execution.js';
 import { Item } from './Item.js';
 import { Token } from './Token.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
-import { expressionScript, scriptOf, templateParts, evaluateTemplate, isFeel, conditionScript } from './Expressions.js';
+import { expressionScript, scriptOf, templateParts, evaluateTemplate, isFeel, conditionScript, freeNames } from './Expressions.js';
 import { evaluate as feelEvaluate } from 'feelin';
+import { actorElements, actorsOf, BUILT_IN_ACTORS, feelView, itemView, instanceView } from './DecisionContext.js';
 import { spawn } from 'child_process';
 import vm from 'node:vm';
 
@@ -25,6 +26,47 @@ class ScriptHandler implements IScriptHandler{
         this.context = options.context ?? {};
     }
 
+    /**
+     * The names every expression sees besides the scope's own (docs/design/expressions.md): `actors` (who did what in
+     * the instance, in the item's branch; worked out when read) and `user` (the operation's, by name). An
+     * application's script context of the same name is used instead. `materialized`: plain values, for the sandbox.
+     */
+    standardValues(scope, materialized = false): Record<string, any> {
+        const execution = ScriptHandler.executionOf(scope);
+        if (!execution) return {};
+        const token = scope?.token ?? (Object.prototype.hasOwnProperty.call(scope, 'startNodeId') ? scope : undefined);
+        const elements = actorElements(execution.definition);
+        let computed: Record<string, any>;
+        const compute = () => computed ??= actorsOf({ instance: execution.instance,
+            items: typeof execution.getItems === 'function' ? execution.getItems() : undefined, elements, scope: token ? token.dataPath ?? '' : null });
+        let actors: Record<string, any> = {};
+        if (materialized) actors = { ...compute() };
+        else for (const name of new Set([...BUILT_IN_ACTORS, ...elements.values()]))
+            Object.defineProperty(actors, name, { get: () => compute()[name], enumerable: true });
+        const standard = { actors, user: { userName: execution.userName ?? null } };
+        for (const name of Object.keys(this.context)) delete standard[name];
+        return standard;
+    }
+
+    private static reads = new Map<string, Set<string>>();
+    /** The names a script reads without declaring them (Expressions.freeNames), remembered by its text. */
+    static namesRead(body: string): Set<string> {
+        let names = ScriptHandler.reads.get(body);
+        if (!names) {
+            try { names = new Set(freeNames(body)); } catch { names = new Set(); }
+            if (ScriptHandler.reads.size > 500) ScriptHandler.reads.delete(ScriptHandler.reads.keys().next().value);
+            ScriptHandler.reads.set(body, names);
+        }
+        return names;
+    }
+
+    /** The execution a scope (an item, a token, an execution) is of. */
+    static executionOf(scope): any {
+        if (!scope || typeof scope !== 'object') return undefined;
+        if (Object.prototype.hasOwnProperty.call(scope, 'tokens')) return scope;
+        return scope.token?.execution ?? scope.execution;
+    }
+
     /** The context's values for a scope. */
     contextValues(scope): Record<string, any> {
         const names = Object.keys(this.context);
@@ -43,10 +85,23 @@ class ScriptHandler implements IScriptHandler{
         return this.evaluateExpression(scope, conditionScript(expression, language), label);
     }
 
-    /** A FEEL expression over the data: its values by name, and `data` itself. */
+    /**
+     * A FEEL expression, with the names every expression sees (docs/design/expressions.md): the data's fields by name,
+     * `data`, `this` and `item`, `instance`, `input`, `output`, `actors`, `user`, `appServices`. A call to an async
+     * service, as the whole expression, is awaited.
+     */
     async evaluateFeel(scope, expression) {
-        const data = scope?.data ?? {};
-        const { value } = feelEvaluate(scriptOf(String(expression).trim()), { ...data, data, ...this.contextValues(scope) });
+        const execution = ScriptHandler.executionOf(scope);
+        const data = scope?.data ?? execution?.instance?.data ?? {};
+        const item = scope?.token ? scope : undefined;
+        const seen = itemView(item, data);
+        const context = {
+            ...data, data, input: item?.input ?? {}, output: item?.output ?? {}, this: seen, item: seen,
+            instance: instanceView(execution?.instance), appServices: feelView(execution?.servicesProvider) ?? {},
+            ...this.standardValues(scope), ...this.contextValues(scope),
+        };
+        let { value } = feelEvaluate(scriptOf(String(expression).trim()), context);
+        if (value instanceof Promise) value = await value;
         return value === undefined ? null : value;
     }
 
@@ -193,7 +248,10 @@ class ScriptHandler implements IScriptHandler{
     }
     /** Runs a script, with the context's variables as its parameters. */
     private compiled(scope, body: string, label: string) {
-        const context = this.contextValues(scope);
+        // the standard names a script reads without declaring them (a script's own `const user` stays its own)
+        const reads = ScriptHandler.namesRead(body);
+        const standard = Object.fromEntries(Object.entries(this.standardValues(scope)).filter(([name]) => reads.has(name)));
+        const context = { ...standard, ...this.contextValues(scope) };
         return ScriptHandler.compile(scope, body, label, Object.keys(context)).call(scope, ...Object.values(context));
     }
     /** bpmn:///<model>/<element>/<label>.js: the element is the item's; a process's own scripts are under 'process'. */
@@ -223,6 +281,7 @@ class ScriptHandler implements IScriptHandler{
             return `
             var appDelegate=this.appDelegate;
             var instance=this.instance;
+            var data=this.instance.data;      // a process's own script: the instance's data, at the top
             var appServices=this.servicesProvider;
             var appUtils=appDelegate.appUtils;
             `;

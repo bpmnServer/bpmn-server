@@ -2,25 +2,26 @@
  * Security policies (docs/design/security-policies.md): who sees a case, which of its data, and what they may do with
  * it and its tasks. A policy is a DMN decision table in the models folder, `policies/security/<name>.dmn.xml`, named by
  * a process (`owf:securityPolicy`) and, for its tasks' actions, by a user task. Every rule that matches counts (hit
- * policy COLLECT) and a denial wins. Its inputs are the person, their relation to the case, the task and the case's
- * data, in FEEL only: it is asked by the host, on every list and page.
+ * policy COLLECT) and a denial wins. It reads what every expression reads (docs/design/expressions.md): the user,
+ * the instance's actors, the task, the data (a task's: its item's, in its scope); it is asked by the host, on every list
+ * and page.
  *
  * `SecurityPolicy` is one models folder's policies; an application may subclass it and override a step (the
- * relations, the context the tables read, the built-in default, combining).
+ * context the tables read, the built-in default, combining).
  *
  * Off until an application has `policies/security/` or SECURITY_POLICY=default: then today's rule (SecureUser) holds.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
-import { decisionContext, relationsOf as caseRelations } from './DecisionContext.js';
+import { decisionContext, actorsOf, actorElements, actorNamesOf, dataPathOf } from './DecisionContext.js';
+import type { Actor } from './DecisionContext.js';
+import { DataHandler } from './DataHandler.js';
 
 export const SECURITY_FOLDER = 'policies/security';
 /** The application's default policy, for a process that names none. */
 export const DEFAULT_SECURITY_POLICY = 'default';
 export const SECURITY_ACTIONS = ['see', 'data', 'claim', 'complete', 'assign', 'restart', 'events'] as const;
-
-import type { Relation } from './DecisionContext.js';
 
 /** Who asks: a user name and groups; administrators and the system are not asked (`unrestricted`). */
 export interface ISecurityUser {
@@ -66,8 +67,11 @@ export interface IWhoMay {
     tasks: { seq: number; elementId: string; name?: string; offered: boolean; claim: boolean; complete: boolean; assign: boolean; rules: IPolicyRule[] }[];
 }
 
-/** What a model says for security: its process's policy, its tasks', and the fields its forms enter. */
-export interface IModelSecurity { policy?: string; taskPolicies: Map<string, string>; formFields: Set<string>; taskFields: Map<string, Set<string>>; }
+/** What a model says for security: its process's policy, its tasks', the fields its forms enter, its actors (owf:actor). */
+export interface IModelSecurity { policy?: string; taskPolicies: Map<string, string>; formFields: Set<string>; taskFields: Map<string, Set<string>>; actors: Map<string, string>; }
+
+/** A task a decision is about: its element, and the item (its scope) when known; else the element's waiting item. */
+export interface ISecurityTask { elementId: string; itemId?: string; }
 
 export const FULL_ACCESS: IAccess = Object.freeze({
     see: 'full', data: { all: true, forms: true, paths: [] }, claim: null, complete: null, assign: null, restart: true, events: true, rules: [],
@@ -108,7 +112,7 @@ export class SecurityPolicy {
 
     /** A model's security facts, from its file. */
     model(modelName: string): IModelSecurity {
-        const model: IModelSecurity = { taskPolicies: new Map(), formFields: new Set(), taskFields: new Map() };
+        const model: IModelSecurity = { taskPolicies: new Map(), formFields: new Set(), taskFields: new Map(), actors: new Map() };
         const file = this.definitionsPath && modelName ? path.join(this.definitionsPath, `${modelName}.bpmn`) : null;
         let stat: fs.Stats;
         try { stat = fs.statSync(file); } catch { return model; }
@@ -116,6 +120,7 @@ export class SecurityPolicy {
         const cached = SecurityPolicy.models.get(file);
         if (cached?.stamp === stamp) return cached.model;
         const xml = fs.readFileSync(file, 'utf8');
+        model.actors = actorElements(xml);
         const processTag = /<(?:[\w.-]+:)?process\b[^>]*>/.exec(xml)?.[0];
         if (processTag) model.policy = attr(processTag, 'securityPolicy');
         // each start event's and user task's: its policy, and its form's fields
@@ -138,9 +143,22 @@ export class SecurityPolicy {
         return model;
     }
 
-    /** The relations a person has to a case, from its items (and who started it): engine/DecisionContext.ts's. */
-    relationsOf(user: ISecurityUser, instance: any): Relation[] {
-        return caseRelations(user, instance);
+    /** The task's item: by its id, else the element's waiting one, else its latest. */
+    private itemOf(instance: any, task?: ISecurityTask): any {
+        if (!task) return undefined;
+        const items: any[] = instance?.items ?? [];
+        return (task.itemId && items.find(i => i.id === task.itemId))
+            ?? items.find(i => i.elementId === task.elementId && i.status === 'wait')
+            ?? [...items].reverse().find(i => i.elementId === task.elementId);
+    }
+
+    /**
+     * An instance's actors (engine/DecisionContext.ts), from its items and its model's owf:actor; for a task, those of
+     * its item's branch.
+     */
+    actorsOf(instance: any, task?: ISecurityTask): Record<string, Actor> {
+        const item = this.itemOf(instance, task);
+        return actorsOf({ instance, elements: this.model(instance?.name).actors, scope: item ? dataPathOf(item, instance?.tokens) : null });
     }
 
     /**
@@ -148,11 +166,10 @@ export class SecurityPolicy {
      * process's, else the application's default, else the built-in one; and the task's own), combined. A policy that
      * can't be read decides nothing (its error is in `errors`), so what it would have allowed stays refused.
      */
-    async decide(user: ISecurityUser, instance: any, task?: { elementId: string }, errors: string[] = []): Promise<IAccess> {
+    async decide(user: ISecurityUser, instance: any, task?: ISecurityTask, errors: string[] = []): Promise<IAccess> {
         if (user.unrestricted) return FULL_ACCESS;
         const model = this.model(instance?.name);
-        const relations = this.relationsOf(user, instance);
-        const context = await this.context(user, instance, task, relations);
+        const context = await this.context(user, instance, task);
         const rules: IPolicyRule[] = [];
         const named = [model.policy || DEFAULT_SECURITY_POLICY];
         const own = task && model.taskPolicies.get(task.elementId);
@@ -161,7 +178,7 @@ export class SecurityPolicy {
             const file = this.file(name);
             if (!file) {
                 if (name === DEFAULT_SECURITY_POLICY && !model.policy)
-                    rules.push(...this.builtInDefault(user, relations).map(r => ({ policy: 'built-in default', ...r })));
+                    rules.push(...this.builtInDefault(user, instance, context.actors).map(r => ({ policy: 'built-in default', ...r })));
                 else errors.push(`there is no ${SECURITY_FOLDER}/${name}.dmn.xml`);
                 continue;
             }
@@ -226,12 +243,16 @@ export class SecurityPolicy {
     }
 
     /**
-     * What the policies' tables read: the one context every decision reads (engine/DecisionContext.ts): the case's
-     * data (by name and as `data`), the person, their relations, the task, the application's facts.
+     * What the policies' tables read: the names every expression reads (engine/DecisionContext.ts): the user, the
+     * actors, the task, the data (the instance's; a task's, its item's in its scope), the application's facts.
      */
-    protected async context(user: ISecurityUser, instance: any, task: { elementId: string } | undefined, relations: Relation[]): Promise<Record<string, any>> {
-        return decisionContext({ kind: 'security', name: this.model(instance?.name).policy, data: instance?.data, user, instance,
-            task: task?.elementId, appDelegate: this.appDelegate });
+    protected async context(user: ISecurityUser, instance: any, task?: ISecurityTask): Promise<Record<string, any>> {
+        const model = this.model(instance?.name);
+        const item = this.itemOf(instance, task);
+        const scope = item ? dataPathOf(item, instance?.tokens) : null;
+        const data = scope ? DataHandler.getData(instance?.data ?? {}, scope) ?? {} : instance?.data;
+        return decisionContext({ kind: 'security', name: model.policy, data, user, instance, task: task?.elementId, item,
+            elements: model.actors, scope, appDelegate: this.appDelegate });
     }
 
     /**
@@ -246,6 +267,7 @@ export class SecurityPolicy {
         const items: any[] = instance?.items ?? [];
         const waiting = items.filter(i => i.type === 'bpmn:UserTask' && i.status === 'wait');
         const known = new Map(users.filter(u => u?.userName).map(u => [u.userName, u]));
+        const actors = this.actorsOf(instance);
         const named = new Map<string, string[]>();     // a person the case names, and why
         const name = (userName, why: string) => {
             if (!userName) return;
@@ -267,12 +289,15 @@ export class SecurityPolicy {
         for (const userName of people) {
             if (adminSet.has(userName)) continue;
             // someone the case names whom the directory doesn't know: asked with no groups, and said so
-            subjects.push({ kind: 'person', label: userName, user: { userName, userGroups: known.get(userName)?.userGroups ?? [] },
-                because: [...(named.get(userName) ?? []), ...(known.has(userName) ? [] : ['groups unknown (not in the user directory)'])].join(', ') });
+            const user = { userName, userGroups: known.get(userName)?.userGroups ?? [] };
+            const roles = actorNamesOf(user, actors).filter(a => a !== 'initiator' && a !== 'assignee' && a !== 'candidate');
+            subjects.push({ kind: 'person', label: userName, user,
+                because: [...(named.get(userName) ?? []), ...roles.map(a => `actor ${a}`),
+                    ...(known.has(userName) ? [] : ['groups unknown (not in the user directory)'])].join(', ') });
         }
         const groups = [...new Set([...roles, ...waiting.flatMap(i => asList(i.candidateGroups))])];
         for (const group of groups)
-            subjects.push({ kind: 'role', label: group, user: { userName: `\u0000role:${group}`, userGroups: [group] }, because: 'a member, with no part in the case' });
+            subjects.push({ kind: 'role', label: group, user: { userName: `\u0000role:${group}`, userGroups: [group] }, because: 'a member, no actor of the instance' });
         subjects.push({ kind: 'anyone', label: 'anyone else', user: { userName: '\u0000anyone', userGroups: [] }, because: 'no part in it, none of these roles' });
 
         const answers: IWhoMay[] = [];
@@ -284,7 +309,7 @@ export class SecurityPolicy {
             const access = await this.decide(who.user, instance);
             const tasks = [];
             for (const item of waiting) {
-                const onTask = await this.decide(who.user, instance, { elementId: item.elementId });
+                const onTask = await this.decide(who.user, instance, { elementId: item.elementId, itemId: item.id });
                 const me = who.user.userName, groupsOf = who.user.userGroups ?? [];
                 const offered = item.assignee ? item.assignee === me
                     : asList(item.candidateUsers).includes(me) || asList(item.candidateGroups).some(g => groupsOf.includes(g))
@@ -304,21 +329,23 @@ export class SecurityPolicy {
     /** One policy's matching rules, for this context. */
     protected async ask(file: string, context: Record<string, any>): Promise<{ rule: number; outputs: Record<string, any> }[]> {
         const dmn = await new DMNEngine({ listInputs: true }).load(file);
-        const result = dmn.evaluate(context);
+        const result = await dmn.evaluateAsync(context);
         const rows: any[] = Array.isArray(result) ? result : result ? [result] : [];
         return rows.map((outputs, i) => ({ rule: dmn.matched[i] ?? i + 1, outputs: outputs ?? {} }));
     }
 
     /**
      * The built-in default, for a folder without `default.dmn.xml` (the Fable Review's H2): designers see every case
-     * and its data; the assignee and candidates of a task see the case as a line, and what forms entered; those who
-     * started it or worked on it, as a line.
+     * and its data; the assignee and candidates of a task see the case as a line, and what forms entered; who started
+     * it or completed a step of it, as a line.
      */
-    protected builtInDefault(user: ISecurityUser, relations: Relation[]): { rule: number; outputs: Record<string, any> }[] {
+    protected builtInDefault(user: ISecurityUser, instance: any, actors: Record<string, Actor>): { rule: number; outputs: Record<string, any> }[] {
         const rows = [];
+        const is = actorNamesOf(user, actors ?? {});
+        const completed = !!user.userName && (instance?.items ?? []).some(i => i.status === 'end' && i.userName === user.userName && i.type === 'bpmn:UserTask');
         if ((user.userGroups ?? []).includes('DESIGNER')) rows.push({ rule: 1, outputs: { see: 'full', data: 'all' } });
-        if (relations.includes('assignee') || relations.includes('candidate')) rows.push({ rule: 2, outputs: { see: 'summary', data: 'forms' } });
-        if (relations.includes('participant') || relations.includes('initiator')) rows.push({ rule: 3, outputs: { see: 'summary' } });
+        if (is.includes('assignee') || is.includes('candidate')) rows.push({ rule: 2, outputs: { see: 'summary', data: 'forms' } });
+        if (is.includes('initiator') || completed) rows.push({ rule: 3, outputs: { see: 'summary' } });
         return rows;
     }
 }

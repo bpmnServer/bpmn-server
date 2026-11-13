@@ -200,7 +200,7 @@ export class Workflow extends Common {
             const instance = await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');
             // the case's security policy (caseAccess.ts): completing it may be refused; its data, what it lets them read
             const caseAccess = new CaseAccess(serverOf(request));
-            const access = await caseAccess.decide(getSecureUser(request), instance, { elementId: item.elementId });
+            const access = await caseAccess.decide(getSecureUser(request), instance, { elementId: item.elementId, itemId: item.id });
             if (access.complete === false) return answerMessage(request, response, 403, 'This task is not yours to complete (security policy)');
 
             let definition=await serverOf(request).definitions.loadFromInstance(instance);
@@ -233,7 +233,7 @@ export class Workflow extends Common {
             if (caseAccess.on) {
                 const item = await apiOf(request).data.findItem({ "items.id": id }, getSecureUser(request));
                 const instance = item && await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');
-                if (!item || (await caseAccess.decide(getSecureUser(request), instance, { elementId: item.elementId })).complete === false)
+                if (!item || (await caseAccess.decide(getSecureUser(request), instance, { elementId: item.elementId, itemId: item.id })).complete === false)
                     return answerMessage(request, response, 403, 'This task is not yours to complete (security policy)');
             }
 

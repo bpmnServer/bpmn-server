@@ -2,14 +2,29 @@
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="LeaveCases_definitions" name="Leave cases" namespace="http://bpmn-server/dmn">
   <decision id="LeaveCases" name="Leave cases">
     <decisionTable id="LeaveCases_table" hitPolicy="COLLECT">
-      <input id="LeaveCases_relation" label="Relation">
-        <inputExpression id="LeaveCases_relationExpression" typeRef="string">
-          <text>relation</text>
+      <input id="LeaveCases_initiator" label="Initiator">
+        <inputExpression id="LeaveCases_initiatorExpression" typeRef="string">
+          <text>actors.initiator</text>
+        </inputExpression>
+      </input>
+      <input id="LeaveCases_approver" label="Approver">
+        <inputExpression id="LeaveCases_approverExpression" typeRef="string">
+          <text>actors.approver</text>
+        </inputExpression>
+      </input>
+      <input id="LeaveCases_assignee" label="Assignee">
+        <inputExpression id="LeaveCases_assigneeExpression" typeRef="string">
+          <text>actors.assignee</text>
+        </inputExpression>
+      </input>
+      <input id="LeaveCases_offered" label="Offered to">
+        <inputExpression id="LeaveCases_offeredExpression" typeRef="string">
+          <text>actors.candidate</text>
         </inputExpression>
       </input>
       <input id="LeaveCases_groups" label="Groups">
         <inputExpression id="LeaveCases_groupsExpression" typeRef="string">
-          <text>groups</text>
+          <text>user.userGroups</text>
         </inputExpression>
       </input>
       <input id="LeaveCases_task" label="Task">
@@ -25,7 +40,10 @@
       <output id="LeaveCases_restart" label="Restart" name="restart" typeRef="string" />
       <rule id="LeaveCases_hr">
         <description>HR sees every leave case and all its data, may give its tasks to someone else, and may restart a step</description>
-        <inputEntry id="LeaveCases_hr_relation"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_hr_initiator"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_hr_approver"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_hr_assignee"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_hr_offered"><text>-</text></inputEntry>
         <inputEntry id="LeaveCases_hr_groups"><text>"HR"</text></inputEntry>
         <inputEntry id="LeaveCases_hr_task"><text>-</text></inputEntry>
         <outputEntry id="LeaveCases_hr_see"><text>"full"</text></outputEntry>
@@ -37,7 +55,10 @@
       </rule>
       <rule id="LeaveCases_requester">
         <description>Whoever asked sees their request, and what the forms entered (the decision and its comment too)</description>
-        <inputEntry id="LeaveCases_requester_relation"><text>"initiator"</text></inputEntry>
+        <inputEntry id="LeaveCases_requester_initiator"><text>user.userName</text></inputEntry>
+        <inputEntry id="LeaveCases_requester_approver"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_requester_assignee"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_requester_offered"><text>-</text></inputEntry>
         <inputEntry id="LeaveCases_requester_groups"><text>-</text></inputEntry>
         <inputEntry id="LeaveCases_requester_task"><text>-</text></inputEntry>
         <outputEntry id="LeaveCases_requester_see"><text>"full"</text></outputEntry>
@@ -48,8 +69,11 @@
         <outputEntry id="LeaveCases_requester_restart"><text></text></outputEntry>
       </rule>
       <rule id="LeaveCases_manager">
-        <description>A manager it is offered to sees the request: its dates, type and reason</description>
-        <inputEntry id="LeaveCases_manager_relation"><text>"candidate","assignee"</text></inputEntry>
+        <description>While it waits for the managers, a manager sees the request: its dates, type and reason</description>
+        <inputEntry id="LeaveCases_manager_initiator"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_manager_approver"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_manager_assignee"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_manager_offered"><text>"Manager"</text></inputEntry>
         <inputEntry id="LeaveCases_manager_groups"><text>"Manager"</text></inputEntry>
         <inputEntry id="LeaveCases_manager_task"><text>-</text></inputEntry>
         <outputEntry id="LeaveCases_manager_see"><text>"full"</text></outputEntry>
@@ -59,21 +83,42 @@
         <outputEntry id="LeaveCases_manager_assign"><text></text></outputEntry>
         <outputEntry id="LeaveCases_manager_restart"><text></text></outputEntry>
       </rule>
-      <rule id="LeaveCases_participant">
-        <description>Anyone who worked on it sees it as a line</description>
-        <inputEntry id="LeaveCases_participant_relation"><text>"participant"</text></inputEntry>
-        <inputEntry id="LeaveCases_participant_groups"><text>-</text></inputEntry>
-        <inputEntry id="LeaveCases_participant_task"><text>-</text></inputEntry>
-        <outputEntry id="LeaveCases_participant_see"><text>"summary"</text></outputEntry>
-        <outputEntry id="LeaveCases_participant_data"><text></text></outputEntry>
-        <outputEntry id="LeaveCases_participant_claim"><text></text></outputEntry>
-        <outputEntry id="LeaveCases_participant_complete"><text></text></outputEntry>
-        <outputEntry id="LeaveCases_participant_assign"><text></text></outputEntry>
-        <outputEntry id="LeaveCases_participant_restart"><text></text></outputEntry>
+      <rule id="LeaveCases_assignee">
+        <description>Whoever it is assigned to sees the request too</description>
+        <inputEntry id="LeaveCases_assignee_initiator"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_assignee_approver"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_assignee_assignee"><text>user.userName</text></inputEntry>
+        <inputEntry id="LeaveCases_assignee_offered"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_assignee_groups"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_assignee_task"><text>-</text></inputEntry>
+        <outputEntry id="LeaveCases_assignee_see"><text>"full"</text></outputEntry>
+        <outputEntry id="LeaveCases_assignee_data"><text>["LeaveType","StartDate","EndDate","RequestReason","requester","days"]</text></outputEntry>
+        <outputEntry id="LeaveCases_assignee_claim"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_assignee_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_assignee_assign"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_assignee_restart"><text></text></outputEntry>
+      </rule>
+      <rule id="LeaveCases_approver">
+        <description>Whoever approved it sees it as a line</description>
+        <inputEntry id="LeaveCases_approver_initiator"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_approver_approver"><text>user.userName</text></inputEntry>
+        <inputEntry id="LeaveCases_approver_assignee"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_approver_offered"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_approver_groups"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_approver_task"><text>-</text></inputEntry>
+        <outputEntry id="LeaveCases_approver_see"><text>"summary"</text></outputEntry>
+        <outputEntry id="LeaveCases_approver_data"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_approver_claim"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_approver_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_approver_assign"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_approver_restart"><text></text></outputEntry>
       </rule>
       <rule id="LeaveCases_own">
         <description>Separation of duties: whoever asked may not approve their own leave, even as a manager, nor give its approval to someone else</description>
-        <inputEntry id="LeaveCases_own_relation"><text>"initiator"</text></inputEntry>
+        <inputEntry id="LeaveCases_own_initiator"><text>user.userName</text></inputEntry>
+        <inputEntry id="LeaveCases_own_approver"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_own_assignee"><text>-</text></inputEntry>
+        <inputEntry id="LeaveCases_own_offered"><text>-</text></inputEntry>
         <inputEntry id="LeaveCases_own_groups"><text>-</text></inputEntry>
         <inputEntry id="LeaveCases_own_task"><text>"Approve"</text></inputEntry>
         <outputEntry id="LeaveCases_own_see"><text></text></outputEntry>

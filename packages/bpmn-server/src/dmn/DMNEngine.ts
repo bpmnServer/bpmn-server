@@ -37,6 +37,8 @@ class DMNEngine {
     private options: DMNOptions;
     /** the rules the last table evaluated matched, numbered from 1 */
     matched: number[] = [];
+    /** input expressions that call an async function, their values awaited first: evaluateAsync */
+    private called = new Map<string, any>();
 
     constructor(options: DMNOptions = { debug: false }) {
         this.options = options;
@@ -101,6 +103,28 @@ class DMNEngine {
         return this.evaluateDecision(this.decision, context, []);
     }
 
+    /**
+     * Evaluate it, an input expression that calls a function (`appServices.crm.tierOf(customerId)`) awaited first:
+     * once each, with these values. A call inside a larger expression (`f(x) = 1`) is not awaited.
+     */
+    async evaluateAsync(input: Record<string, any>): Promise<any> {
+        if (!this.decision)
+            throw new Error('Must load a decision first');
+        this.called = new Map();
+        for (const decision of this.definitions.decisions)
+            for (const column of decision.table?.inputs ?? []) {
+                if (!column.expression.includes('(') || this.called.has(column.expression)) continue;
+                let value;
+                try { value = feelEvaluate(column.expression, input || {}).value; }
+                catch { continue; }
+                if (!(value instanceof Promise)) continue;     // worked out where it is, as any other
+                try { this.called.set(column.expression, await value); }
+                catch (error) { throw new Error(`Decision '${decision.name}' input '${column.expression}': ${error?.message ?? error}`); }
+            }
+        try { return this.evaluate(input); }
+        finally { this.called = new Map(); }
+    }
+
     private evaluateDecision(decision: Decision, context: Record<string, any>, path: string[]): any {
         if (path.includes(decision.id))
             throw new Error(`Decision '${decision.name}' requires itself: ${[...path, decision.id].join(' > ')}`);
@@ -127,7 +151,12 @@ class DMNEngine {
     }
 
     private evaluateTable(decision: Decision, table: DecisionTable, context: Record<string, any>): any {
-        const values = table.inputs.map(input => coerce(this.value(input.expression, context, false), input.typeRef));
+        const values = table.inputs.map(input => {
+            const value = this.called.has(input.expression) ? this.called.get(input.expression) : this.value(input.expression, context, false);
+            if (value instanceof Promise)
+                throw new Error(`Decision '${decision.name}' input '${input.expression}' calls an async function: evaluated with evaluateAsync`);
+            return coerce(value, input.typeRef);
+        });
         // output cells see an input named by its expression as its column's type
         context = { ...context };
         table.inputs.forEach((input, c) => { if (/^[A-Za-z_]\w*$/.test(input.expression)) context[input.expression] = values[c]; });

@@ -35,6 +35,13 @@ export const owf = {
             properties: [{ name: 'assignmentPolicy', isAttr: true, type: 'String' }]
         },
         {
+            // who completes it is this actor of the instance: actors.<name> (engine/DecisionContext.ts)
+            name: 'Actor',
+            isAbstract: true,
+            extends: ['bpmn:UserTask'],
+            properties: [{ name: 'actor', isAttr: true, type: 'String' }]
+        },
+        {
             // a process's or a task's security policy (engine/SecurityPolicy.ts)
             name: 'SecurityPolicy',
             isAbstract: true,
