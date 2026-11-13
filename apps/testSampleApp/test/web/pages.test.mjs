@@ -180,6 +180,15 @@ test('the diagram is of the model, not of a run: marks a picture was saved with 
 test('the instance page: each user task\'s assignment under the Rationale, after the fact; without security policies, no "who may"', async () => {
   const page = (await admin.get(`/instanceDetails?id=${instanceId}`)).text;
   assert.match(page, /<h2 id="access-heading">Assignment and access<\/h2>/);
-  assert.match(page, /<div class="access-task" data-element="Submit"[^>]*>[^]*?Offered to: staff/);
+  assert.match(page, /<div class="access-task" data-element="Submit"[^>]*>[^]*?Offered to staff by the task itself/);
   assert.doesNotMatch(page, /id="access-case"/, 'security policies are off here: who may do what is today\'s rules');
+});
+
+test('element templates are a preview, off by default (ELEMENT_TEMPLATES): none offered, the editor without its chooser', async () => {
+  const catalog = await admin.get('/model/templates');
+  assert.equal(catalog.status, 200);
+  assert.deepEqual(JSON.parse(catalog.text), { templates: [], rejected: [], warnings: [], off: true });
+  const editor = (await admin.get(`/model/edit/${encodeURIComponent(MODEL)}`)).text;
+  assert.match(editor, /<script id="modeler-options" type="application\/json">\{"elementTemplates":false\}<\/script>/);
+  assert.doesNotMatch((await admin.get('/dashboard/design')).text, /task templates/i);
 });

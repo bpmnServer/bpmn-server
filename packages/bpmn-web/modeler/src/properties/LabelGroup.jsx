@@ -60,10 +60,11 @@ function Preview({ id, template, bo, attribute }) {
     if (!preview)
         return <div class="bpmn-server-label-preview muted" data-preview-for={id}>Open a scenario in the Test tab to preview this label with its data.</div>;
     const text = previewLabel(template, { bo, attribute, preview });
-    const from = preview.run ? `${preview.scenario}'s last run` : `${preview.scenario}'s start data`;
+    // which data the preview is with: the Test tab's scenario, its last run's or its start data
+    const from = `with the data of “${preview.scenario}” (${preview.run ? 'its last run' : 'its start data'})`;
     const ended = (preview.items ?? []).some(i => i.elementId === bo.id && ['end', 'terminated', 'cancelled', 'discard'].includes(i.status));
     const empty = attribute === 'owf:endLabel' && !ended ? '(not ended here: its Label shows until it ends)' : '(nothing: every value is missing)';
-    return <div class="bpmn-server-label-preview" data-preview-for={id} title={`With ${from}`}>
+    return <div class="bpmn-server-label-preview" data-preview-for={id} title={from}>
         <span class="bpmn-server-label-preview-text">{text || empty}</span>
         <span class="bpmn-server-label-preview-from"> · {from}</span>
     </div>;

@@ -137,11 +137,11 @@ test('who may do what with a case: under the Rationale on the instance page, and
     const row = (table, who) => (new RegExp(`<tr data-who="${who}"[^>]*>([^]*?)</tr>`).exec(table) ?? [])[1] ?? '';
     const caseTable = /<table class="instance-table access-table" id="access-case">([^]*?)<\/table>/.exec(page)?.[1] ?? '';
     assert.match(row(caseTable, 'sam'), /started it[^]*full[^]*what forms entered/, 'sam asked: he sees it, what forms entered');
-    assert.match(row(caseTable, 'anyone else'), /<td>—<\/td>/, 'anyone else: not seen');
+    assert.equal(row(caseTable, 'anyone else'), '', 'anyone else does not see it: not listed');
     // Approve, done by mona earlier: its assignment after the fact
     const approve = /<div class="access-task" data-element="Approve"[^>]*>([^]*?)(?=<div class="access-task"|<\/section>)/.exec(page)?.[1] ?? '';
-    assert.match(approve, /Offered to: manager/);
-    assert.match(approve, /Completed by: mona/);
+    assert.match(approve, /<li>Offered to manager by the task itself/);
+    assert.match(approve, /<li>Completed by mona<\/li>/);
 
     // the API: the same, administrators only
     // the service account (its API key) is an administrator; a person's token never is

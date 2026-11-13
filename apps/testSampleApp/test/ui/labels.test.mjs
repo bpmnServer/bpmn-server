@@ -136,7 +136,7 @@ test("a label's preview from the Test tab's scenario, following the template as 
     await page.click('#js-tab-test');
     await page.waitForSelector('#js-test .test-panel');
     await page.waitForFunction(() => /Client: acme · Order: 1234/.test(document.querySelector('[data-preview-for="case-label"]')?.textContent ?? ''));
-    assert.match(await casePreview.innerText(), /Acme claim's start data/);
+    assert.match(await casePreview.innerText(), /with the data of “Acme claim” \(its start data\)/);
 
     // the preview follows the template
     await type(page, 'case-label', 'caseId: ${data.orderNo}');

@@ -63,9 +63,10 @@ block dash
 				.dash-stat
 					b= policies.assignment.length + policies.security.length
 					span policies
-				.dash-stat
-					b= templates.length
-					span task templates
+				if templatesOn
+					.dash-stat
+						b= templates.length
+						span task templates
 			//- a div: a form (Run all tests) can not be inside a p
 			div(style='margin:14px 0 0')
 				a.btn.btn-primary.btn-sm(href='/model/new') New model
@@ -151,18 +152,19 @@ block dash
 					p.dash-muted Security policies are off (SECURITY_POLICY=off).
 			else
 				p.dash-empty No policies (policies/assignment, policies/security in the models folder).
-			h2(style='margin-top:18px') Task templates
-				span.count= templates.length
-			if templates.length
-				table
-					each t in templates
-						tr
-							td= t.name
-							td.dash-muted= (t.appliesTo || []).join(', ').replace(/bpmn:/g, '')
-			else
-				p.dash-empty No element templates.
-			if rejectedTemplates.length
-				p.dash-muted #{rejectedTemplates.length} template file(s) left out: #{rejectedTemplates.map(r => r.file).join(', ')}
+			if templatesOn
+				h2(style='margin-top:18px') Task templates
+					span.count= templates.length
+				if templates.length
+					table
+						each t in templates
+							tr
+								td= t.name
+								td.dash-muted= (t.appliesTo || []).join(', ').replace(/bpmn:/g, '')
+				else
+					p.dash-empty No element templates.
+				if rejectedTemplates.length
+					p.dash-muted #{rejectedTemplates.length} template file(s) left out: #{rejectedTemplates.map(r => r.file).join(', ')}
 
 		section.dash-card.wide#models
 			a#tests

@@ -27,8 +27,9 @@ Each field is one bpmn-server reads, with what it means when the process runs:
 - **Data objects:** the field the object fills in the instance data (`data.client`), and the elements that load
   it. See [Data objects](data-objects.md).
 - **Call activities:** the model they start.
-- **Templates:** configured tasks (a service task that calls a given service with its inputs, a user task for a
-  given group), from the application's element templates (Camunda 7 template format).
+- **Templates** (a preview, off in 3.7.1: `ELEMENT_TEMPLATES=on`): configured tasks (a service task that calls a
+  given service with its inputs, a user task for a given group), from the application's element templates (Camunda 7
+  template format). To be finished: [the roadmap](../design/roadmap.md).
 
 Camunda engine settings bpmn-server does not run (asynchronous continuations, Java classes, external tasks,
 field injection, …) are not offered. When a model has one, the panel still shows it, and Problems

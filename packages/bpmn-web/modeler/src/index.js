@@ -34,6 +34,10 @@ const { processName } = page.dataset;
 const canvasElement = document.getElementById('js-canvas');
 const status = document.getElementById('js-save-status');
 
+/** What the page says the editor offers (views/modeler.pug): element templates only with ELEMENT_TEMPLATES=on. */
+const options = (() => { try { return JSON.parse(document.getElementById('modeler-options')?.textContent || '{}'); } catch { return {}; } })();
+const templateModules = options.elementTemplates ? [ElementTemplatesPropertiesProviderModule, ElementTemplateChooserModule] : [];
+
 const modeler = new BpmnModeler({
     container: canvasElement,
     propertiesPanel: { parent: '#js-properties-panel' },
@@ -42,8 +46,7 @@ const modeler = new BpmnModeler({
         BpmnPropertiesProviderModule,
         CamundaPlatformPropertiesProviderModule,
         CamundaBehaviorsModule,
-        ElementTemplatesPropertiesProviderModule,
-        ElementTemplateChooserModule,
+        ...templateModules,
         BpmnServerPropertiesModule,
         ProblemsModule,
         ReportModule,
@@ -282,6 +285,7 @@ function fitDiagram() {
 
 /** The configured tasks of the application (GET /model/templates), offered under Template in the panel. */
 async function loadTemplates() {
+    if (!options.elementTemplates) return;     // off: ELEMENT_TEMPLATES
     try {
         const response = await fetch('/model/templates');
         if (!response.ok)

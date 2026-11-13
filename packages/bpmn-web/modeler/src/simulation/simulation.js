@@ -223,9 +223,13 @@ export function updateSimulationPanel(root, sim) {
     find('.test-sim-text').textContent = sim?.text ?? '';
     const details = find('.test-sim-details');
     const lines = showDetails() && sim && !(sim.atEnd && sim.paused && /^Done/.test(sim.text)) ? frameDetails(sim.current, sim.steps) : [];
-    details.replaceChildren(...lines.map(line => el('li', {}, line)));
+    // which item this change is: its number, its element, what it is now
+    const item = showDetails() && sim?.current?.item;
+    const status = item && ({ wait: 'waits', end: 'done', start: 'started' }[item.status] ?? item.status ?? '');
+    const heading = item ? el('li', { class: 'test-sim-details-item' }, `#${item.seq ?? '?'} ${item.name || item.elementId || ''}${status ? ` · ${status}` : ''}`) : null;
+    details.replaceChildren(...(heading ? [heading] : []), ...lines.map(line => el('li', {}, line)));
     details.hidden = !showDetails() || !sim;
     if (showDetails() && sim && !lines.length && sim.current)
-        details.replaceChildren(el('li', { class: 'test-sim-details-none' }, sim.steps?.length ? 'Nothing more in the Rationale about this change.' : 'No Rationale: this run kept no log.'));
+        details.replaceChildren(...(heading ? [heading] : []), el('li', { class: 'test-sim-details-none' }, sim.steps?.length ? 'Nothing more in the Rationale about this change.' : 'No Rationale: this run kept no log.'));
     find('.test-sim-details-on').checked = showDetails();
 }

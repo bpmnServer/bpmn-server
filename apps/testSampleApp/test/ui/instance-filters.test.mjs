@@ -141,6 +141,7 @@ test('the diagram numbers its elements by their items\' seq, as the items table;
     await panel.locator('.test-sim-details-on').check();
     assert.equal(await panel.locator('.test-sim-details').isVisible(), true);
     assert.ok((await panel.locator('.test-sim-details li').count()) > 0);
+    assert.match(await panel.locator('.test-sim-details .test-sim-details-item').innerText(), /^#\d+ \S/, 'which item: its number first');
     await panel.locator('.test-sim-play').click();
     await page.waitForFunction(() => /^Done \(/.test(document.querySelector('#simulation .test-sim-text')?.textContent || ''), null, { timeout: 30000 });
     assert.ok(await page.locator('.djs-element.test-passed').count() > 0, 'done: green');
@@ -175,6 +176,7 @@ test('a click on an element of the diagram: its popup says what the Model report
     assert.equal(await popup.locator('.report-settings').first().evaluate(e => e.textContent), reportSettings, 'the report\'s settings');
     assert.match(await popup.locator('h3').first().innerText(), /Submit/);
     assert.match(await popup.locator('.report-popup-run').innerText(), /In this run: #3 ended/);
+    assert.equal(await popup.locator('.report-flow').count(), 0, 'the popup leaves out its outgoing flows (the Model report keeps them)');
     // another element: the same popup, now of it
     await page.locator('.instance-diagram .djs-element[data-element-id="Approve"]').click();
     await page.waitForFunction(() => /#\d+ waits/.test(document.querySelector('.report-popup-run')?.textContent || ''));

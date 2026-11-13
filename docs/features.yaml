@@ -556,7 +556,7 @@ features:
   - id: modeler
     area: web
     name: "The model editor and its properties panel"
-    what: "bpmn-js with a panel shaped for bpmn-server (only what it runs), code fields with completion, element templates."
+    what: "bpmn-js with a panel shaped for bpmn-server (only what it runs), code fields with completion; element templates as a preview (ELEMENT_TEMPLATES=on, docs/design/roadmap.md)."
     docs: [docs/docs/modeler.md]
     code: [packages/bpmn-web/modeler/src/index.js, packages/bpmn-web/modeler/src/properties]
     tests: [apps/testSampleApp/test/ui/modeler.test.mjs, apps/testSampleApp/test/ui/panel.test.mjs, apps/testSampleApp/test/ui/code.test.mjs, apps/testSampleApp/test/ui/templates.test.mjs]

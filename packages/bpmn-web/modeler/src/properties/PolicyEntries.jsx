@@ -102,7 +102,8 @@ function PolicySummary({ element, id }) {
         if (name !== policy) modeling.updateProperties(element, { [ATTRIBUTE]: name });
         openPolicy(name);
     };
-    const from = preview ? (preview.run ? `${preview.scenario}'s last run` : `${preview.scenario}'s start data`) : '';
+    // which data the preview is with: the Test tab's scenario, its last run's or its start data
+    const from = preview ? `with the data of “${preview.scenario}” (${preview.run ? 'its last run' : 'its start data'})` : '';
     return <div class="bio-properties-panel-entry bpmn-server-policy" data-entry-id={id}>
         <div class="bpmn-server-policy-actions">
             {policy && list?.includes(policy) ? <button type="button" class="bpmn-server-policy-open" onClick={() => openPolicy(policy)}>Open {policy}</button> : null}

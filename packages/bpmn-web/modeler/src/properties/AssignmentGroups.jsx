@@ -25,6 +25,8 @@ export function UserAssignmentGroup(element, translate) {
             // who completes it is this actor of the instance: actors.<name> in every expression (docs/design/expressions.md)
             attributeEntry(element, { id: 'assignment-actor', attribute: 'owf:actor', label: 'Actor',
                 description: 'Who completes it is this actor of the instance (approver): actors.approver in conditions, scripts and policies' }),
+            attributeEntry(element, { id: 'assignment-security-policy', attribute: 'owf:securityPolicy', label: 'Security policy',
+                description: "Its own, besides the process's (in the process's Policies group): policies/security/<name>.dmn.xml, for who may claim, complete and assign it" }),
             attributeEntry(element, { id: 'assignment-notification-policy', attribute: 'owf:notificationPolicy', label: 'Notification policy',
                 description: "Its own, besides the process's: policies/notification/<name>.dmn.xml, asked when it waits and when it is completed" }),
             entry('dueDate', 'Due date', DATE_HELP),

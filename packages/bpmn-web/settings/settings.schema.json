@@ -85,6 +85,14 @@
       "x-restart": true,
       "default": true
     },
+    "ELEMENT_TEMPLATES": {
+      "description": "`on` offers the application's element templates (configured tasks) in the model editor and lists them on the Design page. Off by default in 3.7.1: a preview, to be finished (docs/design/roadmap.md)",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "enum": ["on", "off"],
+      "x-restart": false
+    },
     "NOTIFICATIONS": {
       "description": "Notification policies (docs/design/notification-policies.md): `record` keeps every notification in wf_notifications without delivering it (the application's notify is not called), for a test or staging server; unset, they are delivered (a test run's are only kept)",
       "x-where": "env",

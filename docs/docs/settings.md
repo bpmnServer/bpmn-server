@@ -100,6 +100,7 @@ by `npm run features`: edit the schema, not these tables.
 
 | Setting | Means |
 |---|---|
+| `ELEMENT_TEMPLATES` | `on` offers the application's element templates (configured tasks) in the model editor and lists them on the Design page. Off by default in 3.7.1: a preview, to be finished (docs/design/roadmap.md) |
 | `CATALOG_URL` | The model catalog to browse |
 | `CONNECTORS_ALLOW_HOSTS` | A comma list of the hosts connectors may call |
 | `CONNECTORS_KEY` | **A secret.** Encrypts connectors' keys. Required to give a connector a key, and keep it: backups need the same one |

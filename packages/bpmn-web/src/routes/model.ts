@@ -14,7 +14,7 @@ import { bpmnToSvg } from './bpmnToSvg.js';
 import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS, SecurityPolicy, SECURITY_FOLDER, decisionContext } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
-import { loadTemplateCatalog } from './elementTemplates.js';
+import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
 import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
 import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
@@ -374,6 +374,8 @@ export class Model extends Common {
             catch (exc) {
                 services = undefined;   // a provider that needs a running execution: service names are not checked
             }
+            // off (ELEMENT_TEMPLATES): none offered
+            if (!templatesOn()) return response.json({ templates: [], rejected: [], warnings: [], off: true });
             const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, services);
             for (const rejected of catalog.rejected)
                 console.log(`element template ${rejected.file} ${rejected.id ?? ''} left out: ${rejected.problems.join('; ')}`);

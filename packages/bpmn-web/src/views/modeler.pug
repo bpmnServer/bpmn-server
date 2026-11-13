@@ -57,4 +57,6 @@ html(lang="en")
           button#js-panel-toggle(type="button" title="Show or hide the properties panel" aria-label="Show or hide the properties panel")
         #js-properties-panel.modeler-panel
     script#model-source(type="application/json")!= modelJson
+    //- what the editor offers: element templates only with ELEMENT_TEMPLATES=on (a preview in 3.7.1)
+    script#modeler-options(type="application/json")!= JSON.stringify({ elementTemplates: !!elementTemplates })
     script(src=asset("/modeler/modeler.js"))

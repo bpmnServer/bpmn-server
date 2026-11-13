@@ -90,7 +90,7 @@ async function setUp() {
 
 /**
  * A click on an element of the diagram: its popup (SVGHelper.js's displayDescription) shows what the Model report says
- * of it (its section: settings, form, policies, its flows), then what this run did with it. The report and the popup
+ * of it (its section: settings, form, policies; not its outgoing flows), then what this run did with it. The report and the popup
  * say the same. An element the report has no section for (a pool, a lane) keeps the popup it had.
  */
 function popupsFromReport() {
@@ -104,8 +104,9 @@ function popupsFromReport() {
         try { section = document.querySelector(`#model-report [data-element-id="${CSS.escape(id)}"]`); } catch { section = null; }
         if (!section) return earlier(id);
         const copy = section.cloneNode(true);
-        // the element itself: not the elements nested under it (a sub-process's), they have their own
-        copy.querySelectorAll('.report-element').forEach(nested => nested.remove());
+        // the element itself: not the elements nested under it (a sub-process's), they have their own; nor, in the
+        // popup only, the flows that leave it (the Model report keeps them)
+        copy.querySelectorAll('.report-element, .report-flow').forEach(nested => nested.remove());
         copy.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
         const runs = items.filter(i => (i.elementId ?? i.id) === id).sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
         const kind = window.bpmn_descriptions?.[String(window.jsonData?.elements?.find?.(e => e.id === id)?.type ?? '').replace('bpmn:', '')];

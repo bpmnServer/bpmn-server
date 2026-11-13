@@ -190,3 +190,10 @@ pre.report-value {
 .report-form caption { text-align: left; font-size: 12px; color: #52575f; padding-bottom: 2px; }
 .report-form td { vertical-align: top; }
 .report-form td div + div { margin-top: 2px; }
+/* the form's columns are text (the third is not a flow's condition: no code font) but the field's id */
+.report-form td:nth-child(3) { font-family: inherit; font-size: inherit; }
+.report-form td code { font-size: 12px; }
+.report-form th { font-weight: 600; color: #52575f; white-space: nowrap; }
+/* in a diagram's popup: narrower, so the cells wrap */
+.report-popup .report-form { font-size: 12px; }
+.report-popup .report-form th, .report-popup .report-form td { padding: 3px 6px; overflow-wrap: anywhere; }

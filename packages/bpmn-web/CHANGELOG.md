@@ -169,6 +169,17 @@ and here
   a click on a section's heading (Rationale, Model report, Instance logs) opens or closes it, as its button does.
   **Simulate** replaces Show animation: the editor's Test tab's, the same frames, controls and colours
   (`modeler/src/simulation/simulation.js`, used by both; the page's is `public/modeler/instance.js`).
+- **Element templates are a preview, off by default** (`ELEMENT_TEMPLATES=on` shows them): the model editor leaves
+  out the Template chooser, `GET /model/templates` offers none, and the Design page doesn't list them. To be finished
+  (docs/design/roadmap.md): what they set shown in the editor, the `owf:` attributes, their documentation.
+- **The instance page, plainer:** Assignment and access says each task in a line (*Offered to Manager by policy
+  LeaveApproval, rule 2*; *Assigned to user1 by the task itself*), then claims, reassignments and who completed it;
+  those with no access are not listed (API v3's `/access` still lists everyone). A diagram element's popup leaves out
+  its outgoing flows (the Model report keeps them). Simulate's details start with the item: `#12 Approve · done`. A
+  form's fields in the Model report: its labels as text, not code.
+- **A user task's own security policy in the editor** (User assignment, Security policy), beside the process's
+  (Policies). A policy's and a label's preview say which data they are with: *with the data of "A long leave" (its
+  start data)*.
 - **Notification policies:** API v3's `GET /instances/{id}/notifications` (whoever sees the instance fully): what its
   policies notified, kept, delivered or not. `NOTIFICATIONS=record` in the settings. The model editor: a process's
   **Policies** group (its security policy and its notification policy) and a user task's notification policy in User

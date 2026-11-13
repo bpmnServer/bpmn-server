@@ -250,13 +250,14 @@ block content
         .instance-card-heading
           div
             h2#access-heading Assignment and access
-            p.instance-hint Each user task: who it was offered to and assigned to, what decided it, who completed it. While security policies are on, who may do what now: the case's policy, asked for each person and role.
+            p.instance-hint Each user task: whom it went to, what decided it, who completed it. While security policies are on, who may do what now: the policy, asked for each person and role (those with no access are not listed).
           button#showAccess.btn.btn-default(type="button", onclick="toggleDetails('access', 'showAccess')", aria-expanded="true", aria-controls="access", aria-label="Toggle assignment and access")
             i.fa.fa-chevron-up(aria-hidden="true")
         #access.instance-table-scroll
           - var yes = v => v ? 'yes' : '—';
           if access.on && accessDetails
-            h3.access-title Who may see this case
+            h3.access-title Who may see it
+            - var seeing = access.cases.filter(r => r.see !== 'none')
             table.instance-table.access-table#access-case
               thead
                 tr
@@ -268,7 +269,7 @@ block content
                   th(scope="col") Start events
                   th(scope="col") Rules
               tbody
-                each row in access.cases
+                each row in seeing
                   tr(data-who=row.who.label, data-kind=row.who.kind)
                     td: strong #{row.who.label}
                     td.instance-hint #{row.who.because}
@@ -281,16 +282,13 @@ block content
             .access-task(data-element=t.elementId, data-seq=t.seq)
               h3.access-title ##{t.seq} #{t.name || t.elementId} · #{t.status === 'wait' ? 'waits' : t.status === 'end' ? 'done' : t.status}
               ul.access-facts
-                li Offered to: #{[...t.candidateUsers, ...t.candidateGroups].join(', ') || '—'}
-                if t.assignee
-                  li Assigned to: #{t.assignee}
-                if t.decidedBy
-                  li Decided by: #{t.decidedBy}
-                each h in t.history
-                  li.access-history #{h.action}#{h.why ? ' — ' + h.why.replace(/\s+/g, ' ') : ''}
+                li #{t.said.whom}#{t.said.by ? ' ' + t.said.by : ''}
+                each note in t.said.notes
+                  li.access-history #{note}
                 if t.completedBy
-                  li Completed by: #{t.completedBy}
-              if access.on && accessDetails && t.who && t.who.length
+                  li Completed by #{t.completedBy}
+              - var mayAct = (t.who || []).filter(r => r.offered || r.claim || r.complete || r.assign)
+              if access.on && accessDetails && mayAct.length
                 table.instance-table.access-table
                   thead
                     tr
@@ -301,7 +299,7 @@ block content
                       th(scope="col") May assign
                       th(scope="col") Rules
                   tbody
-                    each row in t.who
+                    each row in mayAct
                       tr(data-who=row.who.label, data-kind=row.who.kind)
                         td: strong #{row.who.label}
                         td #{yes(row.offered)}

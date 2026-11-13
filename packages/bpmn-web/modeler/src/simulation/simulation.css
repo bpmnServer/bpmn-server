@@ -8,6 +8,7 @@
 .test-sim-details[hidden] { display: none; }
 .test-sim-details li { margin: 2px 0; overflow-wrap: anywhere; }
 .test-sim-details-none { list-style: none; margin-left: -14px; color: #5d6573; }
+.test-sim-details-item { list-style: none; margin-left: -14px; font-weight: 600; }
 
 /* the run on the diagram: started blue, done green, still waiting orange (dashed) */
 .djs-element.test-started .djs-visual > :first-child { stroke: #1f62c8 !important; stroke-width: 3px !important; }

@@ -14,7 +14,7 @@ import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, save
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
-import { loadTemplateCatalog } from './elementTemplates.js';
+import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
 import { modelFeatures } from '../modelFeatures.js';
 import { MODEL_FEATURES } from '../modelFeatureCatalog.js';
 import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
@@ -207,7 +207,7 @@ export class Dashboards extends Common {
                 const name = f.replace(DMN_FILE, '');
                 return { name, tests: decisionTests.get(name) ?? 0 };
             });
-            const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, undefined);
+            const catalog = templatesOn() ? loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, undefined) : { templates: [], rejected: [] };
             // the policies of the models folder, assignment and security, each with the models that name it
             const sources = new Map(models.map(m => {
                 try { return [m.name, FS.readFileSync(path.join(dir, m.name + '.bpmn'), 'utf8')]; } catch { return [m.name, '']; }
@@ -226,7 +226,7 @@ export class Dashboards extends Common {
             render(req, res, 'design', {
                 title: 'Design', models, recent, decisions, policies, featureUse, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
                 message: req.query.message,
-                templates: catalog.templates ?? [], rejectedTemplates: catalog.rejected ?? [],
+                templates: catalog.templates ?? [], rejectedTemplates: catalog.rejected ?? [], templatesOn: templatesOn(),
                 problems: { errors: models.filter(m => m.errors).length, warnings: models.filter(m => !m.errors && m.warnings).length },
             });
         }));

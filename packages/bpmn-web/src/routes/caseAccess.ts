@@ -106,8 +106,25 @@ export class CaseAccess {
         const items: any[] = instance?.items ?? [];
         const logs: any[] = instance?.logs ?? [];
         const list = value => (Array.isArray(value) ? value : value == null || value === '' ? [] : String(value).split(',')).map(v => String(v).trim()).filter(Boolean);
+        const why = l => (String(l.message || '').split('\nwhy:\n')[1] || '').replace(/^ {4}/gm, '').replace(/\s+/g, ' ').trim();
+        /** Its assignment, said plainly: whom, and by what; then what changed it (claimed, reassigned) or what a policy failed to do. */
+        const said = item => {
+            const candidates = [...list(item.candidateUsers), ...list(item.candidateGroups)];
+            const whom = item.assignee ? `Assigned to ${item.assignee}` : candidates.length ? `Offered to ${candidates.join(', ')}` : 'Offered to anyone';
+            const by = item.assignment?.policy ? `by policy ${item.assignment.policy}, rule ${item.assignment.rule}`
+                : item.assignment?.userName ? `by ${item.assignment.userName}, by hand`
+                : item.assignee || candidates.length ? 'by the task itself (its assignee, candidates or lane)' : '';
+            const notes = logs.filter(l => l?.type === 'decision' && l.seq === item.seq).flatMap(l => {
+                const action = String(l.action ?? '');
+                if (/^is claimed by /.test(action)) return [`Claimed by ${action.replace(/^is claimed by /, '')}`];
+                if (/^is reassigned by /.test(action)) return [`Reassigned by ${action.replace(/^is reassigned by /, '')}${why(l) ? ` (${why(l)})` : ''}`];
+                if (/^is not assigned by its policy/.test(action) && !item.assignment?.policy) return [`Its assignment policy gave no one (${why(l)}): the task itself decided`];
+                return [];
+            });
+            return { whom, by, notes };
+        };
         const tasks = items.filter(i => i.type === 'bpmn:UserTask').sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0)).map(item => ({
-            seq: item.seq, elementId: item.elementId, name: item.name, status: item.status,
+            seq: item.seq, elementId: item.elementId, name: item.name, status: item.status, said: said(item),
             assignee: item.assignee ?? null, candidateUsers: list(item.candidateUsers), candidateGroups: list(item.candidateGroups),
             decidedBy: item.assignment?.policy ? `policy ${item.assignment.policy}, rule ${item.assignment.rule}`
                 : item.assignment?.userName ? `reassigned by ${item.assignment.userName}` : null,

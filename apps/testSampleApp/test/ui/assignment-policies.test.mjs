@@ -94,10 +94,11 @@ test("the User assignment group: the policy chosen from the models folder's, sav
     await page.click('#js-tab-test');
     await page.waitForSelector('#js-test .test-panel');
     await page.waitForFunction(() => /Rule 1: offered to HR/.test(document.querySelector('[data-preview-for="assignment-policy"]')?.textContent ?? ''));
-    assert.match(await preview.innerText(), /A long leave's start data/);
+    assert.match(await preview.innerText(), /with the data of “A long leave” \(its start data\)/);
 
     // who completes it is the instance's approver: actors.approver
     await page.locator('[data-entry-id="assignment-actor"] input').fill('approver');
+    assert.equal(await page.locator('[data-entry-id="assignment-security-policy"] input').count(), 1, "its own security policy, besides the process's");
     await page.waitForTimeout(400);
 
     // the process's policies: its Policies group

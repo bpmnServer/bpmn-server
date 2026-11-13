@@ -10,6 +10,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+/**
+ * Whether the editor offers element templates: ELEMENT_TEMPLATES=on. Off by default in 3.7.1: they are a preview,
+ * to be finished (docs/design/roadmap.md: what they set shown in the editor, the owf: attributes, their docs).
+ */
+export const templatesOn = (): boolean => /^(on|true|1|yes)$/i.test(String(process.env.ELEMENT_TEMPLATES ?? '').trim());
+
 /** Attributes bpmn-server reads (elements/Tasks.ts, Events.ts, Definition.ts), as template `property` bindings. */
 const PROPERTIES = new Set([
     'name',
