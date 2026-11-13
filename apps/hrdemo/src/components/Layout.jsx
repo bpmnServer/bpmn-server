@@ -29,6 +29,10 @@ const adminItems = [
 // the owf pages are under /workflow; a link is active on its own page only, but for the HR pages' sections
 const exact = to => to === '/' || to === '/workflow' || to === '/workflow/dashboard';
 
+// owf's editors (a model, a decision, a policy): the whole window, without the sidebar or the To do panel; the menu
+// opens over them, from its button
+const EDITOR = /^\/workflow\/model\/(edit|editNoProp|decision|policy|security-policy|notification-policy)\//;
+
 export default function Layout({ children }) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -39,12 +43,18 @@ export default function Layout({ children }) {
   const [waiting, setWaiting] = useState(null);
   const location = useLocation();
   useEffect(() => setMenuOpen(false), [location]);
+  const editor = EDITOR.test(location.pathname);
   async function leave() {
     await signOut();
     navigate('/login');
   }
   return (
-    <div className={`app-layout${menuOpen ? ' menu-open' : ''}`}>
+    <div className={`app-layout${menuOpen ? ' menu-open' : ''}${editor ? ' editor-layout' : ''}`}>
+      {editor && (
+        <button className="editor-menu-button" onClick={() => setMenuOpen(o => !o)} aria-label="Menu" aria-expanded={menuOpen} title="Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      )}
       <header className="mobile-bar">
         <button className="mobile-bar-button" onClick={() => setMenuOpen(o => !o)} aria-label="Menu" aria-expanded={menuOpen}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -81,10 +91,10 @@ export default function Layout({ children }) {
           <button className="sidebar-signout" onClick={leave}>Sign out</button>
         </div>
       </aside>
-      <main className={`main-content${panelOpen ? ' with-tasks' : ''}`}>
+      <main className={`main-content${panelOpen && !editor ? ' with-tasks' : ''}`}>
         {children}
       </main>
-      <TaskPanel onToggle={setPanelOpen} onCount={setWaiting} />
+      {!editor && <TaskPanel onToggle={setPanelOpen} onCount={setWaiting} />}
     </div>
   );
 }

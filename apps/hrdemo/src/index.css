@@ -638,3 +638,16 @@ a:hover { color: var(--color-primary-dark); }
   .toolbar .search-input { width: 100%; }
   .page-header-row { flex-wrap: wrap; gap: 12px; }
 }
+
+/* owf's editors: the whole window; the sidebar is a drawer over them, opened by the menu button (Layout.jsx) */
+.editor-menu-button { display: none; }
+.app-layout.editor-layout .main-content { margin-left: 0; margin-right: 0; padding-top: 0; }
+.app-layout.editor-layout .mobile-bar { display: none; }
+.app-layout.editor-layout .workflow-frame { height: 100vh; }
+.app-layout.editor-layout .sidebar { transform: translateX(-100%); transition: transform 0.2s ease; z-index: 120; }
+.app-layout.editor-layout.menu-open .sidebar { transform: none; box-shadow: 4px 0 16px rgba(15, 23, 42, 0.25); }
+.app-layout.editor-layout.menu-open .menu-backdrop { display: block; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); z-index: 115; }
+.app-layout.editor-layout .editor-menu-button { display: flex; align-items: center; justify-content: center; position: fixed; left: 6px; bottom: 6px;
+  z-index: 125; width: 32px; height: 32px; border: 0; border-radius: 6px; background: var(--color-sidebar); color: #e2e8f0; cursor: pointer;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.3); }
+.app-layout.editor-layout.menu-open .editor-menu-button { display: none; }
