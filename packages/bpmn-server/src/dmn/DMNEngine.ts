@@ -10,6 +10,7 @@
  *  - a literal expression: { variable: value }
  */
 import * as fs from 'fs';
+import { DECISION_KEYS } from '../engine/DecisionContext.js';
 import * as path from 'path';
 import { evaluate as feelEvaluate, unaryTest } from 'feelin';
 import { DMNParser, legacyTest } from './DMNParser.js';
@@ -28,6 +29,8 @@ type DMNOptions = {
 type FoundDecision = { filePath: string; definitions: DMNDefinitions; decision: Decision };
 
 const DMN_FILE = /\.dmn(\.xml)?$/i;
+/** The names every decision reads that a table's own variable can't replace (engine/DecisionContext.ts), and a notification's `event`. */
+const PROTOCOL_NAMES = new Set<string>([...DECISION_KEYS, 'event']);
 const BARE_WORD = /^[A-Za-z_][\w ]*$/;
 const NUMBER_TYPES = ['number', 'integer', 'long', 'double'];
 
@@ -37,7 +40,7 @@ class DMNEngine {
     private options: DMNOptions;
     /** the rules the last table evaluated matched, numbered from 1 */
     matched: number[] = [];
-    /** input expressions that call an async function, their values awaited first: evaluateAsync */
+    /** input expressions that call a function, their values worked out (an async one awaited) first: evaluateAsync */
     private called = new Map<string, any>();
 
     constructor(options: DMNOptions = { debug: false }) {
@@ -113,12 +116,17 @@ class DMNEngine {
         this.called = new Map();
         for (const decision of this.definitions.decisions)
             for (const column of decision.table?.inputs ?? []) {
-                if (!column.expression.includes('(') || this.called.has(column.expression)) continue;
+                if (!column.expression.includes('(') || this.called.has(`${decision.id}|${column.expression}`)) continue;
                 let value;
                 try { value = feelEvaluate(column.expression, input || {}).value; }
                 catch { continue; }
-                if (!(value instanceof Promise)) continue;     // worked out where it is, as any other
-                try { this.called.set(column.expression, await value); }
+                // a value, not a promise: kept when the decision reads only these values (it requires no other decision),
+                // so the function runs once; else worked out where it is, with the decisions it requires
+                if (!(value instanceof Promise)) {
+                    if (!decision.requires?.length) this.called.set(`${decision.id}|${column.expression}`, value);
+                    continue;
+                }
+                try { this.called.set(`${decision.id}|${column.expression}`, await value); }
                 catch (error) { throw new Error(`Decision '${decision.name}' input '${column.expression}': ${error?.message ?? error}`); }
             }
         try { return this.evaluate(input); }
@@ -152,14 +160,23 @@ class DMNEngine {
 
     private evaluateTable(decision: Decision, table: DecisionTable, context: Record<string, any>): any {
         const values = table.inputs.map(input => {
-            const value = this.called.has(input.expression) ? this.called.get(input.expression) : this.value(input.expression, context, false);
+            const key = `${decision.id}|${input.expression}`;
+            const value = this.called.has(key) ? this.called.get(key) : this.value(input.expression, context, false);
             if (value instanceof Promise)
                 throw new Error(`Decision '${decision.name}' input '${input.expression}' calls an async function: evaluated with evaluateAsync`);
             return coerce(value, input.typeRef);
         });
-        // output cells see an input named by its expression as its column's type
+        // output cells see an input named by its expression as its column's type; and a column whose label is a plain
+        // name is the table's own variable, by that name (label employeeManager, expression appServices.managerOf(...)):
+        // worked out once, its rules' outputs read it, over a data field of that name; never one of the protocol's
+        // names (user, actors, ...: engine/DecisionContext.ts).
         context = { ...context };
-        table.inputs.forEach((input, c) => { if (/^[A-Za-z_]\w*$/.test(input.expression)) context[input.expression] = values[c]; });
+        const NAME = /^[A-Za-z_]\w*$/;
+        table.inputs.forEach((input, c) => {
+            if (NAME.test(input.expression)) context[input.expression] = values[c];
+            const label = String(input.label ?? '').trim();
+            if (NAME.test(label) && label !== input.expression && !PROTOCOL_NAMES.has(label)) context[label] = values[c];
+        });
         const matched: number[] = [];
         for (let r = 0; r < table.rules.length; r++) {
             const rule = table.rules[r];

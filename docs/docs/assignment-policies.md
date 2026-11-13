@@ -42,9 +42,18 @@ as any other decision.
   (`$(appServices.managerOf(data.requesterId))`).
 - **An empty output cell** leaves that field as it was. **An empty list, `[]`,** clears it: `assignee` the employee's
   manager and `candidateGroups` `[]` is that manager and no one else, whatever the lane offered.
-- **An employee's own manager:** the HR demo's `LeaveApproval` has an input `appServices.managerOf(actors.initiator)`
-  (the application's service, from HR's records): when it is `not(null)`, that manager is the assignee and `[]` the
-  candidate groups; someone with no manager in the records goes to the Manager group.
+- **The table's own variables:** an input column whose label is a plain name is a variable of the table, calculated
+  in the table, once each time it is asked; its rules' outputs read it by that name. The HR demo's `LeaveApproval`:
+
+  | days | employeeManager: `appServices.managerOf(actors.initiator)` | assignee | candidateGroups |
+  |---|---|---|---|
+  | > 10 | - | | `"HR"` |
+  | - | `not(null)` | `employeeManager` | `[]` |
+  | - | - | | `"Manager"` |
+
+  A leave goes to the employee's own manager (the application's service, from HR's records), and only to them; someone
+  with no manager in the records, to the Manager group. A variable can't be one of the names every table reads
+  (`user`, `actors`, `task`, ...); it is read over a data field of the same name.
 - **Its tests** are a decision's: the decision editor's Test tab, kept as `<name>.policy.dmn.feature` in the models
   folder. A `$(...)` output's result is its text.
 

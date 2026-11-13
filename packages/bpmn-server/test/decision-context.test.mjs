@@ -259,3 +259,25 @@ test('an actor is the user who completes a user task or starts the process at a 
     ] };
     assert.deepEqual(actorsOf({ instance, elements: actorElements(xml) }), { initiator: 'ann', requester: 'ann', approver: 'bob', assignee: null, candidate: null });
 });
+
+test('a column whose label is a plain name is the table\'s own variable: its outputs read it; never a protocol name', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-var-'));
+    const file = path.join(dir, 'Own.dmn.xml');
+    let calls = 0;
+    fs.writeFileSync(file, `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="Own" namespace="t">
+  <decision id="Own" name="Own"><decisionTable id="t" hitPolicy="FIRST">
+    <input id="i1" label="employeeManager"><inputExpression id="e1" typeRef="string"><text>appServices.managerOf(actors.initiator)</text></inputExpression></input>
+    <input id="i2" label="user"><inputExpression id="e2" typeRef="string"><text>data.who</text></inputExpression></input>
+    <output id="o1" name="assignee" typeRef="string" /><output id="o2" name="asking" typeRef="string" />
+    <rule id="r1"><inputEntry id="a"><text>not(null)</text></inputEntry><inputEntry id="b"><text>-</text></inputEntry>
+      <outputEntry id="c"><text>employeeManager</text></outputEntry><outputEntry id="d2"><text>user.userName</text></outputEntry></rule>
+  </decisionTable></decision>
+</definitions>`);
+    const context = await decisionContext({ kind: 'assignment', data: { who: 'x', employeeManager: 'from the data' }, user: { userName: 'mia' },
+        instance: { items: [{ seq: 1, type: 'bpmn:StartEvent', elementId: 'S', status: 'end', userName: 'david.kim' }] },
+        appServices: { managerOf: id => { calls++; return id === 'david.kim' ? 'sarah.chen' : null; } } });
+    const result = await (await new DMNEngine({ listInputs: true }).load(file)).evaluateAsync(context);
+    assert.deepEqual(result, { assignee: 'sarah.chen', asking: 'mia' }, 'the column\'s value over a data field; "user" stays the protocol\'s');
+    assert.equal(calls, 1, 'worked out once');
+});

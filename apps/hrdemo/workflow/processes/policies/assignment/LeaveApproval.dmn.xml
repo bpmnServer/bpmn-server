@@ -7,7 +7,7 @@
           <text>days</text>
         </inputExpression>
       </input>
-      <input id="LeaveApproval_manager" label="Employee's manager">
+      <input id="LeaveApproval_manager" label="employeeManager">
         <inputExpression id="LeaveApproval_managerExpression" typeRef="string">
           <text>appServices.managerOf(actors.initiator)</text>
         </inputExpression>
@@ -22,10 +22,10 @@
         <outputEntry id="LeaveApproval_long_groups"><text>"HR"</text></outputEntry>
       </rule>
       <rule id="LeaveApproval_own">
-        <description>Any other: the employee's own manager approves it (HR's records, appServices.managerOf), and only they: [] clears the Manager lane's group</description>
+        <description>Any other: the employee's own manager approves it: employeeManager, this table's own variable (its column, appServices.managerOf from HR's records); and only they: [] clears the Manager lane's group</description>
         <inputEntry id="LeaveApproval_own_days"><text>-</text></inputEntry>
         <inputEntry id="LeaveApproval_own_manager"><text>not(null)</text></inputEntry>
-        <outputEntry id="LeaveApproval_own_assignee"><text>appServices.managerOf(actors.initiator)</text></outputEntry>
+        <outputEntry id="LeaveApproval_own_assignee"><text>employeeManager</text></outputEntry>
         <outputEntry id="LeaveApproval_own_groups"><text>[]</text></outputEntry>
       </rule>
       <rule id="LeaveApproval_other">

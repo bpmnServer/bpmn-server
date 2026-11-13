@@ -19,6 +19,10 @@ name (its `camunda:inputOutput`, which may call `appServices`); the names every 
 application's facts, from `appDelegate.decisionContext(context, about)` (a failure is logged, and the table decides
 without them).
 
+**A table's own variables:** an input column whose label is a plain name (`employeeManager`, its expression
+`appServices.managerOf(actors.initiator)`) is a variable of that table: calculated in the table, once, and read by
+name in its rules' outputs. It can't replace the protocol's names.
+
 **A list input** (`user.userGroups`, an actor of several people) matches a test when the list does (`count(?) > 1`),
 or one of its values does (`"Manager"`).
 

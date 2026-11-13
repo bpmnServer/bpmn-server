@@ -42,6 +42,9 @@ and here
   `appServices`; a decision table also reads the data's fields and its task's prepared inputs by name, then the
   application's facts from the new optional `appDelegate.decisionContext(context, about)`. A process's own script
   reads `data`. A list input matches when the list or one of its values does, in every table.
+- **A decision table's own variables:** an input column whose label is a plain name (`employeeManager`) is a
+  variable of the table, calculated there (`appServices.managerOf(actors.initiator)`) once, and read by name in its
+  rules' outputs; over a data field of that name, never one of the protocol's. `evaluateAsync` works out a call once.
 - **An assignment policy's `[]` clears a field:** an empty list in `candidateUsers` or `candidateGroups` clears what the
   task's attributes or lane gave ("this assignee, and no one else"); an empty cell still leaves it as it was.
 - **An actor is the user who completes a user task, or starts the process at a start event:** `owf:actor` is read
