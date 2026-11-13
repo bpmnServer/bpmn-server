@@ -9,7 +9,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
-import { startWebApp, PASSWORD } from '../support/webApp.mjs';
+import { startWebApp } from '../support/webApp.mjs';
+import { signedInPage } from '../support/signedIn.mjs';
 
 let web, browser;
 test.before(async () => {
@@ -23,23 +24,14 @@ test.after(async () => {
 });
 
 async function openTestTab(model = 'leave-request') {
-    const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-    await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());
-    await context.addInitScript(() => localStorage.setItem('bpmn-web.modeler.panel', JSON.stringify({ dockHeight: 560 })));
-    const page = await context.newPage();
-    page.setDefaultTimeout(20000);
-    page.on('dialog', d => d.accept());
-    const errors = [];
-    page.on('pageerror', e => errors.push(e.message));
-    await page.goto(web.base + '/login');
-    await page.fill('#userName', 'designer');
-    await page.fill('#password', PASSWORD);
-    await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
+    const { page, errors, close } = await signedInPage(browser, web, 'designer', {
+        init: () => localStorage.setItem('bpmn-web.modeler.panel', JSON.stringify({ dockHeight: 560 })),
+    });
     await page.goto(`${web.base}/model/edit/${model}`);
     await page.waitForSelector('#js-canvas .djs-shape');
     await page.click('#js-tab-test');
     await page.waitForSelector('#js-test .test-panel');
-    return { page, errors, close: () => context.close() };
+    return { page, errors, close };
 }
 
 /** Record: the start form opens; Start recording starts it, and a step waits. */
