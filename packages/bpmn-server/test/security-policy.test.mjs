@@ -1,4 +1,4 @@
-// @features: security-policies
+// @features: notification-policies
 // Security policies (docs/design/security-policies.md): a DMN table in policies/security/ decides who sees a case, which
 // of its data, and what they may do with it and its tasks; every matching rule counts and a denial wins.
 import test from 'node:test';

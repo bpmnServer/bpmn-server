@@ -49,6 +49,13 @@ export const owf = {
             properties: [{ name: 'securityPolicy', isAttr: true, type: 'String' }]
         },
         {
+            // a process's or a user task's notification policy (engine/NotificationPolicy.ts)
+            name: 'NotificationPolicy',
+            isAbstract: true,
+            extends: ['bpmn:Process', 'bpmn:UserTask'],
+            properties: [{ name: 'notificationPolicy', isAttr: true, type: 'String' }]
+        },
+        {
             // Node.failed: an exception of the task's work is raised as a BPMN error
             name: 'ExceptionsAsErrors',
             isAbstract: true,

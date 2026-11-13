@@ -288,6 +288,14 @@ export const MODEL_FEATURES: { id: string, name: string, area: string, xml: stri
         ]
     },
     {
+        "id": "notification-policies",
+        "name": "Notification policies",
+        "area": "application",
+        "xml": [
+            "[owf:notificationPolicy]"
+        ]
+    },
+    {
         "id": "expressions",
         "name": "Expressions and conditions",
         "area": "modeling",

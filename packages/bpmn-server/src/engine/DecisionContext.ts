@@ -17,8 +17,8 @@
  * names above, which the data can't set. Then the application's facts: appDelegate.decisionContext(context, about).
  */
 
-/** What is deciding: a business rule task's decision, an assignment policy, a security policy. */
-export type DecisionKind = 'decision' | 'assignment' | 'security';
+/** What is deciding: a business rule task's decision, an assignment, security or notification policy. */
+export type DecisionKind = 'decision' | 'assignment' | 'security' | 'notification';
 
 /** The user acting (the operation's) or asking (a security policy's): the application's (IUserInfo), or a name only. */
 export interface IDecisionUser {
@@ -127,7 +127,8 @@ export function actorsOf({ instance, items = instance?.items ?? [], tokens = ins
     }
     for (const [name, users] of byName)
         if (!(BUILT_IN_ACTORS as readonly string[]).includes(name)) actors[name] = one(users);
-    const waiting = latestFirst.filter(i => elementType(i) === 'bpmn:UserTask' && i.status === 'wait');
+    // a user task starting is about to wait (its assignment set: a notification policy's `assigned`)
+    const waiting = latestFirst.filter(i => elementType(i) === 'bpmn:UserTask' && (i.status === 'wait' || i.status === 'start'));
     actors.assignee = one(waiting.map(i => i.assignee).filter(Boolean));
     actors.candidate = one(waiting.filter(i => !i.assignee).flatMap(i => [...asList(i.candidateUsers), ...asList(i.candidateGroups)]));
     return actors;

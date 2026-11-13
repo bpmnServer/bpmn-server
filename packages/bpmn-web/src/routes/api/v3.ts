@@ -151,6 +151,7 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
     }));
     router.get('/instances/:id', handler((req, user) => instances.get(user, req.params.id)));
     router.get('/instances/:id/rationale', handler((req, user) => instances.rationale(user, req.params.id)));
+    router.get('/instances/:id/notifications', handler((req, user) => instances.notifications(user, req.params.id)));
     // who may do what with a case names people: an administrator's own token or the service key; never an AI link
     router.get('/instances/:id/access', (req: any, res, next) => req.apiScope
         ? res.status(403).json({ error: { code: 'LEVEL_REFUSED', message: 'An AI link does not reach who may do what' } })

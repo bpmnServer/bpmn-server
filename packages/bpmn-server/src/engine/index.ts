@@ -12,3 +12,4 @@ export * from './Labels.js';
 export * from './AssignmentPolicy.js';
 export * from './SecurityPolicy.js';
 export * from './DecisionContext.js';
+export * from './NotificationPolicy.js';

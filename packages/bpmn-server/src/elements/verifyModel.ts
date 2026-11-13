@@ -10,6 +10,7 @@ import { templateProblems } from '../engine/Labels.js';
 import { owfAttribute, legacyAttributes } from './owfAttributes.js';
 import { actorElements, BUILT_IN_ACTORS } from '../engine/DecisionContext.js';
 import { SECURITY_FOLDER, DEFAULT_SECURITY_POLICY } from '../engine/SecurityPolicy.js';
+import { notificationPolicyFile, notificationTemplateFile, NOTIFICATION_FOLDER, NOTIFICATION_TEMPLATES, NOTIFICATION_OUTPUTS } from '../engine/NotificationPolicy.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IBPMNServer } from '../interfaces/server.js';
@@ -418,6 +419,12 @@ class ModelVerifier {
         const services = await this.servicesProvider();
         this.services = services;
 
+        for (const proc of definition.processes.values()) {
+            const notices = (proc.def || proc)?.$attrs?.['owf:notificationPolicy'];
+            this.processId = proc.id;
+            if (typeof notices == 'string' && notices.trim())
+                await this.checkNotificationPolicy(notices.trim(), proc.def || proc);
+        }
         definition.processes.forEach(proc => {
             this.processId = proc.id;
             this.checkLabel(proc.def || proc);
@@ -478,6 +485,9 @@ class ModelVerifier {
             const policy = owfAttribute(def, 'assignmentPolicy');
             if (typeof policy == 'string' && policy.trim())
                 await this.checkPolicy(policy.trim(), def);
+            const notices = def.$attrs?.['owf:notificationPolicy'];
+            if (typeof notices == 'string' && notices.trim())
+                await this.checkNotificationPolicy(notices.trim(), def);
             if (node.lane) lanes.set(node.lane, def);
 
             if (node instanceof CallActivity && node.calledElement && knownModels && !knownModels.has(node.calledElement))
@@ -558,6 +568,42 @@ class ModelVerifier {
      * A user task's assignment policy (engine/AssignmentPolicy.ts): in policies/assignment/, a readable decision whose outputs
      * are the assignment's fields; the groups it names, roles of roles.json (when there is one).
      */
+    /**
+     * A process's or user task's notification policy (engine/NotificationPolicy.ts): in policies/notification/, a
+     * readable decision whose outputs are notify, template, channel; a template cell that is a name, a template file.
+     */
+    async checkNotificationPolicy(policy: string, def) {
+        const folder = this.decisionsFolder;
+        if (!folder) return;
+        const file = notificationPolicyFile(folder, policy);
+        if (!file) {
+            this.add('error', 'notification-policy-not-found', `Notification policy '${policy}': there is no ${NOTIFICATION_FOLDER}/${policy}.dmn.xml.`, def);
+            return;
+        }
+        let definitions;
+        try { definitions = await DMNParser.loadFile(file); }
+        catch (exc) {
+            this.add('error', 'notification-policy-invalid', `Notification policy '${policy}': ${exc.message}`, def);
+            return;
+        }
+        for (const issue of DMNParser.check(definitions))
+            this.add('error', 'notification-policy-invalid', `Notification policy '${policy}': ${issue.message}`, def);
+        const table = DMNEngine.topDecision(definitions)?.table;
+        if (!table) return;
+        const outputs: readonly string[] = NOTIFICATION_OUTPUTS;
+        for (const output of table.outputs)
+            if (!outputs.includes(output.name))
+                this.add('warning', 'notification-policy-output', `Notification policy '${policy}': output '${output.name}' is not ${NOTIFICATION_OUTPUTS.join(', ')}; it is not used.`, def);
+        const template = table.outputs.findIndex(o => o.name === 'template');
+        if (template < 0) return;
+        for (const [r, rule] of table.rules.entries()) {
+            // a name ("approval-request"): a template file; a text with spaces or ${...} is the message itself
+            const name = /^"([\w.-]+)"$/.exec((rule.outputEntries[template] ?? '').trim())?.[1];
+            if (name && !notificationTemplateFile(folder, name))
+                this.add('warning', 'notification-template-not-found', `Notification policy '${policy}', rule ${r + 1}: there is no template '${name}' (${NOTIFICATION_TEMPLATES}/${name}.md); the name itself would be the message.`, def);
+        }
+    }
+
     async checkPolicy(policy: string, def) {
         const folder = this.decisionsFolder;
         if (!folder) return;

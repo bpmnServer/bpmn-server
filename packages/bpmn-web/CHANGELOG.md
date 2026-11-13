@@ -169,6 +169,10 @@ and here
   a click on a section's heading (Rationale, Model report, Instance logs) opens or closes it, as its button does.
   **Simulate** replaces Show animation: the editor's Test tab's, the same frames, controls and colours
   (`modeler/src/simulation/simulation.js`, used by both; the page's is `public/modeler/instance.js`).
+- **Notification policies:** API v3's `GET /instances/{id}/notifications` (whoever sees the instance fully): what its
+  policies notified, kept, delivered or not. `NOTIFICATIONS=record` in the settings. The model editor: a process's
+  **Policies** group (its security policy and its notification policy) and a user task's notification policy in User
+  assignment; the Model report says them.
 - **Actor** on a user task in the model editor's User assignment group (`owf:actor`): who completes it is that actor
   of the instance, `actors.approver` in every expression. The Model report says it. The HR demo's Leave Application
   names its approver, and its security policy `LeaveCases` reads the actors.

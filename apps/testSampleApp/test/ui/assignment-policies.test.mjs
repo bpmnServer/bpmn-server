@@ -100,12 +100,21 @@ test("the User assignment group: the policy chosen from the models folder's, sav
     await page.locator('[data-entry-id="assignment-actor"] input').fill('approver');
     await page.waitForTimeout(400);
 
+    // the process's policies: its Policies group
+    await page.evaluate(() => { document.activeElement?.blur(); const m = window.bpmnModeler; m.get('selection').select(m.get('canvas').getRootElement()); });
+    const policies = page.locator('.bio-properties-panel-group-header', { hasText: 'Policies' }).first();
+    await page.waitForTimeout(200);
+    if (!/open/.test(await policies.getAttribute('class'))) await policies.click();
+    await page.locator('[data-entry-id="process-notification-policy"] input').fill('LeaveNotices');
+    await page.waitForTimeout(400);
+
     const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/model/edit/Leave'));
     await page.click('#js-save');
     assert.equal((await saved).status(), 200);
     const source = await web.bpmnServer.definitions.getSource('Leave');
     assert.match(source, /<bpmn:userTask id="Approve"[^>]*owf:assignmentPolicy="LeaveApproval"/);
     assert.match(source, /<bpmn:userTask id="Approve"[^>]*owf:actor="approver"/);
+    assert.match(source, /<bpmn:process [^>]*owf:notificationPolicy="LeaveNotices"/);
 
     // the task, run: the policy's rule assigns it
     const run = await web.bpmnServer.engine.start('Leave', { days: 3 }, null, 'admin');

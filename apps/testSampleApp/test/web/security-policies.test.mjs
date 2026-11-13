@@ -1,4 +1,4 @@
-// @features: security-policies
+// @features: notification-policies
 // Security policies through API v3 and the pages (docs/design/security-policies.md, routes/caseAccess.ts): the models
 // folder's policies/security/default.dmn.xml decides who sees a case, which of its data, and who may complete its tasks.
 import test from 'node:test';

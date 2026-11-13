@@ -88,7 +88,7 @@ const SETTINGS = ['implementation', 'camunda:delegateExpression', 'camunda:expre
     'camunda:followUpDate', 'camunda:priority', 'camunda:formKey', 'calledElement', 'camunda:decisionRef',
     'camunda:resultVariable', 'camunda:mapDecisionResult', 'messageRef', 'instantiate', 'scriptFormat',
     // bpmn-server's own: the labels, a user task's assignment policy, a process's or a task's security policy
-    'owf:label', 'owf:endLabel', 'owf:assignmentPolicy', 'owf:securityPolicy', 'owf:exceptionsAsErrors', 'owf:actor'];
+    'owf:label', 'owf:endLabel', 'owf:assignmentPolicy', 'owf:securityPolicy', 'owf:exceptionsAsErrors', 'owf:actor', 'owf:notificationPolicy'];
 
 /** An element's settings as `key: value` lines, from the model being edited: what bpmn-server reads of it. */
 function settingsOf(bo) {

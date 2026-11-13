@@ -189,6 +189,14 @@ interface IAppDelegate {
     decisionContext?(context: Record<string, any>, about: { kind: 'decision' | 'assignment' | 'security'; name?: string; user: { userName?: string | null; userGroups?: string[] }; instance?: any; task?: string }): Record<string, any> | void | Promise<Record<string, any> | void>;
 
     /**
+     * Optional. Delivers a notification a notification policy decided on (engine/NotificationPolicy.ts,
+     * docs/design/notification-policies.md): whom (`to`: user names and groups), `subject`, `message`, `channel`.
+     * It is kept in wf_notifications either way; not called for a test run's instance, nor with NOTIFICATIONS=record.
+     * A failure is kept with the notification and said in the Rationale; the process goes on.
+     */
+    notify?(notification: { id: string; instanceId: string; event: string; to: string[]; subject: string; message: string; channel?: string; [more: string]: any }): void | Promise<void>;
+
+    /**
      * Optional. The application's own checks on a model, run by verifyModel (the model editor's check, the
      * import checks, `bpmn-server verify` with a server) after its own, on a model the engine could load.
      * Returns issues in verifyModel's form; `severity` defaults to 'error'. Called without a running execution.

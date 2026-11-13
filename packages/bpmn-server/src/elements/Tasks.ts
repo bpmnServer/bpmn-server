@@ -1,5 +1,6 @@
 
 import { runningDecisionContext } from '../engine/DecisionContext.js';
+import { notifyEvent } from '../engine/NotificationPolicy.js';
 import { owfAttribute } from './owfAttributes.js';
 import { Node } from './Node.js';
 import { applyPolicy } from '../engine/AssignmentPolicy.js';
@@ -275,7 +276,8 @@ class SendTask extends ServiceTask {
 class UserTask extends Node {
 
     async end(item: Item,cancel=false) {
-
+        // its notification policies, asked: it is completed (engine/NotificationPolicy.ts)
+        if (!cancel) await notifyEvent(item.token.execution, 'completed', item);
         return await super.end(item,cancel);
     }
     async start(item: Item): Promise<NODE_ACTION> {
@@ -300,6 +302,8 @@ class UserTask extends Node {
         const policy = owfAttribute(this.def, 'assignmentPolicy');
         if (policy)
             await applyPolicy(this, item, String(policy).trim());
+        // its notification policies, asked: it waits for someone (engine/NotificationPolicy.ts)
+        await notifyEvent(item.token.execution, 'assigned', item);
 
         return await super.start(item);
     }

@@ -26,6 +26,15 @@ and here
   `owf:endLabel`, `owf:exceptionsAsErrors`, in `xmlns:owf="http://omniworkflow.com/schema/owf/1.0"`; `camunda:` is
   only for what Camunda defines. The old `camunda:` names are still read, and `verifyModel` warns of them
   (`owf-attribute-legacy`). `owfAttribute(def, name)`, `legacyAttributes(def)`, `OWF_NAMESPACE`.
+- **Notification policies** (docs/design/notification-policies.md, `engine/NotificationPolicy.ts`), a first slice: a
+  process (and a user task) names one, `owf:notificationPolicy`: a DMN table in `policies/notification/<name>.dmn.xml`,
+  every matching rule notifying. Asked when a user task waits (`assigned`), is completed (`completed`) and when the
+  instance ends (`ended`), with the names every expression reads and `event`. Its outputs: `notify` (actors, users,
+  groups, a `$(...)` expression), `template` (a file in `policies/notification/templates/`, its first line the subject,
+  or the text; `${...}` filled in), `channel`. The application delivers, the new optional `appDelegate.notify`; each is
+  kept in `wf_notifications` (`recorded`, `sent`, `failed`), and a test run's, or every one with
+  `NOTIFICATIONS=record`, only kept. Never fails the process; the Rationale says it. `notificationsOf(server, id)`;
+  `verifyModel`: `notification-policy-not-found`, `-invalid`, `-output`, `notification-template-not-found`.
 - **One set of names for every expression** (docs/design/expressions.md, `engine/DecisionContext.ts`): JavaScript
   and FEEL, conditions, scripts, a business rule task's decision, an assignment policy and a security policy see the
   same names: `data` (the item's, in its scope), `instance`, `item` and `this` (FEEL too: `this.data.amount` is no

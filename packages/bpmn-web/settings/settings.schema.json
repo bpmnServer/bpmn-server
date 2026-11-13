@@ -85,6 +85,14 @@
       "x-restart": true,
       "default": true
     },
+    "NOTIFICATIONS": {
+      "description": "Notification policies (docs/design/notification-policies.md): `record` keeps every notification in wf_notifications without delivering it (the application's notify is not called), for a test or staging server; unset, they are delivered (a test run's are only kept)",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "enum": ["record"],
+      "x-restart": false
+    },
     "SECURITY_POLICY": {
       "description": "Security policies (docs/design/security-policies.md): unset, they are on when the models folder has `policies/security/`; `default` turns them on with the built-in default policy; `off` turns them off",
       "x-where": "env",

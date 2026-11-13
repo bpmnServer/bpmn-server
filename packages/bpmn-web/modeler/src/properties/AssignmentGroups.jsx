@@ -25,9 +25,28 @@ export function UserAssignmentGroup(element, translate) {
             // who completes it is this actor of the instance: actors.<name> in every expression (docs/design/expressions.md)
             attributeEntry(element, { id: 'assignment-actor', attribute: 'owf:actor', label: 'Actor',
                 description: 'Who completes it is this actor of the instance (approver): actors.approver in conditions, scripts and policies' }),
+            attributeEntry(element, { id: 'assignment-notification-policy', attribute: 'owf:notificationPolicy', label: 'Notification policy',
+                description: "Its own, besides the process's: policies/notification/<name>.dmn.xml, asked when it waits and when it is completed" }),
             entry('dueDate', 'Due date', DATE_HELP),
             entry('followUpDate', 'Follow up date', DATE_HELP),
             entry('priority', 'Priority', 'A number or an expression such as $data.priority')
+        ]
+    };
+}
+
+/** A process's policies (docs/design/security-policies.md, notification-policies.md): each a decision table of the models folder. */
+export function ProcessPoliciesGroup(element, translate) {
+    if (!is(element, 'bpmn:Process'))
+        return null;
+    return {
+        id: 'BpmnServer__ProcessPolicies',
+        label: translate('Policies'),
+        component: Group,
+        entries: [
+            attributeEntry(element, { id: 'process-security-policy', attribute: 'owf:securityPolicy', label: 'Security policy',
+                description: 'Who sees its instances, which of their data, what they may do: policies/security/<name>.dmn.xml; none, the default' }),
+            attributeEntry(element, { id: 'process-notification-policy', attribute: 'owf:notificationPolicy', label: 'Notification policy',
+                description: 'Who is told what: policies/notification/<name>.dmn.xml, asked when a user task waits or is completed, and when an instance ends' }),
         ]
     };
 }

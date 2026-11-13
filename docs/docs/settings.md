@@ -79,6 +79,7 @@ by `npm run features`: edit the schema, not these tables.
 | `DISABLE_DESIGN` | `true`: no model editor or test runs, and **no test calls on the engine**. Set it on both for production |
 | `DISABLE_SIGNUP` | `true`: no self-registration |
 | `ENFORCE_SECURITY`, `REQUIRE_AUTHENTICATION` | On unless set to `false` (`init` writes `true`). `false` turns off sign-in and the security rules: for development only |
+| `NOTIFICATIONS` | Notification policies (docs/design/notification-policies.md): `record` keeps every notification in wf_notifications without delivering it (the application's notify is not called), for a test or staging server; unset, they are delivered (a test run's are only kept) |
 | `SECURITY_POLICY` | Security policies (docs/design/security-policies.md): unset, they are on when the models folder has `policies/security/`; `default` turns them on with the built-in default policy; `off` turns them off |
 | `SESSION_SECRET` | **A secret, required in production.** Secures sessions and CSRF tokens |
 | `SIGNUP_GROUPS`, `SIGNUP_VERIFY_EMAIL` | Sign-up sends a verification email, and gives these groups once verified |

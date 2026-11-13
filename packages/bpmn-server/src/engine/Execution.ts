@@ -1,4 +1,5 @@
 import { v4 as uuid } from '@lukeed/uuid';
+import { notifyEvent } from './NotificationPolicy.js';
 import { Item } from './Item.js';
 import { Token, TOKEN_TYPE  } from './Token.js';
 import { Loop} from './Loop.js';
@@ -101,6 +102,7 @@ class Execution extends ServerComponent implements IExecution {
             await CallActivity.executionEnded(this);
         }
         await this.process.end(this);
+        await notifyEvent(this, 'ended');      // its notification policy, asked (engine/NotificationPolicy.ts)
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_end);
     }
     /**

@@ -1,4 +1,4 @@
-import { BPMNAPI, SecureUser } from '../../index.js';
+import { BPMNAPI, SecureUser, notificationsOf } from '../../index.js';
 import { rationaleSteps } from '../../testing/rationale.js';
 import { notATest } from '../../testing/scenarios.js';
 import { labeledInstances } from './labels.js';
@@ -123,6 +123,16 @@ export class InstanceOperations {
     }
 
     /** Why it went the way it did: the Rationale, step by step (each operation, its outcome, each decision). */
+    /**
+     * What its notification policies notified (docs/design/notification-policies.md): every notification kept,
+     * delivered or not, oldest first; for whoever sees it fully.
+     */
+    async notifications(user: SecureUser, id: string) {
+        const { instance, access } = await this.findWithAccess(user, id);
+        if (access.see !== 'full') throw notFound();
+        return { ...summary(instance), items: await notificationsOf(this.server, instance.id) };
+    }
+
     async rationale(user: SecureUser, id: string) {
         const { instance, access } = await this.findWithAccess(user, id);
         if (access.see !== 'full') throw notFound();

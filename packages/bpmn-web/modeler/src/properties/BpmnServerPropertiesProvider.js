@@ -1,7 +1,7 @@
 // Shapes the Camunda 7 properties panel to what bpmn-server runs. It runs after the Camunda provider
 // (lower priority), removes the groups for Camunda engine features bpmn-server does not have, and puts
 // bpmn-server's own groups in place of the ones whose fields mean something different here.
-import { UserAssignmentGroup, StartAssignmentGroup } from './AssignmentGroups.jsx';
+import { UserAssignmentGroup, StartAssignmentGroup, ProcessPoliciesGroup } from './AssignmentGroups.jsx';
 import { ServiceGroup, ScriptGroup } from './TaskGroups.jsx';
 import { getConnector, taskInputOutput } from './ConnectorEntries.jsx';
 import { ScriptsGroup } from './ScriptsGroup.jsx';
@@ -102,6 +102,10 @@ export default class BpmnServerPropertiesProvider {
             const startAssignment = StartAssignmentGroup(element, translate);
             if (startAssignment)
                 groups.splice(Math.min(groups.length, 2), 0, startAssignment);
+
+            const policies = ProcessPoliciesGroup(element, translate);
+            if (policies)
+                groups.splice(Math.min(groups.length, 2), 0, policies);
             return groups;
         };
     }
