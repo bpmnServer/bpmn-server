@@ -178,7 +178,7 @@ and here
   its outgoing flows (the Model report keeps them). Simulate's details start with the item: `#12 Approve · done`. A
   form's fields in the Model report: its labels as text, not code.
 - **A user task's own security policy in the editor** (User assignment, Security policy), beside the process's
-  (Policies). A policy's and a label's preview say which data they are with: *with the data of "A long leave" (its
+  (Policies: select the process, or its pool when it is drawn in one). A policy's and a label's preview say which data they are with: *with the data of "A long leave" (its
   start data)*.
 - **Notification policies:** API v3's `GET /instances/{id}/notifications` (whoever sees the instance fully): what its
   policies notified, kept, delivered or not. `NOTIFICATIONS=record` in the settings. The model editor: a process's

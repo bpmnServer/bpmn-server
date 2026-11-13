@@ -1,7 +1,8 @@
 // Who a user task goes to and who may start a process, as bpmn-server reads them (Tasks.ts setAssignVal,
 // Events.ts): a value starting with $ is an expression, # runs JavaScript, a comma-separated value is a list.
-import { Group } from '@bpmn-io/properties-panel';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { Group, TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
+import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
 import { policyEntries } from './PolicyEntries.jsx';
 
@@ -36,18 +37,46 @@ export function UserAssignmentGroup(element, translate) {
     };
 }
 
-/** A process's policies (docs/design/security-policies.md, notification-policies.md): each a decision table of the models folder. */
+/** The process an element stands for: itself, or a pool's (a participant's processRef). */
+const processOf = bo => is(bo, 'bpmn:Participant') ? bo.get('processRef') : bo;
+
+/** A process's attribute: on the process itself, or, for a pool, on its process (as the Label group does). */
+function ProcessAttributeField({ element, id, attribute, label, description }) {
+    const modeling = useService('modeling');
+    const debounce = useService('debounceInput');
+    const translate = useService('translate');
+    const bo = getBusinessObject(element);
+    const target = processOf(bo);
+    return <TextFieldEntry
+        element={element}
+        id={id}
+        label={translate(label)}
+        description={translate(description)}
+        debounce={debounce}
+        getValue={() => target?.get(attribute) || ''}
+        setValue={value => is(bo, 'bpmn:Participant')
+            ? modeling.updateModdleProperties(element, target, { [attribute]: value || undefined })
+            : modeling.updateProperties(element, { [attribute]: value || undefined })}
+    />;
+}
+
+/**
+ * A process's policies (docs/design/security-policies.md, notification-policies.md): each a decision table of the
+ * models folder. On the process, or on a pool: its process's.
+ */
 export function ProcessPoliciesGroup(element, translate) {
-    if (!is(element, 'bpmn:Process'))
+    const bo = getBusinessObject(element);
+    if (!is(bo, 'bpmn:Process') && !(is(bo, 'bpmn:Participant') && bo.get('processRef')))
         return null;
+    const entry = props => ({ element, ...props, component: ProcessAttributeField, isEdited: isTextFieldEntryEdited });
     return {
         id: 'BpmnServer__ProcessPolicies',
         label: translate('Policies'),
         component: Group,
         entries: [
-            attributeEntry(element, { id: 'process-security-policy', attribute: 'owf:securityPolicy', label: 'Security policy',
+            entry({ id: 'process-security-policy', attribute: 'owf:securityPolicy', label: 'Security policy',
                 description: 'Who sees its instances, which of their data, what they may do: policies/security/<name>.dmn.xml; none, the default' }),
-            attributeEntry(element, { id: 'process-notification-policy', attribute: 'owf:notificationPolicy', label: 'Notification policy',
+            entry({ id: 'process-notification-policy', attribute: 'owf:notificationPolicy', label: 'Notification policy',
                 description: 'Who is told what: policies/notification/<name>.dmn.xml, asked when a user task waits or is completed, and when an instance ends' }),
         ]
     };
