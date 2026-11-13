@@ -1,6 +1,7 @@
 # Notification policies
 
-**Status:** built on `3.7.1` (`engine/NotificationPolicy.ts`), a first slice.
+**Status:** built on `3.7.1` (`engine/NotificationPolicy.ts`), a first slice. How to use them, with the HR demo's
+`LeaveNotices`: [docs/docs/notification-policies.md](../docs/notification-policies.md).
 
 The third policy, beside [assignment](assignment.md) and [security](security-policies.md): who is told what, and when.
 A decision table reading the names every expression reads ([expressions.md](expressions.md)); **every rule that
@@ -30,7 +31,7 @@ The table's `event` input says which:
 | event | when | the table's `task`, `item`, `data` |
 |---|---|---|
 | `assigned` | a user task waits for someone: its assignee and candidates set (its policy applied) | that task, its item, its data |
-| `completed` | a user task is completed | that task, its item, its data, `item.userName` who completed it |
+| `completed` | a user task is completed (asked once it has ended: who completed it is its actor) | that task, its item, its data, `item.userName` who completed it |
 | `ended` | the instance ends | empty, none, the instance's data |
 
 *Not built yet:* `overdue` (a task past its due date), `started`.

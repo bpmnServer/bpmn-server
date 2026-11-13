@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="LeaveNotices_definitions" name="Leave notices" namespace="http://bpmn-server/dmn">
+  <decision id="LeaveNotices" name="Leave notices">
+    <decisionTable id="LeaveNotices_table" hitPolicy="COLLECT">
+      <input id="LeaveNotices_event" label="Event">
+        <inputExpression id="LeaveNotices_eventExpression" typeRef="string">
+          <text>event</text>
+        </inputExpression>
+      </input>
+      <input id="LeaveNotices_task" label="Task">
+        <inputExpression id="LeaveNotices_taskExpression" typeRef="string">
+          <text>task</text>
+        </inputExpression>
+      </input>
+      <input id="LeaveNotices_approval" label="Approval">
+        <inputExpression id="LeaveNotices_approvalExpression" typeRef="string">
+          <text>data.approval</text>
+        </inputExpression>
+      </input>
+      <input id="LeaveNotices_recorded" label="Recorded">
+        <inputExpression id="LeaveNotices_recordedExpression" typeRef="string">
+          <text>data.recordId</text>
+        </inputExpression>
+      </input>
+      <output id="LeaveNotices_notify" label="Notify" name="notify" typeRef="string" />
+      <output id="LeaveNotices_template" label="Template" name="template" typeRef="string" />
+      <output id="LeaveNotices_channel" label="Channel" name="channel" typeRef="string" />
+      <rule id="LeaveNotices_request">
+        <description>A request waits for approval: those it is offered to (the Manager or HR group, as LeaveApproval said)</description>
+        <inputEntry id="LeaveNotices_request_event"><text>"assigned"</text></inputEntry>
+        <inputEntry id="LeaveNotices_request_task"><text>"Approve"</text></inputEntry>
+        <inputEntry id="LeaveNotices_request_approval"><text>-</text></inputEntry>
+        <inputEntry id="LeaveNotices_request_recorded"><text>-</text></inputEntry>
+        <outputEntry id="LeaveNotices_request_notify"><text>actors.candidate</text></outputEntry>
+        <outputEntry id="LeaveNotices_request_template"><text>"approval-request"</text></outputEntry>
+        <outputEntry id="LeaveNotices_request_channel"><text>"email"</text></outputEntry>
+      </rule>
+      <rule id="LeaveNotices_approved">
+        <description>Approved: the employee who asked</description>
+        <inputEntry id="LeaveNotices_approved_event"><text>"completed"</text></inputEntry>
+        <inputEntry id="LeaveNotices_approved_task"><text>"Approve"</text></inputEntry>
+        <inputEntry id="LeaveNotices_approved_approval"><text>"A"</text></inputEntry>
+        <inputEntry id="LeaveNotices_approved_recorded"><text>-</text></inputEntry>
+        <outputEntry id="LeaveNotices_approved_notify"><text>actors.initiator</text></outputEntry>
+        <outputEntry id="LeaveNotices_approved_template"><text>"leave-approved"</text></outputEntry>
+        <outputEntry id="LeaveNotices_approved_channel"><text>"email"</text></outputEntry>
+      </rule>
+      <rule id="LeaveNotices_rejected">
+        <description>Not approved: the employee, with the approver's comment</description>
+        <inputEntry id="LeaveNotices_rejected_event"><text>"completed"</text></inputEntry>
+        <inputEntry id="LeaveNotices_rejected_task"><text>"Approve"</text></inputEntry>
+        <inputEntry id="LeaveNotices_rejected_approval"><text>"Reject"</text></inputEntry>
+        <inputEntry id="LeaveNotices_rejected_recorded"><text>-</text></inputEntry>
+        <outputEntry id="LeaveNotices_rejected_notify"><text>actors.initiator</text></outputEntry>
+        <outputEntry id="LeaveNotices_rejected_template"><text>"Your ${data.LeaveType} leave was not approved: ${data.comment}"</text></outputEntry>
+        <outputEntry id="LeaveNotices_rejected_channel"><text>"inbox"</text></outputEntry>
+      </rule>
+      <rule id="LeaveNotices_recorded">
+        <description>Recorded in HR's system: HR, and the approver</description>
+        <inputEntry id="LeaveNotices_recorded_event"><text>"ended"</text></inputEntry>
+        <inputEntry id="LeaveNotices_recorded_task"><text>-</text></inputEntry>
+        <inputEntry id="LeaveNotices_recorded_approval"><text>-</text></inputEntry>
+        <inputEntry id="LeaveNotices_recorded_recorded"><text>not(null)</text></inputEntry>
+        <outputEntry id="LeaveNotices_recorded_notify"><text>["HR", actors.approver]</text></outputEntry>
+        <outputEntry id="LeaveNotices_recorded_template"><text>"Leave ${data.recordId} recorded for ${actors.initiator}, approved by ${actors.approver}"</text></outputEntry>
+        <outputEntry id="LeaveNotices_recorded_channel"><text>"inbox"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="LeaveNotices_diagram">
+      <dmndi:DMNShape id="LeaveNotices_shape" dmnElementRef="LeaveNotices">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

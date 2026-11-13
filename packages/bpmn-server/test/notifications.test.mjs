@@ -24,7 +24,7 @@ ${rules.map((r, n) => `    <rule id="r${n}">${r.slice(0, 2).map((c, i) => `<inpu
 
 const NOTICES = POLICY([
     ['"assigned"', '"Approve"', 'actors.assignee', '"approval-request"', '"email"'],
-    ['"completed"', '"Approve"', 'actors.initiator', '"Your leave: ${data.decision}"', '"inbox"'],
+    ['"completed"', '"Approve"', 'actors.initiator', '"Your leave: ${data.decision} by ${actors.approver}"', '"inbox"'],
     ['"ended"', '-', '[actors.initiator, actors.approver]', '"Closed: ${data.days} days"', ''],
     ['"completed"', '"Approve"', '$(appServices.managerOf(data.requester))', '"FYI ${item.name} done by ${item.userName}"', ''],
 ]);
@@ -67,7 +67,7 @@ test('asked at each event: whom, with what message (a template file, or the text
 
     await srv.engine.invoke({ id, 'items.elementId': 'Approve' }, { decision: 'approved' }, 'bob');
     const byRule = n => delivered.find(d => d.rule === n);
-    assert.deepEqual([byRule(2).event, byRule(2).to, byRule(2).message, byRule(2).subject], ['completed', ['ann'], 'Your leave: approved', 'Your leave: approved'],
+    assert.deepEqual([byRule(2).event, byRule(2).to, byRule(2).message, byRule(2).subject], ['completed', ['ann'], 'Your leave: approved by bob', 'Your leave: approved by bob'],
         'a text: the message, its first line the subject');
     assert.deepEqual(byRule(4).to, ['manager-of-ann'], 'a $(...) notify: the application\'s service');
     assert.equal(byRule(4).message, 'FYI Approve done by bob');
@@ -124,5 +124,25 @@ test('verifyModel: a policy not there, an output not used, a template name with 
     assert.match(codes, /notification-policy-output: .*output 'urgency'/);
     assert.match(codes, /notification-template-not-found: .*rule 1: there is no template 'no-such-template'/);
     assert.doesNotMatch(codes, /notification-policy-not-found/);
+    await srv.shutdown();
+});
+
+test('the HR demo\'s LeaveNotices (docs/docs/notification-policies.md\'s example): a request, its approval, its record', async () => {
+    // the demo's own models folder (apps/hrdemo), copied: the documented example, as it is
+    const dir = definitionsFolder();
+    fs.cpSync(new URL('../../../apps/hrdemo/workflow/processes', import.meta.url), dir, { recursive: true });
+    const sent = [];
+    const { server: srv } = await makeServer({ dir, services: { notify: n => { sent.push(n); }, notifyUsers: () => ({}), recordLeave: () => ({ recordId: 'LV-9' }) } });
+    const { issues } = await verifyModel(fs.readFileSync(path.join(dir, 'Leave Application.bpmn'), 'utf8'), srv, 'Leave Application');
+    assert.deepEqual(issues.filter(i => /notification|actor/.test(i.code)), [], 'its policy and templates check');
+    const { id } = await srv.engine.start('Leave Application', {}, null, 'user1');
+    await srv.engine.invoke({ id, 'items.elementId': 'Request' }, { LeaveType: 'Vacation', StartDate: '2026-12-01', EndDate: '2026-12-05', RequestReason: 'Holidays' }, 'user1');
+    await srv.engine.invoke({ id, 'items.elementId': 'Approve' }, { approval: 'A', comment: 'Enjoy' }, 'manager1');
+    assert.deepEqual(sent.map(n => [n.event, n.rule, n.to, n.subject]), [
+        ['assigned', 1, ['Manager'], 'Leave to approve: Vacation, 5 days'],
+        ['completed', 2, ['user1'], 'Your leave is approved'],
+        ['ended', 4, ['HR', 'manager1'], 'Leave LV-9 recorded for user1, approved by manager1'],
+    ]);
+    assert.equal(sent[1].message, 'Your Vacation leave from 2026-12-01 to 2026-12-05 is approved by manager1.\n\nEnjoy');
     await srv.shutdown();
 });

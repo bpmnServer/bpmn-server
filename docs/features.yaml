@@ -317,7 +317,7 @@ features:
     what: "A process (and a user task) names a notification policy (owf:notificationPolicy): a DMN table in policies/notification/<name>.dmn.xml, hit policy COLLECT, asked when a user task waits (assigned), is completed, and when the instance ends (event); each matching rule notifies whom its notify says (actors, users, groups, a $(...) expression) with its template (a file in policies/notification/templates, or the text; ${...} filled in) and channel. The application delivers (appDelegate.notify); every notification is kept in wf_notifications (recorded, sent, failed), a test run's and NOTIFICATIONS=record only kept. API v3: GET /instances/{id}/notifications. verifyModel checks the policy, its outputs and its template names. In the editor's Policies group of a process and User assignment of a task."
     note: "A first slice: no overdue or started events, not on the instance page, no scenario step to say who was notified."
     xml: ["[owf:notificationPolicy]"]
-    docs: [docs/design/notification-policies.md]
+    docs: [docs/docs/notification-policies.md, docs/design/notification-policies.md]
     code: [packages/bpmn-server/src/engine/NotificationPolicy.ts, packages/bpmn-web/src/routes/api/instances.ts]
     examples: [apps/hrdemo/workflow/processes/policies/security/LeaveCases.dmn.xml]
     tests: [packages/bpmn-server/test/security-policy.test.mjs, apps/testSampleApp/test/web/security-policies.test.mjs]

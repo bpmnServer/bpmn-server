@@ -276,9 +276,11 @@ class SendTask extends ServiceTask {
 class UserTask extends Node {
 
     async end(item: Item,cancel=false) {
-        // its notification policies, asked: it is completed (engine/NotificationPolicy.ts)
-        if (!cancel) await notifyEvent(item.token.execution, 'completed', item);
-        return await super.end(item,cancel);
+        const wasEnded = item?.status == ITEM_STATUS.end;
+        const result = await super.end(item,cancel);
+        // its notification policies, asked once it is completed: who completed it is its actor (engine/NotificationPolicy.ts)
+        if (!cancel && !wasEnded && item?.status == ITEM_STATUS.end) await notifyEvent(item.token.execution, 'completed', item);
+        return result;
     }
     async start(item: Item): Promise<NODE_ACTION> {
         if (this.def.$attrs)

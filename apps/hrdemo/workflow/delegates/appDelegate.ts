@@ -55,6 +55,18 @@ class AppDelegate extends WebAppDelegate{
     }
     // startUp (housekeeping) and sendEmail (notifications) come from WebAppDelegate
 
+    /**
+     * A notification policy's notification (policies/notification/LeaveNotices.dmn.xml): delivered here. The demo
+     * writes it to the console; an application sends it by its channel (email, its inbox, ...). Not called for a test
+     * run's instance, nor with NOTIFICATIONS=record: those are only kept (wf_notifications).
+     */
+    async notify(notification) {
+        const by = notification.channel ? ` by ${notification.channel}` : '';
+        const body = notification.message && notification.message !== notification.subject
+            ? '\n  ' + notification.message.replace(/\n/g, '\n  ') : '';
+        console.log(`notify ${notification.to.join(', ')}${by}: ${notification.subject}${body}`);
+    }
+
     
     ///
     
