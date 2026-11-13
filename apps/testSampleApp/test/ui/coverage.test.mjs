@@ -39,7 +39,6 @@ async function openTestTab(model = 'leave-request') {
 }
 
 async function record(page, name, steps) {
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.fill('.test-name', name);
     await page.click('.test-run');
@@ -127,7 +126,6 @@ function drawnFlows() {
 }
 /** A scenario of the drawn model, which runs from its start data to the end. */
 async function recordStart(page, name, data) {
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.fill('.test-name', name);
     await page.click('.test-run');
@@ -204,7 +202,6 @@ test('coverage comes from the kept runs after a reload; a scenario with no insta
     const kept = await counts(page);
     assert.ok(kept.nodes[0] > 0, JSON.stringify(kept));
 
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.waitForFunction(() => /1 scenario has not run/.test(document.querySelector('.test-coverage').textContent));
     assert.deepEqual(await counts(page), kept, 'written, not run: nothing added');

@@ -9,7 +9,7 @@ import vm from 'node:vm';
 import { randomUUID } from 'node:crypto';
 import { AstBuilder, compile, GherkinClassicTokenMatcher, Parser } from '@cucumber/gherkin';
 import { IdGenerator } from '@cucumber/messages';
-import { runSandboxed, SandboxScriptHandler, SecureUser, type StubSet } from 'bpmn-server';
+import { runSandboxed, SandboxScriptHandler, SecureUser, notificationsOf, type StubSet } from 'bpmn-server';
 import { matched, outputAt } from './decisionTests.js';
 import { compare, valueAt } from './scenarios.js';
 
@@ -158,6 +158,17 @@ class Scenario {
             const actual = valueAt(item, ofElement[4]);
             const op = { is: '=', 'is not': '<>' }[ofElement[5]] ?? ofElement[5];
             return { ok: compare(actual, op, await this.value(ofElement[6])), said: `${element} ${ofElement[4]} is ${JSON.stringify(actual)}` };
+        }
+        // whom a notification went to (all of them, in any order), with its template, at an element
+        const notified = new RegExp(`^:(\\w+) notified (\\[.*?\\]|"[^"]*")(?: with template ("[^"]*"))?(?: at element:${NAME})?$`).exec(statement);
+        if (notified) {
+            const { instance } = await this.instanceOf(notified[1]);
+            const to = [JSON.parse(notified[2])].flat().map(String).sort();
+            const template = notified[3] && JSON.parse(notified[3]);
+            const element = notified[4] && unquoted(notified[4]);
+            const made = (await notificationsOf(this.server, instance.id)).filter(n => (!element || n.elementId === element) && (!template || n.template === template));
+            const ok = made.some(n => { const x = [...n.to].map(String).sort(); return x.length === to.length && x.every((v, i) => v === to[i]); });
+            return { ok, said: made.length ? `notified ${made.map(n => n.to.join(', ')).join('; ')}` : 'notified no one' };
         }
         const expression = /^\$\{([\s\S]*)\}$/.exec(statement);
         if (expression) {

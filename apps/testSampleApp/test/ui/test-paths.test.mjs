@@ -214,7 +214,6 @@ test('a receive task is a step: recorded, repeated by Run, and Test all paths go
     await web.bpmnServer.engine.install({ rebuild: true });
 
     const { page, errors, close } = await openTestTab('receives');
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.click('.test-run');
     await page.click('.test-start-go');

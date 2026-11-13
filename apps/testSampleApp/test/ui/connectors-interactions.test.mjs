@@ -427,7 +427,6 @@ test('run from the Test tab: the start data reaches the connector, the answer is
     await page.waitForSelector('#js-canvas .djs-shape');
     await page.click('#js-tab-test');
     await page.waitForSelector('#js-test .test-panel');
-    await page.click('#js-test .test-new-menu summary');
     await page.click('#js-test .test-new');
     await page.click('#js-test .test-run');
     await page.waitForSelector('.test-start');

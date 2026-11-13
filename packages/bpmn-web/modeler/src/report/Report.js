@@ -693,7 +693,7 @@ function summary(issues) {
     const count = severity => issues.filter(i => i.severity === severity).length;
     const parts = [['error', count('error')], ['warning', count('warning')]].filter(([, n]) => n)
         .map(([s, n]) => `${n} ${s}${n === 1 ? '' : 's'}`);
-    return parts.length ? `Problems: ${parts.join(', ')}` : 'No problems found';
+    return parts.length ? `Problems: ${parts.join(', ')}` : 'Model is validated: no problems found';
 }
 
 Report.$inject = ['config.report', 'eventBus', 'bpmnjs', 'elementRegistry', 'canvas', 'selection', 'problems', 'injector'];

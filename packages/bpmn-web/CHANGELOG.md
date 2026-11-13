@@ -184,6 +184,16 @@ and here
   `/modeler/instance.js` (and every page its scripts and stylesheets) by a URL without its build, so a browser kept
   running an old one (the Report's form fields as lines, not their table). Every page's own scripts and stylesheets
   now go through `asset()`, their URL carrying the file's build time.
+- **The Test tab: who acts.** A recorded scenario's start and steps have a User and a Role: who acts there and in the
+  steps after, written as Gherkin's `user:<name> @login [with role of "<role>"]`; with a role, only a task offered to
+  them is theirs (`completeTest`, `POST /model/test/invoke` take `user`, `role`). A step that fails says why in its
+  box, and can be kept as a refused step (`@invoke ... is refused`), which Run checks still is.
+- **The Test tab: checks of an assignment and a notification.** A waiting task shows whom it is assigned or offered
+  to, and a *notified* row of What happened offers its check: `:instance last element:<e> candidateGroups is [...]`,
+  `:instance notified [...] [with template "t"] [at element:<e>]` (Gherkin's runner reads both). Add as a check is a
+  small icon (`+✓`), as Copy check is (`⧉`); a step's data is collapsed, its JSON when opened; New is one button (Start at chooses a task by
+  itself).
+- **The Problems tab, and the Report, say *Model is validated: no problems found*** (it was *No problems found*).
 - **An actor on a start event too** (Who can start, Actor): the user who starts the process there. An actor is the
   name for the user who completes a user task or starts the process; nowhere else.
 - **The instance page:** its actors under Instance data; the Access section (was Assignment and access) only says who

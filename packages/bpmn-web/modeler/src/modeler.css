@@ -650,6 +650,86 @@ body {
     padding-top: 4px;
 }
 
+.test-who {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin: 2px 0 4px;
+}
+
+.test-who label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    font-weight: normal;
+}
+
+.test-who label > span {
+    color: #52575f;
+    font-size: 12px;
+}
+
+.test-who input {
+    width: 130px;
+}
+
+.test-fieldset .test-who, .test-start .test-who {
+    margin: 4px 0;
+}
+
+.test-step-assignment {
+    margin-top: 4px;
+    color: #52575f;
+    font-size: 12px;
+}
+
+.test-step-assignment .test-add-check {
+    margin-left: 4px;
+}
+
+.test-step-failure {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    margin: 0 0 6px;
+    color: #b42318;
+}
+
+.test-step-refused {
+    margin-left: 6px;
+    padding: 0 5px;
+    border-radius: 8px;
+    background: #fef3f2;
+    color: #b42318;
+    font-size: 11px;
+}
+
+.test-step-who {
+    margin-left: 6px;
+    color: #52575f;
+    font-size: 12px;
+}
+
+details.test-step-data > summary {
+    cursor: pointer;
+    color: #52575f;
+}
+
+details.test-step-data > pre {
+    margin: 4px 0 0;
+    padding: 4px 6px;
+    background: #f6f8fa;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: pre-wrap;
+}
+
+.test-no-data {
+    color: #8a8f98;
+}
+
 .test-step-data {
     padding-top: 4px;
     font-family: ui-monospace, SFMono-Regular, Consolas, monospace;

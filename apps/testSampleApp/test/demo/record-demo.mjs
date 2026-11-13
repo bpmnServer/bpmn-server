@@ -196,7 +196,6 @@ await caption('Conditions, forms and scripts, in flow order', 2500);
 await caption('Test: record a run of the process in the editor, step by step');
 await click(page.locator('#js-tab-test'));
 await page.waitForSelector('#js-test .test-panel');
-await click(page.locator('.test-new-menu summary'));
 await click(page.locator('.test-new'));
 await click(page.locator('.test-name'));
 await page.locator('.test-name').fill('');

@@ -54,7 +54,7 @@ Open **Leave Application** in the model editor (Workbench → Models → **Open 
 | Manager | **Approve**, its reminder timer, **Remind the managers**, the **Outcome?** gateway |
 | HR | **Record the leave**, its error event **Not recorded**, **Fix the record** |
 
-The **Problems** tab under the diagram says *No problems found*: the model is checked as it is edited, against the
+The **Problems** tab under the diagram says *Model is validated: no problems found*: the model is checked as it is edited, against the
 way the server runs it. Every element says what it is for in its **Documentation**, which is printed in the
 **Report** tab: the model explains itself.
 

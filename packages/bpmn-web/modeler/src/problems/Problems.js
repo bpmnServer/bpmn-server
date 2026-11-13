@@ -174,7 +174,7 @@ export default class Problems {
             .filter(([, n]) => n > 0)
             .map(([severity, n]) => `<span class="count severity-${severity}" title="${n} ${severity}${n === 1 ? '' : 's'}">${n}</span>`)
             .join('');
-        this._setStatus(this._issues.length ? '' : 'No problems found');
+        this._setStatus(this._issues.length ? '' : 'Model is validated: no problems found');
 
         this._list.replaceChildren(...this._issues.map((issue, index) => {
             const item = document.createElement('li');

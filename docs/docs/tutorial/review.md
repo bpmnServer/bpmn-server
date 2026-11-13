@@ -5,7 +5,7 @@ once as its users would run it.
 
 ## Checked
 
-- The **Problems** tab says *No problems found*. `npm run verify` checks every model the same way, from the command
+- The **Problems** tab says *Model is validated: no problems found*. `npm run verify` checks every model the same way, from the command
   line.
 - **Run all** in the Test tab, or `npm test`: every scenario passes.
 

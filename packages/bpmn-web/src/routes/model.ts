@@ -17,7 +17,7 @@ import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/
 import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
 import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
-import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
+import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest, withNotifications } from '../testing/scenarios.js';
 import { withReached, idsByName } from '../testing/modelCoverage.js';
 
 
@@ -842,21 +842,24 @@ export class Model extends Common {
         }));
         /** Recording: start, then complete waiting items one at a time. */
         router.post('/test/start', awaitHandlerFactory(async (request, response) => {
-            const { processName, startNodeId, data, only } = request.body ?? {};
+            // user: who starts it, else the tester (a test instance: a designer may act as anyone in it)
+            const { processName, startNodeId, data, only, user } = request.body ?? {};
             try {
-                response.json({ instance: summarize(await startTest(bpmnServer, processName, startNodeId, data ?? {}, request.user?.userName, only === true)) });
+                response.json({ instance: summarize(await startTest(bpmnServer, processName, startNodeId, data ?? {}, String(user || '').trim() || request.user?.userName, only === true)) });
             } catch (exc) {
                 response.status(422).json({ error: String(exc?.message ?? exc) });
             }
         }));
         router.post('/test/invoke', awaitHandlerFactory(async (request, response) => {
-            const { instanceId, itemId, data } = request.body ?? {};
+            const { instanceId, itemId, data, user, role } = request.body ?? {};
             if (!String(instanceId || '').startsWith('test-')) {
                 response.status(400).json({ error: 'only test instances are completed here' });
                 return;
             }
             try {
-                response.json({ instance: summarize(await completeTest(bpmnServer, instanceId, itemId, data ?? {}, request.user?.userName)) });
+                // user, role: who completes it (a role: only an item offered to them), else the tester
+                const who = String(user || '').trim();
+                response.json({ instance: summarize(await completeTest(bpmnServer, instanceId, itemId, data ?? {}, who || request.user?.userName, (who && String(role || '').trim()) || undefined)) });
             } catch (exc) {
                 response.status(422).json({ error: String(exc?.message ?? exc), instance: summarize(await findTest(bpmnServer, instanceId).catch(() => null)) });
             }
@@ -895,7 +898,7 @@ export class Model extends Common {
                 return;
             }
             const all = [...expectChecks(expect), ...(Array.isArray(checks) ? checks : [])];
-            response.json({ checks: checksAt(all, after?.element ? after : at === 'start' ? 'start' : 'end', instance), instance: summarize(instance) });
+            response.json({ checks: checksAt(all, after?.element ? after : at === 'start' ? 'start' : 'end', await withNotifications(bpmnServer, instance, all)), instance: summarize(instance) });
         }));
 
         /** The debugger: a test instance's data replaced (the next steps run with it). */

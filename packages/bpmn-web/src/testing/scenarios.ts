@@ -17,11 +17,18 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { rationaleSteps } from './rationale.js';
 import { readFeature, sourceFeature, writeFeature } from './featureFiles.js';
+import { SecureUser, notificationsOf } from 'bpmn-server';
 
 export interface ScenarioStep {
     /** the waiting element to complete */
     element: string;
     data?: Record<string, any>;
+    /** who completes it (else whoever acted before it: the start's user, the tester); the steps after act as them too */
+    user?: string;
+    /** the user's role (their one group): they complete only an item offered to them (assignee, candidates) */
+    role?: string;
+    /** it is refused: completing it fails (the user may not, the engine refuses); the item still waits */
+    refused?: boolean;
 }
 
 /** A check of a run: at its start (once it has started), at its end, or after a step (each time that step's element is completed). */
@@ -29,7 +36,7 @@ export interface Check {
     at?: 'start' | 'end' | 'after';
     /** at 'after': the step's element, by id or name */
     step?: string;
-    kind: 'status' | 'node' | 'data';
+    kind: 'status' | 'node' | 'data' | 'assignment' | 'notified';
     /** status: the instance's; node: its items' (optional) */
     status?: string;
     /** node: the element, by id or name */
@@ -40,12 +47,17 @@ export interface Check {
     path?: string;
     op?: '=' | '<>' | '>' | '<' | '>=' | '<=';
     value?: any;
+    /** assignment: the field of the element's latest item (node) that holds `value`: a name, or names */
+    field?: 'assignee' | 'candidateUsers' | 'candidateGroups';
+    /** notified: whom a notification went to (users, groups; all of them, in any order), its template; at node, if named */
+    to?: string[];
+    template?: string;
 }
 
 export interface Scenario {
     name: string;
     /** only: the element at startNodeId by itself (a task tested alone): the run ends once it is done */
-    start?: { startNodeId?: string; only?: boolean; data?: Record<string, any> };
+    start?: { startNodeId?: string; only?: boolean; data?: Record<string, any>; user?: string; role?: string };
     steps?: ScenarioStep[];
     checks?: Check[];
     expect?: { status?: string; data?: Record<string, any>; passes?: string[]; avoids?: string[] };
@@ -130,22 +142,25 @@ function definitions(key: string, all: any[]) {
     // a name as Gherkin reads it
     const list = all.map(item => ({ ...item, name: String(item.name).trim() }));
     if (key.startsWith(DECISION))
-        return list.map(({ name, decision, data, checks, source, featureTags, background, tags }) => source !== undefined
-            ? { name, source, featureTags, background, tags }
-            : { name, ...(decision && decision !== setName(key) ? { decision } : {}), data: data ?? {}, checks: (checks ?? []).map(({ what, ok, actual, ...check }) => check), featureTags, tags });
-    return list.map(({ name, start, steps, checks, expect, generated, source, featureTags, background, tags }) => source !== undefined
-        ? { name, source, featureTags, background, tags }
+        return list.map(({ name, decision, data, checks, source, featureTags, featureDescription, background, tags }) => source !== undefined
+            ? { name, source, featureTags, featureDescription, background, tags }
+            : { name, ...(decision && decision !== setName(key) ? { decision } : {}), data: data ?? {}, checks: (checks ?? []).map(({ what, ok, actual, ...check }) => check), featureTags, featureDescription, tags });
+    return list.map(({ name, start, steps, checks, expect, generated, source, featureTags, featureDescription, background, tags }) => source !== undefined
+        ? { name, source, featureTags, featureDescription, background, tags }
         : {
             name,
-            start: { data: start?.data ?? {}, ...(start?.startNodeId ? { startNodeId: start.startNodeId } : {}), ...(start?.only ? { only: true } : {}) },
-            steps: (steps ?? []).map(({ element, data }) => ({ element, data: data ?? {} })),
+            start: { data: start?.data ?? {}, ...(start?.startNodeId ? { startNodeId: start.startNodeId } : {}), ...(start?.only ? { only: true } : {}), ...who(start) },
+            steps: (steps ?? []).map(({ element, data, user, role, refused }) => ({ element, data: data ?? {}, ...who({ user, role }), ...(refused ? { refused: true } : {}) })),
             checks: [...expectChecks(expect), ...(checks ?? [])].map(({ what, ok, actual, ...check }: any) => {
                 if (check.at === 'end') delete check.at;
                 return check;
             }),
-            ...(generated ? { generated: true } : {}), featureTags, tags,
+            ...(generated ? { generated: true } : {}), featureTags, featureDescription, tags,
         });
 }
+
+/** Who acts at a start or step, when it says: { user, role }. */
+const who = (at): { user?: string; role?: string } => at?.user ? { user: at.user, ...(at.role ? { role: at.role } : {}) } : {};
 
 const sorted = value => Array.isArray(value) ? value.map(sorted)
     : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).filter(k => value[k] !== undefined).sort().map(k => [k, sorted(value[k])]))
@@ -354,11 +369,12 @@ export function checkScenarios(scenarios): string[] {
         if (s.start?.data !== undefined && (typeof s.start.data !== 'object' || Array.isArray(s.start.data))) problems.push(`${at}: start data must be an object`);
         (s.steps ?? []).forEach((step, j) => {
             if (!step?.element) problems.push(`${at}, step ${j + 1}: no element`);
+            if (step?.user !== undefined && (typeof step.user !== 'string' || /\s/.test(step.user))) problems.push(`${at}, step ${j + 1}: a user is a name without spaces`);
             if (step?.data !== undefined && (typeof step.data !== 'object' || Array.isArray(step.data))) problems.push(`${at}, step ${j + 1}: data must be an object`);
         });
         if (s.checks !== undefined && !Array.isArray(s.checks)) problems.push(`${at}: checks must be a list`);
         (Array.isArray(s.checks) ? s.checks : []).forEach((check, j) => {
-            if (!['status', 'node', 'data'].includes(check?.kind)) problems.push(`${at}, check ${j + 1}: kind must be status, node or data`);
+            if (!['status', 'node', 'data', 'assignment', 'notified'].includes(check?.kind)) problems.push(`${at}, check ${j + 1}: kind must be status, node, data, assignment or notified`);
             if (check?.op !== undefined && !OPS.includes(check.op)) problems.push(`${at}, check ${j + 1}: op must be one of ${OPS.join(' ')}`);
         });
     });
@@ -375,7 +391,8 @@ export function summarize(instance) {
         data: instance.data,
         items: (instance.items ?? []).map(i => ({
             id: i.id, seq: i.seq, elementId: i.elementId, name: i.name, type: i.type, status: i.status,
-            startedAt: i.startedAt, endedAt: i.endedAt, assignee: i.assignee
+            startedAt: i.startedAt, endedAt: i.endedAt, assignee: i.assignee,
+            candidateUsers: i.candidateUsers, candidateGroups: i.candidateGroups
         })),
         logs: (instance.logs ?? []).slice(-300).map(l => typeof l === 'string' ? l : `${' '.repeat(Math.max(0, l.level ?? 0))}${l.message}`),
         // why the engine took its path: the log's decision entries, in order
@@ -414,13 +431,22 @@ export async function startTest(server, model: string, startNodeId: string | und
     return execution.instance;
 }
 
-/** Complete a waiting item of a test instance with data. */
-export async function completeTest(server, instanceId: string, itemId: string, data, userName?: string) {
+/**
+ * Complete a waiting item of a test instance with data. With a role, as `user:<name> @login with role of "<role>"`:
+ * the user, in that one group, completes only an item offered to them (its assignee, candidate users or groups).
+ */
+export async function completeTest(server, instanceId: string, itemId: string, data, userName?: string, role?: string) {
     const saved = await findTest(server, instanceId);
     const item = saved?.items?.find(i => i.id === itemId);
     if (item && !isStep(item))
         throw new Error(`${item.name || item.elementId} completes by itself (${item.type.replace('bpmn:', '')} waiting on the process); it is not a step`);
-    const execution = await server.engine.invoke({ id: instanceId, 'items.id': itemId }, clone(data), userName ?? null);
+    let query: any = { id: instanceId, 'items.id': itemId };
+    if (role) {
+        query = new SecureUser({ userName: userName ?? '', userGroups: [role], tenantId: null } as any, { enforceSecurity: true } as any).qualifyItems(query);
+        if (!(await server.dataStore.findItems(query)).length)
+            throw new Error(`${userName ?? 'the user'} (${role}) may not complete ${item?.name || item?.elementId || itemId}: it is not offered to them`);
+    }
+    const execution = await server.engine.invoke(query, clone(data), userName ?? null);
     return execution.instance;
 }
 
@@ -481,6 +507,10 @@ export function compare(actual, op: string, expected): boolean {
 export function describeCheck(check: Check): string {
     const where = check.at === 'after' ? `after ${check.step}: ` : check.at === 'start' ? 'at the start: ' : '';
     if (check.kind === 'status') return `${where}status is ${check.status}`;
+    if (check.kind === 'assignment')
+        return `${where}${check.node} ${check.field === 'assignee' ? 'is assigned to' : 'is offered to'} ${names(check.value).join(', ') || 'no one'}`;
+    if (check.kind === 'notified')
+        return `${where}notified ${names(check.to).join(', ')}${check.template ? ` with ${check.template}` : ''}${check.node ? ` at ${check.node}` : ''}`;
     if (check.kind === 'node') {
         const status = check.status ? `, ${check.status},` : '';
         if (!hasCount(check)) return `${where}passes ${check.node}${status ? ` (${check.status})` : ''}`;
@@ -491,6 +521,11 @@ export function describeCheck(check: Check): string {
     return `${where}data.${check.path} ${op === '=' ? 'is' : op === '<>' ? 'is not' : op} ${JSON.stringify(check.value)}`;
 }
 
+/** Names: a list, or a comma separated text. */
+const names = (value): string[] => (Array.isArray(value) ? value.flat() : value == null || value === '' ? [] : String(value).split(','))
+    .map(v => String(v ?? '').trim()).filter(Boolean);
+const sameNames = (a, b) => { const x = names(a).sort(), y = names(b).sort(); return x.length === y.length && x.every((v, i) => v === y[i]); };
+
 const hasCount = (check: Check) => check.count !== undefined && check.count !== null && check.count !== ('' as any);
 
 /** A check on an instance: { what, ok, actual, check }. A node's actual is how many times it ran, in that status. */
@@ -498,6 +533,17 @@ export function evaluateCheck(check: Check, instance) {
     const what = describeCheck(check);
     if (check.kind === 'status')
         return { what, ok: instance?.status === check.status, actual: instance?.status, check };
+    if (check.kind === 'assignment') {
+        // the element's latest item: who it is assigned or offered to now
+        const item = (instance?.items ?? []).filter(i => i.elementId === check.node || i.name === check.node).sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0)).at(-1);
+        const actual = item ? names(item[check.field ?? 'assignee']) : null;
+        return { what, ok: !!item && sameNames(actual, check.value), actual, check };
+    }
+    if (check.kind === 'notified') {
+        // the instance's notifications (withNotifications): one to all of them, with the template, at the element
+        const made = (instance?.notifications ?? []).filter(n => (!check.node || n.elementId === check.node) && (!check.template || n.template === check.template));
+        return { what, ok: made.some(n => sameNames(n.to, check.to)), actual: made.map(n => n.to.join(', ')), check };
+    }
     if (check.kind === 'node') {
         const runs = (instance?.items ?? []).filter(i => (i.elementId === check.node || i.name === check.node) && (!check.status || i.status === check.status));
         const ok = hasCount(check) ? runs.length === Number(check.count) : runs.length > 0;
@@ -505,6 +551,12 @@ export function evaluateCheck(check: Check, instance) {
     }
     const actual = valueAt(instance?.data, check.path);
     return { what, ok: compare(actual, check.op, check.value), actual, check };
+}
+
+/** The instance with its notifications (instance.notifications), when a check asks whom it notified. */
+export async function withNotifications(server, instance, checks: Check[]) {
+    if (!instance || !checks.some(c => c.kind === 'notified')) return instance;
+    return { ...instance, notifications: await notificationsOf(server, instance.id).catch(() => []) };
 }
 
 /** The checks due at the start, at the end, or after a step on an element (by id or name). */
@@ -581,13 +633,16 @@ export async function runScenario(server, model: string, scenario: Scenario, use
     const checks = [];
     let instance, error = null;
     try {
-        instance = await startTest(server, model, scenario.start?.startNodeId, scenario.start?.data, userName, !!scenario.start?.only);
+        instance = await startTest(server, model, scenario.start?.startNodeId, scenario.start?.data, scenario.start?.user || userName, !!scenario.start?.only);
     }
     catch (err) {
         return { name: scenario.name, ok: false, error: `Starting failed: ${message(err)}`, steps, checks: [], instance: null };
     }
-    checks.push(...checksAt(all, 'start', instance));
+    checks.push(...checksAt(all, 'start', await withNotifications(server, instance, all)));
+    // who acts: the start's user, then each step's, for the steps after it too
+    let as = scenario.start?.user ? { user: scenario.start.user, role: scenario.start.role } : { user: userName, role: undefined };
     for (const [index, step] of (scenario.steps ?? []).entries()) {
+        if (step.user) as = { user: step.user, role: step.role };
         const waiting = (instance.items ?? []).filter(isStep);
         const item = waiting.find(i => i.elementId === step.element);
         if (!item) {
@@ -597,10 +652,23 @@ export async function runScenario(server, model: string, scenario: Scenario, use
             error = 'A step could not be done';
             break;
         }
-        try {
-            instance = await completeTest(server, instance.id, item.id, step.data, userName);
+        if (step.refused) {
+            // it is refused: completing it fails, and the instance is as it was
+            const done = await completeTest(server, instance.id, item.id, step.data, as.user, as.role).then(() => true, () => false);
+            if (done) {
+                steps.push({ index, element: step.element, ok: false, error: `${step.element} was completed${as.user ? ` by ${as.user}` : ''}, not refused` });
+                error = 'A step was not refused';
+                instance = (await findTest(server, instance.id).catch(() => null)) ?? instance;
+                break;
+            }
             steps.push({ index, element: step.element, ok: true });
-            checks.push(...checksAt(all, { element: item.elementId, name: item.name }, instance));
+            instance = (await findTest(server, instance.id).catch(() => null)) ?? instance;
+            continue;
+        }
+        try {
+            instance = await completeTest(server, instance.id, item.id, step.data, as.user, as.role);
+            steps.push({ index, element: step.element, ok: true });
+            checks.push(...checksAt(all, { element: item.elementId, name: item.name }, await withNotifications(server, instance, all)));
         }
         catch (err) {
             steps.push({ index, element: step.element, ok: false, error: message(err) });
@@ -610,7 +678,7 @@ export async function runScenario(server, model: string, scenario: Scenario, use
             break;
         }
     }
-    checks.push(...checksAt(all, 'end', instance));
+    checks.push(...checksAt(all, 'end', await withNotifications(server, instance, all)));
     return {
         name: scenario.name,
         ok: !error && checks.every(c => c.ok),

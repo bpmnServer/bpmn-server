@@ -126,7 +126,6 @@ test('the Test tab runs a FEEL condition: the data chooses the path', async () =
   await page.waitForSelector('#js-test .test-panel');
 
   const run = async (name, data, reached, passed) => {
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.fill('.test-name', name);
     await page.click('.test-run');

@@ -86,7 +86,14 @@ Then @check ${data.total > 100}
   And @check :order last element:approve-order status is "wait"
   And @check :result output.approvalStatus is "Approved"
   And @check :result rules is 1
+  And @check :leave last element:Approve candidateGroups is ["Manager"]
+  And @check :leave last element:Approve assignee is "sarah.chen"
+  And @check :leave notified ["Manager"] with template "approval-request" at element:Approve
 ```
+
+`notified` holds when one of the instance's notifications ([notification policies](notification-policies.md)) went to
+all of those people and groups, in any order; `with template` and `at element:` narrow it to that template and task.
+In a test run, a notification is only recorded, never delivered.
 
 A table's values are read as JSON too: `true` is a boolean, `5` a number, anything else text.
 
@@ -144,6 +151,12 @@ A stubbed service runs even with `SERVICE_TASKS=false`. A stubbed timer needs ti
 ### In the model editor
 
 The [Test tab](modeler.md#testing-a-model) reads and writes `<model>.feature`. A scenario made of a start, steps and checks opens in its form. Anything else, such as a `@stub` or an expression, stays as written: you can run it and change it with **Edit as text**.
+
+In the form, the start and each step have a **User** and a **Role**: who acts there, and in the steps after, written as
+`user:<name> @login [with role of "<role>"]` before it. Empty, whoever acted before acts: the start's user, else you.
+With a role, the user completes only a task offered to them. A step that fails says why in its box; **Keep as a refused
+step** keeps it in the scenario as `@invoke ... is refused`, and Run checks it still is. A waiting task shows whom it is
+assigned or offered to; its **+✓** adds that as a check, as it does on a *notified* row of What happened.
 
 Each run is a real instance, its id starting with `test-`, which can be opened on the instance page. An older `<model>.tests.json` in the models folder is converted to a `.feature` file when the server starts.
 

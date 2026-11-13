@@ -49,16 +49,16 @@ async function startRun(page) {
     await page.waitForSelector('.test-step.pending');
 }
 
-/** New: The whole process. */
+/** New: a scenario; where it starts is its start form's. */
 async function newScenario(page) {
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
 }
 
-/** New: The task selected. */
-async function newTask(page) {
-    await page.click('.test-new-menu summary');
-    await page.click('.test-task');
+/** New, then Record: Start at the task, by itself. */
+async function newTask(page, id) {
+    await page.click('.test-new');
+    await page.click('.test-run');
+    await page.locator('.test-start-event').selectOption(id);
 }
 
 const pick = (page, name) => page.locator('.test-tree-row', { hasText: name }).click();
@@ -495,14 +495,12 @@ test('debugging a kept run is that run only: a step restarted and run again leav
     await close();
 });
 
-test('New, The task selected: the task selected on the diagram, by itself; a script runs, a user task waits for its step; nothing after', async () => {
+test('New is one button; Start at, a task by itself: a script runs, a user task waits for its step; nothing after', async () => {
     const { page, errors, close } = await openTestTab();
-    const select = id => page.evaluate(id => window.bpmnModeler.get('selection').select(window.bpmnModeler.get('elementRegistry').get(id)), id);
+    assert.equal(await page.locator('.test-new-menu').count(), 0, 'no menu: where it starts is the start form');
 
     // a script task: its input, then what it did
-    await select('AutoApprove');
-    await newTask(page);
-    assert.equal(await page.inputValue('.test-name'), 'Approve automatically by itself');
+    await newTask(page, 'AutoApprove');
     assert.equal(await page.inputValue('.test-start-event'), 'AutoApprove');
     assert.equal(await page.locator('.test-start-go').innerText(), 'Run the task');
     await page.fill('textarea.test-start-data', '{"days": 2}');
@@ -512,21 +510,107 @@ test('New, The task selected: the task selected on the diagram, by itself; a scr
     assert.deepEqual(items, ['AutoApprove'], 'that task only');
 
     // a user task: it waits; its step completes it, and the run ends there
-    await select('Approve');
-    await newTask(page);
+    await newTask(page, 'Approve');
     await page.click('.test-start-go');
     await page.waitForSelector('.test-step.pending');
     assert.deepEqual(await pendingNames(page), ['Approve request (Approve)']);
     await runStep(page, 'Approve', { approved: true });
     await page.waitForSelector('.test-summary.ok');
     assert.deepEqual(await page.locator('.test-items tbody tr').evaluateAll(trs => trs.map(tr => tr.dataset.elementId)), ['Approve']);
-
-    // nothing selected: a message
-    await page.evaluate(() => window.bpmnModeler.get('selection').select(null));
-    await newTask(page);
-    assert.match(await page.locator('.test-status').innerText(), /Select a task on the diagram first/);
     assert.deepEqual(errors, []);
     await close();
+});
+
+test('who acts: a user and role at the start and on a step; a waiting task shows whom it is offered to; its assignment and a notification as checks; the data collapsed', async () => {
+    const model = 'test-who';
+    fs.writeFileSync(path.join(web.definitionsPath, `${model}.bpmn`), `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:owf="http://omniworkflow.com/schema/owf/1.0" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="d" targetNamespace="t">
+  <bpmn:process id="Who" isExecutable="true" owf:notificationPolicy="WhoNotices">
+    <bpmn:startEvent id="S" /><bpmn:userTask id="Ask" name="Ask" camunda:candidateGroups="Manager" /><bpmn:endEvent id="E" />
+    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Ask" /><bpmn:sequenceFlow id="f2" sourceRef="Ask" targetRef="E" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="dg"><bpmndi:BPMNPlane id="pl" bpmnElement="Who">
+    <bpmndi:BPMNShape id="S_di" bpmnElement="S"><dc:Bounds x="100" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Ask_di" bpmnElement="Ask"><dc:Bounds x="200" y="78" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="E_di" bpmnElement="E"><dc:Bounds x="360" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1"><di:waypoint x="136" y="118" /><di:waypoint x="200" y="118" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2"><di:waypoint x="300" y="118" /><di:waypoint x="360" y="118" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>`);
+    const policies = path.join(web.definitionsPath, 'policies', 'notification');
+    fs.mkdirSync(policies, { recursive: true });
+    fs.writeFileSync(path.join(policies, 'WhoNotices.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="WhoNotices_definitions" name="Who notices" namespace="http://bpmn-server/dmn">
+  <decision id="WhoNotices" name="Who notices">
+    <decisionTable id="WhoNotices_table" hitPolicy="COLLECT">
+      <input id="WhoNotices_event" label="Event"><inputExpression id="WhoNotices_eventExpression" typeRef="string"><text>event</text></inputExpression></input>
+      <output id="WhoNotices_notify" label="Notify" name="notify" typeRef="string" />
+      <rule id="WhoNotices_asked">
+        <inputEntry id="WhoNotices_asked_event"><text>"assigned"</text></inputEntry>
+        <outputEntry id="WhoNotices_asked_notify"><text>actors.candidate</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>`);
+    const { page, errors, close } = await openTestTab(model);
+    try {
+        await newScenario(page);
+        await page.click('.test-run');
+        await page.fill('.test-start .test-who-user', 'emp1');
+        await page.fill('.test-start textarea.test-start-data', '{"reason": "trip", "days": 3}');
+        await page.click('.test-start-go');
+        await page.waitForSelector('.test-step.pending');
+
+        // the start: by whom; its data collapsed, the JSON when opened
+        const start = page.locator('.test-step-start');
+        assert.match(await start.locator('.test-step-who').innerText(), /by emp1/);
+        assert.equal(await start.locator('details.test-step-data > summary').innerText(), 'Data: reason, days');
+        assert.equal(await start.locator('details.test-step-data').evaluate(d => d.open), false);
+
+        // the waiting task: whom it is offered to, and a check of it
+        const pending = page.locator('.test-step.pending[data-element-id="Ask"]');
+        assert.match(await pending.locator('.test-step-assignment').innerText(), /offered to Manager/);
+        await pending.locator('.test-step-assignment .test-add-check').click();
+        // the notification of it, on its row in what happened: a check of it, by a small icon
+        const details = start.locator('details.test-steps-rows');
+        if (!(await details.evaluate(d => d.open))) await details.locator(':scope > summary').click();
+        const notified = start.locator('tr:has-text("notified Manager")');
+        assert.equal(await notified.locator('.test-add-check').getAttribute('aria-label'), 'Add as a check');
+        await notified.locator('.test-add-check').click();
+        // a check shows once: under its row, not offered again
+        await page.waitForSelector('.test-step-start .test-check-row:has-text("Manager notified, at Ask")');
+
+        // as an employee, the task is not theirs; as a manager, it is
+        await pending.locator('.test-who-user').fill('bob');
+        await pending.locator('.test-who-role').fill('Employee');
+        await pending.locator('.test-step-run').click();
+        // why, in the step's box; kept as a step of the scenario: it is refused
+        const failure = page.locator('.test-step.pending[data-element-id="Ask"] .test-step-failure');
+        assert.match(await failure.innerText(), /bob \(Employee\) may not complete Ask/);
+        assert.equal(await page.inputValue('.test-step.pending[data-element-id="Ask"] .test-who-user'), 'bob', 'what was typed stays for another try');
+        await failure.locator('.test-keep-refused').click();
+        await page.waitForSelector('.test-timeline .test-step:not(.pending)[data-element-id="Ask"] .test-step-refused');
+        await page.locator('.test-step.pending[data-element-id="Ask"] .test-who-user').fill('bob');
+        await page.locator('.test-step.pending[data-element-id="Ask"] .test-who-role').fill('Manager');
+        await page.locator('.test-step.pending[data-element-id="Ask"] .test-step-run').click();
+        await page.waitForSelector('.test-summary.ok');
+        assert.deepEqual(await page.locator('.test-timeline .test-step:not(.pending)[data-element-id="Ask"] .test-step-who').allInnerTexts(), ['by bob (Employee)', 'by bob (Manager)']);
+
+        // the .feature: who acts, as Gherkin's @login; the checks; Run repeats it as bob, and they hold
+        const feature = fs.readFileSync(path.join(web.definitionsPath, `${model}.feature`), 'utf8');
+        assert.match(feature, /Given user:emp1 @login\r?\n\s+When @start process:test-who/);
+        assert.match(feature, /And user:bob @login with role of "Employee"\r?\n\s+And @invoke element:Ask in :instance is refused/);
+        assert.match(feature, /And user:bob @login with role of "Manager"\r?\n\s+And @invoke element:Ask in :instance\r?\n/);
+        assert.match(feature, /@check :instance last element:Ask candidateGroups is \["Manager"\]/);
+        assert.match(feature, /@check :instance notified \["Manager"\] at element:Ask/);
+        await page.click('.test-replay');
+        await page.waitForSelector('.test-summary.ok .test-summary-count');
+        assert.match(await page.locator('.test-summary-count').innerText(), /^2 checks$/);
+        assert.deepEqual(errors, []);
+    } finally {
+        await close();
+        fs.rmSync(path.join(policies, 'WhoNotices.dmn.xml'), { force: true });
+    }
 });
 
 test('Add as a check: on a step\'s row, or a value; the check under the row of its item; the step is when it is checked', async () => {
@@ -574,7 +658,7 @@ test('Add as a check: on a step\'s row, or a value; the check under the row of i
     assert.equal(await afterSubmit.nth(0).locator('.test-check-path').inputValue(), 'days');
     assert.equal(await afterSubmit.nth(0).locator('.test-check-value').inputValue(), '10');
     await afterSubmit.nth(0).locator('.test-check-done').click();
-    assert.equal(await page.locator('.test-data-row[data-path="days"] .test-add-check').innerText(), '✓ In checks', 'not twice');
+    assert.equal(await page.locator('.test-data-row[data-path="days"] .test-add-check').innerText(), '✓', 'not twice');
 
     // a click on the button does not select the row's element
     assert.deepEqual(await page.evaluate(() => window.bpmnModeler.get('selection').get().map(e => e.id)), []);
@@ -761,7 +845,31 @@ test('Edit as text: the whole .feature in the Test tab; what does not read is no
     assert.deepEqual(errors, []);
 });
 
-test('"No problems found" and Rules show with the Problems tab only', async () => {
+test('a model with no problems: the Problems tab says it is validated', async () => {
+    fs.writeFileSync(path.join(web.definitionsPath, 'test-clean.bpmn'), `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="d" targetNamespace="t">
+  <bpmn:process id="Clean" isExecutable="true">
+    <bpmn:startEvent id="S" name="Asked"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:userTask id="Do" name="Do it"><bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:userTask>
+    <bpmn:endEvent id="E" name="Done"><bpmn:incoming>f2</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Do" /><bpmn:sequenceFlow id="f2" sourceRef="Do" targetRef="E" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="dg"><bpmndi:BPMNPlane id="pl" bpmnElement="Clean">
+    <bpmndi:BPMNShape id="S_di" bpmnElement="S"><dc:Bounds x="100" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Do_di" bpmnElement="Do"><dc:Bounds x="200" y="78" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="E_di" bpmnElement="E"><dc:Bounds x="360" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1"><di:waypoint x="136" y="118" /><di:waypoint x="200" y="118" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2"><di:waypoint x="300" y="118" /><di:waypoint x="360" y="118" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>`);
+    const { page, close } = await openTestTab('test-clean');
+    await page.click('#js-tab-problems');
+    await page.waitForFunction(() => !/Checking/.test(document.querySelector('#js-problems-status')?.textContent ?? 'Checking'), null, { timeout: 15000 }).catch(() => {});
+    assert.equal(await page.locator('#js-problems-status').innerText(), 'Model is validated: no problems found', await page.locator('.problem').allInnerTexts().then(t => t.join(' | ')));
+    await close();
+});
+
+test('the Problems status and Rules show with the Problems tab only', async () => {
     const { page } = await openTestTab();
     assert.equal(await page.locator('#js-lint-rules-open').isVisible(), false);
     assert.equal(await page.locator('#js-problems-status').isVisible(), false);
