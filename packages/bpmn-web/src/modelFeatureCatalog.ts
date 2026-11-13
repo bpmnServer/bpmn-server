@@ -276,7 +276,7 @@ export const MODEL_FEATURES: { id: string, name: string, area: string, xml: stri
         "name": "Assignment policies",
         "area": "modeling",
         "xml": [
-            "[camunda:assignmentPolicy]"
+            "[owf:assignmentPolicy]"
         ]
     },
     {
@@ -309,8 +309,8 @@ export const MODEL_FEATURES: { id: string, name: string, area: string, xml: stri
         "name": "Labels of cases and tasks",
         "area": "application",
         "xml": [
-            "[camunda:label]",
-            "[camunda:endLabel]"
+            "[owf:label]",
+            "[owf:endLabel]"
         ]
     },
     {

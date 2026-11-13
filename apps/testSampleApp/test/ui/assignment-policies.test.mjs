@@ -1,6 +1,6 @@
 // @features: assignment-policies
 // A user task's assignment policy in the model editor (properties/PolicyEntries.jsx): chosen from the policies of
-// the models folder, saved as camunda:assignmentPolicy, and previewed with the Test tab's scenario.
+// the models folder, saved as owf:assignmentPolicy, and previewed with the Test tab's scenario.
 //   npm run test:ui
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -99,7 +99,7 @@ test("the User assignment group: the policy chosen from the models folder's, sav
     const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/model/edit/Leave'));
     await page.click('#js-save');
     assert.equal((await saved).status(), 200);
-    assert.match(await web.bpmnServer.definitions.getSource('Leave'), /<bpmn:userTask id="Approve"[^>]*camunda:assignmentPolicy="LeaveApproval"/);
+    assert.match(await web.bpmnServer.definitions.getSource('Leave'), /<bpmn:userTask id="Approve"[^>]*owf:assignmentPolicy="LeaveApproval"/);
 
     // the task, run: the policy's rule assigns it
     const run = await web.bpmnServer.engine.start('Leave', { days: 3 }, null, 'admin');

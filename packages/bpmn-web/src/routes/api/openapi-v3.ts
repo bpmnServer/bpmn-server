@@ -171,7 +171,7 @@ export function openApiV3(origin: string) {
                 LabelValue: { type: 'object', description: 'A named value of a label', properties: { name: { type: 'string' }, path: { type: 'string', description: 'The data path it reads' }, value: {} } },
                 TaskWithForm: { allOf: [ref('Task'), { type: 'object', properties: { data, form: ref('Form') } }] },
                 Instance: { type: 'object', properties: { id: { type: 'string' }, name: { type: 'string' }, status: { type: 'string' }, startedAt: { type: 'string' }, endedAt: { type: ['string', 'null'] }, data,
-                    label: { type: 'string', description: 'Its label (the model\'s camunda:label, the application\'s, else <model> #<caseId>): on the lists, one instance, a start and a completion' }, labelValues: { type: 'array', items: ref('LabelValue') } } },
+                    label: { type: 'string', description: 'Its label (the model\'s owf:label, the application\'s, else <model> #<caseId>): on the lists, one instance, a start and a completion' }, labelValues: { type: 'array', items: ref('LabelValue') } } },
                 User: { type: 'object', properties: { userName: { type: 'string' }, email: { type: ['string', 'null'] }, groups: { type: 'array', items: { type: 'string' } } } },
                 Issue: { type: 'object', properties: { code: { type: 'string' }, element: { type: ['string', 'null'] }, message: { type: 'string' } } },
                 Check: { type: 'object', properties: { name: { type: 'string' }, valid: { type: 'boolean' }, errors: { type: 'array', items: ref('Issue') }, warnings: { type: 'array', items: ref('Issue') } } },

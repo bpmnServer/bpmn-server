@@ -169,6 +169,9 @@ and here
   a click on a section's heading (Rationale, Model report, Instance logs) opens or closes it, as its button does.
   **Simulate** replaces Show animation: the editor's Test tab's, the same frames, controls and colours
   (`modeler/src/simulation/simulation.js`, used by both; the page's is `public/modeler/instance.js`).
+- **The model editor writes OmniWorkflow's attributes as `owf:`** (an `owf` moddle descriptor): labels, the
+  assignment policy, exceptions as errors, the security policy. A model saved with them as `camunda:` opens with them
+  moved to `owf:`, says so, and is saved so. The HR demo's models use `owf:`.
 - **Assignment and access, under the Rationale on the instance page:** each user task, after the fact: who it was
   offered to, its assignee, what decided it (a policy's rule, or who reassigned it), its assignment as the log tells it,
   who completed it. While security policies are on, for designers and administrators: who may see the case and its

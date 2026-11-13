@@ -2,7 +2,7 @@
 // on the page's diagram (an SVG of the model, its elements by data-element-id, each item's number badge #seq_<seq>):
 // the run one change at a time, Back, Step, Play, Stop, and Show details (what the Rationale says of each change).
 import { BpmnModdle } from 'bpmn-moddle';
-import camunda from '../moddle.js';
+import { moddleExtensions } from '../moddle.js';
 import './instance.css';
 import { Simulation, simulationFrames, simulationPanel, updateSimulationPanel, SIMULATION_MARKERS } from '../simulation/simulation.js';
 
@@ -15,7 +15,7 @@ async function flowSources(xml) {
     const flows = new Map();
     if (!xml) return flows;
     try {
-        const { rootElement } = await new BpmnModdle({ camunda }).fromXML(xml);
+        const { rootElement } = await new BpmnModdle(moddleExtensions).fromXML(xml);
         const walk = container => (container.get?.('flowElements') || []).forEach(e => {
             if (e.$type === 'bpmn:SequenceFlow') flows.set(e.id, e.get('sourceRef')?.id);
             if (e.$type === 'bpmn:SubProcess' || e.$type === 'bpmn:Transaction' || e.$type === 'bpmn:AdHocSubProcess') walk(e);

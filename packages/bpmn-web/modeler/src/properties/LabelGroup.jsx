@@ -44,12 +44,12 @@ export function previewLabel(template, { bo, attribute, preview }) {
     const scope = { data, model: preview.model };
     if (is(targetOf(bo), 'bpmn:Process'))
         return fillTemplate(template, scope).text;
-    const caseTemplate = processOf(bo)?.get('camunda:label');
+    const caseTemplate = processOf(bo)?.get('owf:label');
     const caseValues = caseTemplate ? fillTemplate(caseTemplate, scope).values : [];
     const item = [...(preview.items ?? [])].reverse().find(i => i.elementId === bo.id) ?? {};
     return fillTemplate(template, {
         ...scope, name: bo.name, elementId: bo.id, status: item.status, assignee: item.assignee, userName: item.userName,
-        completedBy: attribute === 'camunda:endLabel' ? item.userName : undefined, startedAt: item.startedAt, endedAt: item.endedAt,
+        completedBy: attribute === 'owf:endLabel' ? item.userName : undefined, startedAt: item.startedAt, endedAt: item.endedAt,
         instance: Object.fromEntries(caseValues.map(v => [v.name, v.value])),
     }).text;
 }
@@ -62,7 +62,7 @@ function Preview({ id, template, bo, attribute }) {
     const text = previewLabel(template, { bo, attribute, preview });
     const from = preview.run ? `${preview.scenario}'s last run` : `${preview.scenario}'s start data`;
     const ended = (preview.items ?? []).some(i => i.elementId === bo.id && ['end', 'terminated', 'cancelled', 'discard'].includes(i.status));
-    const empty = attribute === 'camunda:endLabel' && !ended ? '(not ended here: its Label shows until it ends)' : '(nothing: every value is missing)';
+    const empty = attribute === 'owf:endLabel' && !ended ? '(not ended here: its Label shows until it ends)' : '(nothing: every value is missing)';
     return <div class="bpmn-server-label-preview" data-preview-for={id} title={`With ${from}`}>
         <span class="bpmn-server-label-preview-text">{text || empty}</span>
         <span class="bpmn-server-label-preview-from"> · {from}</span>
@@ -103,15 +103,15 @@ export function LabelGroup(element, translate) {
     if (is(bo, 'bpmn:Process') || (is(bo, 'bpmn:Participant') && bo.get('processRef')))
         return {
             id: 'BpmnServer__Label', label: translate('Label'),
-            entries: [entry(element, { id: 'case-label', attribute: 'camunda:label', label: 'Case label', description: CASE_HELP })],
+            entries: [entry(element, { id: 'case-label', attribute: 'owf:label', label: 'Case label', description: CASE_HELP })],
         };
     if (!is(bo, 'bpmn:FlowNode'))
         return null;
     return {
         id: 'BpmnServer__Label', label: translate('Label'),
         entries: [
-            entry(element, { id: 'element-label', attribute: 'camunda:label', label: 'Label', description: ELEMENT_HELP }),
-            entry(element, { id: 'element-end-label', attribute: 'camunda:endLabel', label: 'Label once done', description: DONE_HELP }),
+            entry(element, { id: 'element-label', attribute: 'owf:label', label: 'Label', description: ELEMENT_HELP }),
+            entry(element, { id: 'element-end-label', attribute: 'owf:endLabel', label: 'Label once done', description: DONE_HELP }),
         ],
     };
 }

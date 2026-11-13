@@ -91,7 +91,7 @@ Configure `api` or `ui` to `false` when the host should serve only the other sur
 
 ### What cases and tasks are called
 
-The pages and the APIs show each case and task by its label, which its model defines (`camunda:label`, with its
+The pages and the APIs show each case and task by its label, which its model defines (`owf:label`, with its
 values named: `Client: ${Client = data.clientId}`). An application whose labels must be computed in code
 implements the delegate's optional `instanceLabel(instance)`. See [Labels](labels.md).
 

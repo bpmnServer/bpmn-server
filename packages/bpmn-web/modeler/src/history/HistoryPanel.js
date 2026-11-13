@@ -10,7 +10,7 @@
 // so the history keeps every version and a restore can itself be undone. Purge history removes every saved version
 // (the model itself stays).
 import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
-import camundaModdle from '../moddle.js';
+import { moddleExtensions } from '../moddle.js';
 import { textChanges, layoutChanges, diagramChanges } from './compare.js';
 
 const SVG = 'http://www.w3.org/2000/svg';
@@ -156,7 +156,7 @@ export default class HistoryPanel {
     async drawDiagram({ xml, diagram }) {
         if (!this._viewer) {
             this._diagramHost = el('div', { class: 'history-diagram' });
-            this._viewer = new NavigatedViewer({ container: this._diagramHost, moddleExtensions: { camunda: camundaModdle } });
+            this._viewer = new NavigatedViewer({ container: this._diagramHost, moddleExtensions });
         }
         this.render();
         try {

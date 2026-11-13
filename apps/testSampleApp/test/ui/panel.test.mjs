@@ -113,7 +113,7 @@ test('a multi-instance task offers its collection only', async () => {
     await close();
 });
 
-test('a service task can raise its exceptions as BPMN errors: saved as camunda:exceptionsAsErrors, said in the Report', async () => {
+test('a service task can raise its exceptions as BPMN errors: saved as owf:exceptionsAsErrors, said in the Report', async () => {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="d" targetNamespace="urn:test">
   <bpmn:process id="p" isExecutable="true"><bpmn:serviceTask id="Call" name="Call out" implementation="callOut" /></bpmn:process>
@@ -129,7 +129,7 @@ test('a service task can raise its exceptions as BPMN errors: saved as camunda:e
     assert.equal(await box.isChecked(), false);
     await box.check();
     const saved = await save(page, model);
-    assert.match(saved, /<bpmn:serviceTask id="Call"[^>]*camunda:exceptionsAsErrors="true"/);
+    assert.match(saved, /<bpmn:serviceTask id="Call"[^>]*owf:exceptionsAsErrors="true"/);
     await page.click('#js-tab-report');
     assert.match(await page.innerText('#js-report'), /exceptionsAsErrors/i);
     // the panel again, after the Report: unchecked, the attribute goes

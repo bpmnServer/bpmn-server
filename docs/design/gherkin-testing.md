@@ -153,7 +153,7 @@ Rules:
 - **A stub service runs even with `SERVICE_TASKS=false`.** That setting prevents real calls, and a stub makes none. A stub timer still needs `TIMERS` on.
 - **A stub runs like `@script`:** in the engine, under the script handler, with no operating system access.
 - **A stub naming nothing in the model fails the scenario**, so a renamed service or timer can't silently leave the real one running.
-- **A `throw` in a stub behaves as a real service's exception.** With `camunda:exceptionsAsErrors="true"` and an error event that catches it, it is raised there as a BPMN error and the process goes on. Otherwise the item's status is `error` and the step fails with its message. So a stub tests a model's error handling either way.
+- **A `throw` in a stub behaves as a real service's exception.** With `owf:exceptionsAsErrors="true"` and an error event that catches it, it is raised there as a BPMN error and the process goes on. Otherwise the item's status is `error` and the step fails with its message. So a stub tests a model's error handling either way.
 - **`fail("message")` in a stub always fails the scenario**, whatever the model does. Use it for an assertion on a task that may catch exceptions: there, a failed `throw` would become the process's own error path, and the test could pass.
 - **A stub can also return `{ bpmnError: "<code>" }`**, as a real service does.
 

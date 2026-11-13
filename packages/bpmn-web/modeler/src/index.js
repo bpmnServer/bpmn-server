@@ -17,7 +17,7 @@ import { BpmnPropertiesPanelModule, BpmnPropertiesProviderModule, CamundaPlatfor
 import CamundaBehaviorsModule from 'camunda-bpmn-js-behaviors/lib/camunda-platform';
 import { ElementTemplatesPropertiesProviderModule } from 'bpmn-js-element-templates';
 import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
-import camundaModdle from './moddle.js';
+import { moddleExtensions, upgradeToOwf } from './moddle.js';
 import BpmnServerPropertiesModule from './properties/index.js';
 import ProblemsModule from './problems/index.js';
 import ReportModule from './report/index.js';
@@ -65,7 +65,7 @@ const modeler = new BpmnModeler({
     // tests run the saved model: save the editor's changes first
     test: { container: '#js-test', processName, save: () => saveIfChanged(), showDiagram: () => setDockFull(false) },
     problems: { list: '#js-problems', counts: '#js-problems-counts', status: '#js-problems-status', url: '/model/verify', processName },
-    moddleExtensions: { camunda: camundaModdle }
+    moddleExtensions
 });
 window.bpmnModeler = modeler;
 window.BPMNModeler = modeler;     // the classic modeler's name for it, used by hosts
@@ -304,6 +304,11 @@ async function open() {
         const { warnings } = await modeler.importXML(xml);
         if (warnings.length)
             console.warn('import warnings', warnings);
+        // OWF's attributes once written as camunda: are owf: now; saved so when the model is next saved
+        if (upgradeToOwf(modeler.getDefinitions())) {
+            changed = true;
+            showStatus('Its OmniWorkflow attributes are now owf: (they were camunda:); saved with the model.');
+        }
         fitDiagram();
         showElementOfAddress();
     } catch (err) {

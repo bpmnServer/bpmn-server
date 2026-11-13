@@ -27,6 +27,7 @@ Errors are `{ "error": { "code", "message" } }`, with the status the error's kin
 | [GET /instances](#get-instances) | The instances this user may see, newest first |
 | [GET /instances/{id}](#get-instancesid) | One instance: its data and items |
 | [DELETE /instances/{id}](#delete-instancesid) | Delete it (administrators) |
+| [GET /instances/{id}/access](#get-instancesidaccess) | Who was given its tasks, and who may do what with it (administrators) |
 | [GET /instances/{id}/rationale](#get-instancesidrationale) | Why it went the way it did, step by step |
 | [POST /instances/{id}/events/{elementId}](#post-instancesideventselementid) | A start event of the running instance |
 | [POST /instances/{id}/restart](#post-instancesidrestart) | Run an item again, and the instance on from it |
@@ -221,6 +222,21 @@ Delete it (administrators).
 | Answer | Means | Body |
 |---|---|---|
 | 200 | Deleted | { deleted } |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 403 | Not this user's to do | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+
+### GET /instances/{id}/access
+
+Who was given its tasks, and who may do what with it (administrators).
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `id` | path | string | yes | The instance |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | Its assignment and access | { id, name, on, cases, tasks } |
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 403 | Not this user's to do | [Error](#error) |
 | 404 | No such thing, or not this user's to see | [Error](#error) |
@@ -796,7 +812,7 @@ Everything of [Task](#task), and:
 | `startedAt` | string |  |  |
 | `endedAt` | string or null |  |  |
 | `data` | object |  |  |
-| `label` | string |  | Its label (the model's camunda:label, the application's, else &lt;model> #&lt;caseId>): on the lists, one instance, a start and a completion |
+| `label` | string |  | Its label (the model's owf:label, the application's, else &lt;model> #&lt;caseId>): on the lists, one instance, a start and a completion |
 | `labelValues` | list of [LabelValue](#labelvalue) |  |  |
 
 ### User

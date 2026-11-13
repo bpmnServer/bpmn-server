@@ -4,7 +4,7 @@
     <bpmn2:participant id="LeaveParticipant" name="Leave Application" processRef="LeaveProcess" />
   </bpmn2:collaboration>
   <bpmn2:error id="RecordFailedError" name="Not recorded" errorCode="RecordFailed" />
-  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true" owf:securityPolicy="LeaveCases" camunda:label="Leave by ${data.requester}">
+  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true" owf:securityPolicy="LeaveCases" owf:label="Leave by ${data.requester}">
     <bpmn2:documentation>An employee asks for leave; a manager decides; HR's system records it; the employee is told.</bpmn2:documentation>
     <bpmn2:laneSet id="LeaveLanes">
       <bpmn2:lane id="EmployeeLane" name="Employee">
@@ -74,7 +74,7 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       <bpmn2:outgoing>datesRight</bpmn2:outgoing>
       <bpmn2:outgoing>datesWrong</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
-    <bpmn2:userTask id="Approve" name="Approve" camunda:assignmentPolicy="LeaveApproval">
+    <bpmn2:userTask id="Approve" name="Approve" owf:assignmentPolicy="LeaveApproval">
       <bpmn2:documentation>Assigned by the policy LeaveApproval (policies/LeaveApproval.dmn.xml): over 10 days to HR, else to the Manager group. The outcome decides the path; the comment goes to the employee.</bpmn2:documentation>
       <bpmn2:extensionElements>
         <camunda:formData>

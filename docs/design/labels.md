@@ -28,8 +28,8 @@ word is the name and which is the value, so it can't offer a *Client* column or 
 
 | Piece | The branch today | With this design |
 |---|---|---|
-| A case's label | `camunda:label` pattern, else the `instanceLabel` hook, else `labels.instance` in `app.config.json`, else `<model> #<caseId>`; computed at save, stored as `instance.label` | `camunda:label` template with named placeholders, else the hook, else `<model> #<caseId>`; computed when shown, not stored |
-| An activity's label | `camunda:label`, `camunda:endLabel`; computed at save, kept when it ends | The same attributes, as templates; computed when shown |
+| A case's label | `owf:label` pattern, else the `instanceLabel` hook, else `labels.instance` in `app.config.json`, else `<model> #<caseId>`; computed at save, stored as `instance.label` | `owf:label` template with named placeholders, else the hook, else `<model> #<caseId>`; computed when shown, not stored |
+| An activity's label | `owf:label`, `owf:endLabel`; computed at save, kept when it ends | The same attributes, as templates; computed when shown |
 | A user task with no label | Its name and the case's label | The same |
 | Extra columns (#281) | `views.*.columns` in `app.config.json` | Columns from the named placeholders of the models listed; `views` goes |
 | Stored `instance.label`, `item.label`, `labelKept`, their indexes | Yes | Removed |
@@ -39,14 +39,14 @@ word is the name and which is the value, so it can't offer a *Client* column or 
 
 ### 1. The template
 
-`camunda:label` on the process (the case), and `camunda:label` and `camunda:endLabel` on any activity, are display
+`owf:label` on the process (the case), and `owf:label` and `owf:endLabel` on any activity, are display
 templates:
 
 ```xml
-<bpmn:process id="Expense" camunda:label="Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}">
-<bpmn:userTask id="Approve" camunda:label="Approve ${Amount = data.amount} for ${instance.Client}"
-                            camunda:endLabel="Approved by ${completedBy}">
-<bpmn:process id="Onboarding" camunda:label="New hire: ${data.name}">
+<bpmn:process id="Expense" owf:label="Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}">
+<bpmn:userTask id="Approve" owf:label="Approve ${Amount = data.amount} for ${instance.Client}"
+                            owf:endLabel="Approved by ${completedBy}">
+<bpmn:process id="Onboarding" owf:label="New hire: ${data.name}">
 ```
 
 - **`${Name = path}`** is a **named value**: shown in the text, and offered as a column and a filter under its
@@ -84,7 +84,7 @@ Values are shown as text: a date as a date, a list joined, an object as JSON, ev
 
 ### 4. The defaults
 
-| Element | With no `camunda:label` |
+| Element | With no `owf:label` |
 |---|---|
 | A case | The application's `instanceLabel(instance)` hook (the delegate: an optional escape hatch for labels computed in code), else `<model> #<caseId>`, else the model's name |
 | A user task | Its name and its case's label: *Approve · Client: abc · Order: 1234* |
@@ -94,13 +94,13 @@ Values are shown as text: a date as a date, a list joined, an object as JSON, ev
 
 Three models and two tasks, as an example:
 
-| Model | `camunda:label` on the process |
+| Model | `owf:label` on the process |
 |---|---|
 | Expense | `Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}` |
 | Change Request | `${Project = data.project} (${Priority = data.priority})` |
 | Onboarding | `New hire: ${data.name}` |
 
-| Task | `camunda:label` | `camunda:endLabel` |
+| Task | `owf:label` | `owf:endLabel` |
 |---|---|---|
 | Expense → Approve | `Amount: ${Amount = data.amount} · Level: ${Level = data.level} of ${data.levels}` | `Approved by ${completedBy}` |
 | Change Request → Review | none (the default) | none |
@@ -266,7 +266,7 @@ before named-value columns can be added there.
 
 ## Phases
 
-1. Templates with named values for `camunda:label` and `camunda:endLabel`, filled in when shown; the defaults;
+1. Templates with named values for `owf:label` and `owf:endLabel`, filled in when shown; the defaults;
    `verifyModel` checks; the stored labels, `app.config.json` and `views` out of the labels PR.
 2. The lists: the Case and Label columns, per-model columns, the filter bar and search everything, as database
    queries on the named paths; the filter in the URL.

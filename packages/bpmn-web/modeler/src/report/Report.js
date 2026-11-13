@@ -88,7 +88,7 @@ const SETTINGS = ['implementation', 'camunda:delegateExpression', 'camunda:expre
     'camunda:followUpDate', 'camunda:priority', 'camunda:formKey', 'calledElement', 'camunda:decisionRef',
     'camunda:resultVariable', 'camunda:mapDecisionResult', 'messageRef', 'instantiate', 'scriptFormat',
     // bpmn-server's own: the labels, a user task's assignment policy, a process's or a task's security policy
-    'camunda:label', 'camunda:endLabel', 'camunda:assignmentPolicy', 'owf:securityPolicy'];
+    'owf:label', 'owf:endLabel', 'owf:assignmentPolicy', 'owf:securityPolicy', 'owf:exceptionsAsErrors'];
 
 /** An element's settings as `key: value` lines, from the model being edited: what bpmn-server reads of it. */
 function settingsOf(bo) {
@@ -434,8 +434,8 @@ export default class Report {
                     formTable(bo),
                     loadedBy(bo).length ? el('p', { class: 'report-loads' }, 'Loads ', loadedBy(bo).map(n => el('code', {}, dataField(n))).flatMap((c, i) => i ? [', ', c] : [c])) : null,
                     live && is(bo, 'bpmn:BusinessRuleTask') ? this.decisionSection(bo) : null,
-                    live && bo.get('camunda:assignmentPolicy') ? this.policySection('assignment', bo.get('camunda:assignmentPolicy')) : null,
-                    live && bo.$attrs?.['owf:securityPolicy'] ? this.policySection('security', bo.$attrs['owf:securityPolicy']) : null,
+                    live && bo.get('owf:assignmentPolicy') ? this.policySection('assignment', bo.get('owf:assignmentPolicy')) : null,
+                    live && bo.get('owf:securityPolicy') ? this.policySection('security', bo.get('owf:securityPolicy')) : null,
                     issueList(issuesOf(bo.id)),
                     boundary.map(b => elementSection(b, placed)),
                     children.map(child => elementSection(child, placed)),
@@ -657,7 +657,7 @@ Report.prototype.policySection = function (kind, name, note) {
 
 /** A process's security: its own policy, else the application's default, else the built-in one; none while security policies are off. */
 Report.prototype.securitySection = function (process) {
-    const named = process.$attrs?.['owf:securityPolicy'];
+    const named = process.get('owf:securityPolicy');
     if (named) return this.policySection('security', named, 'Who sees its cases, which of their data, and what they may do: every rule that matches counts, and a denial wins.');
     const policies = this._decisions?.policies;
     if (!policies?.securityOn) return null;

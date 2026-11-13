@@ -52,8 +52,8 @@ give it to others.
    asked: they see and do everything, as today. A policy decides only about cases and their tasks, for everyone else.
 8. **A new namespace, `owf:`,** for OWF's own attributes (`owf:securityPolicy`), with its moddle descriptor in
    bpmn-server and the editor. `camunda:` stays for the Camunda-compatible ones (assignee, candidates, forms).
-   Moving `camunda:assignmentPolicy`, `camunda:label` and `camunda:endLabel` to `owf:` is the work doc's open
-   question, decided with them, read under both names for a release.
+   `camunda:` is only for what Camunda defines: `assignmentPolicy`, `label`, `endLabel` and `exceptionsAsErrors`
+   moved to `owf:`, the old names still read ([the owf: namespace](owf-namespace.md)).
 
 ## The actions
 

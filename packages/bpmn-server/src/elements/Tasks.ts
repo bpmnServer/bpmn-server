@@ -1,5 +1,6 @@
 
 import { decisionContext } from '../engine/DecisionContext.js';
+import { owfAttribute } from './owfAttributes.js';
 import { Node } from './Node.js';
 import { applyPolicy } from '../engine/AssignmentPolicy.js';
 
@@ -300,7 +301,7 @@ class UserTask extends Node {
             item.candidateGroups = groups;
             }
         // its assignment policy, last: it wins over the attributes and the lane (engine/AssignmentPolicy.ts)
-        const policy = this.def.$attrs?.['camunda:assignmentPolicy'];
+        const policy = owfAttribute(this.def, 'assignmentPolicy');
         if (policy)
             await applyPolicy(this, item, String(policy).trim());
 
@@ -338,7 +339,7 @@ class UserTask extends Node {
         let desc = super.describe();
 
         attrs.forEach(attr => {
-            let val = this.def.$attrs["camunda:" + attr];
+            let val = owfAttribute(this.def, attr);
             if (val)
                 desc.push([attr, val]);
         });

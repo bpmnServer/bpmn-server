@@ -1,4 +1,4 @@
-// A user task's assignment policy (docs/docs/assignment-policies.md): camunda:assignmentPolicy names a decision table
+// A user task's assignment policy (docs/docs/assignment-policies.md): owf:assignmentPolicy names a decision table
 // of the models folder, policies/assignment/<name>.dmn.xml, whose first matching rule assigns the task when it starts. The list
 // of policies, a link to open (or make) one in the decision editor, and a preview with the Test tab's data.
 import { SelectEntry, isSelectEntryEdited } from '@bpmn-io/properties-panel';
@@ -8,7 +8,7 @@ import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { request } from '../testing/common.js';
 import { usePreview } from './LabelGroup.jsx';
 
-const ATTRIBUTE = 'camunda:assignmentPolicy';
+const ATTRIBUTE = 'owf:assignmentPolicy';
 
 // ---- the policies of the models folder, read once a page and again when it gets the focus back
 let policies = null;

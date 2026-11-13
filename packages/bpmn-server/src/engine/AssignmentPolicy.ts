@@ -1,5 +1,5 @@
 /**
- * Assignment policies (docs/design/assignment.md): a user task names one, `camunda:assignmentPolicy="Approval"`, and
+ * Assignment policies (docs/design/assignment.md): a user task names one, `owf:assignmentPolicy="Approval"`, and
  * when it starts the policy says who works on it. A policy is a DMN decision table in the models folder,
  * `policies/assignment/<name>.dmn.xml`: conditions on the case's data in FEEL, the first rule that matches assigns. Its outputs
  * are the task's usual fields, `assignee`, `candidateUsers` and `candidateGroups`; a cell is a FEEL value, or a model

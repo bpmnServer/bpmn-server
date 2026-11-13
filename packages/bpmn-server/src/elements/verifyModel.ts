@@ -7,6 +7,7 @@ import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames, isFe
 import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
 import { templateProblems } from '../engine/Labels.js';
+import { owfAttribute, legacyAttributes } from './owfAttributes.js';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { DMNParser } from '../dmn/DMNParser.js';
@@ -71,10 +72,15 @@ class ModelVerifier {
             || (this.server && this.server.configuration && this.server.configuration.definitionsPath) || null;
     }
 
-    /** Label templates (camunda:label, camunda:endLabel): data paths, names once (engine/Labels.ts). */
+    /**
+     * Label templates (owf:label, owf:endLabel): data paths, names once (engine/Labels.ts). And OWF's attributes
+     * still under their old camunda: names (elements/owfAttributes.ts).
+     */
     checkLabel(def) {
-        for (const attr of ['camunda:label', 'camunda:endLabel']) {
-            const template = def?.$attrs?.[attr];
+        for (const name of legacyAttributes(def))
+            this.add('warning', 'owf-attribute-legacy', `camunda:${name} is OWF's, not Camunda's: it is read, and the model editor saves it as owf:${name}.`, def);
+        for (const attr of ['label', 'endLabel']) {
+            const template = owfAttribute(def, attr);
             if (template == null) continue;
             for (const problem of templateProblems(template))
                 this.add('error', 'label-template', `Label '${template}': ${problem}.`, def);
@@ -464,7 +470,7 @@ class ModelVerifier {
             if (node instanceof BusinessRuleTask)
                 await this.checkDecision(node, def);
 
-            const policy = def.$attrs?.['camunda:assignmentPolicy'];
+            const policy = owfAttribute(def, 'assignmentPolicy');
             if (typeof policy == 'string' && policy.trim())
                 await this.checkPolicy(policy.trim(), def);
             if (node.lane) lanes.set(node.lane, def);

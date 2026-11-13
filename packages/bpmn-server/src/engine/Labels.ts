@@ -12,6 +12,7 @@
  * The path checks and the way values are shown come from PR #281 (bpmn-web's list columns).
  */
 import { Definition } from '../elements/Definition.js';
+import { owfAttribute } from '../elements/owfAttributes.js';
 import { moddleOptions as defaultModdleOptions } from '../elements/js-bpmn-moddle.js';
 import { DataHandler } from './DataHandler.js';
 import { fillTemplate, parseTemplate, pathProblem } from './LabelTemplate.js';
@@ -48,15 +49,15 @@ async function readLabels(source: string, moddleOptions): Promise<IModelLabels> 
         const { rootElement } = await Definition.moddleFor(moddleOptions).fromXML(source);
         const walk = container => {
             for (const e of container.flowElements ?? []) {
-                const attrs = e.$attrs ?? {};
-                if (attrs['camunda:label'] || attrs['camunda:endLabel'])
-                    labels.elements.set(e.id, { label: attrs['camunda:label'], endLabel: attrs['camunda:endLabel'] });
+                const label = owfAttribute(e, 'label'), endLabel = owfAttribute(e, 'endLabel');
+                if (label || endLabel)
+                    labels.elements.set(e.id, { label, endLabel });
                 if (e.flowElements) walk(e);
             }
         };
         for (const root of rootElement.rootElements ?? [])
             if (root.$type === 'bpmn:Process') {
-                labels.process ??= root.$attrs?.['camunda:label'];
+                labels.process ??= owfAttribute(root, 'label');
                 walk(root);
             }
     }

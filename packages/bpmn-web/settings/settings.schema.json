@@ -85,6 +85,14 @@
       "x-restart": true,
       "default": true
     },
+    "SECURITY_POLICY": {
+      "description": "Security policies (docs/design/security-policies.md): unset, they are on when the models folder has `policies/security/`; `default` turns them on with the built-in default policy; `off` turns them off",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "enum": ["default", "off"],
+      "x-restart": false
+    },
     "REQUIRE_AUTHENTICATION": {
       "description": "On unless set to `false` (`init` writes `true`). `false` turns off sign-in and the security rules: for development only",
       "x-where": "env",

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="6.5.1">
+<bpmn:definitions xmlns:owf="http://omniworkflow.com/schema/owf/1.0" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="6.5.1">
   <bpmn:collaboration id="Collaboration_0memx95">
     <bpmn:participant id="Participant_1c0lpx5" processRef="Process_1hf9394" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_1hf9394" camunda:label="Car: ${Car = data.carModel} · Buyer: ${Buyer = data.starterUserId}" isExecutable="true">
+  <bpmn:process id="Process_1hf9394" owf:label="Car: ${Car = data.carModel} · Buyer: ${Buyer = data.starterUserId}" isExecutable="true">
     <bpmn:documentation>Demo Model, to show: \n User Tasks \n Conditional Flow
 Gateways</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_15ojlwy">
@@ -27,7 +27,7 @@ Gateways</bpmn:documentation>
     <bpmn:sequenceFlow id="flow_gw1_repair" sourceRef="gateway_1" targetRef="task_repair">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">(item.data.needsRepairs=="Yes") || item.data.needsRepairs</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="task_clean" camunda:label="Clean the ${data.carModel}" camunda:endLabel="Cleaned by ${completedBy}" name="Clean">
+    <bpmn:userTask id="task_clean" owf:label="Clean the ${data.carModel}" owf:endLabel="Cleaned by ${completedBy}" name="Clean">
       <bpmn:incoming>flow_gw1_clean</bpmn:incoming>
       <bpmn:outgoing>flow_clean_gw2</bpmn:outgoing>
     </bpmn:userTask>
@@ -63,7 +63,7 @@ Gateways</bpmn:documentation>
       </bpmn:extensionElements>
       <bpmn:outgoing>flow_start_buy</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="task_Buy" camunda:label="Buy the ${data.carModel}" camunda:endLabel="Bought by ${completedBy}" name="Buy" camunda:assignee="$(this.userId)" camunda:dueDate="$this.dueDate">
+    <bpmn:userTask id="task_Buy" owf:label="Buy the ${data.carModel}" owf:endLabel="Bought by ${completedBy}" name="Buy" camunda:assignee="$(this.userId)" camunda:dueDate="$this.dueDate">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="needsRepairs" label="Repairs Required?" type="enum" defaultValue="No">
@@ -88,11 +88,11 @@ this.dueDate=date.toISOString();</camunda:script>
       <bpmn:incoming>flow_start_buy</bpmn:incoming>
       <bpmn:outgoing>flow_buy_gw</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="task_repair" camunda:label="Repair the ${data.carModel}" camunda:endLabel="Repaired by ${completedBy}" name="Repair">
+    <bpmn:userTask id="task_repair" owf:label="Repair the ${data.carModel}" owf:endLabel="Repaired by ${completedBy}" name="Repair">
       <bpmn:incoming>flow_gw1_repair</bpmn:incoming>
       <bpmn:outgoing>flow_repair_gw2</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="task_Drive" camunda:label="Test drive the ${data.carModel}" camunda:endLabel="Driven by ${completedBy}" name="Drive" camunda:candidateUsers="$data.starterUserId" camunda:dueDate="$new Date().setDate(new Date(instance.startedAt).getDate()+10)" camunda:followUpDate="$new Date().setDate(new Date(instance.startedAt).getDate()+5)">
+    <bpmn:userTask id="task_Drive" owf:label="Test drive the ${data.carModel}" owf:endLabel="Driven by ${completedBy}" name="Drive" camunda:candidateUsers="$data.starterUserId" camunda:dueDate="$new Date().setDate(new Date(instance.startedAt).getDate()+10)" camunda:followUpDate="$new Date().setDate(new Date(instance.startedAt).getDate()+5)">
       <bpmn:incoming>flow_gw2_drive</bpmn:incoming>
       <bpmn:outgoing>flow_drive_end</bpmn:outgoing>
     </bpmn:userTask>

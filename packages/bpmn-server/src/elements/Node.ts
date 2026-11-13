@@ -1,5 +1,6 @@
 import { Element } from './Element.js';
 import { Flow } from './Flow.js';
+import { owfAttribute } from './owfAttributes.js';
 import { EventBasedGateway } from './Gateway.js';
 
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
@@ -292,9 +293,9 @@ class Node extends Element {
         return ret2;
 
     }
-    /** `camunda:exceptionsAsErrors="true"`: an exception of the task's work is raised as a BPMN error. */
+    /** `owf:exceptionsAsErrors="true"` (or the old `camunda:` name): an exception of the task's work is raised as a BPMN error. */
     get exceptionsAsErrors(): boolean {
-        return String(this.def?.$attrs?.['camunda:exceptionsAsErrors'] ?? this.def?.exceptionsAsErrors ?? '') === 'true';
+        return String(owfAttribute(this.def, 'exceptionsAsErrors') ?? this.def?.exceptionsAsErrors ?? '') === 'true';
     }
     /**
      * The task's work threw. With exceptionsAsErrors and an error event that catches it (by the exception's code,

@@ -17,7 +17,7 @@ it, as code a report or the editor can't read.
      group of the same name.
    - `processes/policies/assignment/<name>.dmn.xml`: a policy, as a DMN decision table. Each kind of policy has
      its folder in `policies/`: `assignment/`, and `security/` ([security-policies.md](security-policies.md)).
-2. **A task picks a policy,** by its name: `camunda:assignmentPolicy="Approval"`.
+2. **A task picks a policy,** by its name: `owf:assignmentPolicy="Approval"`.
 3. **A policy is a decision table** (DMN, hit policy FIRST): conditions on the case's data in FEEL, the first rule
    that matches assigns. The DMN support already there evaluates it (`dmn/DMNEngine.ts`).
 4. **What a rule assigns is an expression:** a FEEL value (`"Director"`, `requesterId`), or a model expression
@@ -47,7 +47,7 @@ it, as code a report or the editor can't read.
 ## The task
 
 ```xml
-<bpmn:userTask id="approve" name="Approve" camunda:assignmentPolicy="Approval" />
+<bpmn:userTask id="approve" name="Approve" owf:assignmentPolicy="Approval" />
 ```
 
 In the editor, the User assignment group has **Assignment policy**: a list of the application's policies, and a
@@ -88,7 +88,7 @@ model's assignee and candidates.)
 
 ## Compatibility
 
-- Nothing changes for a task with no `camunda:assignmentPolicy`, or an application with no `policies` folder.
+- Nothing changes for a task with no `owf:assignmentPolicy`, or an application with no `policies` folder.
 - `item.assignment` is a new, optional field.
 - The models list, imports and exports take `roles.json` and `policies/` along with the models; a server with
   several applications has them per application, as their models are.
@@ -109,7 +109,7 @@ model's assignee and candidates.)
 ## Increments
 
 1. This note.
-2. The engine: `camunda:assignmentPolicy`, the evaluation, `item.assignment`, the Rationale entries; `verifyModel`'s
+2. The engine: `owf:assignmentPolicy`, the evaluation, `item.assignment`, the Rationale entries; `verifyModel`'s
    checks. Engine scenarios: each rule, no match, a failing policy, an explicit attribute, a `$(...)` output.
 3. The editor: the Assignment policy list, the preview; the DMN editor opens `policies/assignment/`.
 4. The HR demo's Leave Application with a policy, to try.

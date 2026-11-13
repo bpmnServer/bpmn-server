@@ -98,9 +98,10 @@ test('the Label group: the case label on the process, a label and a label once d
     await page.click('#js-save');
     assert.equal((await saved).status(), 200);
     const xml = await web.bpmnServer.definitions.getSource('Claim');
-    assert.match(xml, /<bpmn:process id="Claim"[^>]*camunda:label="Client: \$\{Client = data.clientId\} · Order: \$\{Order = data.orderNo\}"/);
-    assert.match(xml, /<bpmn:userTask id="Approve"[^>]*camunda:label="Approve \$\{Amount = data.amount\}"/);
-    assert.match(xml, /camunda:endLabel="Approved by \$\{completedBy\}"/);
+    assert.match(xml, /<bpmn:process id="Claim"[^>]*owf:label="Client: \$\{Client = data.clientId\} · Order: \$\{Order = data.orderNo\}"/);
+    assert.match(xml, /<bpmn:userTask id="Approve"[^>]*owf:label="Approve \$\{Amount = data.amount\}"/);
+    assert.match(xml, /xmlns:owf="http:\/\/omniworkflow\.com\/schema\/owf\/1\.0"/, 'the namespace declared');
+    assert.match(xml, /owf:endLabel="Approved by \$\{completedBy\}"/);
     assert.deepEqual(errors, []);
     await close();
 
@@ -148,6 +149,30 @@ test("a label's preview from the Test tab's scenario, following the template as 
     await type(page, 'element-label', 'Approve ${Amount = data.amount} for order ${instance.No}');
     assert.match(await page.locator('[data-preview-for="element-label"]').innerText(), /Approve 90 for order 1234/);
 
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('a model saved before, with its labels as camunda:, opens with them as owf: and is saved so', async () => {
+    const legacy = MODEL.replace('xmlns:bpmn=', 'xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bpmn=')
+        .replace('<bpmn:process id="Claim" isExecutable="true">', '<bpmn:process id="Legacy" isExecutable="true" camunda:label="Old ${data.x}">')
+        .replace('<bpmn:userTask id="Approve" name="Approve" />', '<bpmn:userTask id="Approve" name="Approve" camunda:endLabel="Done by ${completedBy}" camunda:assignee="ann" />')
+        .replace('bpmnElement="Claim"', 'bpmnElement="Legacy"');
+    fs.writeFileSync(path.join(web.definitionsPath, 'Legacy.bpmn'), legacy);
+    const { page, errors, close } = await openEditor('Legacy');
+    assert.match(await page.locator('#js-save-status').innerText(), /now owf: \(they were camunda:\)/, 'said, and to be saved');
+    await select(page, 'Approve');
+    await openGroup(page, 'Label');
+    assert.equal(await page.locator('[data-entry-id="element-end-label"] input').inputValue(), 'Done by ${completedBy}', 'shown in the Label group');
+
+    const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/model/edit/Legacy'));
+    await page.click('#js-save');
+    assert.equal((await saved).status(), 200);
+    const xml = await web.bpmnServer.definitions.getSource('Legacy');
+    assert.match(xml, /<bpmn:process id="Legacy"[^>]*owf:label="Old \$\{data\.x\}"/);
+    assert.match(xml, /owf:endLabel="Done by \$\{completedBy\}"/);
+    assert.doesNotMatch(xml, /camunda:(label|endLabel)=/, 'the old names are gone');
+    assert.match(xml, /camunda:assignee="ann"/, "Camunda's own stay camunda:");
     assert.deepEqual(errors, []);
     await close();
 });

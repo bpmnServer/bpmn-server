@@ -22,6 +22,10 @@ and here
   `visibleData`, `model`, `on` (an application may subclass it and override a step: `context`, `builtInDefault`); `on` when the
   application has `policies/security/`, or `SECURITY_POLICY=default`, and off otherwise. Its actions: `see`, `data`,
   `claim`, `complete`, `assign` (giving a task to someone else), `restart`, `events`. `DMNEngine`'s `listInputs`: an input whose value is a list matches a test when one of its values does.
+- **OmniWorkflow's attributes are `owf:`** (docs/design/owf-namespace.md): `owf:assignmentPolicy`, `owf:label`,
+  `owf:endLabel`, `owf:exceptionsAsErrors`, in `xmlns:owf="http://omniworkflow.com/schema/owf/1.0"`; `camunda:` is
+  only for what Camunda defines. The old `camunda:` names are still read, and `verifyModel` warns of them
+  (`owf-attribute-legacy`). `owfAttribute(def, name)`, `legacyAttributes(def)`, `OWF_NAMESPACE`.
 - **One protocol for every decision table** (docs/design/decision-context.md, `engine/DecisionContext.ts`): a business
   rule task's decision, an assignment policy and a security policy read the same context: the case data by name and
   as `data`, the task's prepared inputs (its `camunda:inputOutput`, which may call `appServices`), and `user`,

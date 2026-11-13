@@ -130,7 +130,7 @@ Then @wait :order status is "end"
 | In a stub | Behaves |
 |---|---|
 | `input`, `data` | The task's mapped input (empty without a mapping) and the instance's data |
-| `throw new Error(...)` | As a real service throwing: `camunda:exceptionsAsErrors` decides what happens |
+| `throw new Error(...)` | As a real service throwing: `owf:exceptionsAsErrors` decides what happens |
 | `return { bpmnError: "code" }` | As a real service returning a BPMN error |
 | `fail("message")` | Always fails the scenario |
 

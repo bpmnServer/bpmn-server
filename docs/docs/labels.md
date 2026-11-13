@@ -20,7 +20,7 @@ The pictures on this page are the sample application's *Buy Used Car*, whose mod
 On the process, in the editor's **Label** group (*Case label*), or in the XML:
 
 ```xml
-<bpmn:process id="Expense" camunda:label="Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}">
+<bpmn:process id="Expense" owf:label="Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}">
 ```
 
 ![The process selected: its Label group, Case label](images/labels/editor-case-label.png)

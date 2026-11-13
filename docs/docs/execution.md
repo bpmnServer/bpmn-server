@@ -147,7 +147,7 @@ instance goes on (`engine.retry({ 'items.id': id })`, `api.engine.retry(...)`).
 
 ### Exceptions as BPMN errors
 A service, send or script task can choose otherwise: **Exceptions raise a BPMN error** in its properties
-(`camunda:exceptionsAsErrors="true"`). An exception of its work, a service that throws or a connector that can not
+(`owf:exceptionsAsErrors="true"`). An exception of its work, a service that throws or a connector that can not
 be called, is then raised as a BPMN error, caught as one returned with `{bpmnError}`:
 
 - its error code is the exception's `code` when it has one (`ECONNREFUSED`, `ETIMEDOUT`), else its name
@@ -158,7 +158,7 @@ be called, is then raised as a BPMN error, caught as one returned with `{bpmnErr
 ```xml
 <bpmn:error id="Refused" errorCode="ECONNREFUSED" />
 ...
-<bpmn:serviceTask id="Notify" implementation="notify" camunda:exceptionsAsErrors="true" />
+<bpmn:serviceTask id="Notify" implementation="notify" owf:exceptionsAsErrors="true" />
 <bpmn:boundaryEvent id="Unreachable" attachedToRef="Notify">
   <bpmn:errorEventDefinition errorRef="Refused" />
 </bpmn:boundaryEvent>

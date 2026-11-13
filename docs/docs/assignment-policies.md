@@ -10,7 +10,7 @@ Application uses one: `apps/hrdemo/workflow/processes/policies/assignment/LeaveA
 ## The task
 
 ```xml
-<bpmn:userTask id="approve" name="Approve" camunda:assignmentPolicy="Approval" />
+<bpmn:userTask id="approve" name="Approve" owf:assignmentPolicy="Approval" />
 ```
 
 In the model editor: select the task, and in **User assignment** choose the **Assignment policy** from the
