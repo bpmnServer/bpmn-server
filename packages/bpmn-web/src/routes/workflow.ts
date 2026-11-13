@@ -11,10 +11,13 @@ import { rationaleSteps } from '../testing/rationale.js';
 import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
 import { labelFilterOf } from './labelFilter.js';
-import { CaseAccess } from './caseAccess.js';
+import { CaseAccess, accessDirectory } from './caseAccess.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import { guardModelParams } from './middleware/modelName.js';
-import { afterWork } from '../userAccess/roles.js';
+import { afterWork, canDesign, isAdminGroups } from '../userAccess/roles.js';
+
+/** Designers and administrators: who may do what with a case is theirs to see (the instance page's Assignment and access). */
+const worksOnModels = user => !!user && (isAdminGroups(user.userGroups) || canDesign(user));
 const FORM_ONLY = new Set(['itemId', '_csrf', 'returnTo']);     // the form's own fields, not the task's data
 
 
@@ -297,7 +300,13 @@ export class Workflow extends Common {
             assignment['candidateUsers'] = assignment['candidateUsers'].split(',');
             assignment['candidateGroups'] = assignment['candidateGroups'].split(',');
 
-            //console.log('data', data, 'assignment', assignment);
+            // the case's security policy may refuse giving it to someone else (caseAccess.ts)
+            try {
+                await new CaseAccess(serverOf(request)).requireAssignment(getSecureUser(request), { "items.id": id }, assignment);
+            } catch (exc) {
+                if (exc?.code === 'POLICY_DENIED') return answerMessage(request, response, 403, `This task is not yours to assign (security policy): ${exc.message}`);
+                throw exc;
+            }
             let result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.assign({ "items.id": id }, data, assignment, getSecureUser(request)));
 
             return await afterOperation(request,response,result);
@@ -563,6 +572,8 @@ async function instanceDetails(request,response,instanceId,version) {
         // previews lack it, so draw the diagram again from the instance's model
         if (!svg || !svg.includes('data-element-id'))
             svg = (await bpmnToSvg(instance.source || await serverOf(request).definitions.getSource(instance.name))) || svg;
+        // the model's picture, not the colours of a run the editor showed when it was saved
+        if (svg) svg = ViewHelper.withoutRunMarks(svg);
     }
     catch (ex) {
 
@@ -595,6 +606,10 @@ async function instanceDetails(request,response,instanceId,version) {
             logs,items:items, svg,
             decorations, definition: defJson, lastItem,
             rationale: rationaleSteps(logs, items, instance.startedAt),
+            // under it: its user tasks' assignment, after the fact; who may do what, for those who work on the models
+            access: await caseAccess.instanceAccess({ ...instance, items, logs }, worksOnModels(request.user)
+                ? await accessDirectory(request, serverOf(request)) : {}).catch(() => null),
+            accessDetails: worksOnModels(request.user),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
             modelJson: JSON.stringify(instance.source || await serverOf(request).definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });

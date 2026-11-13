@@ -13,13 +13,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
+import { decisionContext, relationsOf as caseRelations } from './DecisionContext.js';
 
 export const SECURITY_FOLDER = 'policies/security';
 /** The application's default policy, for a process that names none. */
 export const DEFAULT_SECURITY_POLICY = 'default';
-export const SECURITY_ACTIONS = ['see', 'data', 'claim', 'complete', 'restart', 'events'] as const;
+export const SECURITY_ACTIONS = ['see', 'data', 'claim', 'complete', 'assign', 'restart', 'events'] as const;
 
-export type Relation = 'initiator' | 'assignee' | 'candidate' | 'participant';
+import type { Relation } from './DecisionContext.js';
 
 /** Who asks: a user name and groups; administrators and the system are not asked (`unrestricted`). */
 export interface ISecurityUser {
@@ -41,17 +42,35 @@ export interface IAccess {
     /** true: allowed, false: denied, null: as the assignment says (assignee, candidates) */
     claim: boolean | null;
     complete: boolean | null;
+    /** giving a task to someone else (its assignee, its candidates): null, as today (those with a part in it) */
+    assign: boolean | null;
     restart: boolean;
     events: boolean;
     /** the rules that matched */
     rules: IPolicyRule[];
 }
 
+/** Someone the reverse of a policy asks about (whoMay). */
+export interface IWho {
+    kind: 'administrators' | 'person' | 'role' | 'anyone';
+    label: string;
+    user?: ISecurityUser;
+    /** why they are asked about: how the case names them */
+    because?: string;
+}
+
+/** What one of them may do with a case, and with each of its waiting user tasks. */
+export interface IWhoMay {
+    who: IWho;
+    access: IAccess;
+    tasks: { seq: number; elementId: string; name?: string; offered: boolean; claim: boolean; complete: boolean; assign: boolean; rules: IPolicyRule[] }[];
+}
+
 /** What a model says for security: its process's policy, its tasks', and the fields its forms enter. */
 export interface IModelSecurity { policy?: string; taskPolicies: Map<string, string>; formFields: Set<string>; taskFields: Map<string, Set<string>>; }
 
 export const FULL_ACCESS: IAccess = Object.freeze({
-    see: 'full', data: { all: true, forms: true, paths: [] }, claim: null, complete: null, restart: true, events: true, rules: [],
+    see: 'full', data: { all: true, forms: true, paths: [] }, claim: null, complete: null, assign: null, restart: true, events: true, rules: [],
 }) as IAccess;
 
 const asList = (value): string[] => (Array.isArray(value) ? value : value == null || value === '' ? [] : String(value).split(','))
@@ -63,7 +82,8 @@ export class SecurityPolicy {
     /** models' security facts, by file, while the file is as it was (shared by every instance) */
     private static models = new Map<string, { stamp: string; model: IModelSecurity }>();
 
-    constructor(readonly definitionsPath: string) { }
+    /** `appDelegate`: the application's, for its decisionContext hook (engine/DecisionContext.ts) */
+    constructor(readonly definitionsPath: string, readonly appDelegate?: any) { }
 
     /** Whether this folder's cases are decided by security policies. */
     get on(): boolean {
@@ -118,25 +138,9 @@ export class SecurityPolicy {
         return model;
     }
 
-    /** The relations a person has to a case, from its items (and who started it). */
+    /** The relations a person has to a case, from its items (and who started it): engine/DecisionContext.ts's. */
     relationsOf(user: ISecurityUser, instance: any): Relation[] {
-        const relations = new Set<Relation>();
-        const items: any[] = instance?.items ?? [];
-        const me = user.userName, groups = user.userGroups ?? [];
-        const first = [...items].sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0))[0];
-        if (items.some(i => i.type === 'bpmn:StartEvent' && i.userName === me) || first?.userName === me || instance?.userName === me)
-            relations.add('initiator');
-        for (const item of items) {
-            if (item.type !== 'bpmn:UserTask') continue;
-            const waiting = item.status === 'wait';
-            if (waiting && item.assignee === me) relations.add('assignee');
-            if (waiting && (!item.assignee || item.assignee === me)
-                && (asList(item.candidateUsers).includes(me) || asList(item.candidateGroups).some(g => groups.includes(g))))
-                relations.add('candidate');
-            if (item.status === 'end' && item.userName === me) relations.add('participant');
-        }
-        if (relations.has('assignee') || relations.has('candidate')) relations.add('participant');
-        return [...relations];
+        return caseRelations(user, instance);
     }
 
     /**
@@ -198,7 +202,7 @@ export class SecurityPolicy {
 
     /** The matching rules' answers, combined: any deny wins; else what is allowed; else each action's default. */
     combine(rules: IPolicyRule[]): IAccess {
-        const access: IAccess = { see: 'none', data: { all: false, forms: false, paths: [] }, claim: null, complete: null, restart: false, events: false, rules };
+        const access: IAccess = { see: 'none', data: { all: false, forms: false, paths: [] }, claim: null, complete: null, assign: null, restart: false, events: false, rules };
         const said = (name: string) => rules.map(r => r.outputs?.[name]).filter(v => v !== null && v !== undefined && v !== '');
         const is = (v, word) => String(v).trim().toLowerCase() === word;
         const see = said('see');
@@ -212,24 +216,89 @@ export class SecurityPolicy {
                 else if (is(v, 'forms')) access.data.forms = true;
                 else access.data.paths.push(...asList(v));
             }
-        for (const action of ['claim', 'complete', 'restart', 'events'] as const) {
+        for (const action of ['claim', 'complete', 'assign', 'restart', 'events'] as const) {
             const values = said(action);
             const decided = values.some(v => is(v, 'deny') || v === false) ? false : values.some(v => is(v, 'allow') || v === true) ? true : null;
-            if (action === 'claim' || action === 'complete') access[action] = decided;
+            if (action === 'claim' || action === 'complete' || action === 'assign') access[action] = decided;
             else access[action] = decided === true;
         }
         return access;
     }
 
-    /** What the policies' tables read: the person, their relations, the task, the case's data. */
+    /**
+     * What the policies' tables read: the one context every decision reads (engine/DecisionContext.ts): the case's
+     * data (by name and as `data`), the person, their relations, the task, the application's facts.
+     */
     protected async context(user: ISecurityUser, instance: any, task: { elementId: string } | undefined, relations: Relation[]): Promise<Record<string, any>> {
-        return {
-            user: { userName: user.userName, groups: user.userGroups ?? [] },
-            groups: user.userGroups ?? [],
-            relation: relations,
-            task: task?.elementId ?? '',
-            data: instance?.data ?? {},
+        return decisionContext({ kind: 'security', name: this.model(instance?.name).policy, data: instance?.data, user, instance,
+            task: task?.elementId, appDelegate: this.appDelegate });
+    }
+
+    /**
+     * The reverse of a policy, for one case: who may do what with it. Asked forward for everyone who could make a
+     * difference: the people the case names (who started it, a task's assignee or candidates, who completed a step;
+     * with `users`, everyone in the directory, with their groups), each role as a member with no relation to the case
+     * (`roles`, and the groups its waiting tasks are offered to), and anyone else. Administrators (`admins`) are not
+     * asked: they may do everything. For each, the case (see, data, restart, events) and each waiting user task: whether
+     * they may claim, complete and assign it, the assignment's offer and the policy's allow or deny combined.
+     */
+    async whoMay(instance: any, { users = [], roles = [], admins = [] }: { users?: ISecurityUser[]; roles?: string[]; admins?: string[] } = {}): Promise<IWhoMay[]> {
+        const items: any[] = instance?.items ?? [];
+        const waiting = items.filter(i => i.type === 'bpmn:UserTask' && i.status === 'wait');
+        const known = new Map(users.filter(u => u?.userName).map(u => [u.userName, u]));
+        const named = new Map<string, string[]>();     // a person the case names, and why
+        const name = (userName, why: string) => {
+            if (!userName) return;
+            named.set(userName, [...(named.get(userName) ?? []), why]);
         };
+        const label = item => item.name || item.elementId;
+        for (const item of items) {
+            if (item.type === 'bpmn:StartEvent' && item.userName) name(item.userName, 'started it');
+            if (item.type === 'bpmn:UserTask' && item.status === 'end' && item.userName) name(item.userName, `completed ${label(item)}`);
+        }
+        for (const item of waiting) {
+            if (item.assignee) name(item.assignee, `${label(item)}'s assignee`);
+            for (const u of asList(item.candidateUsers)) name(u, `offered ${label(item)}`);
+        }
+        const subjects: IWho[] = [];
+        const adminSet = new Set(admins);
+        if (admins.length) subjects.push({ kind: 'administrators', label: admins.join(', '), because: 'administrators: not asked' });
+        const people = new Set([...named.keys(), ...known.keys()]);
+        for (const userName of people) {
+            if (adminSet.has(userName)) continue;
+            // someone the case names whom the directory doesn't know: asked with no groups, and said so
+            subjects.push({ kind: 'person', label: userName, user: { userName, userGroups: known.get(userName)?.userGroups ?? [] },
+                because: [...(named.get(userName) ?? []), ...(known.has(userName) ? [] : ['groups unknown (not in the user directory)'])].join(', ') });
+        }
+        const groups = [...new Set([...roles, ...waiting.flatMap(i => asList(i.candidateGroups))])];
+        for (const group of groups)
+            subjects.push({ kind: 'role', label: group, user: { userName: `\u0000role:${group}`, userGroups: [group] }, because: 'a member, with no part in the case' });
+        subjects.push({ kind: 'anyone', label: 'anyone else', user: { userName: '\u0000anyone', userGroups: [] }, because: 'no part in it, none of these roles' });
+
+        const answers: IWhoMay[] = [];
+        for (const who of subjects) {
+            if (who.kind === 'administrators') {
+                answers.push({ who, access: FULL_ACCESS, tasks: waiting.map(item => ({ seq: item.seq, elementId: item.elementId, name: item.name, offered: true, claim: true, complete: true, assign: true, rules: [] })) });
+                continue;
+            }
+            const access = await this.decide(who.user, instance);
+            const tasks = [];
+            for (const item of waiting) {
+                const onTask = await this.decide(who.user, instance, { elementId: item.elementId });
+                const me = who.user.userName, groupsOf = who.user.userGroups ?? [];
+                const offered = item.assignee ? item.assignee === me
+                    : asList(item.candidateUsers).includes(me) || asList(item.candidateGroups).some(g => groupsOf.includes(g))
+                        || (!asList(item.candidateUsers).length && !asList(item.candidateGroups).length);
+                // the assignment's offer, unless a rule denies it; a rule's allow besides
+                const effective = (action: 'claim' | 'complete' | 'assign') => onTask[action] === true || (onTask[action] !== false && offered);
+                const complete = effective('complete');
+                tasks.push({ seq: item.seq, elementId: item.elementId, name: item.name, offered,
+                    claim: !item.assignee && complete !== false && (onTask.claim === true || (onTask.claim !== false && onTask.complete !== false && offered)),
+                    complete, assign: effective('assign'), rules: onTask.rules });
+            }
+            answers.push({ who, access, tasks });
+        }
+        return answers;
     }
 
     /** One policy's matching rules, for this context. */

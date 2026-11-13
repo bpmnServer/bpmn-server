@@ -216,6 +216,11 @@ test('Run repeats the saved steps on a new instance; Simulate numbers its path; 
     assert.match(await page.locator('.test-sim-text').innerText(), /^3 of \d+: /);
     await page.click('.test-sim-back');
     assert.match(await page.locator('.test-sim-text').innerText(), /^2 of \d+: /);
+    // Show details: what the Rationale says of the change shown (as on an instance's page)
+    await page.locator('.test-sim-details-on').check();
+    assert.ok((await page.locator('.test-sim-details li').count()) > 0, (await page.locator('.test-sim-details').innerText()));
+    await page.locator('.test-sim-details-on').uncheck();
+    assert.equal(await page.locator('.test-sim-details').isVisible(), false);
     await page.click('.test-sim-play');                       // play the rest
     await page.waitForSelector('.test-sim-text:text("Done (")', { timeout: 20000 });
     const numbers = await page.evaluate(() => [...document.querySelectorAll('.test-seq')]
@@ -425,7 +430,7 @@ test('the runs: a kept run debugged again and restarted at a step; a run deleted
     await pick(page, 'Long leave');
     await page.click('.test-replay');
     await page.waitForSelector('.test-status:text("Long leave: passed")');
-    assert.equal(await page.locator('.test-summary .test-instance-link').getAttribute('target'), '_blank');
+    assert.equal(await page.locator('.test-summary .test-instance-link').getAttribute('target'), 'test-instance', 'one tab, used again by each Open instance');
     const shownInstance = () => page.evaluate(() => { const panel = window.bpmnModeler.get('testPanel'); return panel._results.get(panel._current).instance.id; });
 
     // Debug on a kept run: its steps done, from its items; Restart here goes back to one
@@ -459,6 +464,33 @@ test('the runs: a kept run debugged again and restarted at a step; a run deleted
     await page.waitForSelector('.test-status:text("runs cleared")');
     assert.equal(await page.locator('.test-tree-row').count(), scenarios);
     assert.equal(await page.locator('.test-clear-all').isDisabled(), true);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('debugging a kept run is that run only: a step restarted and run again leaves the scenario\'s steps, and their data, as they were', async () => {
+    const { page, errors, close } = await openTestTab();
+    await pick(page, 'Long leave');
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-status:text("Long leave: passed")');
+    const stepsOf = () => page.evaluate(() => JSON.stringify(window.bpmnModeler.get('testPanel')._current.steps));
+    const savedSteps = async () => {
+        const res = await page.request.get(`${web.base}/model/scenarios/leave-request`);
+        return JSON.stringify((await res.json()).scenarios.find(s => s.name === 'Long leave').steps);
+    };
+    const before = await stepsOf();
+    assert.ok(Object.keys(JSON.parse(before)[0].data ?? {}).length, 'Submit has data of its own');
+
+    await page.click('.test-debug');
+    const approve = page.locator('.test-step.done[data-element-id="Approve"]');
+    await approve.locator('.test-restart').click();
+    await approve.locator('.test-restart-form .test-variables-apply').click();
+    await page.waitForSelector('.test-status:text("Back at Approve request (Approve)")');
+    await runStep(page, 'Approve', { approved: true });
+    await page.waitForFunction(() => !document.querySelector('.test-debug-panel'));
+
+    assert.equal(await stepsOf(), before, 'the scenario\'s steps, unchanged');
+    assert.equal(await savedSteps(), before, 'and as saved');
     assert.deepEqual(errors, []);
     await close();
 });
@@ -796,6 +828,68 @@ test('a step of the timeline opens to what happened when it ran: its Rationale, 
     assert.equal(await expression.locator('xpath=ancestor::tr[1]/preceding-sibling::tr[1]').getAttribute('data-element'), 'Submit');
     assert.match(await row(step(2), 'Approve').locator('.test-copy-check').getAttribute('title'), /@check :r has 1 items of element:Approve with status "wait"$/);
     fs.rmSync(file);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('the result line and the save state: a run that checked nothing is not Passed; a failed check is listed; changed since is said; Not saved stays until a save succeeds', async () => {
+    const { page, errors, close } = await openTestTab();
+    await newScenario(page);
+    await page.fill('.test-name', 'Nothing checked');
+    const primary = selector => page.locator(selector).evaluate(b => b.classList.contains('primary'));
+    assert.equal(await primary('.test-run'), true, 'no steps yet: Record leads');
+    assert.equal(await primary('.test-replay'), false);
+    await page.waitForSelector('.test-save-state.saved');
+
+    // a run with no checks ran: neither green nor Passed
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-summary.unchecked');
+    assert.equal(await page.locator('.test-summary-title').innerText(), '○ Ran: nothing checked');
+    assert.ok((await listed(page)).includes('○ Nothing checked'), (await listed(page)).join(' | '));
+    assert.equal(await page.locator('.test-summary-when').count(), 1, 'when, and how, in sight');
+
+    // a check added since: the result is not the scenario's any more; run again, the failed check is in the result line
+    await addCheck(page, { kind: 'status', status: 'end' });
+    assert.match(await page.locator('.test-summary-stale').innerText(), /the scenario changed since/);
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-summary.failed');
+    assert.equal(await page.locator('.test-summary-count').innerText(), '1 of 1 check failed');
+    assert.match(await page.locator('.test-summary-failed li').innerText(), /^At the end: [^]*Found:/);
+    assert.equal(await page.locator('.test-summary-stale').count(), 0);
+    assert.equal(await page.locator('.test-check-row .test-check-icon.failed').first().getAttribute('aria-label'), 'Failed in this run');
+
+    // a save that fails says so by the name, and stays said until one succeeds
+    const url = `${web.base}/model/scenarios/leave-request`;
+    await page.route(url, route => route.request().method() === 'PUT'
+        ? route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'the disk is full' }) }) : route.continue());
+    await page.fill('.test-name', 'Nothing checked, renamed');
+    await page.waitForSelector('.test-save-state.failed');
+    assert.match(await page.locator('.test-save-state').innerText(), /Not saved/);
+    await page.unroute(url);
+    await page.click('.test-save-retry');
+    await page.waitForSelector('.test-save-state.saved');
+
+    // recording: Run waits until it stops
+    await startRun(page);
+    assert.equal(await page.locator('.test-replay').isDisabled(), true);
+    await page.click('.test-stop-recording');
+
+    // the list by the keyboard
+    await newScenario(page);
+    await page.fill('.test-name', 'Another');
+    const back = page.locator('.test-tree-row', { hasText: 'Nothing checked, renamed' });
+    await back.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(() => window.bpmnModeler.get('testPanel')._current?.name === 'Nothing checked, renamed');
+    assert.equal(await page.locator('.test-tree-row.selected').getAttribute('aria-current'), 'true');
+
+    for (const name of ['Nothing checked, renamed', 'Another']) {
+        await pick(page, name);
+        await page.click('.test-scenario-menu summary');
+        await page.click('.test-delete');
+    }
+    // none shown now: the panel's state says it is saved
+    await page.waitForFunction(() => window.bpmnModeler.get('testPanel')._saveState === 'saved');
     assert.deepEqual(errors, []);
     await close();
 });

@@ -86,7 +86,9 @@ function valueOf(value) {
 const SETTINGS = ['implementation', 'camunda:delegateExpression', 'camunda:expression', 'camunda:class', 'camunda:topic',
     'camunda:initiator', 'camunda:assignee', 'camunda:candidateUsers', 'camunda:candidateGroups', 'camunda:dueDate',
     'camunda:followUpDate', 'camunda:priority', 'camunda:formKey', 'calledElement', 'camunda:decisionRef',
-    'camunda:resultVariable', 'camunda:mapDecisionResult', 'messageRef', 'instantiate', 'scriptFormat'];
+    'camunda:resultVariable', 'camunda:mapDecisionResult', 'messageRef', 'instantiate', 'scriptFormat',
+    // bpmn-server's own: the labels, a user task's assignment policy, a process's or a task's security policy
+    'camunda:label', 'camunda:endLabel', 'camunda:assignmentPolicy', 'owf:securityPolicy'];
 
 /** An element's settings as `key: value` lines, from the model being edited: what bpmn-server reads of it. */
 function settingsOf(bo) {
@@ -96,7 +98,7 @@ function settingsOf(bo) {
         if (text !== undefined && !String(text).startsWith('##')) lines.push([key, String(text)]);
     };
     for (const key of SETTINGS)
-        if (bo.$descriptor?.propertiesByName?.[key] || bo.$attrs?.[key] !== undefined) add(key.replace(/^camunda:/, ''), bo.get(key));
+        if (bo.$descriptor?.propertiesByName?.[key] || bo.$attrs?.[key] !== undefined) add(key.replace(/^(camunda|owf):/, ''), bo.get(key));
     if (is(bo, 'bpmn:ScriptTask')) add('script', bo.get('script'));
     if (is(bo, 'bpmn:BoundaryEvent')) {
         add('attachedToRef', bo.get('attachedToRef')?.id);
@@ -136,9 +138,10 @@ function settingsOf(bo) {
             for (const p of extension.get('inputParameters') || []) lines.push([`input ${p.get('name')}`, p.get('value') ?? valueOf(p.get('definition')) ?? '']);
             for (const p of extension.get('outputParameters') || []) lines.push([`output ${p.get('name')}`, p.get('value') ?? valueOf(p.get('definition')) ?? '']);
         }
-        else if (is(extension, 'camunda:FormData'))
-            for (const f of extension.get('fields') || [])
-                add('formField', `${f.get('id')} (${f.get('type') || 'string'})${f.get('label') && f.get('label') !== f.get('id') ? ` ${f.get('label')}` : ''}`);
+        else if (is(extension, 'camunda:FormData')) {
+            // its fields are the element's form table (formTable); what else the form data sets, here
+            for (const [key, value] of otherSettings(extension, 'form', new Set(['fields']))) lines.push([key, value]);
+        }
         else if (is(extension, 'camunda:ExecutionListener') || is(extension, 'camunda:TaskListener')) {
             const script = extension.get('script');
             add(`on ${extension.get('event')}${script?.get('scriptFormat') ? ` (${script.get('scriptFormat')})` : ''}`,
@@ -155,13 +158,49 @@ function settingsOf(bo) {
         else
             for (const [key, value] of otherSettings(extension, localName(extension.$type))) lines.push([key, value]);
     }
-    // the form fields' details, and whatever else the element sets that the lines above do not say
-    for (const extension of bo.get('extensionElements')?.get('values') || [])
-        if (is(extension, 'camunda:FormData'))
-            for (const f of extension.get('fields') || [])
-                for (const [key, value] of otherSettings(f, `formField ${f.get('id')}`, FORM_FIELD_SAID)) lines.push([key, value]);
+    // whatever else the element sets that the lines above do not say
     for (const [key, value] of otherSettings(bo, '', SAID)) lines.push([key, value]);
     return lines;
+}
+
+/** An element's form fields (camunda:formData). */
+function formFieldsOf(bo) {
+    return (bo.get('extensionElements')?.get('values') || []).filter(e => is(e, 'camunda:FormData')).flatMap(e => e.get('fields') || []);
+}
+
+/**
+ * An element's form, a field a row: its id, type, label, default value, options (an enum's values: `id (name)` when
+ * they differ) and the rest it sets (its validation, its properties). A part's generated id alone (an empty
+ * camunda:properties) is not a setting.
+ */
+function formTable(bo) {
+    const fields = formFieldsOf(bo);
+    if (!fields.length) return null;
+    const optionsOf = f => (f.get('values') || []).map(v => {
+        const id = v.get('id'), name = v.get('name');
+        return name && name !== id ? `${id} (${name})` : id;
+    }).join(', ');
+    const validationOf = f => (f.get('validation')?.get('constraints') || [])
+        .map(c => c.get('config') !== undefined && c.get('config') !== '' ? `${c.get('name')} ${c.get('config')}` : c.get('name')).join(', ');
+    const restOf = f => {
+        const lines = otherSettings(f, '', FORM_FIELD_SAID).filter(([key]) => !/^properties( values)? id$/.test(key));
+        const validation = validationOf(f);
+        return [...(validation ? [['validation', validation]] : []), ...lines];
+    };
+    const rows = fields.map(f => ({ f, label: f.get('label') && f.get('label') !== f.get('id') ? f.get('label') : '', options: optionsOf(f), rest: restOf(f) }));
+    const has = key => rows.some(r => key(r));
+    const columns = [
+        ['Field', r => el('code', {}, r.f.get('id'))],
+        ['Type', r => r.f.get('type') || 'string'],
+        ...(has(r => r.label) ? [['Label', r => r.label]] : []),
+        ...(has(r => r.f.get('defaultValue') !== undefined) ? [['Default', r => r.f.get('defaultValue') ?? '']] : []),
+        ...(has(r => r.options) ? [['Options', r => r.options]] : []),
+        ...(has(r => r.rest.length) ? [['Other', r => r.rest.map(([key, value]) => el('div', {}, `${key}: ${value}`))]] : []),
+    ];
+    return el('table', { class: 'report-flows report-form' },
+        el('caption', {}, 'Form'),
+        el('thead', {}, el('tr', {}, columns.map(([title]) => el('th', {}, title)))),
+        el('tbody', {}, rows.map(r => el('tr', {}, columns.map(([, cell]) => el('td', {}, cell(r)))))));
 }
 
 /** What the report says of an element in its own words (its head, settingsOf, its sections), so not again as-is. */
@@ -171,7 +210,7 @@ const SAID = new Set(['id', 'name', 'documentation', 'flowElements', 'artifacts'
     'lanes', 'flowNodeRef', 'childLaneSet', 'participants', 'messageFlows', 'processRef', 'rootElements', 'diagrams',
     'categoryValueRef', 'di', 'ioSpecification', 'properties',
     ...SETTINGS]);
-const FORM_FIELD_SAID = new Set(['id', 'type', 'label']);
+const FORM_FIELD_SAID = new Set(['id', 'type', 'label', 'defaultValue', 'values', 'validation']);
 
 /**
  * Every setting of a model part the report does not say in its own words, as `key: value` lines (a part inside
@@ -392,8 +431,11 @@ export default class Report {
                 el('div', { class: 'report-body' },
                     documentation ? el('p', { class: 'report-documentation' }, documentation) : null,
                     settings(settingsOf(bo)),
+                    formTable(bo),
                     loadedBy(bo).length ? el('p', { class: 'report-loads' }, 'Loads ', loadedBy(bo).map(n => el('code', {}, dataField(n))).flatMap((c, i) => i ? [', ', c] : [c])) : null,
                     live && is(bo, 'bpmn:BusinessRuleTask') ? this.decisionSection(bo) : null,
+                    live && bo.get('camunda:assignmentPolicy') ? this.policySection('assignment', bo.get('camunda:assignmentPolicy')) : null,
+                    live && bo.$attrs?.['owf:securityPolicy'] ? this.policySection('security', bo.$attrs['owf:securityPolicy']) : null,
                     issueList(issuesOf(bo.id)),
                     boundary.map(b => elementSection(b, placed)),
                     children.map(child => elementSection(child, placed)),
@@ -416,6 +458,7 @@ export default class Report {
                 head('h2', process),
                 documentationOf(process) ? el('p', { class: 'report-documentation' }, documentationOf(process)) : null,
                 settings(settingsOf(process)),
+                live ? this.securitySection(process) : null,
                 issueList(issuesOf(process.id)),
                 (() => {
                     const placed = new Set();
@@ -599,13 +642,39 @@ Report.prototype.decisionSection = function (bo) {
     if (!found || !found.decision)
         return el('div', { class: 'report-decision' }, el('p', {}, 'Decision ', el('code', {}, ref),
             this._decisions?.loaded ? ': not found in the models folder.' : '.'), saved);
-    const { file, decision } = found;
-    const title = el('p', { class: 'report-decision-title' }, 'Decision ', el('strong', {}, decision.name), ` · ${file.file}`);
+    return decisionTable(found, 'Decision', saved);
+};
+
+/** An assignment or a security policy's table, under the element that names it (a user task's, a process's). */
+Report.prototype.policySection = function (kind, name, note) {
+    const what = kind === 'assignment' ? 'Assignment policy' : 'Security policy';
+    const found = this._decisions?.findPolicy?.(kind, name);
+    if (!found || !found.decision)
+        return el('div', { class: 'report-decision' }, el('p', {}, `${what} `, el('code', {}, name),
+            this._decisions?.loaded ? `: not found in policies/${kind}/.` : '.'));
+    return decisionTable(found, what, note ? el('p', { class: 'report-loads' }, note) : null);
+};
+
+/** A process's security: its own policy, else the application's default, else the built-in one; none while security policies are off. */
+Report.prototype.securitySection = function (process) {
+    const named = process.$attrs?.['owf:securityPolicy'];
+    if (named) return this.policySection('security', named, 'Who sees its cases, which of their data, and what they may do: every rule that matches counts, and a denial wins.');
+    const policies = this._decisions?.policies;
+    if (!policies?.securityOn) return null;
+    if (this._decisions.findPolicy('security', 'default'))
+        return this.policySection('security', 'default', 'No policy named: the application\'s default decides who sees its cases.');
+    return el('div', { class: 'report-decision' }, el('p', {}, 'Security policy: none named, and no ', el('code', {}, 'policies/security/default.dmn.xml'),
+        ': the built-in default (designers see every case; those offered a task, or who worked on it, see it as a line).'));
+};
+
+/** A decision's table (hit policy, inputs, outputs, rules) or its expression, titled by what it is. */
+function decisionTable({ file, decision }, what, after) {
+    const title = el('p', { class: 'report-decision-title' }, `${what} `, el('strong', {}, decision.name), ` · ${file.file}`);
     if (decision.literal)
-        return el('div', { class: 'report-decision' }, title, el('p', {}, el('code', {}, `${decision.literal.variable} = ${decision.literal.text}`)), saved);
+        return el('div', { class: 'report-decision' }, title, el('p', {}, el('code', {}, `${decision.literal.variable} = ${decision.literal.text}`)), after);
     const t = decision.table;
     if (!t)
-        return el('div', { class: 'report-decision' }, title, saved);
+        return el('div', { class: 'report-decision' }, title, after);
     return el('div', { class: 'report-decision' }, title,
         el('table', { class: 'report-flows report-decision-table' },
             el('caption', {}, `${t.hitPolicy}${t.aggregation ? ' ' + t.aggregation : ''}`),
@@ -617,8 +686,8 @@ Report.prototype.decisionSection = function (bo) {
                 t.inputs.map((_, c) => el('td', { class: 'decision-input' }, r.inputs[c] ?? '')),
                 t.outputs.map((_, c) => el('td', { class: 'decision-output' }, r.outputs[c] ?? '')),
                 el('td', {}, r.description))))),
-        saved);
-};
+        after);
+}
 
 function summary(issues) {
     const count = severity => issues.filter(i => i.severity === severity).length;

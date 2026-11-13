@@ -63,6 +63,7 @@ give it to others.
 | `data` | which of its data the person reads, on the instance page and in a task's form | `"all"`, `"forms"`, a list of data paths, `"deny"` | none, but a task's own form fields |
 | `claim` | taking a task offered to them | `"allow"`, `"deny"` | allowed to its candidates (assignment) |
 | `complete` | completing a task | `"allow"`, `"deny"` | allowed to its assignee and candidates (assignment) |
+| `assign` | giving a task to someone else: its assignee, its candidates | `"allow"`, `"deny"` | allowed to those with a part in it (today's rule) |
 | `restart` | running an item of the case again | `"allow"`, `"deny"` | refused |
 | `events` | firing a start event of the running case | `"allow"`, `"deny"` | refused |
 
@@ -71,23 +72,32 @@ give it to others.
 - **An empty cell** says nothing about that action.
 - `"forms"` is what forms put in the case's data: its start form's and its user tasks' fields, nothing a script, a
   service or a connector set.
-- `claim` and `complete` are asked with `task` set; the others with `task` empty, or set when the action is about a
-  task's item (restarting it).
+- `claim`, `complete` and `assign` are asked with `task` set; the others with `task` empty, or set when the action
+  is about a task's item (restarting it).
+- **Assigning is an engine operation** (`engine.assign`: it fires the task's assign event, and the Rationale says who
+  gave it to whom). Taking a task as its assignee, changing nothing else, is a claim and asks `claim`; any other change
+  of its assignee or candidates asks `assign`; a change of its dates or priority alone asks neither.
+
+## Its inputs, and its reverse
+
+A security policy reads what every decision table reads: [one protocol](decision-context.md), the case data by name
+and as `data`, the person (`user`, `groups`), their `relation` to the case, the `task`, and the application's facts.
+Its reverse, who may do what with a case, is in the same note, and shown under the Rationale on the instance page.
 
 ## A policy
 
 `processes/policies/security/LeaveCases.dmn.xml`, hit policy COLLECT:
 
-| relation | groups | task | see | data | claim | complete | restart |
-|---|---|---|---|---|---|---|---|
-| | `list contains(groups, "HR")` | | `"full"` | `"all"` | | | `"allow"` |
-| `"initiator"` | | | `"full"` | `"forms"` | | | |
-| `"candidate"`, `"assignee"` | `list contains(groups, "Manager")` | | `"full"` | `["LeaveType", "StartDate", "EndDate", "RequestReason"]` | | | |
-| `"participant"` | | | `"summary"` | | | | |
-| `"initiator"` | | `"Approve"` | | | `"deny"` | `"deny"` | |
+| relation | groups | task | see | data | claim | complete | assign | restart |
+|---|---|---|---|---|---|---|---|---|
+| | `list contains(groups, "HR")` | | `"full"` | `"all"` | | | `"allow"` | `"allow"` |
+| `"initiator"` | | | `"full"` | `"forms"` | | | | |
+| `"candidate"`, `"assignee"` | `list contains(groups, "Manager")` | | `"full"` | `["LeaveType", "StartDate", "EndDate", "RequestReason"]` | | | | |
+| `"participant"` | | | `"summary"` | | | | | |
+| `"initiator"` | | `"Approve"` | | | `"deny"` | `"deny"` | `"deny"` | |
 
 The last rule is separation of duties: whoever asked for the leave may not claim or approve it, even as a manager,
-whatever the task's candidates say. It doesn't matter where the rule is in the table.
+nor give its approval to someone of their choosing, whatever the task's candidates say. It doesn't matter where the rule is in the table.
 
 ## The person's relation to a case
 
@@ -125,7 +135,8 @@ engine is asked to act: the engine runs nothing new and stores nothing new.
 - **One case:** API v3's `GET /instances/:id` and its Rationale; the instance page. `summary` answers its summary
   only; not seen is the same 404 as an unknown id, as today, so an id can't be probed.
 - **A task:** API v3's `GET /tasks/:id` and the task form (`invokeItem`): its data is what `data` allows, its own
-  form's fields always; `claim` and `complete` (API v3, `/api2/tasks`, the task form) before the engine is asked.
+  form's fields always; `claim` and `complete` (API v3, `/api2/tasks`, the task form) before the engine is asked;
+  `assign` (the pages' Assign form, `/api/engine/assign` and `/api2/engine/assign`) likewise.
 - **Restart and start events:** API v3, the instance page.
 - **Its answer is said:** a refused action answers 403 with the rule that denied it
   (`POLICY_DENIED`: *policy LeaveCases, rule 5*), and the decision editor's preview shows which rules matched.

@@ -29,6 +29,12 @@ export interface IUserManager {
      * exported), and keep the session cookie SameSite=Lax or Strict.
      */
     apiUser?(req): Promise<IUserInfo | null> | IUserInfo | null;
+    /**
+     * Optional. The application's people, with their groups: the instance page's and API v3's "who may" (a case's
+     * security policy, asked for each of them) names them. Without it, they are named by the roles and by what the
+     * case says (who started it, a task's assignee and candidates).
+     */
+    listUsers?(): Promise<{ userName: string; userGroups?: string[] }[]> | { userName: string; userGroups?: string[] }[];
 }
 
 /** A person signed in, as bpmn-web's pages read them (req.user). */

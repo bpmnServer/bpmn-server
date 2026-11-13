@@ -32,6 +32,16 @@ export async function modelElements(source: string) {
     return { elements: { nodes: ids('bpmn:FlowNode'), flows: ids('bpmn:SequenceFlow') }, listeners };
 }
 
+/** The model's elements' ids, by name (a check after a step may name its element either way); none when the model can't be read. */
+export async function idsByName(server, model: string): Promise<Map<string, string>> {
+    try {
+        return new Map(allElements(await parse(await server.definitions.getSource(model))).filter(e => e.name).map(e => [String(e.name), e.id]));
+    }
+    catch {
+        return new Map();
+    }
+}
+
 /** The model's description: the documentation of what the editor shows with nothing selected (with pools, the collaboration), else its process's. */
 export async function modelDescription(source: string): Promise<string> {
     const root = await parse(source);

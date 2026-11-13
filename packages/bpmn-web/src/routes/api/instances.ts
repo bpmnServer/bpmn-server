@@ -129,6 +129,17 @@ export class InstanceOperations {
         return { ...summary(instance), data: this.access.data(instance, access), steps: rationaleSteps(instance.logs ?? [], instance.items ?? [], instance.startedAt) };
     }
 
+    /**
+     * Who was given its tasks and who may do what with it (CaseAccess.instanceAccess): each user task's assignment,
+     * after the fact; while security policies are on, its policy asked for each person and role (`directory`).
+     * For administrators and the service key only (v3.ts checks): it names people and what they may do.
+     */
+    async whoMay(user: SecureUser, id: string, directory) {
+        const { instance } = await this.findWithAccess(user, id);
+        const [full] = await this.server.dataStore.findInstances({ id: instance.id }, 'full');
+        return { id: instance.id, name: instance.name, ...(await this.access.instanceAccess(full ?? instance, directory)) };
+    }
+
     /** A start event of a running instance (an event sub-process, a second start), with this data. */
     async startEvent(user: SecureUser, id: string, elementId: string, data = {}) {
         const { access } = await this.findWithAccess(user, id);

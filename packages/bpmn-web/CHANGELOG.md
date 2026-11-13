@@ -144,8 +144,64 @@ and here
 - **The pages apply the security rules one way.** My work and the start page (API v3's operations) follow
   `ENFORCE_SECURITY` as every other page does; before, they kept the rules on while the task forms and the instance
   page turned them off with `ENFORCE_SECURITY=false`. API v3 keeps them on for its clients, as before.
+- **The Test tab says more of what it knows** (from a review of the tab):
+  - **Saved, Saving…, Not saved [Retry]** by the scenario's name; a failed save stays said until one succeeds (it was
+    a status line the next message overwrote).
+  - **The result line:** how many checks, and the failed ones listed with what was found; a run with no checks is
+    *○ Ran: nothing checked*, not *✓ Passed* (○ in the list too); when and how it ran, in sight; *the scenario
+    changed since* and *the model changed since*.
+  - **Record leads** on a scenario with no steps; **Run** is off while a recording is on (it dropped the recording).
+  - **Debug** says a kept run's debugging is that run only.
+  - **Keyboard and screen readers:** the scenario list by Tab and Enter; a check's shield says passed, failed or not
+    checked, and an empty shield is not checked (it was the passed one in blue); the list resizer shows its focus.
+- **Assigning a task asks the case's security policy** (its `assign` action): the pages' Assign form,
+  `/api/engine/assign` and `/api2/engine/assign` answer 403 `POLICY_DENIED` with the rule when a rule denies it;
+  taking a task oneself asks `claim`; without a rule, today's rule holds. The HR demo's `LeaveCases`: HR may reassign;
+  whoever asked may not give their own leave's approval away.
+- **The Report says bpmn-server's own settings and policies:** `label`, `endLabel`, `assignmentPolicy` and
+  `securityPolicy` lines; a user task's assignment policy table and a process's security policy table (the one it
+  names, else the application's default, else the built-in one, said), as a business rule task's decision table is
+  shown. `/model/decisions` also returns the policies (`policies: { assignment, security, securityOn }`).
+- **The Test tab's Open instance** opens in one tab, used again by the next one, not a new tab each time.
+- **The instance page opens with every item**, not filtered to the user tasks: the Rationale's steps showed one row
+  of several. A filter you choose still narrows it.
+- **The instance page:** the Rationale comes first, above the items, open, each step one line (it opens to its rows);
+  a click on a section's heading (Rationale, Model report, Instance logs) opens or closes it, as its button does.
+  **Simulate** replaces Show animation: the editor's Test tab's, the same frames, controls and colours
+  (`modeler/src/simulation/simulation.js`, used by both; the page's is `public/modeler/instance.js`).
+- **Assignment and access, under the Rationale on the instance page:** each user task, after the fact: who it was
+  offered to, its assignee, what decided it (a policy's rule, or who reassigned it), its assignment as the log tells it,
+  who completed it. While security policies are on, for designers and administrators: who may see the case and its
+  data, restart it, and claim, complete and assign each waiting task, the case's policy asked for each person (the
+  user directory) and role. API v3: `GET /instances/{id}/access` (an administrator's own token, or the service key).
+  An application's user manager may have `listUsers()`, to name its people; the HR demo's does.
+- **An assignment policy's editor preview** reads what the task will: the one decision context.
+- **A diagram element's popup on the instance page says what the Model report says of it** (its section: settings,
+  form, policies, flows), then what this run did with it (`#3 ended`, `#15 waits`); any part of a shape opens it.
+- **The Report shows an element's form as a table:** a field a row (Field, Type, Label, Default, Options, Other), not a
+  `formField` line for each field and each of its values; an empty `camunda:properties`'s generated id is left out.
+- **Design shows the policies:** each assignment policy (to its editor, its tests) and security policy (the default
+  said), with the models that name it; the overview counts them.
+- **Simulate's Show details**, in the Test tab and on the instance page: each change with what the Rationale says of
+  it (who completed it and with what data, a flow's condition and the values it read, a gateway's choice); remembered
+  in the browser.
+- **A route can stay out of the request log** (`res.locals.quiet = true`); the HR demo's reload check, asked every
+  1.5s by each page, is.
 
 ### Fixed
+- **The instance page showed a run's colours on its diagram:** the editor saved the model's picture with the Test tab's
+  marks of the run it showed (a task still waiting, orange). The editor now saves the picture without them, and the
+  instance page leaves them out of a picture saved before.
+- **The instance page's items** had no header over the name, so every column from Started on sat under the wrong
+  one.
+- **The Test tab:**
+  - **Debugging a kept run no longer rewrites the scenario.** Restarting a step and running it again saved the run's
+    steps as the scenario's, without their data, so the next Run could take another path.
+  - **A check after a step the scenario doesn't have no longer stops every save** ("Scenarios not saved: the check
+    after … names no step"). It is saved as a check at the end; one naming its step by the element's name is saved by
+    its id. Converting an older `.tests.json` still leaves such a file as it is.
+  - `GET` and `PUT /model/scenarios/:process` refuse a model name that isn't one (400), as the `/feature` routes do.
+  - Unused code removed (`checkExpectations`, a simulation branch of the diagram marks, a request wrapper).
 - **Signing in goes back to the page that asked for it**, and only to it: the page is kept where a page that needs a
   person sends them to `/login` (`rememberPage`), not on every page asked for while signed out. An application's own
   sign-in or welcome page (apps/hrdemo's `/hr/login`), or a page such as `/forgot`, was kept too, and signing in then

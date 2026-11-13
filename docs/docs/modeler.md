@@ -70,12 +70,18 @@ page shows the same report of its model (under **Model report**), and the Histor
   `key: value` lines (scripts in full) and its problems; nested under an element, its boundary events, a
   sub-process's elements and its outgoing flows with their conditions. Then the data objects and annotations.
 
-A setting the report has no words of its own for (another tool's extension, a form field's validation) is still
-there, as `key: value`. A business rule task shows its decision's table. Clicking an id selects the element on the
-diagram. **Print** saves the report as a PDF.
+A setting the report has no words of its own for (another tool's extension) is still there, as `key: value`. An
+element's form is a table, a field a row: its type, label, default, options, and the rest it sets (its validation).
+On an instance's page, a click on an element of the diagram shows its section of the report, and what the run did
+with it. bpmn-server's own settings have lines of their own: `label` and `endLabel`, a user task's
+`assignmentPolicy`, a process's or a task's `securityPolicy`. A business rule task shows its decision's table, a
+user task its [assignment policy](assignment-policies.md)'s, and a process its security policy's: the one it names,
+else the application's default (`policies/security/default.dmn.xml`), else a line saying the built-in default
+decides (only while security policies are on). Clicking an id selects the element on the diagram. **Print** saves
+the report as a PDF.
 
-The report is also what [History](#history) compares: as text, the model's problems and the decisions' tables
-left out (they are not in the model file).
+The report is also what [History](#history) compares: as text, the model's problems and the decisions' and
+policies' tables left out (they are not in the model file).
 
 ## Testing a model
 
@@ -102,6 +108,10 @@ Two commands close what is left:
 - **Fill**, on an element not reached, records a new scenario with that element as its goal. The data the way there asks is filled
   in, and the recording says which step is next, when the goal is reached, and when the run can no longer get there.
 
+By the scenario's name, **Saved** or **Saving…** says whether your changes are saved; **Not saved**, with **Retry**,
+stays until a save succeeds. A new scenario has no steps: **Record** is the button to start with, and **Run** waits
+while a recording is on.
+
 1. **New** adds a scenario, and **Record** starts the process with its start data and shows what waits as the next
    steps: user tasks (**Complete step**), receive tasks (**Receive**) and events (**Trigger event**), each with its data.
 2. Completing a step shows what waits next, until nothing waits: the recording then closes by itself and shows its
@@ -111,6 +121,8 @@ Two commands close what is left:
    stopping, and run its checks.
 4. **Add check** adds a check, at the start, after a step or at the end, and it shows under its step, in words, with **Edit**: the instance's status, a data value, or an element passed
    (how many times, in what status). After a run its shield is green or red, and a failed check says what was found.
+   A check after a step the scenario doesn't have (yet, or any more: the step removed, or recorded along another
+   path) is saved as a check at the end, since the `.feature` has nowhere else to put it.
 
 **A task by itself:** select a task on the diagram and choose **New**, *The task selected* (or choose it under
 **Start at**, *A task by itself*). The scenario runs that task alone, with the data you give as its input: a script or a service
@@ -118,12 +130,21 @@ runs and the run ends; a user task waits for its step, then the run ends. Nothin
 has the items, the data and the decisions as any other, and **Debug** changes its data and runs it again. It is
 saved, repeated and checked as the other scenarios.
 
+**The result** of the run shown: **✓ Passed** or **✗ Failed** with how many checks, and the checks that failed listed
+under it with what was found; a run with no checks says **○ Ran: nothing checked** (and the list shows ○), since
+it passed nothing. It says when and how the run was made, and *the scenario changed since* or *the model changed
+since* when the result is no longer the scenario's as it is now. A check's shield is empty until a run checks it,
+then green or red.
+
 Each scenario keeps its last run with its instance; the next run replaces them. By its result are **Open instance**
 and the commands for that run, **Simulate** and **Debug** each opening its panel under them, and **Delete**:
 
 - **Simulate** plays the run on the diagram: an element turns blue when it starts and green when it ends, orange if it
-  still waits, numbered in the order they started; **Back**, **Step**, **Play** and **Stop**.
+  still waits, numbered in the order they started; **Back**, **Step**, **Play** and **Stop**. **Show details** says
+  what the Rationale says of each change: who did it, with what data, and why (a flow's condition and the values it
+  read, a gateway's choice). An instance's page has the same Simulate.
 - **Debug** changes the instance's variables for the next steps; **Restart here**, on a step done, goes back to it.
+  Debugging a kept run changes that run only: the scenario's steps and their data stay as they were.
 
 **Inspect this run** shows its data, items, the Rationale (as on the instance page: what happened, in order, and why) and log. **Add as a check**, on an item or a value,
 checks it is as it is there: its status or its value, where the run waits (after the last step done, or at the start

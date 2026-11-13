@@ -58,6 +58,15 @@ because of its policy.
 
 The policy runs once, when the task starts: not when it is claimed, and not when the data changes later.
 
+**What a policy reads** is what every decision table reads ([one protocol](../design/decision-context.md)): the
+case data by name (`amount`) and as `data`, the task's prepared inputs (its input parameters, which may call the
+application's services: `$(appServices.managerOf(this.data.requester))`), and `user`, `groups`, `relation`
+(`initiator`, `assignee`, `candidate`, `participant`), `initiator` (who started the case) and `task`. A rule can say
+"not the one who asked": `relation` is not `"initiator"`.
+
+**After the fact**, the instance page shows each user task's assignment under the Rationale: who it was offered to
+and assigned to, the policy and rule that decided it, who claimed or reassigned it, who completed it.
+
 **API v3** returns what decided as the task's `assignedBy`: `{ policy: 'Approval', rule: 1 }`, so a client can show
 why a task came to someone.
 

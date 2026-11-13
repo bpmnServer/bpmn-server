@@ -1,0 +1,17 @@
+/* Simulate (simulation.js): its panel, and the run on the diagram, in the editor and on an instance's page */
+.test-command-panel { margin: 0 0 8px; padding: 7px 10px; border: 1px solid #b9c6da; border-left: 4px solid #1f62c8; border-radius: 4px; background: #fbfcfe; }
+.test-command-panel[hidden] { display: none; }
+.test-sim-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.test-sim-text { flex: 1 1 240px; margin-left: 6px; color: #3d4450; font-size: 12px; }
+.test-sim-details-toggle { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 0 6px; font-size: 12px; font-weight: normal; color: #3d4450; cursor: pointer; }
+.test-sim-details { flex-basis: 100%; margin: 4px 0 0; padding: 6px 10px 6px 24px; border-top: 1px solid #e3e8f0; font-size: 12px; color: #182b3c; }
+.test-sim-details[hidden] { display: none; }
+.test-sim-details li { margin: 2px 0; overflow-wrap: anywhere; }
+.test-sim-details-none { list-style: none; margin-left: -14px; color: #5d6573; }
+
+/* the run on the diagram: started blue, done green, still waiting orange (dashed) */
+.djs-element.test-started .djs-visual > :first-child { stroke: #1f62c8 !important; stroke-width: 3px !important; }
+.djs-element.test-passed .djs-visual > :first-child { stroke: #067647 !important; stroke-width: 3px !important; }
+.djs-element.test-waiting .djs-visual > :first-child { stroke: #dc6803 !important; stroke-width: 3px !important; stroke-dasharray: 6 3; }
+/* a flow's line (its first child is the arrowhead's <defs>) */
+.djs-connection.test-passed .djs-visual > path { stroke: #067647 !important; stroke-width: 2px !important; }

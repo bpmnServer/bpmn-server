@@ -176,6 +176,19 @@ interface IAppDelegate {
     loadDataObject?(name: string, item: IItem): unknown | Promise<unknown>;
 
     /**
+     * Optional. The application's facts for a decision table (a business rule task's decision, an assignment policy,
+     * a security policy: engine/DecisionContext.ts), before it is evaluated: what it returns is added to what the
+     * table reads (`{ managerOf: true }`; `groups`, a person's groups when only the application knows them). Called
+     * for each decision, a security policy's once per case and task it decides on; keep it quick. A failure is
+     * logged, and the table decides without the application's facts.
+     *
+     * @param context  what the table reads so far: the case data, the task's prepared inputs, data, user, groups,
+     *                 relation, initiator, task, decision
+     * @param about    what is deciding (kind: decision, assignment or security; name), for whom, on what case and task
+     */
+    decisionContext?(context: Record<string, any>, about: { kind: 'decision' | 'assignment' | 'security'; name?: string; user: { userName?: string | null; userGroups?: string[] }; instance?: any; task?: string }): Record<string, any> | void | Promise<Record<string, any> | void>;
+
+    /**
      * Optional. The application's own checks on a model, run by verifyModel (the model editor's check, the
      * import checks, `bpmn-server verify` with a server) after its own, on a model the engine could load.
      * Returns issues in verifyModel's form; `severity` defaults to 'error'. Called without a running execution.

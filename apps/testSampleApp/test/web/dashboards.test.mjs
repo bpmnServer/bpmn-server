@@ -243,3 +243,40 @@ test('My work and starting a process use API v3\'s operations in this process: n
   assert.equal(start.status, 200, why(start));
   assert.equal(await tokens.revoke('staff'), 0, 'the pages made no token');
 });
+
+test('Design shows the policies: assignment (to its editor, its tests) and security (the default said), each with the models that name it', async () => {
+  const folder = web.definitionsPath;
+  const table = name => `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="${name}_d" name="${name}" namespace="t">
+  <decision id="${name}" name="${name}"><decisionTable id="${name}_t" hitPolicy="FIRST">
+    <input id="${name}_i" label="amount"><inputExpression id="${name}_e" typeRef="number"><text>amount</text></inputExpression></input>
+    <output id="${name}_o" name="candidateGroups" typeRef="string" />
+    <rule id="${name}_r"><inputEntry id="${name}_ri"><text>-</text></inputEntry><outputEntry id="${name}_ro"><text>"manager"</text></outputEntry></rule>
+  </decisionTable></decision>
+</definitions>`;
+  fs.mkdirSync(path.join(folder, 'policies', 'assignment'), { recursive: true });
+  fs.mkdirSync(path.join(folder, 'policies', 'security'), { recursive: true });
+  fs.writeFileSync(path.join(folder, 'policies', 'assignment', 'DashApproval.dmn.xml'), table('DashApproval'));
+  fs.writeFileSync(path.join(folder, 'policies', 'security', 'default.dmn.xml'), table('default'));
+  const model = 'dash-policies';
+  await web.bpmnServer.models.save(model, `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="t">
+  <bpmn:process id="P" isExecutable="true">
+    <bpmn:startEvent id="S" /><bpmn:userTask id="Approve" camunda:assignmentPolicy="DashApproval" /><bpmn:endEvent id="E" />
+    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Approve" /><bpmn:sequenceFlow id="f2" sourceRef="Approve" targetRef="E" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  try {
+    const page = (await designer.get('/dashboard/design')).text;
+    const row = key => (new RegExp(`<tr data-policy="${key}">([^]*?)</tr>`).exec(page) ?? [])[1] ?? '';
+    const assignment = row('assignment/DashApproval');
+    assert.match(assignment, /href="\/model\/policy\/DashApproval"/);
+    assert.match(assignment, new RegExp(`used by [^<]*${model}`));
+    assert.match(row('security/default'), /the default: every process that names none/);
+    assert.match(page, /<h2 id="policies"[^>]*>Policies/);
+  } finally {
+    fs.rmSync(path.join(folder, 'policies', 'security'), { recursive: true, force: true });
+    fs.rmSync(path.join(folder, 'policies', 'assignment', 'DashApproval.dmn.xml'), { force: true });
+    await web.bpmnServer.models.remove?.(model).catch?.(() => {});
+  }
+});

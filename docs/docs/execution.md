@@ -204,5 +204,9 @@ Each operation on the instance is logged too, as a JSON entry: `{"type":"executi
 (`Start Process`, `Invoke Item`, `Timer Fired` for a timer the server fires, `Invoke Event`, `Retry Item`,
 `Restart Item`, with who and the data), and `{"type":"outcome",...}` when it saves: the instance's `status`, the
 items whose status `changed` (each with its new status) and the items `waiting`. The **Rationale** is the log cut at
-each operation: on the instance page each step is a line that opens to its rows, and in the Test tab each step of
-the timeline has **What happened**, its checks offered from the outcome as logged.
+each operation: on the instance page, open above the items, each step is a line that opens to its rows, and in the
+Test tab each step of the timeline has **What happened**, its checks offered from the outcome as logged.
+
+**Simulate**, on the instance page as in the Test tab, plays the run on its diagram one change at a time (**Back**,
+**Step**, **Play**, **Stop**); with **Show details**, each change says what the Rationale says of it: who completed
+the task and with what data, the condition a flow was taken on and the values it read, what a gateway chose.

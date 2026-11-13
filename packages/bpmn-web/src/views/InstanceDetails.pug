@@ -4,6 +4,7 @@ block content
   //- cached for a year: its URL carries its build time, so a browser takes a new one when it changes
   link(rel="stylesheet", href=asset("/stylesheets/instance-details.css"))
   link(rel="stylesheet", href="/modeler/report.css")
+  link(rel="stylesheet", href="/modeler/instance.css")
   - var docs = JSON.parse(definition || '{}');
   - var info = (logs || []).filter(l => l.type === 'info');
   include includes/dates.pug
@@ -21,6 +22,13 @@ block content
       button.querySelector('.fa').className = panel.hidden ? 'fa fa-chevron-down' : 'fa fa-chevron-up';
     }
     function showDocs() { toggleDetails('docs', 'showDoc'); }
+    // a click on a section's heading (not on its button, a link or a field) opens or closes it, as its button does
+    document.addEventListener('click', function (e) {
+      var heading = e.target.closest && e.target.closest('.instance-collapsible > .instance-card-heading');
+      if (!heading || e.target.closest('button, a, input, select, label')) return;
+      var button = heading.querySelector('button[aria-controls]');
+      if (button) button.click();
+    });
     function showLogs() { toggleDetails('logs', 'showHide'); }
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('#logs table tr td').forEach(function (td) {
@@ -87,11 +95,7 @@ block content
       document.getElementById('filter-clear').addEventListener('click', function () {
         typeSelect.value = ''; elementSelect.value = ''; apply(false);
       });
-      // at first: the user tasks, when the instance has any
-      if (elements.some(function (e) { return e.type === 'bpmn:UserTask'; })) {
-        typeSelect.value = 'bpmn:UserTask';
-        apply(false);
-      }
+      // at first: everything (a filter you choose narrows it)
     }
 
   main#instances.instance-page
@@ -148,17 +152,20 @@ block content
           button#showTokens.btn.btn-default(type="button", onclick="$('.decor-token').toggle()")
             i.fa.fa-map-marker(aria-hidden="true")
             | Show tokens
-          button#startAnimation.btn.btn-default(type="button", onclick="startAnimation()")
+          //- instance.js (modeler/src/instance/view.js): the editor's Simulate, on this diagram
+          button#startSimulation.btn.btn-default(type="button", disabled, aria-pressed="false", title="The run on the diagram one change at a time, as the editor's Test tab shows it")
             i.fa.fa-play(aria-hidden="true")
-            | Show animation
-        span#animationStatus.instance-animation-status(role="status", aria-live="polite")
+            | Simulate
+      #simulation
       .instance-diagram
         if svg
           div!= svg
         else
           p.instance-empty Diagram unavailable for this instance.
       script(type="application/json" id="jsonInfo")!= JSON.stringify(info)
-      script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, seq: item.seq, type: item.type, status: item.status }))).replace(/</g, '\\u003c')
+      script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, elementId: item.elementId, name: item.name, seq: item.seq, type: item.type, status: item.status }))).replace(/</g, '\\u003c')
+      script(type="application/json" id="rationaleSteps")!= JSON.stringify(rationale || []).replace(/</g, '\\u003c')
+      script(src="/modeler/instance.js" defer)
 
     //- Filters for the items, the Rationale and the logs: a type of element, an element (of that type)
     - var kindOf = t => String(t || '').replace(/^bpmn:/, '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
@@ -179,6 +186,130 @@ block content
       span#filter-count.instance-hint(role="status")
       script(type="application/json" id="filterElements")!= JSON.stringify(filterElements.map(e => ({ id: e.id, type: e.type }))).replace(/</g, '\\u003c')
 
+    section.instance-card.instance-collapsible(aria-labelledby="rationale-heading")
+      .instance-card-heading
+        div
+          h2#rationale-heading Rationale
+          p.instance-hint Step by step: each action on the instance (its start, a task completed, a timer, a message), then what it caused and why: conditions with the values they read, gateways, joins, timers.
+        button#showRationale.btn.btn-default(type="button", onclick="toggleDetails('rationale', 'showRationale')", aria-expanded="true", aria-controls="rationale", aria-label="Toggle the Rationale")
+          i.fa.fa-chevron-up(aria-hidden="true")
+      //- open, each step one line: a click on a step opens it to what it caused, and why
+      #rationale.instance-table-scroll
+        table.instance-table.rationale-table
+          thead
+            tr
+              th(scope="col") Seq #
+              th(scope="col") At
+              th(scope="col") Element
+              th(scope="col") Type
+              th(scope="col") What happened
+              th(scope="col") Why
+          each step in rationale
+            //- a step: what drove the instance, who, with what data; it opens to what it caused, and why
+            tbody.rationale-group
+              tr.rationale-step(tabindex="0", role="button", aria-expanded="false")
+                td(colspan="6")
+                  i.fa.fa-caret-right.rationale-caret(aria-hidden="true")
+                  strong Step #{step.n}#{step.label ? ` · ${step.label}` : ''}
+                  if step.name || step.element
+                    |  #{step.name || step.element}
+                  if step.userName
+                    |  by #{step.userName}
+                  if step.data && Object.keys(step.data).length
+                    code.rationale-step-data #{JSON.stringify(step.data)}
+                  span.rationale-step-count #{step.events.length} rows
+              each e in step.events
+                tr(class=e.decisions.length ? 'rationale-chose' : undefined data-element=e.id)
+                  td #{e.seq != null ? e.seq : ''}
+                  td.instance-nowrap #{e.at}
+                  td #{e.name ? `${e.name} (${e.id})` : (e.id || '')}
+                  td.instance-nowrap #{e.type || ''}
+                  td.instance-nowrap
+                    if e.word
+                      if e.raw === 'Waiting'
+                        span.status-badge.status-wait #{e.word}
+                      else if e.raw === 'Aborted' || e.raw === 'Cancelled'
+                        span.status-badge.status-error #{e.word}
+                      else
+                        | #{e.word}
+                    each d in e.decisions
+                      if d.action
+                        div.rationale-decision(class=d.not ? 'rationale-not' : undefined) #{d.action}
+                  td.rationale-why
+                    each d in e.decisions
+                      div #{d.why}
+          if !rationale.length
+            tbody
+              tr
+                td(colspan="6") Nothing to show: the server keeps an instance's log when its configuration says so (SAVE_LOGS).
+
+    //- under the Rationale: each user task's assignment, after the fact; while security policies are on, who may do
+    //- what with the case now (its policy asked for each person and role: CaseAccess.instanceAccess)
+    if access && (access.tasks.length || access.on)
+      section.instance-card.instance-collapsible(aria-labelledby="access-heading")
+        .instance-card-heading
+          div
+            h2#access-heading Assignment and access
+            p.instance-hint Each user task: who it was offered to and assigned to, what decided it, who completed it. While security policies are on, who may do what now: the case's policy, asked for each person and role.
+          button#showAccess.btn.btn-default(type="button", onclick="toggleDetails('access', 'showAccess')", aria-expanded="true", aria-controls="access", aria-label="Toggle assignment and access")
+            i.fa.fa-chevron-up(aria-hidden="true")
+        #access.instance-table-scroll
+          - var yes = v => v ? 'yes' : '—';
+          if access.on && accessDetails
+            h3.access-title Who may see this case
+            table.instance-table.access-table#access-case
+              thead
+                tr
+                  th(scope="col") Who
+                  th(scope="col") Because
+                  th(scope="col") Sees
+                  th(scope="col") Data
+                  th(scope="col") Restart
+                  th(scope="col") Start events
+                  th(scope="col") Rules
+              tbody
+                each row in access.cases
+                  tr(data-who=row.who.label, data-kind=row.who.kind)
+                    td: strong #{row.who.label}
+                    td.instance-hint #{row.who.because}
+                    td #{row.see === 'none' ? '—' : row.see}
+                    td #{row.data}
+                    td #{yes(row.restart)}
+                    td #{yes(row.events)}
+                    td.instance-hint #{row.rules}
+          each t in access.tasks
+            .access-task(data-element=t.elementId, data-seq=t.seq)
+              h3.access-title ##{t.seq} #{t.name || t.elementId} · #{t.status === 'wait' ? 'waits' : t.status === 'end' ? 'done' : t.status}
+              ul.access-facts
+                li Offered to: #{[...t.candidateUsers, ...t.candidateGroups].join(', ') || '—'}
+                if t.assignee
+                  li Assigned to: #{t.assignee}
+                if t.decidedBy
+                  li Decided by: #{t.decidedBy}
+                each h in t.history
+                  li.access-history #{h.action}#{h.why ? ' — ' + h.why.replace(/\s+/g, ' ') : ''}
+                if t.completedBy
+                  li Completed by: #{t.completedBy}
+              if access.on && accessDetails && t.who && t.who.length
+                table.instance-table.access-table
+                  thead
+                    tr
+                      th(scope="col") Who
+                      th(scope="col") Offered
+                      th(scope="col") May claim
+                      th(scope="col") May complete
+                      th(scope="col") May assign
+                      th(scope="col") Rules
+                  tbody
+                    each row in t.who
+                      tr(data-who=row.who.label, data-kind=row.who.kind)
+                        td: strong #{row.who.label}
+                        td #{yes(row.offered)}
+                        td #{yes(row.claim)}
+                        td #{yes(row.complete)}
+                        td #{yes(row.assign)}
+                        td.instance-hint #{row.rules}
+
     section.instance-card(aria-labelledby="items-heading")
       .instance-card-heading
         div
@@ -190,6 +321,7 @@ block content
             tr
               th(scope="col") Seq #
               th(scope="col") Element
+              th(scope="col") Name
               th(scope="col") Started
               th(scope="col") Ended
               th(scope="col") Status
@@ -247,62 +379,6 @@ block content
             if !items || !items.length
               tr
                 td(colspan="15") No items to show.
-
-    section.instance-card.instance-collapsible(aria-labelledby="rationale-heading")
-      .instance-card-heading
-        div
-          h2#rationale-heading Rationale
-          p.instance-hint Step by step: each action on the instance (its start, a task completed, a timer, a message), then what it caused and why: conditions with the values they read, gateways, joins, timers.
-        button#showRationale.btn.btn-default(type="button", onclick="toggleDetails('rationale', 'showRationale')", aria-expanded="false", aria-controls="rationale", aria-label="Toggle the Rationale")
-          i.fa.fa-chevron-down(aria-hidden="true")
-      #rationale.instance-table-scroll(hidden)
-        table.instance-table.rationale-table
-          thead
-            tr
-              th(scope="col") Seq #
-              th(scope="col") At
-              th(scope="col") Element
-              th(scope="col") Type
-              th(scope="col") What happened
-              th(scope="col") Why
-          each step in rationale
-            //- a step: what drove the instance, who, with what data; it opens to what it caused, and why
-            tbody.rationale-group
-              tr.rationale-step(tabindex="0", role="button", aria-expanded="false")
-                td(colspan="6")
-                  i.fa.fa-caret-right.rationale-caret(aria-hidden="true")
-                  strong Step #{step.n}#{step.label ? ` · ${step.label}` : ''}
-                  if step.name || step.element
-                    |  #{step.name || step.element}
-                  if step.userName
-                    |  by #{step.userName}
-                  if step.data && Object.keys(step.data).length
-                    code.rationale-step-data #{JSON.stringify(step.data)}
-                  span.rationale-step-count #{step.events.length} rows
-              each e in step.events
-                tr(class=e.decisions.length ? 'rationale-chose' : undefined data-element=e.id)
-                  td #{e.seq != null ? e.seq : ''}
-                  td.instance-nowrap #{e.at}
-                  td #{e.name ? `${e.name} (${e.id})` : (e.id || '')}
-                  td.instance-nowrap #{e.type || ''}
-                  td.instance-nowrap
-                    if e.word
-                      if e.raw === 'Waiting'
-                        span.status-badge.status-wait #{e.word}
-                      else if e.raw === 'Aborted' || e.raw === 'Cancelled'
-                        span.status-badge.status-error #{e.word}
-                      else
-                        | #{e.word}
-                    each d in e.decisions
-                      if d.action
-                        div.rationale-decision(class=d.not ? 'rationale-not' : undefined) #{d.action}
-                  td.rationale-why
-                    each d in e.decisions
-                      div #{d.why}
-          if !rationale.length
-            tbody
-              tr
-                td(colspan="6") Nothing to show: the server keeps an instance's log when its configuration says so (SAVE_LOGS).
 
     section.instance-card.instance-collapsible(aria-labelledby="docs-heading")
       .instance-card-heading

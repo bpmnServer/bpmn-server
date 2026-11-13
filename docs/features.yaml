@@ -309,7 +309,7 @@ features:
     note: "A first slice: not yet in the editor (owf:securityPolicy is written in the XML), not checked by verifyModel, no As whom preview; a policy can deny claim and complete but not yet give them to someone the assignment doesn't offer the task to."
     xml: ["[owf:securityPolicy]"]
     docs: [docs/design/security-policies.md]
-    code: [packages/bpmn-server/src/engine/SecurityPolicy.ts, packages/bpmn-web/src/routes/caseAccess.ts, packages/bpmn-web/src/routes/api/instances.ts, packages/bpmn-web/src/routes/api/tasks.ts, packages/bpmn-web/src/routes/workflow.ts]
+    code: [packages/bpmn-server/src/engine/SecurityPolicy.ts, packages/bpmn-server/src/engine/DecisionContext.ts, packages/bpmn-web/src/routes/caseAccess.ts, packages/bpmn-web/src/routes/api/instances.ts, packages/bpmn-web/src/routes/api/tasks.ts, packages/bpmn-web/src/routes/workflow.ts]
     examples: [apps/hrdemo/workflow/processes/policies/security/LeaveCases.dmn.xml]
     tests: [packages/bpmn-server/test/security-policy.test.mjs, apps/testSampleApp/test/web/security-policies.test.mjs]
   - id: expressions
@@ -626,9 +626,9 @@ features:
   - id: instance-page
     area: pages
     name: "The instance page"
-    what: "Data, diagram (tokens, replay), items, the Rationale by step, the model's report, logs; filters; Retry and Force."
+    what: "Data, diagram (tokens; Simulate as the editor's, with Show details), the Rationale by step (above the items, each step a line), items, the model's report, logs (each opened by its heading); filters; Retry and Force."
     docs: [docs/docs/bpmn-web.md, docs/docs/execution.md]
-    code: [packages/bpmn-web/src/views/InstanceDetails.pug, packages/bpmn-web/public/javascripts/SVGHelper.js]
+    code: [packages/bpmn-web/src/views/InstanceDetails.pug, packages/bpmn-web/modeler/src/instance/view.js, packages/bpmn-web/modeler/src/simulation/simulation.js, packages/bpmn-web/public/javascripts/SVGHelper.js]
     tests: [apps/testSampleApp/test/web/pages.test.mjs, apps/testSampleApp/test/ui/instance-filters.test.mjs]
   - id: tasks-forms-web
     area: pages

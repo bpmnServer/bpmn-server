@@ -127,7 +127,6 @@ export async function runDecisionTests(filePath: string, tests: DecisionTest[], 
             }
             // the engine's lines on what each decision matched (not that the file was loaded)
             const keep = line => { if (!/ loaded from /.test(line)) log.push(String(line).replace(/^\.+/, '')); };
-            // an assignment policy's $(...) outputs run in a task, not here: their text is the result
             // an assignment policy's $(...) outputs are kept as written (they run in the engine, with the case)
             const policy = /[\\/]policies[\\/]assignment[\\/][^\\/]+$/.test(filePath);
             const engine = await new DMNEngine({ log: keep, ...(policy ? { keepOutput: (bpmnServerPackage as any).isExpression } : {}) }).load(filePath, test.decision);

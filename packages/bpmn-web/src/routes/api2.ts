@@ -251,6 +251,8 @@ export class API2 extends Common {
                     errors = context.errors.toString();
             }
             catch (exc) {
+                // refused by the case's security policy: 403, with the rule
+                if (exc?.code === 'POLICY_DENIED') return response.status(403).json({ errors: exc.message, code: exc.code });
                 errors = exc.toString();
                 console.log(errors);
             }

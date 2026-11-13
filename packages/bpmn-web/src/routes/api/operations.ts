@@ -1,5 +1,6 @@
 import { BPMNAdminAPI, SecureUser } from '../../index.js';
 import { ViewHelper } from '../ViewHelper.js';
+import { CaseAccess } from '../caseAccess.js';
 import { invokeDecision } from '../decisions.js';
 import { assertModelAcceptable, checkModel } from '../../runtime/modelVerification.js';
 
@@ -65,7 +66,9 @@ export class Operations {
     start(user: SecureUser, name: string, { data, options = {} }: EngineInput = {}) {
         return this.api.engine.start(name, data, user, options);
     }
-    assign(user: SecureUser, query, data, assignment, options = {}) {
+    /** The case's security policy may refuse giving the task to someone else (CaseAccess.requireAssignment). */
+    async assign(user: SecureUser, query, data, assignment, options = {}) {
+        await new CaseAccess(this.server).requireAssignment(user, query, assignment);
         return this.api.engine.assign(query, data, assignment, user, options);
     }
     invoke(user: SecureUser, query, { data, options }: EngineInput = {}) {

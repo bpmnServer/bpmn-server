@@ -328,3 +328,69 @@ test('the debugger: the variables changed, then the run restarted at an earlier 
     assert.equal((await designer.request('POST', '/model/test/data', { json: { instanceId: 'real-1', data: {} } })).status, 400, 'test instances only');
     assert.equal((await designer.request('POST', '/model/test/restart', { json: { instanceId: 'real-1', itemId: 'x' } })).status, 400);
 });
+
+test('the checks of a run step by step: at the start, after a step (by id or name), at the end, the older expect; test instances only', async () => {
+    const check = body => designer.request('POST', '/model/test/check', { json: body });
+    let { instance } = JSON.parse((await designer.request('POST', '/model/test/start', { json: { processName: 'leave-request', data: { requester: 'sam' } } })).text);
+    const checks = [
+        { at: 'start', kind: 'status', status: 'running' },
+        { at: 'after', step: 'Submit', kind: 'data', path: 'days', op: '=', value: 9 },
+        { at: 'after', step: 'Submit request', kind: 'node', node: 'Approve', status: 'wait', count: 1 },
+        { kind: 'status', status: 'running' },
+    ];
+    let res = await check({ instanceId: instance.id, checks, at: 'start' });
+    assert.equal(res.status, 200, why(res));
+    assert.deepEqual(JSON.parse(res.text).checks.map(c => [c.what, c.ok]), [['at the start: status is running', true]]);
+
+    const submit = instance.items.find(i => i.elementId === 'Submit' && i.status === 'wait');
+    ({ instance } = JSON.parse((await designer.request('POST', '/model/test/invoke', { json: { instanceId: instance.id, itemId: submit.id, data: { days: 9 } } })).text));
+    res = await check({ instanceId: instance.id, checks, after: { element: 'Submit', name: 'Submit request' } });
+    const after = JSON.parse(res.text);
+    assert.deepEqual(after.checks.map(c => [c.what, c.ok]), [['after Submit: data.days is 9', true], ['after Submit request: passes Approve, wait, 1 time', true]],
+        'the step\'s checks, by its id and by its name');
+    assert.equal(after.instance.id, instance.id, 'with the instance as it is now');
+
+    res = await check({ instanceId: instance.id, checks, expect: { data: { requester: 'sam' } } });
+    assert.deepEqual(JSON.parse(res.text).checks.map(c => [c.what, c.ok]), [['data.requester is "sam"', true], ['status is running', true]], 'at the end: the older expect, then the checks');
+
+    assert.equal((await check({ instanceId: 'real-1', checks })).status, 404, 'test instances only');
+    assert.equal((await check({ instanceId: 'test-no-such', checks })).status, 404);
+});
+
+test('a test instance, as the Test tab shows a kept run: its items, log and Rationale; none: 404', async () => {
+    const { instance: started } = JSON.parse((await designer.request('POST', '/model/test/start', { json: { processName: 'leave-request', data: {} } })).text);
+    const res = await designer.get(`/model/test/instance/${started.id}`);
+    assert.equal(res.status, 200, why(res));
+    const { instance } = JSON.parse(res.text);
+    assert.equal(instance.id, started.id);
+    assert.ok(instance.items.some(i => i.elementId === 'Submit' && i.status === 'wait'));
+    assert.ok(Array.isArray(instance.logs) && instance.logs.length);
+    assert.ok(Array.isArray(instance.steps), 'the Rationale by its steps');
+    assert.equal((await designer.get('/model/test/instance/real-1')).status, 404);
+    assert.equal((await designer.get('/model/test/instance/test-no-such')).status, 404);
+});
+
+test('a check after a step the scenario no longer has: the save does not fail, and it is checked at the end; one by the step\'s name is kept by its id', async () => {
+    const scenario = {
+        name: 'Short leave, its later step removed',
+        steps: [{ element: 'Submit', data: { days: 2 } }],
+        checks: [
+            { at: 'after', step: 'Approve', kind: 'node', node: 'Approve', count: 0 },
+            { at: 'after', step: 'Submit request', kind: 'data', path: 'days', op: '=', value: 2 },
+        ],
+    };
+    const res = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [scenario] } });
+    assert.equal(res.status, 200, why(res));
+    const [saved] = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
+    // read back in the file's order: after its step, then at the end
+    assert.deepEqual(saved.checks, [
+        { at: 'after', step: 'Submit', kind: 'data', path: 'days', op: '=', value: 2 },
+        { kind: 'node', node: 'Approve', count: 0 },
+    ]);
+    await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [] } });
+});
+
+test('the scenarios of a model whose name is not one: 400', async () => {
+    assert.equal((await designer.get('/model/scenarios/a..b')).status, 400);
+    assert.equal((await designer.request('PUT', '/model/scenarios/a..b', { json: { scenarios: [] } })).status, 400);
+});

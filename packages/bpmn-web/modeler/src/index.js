@@ -3,6 +3,7 @@
 // buttons, the dock under the canvas (#js-dock: the Problems, Report, Test and History tabs) and the model as JSON in #model-source. window.saveDiagramFunct(option) saves, as it did in the
 // classic modeler (hosts and tests call it).
 import 'bpmn-js/dist/assets/diagram-js.css';
+import { withoutRunMarks } from './simulation/simulation.js';
 import 'bpmn-js/dist/assets/bpmn-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
@@ -334,7 +335,8 @@ async function saveDiagram(option) {
     try {
         showStatus('Saving…');
         const { xml } = await modeler.saveXML({ format: true });
-        const { svg } = await modeler.saveSVG();
+        // the picture of the model, not of the run the Test tab shows on it
+        const svg = withoutRunMarks((await modeler.saveSVG()).svg);
         const response = await fetch(window.location.pathname, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

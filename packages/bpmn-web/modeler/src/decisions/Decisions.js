@@ -63,6 +63,8 @@ export default class Decisions {
         this._url = config?.url;
         /** [{ name, file, decisions, error }] */
         this.files = [];
+        /** the policies of the models folder, by kind (assignment, security): [{ name, file, decisions, error }]; securityOn */
+        this.policies = { assignment: [], security: [], securityOn: false };
         this.loaded = false;
         this.load();
         window.addEventListener('focus', () => this.load());
@@ -73,19 +75,28 @@ export default class Decisions {
             return;
         try {
             const response = await fetch(this._url);
-            const { decisions } = response.ok ? await response.json() : { decisions: [] };
-            this.files = (decisions || []).map(({ name, file, xml }) => {
+            const { decisions, policies } = response.ok ? await response.json() : { decisions: [] };
+            const parsed = ({ name, file, xml }) => {
                 try {
                     return { name, file, decisions: parseDecisions(xml) };
                 } catch (err) {
                     return { name, file, decisions: [], error: err.message };
                 }
-            });
+            };
+            this.files = (decisions || []).map(parsed);
+            this.policies = { assignment: (policies?.assignment || []).map(parsed), security: (policies?.security || []).map(parsed), securityOn: !!policies?.securityOn };
         } catch {
             this.files = [];
+            this.policies = { assignment: [], security: [], securityOn: false };
         }
         this.loaded = true;
         this._eventBus.fire('decisions.changed', { files: this.files });
+    }
+
+    /** A policy of a kind (assignment, security) by its name: { file, decision }, or null. */
+    findPolicy(kind, name) {
+        const file = name ? (this.policies[kind] || []).find(f => f.name === name) : null;
+        return file ? { file, decision: topDecision(file.decisions) } : null;
     }
 
     /** What a business rule task's camunda:decisionRef names: { file, decision }, or null. */

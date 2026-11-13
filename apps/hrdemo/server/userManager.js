@@ -95,6 +95,11 @@ export class HrUserManager {
     return user ? { userName: user.userName, userGroups: user.userGroups, email: user.email } : null;
   }
 
+  /** The HR application's people and their groups: an instance's "who may" names them (bpmn-web's IUserManager.listUsers). */
+  listUsers() {
+    return this.hr.list().map(u => ({ userName: u.userName, userGroups: u.userGroups }));
+  }
+
   /** Signing in and out, the HR users' API, and the workflow pages' sign-in pages sent to the HR application's. */
   setup(app) {
     const json = express.json();

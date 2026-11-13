@@ -167,6 +167,10 @@ test('a claim keeps what offered the task; a reassignment by someone else is the
     await srv.engine.assign({ 'items.id': task.id }, {}, { dueDate: '2030-01-01' }, 'mgr');
     ({ entries } = await saved());
     assert.equal(entries.length, 2, 'a due date is not a reassignment');
+    await srv.engine.assign({ 'items.id': task.id }, {}, { assignee: 'ed', candidateGroups: ['Board'], candidateUsers: [] }, 'boss');
+    ({ item, entries } = await saved());
+    assert.equal(entries.length, 2, 'the same people again (a form sends every field): not a reassignment');
+    assert.deepEqual(item.assignment, { userName: 'mgr' }, 'and what decided it stays');
     await srv.shutdown();
 });
 

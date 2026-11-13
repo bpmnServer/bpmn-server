@@ -29,7 +29,11 @@ const RELOADER = `<script>(() => {
 function reloads(app) {
   const server = Date.now().toString(36);
   const build = () => { try { return String(fs.statSync(path.join(dist, 'index.html')).mtimeMs); } catch { return ''; } };
-  app.get('/hr/__reload', (req, res) => res.set('Cache-Control', 'no-store').json({ server, build: build() }));
+  // asked every 1.5s by each page shown: not in the request log (res.locals.quiet)
+  app.get('/hr/__reload', (req, res) => {
+    res.locals.quiet = true;
+    res.set('Cache-Control', 'no-store').json({ server, build: build() });
+  });
 }
 
 /** Adds the pages to an Express application. */

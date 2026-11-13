@@ -65,7 +65,11 @@ test('the report lists the process in flow order, with how bpmn-server reads eac
     assert.match(await buy.locator('.report-documentation').innerText(), /A User Task/);
     const settings = await buy.locator('.report-settings').first().innerText();
     assert.match(settings, /^candidateGroups: Employee,Manager$/m);
-    assert.match(settings, /^formField: needsRepairs \(boolean\) Repairs Required\?$/m);
+    assert.doesNotMatch(settings, /formField/, 'the form is a table of its own, not lines among the settings');
+    // its form: a field a row, with its type, label, default and options
+    const form = await buy.locator('table.report-form').evaluate(t => [...t.rows].map(r => [...r.cells].map(c => c.innerText.trim())));
+    assert.deepEqual(form[0].slice(0, 3), ['Field', 'Type', 'Label']);
+    assert.ok(form.some(r => r[0] === 'needsRepairs' && r[1] === 'boolean' && r[2] === 'Repairs Required?'), JSON.stringify(form));
     assert.match(settings, /^on start \(JavaScript\):\s*\nvar date=new Date\(\);/m);
     assert.match(await buy.locator('.report-flow').innerText(), /sequenceFlow: flow_buy_gw\s+targetRef: gateway_1/);
 
@@ -204,7 +208,7 @@ test('the report text holds the whole model: every value of every sample model, 
             const doc = new DOMParser().parseFromString(xml, 'application/xml');
             const LAYOUT = ['http://www.omg.org/spec/BPMN/20100524/DI', 'http://www.omg.org/spec/DD/20100524/DC', 'http://www.omg.org/spec/DD/20100524/DI'];
             const SKIP = new Set(['exporter', 'exporterVersion', 'targetNamespace', 'expressionLanguage', 'typeLanguage', 'xsi:type']);
-            const NO_ID = /^(definitions|collaboration|laneSet|association|dataInputAssociation|dataOutputAssociation|dataObjectReference|dataStoreReference|dataObject|group|category|categoryValue|\w+EventDefinition)$/;
+            const NO_ID = /^(definitions|collaboration|laneSet|association|dataInputAssociation|dataOutputAssociation|dataObjectReference|dataStoreReference|dataObject|group|category|categoryValue|properties|property|\w+EventDefinition)$/;
             const found = [];
             const walk = node => {
                 // a task's bpmn:property is a data association's placeholder (bpmn.io's), not a setting
@@ -254,4 +258,64 @@ test('an instance\'s page shows the same report as the editor (of the instance\'
     assert.equal(await page.innerText('#model-report'), editor);
     assert.ok(editor.includes('Buy'), 'a report of the model');
     await close();
+});
+
+const POLICY_XML = (name, hit, inputs, outputs, rules) => `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="${name}_d" name="${name}" namespace="t">
+  <decision id="${name}" name="${name}"><decisionTable id="${name}_t" hitPolicy="${hit}">
+${inputs.map((i, n) => `    <input id="${name}_i${n}" label="${i}"><inputExpression id="${name}_e${n}" typeRef="string"><text>${i}</text></inputExpression></input>`).join('\n')}
+${outputs.map((o, n) => `    <output id="${name}_o${n}" name="${o}" typeRef="string" />`).join('\n')}
+${rules.map((r, n) => `    <rule id="${name}_r${n}"><description>${r.why}</description>${r.in.map((c, k) => `<inputEntry id="${name}_r${n}i${k}"><text>${c}</text></inputEntry>`).join('')}${r.out.map((c, k) => `<outputEntry id="${name}_r${n}o${k}"><text>${c}</text></outputEntry>`).join('')}</rule>`).join('\n')}
+  </decisionTable></decision>
+</definitions>`;
+
+test('the report says bpmn-server\'s own settings: labels, a task\'s assignment policy and the process\'s security policy, each policy\'s table', async () => {
+    const folder = web.definitionsPath;
+    fs.mkdirSync(path.join(folder, 'policies', 'assignment'), { recursive: true });
+    fs.mkdirSync(path.join(folder, 'policies', 'security'), { recursive: true });
+    fs.writeFileSync(path.join(folder, 'policies', 'assignment', 'ReportApproval.dmn.xml'), POLICY_XML('ReportApproval', 'FIRST', ['amount'], ['candidateGroups'],
+        [{ why: 'a large one: the directors', in: ['&gt; 1000'], out: ['"Director"'] }, { why: 'any other', in: ['-'], out: ['"Manager"'] }]));
+    fs.writeFileSync(path.join(folder, 'policies', 'security', 'ReportCases.dmn.xml'), POLICY_XML('ReportCases', 'COLLECT', ['relation'], ['see'],
+        [{ why: 'whoever asked sees it', in: ['"initiator"'], out: ['"full"'] }]));
+    try {
+        const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:owf="http://omniworkflow.com/schema/owf/1.0" id="d" targetNamespace="t">
+  <bpmn:process id="ReportPolicies" isExecutable="true" camunda:label="Request \${Amount = data.amount}" owf:securityPolicy="ReportCases">
+    <bpmn:startEvent id="Start" />
+    <bpmn:userTask id="Approve" name="Approve" camunda:assignmentPolicy="ReportApproval" camunda:endLabel="Approved by \${completedBy}" />
+    <bpmn:endEvent id="End" />
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Approve" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Approve" targetRef="End" />
+  </bpmn:process>
+</bpmn:definitions>`;
+        const { page, errors, close } = await openReport('report-policies', xml);
+        await page.waitForSelector('.report-decision-table');
+        const process = page.locator('.report-process');
+        const processSettings = await process.locator('> .report-settings').innerText();
+        assert.match(processSettings, /^label: Request \$\{Amount = data\.amount\}$/m);
+        assert.match(processSettings, /^securityPolicy: ReportCases$/m);
+        assert.match(await process.locator('> .report-decision .report-decision-title').innerText(), /^Security policy ReportCases · policies\/security\/ReportCases\.dmn\.xml$/);
+        assert.match(await process.locator('> .report-decision table').innerText(), /COLLECT[^]*relation[^]*see[^]*"initiator"[^]*"full"[^]*whoever asked sees it/);
+
+        const approve = section(page, 'Approve');
+        const settings = await approve.locator('.report-settings').first().innerText();
+        assert.match(settings, /^assignmentPolicy: ReportApproval$/m);
+        assert.match(settings, /^endLabel: Approved by \$\{completedBy\}$/m);
+        assert.match(await approve.locator('.report-decision-title').innerText(), /^Assignment policy ReportApproval · policies\/assignment\/ReportApproval\.dmn\.xml$/);
+        assert.match(await approve.locator('.report-decision table').innerText(), /FIRST[^]*amount[^]*candidateGroups[^]*> 1000[^]*"Director"[^]*a large one: the directors[^]*"Manager"/);
+        assert.deepEqual(errors, []);
+        await close();
+
+        // a process naming none, with security policies on: the built-in default, said
+        const plain = await openReport('report-no-policy', xml.replace(' owf:securityPolicy="ReportCases"', '').replace(' camunda:assignmentPolicy="ReportApproval"', ''));
+        await plain.page.waitForSelector('.report-process > .report-decision');
+        assert.match(await plain.page.locator('.report-process > .report-decision').innerText(), /none named[^]*built-in default/);
+        assert.equal(await section(plain.page, 'Approve').locator('.report-decision').count(), 0, 'no assignment policy: no table');
+        await plain.close();
+    }
+    finally {
+        fs.rmSync(path.join(folder, 'policies', 'security'), { recursive: true, force: true });
+        fs.rmSync(path.join(folder, 'policies', 'assignment', 'ReportApproval.dmn.xml'), { force: true });
+        for (const model of ['report-policies', 'report-no-policy']) fs.rmSync(path.join(folder, `${model}.bpmn`), { force: true });
+    }
 });

@@ -13,6 +13,7 @@ import * as path from 'path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { expressionScript } from './Expressions.js';
 import { label } from '../elements/Flow.js';
+import { decisionContext } from './DecisionContext.js';
 
 export const POLICY_FIELDS = ['assignee', 'candidateUsers', 'candidateGroups'] as const;
 /** The models folder's policies, one folder per kind: assignment here, security in policies/security (to come). */
@@ -80,9 +81,9 @@ const asList = (value): string[] => (Array.isArray(value) ? value : String(value
  * A policy evaluated with this data: the first matching rule's number and its outputs (a `$(...)` cell as its text,
  * for the caller to evaluate), or no rule. Throws when the file can't be read or a cell isn't FEEL.
  */
-export async function evaluatePolicy(file: string, data: Record<string, any>, log?: (message: string) => void): Promise<{ rule?: number; outputs: Record<string, any> | null }> {
-    const dmn = await new DMNEngine({ log, keepOutput: isExpression }).load(file);
-    const result = dmn.evaluate({ ...(data || {}) });
+export async function evaluatePolicy(file: string, context: Record<string, any>, log?: (message: string) => void): Promise<{ rule?: number; outputs: Record<string, any> | null }> {
+    const dmn = await new DMNEngine({ log, keepOutput: isExpression, listInputs: true }).load(file);
+    const result = dmn.evaluate({ ...(context || {}) });
     const outputs = (Array.isArray(result) ? result[0] : result) ?? null;
     return { rule: outputs ? dmn.matched[0] : undefined, outputs };
 }
@@ -100,7 +101,15 @@ export async function applyPolicy(node, item, policy: string): Promise<void> {
         const file = policyFile(token.execution.server.configuration.definitionsPath, policy);
         if (!file)
             return unassigned([`there is no ${POLICIES_FOLDER}/${policy}.dmn.xml`]);
-        const { rule, outputs } = await evaluatePolicy(file, token.data, message => token.log(message));
+        // the one context every decision reads (engine/DecisionContext.ts): the data, the task's prepared inputs
+        // (camunda:inputOutput), who acts and their relation to the case, the application's facts
+        const execution = token.execution;
+        const context = await decisionContext({
+            kind: 'assignment', name: policy, data: token.data, input: item.input, task: node.id,
+            user: { userName: execution.userName ?? null }, instance: execution.instance, appDelegate: execution.appDelegate,
+            log: message => token.log(message),
+        });
+        const { rule, outputs } = await evaluatePolicy(file, context, message => token.log(message));
         if (!outputs)
             return unassigned(['no rule matched']);
 
@@ -144,6 +153,8 @@ function whom(fields: { assignee?: any; candidateUsers?: any; candidateGroups?: 
  */
 export function reassigned(execution, item, before: Record<string, any>, changed: Record<string, any>, userName: string): void {
     const now = Object.fromEntries(POLICY_FIELDS.map(f => [f, item[f]]));
+    // the same people as before (a form sends every field): nothing to say, and what decided it stays
+    if (whom(now) === whom(before)) return;
     const earlier = item.assignment?.policy ? `policy ${item.assignment.policy}, rule ${item.assignment.rule}` : item.assignment?.userName;
     const was = `it was ${whom(before)}${earlier ? ` (${earlier})` : ''}`;
     const element = `user task ${label(item.node)}`;

@@ -184,3 +184,9 @@ pre.report-value {
     background: #f3f7fd;
 }
 
+
+/* an element's form: a field a row */
+.report-form { margin: 4px 0 8px; }
+.report-form caption { text-align: left; font-size: 12px; color: #52575f; padding-bottom: 2px; }
+.report-form td { vertical-align: top; }
+.report-form td div + div { margin-top: 2px; }

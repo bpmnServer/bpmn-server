@@ -268,8 +268,28 @@ export async function loadScenarios(model: string): Promise<Scenario[]> {
     return loadTestSet(model);
 }
 
-export async function saveScenarios(model: string, scenarios: Scenario[], userName?: string): Promise<void> {
-    await saveTestSet(model, scenarios, userName);
+/** `ids`: the model's element ids by name, for a check after a step that names it (see stepsOfChecks). */
+export async function saveScenarios(model: string, scenarios: Scenario[], userName?: string, ids = new Map<string, string>()): Promise<void> {
+    await saveTestSet(model, scenarios.map(scenario => stepsOfChecks(scenario, ids)), userName);
+}
+
+/**
+ * Each check after a step names one of the scenario's steps, as a .feature writes it: a step named by its element's
+ * name is written by its id. A check after a step the scenario no longer has (the step removed, or recorded along
+ * another path) is saved as a check at the end: the file has nowhere else to put it, and the save never fails on it.
+ * (Converting an older JSON file still refuses one: it would not read back the same.)
+ */
+function stepsOfChecks(scenario: Scenario, ids: Map<string, string>): Scenario {
+    if ((scenario as any)?.source !== undefined || !Array.isArray(scenario?.checks)) return scenario;
+    const steps = new Set((scenario.steps ?? []).map(s => s?.element));
+    const placed = (check: Check): Check => {
+        if (check?.at !== 'after' || steps.has(check.step)) return check;
+        const id = ids.get(String(check.step));
+        if (id && steps.has(id)) return { ...check, step: id };
+        const { at, step, ...atEnd } = check;
+        return atEnd;
+    };
+    return { ...scenario, checks: scenario.checks.map(placed) };
 }
 
 /** Every test set of the models folder: its key, how many tests, when last saved. */
@@ -494,10 +514,6 @@ export function checksAt(checks: Check[], at: 'start' | 'end' | { element: strin
         .map(c => evaluateCheck(c, instance));
 }
 
-/** The older call: what `expect` and `checks` ask at the end. */
-export function checkExpectations(expect: Scenario['expect'], instance, checks: Check[] = []) {
-    return checksAt([...expectChecks(expect), ...checks], 'end', instance);
-}
 
 /** Change a test instance's data (the Test tab's debugger): under its lock, saved as a new version. */
 export async function setTestData(server, instanceId: string, data) {

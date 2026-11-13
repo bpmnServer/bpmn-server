@@ -33,7 +33,7 @@ async function openInstance() {
     await page.fill('#password', PASSWORD);
     await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
     await page.goto(`${web.base}/instanceDetails?id=${instanceId}`);
-    await page.click('#showHide');           // the logs, open
+    await page.click('#logs-heading');       // the logs, open: by their heading
     return { page, errors, close: () => context.close() };
 }
 
@@ -41,16 +41,30 @@ const visible = (page, selector) => page.locator(selector).evaluateAll(trs => tr
 
 test('a type shows its elements in the items and the Rationale, and the log lines that name them', async () => {
     const { page, errors, close } = await openInstance();
-    // at first: the user tasks; the Rationale closed
-    assert.equal(await page.inputValue('#filter-type'), 'bpmn:UserTask');
-    assert.equal(await page.locator('#rationale').isHidden(), true);
-    await page.click('#showRationale');
+    // at first: every item, under a header of its own; the Rationale open, above them, each step one line
+    assert.equal(await page.inputValue('#filter-type'), '');
+    assert.equal(await page.locator('#filter-count').innerText(), '');
+    const everything = await visible(page, '#dataTable tbody tr[data-element]');
+    assert.ok(everything.length >= 7, everything.join());
+    const columns = await page.locator('#dataTable thead th').count();
+    assert.equal(await page.locator('#dataTable tbody tr[data-element]').first().locator('td').count(), columns, 'a header for each column');
     assert.equal(await page.locator('#rationale').isVisible(), true);
+    const order = await page.locator('main section h2').allInnerTexts();
+    assert.ok(order.indexOf('Rationale') >= 0 && order.indexOf('Rationale') < order.indexOf('Instance items'), order.join(' | '));
+    assert.equal(await page.locator('.rationale-table tbody.rationale-group tr:not(.rationale-step)').first().isVisible(), false, 'its steps closed');
+    // its heading closes and opens it, as its button does
+    await page.click('#rationale-heading');
+    assert.equal(await page.locator('#rationale').isHidden(), true);
+    await page.click('#rationale-heading');
+    assert.equal(await page.locator('#rationale').isVisible(), true);
+    await page.selectOption('#filter-type', 'bpmn:UserTask');
     // each step closed, its line alone; a click on it opens it
     // (a row the filter shows: Submit's)
     const first = page.locator('.rationale-table tbody.rationale-group').first();
     const submit = first.locator('tr[data-element="Submit"]').first();
-    assert.equal(await submit.isVisible(), false, 'the default filter opens no step');
+    // the filter was chosen before the Rationale was shown: its steps with a row of it are open
+    if (await submit.isVisible()) await first.locator('.rationale-step').click();
+    assert.equal(await submit.isVisible(), false, 'closed');
     await first.locator('.rationale-step').click();
     assert.equal(await submit.isVisible(), true, 'opened by its line');
     await first.locator('.rationale-step').click();
@@ -78,7 +92,6 @@ test('a type shows its elements in the items and the Rationale, and the log line
 test('a flow: the gateway\'s choice of it is not its row, its condition is', async () => {
     const { page, close } = await openInstance();
     await page.click('#filter-clear');
-    await page.click('#showRationale');
     await page.selectOption('#filter-element', 'ToApprove');
     // the steps with a row of it open, the others hidden; in a step, its rows alone
     const rows = await page.locator('.rationale-table tbody:not([hidden]) tr:not(.rationale-step)').evaluateAll(trs => trs.filter(tr => !tr.hidden).map(tr => tr.innerText.replace(/\s+/g, ' ').trim()));
@@ -100,7 +113,7 @@ test('a flow: the gateway\'s choice of it is not its row, its condition is', asy
     await close();
 });
 
-test('the diagram numbers its elements by their items\' seq, as the items table; the replay runs', async () => {
+test('the diagram numbers its elements by their items\' seq, as the items table; Simulate shows the run as the editor does', async () => {
     const { page, errors, close } = await openInstance();
     // the shapes' items (a flow has no badge)
     const seqs = await page.locator('#dataTable tbody tr[data-element]').evaluateAll(trs => trs
@@ -110,8 +123,62 @@ test('the diagram numbers its elements by their items\' seq, as the items table;
     assert.deepEqual([...badges].sort((a, b) => a - b), [...seqs].sort((a, b) => a - b), 'a badge per item, by its seq');
     const submit = await page.locator('#seq_3').evaluate(e => e.textContent.trim());
     assert.equal(submit, '3', "Submit's badge is its seq (from 1)");
-    await page.click('#startAnimation');
-    await page.waitForFunction(() => /Replay complete/.test(document.getElementById('animationStatus')?.textContent || ''), null, { timeout: 30000 });
+    // Simulate, as the editor's: paused on the first change; Step; details from the Rationale; Play the rest; Stop
+    await page.waitForSelector('#startSimulation:not([disabled])');
+    await page.click('#startSimulation');
+    const panel = page.locator('#simulation .test-sim-panel');
+    assert.equal(await panel.isVisible(), true);
+    assert.match(await panel.locator('.test-sim-text').innerText(), /^1 of \d+: .*started$/);
+    assert.equal(await page.locator('[id^="seq_"]').evaluateAll(bs => bs.filter(b => b.style.display !== 'none').length), 1, 'the first item\'s number alone');
+    assert.equal(await page.locator('.djs-element.test-started').count(), 1);
+    await panel.locator('.test-sim-step').click();
+    await panel.locator('.test-sim-step').click();
+    assert.match(await panel.locator('.test-sim-text').innerText(), /^3 of \d+: /);
+    await panel.locator('.test-sim-back').click();
+    assert.match(await panel.locator('.test-sim-text').innerText(), /^2 of \d+: /);
+    // Show details: what the Rationale says of the change shown
+    assert.equal(await panel.locator('.test-sim-details').isVisible(), false);
+    await panel.locator('.test-sim-details-on').check();
+    assert.equal(await panel.locator('.test-sim-details').isVisible(), true);
+    assert.ok((await panel.locator('.test-sim-details li').count()) > 0);
+    await panel.locator('.test-sim-play').click();
+    await page.waitForFunction(() => /^Done \(/.test(document.querySelector('#simulation .test-sim-text')?.textContent || ''), null, { timeout: 30000 });
+    assert.ok(await page.locator('.djs-element.test-passed').count() > 0, 'done: green');
+    assert.equal(await page.locator('.djs-element.test-waiting').count(), 1, 'Approve still waits: orange');
+    await panel.locator('.test-sim-stop').click();
+    assert.equal(await panel.isVisible(), false);
+    assert.equal(await page.locator('.djs-element.test-passed, .djs-element.test-waiting, .djs-element.test-started').count(), 0, 'the diagram as it was');
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('the Model report and the logs open by their headings', async () => {
+    const { page, errors, close } = await openInstance();
+    assert.equal(await page.locator('#logs').isVisible(), true, 'opened by its heading');
+    assert.equal(await page.locator('#docs').isHidden(), true);
+    await page.click('#docs-heading');
+    assert.equal(await page.locator('#docs').isVisible(), true);
+    assert.equal(await page.locator('#showDoc').getAttribute('aria-expanded'), 'true');
+    await page.click('#docs-heading');
+    assert.equal(await page.locator('#docs').isHidden(), true);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('a click on an element of the diagram: its popup says what the Model report says of it, and what this run did', async () => {
+    const { page, errors, close } = await openInstance();
+    await page.waitForSelector('#model-report .report-element[data-element-id="Submit"]', { state: 'attached' });
+    await page.locator('.instance-diagram .djs-element[data-element-id="Submit"]').click();
+    const popup = page.locator('.report-popup-dialog .report-popup');
+    await popup.waitFor();
+    const reportSettings = await page.locator('#model-report .report-element[data-element-id="Submit"] .report-settings').first().evaluate(e => e.textContent);
+    assert.equal(await popup.locator('.report-settings').first().evaluate(e => e.textContent), reportSettings, 'the report\'s settings');
+    assert.match(await popup.locator('h3').first().innerText(), /Submit/);
+    assert.match(await popup.locator('.report-popup-run').innerText(), /In this run: #3 ended/);
+    // another element: the same popup, now of it
+    await page.locator('.instance-diagram .djs-element[data-element-id="Approve"]').click();
+    await page.waitForFunction(() => /#\d+ waits/.test(document.querySelector('.report-popup-run')?.textContent || ''));
+    assert.equal(await page.locator('.report-popup-dialog').count(), 1);
     assert.deepEqual(errors, []);
     await close();
 });

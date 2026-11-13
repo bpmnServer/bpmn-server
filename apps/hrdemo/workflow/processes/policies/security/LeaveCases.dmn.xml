@@ -21,9 +21,10 @@
       <output id="LeaveCases_data" label="Data" name="data" typeRef="string" />
       <output id="LeaveCases_claim" label="Claim" name="claim" typeRef="string" />
       <output id="LeaveCases_complete" label="Complete" name="complete" typeRef="string" />
+      <output id="LeaveCases_assign" label="Assign" name="assign" typeRef="string" />
       <output id="LeaveCases_restart" label="Restart" name="restart" typeRef="string" />
       <rule id="LeaveCases_hr">
-        <description>HR sees every leave case and all its data, and may restart a step</description>
+        <description>HR sees every leave case and all its data, may give its tasks to someone else, and may restart a step</description>
         <inputEntry id="LeaveCases_hr_relation"><text>-</text></inputEntry>
         <inputEntry id="LeaveCases_hr_groups"><text>"HR"</text></inputEntry>
         <inputEntry id="LeaveCases_hr_task"><text>-</text></inputEntry>
@@ -31,6 +32,7 @@
         <outputEntry id="LeaveCases_hr_data"><text>"all"</text></outputEntry>
         <outputEntry id="LeaveCases_hr_claim"><text></text></outputEntry>
         <outputEntry id="LeaveCases_hr_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_hr_assign"><text>"allow"</text></outputEntry>
         <outputEntry id="LeaveCases_hr_restart"><text>"allow"</text></outputEntry>
       </rule>
       <rule id="LeaveCases_requester">
@@ -42,6 +44,7 @@
         <outputEntry id="LeaveCases_requester_data"><text>"forms"</text></outputEntry>
         <outputEntry id="LeaveCases_requester_claim"><text></text></outputEntry>
         <outputEntry id="LeaveCases_requester_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_requester_assign"><text></text></outputEntry>
         <outputEntry id="LeaveCases_requester_restart"><text></text></outputEntry>
       </rule>
       <rule id="LeaveCases_manager">
@@ -53,6 +56,7 @@
         <outputEntry id="LeaveCases_manager_data"><text>["LeaveType","StartDate","EndDate","RequestReason","requester","days"]</text></outputEntry>
         <outputEntry id="LeaveCases_manager_claim"><text></text></outputEntry>
         <outputEntry id="LeaveCases_manager_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_manager_assign"><text></text></outputEntry>
         <outputEntry id="LeaveCases_manager_restart"><text></text></outputEntry>
       </rule>
       <rule id="LeaveCases_participant">
@@ -64,10 +68,11 @@
         <outputEntry id="LeaveCases_participant_data"><text></text></outputEntry>
         <outputEntry id="LeaveCases_participant_claim"><text></text></outputEntry>
         <outputEntry id="LeaveCases_participant_complete"><text></text></outputEntry>
+        <outputEntry id="LeaveCases_participant_assign"><text></text></outputEntry>
         <outputEntry id="LeaveCases_participant_restart"><text></text></outputEntry>
       </rule>
       <rule id="LeaveCases_own">
-        <description>Separation of duties: whoever asked may not approve their own leave, even as a manager</description>
+        <description>Separation of duties: whoever asked may not approve their own leave, even as a manager, nor give its approval to someone else</description>
         <inputEntry id="LeaveCases_own_relation"><text>"initiator"</text></inputEntry>
         <inputEntry id="LeaveCases_own_groups"><text>-</text></inputEntry>
         <inputEntry id="LeaveCases_own_task"><text>"Approve"</text></inputEntry>
@@ -75,6 +80,7 @@
         <outputEntry id="LeaveCases_own_data"><text></text></outputEntry>
         <outputEntry id="LeaveCases_own_claim"><text>"deny"</text></outputEntry>
         <outputEntry id="LeaveCases_own_complete"><text>"deny"</text></outputEntry>
+        <outputEntry id="LeaveCases_own_assign"><text>"deny"</text></outputEntry>
         <outputEntry id="LeaveCases_own_restart"><text></text></outputEntry>
       </rule>
     </decisionTable>

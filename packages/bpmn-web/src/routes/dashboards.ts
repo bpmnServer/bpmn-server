@@ -10,7 +10,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
@@ -208,11 +208,23 @@ export class Dashboards extends Common {
                 return { name, tests: decisionTests.get(name) ?? 0 };
             });
             const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, undefined);
+            // the policies of the models folder, assignment and security, each with the models that name it
+            const sources = new Map(models.map(m => {
+                try { return [m.name, FS.readFileSync(path.join(dir, m.name + '.bpmn'), 'utf8')]; } catch { return [m.name, '']; }
+            }));
+            const usedBy = (attribute: string, name: string) => models.filter(m =>
+                new RegExp(`\\s(?:[\\w.-]+:)?${attribute}\\s*=\\s*"${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).test(sources.get(m.name) ?? '')).map(m => m.name);
+            const security = new SecurityPolicy(dir);
+            const policies = {
+                assignment: policyNames(dir).map(name => ({ name, tests: decisionTests.get(`${name}.policy`) ?? 0, models: usedBy('assignmentPolicy', name) })),
+                security: security.names().map(name => ({ name, models: usedBy('securityPolicy', name), isDefault: name === DEFAULT_SECURITY_POLICY })),
+                securityOn: security.on,
+            };
             // the features some model uses, with how many: the Feature filter's choices, by the catalog's order
             const featureUse = MODEL_FEATURES.map(f => ({ id: f.id, name: f.name, models: models.filter(m => m.features?.some(u => u.id === f.id)).length }))
                 .filter(f => f.models > 0);
             render(req, res, 'design', {
-                title: 'Design', models, recent, decisions, featureUse, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
+                title: 'Design', models, recent, decisions, policies, featureUse, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
                 message: req.query.message,
                 templates: catalog.templates ?? [], rejectedTemplates: catalog.rejected ?? [],
                 problems: { errors: models.filter(m => m.errors).length, warnings: models.filter(m => !m.errors && m.warnings).length },

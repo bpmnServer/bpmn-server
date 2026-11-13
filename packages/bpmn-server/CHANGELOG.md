@@ -20,7 +20,15 @@ and here
   user task may too, for its actions: a DMN table in `policies/security/<name>.dmn.xml`, hit policy COLLECT, a denial
   winning. `new SecurityPolicy(definitionsPath)`: `decide(user, instance, task?)`, `relationsOf`, `combine`, `data`,
   `visibleData`, `model`, `on` (an application may subclass it and override a step: `context`, `builtInDefault`); `on` when the
-  application has `policies/security/`, or `SECURITY_POLICY=default`, and off otherwise. `DMNEngine`'s `listInputs`: an input whose value is a list matches a test when one of its values does.
+  application has `policies/security/`, or `SECURITY_POLICY=default`, and off otherwise. Its actions: `see`, `data`,
+  `claim`, `complete`, `assign` (giving a task to someone else), `restart`, `events`. `DMNEngine`'s `listInputs`: an input whose value is a list matches a test when one of its values does.
+- **One protocol for every decision table** (docs/design/decision-context.md, `engine/DecisionContext.ts`): a business
+  rule task's decision, an assignment policy and a security policy read the same context: the case data by name and
+  as `data`, the task's prepared inputs (its `camunda:inputOutput`, which may call `appServices`), and `user`,
+  `groups`, `relation`, `initiator`, `task`, `decision`, which the case data can't set; then the application's facts,
+  from the new optional `appDelegate.decisionContext(context, about)`. A list input matches when the list or one of
+  its values does, in every table. `SecurityPolicy.whoMay(instance, { users, roles, admins })`: the reverse of a
+  security policy, who may do what with a case.
 - **In place of PR #286's proposals:** labels are templates in the model, filled in when shown and never stored (no
   `display` settings, no label saved at each save); roles and assignment are `roles.json` and DMN policies in
   `policies/assignment/` (no `resolveAssignment` hook, no `camunda:properties`, no `assignment` settings): a policy's output
@@ -105,7 +113,8 @@ and here
   `to:[object Object]`, and what it was before (reported on PR #286). A claim or a reassignment now writes a Rationale
   entry (*is claimed by dora*; *is reassigned by mgr: assigned to ed*, why: what it was and what decided it). A
   reassignment by someone other than the one taking it replaces `item.assignment` with `{ userName }`, now one of
-  `{ policy, rule }` or `{ userName }`; a claim keeps the policy that offered it.
+  `{ policy, rule }` or `{ userName }`; a claim keeps the policy that offered it. An assign that leaves the same people
+  (a form sends every field) writes nothing and keeps what decided.
 - **Checking a model with a compensation association** (a compensation boundary event to its handler) no longer fails
   (`Cannot read properties of undefined (reading 'forEach')`); the editor's Problems list stayed empty for it.
 - `scheduling process <model> at ...` is logged once for a process timer: the timers read again (at start, by the

@@ -72,6 +72,9 @@ test('every matching rule counts, and a denial wins wherever it is in the table'
   assert.equal(anyFolder.combine(rows({ see: 'deny' }, { see: 'full' })).see, 'none', 'order does not matter');
   assert.equal(anyFolder.combine(rows({ complete: 'allow' }, { complete: 'deny' })).complete, false);
   assert.equal(anyFolder.combine(rows({})).complete, null, 'nothing said: as the assignment says');
+  assert.equal(anyFolder.combine(rows({})).assign, null, 'giving it to someone else: as today, when nothing is said');
+  assert.equal(anyFolder.combine(rows({ assign: 'allow' }, { assign: 'deny' })).assign, false);
+  assert.equal(anyFolder.combine(rows({ assign: 'allow' })).assign, true);
   assert.equal(anyFolder.combine(rows({ restart: '' })).restart, false, 'a protected action without an allowing rule: refused');
   assert.deepEqual(anyFolder.combine(rows({ data: 'forms' }, { data: ['salary'] })).data, { all: false, forms: true, paths: ['salary'] });
   assert.equal(anyFolder.combine(rows({ data: 'all' }, { data: 'deny' })).data.all, false);

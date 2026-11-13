@@ -139,7 +139,8 @@ export class WebApp {
         }));
 		// an AI link's key is a credential: not in the request log
 		morgan.token('url', (req: any) => String(req.originalUrl || req.url).replace(/\/ai\/bpt_[\w-]+/g, '/ai/bpt_***'));
-		app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+		// a route that is asked all the time (a page polling) sets res.locals.quiet: not in the request log
+		app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev', { skip: (req, res: any) => res.locals?.quiet === true }));
 		const bodyLimit = process.env.BODY_LIMIT || '50mb';
 		app.use(bodyParser.json({ limit: bodyLimit }));
 		app.use(bodyParser.urlencoded({ limit: bodyLimit, extended: true }));

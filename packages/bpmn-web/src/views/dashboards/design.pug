@@ -61,6 +61,9 @@ block dash
 					b= decisions.length
 					span decisions
 				.dash-stat
+					b= policies.assignment.length + policies.security.length
+					span policies
+				.dash-stat
 					b= templates.length
 					span task templates
 			//- a div: a form (Run all tests) can not be inside a p
@@ -113,6 +116,41 @@ block dash
 									+runButton('decision', d.name)
 			else
 				p.dash-empty No decision tables (.dmn) in the models folder.
+			//- the policies of the models folder (docs/docs/assignment-policies.md, docs/design/security-policies.md)
+			h2#policies(style='margin-top:18px') Policies
+				span.count= policies.assignment.length + policies.security.length
+			if policies.assignment.length || policies.security.length
+				table
+					each p in policies.assignment
+						tr(data-policy=`assignment/${p.name}`)
+							td: a(href=`/model/policy/${encodeURIComponent(p.name)}`)= p.name
+							td.dash-muted assignment
+							td
+								if p.tests
+									a(href=`/model/policy/${encodeURIComponent(p.name)}#tests`) #{p.tests} test#{p.tests === 1 ? '' : 's'}
+							td.dash-muted
+								if p.models.length
+									| used by #{p.models.join(', ')}
+								else
+									| not used
+					each p in policies.security
+						tr(data-policy=`security/${p.name}`)
+							td= p.name
+							td.dash-muted security
+							td
+							td.dash-muted
+								if p.isDefault
+									| the default: every process that names none
+									if p.models.length
+										| ; named by #{p.models.join(', ')}
+								else if p.models.length
+									| used by #{p.models.join(', ')}
+								else
+									| not used
+				if policies.security.length && !policies.securityOn
+					p.dash-muted Security policies are off (SECURITY_POLICY=off).
+			else
+				p.dash-empty No policies (policies/assignment, policies/security in the models folder).
 			h2(style='margin-top:18px') Task templates
 				span.count= templates.length
 			if templates.length

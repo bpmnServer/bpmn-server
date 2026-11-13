@@ -11,14 +11,14 @@ import path from 'node:path';
 import { layoutModel } from './layout.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
-import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS } from '../index.js';
+import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS, SecurityPolicy, SECURITY_FOLDER, decisionContext } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
 import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
-import { withReached } from '../testing/modelCoverage.js';
+import { withReached, idsByName } from '../testing/modelCoverage.js';
 
 
 const awaitHandlerFactory = (middleware) => {
@@ -457,11 +457,23 @@ export class Model extends Common {
 
         router.get('/decisions', awaitHandlerFactory(async (request, response) => {
             // the files and their XML: the editor reads their decisions, inputs and outputs
+            const folder = bpmnServer.configuration.definitionsPath;
             const decisions = decisionFiles().map(file => ({
                 name: file.replace(DMN_FILE, ''), file,
-                xml: FS.readFileSync(path.join(bpmnServer.configuration.definitionsPath, file), 'utf8')
+                xml: FS.readFileSync(path.join(folder, file), 'utf8')
             }));
-            response.json({ decisions });
+            // and the policies, assignment and security: the Report shows a task's and a process's tables
+            const policy = (subfolder: string) => (name: string) => {
+                const file = `${subfolder}/${name}.dmn.xml`;
+                try { return { name, file, xml: FS.readFileSync(path.join(folder, file), 'utf8') }; }
+                catch { return null; }
+            };
+            const security = new SecurityPolicy(folder);
+            response.json({ decisions, policies: {
+                assignment: policyNames(folder).map(policy(POLICIES_FOLDER)).filter(Boolean),
+                security: security.names().map(policy(SECURITY_FOLDER)).filter(Boolean),
+                securityOn: security.on,
+            } });
         }));
 
         router.get('/decision/:decision', awaitHandlerFactory(async (request, response) => {
@@ -534,7 +546,9 @@ export class Model extends Common {
                 return response.status(404).json({ error: `No ${POLICIES_FOLDER}/${name}.dmn.xml` });
             const data = request.body?.data;
             try {
-                const { rule, outputs } = await evaluatePolicy(policyPath(name), data && typeof data === 'object' ? data : {});
+                // what the task's policy reads: the one decision context (engine/DecisionContext.ts), of this data
+                const context = await decisionContext({ kind: 'assignment', name, data: data && typeof data === 'object' ? data : {}, appDelegate: bpmnServer.appDelegate });
+                const { rule, outputs } = await evaluatePolicy(policyPath(name), context);
                 const fields = outputs ? Object.fromEntries(POLICY_FIELDS.filter(f => outputs[f] != null && outputs[f] !== '')
                     .map(f => [f, outputs[f]])) : null;
                 response.json({ rule: rule ?? null, outputs: fields, expressions: fields ? Object.keys(fields).filter(f => isExpression(fields[f])) : [] });
@@ -702,9 +716,13 @@ export class Model extends Common {
         // ---- the editor's Test tab: scenarios per model, run on the saved model
 
         router.get('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.process))
+                return response.status(400).json({ error: 'Invalid model name' });
             response.json({ scenarios: await withRuns(bpmnServer, request.params.process, await loadScenarios(request.params.process)) });
         }));
         router.put('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.process))
+                return response.status(400).json({ error: 'Invalid model name' });
             const scenarios = request.body?.scenarios;
             const problems = checkScenarios(scenarios);
             if (problems.length) {
@@ -712,7 +730,7 @@ export class Model extends Common {
                 return;
             }
             await withReached(bpmnServer, request.params.process, scenarios);
-            await saveScenarios(request.params.process, scenarios, request.user?.userName);
+            await saveScenarios(request.params.process, scenarios, request.user?.userName, await idsByName(bpmnServer, request.params.process));
             await saveRuns(bpmnServer, request.params.process, scenarios);
             response.json({ saved: scenarios.length });
         }));
@@ -865,7 +883,6 @@ export class Model extends Common {
     }
 }
 
-/** A new decision file: one decision table, named for the file, with an input, an output and a rule to start from. */
 /** A new policy: a FIRST table on one input, its outputs the assignment's fields. */
 function newPolicy(name: string): string {
     const id = /^[A-Za-z_]/.test(name) ? name.replace(/[^\w.-]/g, '_') : 'policy_' + name.replace(/[^\w.-]/g, '_');
@@ -893,6 +910,7 @@ function newPolicy(name: string): string {
 </definitions>`;
 }
 
+/** A new decision file: one decision table, named for the file, with an input, an output and a rule to start from. */
 function newDecision(name: string): string {
     const id = /^[A-Za-z_]/.test(name) ? name.replace(/[^\w.-]/g, '_') : 'decision_' + name.replace(/[^\w.-]/g, '_');
     const label = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');

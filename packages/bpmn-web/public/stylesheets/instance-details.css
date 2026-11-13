@@ -87,3 +87,16 @@
   color: var(--muted, #667085);
   font-size: 0.85em;
 }
+
+/* a section's heading opens and closes it */
+.instance-collapsible > .instance-card-heading { cursor: pointer; }
+.instance-collapsible > .instance-card-heading:hover h2 { color: #1f62c8; }
+#startSimulation.active { background: #e8f0fc; border-color: #1f62c8; }
+#simulation { margin: 0 0 8px; }
+
+/* Assignment and access, under the Rationale */
+.access-title { margin: 14px 0 6px; font-size: 14px; font-weight: 600; }
+.access-facts { margin: 0 0 8px; padding-left: 18px; font-size: 13px; }
+.access-history { color: #3d4450; }
+.access-table td, .access-table th { white-space: nowrap; }
+.access-task + .access-task { border-top: 1px solid #e3e8f0; }

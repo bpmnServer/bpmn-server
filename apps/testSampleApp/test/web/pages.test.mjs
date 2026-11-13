@@ -81,7 +81,8 @@ test('the instance page shows the diagram with its elements and the replay data'
   const res = await admin.get(`/instanceDetails?id=${instanceId}`);
   assert.match(res.text, /data-element-id="Submit"/, 'diagram elements addressable for decorations');
   assert.match(res.text, /id="animationItems"/);
-  assert.match(res.text, /Show animation/);
+  assert.match(res.text, /id="startSimulation"[^>]*>[^]*?Simulate/, "Simulate, as the editor's");
+  assert.match(res.text, /src="\/modeler\/instance.js"/);
   assert.match(res.text, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/, 'dates are formatted');
 });
 
@@ -153,4 +154,32 @@ test('the instance page carries its model for the Report (drawn by /modeler/repo
   assert.ok(!json.includes('<'), 'no < in the script element: a model can not end it early');
   assert.match(JSON.parse(json), /id="ToApprove"/, 'the model, its flows included');
   assert.equal((await admin.get('/modeler/report.js')).status, 200);
+});
+
+test('the diagram is of the model, not of a run: marks a picture was saved with (the Test tab\'s) are not shown', async () => {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+  const first = await admin.get(`/instanceDetails?id=${instanceId}`);
+  const drawn = /<svg[^]*?<\/svg>/.exec(first.text)[0];
+  // saved while the Test tab showed a run on it: Submit waiting, with a mark of where the picture came from
+  const marked = drawn.replace('<svg', '<svg data-saved="yes"')
+    .replace(/(<g class="[^"]*)("[^>]*data-element-id="Submit")/, '$1 test-waiting$2');
+  assert.match(marked, /test-waiting[^>]*data-element-id="Submit"/);
+  const file = path.join(web.definitionsPath, `${MODEL}.svg`);
+  fs.writeFileSync(file, marked);
+  try {
+    const { instance } = await web.bpmnServer.engine.start(MODEL, {});
+    const page = await admin.get(`/instanceDetails?id=${instance.id}`);
+    assert.match(page.text, /data-saved="yes"/, 'the saved picture');
+    assert.doesNotMatch(page.text, /class="[^"]*\btest-waiting/, 'without the run\'s marks');
+  } finally {
+    fs.rmSync(file, { force: true });
+  }
+});
+
+test('the instance page: each user task\'s assignment under the Rationale, after the fact; without security policies, no "who may"', async () => {
+  const page = (await admin.get(`/instanceDetails?id=${instanceId}`)).text;
+  assert.match(page, /<h2 id="access-heading">Assignment and access<\/h2>/);
+  assert.match(page, /<div class="access-task" data-element="Submit"[^>]*>[^]*?Offered to: staff/);
+  assert.doesNotMatch(page, /id="access-case"/, 'security policies are off here: who may do what is today\'s rules');
 });

@@ -1,4 +1,5 @@
 import express from 'express';
+import { accessDirectory } from '../caseAccess.js';
 import { door } from './door.js';
 import { Tokens, TokenError } from './tokens.js';
 import { canDesign, isAdminGroups } from '../../userAccess/roles.js';
@@ -150,6 +151,12 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
     }));
     router.get('/instances/:id', handler((req, user) => instances.get(user, req.params.id)));
     router.get('/instances/:id/rationale', handler((req, user) => instances.rationale(user, req.params.id)));
+    // who may do what with a case names people: an administrator's own token or the service key; never an AI link
+    router.get('/instances/:id/access', (req: any, res, next) => req.apiScope
+        ? res.status(403).json({ error: { code: 'LEVEL_REFUSED', message: 'An AI link does not reach who may do what' } })
+        : req.apiCredential === 'service' || isAdminGroups(req.apiUser?.userGroups) ? next()
+        : res.status(403).json({ error: { code: 'ADMIN_REQUIRED', message: 'Only an administrator sees who may do what with an instance' } }),
+        handler(async (req, user) => instances.whoMay(user, req.params.id, await accessDirectory(req, server))));
     router.post('/instances/:id/events/:elementId', handler(async (req, user) => ({ instance: await instances.startEvent(user, req.params.id, req.params.elementId, req.body?.data ?? {}) })));
     router.post('/instances/:id/restart', handler(async (req, user) => ({ instance: await instances.restart(user, req.params.id, req.body?.itemId, req.body?.data ?? {}) })));
     router.delete('/instances/:id', handler((req, user) => instances.remove(user, req.params.id)));
