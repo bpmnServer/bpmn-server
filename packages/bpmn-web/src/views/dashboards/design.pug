@@ -117,10 +117,10 @@ block dash
 									+runButton('decision', d.name)
 			else
 				p.dash-empty No decision tables (.dmn) in the models folder.
-			//- the policies of the models folder (docs/docs/assignment-policies.md, docs/design/security-policies.md)
+			//- the policies of the models folder (docs/docs/assignment-policies.md, docs/design/security-policies.md, docs/docs/notification-policies.md)
 			h2#policies(style='margin-top:18px') Policies
-				span.count= policies.assignment.length + policies.security.length
-			if policies.assignment.length || policies.security.length
+				span.count= policies.assignment.length + policies.security.length + policies.notification.length
+			if policies.assignment.length || policies.security.length || policies.notification.length
 				table
 					each p in policies.assignment
 						tr(data-policy=`assignment/${p.name}`)
@@ -136,9 +136,11 @@ block dash
 									| not used
 					each p in policies.security
 						tr(data-policy=`security/${p.name}`)
-							td= p.name
+							td: a(href=`/model/security-policy/${encodeURIComponent(p.name)}`)= p.name
 							td.dash-muted security
 							td
+								if p.tests
+									a(href=`/model/security-policy/${encodeURIComponent(p.name)}#tests`) #{p.tests} test#{p.tests === 1 ? '' : 's'}
 							td.dash-muted
 								if p.isDefault
 									| the default: every process that names none
@@ -148,10 +150,22 @@ block dash
 									| used by #{p.models.join(', ')}
 								else
 									| not used
+					each p in policies.notification
+						tr(data-policy=`notification/${p.name}`)
+							td: a(href=`/model/notification-policy/${encodeURIComponent(p.name)}`)= p.name
+							td.dash-muted notification
+							td
+								if p.tests
+									a(href=`/model/notification-policy/${encodeURIComponent(p.name)}#tests`) #{p.tests} test#{p.tests === 1 ? '' : 's'}
+							td.dash-muted
+								if p.models.length
+									| used by #{p.models.join(', ')}
+								else
+									| not used
 				if policies.security.length && !policies.securityOn
 					p.dash-muted Security policies are off (SECURITY_POLICY=off).
 			else
-				p.dash-empty No policies (policies/assignment, policies/security in the models folder).
+				p.dash-empty No policies (policies/assignment, policies/security, policies/notification in the models folder).
 			if templatesOn
 				h2(style='margin-top:18px') Task templates
 					span.count= templates.length

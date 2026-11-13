@@ -244,7 +244,7 @@ test('My work and starting a process use API v3\'s operations in this process: n
   assert.equal(await tokens.revoke('staff'), 0, 'the pages made no token');
 });
 
-test('Design shows the policies: assignment (to its editor, its tests) and security (the default said), each with the models that name it', async () => {
+test('Design shows the policies: assignment (to its editor, its tests) security (the default said) and notification, each editable, with the models that name it', async () => {
   const folder = web.definitionsPath;
   const table = name => `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="${name}_d" name="${name}" namespace="t">
@@ -256,8 +256,10 @@ test('Design shows the policies: assignment (to its editor, its tests) and secur
 </definitions>`;
   fs.mkdirSync(path.join(folder, 'policies', 'assignment'), { recursive: true });
   fs.mkdirSync(path.join(folder, 'policies', 'security'), { recursive: true });
+  fs.mkdirSync(path.join(folder, 'policies', 'notification'), { recursive: true });
   fs.writeFileSync(path.join(folder, 'policies', 'assignment', 'DashApproval.dmn.xml'), table('DashApproval'));
   fs.writeFileSync(path.join(folder, 'policies', 'security', 'default.dmn.xml'), table('default'));
+  fs.writeFileSync(path.join(folder, 'policies', 'notification', 'DashNotices.dmn.xml'), table('DashNotices'));
   const model = 'dash-policies';
   await web.bpmnServer.models.save(model, `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="t">
@@ -273,9 +275,13 @@ test('Design shows the policies: assignment (to its editor, its tests) and secur
     assert.match(assignment, /href="\/model\/policy\/DashApproval"/);
     assert.match(assignment, new RegExp(`used by [^<]*${model}`));
     assert.match(row('security/default'), /the default: every process that names none/);
+    assert.match(row('security/default'), /href="\/model\/security-policy\/default"/, 'a security policy opens in the decision editor');
+    assert.match(row('notification/DashNotices'), /href="\/model\/notification-policy\/DashNotices"/, 'notification policies are listed, editable');
+    assert.match(row('notification/DashNotices'), /not used/);
     assert.match(page, /<h2 id="policies"[^>]*>Policies/);
   } finally {
     fs.rmSync(path.join(folder, 'policies', 'security'), { recursive: true, force: true });
+    fs.rmSync(path.join(folder, 'policies', 'notification', 'DashNotices.dmn.xml'), { force: true });
     fs.rmSync(path.join(folder, 'policies', 'assignment', 'DashApproval.dmn.xml'), { force: true });
     await web.bpmnServer.models.remove?.(model).catch?.(() => {});
   }
