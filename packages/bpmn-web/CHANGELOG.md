@@ -180,6 +180,10 @@ and here
   `GET /model/policies?kind=security|notification`.
 - **Design's Policies: every policy opens in the decision editor.** A security policy's name links to it (it was
   plain text), and notification policies are listed too, each with its tests and the models that name it.
+- **A new build reaches the browser.** `public/` is cached for a year; the instance page loaded `/modeler/report.js`,
+  `/modeler/instance.js` (and every page its scripts and stylesheets) by a URL without its build, so a browser kept
+  running an old one (the Report's form fields as lines, not their table). Every page's own scripts and stylesheets
+  now go through `asset()`, their URL carrying the file's build time.
 - **An actor on a start event too** (Who can start, Actor): the user who starts the process there. An actor is the
   name for the user who completes a user task or starts the process; nowhere else.
 - **The instance page:** its actors under Instance data; the Access section (was Assignment and access) only says who

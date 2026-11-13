@@ -4,7 +4,7 @@ block nav
 	include ../includes/menu.pug
 
 block content
-	link(rel='stylesheet', href='/stylesheets/dashboards.css')
+	link(rel='stylesheet', href=asset("/stylesheets/dashboards.css"))
 	main.dash
 		h1= title
 		block intro

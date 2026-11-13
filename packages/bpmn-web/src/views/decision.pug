@@ -8,7 +8,7 @@ html(lang="en")
       meta(http-equiv="Content-Security-Policy" content=`frame-ancestors 'self' ${cspHost}`)
     title= `${name} - ${kind || 'Decision'} editor`
     meta(name="csrf-token" content=_csrf)
-    script(src="/javascripts/csrf.js")
+    script(src=asset("/javascripts/csrf.js"))
     link(rel="stylesheet" href=asset("/modeler/decision.css"))
   body(class=(typeof framed !== 'undefined' && framed) ? 'framed' : undefined)
     #decision-page(data-name=name data-exists=exists ? 'true' : 'false')

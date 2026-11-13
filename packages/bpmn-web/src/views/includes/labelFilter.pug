@@ -2,7 +2,7 @@
 //- value; or any named value. A GET form: the filter is in the URL, to bookmark and share (routes/labelFilter.ts).
 //- f.prefix names its parameters, when a page has two lists; f.keep is the other list's filter, which stays.
 mixin labelFilter(f)
-	link(rel="stylesheet", href="/stylesheets/label-filter.css")
+	link(rel="stylesheet", href=asset("/stylesheets/label-filter.css"))
 	form.label-filter(method="get", action=f.action, role="search", aria-label="Filter by label")
 		each k in f.keep || []
 			input(type="hidden", name=k.name, value=k.value)

@@ -82,7 +82,7 @@ test('the instance page shows the diagram with its elements and the replay data'
   assert.match(res.text, /data-element-id="Submit"/, 'diagram elements addressable for decorations');
   assert.match(res.text, /id="animationItems"/);
   assert.match(res.text, /id="startSimulation"[^>]*>[^]*?Simulate/, "Simulate, as the editor's");
-  assert.match(res.text, /src="\/modeler\/instance.js"/);
+  assert.match(res.text, /src="\/modeler\/instance.js\?v=\d+"/, 'its URL carries its build: a browser never keeps an old one');
   assert.match(res.text, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/, 'dates are formatted');
 });
 
@@ -127,6 +127,16 @@ test('the instance page gives the Rationale: the run from start to end, each ste
   assert.equal(rows[4].why, '', 'no why for an event');
 });
 
+test('every page loads its own scripts and stylesheets by a URL that carries their build (public/ is cached for a year)', async () => {
+  const unversioned = [];
+  for (const [url] of [...userPages(), ...adminPages(), ['/dashboard/design'], [`/model/decision/x`]]) {
+    const res = await admin.get(url);
+    for (const [, ref] of res.text.matchAll(/(?:src|href)="(\/(?:modeler|javascripts|stylesheets)\/[^"]+)"/g))
+      if (!/\?v=\d+$/.test(ref)) unversioned.push(`${url}: ${ref}`);
+  }
+  assert.deepEqual(unversioned, []);
+});
+
 test('static assets are served', async () => {
   for (const url of ['/stylesheets/app.css', '/javascripts/SVGHelper.js', '/javascripts/modeller-withPropertyPanel.js'])
     assert.equal((await admin.get(url)).status, 200, url);
@@ -149,7 +159,7 @@ test('the instance page carries its model for the Report (drawn by /modeler/repo
   const page = await admin.get(`/instanceDetails?id=${instanceId}`);
   assert.equal(page.status, 200, why(page));
   assert.match(page.text, /<script type="application\/json" data-report-source="model-report">/);
-  assert.match(page.text, /src="\/modeler\/report.js"/);
+  assert.match(page.text, /src="\/modeler\/report.js\?v=\d+"/, 'its URL carries its build: a browser never keeps an old report');
   const json = page.text.match(/data-report-source="model-report">([^]*?)<\/script>/)[1];
   assert.ok(!json.includes('<'), 'no < in the script element: a model can not end it early');
   assert.match(JSON.parse(json), /id="ToApprove"/, 'the model, its flows included');

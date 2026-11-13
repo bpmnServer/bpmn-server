@@ -9,7 +9,7 @@ html(lang="en")
     title= `${processName} - Model editor`
     meta(name="csrf-token" content=_csrf)
     //- before the modeler: it adds the token to the modeler's save request
-    script(src="/javascripts/csrf.js")
+    script(src=asset("/javascripts/csrf.js"))
     link(rel="stylesheet" href=asset("/modeler/modeler.css"))
   body(class=(typeof framed !== 'undefined' && framed) ? 'framed' : undefined)
     #modeler-page(data-process-name=processName)

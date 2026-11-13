@@ -3,8 +3,8 @@ extends layout
 block content
   //- cached for a year: its URL carries its build time, so a browser takes a new one when it changes
   link(rel="stylesheet", href=asset("/stylesheets/instance-details.css"))
-  link(rel="stylesheet", href="/modeler/report.css")
-  link(rel="stylesheet", href="/modeler/instance.css")
+  link(rel="stylesheet", href=asset("/modeler/report.css"))
+  link(rel="stylesheet", href=asset("/modeler/instance.css"))
   - var docs = JSON.parse(definition || '{}');
   - var info = (logs || []).filter(l => l.type === 'info');
   include includes/dates.pug
@@ -173,7 +173,7 @@ block content
       script(type="application/json" id="jsonInfo")!= JSON.stringify(info)
       script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, elementId: item.elementId, name: item.name, seq: item.seq, type: item.type, status: item.status }))).replace(/</g, '\\u003c')
       script(type="application/json" id="rationaleSteps")!= JSON.stringify(rationale || []).replace(/</g, '\\u003c')
-      script(src="/modeler/instance.js" defer)
+      script(src=asset("/modeler/instance.js") defer)
 
     //- Filters for the items, the Rationale and the logs: a type of element, an element (of that type)
     - var kindOf = t => String(t || '').replace(/^bpmn:/, '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
@@ -389,7 +389,7 @@ block content
       #docs.instance-report(hidden)
         script(type="application/json" data-report-source="model-report")!= modelJson
         #model-report
-      script(src="/modeler/report.js" defer)
+      script(src=asset("/modeler/report.js") defer)
 
     section.instance-card.instance-collapsible(aria-labelledby="logs-heading")
       .instance-card-heading
