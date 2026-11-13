@@ -123,7 +123,7 @@ function popupsFromReport() {
         }
         else {
             dialog = window.jQuery(`<div class="report-popup-dialog">${html}</div>`).dialog({
-                title, autoOpen: true, width: 460, maxHeight: 520,
+                title, autoOpen: true, width: 560, maxHeight: 560,
                 close: () => { dialog?.dialog('destroy'); dialog = null; },
             });
         }

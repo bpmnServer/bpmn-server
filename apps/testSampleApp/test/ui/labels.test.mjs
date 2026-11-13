@@ -197,11 +197,29 @@ test('a process drawn in a pool: its Policies group, on the pool, writes its pro
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>`;
     fs.writeFileSync(path.join(web.definitionsPath, 'Pooled.bpmn'), pooled);
+    // the policies to choose from: the lists are the models folder's
+    const POLICY_FILE = (name, outputs) => `<?xml version="1.0" encoding="UTF-8"?>
+    <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="${name}_d" name="${name}" namespace="t">
+      <decision id="${name}" name="${name}"><decisionTable id="${name}_t" hitPolicy="COLLECT">
+        <input id="${name}_i" label="task"><inputExpression id="${name}_e" typeRef="string"><text>task</text></inputExpression></input>
+    ${outputs.map(o => `    <output id="${name}_${o}" name="${o}" typeRef="string" />`).join('\n')}
+      </decisionTable></decision>
+    </definitions>`;
+    for (const [folder, name, outputs] of [['security', 'LeaveCases', ['see']], ['notification', 'LeaveNotices', ['notify', 'template']]]) {
+        fs.mkdirSync(path.join(web.definitionsPath, 'policies', folder), { recursive: true });
+        fs.writeFileSync(path.join(web.definitionsPath, 'policies', folder, `${name}.dmn.xml`), POLICY_FILE(name, outputs));
+    }
     const { page, errors, close } = await openEditor('Pooled');
     await select(page, 'Pool');
     await openGroup(page, 'Policies');
-    await type(page, 'process-security-policy', 'LeaveCases');
-    await type(page, 'process-notification-policy', 'LeaveNotices');
+    // a list of the models folder's policies of each kind, with Open and New
+    for (const [entry, name] of [['process-security-policy', 'LeaveCases'], ['process-notification-policy', 'LeaveNotices']]) {
+        const select = page.locator(`[data-entry-id="${entry}"] select`);
+        await page.waitForFunction(([e, n]) => [...document.querySelectorAll(`[data-entry-id="${e}"] option`)].some(o => o.value === n), [entry, name]);
+        await select.selectOption(name);
+        await page.waitForTimeout(300);
+        assert.ok(await page.locator(`[data-entry-id="${entry}-actions"] .bpmn-server-policy-open`, { hasText: `Open ${name}` }).count(), `Open ${name}`);
+    }
     const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/model/edit/Pooled'));
     await page.click('#js-save');
     assert.equal((await saved).status(), 200);

@@ -132,16 +132,15 @@ test('who may do what with a case: under the Rationale on the instance page, and
     // the instance page, as an administrator: the case's policy asked for each person and role
     const admin = await web.login('admin');
     const page = (await admin.get(`/instanceDetails?id=${samsCase}`)).text;
-    assert.match(page, /<h2 id="access-heading">Assignment and access<\/h2>/);
+    assert.match(page, /<h2 id="access-heading">Access<\/h2>/);
     assert.ok(page.indexOf('id="access-heading"') > page.indexOf('id="rationale-heading"'), 'under the Rationale');
     const row = (table, who) => (new RegExp(`<tr data-who="${who}"[^>]*>([^]*?)</tr>`).exec(table) ?? [])[1] ?? '';
     const caseTable = /<table class="instance-table access-table" id="access-case">([^]*?)<\/table>/.exec(page)?.[1] ?? '';
     assert.match(row(caseTable, 'sam'), /started it[^]*full[^]*what forms entered/, 'sam asked: he sees it, what forms entered');
     assert.equal(row(caseTable, 'anyone else'), '', 'anyone else does not see it: not listed');
-    // Approve, done by mona earlier: its assignment after the fact
-    const approve = /<div class="access-task" data-element="Approve"[^>]*>([^]*?)(?=<div class="access-task"|<\/section>)/.exec(page)?.[1] ?? '';
-    assert.match(approve, /<li>Offered to manager by the task itself/);
-    assert.match(approve, /<li>Completed by mona<\/li>/);
+    // its actors, under its data: sam started it; a done task's assignment is the Rationale's, not repeated here
+    assert.match(page, /<div data-actor="initiator"><dt>initiator<\/dt><dd>sam<\/dd><\/div>/);
+    assert.doesNotMatch(page, /<div class="access-task" data-element="Approve"/, 'done: no one acts on it now');
 
     // the API: the same, administrators only
     // the service account (its API key) is an administrator; a person's token never is

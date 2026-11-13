@@ -98,7 +98,7 @@ test("the User assignment group: the policy chosen from the models folder's, sav
 
     // who completes it is the instance's approver: actors.approver
     await page.locator('[data-entry-id="assignment-actor"] input').fill('approver');
-    assert.equal(await page.locator('[data-entry-id="assignment-security-policy"] input').count(), 1, "its own security policy, besides the process's");
+    assert.equal(await page.locator('[data-entry-id="assignment-security-policy"] select').count(), 1, "its own security policy, besides the process's: a list");
     await page.waitForTimeout(400);
 
     // the process's policies: its Policies group
@@ -106,8 +106,12 @@ test("the User assignment group: the policy chosen from the models folder's, sav
     const policies = page.locator('.bio-properties-panel-group-header', { hasText: 'Policies' }).first();
     await page.waitForTimeout(200);
     if (!/open/.test(await policies.getAttribute('class'))) await policies.click();
-    await page.locator('[data-entry-id="process-notification-policy"] input').fill('LeaveNotices');
+    // a name not in the models folder's list: kept, said "not found", with Make
+    await page.evaluate(() => { const m = window.bpmnModeler; const root = m.get('canvas').getRootElement();
+        m.get('modeling').updateProperties(root, { 'owf:notificationPolicy': 'LeaveNotices' }); });
     await page.waitForTimeout(400);
+    assert.match(await page.locator('[data-entry-id="process-notification-policy"] select option:checked').innerText(), /LeaveNotices \(not found\)/);
+    assert.ok(await page.locator('[data-entry-id="process-notification-policy-actions"] .bpmn-server-policy-new', { hasText: 'Make LeaveNotices' }).count());
 
     const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/model/edit/Leave'));
     await page.click('#js-save');

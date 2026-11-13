@@ -144,6 +144,14 @@ block content
                 dd #{v.value}
         else
           p.instance-empty No instance data.
+        //- who did what in it: actors.initiator, a model's own (owf:actor), a waiting task's assignee and candidates
+        if actors && actors.length
+          h3.instance-subheading#instance-actors-heading Actors
+          dl.instance-facts.instance-data(aria-labelledby="instance-actors-heading")
+            each a in actors
+              div(data-actor=a.name)
+                dt #{a.name}
+                dd #{a.who}
 
     section.instance-card.instance-diagram-card(aria-labelledby="diagram-heading")
       .instance-card-heading
@@ -243,14 +251,14 @@ block content
               tr
                 td(colspan="6") Nothing to show: the server keeps an instance's log when its configuration says so (SAVE_LOGS).
 
-    //- under the Rationale: each user task's assignment, after the fact; while security policies are on, who may do
-    //- what with the case now (its policy asked for each person and role: CaseAccess.instanceAccess)
-    if access && (access.tasks.length || access.on)
+    //- under the Rationale, for designers and administrators while security policies are on: who may do what with
+    //- the instance now (its policy asked for each person and role: CaseAccess.instanceAccess)
+    if access && access.on && accessDetails
       section.instance-card.instance-collapsible(aria-labelledby="access-heading")
         .instance-card-heading
           div
-            h2#access-heading Assignment and access
-            p.instance-hint Each user task: whom it went to, what decided it, who completed it. While security policies are on, who may do what now: the policy, asked for each person and role (those with no access are not listed).
+            h2#access-heading Access
+            p.instance-hint Who may do what now, as the security policy says, asked for each person and role (those with no access are not listed). How each task was assigned is in the Rationale.
           button#showAccess.btn.btn-default(type="button", onclick="toggleDetails('access', 'showAccess')", aria-expanded="true", aria-controls="access", aria-label="Toggle assignment and access")
             i.fa.fa-chevron-up(aria-hidden="true")
         #access.instance-table-scroll
@@ -278,17 +286,12 @@ block content
                     td #{yes(row.restart)}
                     td #{yes(row.events)}
                     td.instance-hint #{row.rules}
+          //- each waiting task: who may act on it (a task's assignment, after the fact, is the Rationale's)
           each t in access.tasks
-            .access-task(data-element=t.elementId, data-seq=t.seq)
-              h3.access-title ##{t.seq} #{t.name || t.elementId} · #{t.status === 'wait' ? 'waits' : t.status === 'end' ? 'done' : t.status}
-              ul.access-facts
-                li #{t.said.whom}#{t.said.by ? ' ' + t.said.by : ''}
-                each note in t.said.notes
-                  li.access-history #{note}
-                if t.completedBy
-                  li Completed by #{t.completedBy}
-              - var mayAct = (t.who || []).filter(r => r.offered || r.claim || r.complete || r.assign)
-              if access.on && accessDetails && mayAct.length
+            - var mayAct = (t.who || []).filter(r => r.offered || r.claim || r.complete || r.assign)
+            if accessDetails && mayAct.length
+              .access-task(data-element=t.elementId, data-seq=t.seq)
+                h3.access-title Who may act on ##{t.seq} #{t.name || t.elementId}
                 table.instance-table.access-table
                   thead
                     tr

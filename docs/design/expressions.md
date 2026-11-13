@@ -38,10 +38,15 @@ host, has no `appServices`.
 Who did what in an instance, worked out when asked, from its items and its own model (`instance.source`). Nothing is
 stored.
 
+**An actor is the name given to the user who completes a task:** a user task, or a start event (the user who starts
+the process there). The model names it, `owf:actor="approver"`, and `actors.approver` is that user, wherever an
+expression reads it. Only user tasks and start events have one; on any other element `verifyModel` warns
+(`actor-element`) and it is ignored.
+
 | Actor | Who |
 |---|---|
 | `actors.initiator` | who started the instance: its start event's item's user |
-| `actors.<name>` | who completed the items of the elements the model names so: `<bpmn:userTask id="Approve" owf:actor="approver" />` |
+| `actors.<name>` | the user who completed the user task, or started the process at the start event, the model names so: `<bpmn:userTask id="Approve" owf:actor="approver" />`, `<bpmn:startEvent id="Ask" owf:actor="requester" />` |
 | `actors.assignee` | the assignee of a waiting task |
 | `actors.candidate` | the users and groups a waiting task is offered to |
 
@@ -63,7 +68,8 @@ A rule asks "is this user the approver" with the actor as the column and the use
 
 When the actor is a list, the cell matches when the user is in it.
 
-**In the model editor:** an **Actor** field on a user task (`owf:actor`).
+**In the model editor:** an **Actor** field on a user task (User assignment) and a start event (Who can start).
+**On the instance page:** its actors, under its data.
 
 **The security policy's lists** ask the policy for each instance of a page, and read on past those it hides. Turning
 an `actors.<name>` column into a store query is not built. The reverse (who may do what) names each person's actors.

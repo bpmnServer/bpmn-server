@@ -37,6 +37,9 @@ export interface IDecisionAbout {
     task?: string;
 }
 
+/** The elements that may name an actor: the user who completes a user task, or starts the process at a start event. */
+export const ACTOR_ELEMENTS = ['bpmn:UserTask', 'bpmn:StartEvent'];
+
 /** The actors every instance has; a model names its own with owf:actor. */
 export const BUILT_IN_ACTORS = ['initiator', 'assignee', 'candidate'] as const;
 
@@ -53,8 +56,9 @@ const attr = (tag: string, name: string) => new RegExp(`\\s(?:[\\w.-]+:)?${name}
 const elementsOfSource = new Map<string, Map<string, string>>();
 
 /**
- * The elements a model names as actors (`owf:actor="approver"`), by element id. `model`: its XML, or a loaded
- * definition (its nodes).
+ * The elements a model names as actors (`owf:actor="approver"`), by element id: an actor is the name for the user who
+ * completes a user task, or starts the process at a start event; on any other element it means nothing (verifyModel
+ * warns). `model`: its XML, or a loaded definition (its nodes).
  */
 export function actorElements(model: any): Map<string, string> {
     if (!model) return new Map();
@@ -62,7 +66,7 @@ export function actorElements(model: any): Map<string, string> {
         let found = elementsOfSource.get(model);
         if (found) return found;
         found = new Map();
-        for (const [tag] of model.matchAll(/<(?:[\w.-]+:)?\w+\b[^>]*\sowf:actor\s*=\s*"[^"]*"[^>]*>/g)) {
+        for (const [tag] of model.matchAll(/<(?:[\w.-]+:)?(?:userTask|startEvent)\b[^>]*\sowf:actor\s*=\s*"[^"]*"[^>]*>/g)) {
             const id = attr(tag, 'id'), name = attr(tag, 'actor')?.trim();
             if (id && name) found.set(id, name);
         }
@@ -73,6 +77,7 @@ export function actorElements(model: any): Map<string, string> {
     const found = new Map<string, string>();
     const nodes = model.nodes instanceof Map ? [...model.nodes.values()] : [];
     for (const node of nodes) {
+        if (!ACTOR_ELEMENTS.includes(node?.type)) continue;
         const name = node?.def?.$attrs?.['owf:actor'] ?? node?.def?.actor;
         if (name && String(name).trim()) found.set(node.id, String(name).trim());
     }

@@ -40,7 +40,11 @@ as any other decision.
 - **An output cell** is FEEL (`"Director"`, `requesterId`), or a model expression `$(...)`, evaluated as the model's
   other expressions are: it can call the application's services
   (`$(appServices.managerOf(data.requesterId))`).
-- **An empty output cell** leaves that field as it was.
+- **An empty output cell** leaves that field as it was. **An empty list, `[]`,** clears it: `assignee` the employee's
+  manager and `candidateGroups` `[]` is that manager and no one else, whatever the lane offered.
+- **An employee's own manager:** the HR demo's `LeaveApproval` has an input `appServices.managerOf(actors.initiator)`
+  (the application's service, from HR's records): when it is `not(null)`, that manager is the assignee and `[]` the
+  candidate groups; someone with no manager in the records goes to the Manager group.
 - **Its tests** are a decision's: the decision editor's Test tab, kept as `<name>.policy.dmn.feature` in the models
   folder. A `$(...)` output's result is its text.
 

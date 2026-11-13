@@ -1,41 +1,114 @@
-// A user task's assignment policy (docs/docs/assignment-policies.md): owf:assignmentPolicy names a decision table
-// of the models folder, policies/assignment/<name>.dmn.xml, whose first matching rule assigns the task when it starts. The list
-// of policies, a link to open (or make) one in the decision editor, and a preview with the Test tab's data.
+// The policies an element names, each a decision table of the models folder, chosen from a list with a link to open
+// (or make) it in the decision editor: a user task's assignment policy (docs/docs/assignment-policies.md, with a
+// preview from the Test tab's data), a process's or a user task's security and notification policies
+// (docs/design/security-policies.md, docs/docs/notification-policies.md). A pool's are its process's.
 import { SelectEntry, isSelectEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
-import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import { request } from '../testing/common.js';
 import { usePreview } from './LabelGroup.jsx';
 
 const ATTRIBUTE = 'owf:assignmentPolicy';
 
-// ---- the policies of the models folder, read once a page and again when it gets the focus back
-let policies = null;
+/** The kinds of policy: where their files are, where the decision editor opens one. */
+export const POLICY_KINDS = {
+    assignment: { folder: 'policies/assignment', page: 'policy', none: '<none>' },
+    security: { folder: 'policies/security', page: 'security-policy', none: '<none: the default>' },
+    notification: { folder: 'policies/notification', page: 'notification-policy', none: '<none>' },
+};
+
+// ---- each kind's policies in the models folder, read once a page and again when it gets the focus back
+const policies = {};
 const listeners = new Set();
-async function loadPolicies() {
+async function loadPolicies(kind) {
     try {
-        const { policies: list } = await request('GET', '/model/policies');
-        policies = (list || []).map(p => p.name);
+        const { policies: list } = await request('GET', `/model/policies?kind=${kind}`);
+        policies[kind] = (list || []).map(p => p.name);
     }
-    catch { policies = []; }
+    catch { policies[kind] = []; }
     listeners.forEach(fn => fn());
 }
 if (typeof window !== 'undefined')
-    window.addEventListener('focus', () => { if (policies) loadPolicies(); });
+    window.addEventListener('focus', () => Object.keys(policies).forEach(loadPolicies));
 
-function usePolicies() {
+function usePolicies(kind = 'assignment') {
     const [, setVersion] = useState(0);
     useEffect(() => {
         const changed = () => setVersion(v => v + 1);
         listeners.add(changed);
-        if (!policies) loadPolicies();
+        if (!policies[kind]) loadPolicies(kind);
         return () => listeners.delete(changed);
-    }, []);
-    return policies;
+    }, [kind]);
+    return policies[kind] ?? null;
 }
 
-const openPolicy = name => window.open(`/model/policy/${encodeURIComponent(name)}`, 'policy-' + name);
+const openPolicy = (name, kind = 'assignment') =>
+    window.open(`/model/${POLICY_KINDS[kind].page}/${encodeURIComponent(name)}`, `${kind}-policy-${name}`);
+
+/** What an element's attribute is on: the element, or a pool's process. */
+const ownerOf = bo => is(bo, 'bpmn:Participant') ? bo.get('processRef') : bo;
+function useAttribute(element, attribute) {
+    const modeling = useService('modeling');
+    const bo = getBusinessObject(element);
+    const owner = ownerOf(bo);
+    const get = () => owner?.get(attribute) || '';
+    const set = value => is(bo, 'bpmn:Participant')
+        ? modeling.updateModdleProperties(element, owner, { [attribute]: value || undefined })
+        : modeling.updateProperties(element, { [attribute]: value || undefined });
+    return [get, set];
+}
+
+/** A policy chosen from its kind's list; one named but not there shows as not found. */
+function KindPolicyField({ element, id, kind, attribute, label, description }) {
+    const translate = useService('translate');
+    const list = usePolicies(kind);
+    const [getValue, setValue] = useAttribute(element, attribute);
+    return <SelectEntry
+        element={element}
+        id={id}
+        label={translate(label)}
+        description={translate(description)}
+        getValue={getValue}
+        setValue={setValue}
+        getOptions={() => {
+            const current = getValue();
+            const names = list ?? [];
+            const own = current && !names.includes(current) ? [{ value: current, label: `${current} (${list ? 'not found' : 'reading…'})` }] : [];
+            return [{ value: '', label: translate(POLICY_KINDS[kind].none) }, ...own, ...names.map(name => ({ value: name, label: name }))];
+        }}
+    />;
+}
+
+/** Open the policy chosen, or make a new one (named, then opened in the decision editor). */
+function KindPolicyActions({ element, id, kind, attribute, suggestion }) {
+    const list = usePolicies(kind);
+    const [getValue, setValue] = useAttribute(element, attribute);
+    const policy = getValue();
+    const create = () => {
+        const name = (window.prompt(`Name of the new policy (${POLICY_KINDS[kind].folder}/<name>.dmn.xml):`, policy || suggestion) || '').trim();
+        if (!name) return;
+        if (name !== policy) setValue(name);
+        openPolicy(name, kind);
+    };
+    return <div class="bio-properties-panel-entry bpmn-server-policy" data-entry-id={id}>
+        <div class="bpmn-server-policy-actions">
+            {policy && list?.includes(policy) ? <button type="button" class="bpmn-server-policy-open" onClick={() => openPolicy(policy, kind)}>Open {policy}</button> : null}
+            <button type="button" class="bpmn-server-policy-new" onClick={create}>{policy && list && !list.includes(policy) ? `Make ${policy}` : 'New policy'}</button>
+        </div>
+    </div>;
+}
+
+/**
+ * The entries for a security or notification policy: its list, then Open or New. `idPrefix`: the entries' ids
+ * (`<idPrefix>` and `<idPrefix>-actions`).
+ */
+export function kindPolicyEntries(element, { kind, attribute, idPrefix, label, description, suggestion }) {
+    return [
+        { id: idPrefix, element, kind, attribute, label, description, component: KindPolicyField, isEdited: isSelectEntryEdited },
+        { id: `${idPrefix}-actions`, element, kind, attribute, suggestion, component: KindPolicyActions },
+    ];
+}
 
 function PolicyField({ element, id }) {
     const modeling = useService('modeling');

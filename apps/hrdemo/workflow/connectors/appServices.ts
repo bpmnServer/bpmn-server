@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { employees, departments } from '../../server/data.js';
 import { ApprovalManager } from '../delegates/ApprovalManager.js';
 
 async function delay(time, result) {
@@ -16,6 +17,21 @@ class AppServices {
     appDelegate;
     constructor(delegate) {
         this.appDelegate = delegate;
+    }
+    /**
+     * An employee's own manager, as a user name: the employee's managerId in HR's records, else their department's
+     * manager (server/data.js); null for someone who isn't an employee, or who has no manager (a department's head).
+     * The demo's user names are the employees' mail names (david.kim@company.com: david.kim).
+     * LeaveApproval's rule: $(appServices.managerOf(actors.initiator)).
+     */
+    managerOf(userName) {
+        const nameOf = employee => employee?.email ? String(employee.email).split('@')[0] : null;
+        const employee = employees.find(e => nameOf(e) === userName);
+        if (!employee) return null;
+        const managerId = employee.managerId
+            ?? (departments.find(d => d.departmentId === employee.departmentId)?.managerId ?? null);
+        if (!managerId || managerId === employee.employeeId) return null;
+        return nameOf(employees.find(e => e.employeeId === managerId));
     }
     /** Hello.bpmn's Greet task: input { name }, the result stored as data.greeting. */
     async greet({ name }, context) {

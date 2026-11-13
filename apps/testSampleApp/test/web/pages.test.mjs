@@ -177,11 +177,11 @@ test('the diagram is of the model, not of a run: marks a picture was saved with 
   }
 });
 
-test('the instance page: each user task\'s assignment under the Rationale, after the fact; without security policies, no "who may"', async () => {
+test('the instance page: its actors under its data; without security policies, no Access section', async () => {
   const page = (await admin.get(`/instanceDetails?id=${instanceId}`)).text;
-  assert.match(page, /<h2 id="access-heading">Assignment and access<\/h2>/);
-  assert.match(page, /<div class="access-task" data-element="Submit"[^>]*>[^]*?Offered to staff by the task itself/);
-  assert.doesNotMatch(page, /id="access-case"/, 'security policies are off here: who may do what is today\'s rules');
+  assert.match(page, /<h3 class="instance-subheading" id="instance-actors-heading">Actors<\/h3>/);
+  assert.match(page, /<div data-actor="initiator"><dt>initiator<\/dt><dd>[^<]+<\/dd><\/div>/, 'who started it');
+  assert.doesNotMatch(page, /id="access-heading"/, 'security policies are off here: who may do what is today\'s rules');
 });
 
 test('element templates are a preview, off by default (ELEMENT_TEMPLATES): none offered, the editor without its chooser', async () => {

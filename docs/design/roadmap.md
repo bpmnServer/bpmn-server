@@ -40,6 +40,18 @@ its Policies group); narrowing a list's store query by the actors a rule names.
 Built ([expressions.md](expressions.md)). Next: a warning for a FEEL name that is none of the standard names nor a
 data field the model knows; `instance.data` for an item's script in the sandbox.
 
+## Tests of policies outside the editor
+
+A policy's tests (the decision editor's Test tab, `<name>.policy.dmn.feature`) run in the editor, but an application's
+own test runner (the HR demo's `npm test`) can't run them: `invokeDecision is not a function`. Next: the runner
+evaluates a policy's tests as the editor does.
+
+## An application's own facts, declared
+
+The `decisionContext` hook adds names every table reads (`employeeManager`); nothing lists them, so the decision editor
+can't offer them and a typo reads as `null`. Next: an application declares its facts (name, meaning), the editor offers
+them, `verifyModel` checks them.
+
 ## On hold
 
 - **One pool of decisions:** policies referenced by role instead of the `policies/assignment|security|notification`

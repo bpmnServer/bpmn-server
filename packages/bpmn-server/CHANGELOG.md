@@ -42,6 +42,10 @@ and here
   `appServices`; a decision table also reads the data's fields and its task's prepared inputs by name, then the
   application's facts from the new optional `appDelegate.decisionContext(context, about)`. A process's own script
   reads `data`. A list input matches when the list or one of its values does, in every table.
+- **An assignment policy's `[]` clears a field:** an empty list in `candidateUsers` or `candidateGroups` clears what the
+  task's attributes or lane gave ("this assignee, and no one else"); an empty cell still leaves it as it was.
+- **An actor is the user who completes a user task, or starts the process at a start event:** `owf:actor` is read
+  there only; on another element `verifyModel` warns (`actor-element`).
 - **Actors:** who did what in an instance, worked out from its items, nothing stored: `actors.initiator`,
   `actors.assignee`, `actors.candidate`, and `actors.<name>` for the elements a model names so
   (`owf:actor="approver"`): who completed them, a list when several, latest first; in a multi-instance, those of the

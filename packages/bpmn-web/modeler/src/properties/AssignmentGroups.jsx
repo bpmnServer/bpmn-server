@@ -1,10 +1,9 @@
 // Who a user task goes to and who may start a process, as bpmn-server reads them (Tasks.ts setAssignVal,
 // Events.ts): a value starting with $ is an expression, # runs JavaScript, a comma-separated value is a list.
-import { Group, TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
-import { useService } from 'bpmn-js-properties-panel';
+import { Group } from '@bpmn-io/properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
-import { policyEntries } from './PolicyEntries.jsx';
+import { policyEntries, kindPolicyEntries } from './PolicyEntries.jsx';
 
 const VALUE_HELP = 'A name, a comma-separated list, or an expression such as $data.manager';
 const DATE_HELP = 'An ISO date (2026-06-26T09:54:00) or an expression such as $data.dueDate';
@@ -23,41 +22,20 @@ export function UserAssignmentGroup(element, translate) {
             entry('candidateUsers', 'Candidate users', VALUE_HELP),
             entry('candidateGroups', 'Candidate groups', VALUE_HELP),
             ...policyEntries(element),
-            // who completes it is this actor of the instance: actors.<name> in every expression (docs/design/expressions.md)
+            // an actor: the name for the user who completes it (docs/design/expressions.md)
             attributeEntry(element, { id: 'assignment-actor', attribute: 'owf:actor', label: 'Actor',
-                description: 'Who completes it is this actor of the instance (approver): actors.approver in conditions, scripts and policies' }),
-            attributeEntry(element, { id: 'assignment-security-policy', attribute: 'owf:securityPolicy', label: 'Security policy',
-                description: "Its own, besides the process's (in the process's Policies group): policies/security/<name>.dmn.xml, for who may claim, complete and assign it" }),
-            attributeEntry(element, { id: 'assignment-notification-policy', attribute: 'owf:notificationPolicy', label: 'Notification policy',
-                description: "Its own, besides the process's: policies/notification/<name>.dmn.xml, asked when it waits and when it is completed" }),
+                description: 'The name for the user who completes it (approver): actors.approver in rules, conditions and scripts' }),
+            ...kindPolicyEntries(element, { kind: 'security', attribute: 'owf:securityPolicy', idPrefix: 'assignment-security-policy',
+                label: 'Security policy', suggestion: 'TaskAccess',
+                description: "Its own, besides the process's (in the process's Policies group): who may claim, complete and assign it" }),
+            ...kindPolicyEntries(element, { kind: 'notification', attribute: 'owf:notificationPolicy', idPrefix: 'assignment-notification-policy',
+                label: 'Notification policy', suggestion: 'TaskNotices',
+                description: "Its own, besides the process's: asked when it waits and when it is completed" }),
             entry('dueDate', 'Due date', DATE_HELP),
             entry('followUpDate', 'Follow up date', DATE_HELP),
             entry('priority', 'Priority', 'A number or an expression such as $data.priority')
         ]
     };
-}
-
-/** The process an element stands for: itself, or a pool's (a participant's processRef). */
-const processOf = bo => is(bo, 'bpmn:Participant') ? bo.get('processRef') : bo;
-
-/** A process's attribute: on the process itself, or, for a pool, on its process (as the Label group does). */
-function ProcessAttributeField({ element, id, attribute, label, description }) {
-    const modeling = useService('modeling');
-    const debounce = useService('debounceInput');
-    const translate = useService('translate');
-    const bo = getBusinessObject(element);
-    const target = processOf(bo);
-    return <TextFieldEntry
-        element={element}
-        id={id}
-        label={translate(label)}
-        description={translate(description)}
-        debounce={debounce}
-        getValue={() => target?.get(attribute) || ''}
-        setValue={value => is(bo, 'bpmn:Participant')
-            ? modeling.updateModdleProperties(element, target, { [attribute]: value || undefined })
-            : modeling.updateProperties(element, { [attribute]: value || undefined })}
-    />;
 }
 
 /**
@@ -68,16 +46,17 @@ export function ProcessPoliciesGroup(element, translate) {
     const bo = getBusinessObject(element);
     if (!is(bo, 'bpmn:Process') && !(is(bo, 'bpmn:Participant') && bo.get('processRef')))
         return null;
-    const entry = props => ({ element, ...props, component: ProcessAttributeField, isEdited: isTextFieldEntryEdited });
     return {
         id: 'BpmnServer__ProcessPolicies',
         label: translate('Policies'),
         component: Group,
         entries: [
-            entry({ id: 'process-security-policy', attribute: 'owf:securityPolicy', label: 'Security policy',
-                description: 'Who sees its instances, which of their data, what they may do: policies/security/<name>.dmn.xml; none, the default' }),
-            entry({ id: 'process-notification-policy', attribute: 'owf:notificationPolicy', label: 'Notification policy',
-                description: 'Who is told what: policies/notification/<name>.dmn.xml, asked when a user task waits or is completed, and when an instance ends' }),
+            ...kindPolicyEntries(element, { kind: 'security', attribute: 'owf:securityPolicy', idPrefix: 'process-security-policy',
+                label: 'Security policy', suggestion: 'Cases',
+                description: 'Who sees its instances, which of their data, what they may do; none: the default' }),
+            ...kindPolicyEntries(element, { kind: 'notification', attribute: 'owf:notificationPolicy', idPrefix: 'process-notification-policy',
+                label: 'Notification policy', suggestion: 'Notices',
+                description: 'Who is told what, when a user task waits or is completed, and when an instance ends' }),
         ]
     };
 }
@@ -93,7 +72,10 @@ export function StartAssignmentGroup(element, translate) {
         component: Group,
         entries: [
             entry('candidateUsers', 'Candidate users'),
-            entry('candidateGroups', 'Candidate groups')
+            entry('candidateGroups', 'Candidate groups'),
+            // an actor: the name for the user who starts the process here (docs/design/expressions.md)
+            attributeEntry(element, { id: 'start-actor', attribute: 'owf:actor', label: 'Actor',
+                description: 'The name for the user who starts the process here (requester): actors.requester in rules, conditions and scripts' })
         ]
     };
 }

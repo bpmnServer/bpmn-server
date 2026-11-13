@@ -194,3 +194,18 @@ test('verifyModel: a policy that is not there, an output that is not a field, gr
     assert.ok(!result.issues.some(i => i.code === 'assignment-policy-not-found'));
     await srv.shutdown();
 });
+
+test('an empty list, [], clears the candidates the lane gave: this assignee, and no one else; an empty cell leaves them', async () => {
+    const policy = POLICY([['-', '-', '"dora"', '[]']]);
+    let { server: srv } = await server({ policy });
+    let { task, why } = await approve(srv, { amount: 5 });
+    assert.equal(task.assignee, 'dora');
+    assert.deepEqual(task.candidateGroups, [], 'the Managers lane cleared');
+    assert.match(why, /is assigned to dora/);
+    await srv.shutdown();
+
+    ({ server: srv } = await server({ policy: POLICY([['-', '-', '"dora"', '']]) }));
+    ({ task } = await approve(srv, { amount: 5 }));
+    assert.deepEqual(task.candidateGroups, ['Managers'], 'an empty cell: as the lane gave');
+    await srv.shutdown();
+});

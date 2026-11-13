@@ -114,10 +114,12 @@ export async function applyPolicy(node, item, policy: string): Promise<void> {
             if (value == null || value === '') continue;
             if (isExpression(value) && expressionScript(value) !== null)
                 value = await item.context.scriptHandler.evaluateExpression(item, value, field);
+            // an empty list, [], clears the candidates the attributes or the lane gave: "this assignee, and no one else"
+            if (Array.isArray(value) && !value.length && field !== 'assignee') { set[field] = []; continue; }
             if (value == null || value === '' || (Array.isArray(value) && !value.length)) continue;
             set[field] = field === 'assignee' ? String(value) : asList(value);
         }
-        if (!Object.keys(set).length)
+        if (!Object.entries(set).some(([, value]) => Array.isArray(value) ? value.length : value))
             return unassigned([`rule ${rule} matched, and gave no one`]);
 
         Object.assign(item, set);

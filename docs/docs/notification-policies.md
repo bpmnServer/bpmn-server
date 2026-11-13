@@ -24,12 +24,13 @@ that matches notifies. The HR demo's `LeaveNotices`:
 
 | event | task | data.approval | data.recordId | notify | template | channel |
 |---|---|---|---|---|---|---|
-| `"assigned"` | `"Approve"` | - | - | `actors.candidate` | `"approval-request"` | `"email"` |
+| `"assigned"` | `"Approve"` | - | - | `[actors.assignee, actors.candidate]` | `"approval-request"` | `"email"` |
 | `"completed"` | `"Approve"` | `"A"` | - | `actors.initiator` | `"leave-approved"` | `"email"` |
 | `"completed"` | `"Approve"` | `"Reject"` | - | `actors.initiator` | `"Your ${data.LeaveType} leave was not approved: ${data.comment}"` | `"inbox"` |
 | `"ended"` | - | - | `not(null)` | `["HR", actors.approver]` | `"Leave ${data.recordId} recorded for ${actors.initiator}, approved by ${actors.approver}"` | `"inbox"` |
 
-1. A request waits for approval: tell those it is offered to (the Manager or HR group, as the assignment policy said).
+1. A request waits for approval: tell whoever it is assigned to (the employee's own manager), else those it is offered
+   to (the Manager or HR group), as the assignment policy said.
 2. Approved: tell the employee who asked, with the `leave-approved` template.
 3. Not approved: tell the employee, with the approver's comment.
 4. Recorded in HR's system: tell HR, and the manager who approved it.
@@ -51,7 +52,7 @@ What every expression reads ([expressions.md](../design/expressions.md)): the da
 |---|---|
 | `actors.initiator` | who started the instance |
 | `actors.assignee`, `actors.candidate` | a waiting task's assignee; the users and groups it is offered to |
-| `actors.approver` | who completed the elements the model names so: `<bpmn:userTask id="Approve" owf:actor="approver">` |
+| `actors.approver` | an actor: the name the model gives the user who completes a user task (or starts the process at a start event): `<bpmn:userTask id="Approve" owf:actor="approver">` |
 
 ### Its outputs
 

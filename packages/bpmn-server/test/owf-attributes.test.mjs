@@ -98,3 +98,13 @@ test('verifyModel: an actor the model, its policies or its decisions read that n
     assert.match(unknown.join('\n'), /actors\.reviewer \(assignment policy Approval\)/);
     await srv.shutdown();
 });
+
+test('verifyModel: an actor on an element that is not a user task or a start event is warned of, and ignored', async () => {
+    const model = MODEL('owf').replace('<bpmn:scriptTask id="Work"', '<bpmn:scriptTask id="Work" owf:actor="robot"');
+    const srv = await server(model);
+    const { issues } = await verifyModel(model, srv, 'Request');
+    const warned = issues.filter(i => i.code === 'actor-element');
+    assert.equal(warned.length, 1, JSON.stringify(issues));
+    assert.match(warned[0].message, /owf:actor 'robot' is on a ScriptTask: an actor is the user who completes a user task, or starts the process at a start event/);
+    await srv.shutdown();
+});

@@ -169,6 +169,18 @@ and here
   a click on a section's heading (Rationale, Model report, Instance logs) opens or closes it, as its button does.
   **Simulate** replaces Show animation: the editor's Test tab's, the same frames, controls and colours
   (`modeler/src/simulation/simulation.js`, used by both; the page's is `public/modeler/instance.js`).
+- **HR demo: a leave goes to the employee's own manager** (`LeaveApproval`: `appServices.managerOf(actors.initiator)`,
+  from HR's records; the Manager group for someone with no manager), and its notification to whoever it is assigned to.
+- **Policies chosen from lists:** a process's (or its pool's) Security and Notification policy, and a user task's
+  own, are lists of the models folder's policies with Open and New, as the assignment policy is; security and
+  notification policies open in the decision editor (`/model/security-policy/<name>`,
+  `/model/notification-policy/<name>`, with their tests), a new one from a table of their kind's inputs and outputs.
+  `GET /model/policies?kind=security|notification`.
+- **An actor on a start event too** (Who can start, Actor): the user who starts the process there. An actor is the
+  name for the user who completes a user task or starts the process; nowhere else.
+- **The instance page:** its actors under Instance data; the Access section (was Assignment and access) only says who
+  may do what, for designers and administrators while security policies are on, and no longer repeats each task's
+  assignment (the Rationale says it). A form in a diagram's popup: its headings left, a field's id and type unbroken.
 - **Element templates are a preview, off by default** (`ELEMENT_TEMPLATES=on` shows them): the model editor leaves
   out the Template chooser, `GET /model/templates` offers none, and the Design page doesn't list them. To be finished
   (docs/design/roadmap.md): what they set shown in the editor, the `owf:` attributes, their documentation.

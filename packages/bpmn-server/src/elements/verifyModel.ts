@@ -8,7 +8,7 @@ import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
 import { templateProblems } from '../engine/Labels.js';
 import { owfAttribute, legacyAttributes } from './owfAttributes.js';
-import { actorElements, BUILT_IN_ACTORS } from '../engine/DecisionContext.js';
+import { actorElements, BUILT_IN_ACTORS, ACTOR_ELEMENTS } from '../engine/DecisionContext.js';
 import { SECURITY_FOLDER, DEFAULT_SECURITY_POLICY } from '../engine/SecurityPolicy.js';
 import { notificationPolicyFile, notificationTemplateFile, NOTIFICATION_FOLDER, NOTIFICATION_TEMPLATES, NOTIFICATION_OUTPUTS } from '../engine/NotificationPolicy.js';
 import fs from 'node:fs';
@@ -523,6 +523,10 @@ class ModelVerifier {
      * not one every instance has (initiator, assignee, candidate).
      */
     async verifyActors(source: string, definition) {
+        // an actor is the user who completes a user task, or starts the process at a start event: nowhere else
+        for (const node of definition.nodes.values())
+            if (node.def?.$attrs?.['owf:actor'] && !ACTOR_ELEMENTS.includes(node.type))
+                this.add('warning', 'actor-element', `owf:actor '${node.def.$attrs['owf:actor']}' is on a ${String(node.type).replace('bpmn:', '')}: an actor is the user who completes a user task, or starts the process at a start event; it is ignored here.`, node.def);
         const known = new Set<string>([...BUILT_IN_ACTORS, ...actorElements(source).values()]);
         const places: [string, string][] = [['the model', source]];
         const folder = this.decisionsFolder;

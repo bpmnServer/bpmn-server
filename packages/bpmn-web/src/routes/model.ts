@@ -11,7 +11,7 @@ import path from 'node:path';
 import { layoutModel } from './layout.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
-import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS, SecurityPolicy, SECURITY_FOLDER, decisionContext } from '../index.js';
+import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS, SecurityPolicy, SECURITY_FOLDER, decisionContext, NOTIFICATION_FOLDER, notificationPolicyNames } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
@@ -509,10 +509,67 @@ export class Model extends Common {
         const policyPath = (name: string) => path.join(policiesFolder(), `${name}.dmn.xml`);
         const policyTests = (name: string) => `${name}.policy`;
 
+        /** A kind's policies, with their XML: ?kind=assignment (the default), security or notification. */
         router.get('/policies', awaitHandlerFactory(async (request, response) => {
             const folder = bpmnServer.configuration.definitionsPath;
+            const kind = String(request.query.kind ?? 'assignment');
+            if (kind !== 'assignment') {
+                const other = OTHER_POLICIES[kind];
+                if (!other) return response.status(400).json({ error: `kind is assignment, ${Object.keys(OTHER_POLICIES).join(' or ')}` });
+                const names = other.names(folder);
+                return response.json({ kind, policies: names.map(name => ({ name, xml: FS.readFileSync(path.join(folder, other.folder, `${name}.dmn.xml`), 'utf8') })) });
+            }
             response.json({ policies: policyNames(folder).map(name => ({ name, xml: FS.readFileSync(policyPath(name), 'utf8') })) });
         }));
+
+        // ---- security and notification policies: their own folders, edited and tested in the decision editor as an
+        // assignment policy is (/model/security-policy/<name>, /model/notification-policy/<name>); their tests as a
+        // decision's, under `<name>.<kind>-policy`
+        for (const [kind, other] of Object.entries(OTHER_POLICIES)) {
+            const fileOf = (name: string) => path.join(bpmnServer.configuration.definitionsPath, other.folder, `${name}.dmn.xml`);
+            const testsOf = (name: string) => `${name}.${kind}-policy`;
+            const base = `/${kind}-policy/:policy`;
+            router.get(base, awaitHandlerFactory(async (request, response) => {
+                const name = request.params.policy;
+                if (!isSafeModelName(name)) return response.status(400).send('Invalid policy name');
+                const exists = FS.existsSync(fileOf(name));
+                const xml = exists ? FS.readFileSync(fileOf(name), 'utf8') : other.starter(name);
+                response.render('decision', {
+                    name, exists, file: `${other.folder}/${name}.dmn.xml`, kind: other.title,
+                    modelJson: JSON.stringify(xml).replace(/</g, '\\u003c'),
+                    cspHost: process.env.ITSM_HOST,
+                });
+            }));
+            router.post(base, awaitHandlerFactory(async (request, response) => {
+                const name = request.params.policy;
+                const xml = request.body && request.body.xml;
+                if (!isSafeModelName(name)) return response.status(400).json({ errors: 'Invalid policy name' });
+                if (typeof xml !== 'string' || !/<(\w+:)?definitions[\s>]/.test(xml)) return response.status(400).json({ errors: 'Not a DMN file' });
+                FS.mkdirSync(path.dirname(fileOf(name)), { recursive: true });
+                FS.writeFileSync(fileOf(name), xml);
+                response.json({ saved: `${other.folder}/${name}.dmn.xml` });
+            }));
+            router.get(`${base}/tests`, awaitHandlerFactory(async (request, response) => {
+                if (!isSafeModelName(request.params.policy)) return response.status(400).json({ error: 'Invalid policy name' });
+                response.json({ tests: await loadDecisionTests(testsOf(request.params.policy)) });
+            }));
+            router.put(`${base}/tests`, awaitHandlerFactory(async (request, response) => {
+                const tests = request.body?.tests;
+                const problems = isSafeModelName(request.params.policy) ? checkDecisionTests(tests) : ['Invalid policy name'];
+                if (problems.length) return response.status(400).json({ error: problems.join('; ') });
+                await saveDecisionTests(testsOf(request.params.policy), tests, request.user?.userName);
+                response.json({ saved: tests.length });
+            }));
+            router.post(`${base}/tests/run`, awaitHandlerFactory(async (request, response) => {
+                const name = request.params.policy;
+                if (!isSafeModelName(name)) return response.status(400).json({ error: 'Invalid policy name' });
+                if (!FS.existsSync(fileOf(name))) return response.status(404).json({ error: `No ${other.folder}/${name}.dmn.xml: save the policy first` });
+                const tests = request.body?.tests ?? await loadDecisionTests(testsOf(name));
+                const problems = checkDecisionTests(tests);
+                if (problems.length) return response.status(400).json({ error: problems.join('; ') });
+                response.json({ results: await runDecisionTestsInEngine(bpmnServer, `${other.folder}/${name}.dmn.xml`, tests) });
+            }));
+        }
 
         router.get('/policy/:policy', awaitHandlerFactory(async (request, response) => {
             const name = request.params.policy;
@@ -884,6 +941,48 @@ export class Model extends Common {
         return router;
     }
 }
+
+/** A new policy's table: its hit policy, its inputs (label, expression), its outputs (name, label). */
+function starterTable(name: string, hitPolicy: string, inputs: [string, string][], outputs: [string, string][]): string {
+    const id = /^[A-Za-z_]/.test(name) ? name.replace(/[^\w.-]/g, '_') : 'policy_' + name.replace(/[^\w.-]/g, '_');
+    const label = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="${id}_definitions" name="${label}" namespace="http://bpmn-server/dmn">
+  <decision id="${id}" name="${label}">
+    <decisionTable id="${id}_table" hitPolicy="${hitPolicy}">
+${inputs.map(([inputLabel, expression], i) => `      <input id="${id}_input${i + 1}" label="${inputLabel}">
+        <inputExpression id="${id}_inputExpression${i + 1}" typeRef="string">
+          <text>${expression}</text>
+        </inputExpression>
+      </input>`).join('\n')}
+${outputs.map(([output, outputLabel]) => `      <output id="${id}_${output}" label="${outputLabel}" name="${output}" typeRef="string" />`).join('\n')}
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="${id}_diagram">
+      <dmndi:DMNShape id="${id}_shape" dmnElementRef="${id}">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>`;
+}
+
+/** The policies besides assignment's: their folders, names, the decision editor's title, a new one's table. */
+const OTHER_POLICIES: Record<string, { folder: string; title: string; names: (folder: string) => string[]; starter: (name: string) => string }> = {
+    security: {
+        folder: SECURITY_FOLDER, title: 'Security policy', names: folder => new SecurityPolicy(folder).names(),
+        // every rule that matches counts, a denial wins: who the user is, the task asked about
+        starter: name => starterTable(name, 'COLLECT', [['Initiator', 'actors.initiator'], ['Groups', 'user.userGroups'], ['Task', 'task']],
+            [['see', 'See'], ['data', 'Data'], ['claim', 'Claim'], ['complete', 'Complete'], ['assign', 'Assign'], ['restart', 'Restart']]),
+    },
+    notification: {
+        folder: NOTIFICATION_FOLDER, title: 'Notification policy', names: folder => notificationPolicyNames(folder),
+        // every rule that matches notifies: at which event, about which task
+        starter: name => starterTable(name, 'COLLECT', [['Event', 'event'], ['Task', 'task']],
+            [['notify', 'Notify'], ['template', 'Template'], ['channel', 'Channel']]),
+    },
+};
 
 /** A new policy: a FIRST table on one input, its outputs the assignment's fields. */
 function newPolicy(name: string): string {

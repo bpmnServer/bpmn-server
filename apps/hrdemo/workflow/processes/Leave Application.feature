@@ -40,6 +40,19 @@ Feature: Leave Application
     When user:hr1 @login with role of "HR"
     Then @check :leave has 1 items of element:Approve with status "wait" for me
 
+  Scenario: An employee's leave goes to their own manager (the policy LeaveApproval, appServices.managerOf)
+    When user:david.kim @login with role of "Employee"
+      And @start process:"Leave Application" as :leave
+      And @invoke element:Request in :leave
+        | LeaveType     | Vacation   |
+        | StartDate     | 2026-12-01 |
+        | EndDate       | 2026-12-05 |
+        | RequestReason | Holidays   |
+      And user:manager1 @login with role of "Manager"
+    Then @check :leave has 0 items of element:Approve with status "wait" for me
+    When user:sarah.chen @login with role of "Manager"
+    Then @check :leave has 1 items of element:Approve with status "wait" for me
+
   Scenario: Wrong dates go back to the employee
     When user:user1 @login with role of "Employee"
       And @start process:"Leave Application" as :leave

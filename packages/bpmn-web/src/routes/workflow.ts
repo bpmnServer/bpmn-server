@@ -2,7 +2,7 @@ import express from 'express';
 import FS from 'node:fs';
 import path from 'node:path';
 
-import { BPMNServer, dateDiff, Behaviour_names, labelInstances, labelItems } from '../index.js';
+import { BPMNServer, dateDiff, Behaviour_names, labelInstances, labelItems, actorsOf, actorElements } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
@@ -595,12 +595,17 @@ async function instanceDetails(request,response,instanceId,version) {
     output = show(output);
 
     let vars = ViewHelper.formatData(instance.data || {});
+    // who did what in it: its actors (docs/design/expressions.md), from its items and its model's owf:actor
+    const source = instance.source || await Promise.resolve().then(() => serverOf(request).definitions.getSource(instance.name)).catch(() => '');
+    const actors = Object.entries(actorsOf({ instance: { ...instance, items }, elements: actorElements(source || '') }))
+        .filter(([, who]) => who != null && !(Array.isArray(who) && !who.length))
+        .map(([name, who]) => ({ name, who: Array.isArray(who) ? who.join(', ') : String(who) }));
 
     let decorations = JSON.stringify(ViewHelper.calculateDecorations(items,instance.tokens));
 
     response.render('InstanceDetails',
         {
-            instance, vars, request, user,
+            instance, vars, actors, request, user,
             accessRules: def.accessRules,
             title: 'Instance Details',
             logs,items:items, svg,
@@ -611,7 +616,7 @@ async function instanceDetails(request,response,instanceId,version) {
                 ? await accessDirectory(request, serverOf(request)) : {}).catch(() => null),
             accessDetails: worksOnModels(request.user),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
-            modelJson: JSON.stringify(instance.source || await serverOf(request).definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
+            modelJson: JSON.stringify(source).replace(/</g, '\\u003c'),
         });
 
 }//export default router;

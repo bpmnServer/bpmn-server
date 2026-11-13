@@ -194,6 +194,9 @@ pre.report-value {
 .report-form td:nth-child(3) { font-family: inherit; font-size: inherit; }
 .report-form td code { font-size: 12px; }
 .report-form th { font-weight: 600; color: #52575f; white-space: nowrap; }
-/* in a diagram's popup: narrower, so the cells wrap */
+/* in a diagram's popup: narrower; an id or a type never breaks, a label or the options wrap between words */
 .report-popup .report-form { font-size: 12px; }
-.report-popup .report-form th, .report-popup .report-form td { padding: 3px 6px; overflow-wrap: anywhere; }
+.report-popup .report-form th, .report-popup .report-form td { padding: 3px 6px; text-align: left; overflow-wrap: normal; word-break: normal; }
+/* the pages' main.css centers every th, !important: not the report's tables */
+.report-document table.report-flows th { text-align: left !important; }
+.report-popup .report-form td:nth-child(1), .report-popup .report-form td:nth-child(2) { white-space: nowrap; }

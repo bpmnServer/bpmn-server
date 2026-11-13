@@ -249,3 +249,13 @@ test('a security policy deciding about a task reads its item\'s data, in its bra
     assert.equal((await policy.decide(mia, instance, { elementId: 'Approve', itemId: 'a' })).complete, null, 'line 0: 5');
     assert.equal((await policy.decide(mia, instance, { elementId: 'Approve', itemId: 'b' })).complete, false, 'line 1: 500');
 });
+
+test('an actor is the user who completes a user task or starts the process at a start event; elsewhere ignored, and warned of', async () => {
+    const xml = `<bpmn:process id="P"><bpmn:startEvent id="Ask" owf:actor="requester" /><bpmn:userTask id="Ok" owf:actor="approver" /><bpmn:serviceTask id="Svc" owf:actor="robot" /></bpmn:process>`;
+    assert.deepEqual([...actorElements(xml)], [['Ask', 'requester'], ['Ok', 'approver']], 'not the service task');
+    const instance = { items: [
+        { seq: 1, type: 'bpmn:StartEvent', elementId: 'Ask', status: 'end', userName: 'ann' },
+        { seq: 2, type: 'bpmn:UserTask', elementId: 'Ok', status: 'end', userName: 'bob' },
+    ] };
+    assert.deepEqual(actorsOf({ instance, elements: actorElements(xml) }), { initiator: 'ann', requester: 'ann', approver: 'bob', assignee: null, candidate: null });
+});

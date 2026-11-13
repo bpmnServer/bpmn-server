@@ -100,3 +100,6 @@
 .access-history { color: #3d4450; }
 .access-table td, .access-table th { white-space: nowrap; }
 .access-task + .access-task { border-top: 1px solid #e3e8f0; }
+
+/* the instance's actors, under its data */
+.instance-subheading { font-size: 15px; margin: 14px 0 6px; }

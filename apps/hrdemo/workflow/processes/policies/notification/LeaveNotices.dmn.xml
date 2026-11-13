@@ -26,12 +26,12 @@
       <output id="LeaveNotices_template" label="Template" name="template" typeRef="string" />
       <output id="LeaveNotices_channel" label="Channel" name="channel" typeRef="string" />
       <rule id="LeaveNotices_request">
-        <description>A request waits for approval: those it is offered to (the Manager or HR group, as LeaveApproval said)</description>
+        <description>A request waits for approval: whoever it is assigned to (the employee&#39;s manager), else those it is offered to (the Manager or HR group), as LeaveApproval said</description>
         <inputEntry id="LeaveNotices_request_event"><text>"assigned"</text></inputEntry>
         <inputEntry id="LeaveNotices_request_task"><text>"Approve"</text></inputEntry>
         <inputEntry id="LeaveNotices_request_approval"><text>-</text></inputEntry>
         <inputEntry id="LeaveNotices_request_recorded"><text>-</text></inputEntry>
-        <outputEntry id="LeaveNotices_request_notify"><text>actors.candidate</text></outputEntry>
+        <outputEntry id="LeaveNotices_request_notify"><text>[actors.assignee, actors.candidate]</text></outputEntry>
         <outputEntry id="LeaveNotices_request_template"><text>"approval-request"</text></outputEntry>
         <outputEntry id="LeaveNotices_request_channel"><text>"email"</text></outputEntry>
       </rule>

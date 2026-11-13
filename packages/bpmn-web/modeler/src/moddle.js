@@ -35,10 +35,11 @@ export const owf = {
             properties: [{ name: 'assignmentPolicy', isAttr: true, type: 'String' }]
         },
         {
-            // who completes it is this actor of the instance: actors.<name> (engine/DecisionContext.ts)
+            // an actor: the name for the user who completes a user task, or starts the process at a start event:
+            // actors.<name> (engine/DecisionContext.ts)
             name: 'Actor',
             isAbstract: true,
-            extends: ['bpmn:UserTask'],
+            extends: ['bpmn:UserTask', 'bpmn:StartEvent'],
             properties: [{ name: 'actor', isAttr: true, type: 'String' }]
         },
         {
