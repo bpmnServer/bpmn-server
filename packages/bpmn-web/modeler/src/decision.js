@@ -53,6 +53,38 @@ modeler.on('views.changed', () => {
     });
 });
 
+/**
+ * An input column's calculation under its name: dmn-js shows a column's label alone once it has one, so a column
+ * named employeeManager (a table's own variable, engine/DMNEngine.ts) would hide appServices.managerOf(...). Shown
+ * whenever the label and the expression differ, and again whenever the table is drawn again.
+ */
+function showInputExpressions() {
+    const viewer = modeler.getActiveViewer();
+    let sheet;
+    try { sheet = viewer?.get('sheet'); } catch { return; }
+    const cols = sheet?.getRoot?.()?.cols ?? [];
+    for (const th of document.querySelectorAll('th.input-cell[data-col-id]')) {
+        const input = cols.find(c => c.id === th.dataset.colId)?.businessObject;
+        const text = String(input?.inputExpression?.text ?? '').trim();
+        const label = String(input?.label ?? '').trim();
+        const shown = th.querySelector('.owf-input-expression');
+        const wanted = text && label && text.toLowerCase() !== label.toLowerCase() ? text : '';
+        if ((shown?.textContent ?? '') === wanted) continue;
+        if (!wanted) { shown?.remove(); continue; }
+        const line = shown ?? document.createElement('div');
+        line.className = 'owf-input-expression';
+        line.title = "This column's value: what is tested, and what its name stands for in the outputs";
+        line.textContent = wanted;
+        if (!shown) th.querySelector('.input-label')?.after(line);
+    }
+}
+let pending = false;
+new MutationObserver(() => {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => { pending = false; showInputExpressions(); });
+}).observe(document.body, { childList: true, subtree: true });
+
 async function open() {
     const xml = JSON.parse(document.getElementById('model-source').textContent);
     try {

@@ -169,6 +169,8 @@ and here
   a click on a section's heading (Rationale, Model report, Instance logs) opens or closes it, as its button does.
   **Simulate** replaces Show animation: the editor's Test tab's, the same frames, controls and colours
   (`modeler/src/simulation/simulation.js`, used by both; the page's is `public/modeler/instance.js`).
+- **The decision editor shows an input column's calculation under its name** when they differ (a table's own
+  variable, `employeeManager`: `appServices.managerOf(actors.initiator)`); dmn-js alone shows the name only.
 - **HR demo: a leave goes to the employee's own manager** (`LeaveApproval`: `appServices.managerOf(actors.initiator)`,
   from HR's records; the Manager group for someone with no manager), and its notification to whoever it is assigned to.
 - **Policies chosen from lists:** a process's (or its pool's) Security and Notification policy, and a user task's
