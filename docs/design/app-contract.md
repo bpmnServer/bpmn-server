@@ -222,5 +222,6 @@ Everything is optional and additive:
 ## 9. Questions
 
 1. **Types:** JSON Schema (proposed), or a simpler list?
-2. **The file's name**, when `describe()` reads one: `application.json`, or `owf.json` (following the `owf:` rule)?
-3. **Which first:** the HR demo's own `describe()` by hand, or the MDE adapter?
+2. **The file's name**, when `describe()` reads one: `application.json` (proposed), or `owf.json` (following the
+   `owf:` rule)?
+3. ~~Which first~~ **Decided 2026-11-14:** the HR demo's own `describe()`, by hand; the MDE adapter after.
