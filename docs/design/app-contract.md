@@ -25,8 +25,8 @@ The rule: the declarative part says **what** and never **how**. Every name it li
 
 ```ts
 class HrDelegate extends DefaultAppDelegate {
-    expressionFactory(about: About) { return new HrFunctions(about); }     // code: appServices.x(...)
-    decisionVarsFactory(about: About) { return new HrVars(about); }        // code: appVars.x
+    expressionFactory(context) { return new HrFunctions(context); }     // code: appServices.x(...)
+    decisionVarsFactory(context) { return new HrVars(context); }           // code: appVars.x
     describe() { return JSON.parse(fs.readFileSync('processes/application.json', 'utf8')); }   // declarative
     async notify(notification) { /* send it */ }                           // code: hooks
 }
@@ -34,9 +34,9 @@ class HrDelegate extends DefaultAppDelegate {
 
 ### 2.1 Two factories: functions and variables
 
-The delegate gives each evaluation two objects, made for that evaluation from `about` (§2.2):
+The delegate gives each evaluation two objects, made for that evaluation from its context (§2.2):
 
-| | `expressionFactory(about)` | `decisionVarsFactory(about)` |
+| | `expressionFactory(context)` | `decisionVarsFactory(context)` |
 |---|---|---|
 | Gives | the **functions** | the **variables** |
 | Read in an expression as | `appServices.managerOf(actors.initiator)` | `appVars.employeeManager`, `appVars.endFiscalYear` |
@@ -46,9 +46,9 @@ The delegate gives each evaluation two objects, made for that evaluation from `a
 
 ```ts
 class HrVars {
-    constructor(private about: About) {}
+    constructor(private context) {}
     /** The acting user's manager. */
-    async employeeManager(): Promise<string> { return hr.managerOf(this.about.user.userName); }
+    async employeeManager(): Promise<string> { return hr.managerOf(this.context.user.userName); }
     /** The last day of the fiscal year. */
     endFiscalYear(): string { return '2027-03-31'; }
 }
@@ -64,22 +64,23 @@ class HrVars {
   - `appServices` keeps working, as the delegate's functions when there is no `expressionFactory`.
   - `decisionContext` keeps working, and its facts are still read unqualified (`employeeManager`) in decision tables.
 
-### 2.2 `about`: who is asking, on what
+### 2.2 The context, and what is evaluating
 
-Each evaluation tells the application why it is being asked, so a variable can be worked out for that person and
-that case:
+A factory is given the **context**: what the expression reads (expressions.md: the data, `user`, `actors`,
+`instance`, `task`, ...). The context also gains one name, `evaluatingSource`, which says what is evaluating:
 
-| Field | Means | Example |
+| `evaluatingSource` | Is evaluating | Example |
 |---|---|---|
-| `kind` | what is evaluating: `decision` (a business rule task's table), `assignment` (an assignment policy choosing who works on a task), `security` (a security policy deciding what a person may see and do), `notification` (a notification policy), or `script`, `condition`, `expression` | `assignment` |
-| `name` | the table or policy, or the element running the script | `LeaveApproval` |
-| `user` | the person it is about: the user acting, or, for `security`, the user asking | `{ userName: 'ann', userGroups: ['Employee'] }` |
-| `instance` | the case | Ann's leave request |
-| `task` | the task's element id, when it is about a task | `Approve` |
+| `{ type: 'decision', id }` | a decision table: a business rule task's, or an assignment, security or notification policy (`policy` says which) | `{ type: 'decision', id: 'LeaveApproval', policy: 'assignment' }` |
+| `{ type: 'node', id }` | an element's expression: a script, an input or output parameter, a timer, an event's condition | `{ type: 'node', id: 'Approve' }` |
+| `{ type: 'flow', id }` | a sequence flow's condition | `{ type: 'flow', id: 'Flow_approved' }` |
 
-For example, the assignment policy `LeaveApproval` choosing who approves Ann's request is asked with
-`{ kind: 'assignment', name: 'LeaveApproval', user: ann, instance, task: 'Approve' }`; `appVars.employeeManager` is
-then Ann's manager.
+For example, when the assignment policy `LeaveApproval` chooses who approves Ann's request, its variables are made
+from a context that has `user` (Ann), `instance` (her request), `task` (`Approve`) and
+`evaluatingSource: { type: 'decision', id: 'LeaveApproval', policy: 'assignment' }`. `appVars.employeeManager` is then
+Ann's manager.
+
+The rest of the context is what an expression already reads: the factories add nothing to learn.
 
 `describe()` is optional. Without it, nothing is checked or offered, and everything runs as today.
 
