@@ -19,24 +19,24 @@ The application already gives us its delegate. The delegate carries the contract
 | | What | Who reads it | Where |
 |---|---|---|---|
 | **Declarative** | what exists: the names (variables and functions, with their types), roles, APIs, pages | the editor, `verifyModel`, tests, agents; without running anything | `appDelegate.describe()`: JSON, from a file or built in code |
-| **Code** | what it does: the functions and the variables (two factories, §2.1), `notify`, the hooks | the engine, when it runs | the delegate's methods, as today |
+| **Code** | what it does: the functions and the variables (`getAppServices`, `getAppVars`, §2.1), `notify`, the hooks | the engine, when it runs | the delegate's methods, as today |
 
 The rule: the declarative part says **what** and never **how**. Every name it lists is carried out by the code part.
 
 ```ts
 class HrDelegate extends DefaultAppDelegate {
-    expressionFactory(context) { return new HrFunctions(context); }     // code: appServices.x(...)
-    decisionVarsFactory(context) { return new HrVars(context); }           // code: appVars.x
+    getAppServices(context) { return new HrFunctions(context); }     // code: appServices.x(...)
+    getAppVars(context) { return new HrVars(context); }           // code: appVars.x
     describe() { return JSON.parse(fs.readFileSync('processes/application.json', 'utf8')); }   // declarative
     async notify(notification) { /* send it */ }                           // code: hooks
 }
 ```
 
-### 2.1 Two factories: functions and variables
+### 2.1 Functions and variables: `getAppServices` and `getAppVars`
 
 The delegate gives each evaluation two objects, made for that evaluation from its context (§2.2):
 
-| | `expressionFactory(context)` | `decisionVarsFactory(context)` |
+| | `getAppServices(context)` | `getAppVars(context)` |
 |---|---|---|
 | Gives | the **functions** | the **variables** |
 | Read in an expression as | `appServices.managerOf(actors.initiator)` | `appVars.employeeManager`, `appVars.endFiscalYear` |
@@ -61,12 +61,12 @@ class HrVars {
 - **`describe()` lists both from the classes,** so the names aren't written twice; their types come from the JSON or
   from TypeScript.
 - **Compatibility:**
-  - `appServices` keeps working, as the delegate's functions when there is no `expressionFactory`.
+  - `appServices` keeps working, as the delegate's functions when there is no `getAppServices`.
   - `decisionContext` keeps working, and its facts are still read unqualified (`employeeManager`) in decision tables.
 
 ### 2.2 The context, and what is evaluating
 
-A factory is given the **context**: what the expression reads (expressions.md: the data, `user`, `actors`,
+Each is given the **context**: what the expression reads (expressions.md: the data, `user`, `actors`,
 `instance`, `task`, ...). The context also gains one name, `evaluatingSource`, which says what is evaluating:
 
 | `evaluatingSource` | Is evaluating | Example |
@@ -80,7 +80,7 @@ from a context that has `user` (Ann), `instance` (her request), `task` (`Approve
 `evaluatingSource: { type: 'decision', id: 'LeaveApproval', policy: 'assignment' }`. `appVars.employeeManager` is then
 Ann's manager.
 
-The rest of the context is what an expression already reads: the factories add nothing to learn.
+The rest of the context is what an expression already reads: the two methods add nothing to learn.
 
 `describe()` is optional. Without it, nothing is checked or offered, and everything runs as today.
 
