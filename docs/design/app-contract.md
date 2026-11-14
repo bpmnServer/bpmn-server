@@ -9,7 +9,7 @@ application's facts), [form-keys.md](form-keys.md) (its pages), [connectors-as-f
 
 BPMN Server runs an application's workflows, so it depends on what the application has: the names an expression may
 use, its roles, its APIs, its pages. Today most of this is code no one can read before it runs. A typo in a function
-name fails only when it runs, and an unknown fact reads as `null`. The editor can't offer these names, and
+name fails only when it runs, and an unknown variable reads as `null`. The editor can't offer these names, and
 `verifyModel` can't check them.
 
 ## 2. One integration point: `appDelegate`, in two parts
@@ -18,52 +18,68 @@ The application already gives us its delegate. The delegate carries the contract
 
 | | What | Who reads it | Where |
 |---|---|---|---|
-| **Declarative** | what exists: the names (facts and functions, with their types), roles, APIs, pages | the editor, `verifyModel`, tests, agents; without running anything | `appDelegate.describe()`: JSON, from a file or built in code |
-| **Code** | what it does: the functions, the facts' values (a class, §2.1), `notify`, the hooks | the engine, when it runs | the delegate's methods, as today |
+| **Declarative** | what exists: the names (variables and functions, with their types), roles, APIs, pages | the editor, `verifyModel`, tests, agents; without running anything | `appDelegate.describe()`: JSON, from a file or built in code |
+| **Code** | what it does: the functions and the variables (two factories, §2.1), `notify`, the hooks | the engine, when it runs | the delegate's methods, as today |
 
 The rule: the declarative part says **what** and never **how**. Every name it lists is carried out by the code part.
 
 ```ts
 class HrDelegate extends DefaultAppDelegate {
-    facts = new HrFacts();                                   // code: the facts, a class (§2.1)
+    expressionFactory(about: About) { return new HrFunctions(about); }     // code: appServices.x(...)
+    decisionVarsFactory(about: About) { return new HrVars(about); }        // code: appVars.x
     describe() { return JSON.parse(fs.readFileSync('processes/application.json', 'utf8')); }   // declarative
-    async notify(notification) { /* send it */ }             // code: hooks
+    async notify(notification) { /* send it */ }                           // code: hooks
 }
-// appServices: the functions, as today
 ```
 
-### 2.1 Facts, a class
+### 2.1 Two factories: functions and variables
 
-Today one method, `decisionContext(context, about)`, returns every fact as one object:
-- `context` is everything the table already reads;
-- `about` says who is asking.
+The delegate gives each evaluation two objects, made for that evaluation from `about` (§2.2):
 
-Nothing shows which facts exist until it runs. Instead, each fact is a method of a class:
+| | `expressionFactory(about)` | `decisionVarsFactory(about)` |
+|---|---|---|
+| Gives | the **functions** | the **variables** |
+| Read in an expression as | `appServices.managerOf(actors.initiator)` | `appVars.employeeManager`, `appVars.endFiscalYear` |
+| Arguments | yes | none |
+| Worked out | when the expression calls it; it may wait and may change things | before the expression runs, only the names it reads, once each; the same throughout one evaluation |
+| Read in | every expression: scripts, conditions, parameters, decision tables | every expression too |
 
 ```ts
-interface FactRequest {            // who is asking, on what
-    kind: 'decision' | 'assignment' | 'security' | 'notification';
-    name?: string;                 // the table or policy asking
-    user: { userName?: string; userGroups?: string[] };
-    instance?: IInstanceData;
-    task?: string;                 // the task's element id
-}
-
-interface IAppFacts {}             // a fact: (req: FactRequest) => value | Promise<value>
-
-class HrFacts implements IAppFacts {
+class HrVars {
+    constructor(private about: About) {}
     /** The acting user's manager. */
-    async employeeManager(req: FactRequest): Promise<string> { return hr.managerOf(req.user.userName); }
+    async employeeManager(): Promise<string> { return hr.managerOf(this.about.user.userName); }
+    /** The last day of the fiscal year. */
+    endFiscalYear(): string { return '2027-03-31'; }
 }
 ```
 
-- **One method per fact.** Its name is the name a table reads, and its comment and return type describe it.
-- **Only what is read is computed.** Before a table runs, the engine finds the names it uses and calls only those
-  methods, once each.
-- **`describe()` lists the facts from the class** (their names; the types from the JSON or from TypeScript), so they
-  aren't written twice.
-- **`decisionContext` keeps working** for existing applications. When the delegate has both, a fact from the class
-  wins.
+- **Qualified names.** Variables are read as `appVars.<name>`, as functions are read as `appServices.<name>`, so they
+  can't be mistaken for the data's own fields.
+- **One method per name.** The method's name is the name an expression reads, and its comment and return type
+  describe it.
+- **`describe()` lists both from the classes,** so the names aren't written twice; their types come from the JSON or
+  from TypeScript.
+- **Compatibility:**
+  - `appServices` keeps working, as the delegate's functions when there is no `expressionFactory`.
+  - `decisionContext` keeps working, and its facts are still read unqualified (`employeeManager`) in decision tables.
+
+### 2.2 `about`: who is asking, on what
+
+Each evaluation tells the application why it is being asked, so a variable can be worked out for that person and
+that case:
+
+| Field | Means | Example |
+|---|---|---|
+| `kind` | what is evaluating: `decision` (a business rule task's table), `assignment` (an assignment policy choosing who works on a task), `security` (a security policy deciding what a person may see and do), `notification` (a notification policy), or `script`, `condition`, `expression` | `assignment` |
+| `name` | the table or policy, or the element running the script | `LeaveApproval` |
+| `user` | the person it is about: the user acting, or, for `security`, the user asking | `{ userName: 'ann', userGroups: ['Employee'] }` |
+| `instance` | the case | Ann's leave request |
+| `task` | the task's element id, when it is about a task | `Approve` |
+
+For example, the assignment policy `LeaveApproval` choosing who approves Ann's request is asked with
+`{ kind: 'assignment', name: 'LeaveApproval', user: ann, instance, task: 'Approve' }`; `appVars.employeeManager` is
+then Ann's manager.
 
 `describe()` is optional. Without it, nothing is checked or offered, and everything runs as today.
 
@@ -80,21 +96,15 @@ class HrFacts implements IAppFacts {
 }
 ```
 
-### 3.1 Expressions: facts and functions
+### 3.1 Expressions: variables and functions
 
 The names an expression may use, in a script, a condition, a parameter or a decision table (FEEL or JavaScript),
-beyond the standard ones (expressions.md).
-
-| | A fact | A function |
-|---|---|---|
-| Read as | a name: `employeeManager` | a call: `appServices.managerOf(actors.initiator)` |
-| Arguments | none | yes |
-| Its value | worked out by the application before the expression runs; the same throughout one evaluation | worked out when the expression calls it; it may wait (`async`) and may change things |
-| Its code | `appDelegate.facts`, a class (§2.1) | `appServices` |
+beyond the standard ones (expressions.md). The difference between the two kinds is in §2.1.
 
 ```json
 "expressions": [
-  { "kind": "fact", "name": "employeeManager", "type": "string", "about": "user", "description": "The acting user's manager" },
+  { "kind": "var", "name": "employeeManager", "type": "string", "description": "The acting user's manager" },
+  { "kind": "var", "name": "endFiscalYear", "type": "date" },
   { "kind": "function", "name": "managerOf", "params": [{ "name": "userName", "type": "string" }],
     "returns": "string", "async": true, "effect": "read" },
   { "kind": "function", "name": "addAssignment", "params": [{ "name": "assignment", "type": "Assignment" }],
@@ -102,7 +112,6 @@ beyond the standard ones (expressions.md).
 ]
 ```
 
-- `about` gives a fact's scope: `user`, `instance` or `task`.
 - `effect` says what a function does: `none`, `read` or `write`. A decision may not call a `write` function.
 - `types` holds the JSON Schemas that parameters and results name, such as `Assignment`.
 
@@ -167,11 +176,11 @@ Through API v3, as the person or as the service account:
 ## 5. What uses the declarative part
 
 - **The model editor** offers:
-  - the facts and functions in scripts, conditions, parameters and the decision editor;
+  - the variables and functions in scripts, conditions, parameters and the decision editor;
   - the roles for candidate groups and lanes;
   - the pages for Form Key.
 - **`verifyModel`** warns about:
-  - an unknown fact, function, role or page;
+  - an unknown variable, function, role or page;
   - a function called with the wrong number of arguments;
   - a `write` function in a decision.
 - **At start**, the declarative part is checked against the code:
@@ -190,7 +199,7 @@ Its delegate's `describe()` maps its `GET /model` (an adapter we provide):
 - its operations and use cases become functions (a read is `read`, anything else `write`);
 - its OpenAPI becomes `apis`.
 
-Its facts, if any, it declares itself.
+Its variables, if any, it declares itself.
 
 ## 7. An integration guide for AI agents
 
