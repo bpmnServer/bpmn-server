@@ -19,18 +19,51 @@ The application already gives us its delegate. The delegate carries the contract
 | | What | Who reads it | Where |
 |---|---|---|---|
 | **Declarative** | what exists: the names (facts and functions, with their types), roles, APIs, pages | the editor, `verifyModel`, tests, agents; without running anything | `appDelegate.describe()`: JSON, from a file or built in code |
-| **Code** | what it does: the functions, the facts' values, `notifyUsers`, the hooks | the engine, when it runs | the delegate's methods, as today |
+| **Code** | what it does: the functions, the facts' values (a class, §2.1), `notify`, the hooks | the engine, when it runs | the delegate's methods, as today |
 
 The rule: the declarative part says **what** and never **how**. Every name it lists is carried out by the code part.
 
 ```ts
 class HrDelegate extends DefaultAppDelegate {
+    facts = new HrFacts();                                   // code: the facts, a class (§2.1)
     describe() { return JSON.parse(fs.readFileSync('processes/application.json', 'utf8')); }   // declarative
-    async decisionContext(context, about) { return { employeeManager: await hr.managerOf(about.user) }; }  // code: facts
-    async notifyUsers(notice) { /* send it */ }                                                       // code: hooks
+    async notify(notification) { /* send it */ }             // code: hooks
 }
 // appServices: the functions, as today
 ```
+
+### 2.1 Facts, a class
+
+Today one method, `decisionContext(context, about)`, returns every fact as one object:
+- `context` is everything the table already reads;
+- `about` says who is asking.
+
+Nothing shows which facts exist until it runs. Instead, each fact is a method of a class:
+
+```ts
+interface FactRequest {            // who is asking, on what
+    kind: 'decision' | 'assignment' | 'security' | 'notification';
+    name?: string;                 // the table or policy asking
+    user: { userName?: string; userGroups?: string[] };
+    instance?: IInstanceData;
+    task?: string;                 // the task's element id
+}
+
+interface IAppFacts {}             // a fact: (req: FactRequest) => value | Promise<value>
+
+class HrFacts implements IAppFacts {
+    /** The acting user's manager. */
+    async employeeManager(req: FactRequest): Promise<string> { return hr.managerOf(req.user.userName); }
+}
+```
+
+- **One method per fact.** Its name is the name a table reads, and its comment and return type describe it.
+- **Only what is read is computed.** Before a table runs, the engine finds the names it uses and calls only those
+  methods, once each.
+- **`describe()` lists the facts from the class** (their names; the types from the JSON or from TypeScript), so they
+  aren't written twice.
+- **`decisionContext` keeps working** for existing applications. When the delegate has both, a fact from the class
+  wins.
 
 `describe()` is optional. Without it, nothing is checked or offered, and everything runs as today.
 
@@ -57,7 +90,7 @@ beyond the standard ones (expressions.md).
 | Read as | a name: `employeeManager` | a call: `appServices.managerOf(actors.initiator)` |
 | Arguments | none | yes |
 | Its value | worked out by the application before the expression runs; the same throughout one evaluation | worked out when the expression calls it; it may wait (`async`) and may change things |
-| Its code | `decisionContext` | `appServices` |
+| Its code | `appDelegate.facts`, a class (§2.1) | `appServices` |
 
 ```json
 "expressions": [
@@ -120,7 +153,7 @@ from the application's origin only:
 
 ### 4.3 We tell the application
 
-Through the delegate's code, in the same process: `notifyUsers`, `executionStarted`, `messageThrown`,
+Through the delegate's code, in the same process: `notify`, `executionStarted`, `messageThrown`,
 `issueMessage`, ... An application in another process or language would need these as calls to its URL instead;
 that is not proposed now.
 
