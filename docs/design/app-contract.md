@@ -58,8 +58,20 @@ class HrVars {
   can't be mistaken for the data's own fields.
 - **One method per name.** The method's name is the name an expression reads, and its comment and return type
   describe it.
-- **`describe()` lists both from the classes,** so the names aren't written twice; their types come from the JSON or
-  from TypeScript.
+- **The names without a context.** Validation (`verifyModel`, the editor) needs the names when nothing is evaluating,
+  so the delegate also names the two classes; their method names are the lists:
+
+  ```ts
+  class HrDelegate extends DefaultAppDelegate {
+      appVarsClass = HrVars;              // appVars.<method>
+      appServicesClass = HrFunctions;     // appServices.<method>
+  }
+  ```
+
+  `DefaultAppDelegate.getAppVars(context)` is `new this.appVarsClass(context)` (and the same for services), so an
+  application sets the classes and overrides the methods only to build them its own way.
+- **`describe()` adds the rest:** each name's type and description, from the JSON or from TypeScript. A name in one
+  list and not the other is a warning at start.
 - **Compatibility:**
   - `appServices` keeps working, as the delegate's functions when there is no `getAppServices`.
   - `decisionContext` keeps working, and its facts are still read unqualified (`employeeManager`) in decision tables.
