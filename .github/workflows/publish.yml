@@ -1,0 +1,94 @@
+# Publishes the packages to npm when a version tag (v3.6.1) is pushed: built and tested first, then published in the
+# order their dependencies need. The versions and the changelogs are set by hand before the tag (bpmn-internal's
+# PUBLISHING.md); this does what follows. npm trusts this workflow (trusted publishing, OIDC): no npm token is kept in
+# the repository's secrets, and each package is published with its provenance.
+#
+# A tag on a release branch (release/3.6.1) publishes from there, so a patch to the version on npm does not take main's
+# unreleased work with it. A version lower than npm's `latest` is published under `release-<major>.<minor>`, so it
+# does not become `latest`. A version already on npm is skipped: a failed run can be run again.
+name: Publish
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The version tag to publish again (v3.6.1): it must already be pushed'
+        required: true
+
+permissions:
+  contents: write      # the GitHub release
+  id-token: write      # npm's trusted publishing
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      # in the order of their dependencies: bpmn-web needs bpmn-server; bpmn-mcp pins bpmn-server and bpmn-client
+      PACKAGES: bpmn-server bpmn-client bpmn-web bpmn-mcp
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - name: npm with trusted publishing (11.5.1 or later)
+        run: npm install -g npm@^11.5.1 && npm --version
+
+      - name: The tag is every package's version, and their dependencies on each other agree
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const version = process.env.TAG.replace(/^v/, "");
+            const pkg = name => JSON.parse(fs.readFileSync(`packages/${name}/package.json`, "utf8"));
+            const problems = [];
+            for (const name of process.env.PACKAGES.split(" ")) {
+              const p = pkg(name);
+              if (p.version !== version) problems.push(`${name} is ${p.version}, the tag ${version}`);
+              for (const dep of ["bpmn-server", "bpmn-client"]) {
+                const range = p.dependencies?.[dep];
+                if (range && range.replace(/^[\^~]/, "") !== version) problems.push(`${name} depends on ${dep} ${range}, not ${version}`);
+              }
+            }
+            if (problems.length) { console.error(problems.join("\n")); process.exit(1); }
+            console.log(`all at ${version}`);'
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run features -- --check
+      - run: npm test
+
+      - name: Publish
+        run: |
+          version="${TAG#v}"
+          for name in $PACKAGES; do
+            if [ "$(npm view "$name@$version" version 2>/dev/null)" = "$version" ]; then
+              echo "$name@$version is on npm already: skipped"; continue
+            fi
+            latest="$(npm view "$name" dist-tags.latest 2>/dev/null || true)"
+            dist=latest
+            if [ -n "$latest" ] && [ "$(printf '%s\n%s\n' "$latest" "$version" | sort -V | tail -1)" != "$version" ]; then
+              dist="release-$(echo "$version" | cut -d. -f1,2)"      # a patch to an older line: latest stays
+            fi
+            echo "publishing $name@$version (tag $dist)"
+            npm publish -w "$name" --tag "$dist"
+          done
+
+      - name: The versions on npm
+        run: |
+          for name in $PACKAGES; do echo "$name: $(npm view "$name@${TAG#v}" version)"; done
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --verify-tag --title "$TAG" --generate-notes
