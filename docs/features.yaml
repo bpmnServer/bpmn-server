@@ -83,7 +83,6 @@ features:
     docs: [docs/docs/examples/subProcess.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts]
     tests: [testSampleApp/test/custom/subprocess.test.ts, testSampleApp/processes/SubProcess-engine-test.engine.feature]
-    examples: [testSampleApp/examples/cancel-application.test.ts]
   - id: event-sub-process
     area: modeling
     name: "Event sub-process"
@@ -205,7 +204,7 @@ features:
     what: "A task or sub-process once per item of a collection, all at once or one after another."
     docs: [docs/docs/examples/loop.md]
     code: [packages/bpmn-server/src/engine/Loop.ts, packages/bpmn-server/src/elements/behaviours/Loop.ts]
-    tests: [testSampleApp/processes/loop-engine-test.engine.feature, testSampleApp/processes/Issue197.engine.feature, testSampleApp/test/issues/github-issues.test.ts]
+    tests: [testSampleApp/processes/loop-engine-test.engine.feature, testSampleApp/processes/Issue197.engine.feature, testSampleApp/test/issues/github-issues.test.ts, packages/bpmn-server/test/loop-cancel.test.mjs]
     examples: [testSampleApp/examples/multi-instance-vote.test.ts]
   - id: standard-loop
     area: modeling
@@ -562,7 +561,7 @@ features:
     what: "CSRF tokens, sessions, security headers, rate limits on sign-in, error pages without secrets."
     docs: [docs/docs/security.md]
     code: [packages/bpmn-web/src/routes/middleware]
-    tests: [testSampleApp/test/unit/web-security.test.mjs, testSampleApp/test/ui/csrf.test.mjs, testSampleApp/test/unit/error-details.test.mjs]
+    tests: [testSampleApp/test/unit/web-security.test.mjs, testSampleApp/test/ui/csrf.test.mjs, testSampleApp/test/unit/error-details.test.mjs, testSampleApp/test/unit/redact-url.test.mjs]
   - id: roles
     area: security
     name: "Roles and access"

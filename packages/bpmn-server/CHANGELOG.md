@@ -13,7 +13,17 @@ and here
 ### Changed
 -->
 
-## [Unreleased]
+## Release 3.6.1 (unreleased)
+### Fixed
+- **Cancelling a parallel multi-instance loop of one round** (a terminate end event on another branch, an
+  interrupting path) no longer throws `Cannot read properties of null (reading 'id')` in `Loop.cancel`: with no other
+  round to terminate, the loop's own item is ended from the cancelled round's parent token (#289).
+- **Checking a model with a compensation association** (a compensation boundary event to its handler) no longer fails
+  (`Cannot read properties of undefined (reading 'forEach')`); the editor's Problems list stayed empty for it.
+- `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
+  `true`).
+
+## Release 3.6.0 (2026-11-10)
 ### Added
 - **Each operation's outcome in the log**: when it saves, the engine logs `{"type":"outcome"}`, with the instance's status,
   the items whose status changed and the items that wait. A timer the server fires is logged as `Timer Fired`, a

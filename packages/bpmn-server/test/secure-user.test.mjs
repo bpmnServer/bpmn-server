@@ -37,6 +37,11 @@ test('models: only an administrator changes them; a user with an owner sees that
   assert.deepEqual(owned.qualifyModels({ name: 'm' }), { name: 'm', owner: 'acme' });
 });
 
+test('models, with the rules off: the query comes back as it was, as the other qualify* give it (it was true)', () => {
+  assert.deepEqual(open().qualifyModels({ name: 'm' }), { name: 'm' });
+  assert.deepEqual(system().qualifyModels({}), {});
+});
+
 test('deleting instances: an administrator\'s query goes through, anyone else\'s is refused', () => {
   assert.equal(sam().qualifyDeleteInstances({ name: 'm' }), false);
   assert.deepEqual(admin().qualifyDeleteInstances({ name: 'm' }), { name: 'm' });

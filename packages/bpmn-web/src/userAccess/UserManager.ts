@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import { rateLimit } from 'express-rate-limit';
 import MongoStore from 'connect-mongo';
+import { redactUrl } from './redactUrl.js';
 
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
@@ -61,7 +62,7 @@ export class UserManager {
 	}
 	initMongo() {
 
-		console.log("MongoDB URL", process.env.MONGO_DB_URL)
+		console.log("MongoDB URL", redactUrl(process.env.MONGO_DB_URL))
 		mongoose.set('strictQuery', false);
 		mongoose.connect(process.env.MONGO_DB_URL);
 		mongoose.connection.on('error', (err) => {
