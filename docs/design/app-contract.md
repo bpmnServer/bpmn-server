@@ -164,8 +164,7 @@ from the application's origin only:
 ### 4.3 We tell the application
 
 Through the delegate's code, in the same process: `notify`, `executionStarted`, `messageThrown`,
-`issueMessage`, ... An application in another process or language would need these as calls to its URL instead;
-that is not proposed now.
+`issueMessage`, ... An application in another process or language gets them as events (§4.5).
 
 ### 4.4 The application tells us
 
@@ -173,6 +172,38 @@ Through API v3, as the person or as the service account:
 - start a process;
 - complete a task;
 - throw a message or a signal.
+
+### 4.5 An application in another language (.NET, Java, ...)
+
+The declarative part is a file, and the application calls us through API v3, so both work from any language. A
+service task calls the application's REST API as a connector. What doesn't carry over is the delegate's code, which
+runs in our Node process. For a remote application we provide a **remote delegate**, which makes the same calls
+over HTTP to the application's URL (`appUrl` in its `application.json`):
+
+| The delegate's | Over HTTP |
+|---|---|
+| `getAppVars` | `POST <appUrl>/owf/vars` with `{ names, context }` answers `{ name: value }`: one call for every name an evaluation reads (for a list, every case's in one call) |
+| `getAppServices` | `POST <appUrl>/owf/services/{name}` with the arguments answers the result |
+| `notify`, the hooks | `POST <appUrl>/owf/events`, signed (an HMAC of the body with the application's key), retried if it fails: `task.waiting`, `task.completed`, `instance.ended`, `instance.failed`, a notification |
+
+A remote call is slow next to a local one, so a remote application's functions belong in service tasks and scripts,
+and its variables in expressions (§4.6).
+
+### 4.6 Waiting in expressions
+
+| Where | Can it wait for an application's function? |
+|---|---|
+| Scripts: a script task, a listener | Yes: they run as async functions; `await appServices.x()` |
+| Service tasks | Yes: they wait, and can be queued and retried |
+| Expressions: conditions, parameters, timers, assignees, FEEL, decision tables | Only when the whole expression is the call. In `appServices.isSenior(x) && data.amount > 100` the call is not awaited: it is tested as a Promise, and gives the wrong answer. Today, for any async function, local or remote |
+
+So:
+1. **Variables for expressions.** `appVars.x` is worked out before the expression runs (one batched call when the
+   application is remote), so it works in every expression.
+2. **`await` in expressions.** An expression that contains `await` is compiled as async:
+   `(await appServices.isSenior(x)) && data.amount > 100`.
+3. **`verifyModel` warns about** an `appServices` call inside a larger expression without `await`, and about any
+   function call in an expression when the application is remote.
 
 ## 5. What uses the declarative part
 
