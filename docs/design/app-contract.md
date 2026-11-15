@@ -68,7 +68,14 @@ class HrVars {
   }
   ```
 
-  `DefaultAppDelegate.getAppVars(context)` is `new this.appVarsClass(context)` (and the same for services), so an
+  Validation never calls a factory nor makes an object: it reads the class's method names, with no context:
+
+  ```ts
+  Object.getOwnPropertyNames(delegate.appVarsClass.prototype).filter(n => n !== 'constructor')
+  // ['employeeManager', 'endFiscalYear']
+  ```
+
+  The context is needed only when an expression runs. `DefaultAppDelegate.getAppVars(context)` is `new this.appVarsClass(context)` (and the same for services), so an
   application sets the classes and overrides the methods only to build them its own way.
 - **`describe()` adds the rest:** each name's type and description, from the JSON or from TypeScript. A name in one
   list and not the other is a warning at start.
