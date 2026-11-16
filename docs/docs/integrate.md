@@ -1,5 +1,8 @@
 # Integrate an existing application
 
+> **Integration protocol (canonical):** [OWF Integration Protocol](../design/integration-protocol.md) defines the application-scoped operation allowlist, OpenAPI entity discovery, native-form lookups and shared editor/runtime validation. Existing features versus proposed extensions are distinguished there.
+
+
 Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: [Your application in control](architecture.md#your-application-in-control). The walkthrough [Integrate an existing application](tutorial/tutorial-integrate.md) does it with the leave request.
 
 ## 1. Connect
