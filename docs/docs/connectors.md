@@ -1,5 +1,8 @@
 # Connectors
 
+> **Integration protocol (canonical):** [OWF Integration Protocol](../design/integration-protocol.md) defines the application-scoped operation allowlist, OpenAPI entity discovery, native-form lookups and shared editor/runtime validation. Existing features versus proposed extensions are distinguished there.
+
+
 A service task can call a **connector** instead of a service. A connector is a REST API, described by an
 OpenAPI document, that an administrator adds to the server with its authorization key. The model names the
 connector and one of its operations, and gives the operation's inputs and the parts of the answer to keep.
