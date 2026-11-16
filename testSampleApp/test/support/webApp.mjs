@@ -79,8 +79,13 @@ function startEngineProcess(port = '0') {
 export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true } = {}) {
     const dbUrl = testDatabaseUrl();
     const definitionsPath = definitionsFolder();
+    // what the admin's restart reads as a supervisor (dashboards.ts): a CI runner started by systemd sets
+    // INVOCATION_ID, and a restart would then stop the tests' own process
+    delete process.env.INVOCATION_ID;
+    delete process.env.pm_id;
     // the app reads its settings from the environment; dotenv never overrides these
     Object.assign(process.env, {
+        RESTART_ON_EXIT: '',
         // no test reaches a real mail server, whatever the folder's .env says
         SMTP_USER: '', SMTP_PASSWORD: '',
         NODE_ENV: 'production',
