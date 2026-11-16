@@ -6,6 +6,9 @@
 # A tag on a release branch (release/3.6.1) publishes from there, so a patch to the version on npm does not take main's
 # unreleased work with it. A version lower than npm's `latest` is published under `release-<major>.<minor>`, so it
 # does not become `latest`. A version already on npm is skipped: a failed run can be run again.
+#
+# Run by hand (Actions → Publish → Run workflow) on a branch with "dry run" checked, it does everything but publish
+# (`npm publish --dry-run`): a release branch tried before its tag is pushed.
 name: Publish
 
 on:
@@ -14,8 +17,12 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'The version tag to publish again (v3.6.1): it must already be pushed'
-        required: true
+        description: 'The version tag to publish (again) (v3.6.1), already pushed; empty: the branch chosen above'
+        required: false
+      dry_run:
+        description: 'Dry run: build, test and pack, publish nothing'
+        type: boolean
+        default: true
 
 permissions:
   contents: write      # the GitHub release
@@ -29,14 +36,21 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     environment: npm
+    # the tests' MongoDB, as in test.yml
+    services:
+      mongodb:
+        image: mongo:7
+        ports: ['27017:27017']
     env:
+      BPMN_TEST_MONGO_URL: mongodb://localhost:27017
       TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && 'true' || 'false' }}
       # in the order of their dependencies: bpmn-web needs bpmn-server; bpmn-mcp pins bpmn-server and bpmn-client
       PACKAGES: bpmn-server bpmn-client bpmn-web bpmn-mcp
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.TAG }}
+          ref: ${{ github.event.inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -49,8 +63,10 @@ jobs:
         run: |
           node --input-type=module -e '
             import fs from "node:fs";
-            const version = process.env.TAG.replace(/^v/, "");
             const pkg = name => JSON.parse(fs.readFileSync(`packages/${name}/package.json`, "utf8"));
+            const tagged = /^v\d/.test(process.env.TAG);
+            if (!tagged && process.env.DRY_RUN !== "true") { console.error(`${process.env.TAG} is not a version tag`); process.exit(1); }
+            const version = tagged ? process.env.TAG.replace(/^v/, "") : pkg("bpmn-server").version;
             const problems = [];
             for (const name of process.env.PACKAGES.split(" ")) {
               const p = pkg(name);
@@ -70,7 +86,8 @@ jobs:
 
       - name: Publish
         run: |
-          version="${TAG#v}"
+          version="$(node -p 'require("./packages/bpmn-server/package.json").version')"
+          dry=""; [ "$DRY_RUN" = true ] && dry="--dry-run"
           for name in $PACKAGES; do
             if [ "$(npm view "$name@$version" version 2>/dev/null)" = "$version" ]; then
               echo "$name@$version is on npm already: skipped"; continue
@@ -81,14 +98,16 @@ jobs:
               dist="release-$(echo "$version" | cut -d. -f1,2)"      # a patch to an older line: latest stays
             fi
             echo "publishing $name@$version (tag $dist)"
-            npm publish -w "$name" --tag "$dist"
+            npm publish -w "$name" --tag "$dist" $dry
           done
 
       - name: The versions on npm
+        if: env.DRY_RUN != 'true'
         run: |
           for name in $PACKAGES; do echo "$name: $(npm view "$name@${TAG#v}" version)"; done
 
       - name: GitHub release
+        if: env.DRY_RUN != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --verify-tag --title "$TAG" --generate-notes
