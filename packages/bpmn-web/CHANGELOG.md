@@ -13,7 +13,7 @@ and here
 ### Changed
 -->
 
-## Release 3.6.1 (unreleased)
+## Release 3.6.1 (2026-11-16)
 ### Fixed
 - **The MongoDB address is logged without its password** at start (`MongoDB URL mongodb://user:***@...`): it was logged
   whole.

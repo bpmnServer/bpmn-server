@@ -13,7 +13,7 @@ and here
 ### Changed
 -->
 
-## Release 3.6.1 (unreleased)
+## Release 3.6.1 (2026-11-16)
 ### Fixed
 - **Cancelling a parallel multi-instance loop of one round** (a terminate end event on another branch, an
   interrupting path) no longer throws `Cannot read properties of null (reading 'id')` in `Loop.cancel`: with no other
