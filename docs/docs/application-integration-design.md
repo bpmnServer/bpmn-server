@@ -1,5 +1,8 @@
 # Application Integration — Architecture and Design Proposal
 
+> **Integration protocol (canonical):** [OWF Integration Protocol](../design/integration-protocol.md) defines the application-scoped operation allowlist, OpenAPI entity discovery, native-form lookups and shared editor/runtime validation. Existing features versus proposed extensions are distinguished there.
+
+
 - **Status:** Proposed design; nothing here is implemented unless it says so. Phase 1, the task API, is built.
 - **Date:** 2026-11-04, revised 2026-11-05
 - **Scope:** BPMN Server 3.5+ evolution, including future multi-application hosting
