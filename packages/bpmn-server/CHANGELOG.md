@@ -20,6 +20,8 @@ and here
   round to terminate, the loop's own item is ended from the cancelled round's parent token (#289).
 - **Checking a model with a compensation association** (a compensation boundary event to its handler) no longer fails
   (`Cannot read properties of undefined (reading 'forEach')`); the editor's Problems list stayed empty for it.
+- **A log saved to a file (`logger.save`, an instance's log in `logFolder`) can be read again on Linux and macOS**: it
+  was created with mode `666` in decimal (octal 1232, not readable by its owner); it is `0o666` now, less the umask.
 - `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
   `true`).
 
