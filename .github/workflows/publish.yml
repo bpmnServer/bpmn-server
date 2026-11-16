@@ -54,7 +54,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
+          # no registry-url: its .npmrc gives npm a placeholder NODE_AUTH_TOKEN, which gets in the way of trusted
+          # publishing (npm/cli#8730). npm's registry is the default.
           cache: npm
       - name: npm with trusted publishing (11.5.1 or later)
         run: npm install -g npm@^11.5.1 && npm --version
@@ -98,7 +99,7 @@ jobs:
               dist="release-$(echo "$version" | cut -d. -f1,2)"      # a patch to an older line: latest stays
             fi
             echo "publishing $name@$version (tag $dist)"
-            npm publish -w "$name" --tag "$dist" $dry
+            npm publish -w "$name" --tag "$dist" --loglevel verbose $dry
           done
 
       - name: The versions on npm
