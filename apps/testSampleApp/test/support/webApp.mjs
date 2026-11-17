@@ -81,8 +81,13 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     // TEST_DATABASE=sqlite: the same tests on a SQLite file of this app's own (DATABASE=sqlite:<file>)
     const sqliteDir = process.env.TEST_DATABASE === 'sqlite' ? fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-sqlite-')) : null;
     const definitionsPath = definitionsFolder();
+    // what the admin's restart reads as a supervisor (dashboards.ts): a CI runner started by systemd sets
+    // INVOCATION_ID, and a restart would then stop the tests' own process
+    delete process.env.INVOCATION_ID;
+    delete process.env.pm_id;
     // the app reads its settings from the environment; dotenv never overrides these
     Object.assign(process.env, {
+        RESTART_ON_EXIT: '',
         // no test reaches a real mail server, whatever the folder's .env says
         SMTP_USER: '', SMTP_PASSWORD: '',
         NODE_ENV: 'production',

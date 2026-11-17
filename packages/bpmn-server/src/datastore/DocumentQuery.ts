@@ -68,7 +68,9 @@ export class DocumentQuery {
 
     private static matchCondition(values: any[], condition: any): boolean {
         if (!DocumentQuery.isOperatorObject(condition)) {
-            if (condition === null) return values.length === 0 || DocumentQuery.candidates(values).some(v => v == null);
+            // undefined is null, as MongoDB's driver sends it: a field absent, null or undefined (a document read back from
+            // JSON has no key where one in memory had `undefined`, and both match)
+            if (condition == null) return values.length === 0 || DocumentQuery.candidates(values).some(v => v == null);
             return DocumentQuery.candidates(values).some(v => DocumentQuery.equal(v, condition));
         }
         return Object.entries(condition).every(([operator, argument]: [string, any]) => {

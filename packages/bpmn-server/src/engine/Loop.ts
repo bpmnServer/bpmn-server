@@ -237,20 +237,18 @@ class Loop {
             return; // loop belongs to my parent, let him cancel
 
         let promises=[]
-        let loopFirstToken=null;
         let tokens=[];
 
         fromItem.token.log(`..loop.cancel ${currentLoop}`);
 
         fromItem.token.execution.tokens.forEach(t=>{
             if (t.loop && t.loop.id == currentLoop && t.id !==fromItem.token.id)
-                {
-                    if (loopFirstToken==null)
-                        loopFirstToken=t;
                     tokens.push(t);
-                }
         });
-        fromItem.token.log(`..loop.cancel ${currentLoop} - first token ${loopFirstToken.id} `);
+        // the loop's tokens share one parent: the token at the loop's own item. With no sibling (a loop of
+        // one round, #289) it is the cancelled token's parent.
+        const loopToken = (tokens.length ? tokens[0] : token).parentToken;
+        fromItem.token.log(`..loop.cancel ${currentLoop} - ${tokens.length} other token(s), loop's token ${loopToken?.id} `);
         for(let i=0 ; i < tokens.length;i++) {
             if (tokens[i].status!==TOKEN_STATUS.terminated)
             {
@@ -258,7 +256,8 @@ class Loop {
             await tokens[i].terminate();
             }
         }        // also cancel the original item 
-        await loopFirstToken.parentToken.currentNode.end(loopFirstToken.parentToken.currentItem);
+        if (loopToken)
+            await loopToken.currentNode.end(loopToken.currentItem);
 
         await Promise.all(promises);
     }
