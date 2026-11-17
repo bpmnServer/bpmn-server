@@ -414,7 +414,7 @@ class Token implements IToken {
                 tokens.push(ev.token);
         });
 
-        let handler=this.checkTokensForError(tokens,bhName,propertyName,code);
+        let handler=this.checkTokensForError(tokens,bhName,propertyName,code,nodeSubType);
 
         if (handler)
             return handler;
@@ -437,7 +437,7 @@ class Token implements IToken {
                 tokens.push(ct);
         });
 
-        return this.checkTokensForError(tokens,bhName,propertyName,code);
+        return this.checkTokensForError(tokens,bhName,propertyName,code,nodeSubType);
 
     }
     catch (exc) {
@@ -446,7 +446,7 @@ class Token implements IToken {
     }
 
     }
-    private checkTokensForError(tokens,bhName,propertyName,errorCode) {
+    private checkTokensForError(tokens,bhName,propertyName,errorCode,nodeSubType) {
 
         let handlingCodeEventToken=null;
         let handlingAllEventToken=null;
@@ -462,7 +462,10 @@ class Token implements IToken {
                     handlingAllEventToken=ct;
     
             }
-            else
+            // without the definition, it handles all only if it is of this kind: an error boundary event does not
+            // catch an escalation, nor an escalation boundary event an error (the task's own boundary events are all
+            // asked first)
+            else if (ct.currentNode.subType == nodeSubType)
                 handlingAllEventToken=ct;
 
         });

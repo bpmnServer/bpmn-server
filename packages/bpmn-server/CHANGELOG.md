@@ -145,6 +145,11 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **An escalation is caught by an escalation event, and an error by an error event.** Looking for a catcher, any
+  boundary event without the thrown kind's definition counted as a catch-all: a script's escalation went to the
+  task's error boundary event, and an error could go to an escalation boundary event. And an escalation boundary
+  event's code was never read (moddle gives the reference as `escalationRef`, as `errorRef` for errors), so one for
+  a code caught every code. Test: `test/boundary-kind.test.mjs`; testSampleApp's test-escalation2.
 - **A multi-instance task on a branch an exclusive merge cancels no longer keeps the instance running.** When
   another branch reached the merge first, the loop's rounds were cancelled but the loop's own token stayed running,
   so the instance never ended. Test: `test/loop-exclusive-merge.test.mjs`; testSampleApp's Complex Approval Process.
