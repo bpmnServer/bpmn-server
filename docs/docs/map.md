@@ -53,6 +53,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 ## Reference
 
 - [Features](features.md): What bpmn-server, bpmn-web and bpmn-client do, area by area, each with where it is documented, its code and its tests.
+- [Performance and test coverage](performance.md): This page gives the speed, load and memory figures from BPMN Server's own test suites, the effect of the database indexes, and how much of the code the tests run.
 - [Advanced Topics](advanced.md): A command after --, with the answers to its questions, runs just that and quits: for scripts, and for a server (on one made by the installer, bpmn cli ...
 - [Frequently Asked Questions](faq/index.md)
 

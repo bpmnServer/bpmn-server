@@ -63,11 +63,14 @@ before(async () => {
     app = await testApp({ quiet: true });
     const connectors = app.server.connectors;
     await connectors.install();
+    // its file goes in the app's models folder: one an interrupted run left there is removed first
+    await connectors.remove('crm');
     // a real API: { id: 'crm', source: 'https://crm.example.com/openapi.json' } (its document's URL)
     await connectors.add({ id: 'crm', name: 'CRM', document: CRM, baseUrl });
     await connectors.setKey('crm', TOKEN);          // kept encrypted; never returned
 });
 after(async () => {
+    await app.server.connectors.remove('crm');      // the app's models folder left as it was
     await app.stop();
     api.close();
 });

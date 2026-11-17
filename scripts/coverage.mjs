@@ -74,6 +74,13 @@ function offsetMapper(text, grownLengths) {
  * a whole file, which can't be put back: test:scenarios loads tsx/esm for that, and a file found that way is an error, as the report
  * would be wrong without saying so.
  */
+/**
+ * One drive letter's case for a file on Windows, the root's (as c8 --all lists the files not loaded): processes started
+ * from a shell in `c:\...` report `file:///c:/...`, others `file:///C:/...`, and c8 would count each file twice, once
+ * covered and once not.
+ */
+const sameDrive = url => /^[a-zA-Z]:/.test(root) ? url.replace(/^file:\/\/\/[a-zA-Z]:/i, `file:///${root[0]}:`) : url;
+
 function normalize() {
     const texts = new Map();
     const textOf = url => {
@@ -84,9 +91,14 @@ function normalize() {
     for (const file of fs.readdirSync(raw)) {
         const name = path.join(raw, file);
         const coverage = JSON.parse(fs.readFileSync(name, 'utf8'));
-        const maps = coverage['source-map-cache'] ?? {};
+        // the maps' sources are file URLs too, and name the files the report counts
+        const maps = Object.fromEntries(Object.entries(coverage['source-map-cache'] ?? {}).map(([url, map]) => {
+            if (Array.isArray(map.data?.sources)) map.data.sources = map.data.sources.map(sameDrive);
+            return [sameDrive(url), map];
+        }));
         coverage.result = coverage.result.filter(script => script.url.startsWith('file:') && PACKAGE_CODE.test(script.url));
         for (const script of coverage.result) {
+            script.url = sameDrive(script.url);
             const text = textOf(script.url);
             if (Math.max(...script.functions.map(fn => fn.ranges[0].endOffset)) <= text.length) continue;
             const lines = text.split('\n').map(line => line.replace(/\r$/, ''));
@@ -111,7 +123,9 @@ function normalize() {
 }
 
 function report() {
-    const status = run(['node', '"node_modules/c8/bin/c8.js"', 'report', '--all', `--temp-directory "${raw}"`, `--reports-dir "${output}"`,
+    // --merge-async: c8 merges the processes' data one file at a time. Merged all at once, with the UI suites' data
+    // too, @bcoe/v8-coverage's mergeRangeTrees overflowed the stack (even with --stack-size=8000), on CI and locally.
+    const status = run(['node', '"node_modules/c8/bin/c8.js"', 'report', '--merge-async', '--all', `--temp-directory "${raw}"`, `--reports-dir "${output}"`,
         '--reporter=html --reporter=lcovonly --reporter=json-summary --exclude-after-remap',
         '--include "packages/*/src/**" --include "packages/*/dist/**"',
         // what builds and maintains the packages, not what they ship

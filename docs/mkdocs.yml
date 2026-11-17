@@ -121,6 +121,7 @@ nav:
 
 - Reference:
   - Features: features.md
+  - Performance and test coverage: performance.md
   - Labels: labels.md
   - 'Assignment policies': assignment-policies.md
   - 'Notification policies': notification-policies.md
