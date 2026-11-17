@@ -1155,7 +1155,8 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 }
 
 .history-panel { display: flex; min-height: 100%; font-size: 13px; }
-.history-list { flex: none; width: 520px; max-width: 60%; padding: 8px 12px; border-right: 1px solid #dcdfe4; box-sizing: border-box; }
+/* overflow: a row wider than the list (a wider font, Linux's) scrolls in it, not under the comparison beside it */
+.history-list { flex: none; width: 520px; max-width: 60%; padding: 8px 12px; border-right: 1px solid #dcdfe4; box-sizing: border-box; overflow-x: auto; }
 .history-actions { display: flex; gap: 6px; margin-bottom: 6px; }
 .history-panel button { font: inherit; font-size: 12px; padding: 3px 10px; border: 1px solid #c4c8cf; border-radius: 3px; background: #fff; cursor: pointer; }
 .history-panel button.primary { background: #1f62c8; border-color: #1f62c8; color: #fff; }

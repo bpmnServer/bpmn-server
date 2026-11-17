@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD, FIXTURES } from '../support/webApp.mjs';
+import { openGroup as openPanelGroup } from '../support/panel.mjs';
 
 const SAMPLES = FIXTURES;
 const CONDITIONS = `<?xml version="1.0" encoding="UTF-8"?>
@@ -70,9 +71,7 @@ const select = (page, id) => page.evaluate(id => {
 const groupHeader = (page, label) => page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
 const groupTitles = page => page.locator('.bio-properties-panel-group-header-title').allInnerTexts();
 async function openGroup(page, label) {
-    const header = groupHeader(page, label);
-    if (!/\bopen\b/.test(await header.getAttribute('class')))
-        await header.click();
+    return openPanelGroup(page, label);
 }
 
 async function save(page, model) {

@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD, FIXTURES } from '../support/webApp.mjs';
+import { openGroup as openPanelGroup } from '../support/panel.mjs';
 
 let web, browser, page, context;
 test.before(async () => {
@@ -43,10 +44,7 @@ async function select(id) {
 }
 
 async function openGroup(label) {
-    const header = page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
-    await page.waitForTimeout(100);      // the panel settles: the editor opens the groups that have values
-    if (!/\bopen\b/.test(await header.getAttribute('class')))
-        await header.click();
+    return openPanelGroup(page, label);
 }
 
 /** Type at the end of a code field; the completions offered. */

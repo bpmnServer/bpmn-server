@@ -247,7 +247,9 @@ export class Connectors {
             openapi: { source: openapi.source, version: openapi.version, title: openapi.title, fetchedAt: openapi.fetchedAt, bytes: openapi.bytes ?? Buffer.byteLength(JSON.stringify(document)), document },
         };
         this.writeDefinition(definition);
-        const state: ServerState = { id: kept.id, ...(secret ? { key: { secret, last4, setAt, setBy } } : {}), ...(test ? { test } : {}) };
+        // only the parts the old document had: an undefined field is kept by one store, dropped or made null by another
+        const key = Object.fromEntries(Object.entries({ secret, last4, setAt, setBy }).filter(([, v]) => v !== undefined)) as ServerState['key'];
+        const state: ServerState = { id: kept.id, ...(secret ? { key } : {}), ...(test ? { test } : {}) };
         await this.store.remove(this.database, COLLECTION, { id: kept.id });
         await this.store.insert(this.database, COLLECTION, [state]);
         this.server.logger.log(`connector '${kept.id}': written out to ${kept.id}${FILE} in the models folder; its key and test stay with this server`);

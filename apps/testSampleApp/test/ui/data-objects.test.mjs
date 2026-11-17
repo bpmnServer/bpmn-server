@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD } from '../support/webApp.mjs';
+import { openGroup as openPanelGroup } from '../support/panel.mjs';
 
 /** Start (loads client) -> Price (script) -> End; and a data object 'note' connected to nothing. Drawn. */
 const MODEL = `<?xml version="1.0" encoding="UTF-8"?>
@@ -66,10 +67,7 @@ const select = id => page.evaluate(id => {
     m.get('selection').select(m.get('elementRegistry').get(id));
 }, id);
 async function openGroup(label) {
-    const header = page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
-    await page.waitForTimeout(100);      // the panel settles: the editor opens the groups that have values
-    if (!/\bopen\b/.test(await header.getAttribute('class')))
-        await header.click();
+    return openPanelGroup(page, label);
 }
 
 test('a data object shows its field in the instance data and what loads it', async () => {

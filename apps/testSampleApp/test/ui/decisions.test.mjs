@@ -9,6 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD } from '../support/webApp.mjs';
+import { openGroup as openPanelGroup } from '../support/panel.mjs';
 
 const SAMPLES = path.join(import.meta.dirname, '..', '..', 'processes');
 
@@ -47,10 +48,7 @@ async function selectTask() {
         const m = window.bpmnModeler;
         m.get('selection').select(m.get('elementRegistry').get('Activity_0px5w2d'));
     });
-    const header = page.locator('.bio-properties-panel-group-header', { hasText: 'Decision' }).first();
-    await page.waitForTimeout(100);      // the panel settles: the editor opens the groups that have values
-    if (!/\bopen\b/.test(await header.getAttribute('class')))
-        await header.click();
+    await openPanelGroup(page, 'Decision');
 }
 
 const summaryText = () => page.locator('[data-entry-id="decision-summary"] .bio-properties-panel-description').innerText();

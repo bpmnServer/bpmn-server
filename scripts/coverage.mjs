@@ -111,7 +111,9 @@ function normalize() {
 }
 
 function report() {
-    const status = run(['node', '"node_modules/c8/bin/c8.js"', 'report', '--all', `--temp-directory "${raw}"`, `--reports-dir "${output}"`,
+    // --merge-async: c8 merges the processes' data one file at a time. Merged all at once, with the UI suites' data
+    // too, @bcoe/v8-coverage's mergeRangeTrees overflowed the stack (even with --stack-size=8000), on CI and locally.
+    const status = run(['node', '"node_modules/c8/bin/c8.js"', 'report', '--merge-async', '--all', `--temp-directory "${raw}"`, `--reports-dir "${output}"`,
         '--reporter=html --reporter=lcovonly --reporter=json-summary --exclude-after-remap',
         '--include "packages/*/src/**" --include "packages/*/dist/**"',
         // what builds and maintains the packages, not what they ship

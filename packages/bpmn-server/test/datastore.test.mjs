@@ -34,6 +34,20 @@ test('queries: null matches an array element without the field, as in MongoDB; $
   assert.deepEqual(DocumentQuery.sort([{ items: [{}, { n: 2 }] }, { items: [{ n: 1 }] }], { 'items.n': 1 }).map(d => d.items.at(-1).n), [1, 2]);
 });
 
+test('queries: undefined is null, as MongoDB\'s driver sends it; a document read back from JSON (no key) matches as one in memory (undefined)', () => {
+  const inMemory = { events: [{ elementId: 'S', subType: undefined }] };
+  const fromJson = JSON.parse(JSON.stringify(inMemory));
+  assert.equal('subType' in fromJson.events[0], false, 'JSON drops the key');
+  for (const d of [inMemory, fromJson]) {
+    for (const none of [undefined, null]) {
+      assert.equal(DocumentQuery.matches(d, { 'events.subType': none }), true, `a path into the array, ${none}`);
+      assert.equal(DocumentQuery.matches(d, { events: { $elemMatch: { subType: none } } }), true, `$elemMatch (the models' events query), ${none}`);
+      assert.equal(DocumentQuery.matches(d.events[0], { subType: none }), true, `a field of the document itself, ${none}`);
+    }
+  }
+  assert.equal(DocumentQuery.matches({ events: [{ subType: 'timer' }] }, { events: { $elemMatch: { subType: undefined } } }), false, 'a value there: no match');
+});
+
 test('queries: an operator the store does not know is refused, not ignored', () => {
   // $regex is known since 3.7 (sqlite-store.test.mjs); these are not
   assert.throws(() => DocumentQuery.matches(doc, { name: { $where: 'cl' } }), /Unsupported query operator \$where/);

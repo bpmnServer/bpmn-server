@@ -9,6 +9,7 @@ import http from 'node:http';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD } from '../support/webApp.mjs';
+import { openGroup as openPanelGroup } from '../support/panel.mjs';
 
 const SHOP_DOC = {
     openapi: '3.1.0', info: { title: 'Shop', version: '1' },
@@ -66,6 +67,16 @@ test.before(async () => {
     await page.fill('#password', PASSWORD);
     await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
 });
+// TEST_SCREENSHOTS=<folder>: the page as a test that failed left it (CI keeps the folder: the browser job's artifact)
+test.afterEach(async (t) => {
+    const folder = process.env.TEST_SCREENSHOTS;
+    if (!folder || t.passed !== false || !page || page.isClosed()) return;
+    fs.mkdirSync(folder, { recursive: true });
+    const name = 'connectors - ' + t.name.replace(/[^\w -]+/g, '').slice(0, 80);
+    await page.screenshot({ path: path.join(folder, name + '.png'), fullPage: true }).catch(() => { });
+    fs.writeFileSync(path.join(folder, name + '.html'), await page.content().catch(() => ''));
+});
+
 test.after(async () => {
     api?.close();
     await browser?.close();
@@ -126,10 +137,7 @@ async function openModel(name) {
 async function select(id) {
     await page.waitForFunction(id => window.bpmnModeler?.get('elementRegistry').get(id), id);
     await page.evaluate(id => { const m = window.bpmnModeler; m.get('selection').select(m.get('elementRegistry').get(id)); }, id);
-    const header = page.locator('.bio-properties-panel-group-header', { hasText: 'Service' }).first();
-    await header.waitFor();
-    if (!/\bopen\b/.test(await header.getAttribute('class')))
-        await header.click();
+    await openPanelGroup(page, 'Service');
 }
 /** A new service (or send) task on the canvas, selected, its Service group open. */
 async function newTask(type = 'bpmn:ServiceTask') {

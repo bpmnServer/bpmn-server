@@ -65,6 +65,15 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:ui -w test-sample-app
+        env:
+          TEST_SCREENSHOTS: ${{ github.workspace }}/reports/ui-failures
+      # the page as a failed UI test left it (the tests that take one), to see what the runner showed
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ui-failures
+          path: reports/ui-failures
+          if-no-files-found: ignore
 
   coverage:
     runs-on: ubuntu-latest
@@ -80,6 +89,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # coverage runs the UI tests too (scripts/coverage.mjs): their browser, as the browser job installs it
+      - run: npx playwright install --with-deps chromium
       - run: npm run test:coverage
       - uses: actions/upload-artifact@v4
         if: always()
