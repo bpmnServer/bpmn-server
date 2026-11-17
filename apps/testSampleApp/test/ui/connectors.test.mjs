@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD } from '../support/webApp.mjs';
+import { openGroup as openPanelGroup } from '../support/panel.mjs';
 
 const APP = path.join(import.meta.dirname, '..', '..');
 let web, browser, page;
@@ -41,9 +42,7 @@ test.after(async () => {
 });
 
 async function openGroup(label) {
-    const header = page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
-    if (!/\bopen\b/.test(await header.getAttribute('class')))
-        await header.click();
+    return openPanelGroup(page, label);
 }
 /** The value of a field once the panel has re-rendered (it does after each change). */
 async function valueOf(selector, expected) {
