@@ -216,7 +216,7 @@ test('a connector kept whole in the database before 3.7 (packed or not) is writt
     assert.equal(file.openapi.packed, undefined);
   }
   const [packed] = await store.find('bpmn_test', 'wf_connectors', { id: 'packed' });
-  assert.deepEqual({ ...packed, _id: undefined }, { _id: undefined, id: 'packed', key: { secret: 'v1:kept', last4: 'abcd', setAt: 'y', setBy: undefined }, test: { at: 'z', operation: 'health', ok: true, status: 200 } }, 'the collection keeps the key and the test only');
+  assert.deepEqual({ ...packed, _id: undefined }, { _id: undefined, id: 'packed', key: { secret: 'v1:kept', last4: 'abcd', setAt: 'y' }, test: { at: 'z', operation: 'health', ok: true, status: 200 } }, 'the collection keeps the key and the test only');
   const file = JSON.parse(fs.readFileSync(path.join(dir, 'packed.connector.json'), 'utf8'));
   assert.deepEqual(file.auth, { type: 'bearer', scheme: 'bearerAuth' }, 'the scheme in the file, not the key');
   assert.equal((await server.connectors.get('packed')).auth.last4, 'abcd', 'the key still this server\'s');

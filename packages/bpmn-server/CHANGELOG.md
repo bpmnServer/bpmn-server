@@ -48,6 +48,13 @@ and here
   `wf_connectors`; a file holds no key. A connector kept whole in the collection before is written out to its file the
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
+### Fixed
+- **A query for a field that is `undefined` matches a document without it, on SQLite too** (`DocumentQuery`): `undefined`
+  is `null`, as MongoDB's driver sends it. A document read back from JSON has no key where one kept in memory had
+  `undefined`, so on SQLite the models' start events (`findEvents({ 'events.subType': undefined })`) were not found.
+- **A connector written out from the database (before 3.7) keeps only the key fields it had**: no `setBy: undefined`,
+  which one store kept, another dropped and MongoDB would make `null`.
+
 ### Removed
 - **`IUserService`**: the engine never used it (who acts is the `IUserInfo` each call carries; a task's assignee and
   candidates are names it checks against that person). Finding and managing users is the host application's: bpmn-web's
