@@ -69,18 +69,18 @@ function offsetMapper(text, grownLengths) {
 }
 
 /**
- * V8 reports offsets in the code that ran, and every process must agree on them for their data to merge; tsx changes what it loads.
- * A dynamic import() gains a call on its line and the file an inline source map: that is put back here. Its CommonJS hook rewrites
- * a whole file, which can't be put back: test:scenarios loads tsx/esm for that, and a file found that way is an error, as the report
- * would be wrong without saying so.
- */
-/**
  * One drive letter's case for a file on Windows, the root's (as c8 --all lists the files not loaded): processes started
  * from a shell in `c:\...` report `file:///c:/...`, others `file:///C:/...`, and c8 would count each file twice, once
  * covered and once not.
  */
 const sameDrive = url => /^[a-zA-Z]:/.test(root) ? url.replace(/^file:\/\/\/[a-zA-Z]:/i, `file:///${root[0]}:`) : url;
 
+/**
+ * V8 reports offsets in the code that ran, and every process must agree on them for their data to merge; tsx changes what it loads.
+ * A dynamic import() gains a call on its line and the file an inline source map: that is put back here. Its CommonJS hook rewrites
+ * a whole file, which can't be put back: test:scenarios loads tsx/esm for that. A copy found loaded that way is left out of the
+ * report, which says so: the same file loaded as a module, in that process and the others, is counted.
+ */
 function normalize() {
     const texts = new Map();
     const textOf = url => {
@@ -106,6 +106,7 @@ function normalize() {
             // the lines with an import(), and the source map's at the end
             if (changed > text.split('import(').length + 1) {
                 rewritten.add(script.url);
+                script.rewritten = true;
                 continue;
             }
             const toFile = offsetMapper(text, maps[script.url].lineLengths);
@@ -116,10 +117,12 @@ function normalize() {
                 }
             delete maps[script.url];
         }
+        coverage.result = coverage.result.filter(script => !script.rewritten);
         coverage['source-map-cache'] = Object.fromEntries(Object.entries(maps).filter(([url]) => PACKAGE_CODE.test(url)));
         fs.writeFileSync(name, JSON.stringify(coverage));
     }
-    if (rewritten.size) throw new Error(`Rewritten when they loaded, so their coverage can't be merged:\n${[...rewritten].join('\n')}`);
+    if (rewritten.size)
+        console.warn(`Left out of the report: copies tsx's CommonJS hook rewrote where they loaded, their offsets not the file's (the copies loaded as modules are counted):\n${[...rewritten].join('\n')}`);
 }
 
 function report() {

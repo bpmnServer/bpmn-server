@@ -99,19 +99,19 @@ On MongoDB, a process takes the same time with 5,000 more instances stored (21 m
 
 Lines, functions and branches that ran during the tests. Covered code ran during a test, but that doesn't prove a test checked its result. `npm run test:coverage` writes the full summary to `reports/coverage/summary.md`, and a browsable report to `coverage/`. CI runs it on every pull request and keeps the report as an artifact. The run fails when bpmn-server falls below 90% of its lines, functions or branches.
 
-Measured on 2026-11-17 at commit `7d404d9`, on the branch 3.7.1:
+Measured by CI, on Linux, on 2026-11-17 at commit `c460297` (`main`):
 
 | Package | Files | Lines | Functions | Branches |
 | --- | ---: | ---: | ---: | ---: |
-| bpmn-server | 100 | 90.8% | 85.9% | 82.3% |
-| bpmn-web | 81 | 75.7% | 82.6% | 76.2% |
-| bpmn-client | 17 | 52.1% | 82.0% | 79.9% |
+| bpmn-server | 93 | 95.7% | 91.9% | 90.1% |
+| bpmn-web | 76 | 83.2% | 90.2% | 81.1% |
+| bpmn-client | 17 | 52.1% | 82.0% | 79.8% |
 | bpmn-mcp | 2 | 100% | 100% | 91.1% |
 
-For comparison, the last full run on `main` (2026-11-06, commit `93fde30`) measured bpmn-server at 95.6% of lines, 91.9% of functions and 90.6% of branches over 87 files. The code added since then is tested less: assignment and security policies, connectors, and model checks. bpmn-server is now below its bar for functions and branches.
+Measure on Linux, as CI does. On Windows, some modules are loaded twice under two spellings of the drive (`c:\` and `C:\`), and merging the processes' data then loses counts: a Windows run reports less than was tested.
 
 The modeler's browser code is not measured: it runs in the browser during the UI tests. Most of bpmn-client's untested lines are its command line, remote import and monitor, which the tests don't run.
 
-**Scenario coverage** is what each model's saved scenarios reach, by the same rules as the Test tab: an element counts when a scenario that passed reached it. In the sample apps, 23 of 99 models have saved scenarios; those scenarios reach 75% of their models' nodes and 74% of their flows. The other models' behavior is tested by the engine suites.
+**Scenario coverage** is what each model's saved scenarios reach, by the same rules as the Test tab: an element counts when a scenario that passed reached it. In the test app, measured on 2026-11-17 (branch 3.7.1), 76 of its 99 models have saved scenarios, 115 in all. They reach 99.3% of those models' nodes and 96.5% of their flows. One fails there: GitHub repository's, which calls GitHub itself. Most of the models without scenarios reproduce reported issues or test the engine, and have their own tests in the issues and engine suites.
 
 [Features](features.md) lists every feature with the tests that cover it.

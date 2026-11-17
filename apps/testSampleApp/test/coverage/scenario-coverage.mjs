@@ -18,7 +18,8 @@ async function report() {
     for (const file of fs.readdirSync(PROCESSES, { withFileTypes: true }))
         if (file.isFile()) fs.copyFileSync(path.join(PROCESSES, file.name), path.join(web.definitionsPath, file.name));
     await web.bpmnServer.engine.install({ rebuild: true });
-    const { loadScenarios, runScenario } = await import(dist('scenarios.js'));
+    // run in the engine, as the Test tab runs them: the web app's server is the host, a scenario's stubs are the engine's
+    const { loadScenarios, runScenarioInEngine } = await import(dist('scenarios.js'));
     const { modelElements } = await import(dist('modelCoverage.js'));
     const { coverageOf } = await import(dist('coverage.js'));
 
@@ -29,7 +30,7 @@ async function report() {
         const scenarios = await loadScenarios(model).catch(() => []);
         const runs = [], failed = [];
         for (const scenario of scenarios) {
-            const result = await runScenario(web.bpmnServer, model, scenario, 'admin');
+            const result = await runScenarioInEngine(web.bpmnServer, model, scenario, 'admin');
             if (!result.ok) failed.push({ name: scenario.name, error: result.error ?? result.steps?.find(s => !s.ok)?.error ?? result.checks?.find(c => !c.ok)?.text ?? 'a check failed' });
             if (result.instance) runs.push({ ok: result.ok, items: result.instance.items, generated: !!scenario.generated });
         }
