@@ -204,7 +204,7 @@ features:
     what: "A task or sub-process once per item of a collection, all at once or one after another."
     docs: [docs/docs/examples/loop.md]
     code: [packages/bpmn-server/src/engine/Loop.ts, packages/bpmn-server/src/elements/behaviours/Loop.ts]
-    tests: [apps/testSampleApp/processes/loop-engine-test.engine.feature, apps/testSampleApp/processes/Issue197.engine.feature, apps/testSampleApp/test/issues/github-issues.test.ts]
+    tests: [apps/testSampleApp/processes/loop-engine-test.engine.feature, apps/testSampleApp/processes/Issue197.engine.feature, apps/testSampleApp/test/issues/github-issues.test.ts, packages/bpmn-server/test/loop-cancel.test.mjs]
     examples: [apps/testSampleApp/examples/multi-instance-vote.test.ts]
   - id: standard-loop
     area: modeling

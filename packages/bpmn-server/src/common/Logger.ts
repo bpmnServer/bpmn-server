@@ -135,7 +135,7 @@ class Logger implements ILogger {
     async save(filename,flag='w') {
         const fs = require('fs');
         console.log("writing to:" + filename + " " + this.debugMsgs.length);
-        let id = fs.openSync(filename, flag, 666);
+        let id = fs.openSync(filename, flag, 0o666);    // octal: rw for all, less the umask (666 decimal was -w--wx-w-T)
         {
             fs.writeSync(id,'Started at: '+new Date().toISOString() + "\n", null, 'utf8');
 

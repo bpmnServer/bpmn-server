@@ -48,10 +48,6 @@ and here
   `wf_connectors`; a file holds no key. A connector kept whole in the collection before is written out to its file the
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
-### Fixed
-- `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
-  `true`).
-
 ### Removed
 - **`IUserService`**: the engine never used it (who acts is the `IUserInfo` each call carries; a task's assignee and
   candidates are names it checks against that person). Finding and managing users is the host application's: bpmn-web's
@@ -66,6 +62,18 @@ and here
   (`bpmnserver/bpmn-server`) and the `BPMN_` settings keep their names. An install made before keeps its `bpmn` names
   when `install.sh` runs again, so nothing that runs moves; `bpmn` stays another name for the command, and the Docker
   folder's `bpmn`, `bpmn.cmd` and `bpmn.ps1` run `owf` (downloading it the first time), until 4.0.
+
+## Release 3.6.1 (2026-11-16)
+### Fixed
+- **Cancelling a parallel multi-instance loop of one round** (a terminate end event on another branch, an
+  interrupting path) no longer throws `Cannot read properties of null (reading 'id')` in `Loop.cancel`: with no other
+  round to terminate, the loop's own item is ended from the cancelled round's parent token (#289).
+- **Checking a model with a compensation association** (a compensation boundary event to its handler) no longer fails
+  (`Cannot read properties of undefined (reading 'forEach')`); the editor's Problems list stayed empty for it.
+- **A log saved to a file (`logger.save`, an instance's log in `logFolder`) can be read again on Linux and macOS**: it
+  was created with mode `666` in decimal (octal 1232, not readable by its owner); it is `0o666` now, less the umask.
+- `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
+  `true`).
 
 ## Release 3.6.0 (2026-11-10)
 ### Added
