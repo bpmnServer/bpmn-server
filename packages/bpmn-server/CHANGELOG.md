@@ -145,6 +145,11 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **`this.token.loop.end()` ends a parallel or sequential multi-instance loop.** Called by a round's script or
+  listener, the loop ends when that round does: the rounds still waiting are cancelled and the process goes on, as
+  when a completion condition holds. Before, a parallel loop ended this way waited for ever (not even its last round
+  moved it on), and a sequential one ran every round regardless. A standard loop is unchanged. Test:
+  `test/loop-end.test.mjs`; testSampleApp's Standard Loop feature.
 - `Execution.assign`'s log line says to whom a task was assigned (`to:{"assignee":"agent-1"}`), not
   `to:[object Object]`, and what it was before (reported on PR #286). A claim or a reassignment now writes a Rationale
   entry (*is claimed by dora*; *is reassigned by mgr: assigned to ed*, why: what it was and what decided it). A

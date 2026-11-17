@@ -133,4 +133,6 @@ this.token.loop.end();
 ```
 is done in either insided the task or as trigger end-event 
 
+`end()` works on a parallel or sequential multi-instance task too, called by a round's script or listener: when that round ends, the rounds still waiting are cancelled and the process goes on, as when a completion condition holds.
+
 ![alt text](standard%20loop%202.png)

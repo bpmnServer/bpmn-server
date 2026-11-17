@@ -35,6 +35,7 @@ class Loop {
             this.sequence = dataObject.sequence;
             this.definition = node.loopDefinition;
             this.endFlag = dataObject.endFlag;
+            this.endAsked = dataObject.endAsked;
         }
         else {
             this.definition = node.loopDefinition;
@@ -50,14 +51,22 @@ class Loop {
     save() {
         return {
             id: this.id, nodeId: this.node.id, ownerTokenId: this.ownerToken.id, dataPath: this.dataPath,
-            items: this._items, endFlag: this.endFlag,
+            items: this._items, endFlag: this.endFlag, endAsked: this.endAsked,
             completed: this.completed, sequence: this.sequence
         };
     }
     // for Manual Loops:
     endFlag=false;
+    /** end() was called: a parallel or sequential loop ends at this round's end, as its completion condition ends it */
+    endAsked=false;
+    /**
+     * Ends the loop: a standard loop at its next round; a parallel or sequential one when the current round ends (a
+     * script or listener of that round calls it), the rounds still running cancelled and the loop going on.
+     */
     end() {
-        this.endFlag=true;
+        this.endAsked=true;
+        if (this.isStandard())
+            this.endFlag=true;
     }
     static load(execution, dataObject): Loop {
 
@@ -280,7 +289,7 @@ class Loop {
         if (token.loop && token.currentNode.id==token.loop.node.id) {
             if (token.loop.isSequential()) {
                 // the last round, or the completion condition holds: no more rounds
-                if (await token.loop.isDone() || await token.loop.completes(token)) {
+                if (await token.loop.isDone() || token.loop.endAsked || await token.loop.completes(token)) {
 
                     // need to converge here ;
                     await token.end();
@@ -335,8 +344,8 @@ class Loop {
                 token.loop.completed++;
                 let items = await token.loop.getItems();
                 const all = token.loop.completed == items.length + 1;
-                if (!all && await token.loop.completes(token)) {
-                    // the condition holds: the rounds still running are cancelled, the loop goes on
+                if (!all && (token.loop.endAsked || await token.loop.completes(token))) {
+                    // end() was called, or the condition holds: the rounds still running are cancelled, the loop goes on
                     token.loop.endFlag = true;
                     for (const t of [...token.execution.tokens.values()])
                         if (t.loop?.id === token.loop.id && t.id !== token.id && t !== token.parentToken
