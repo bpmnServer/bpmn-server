@@ -20,6 +20,18 @@ import { DocumentPager } from './DocumentPager.js';
  
 class DataStore extends ServerComponent  implements IDataStore {
 
+	/**
+	 * The instances' indexes for the common queries, made by {@link install} besides `id`, `items.id` and `tag.process`.
+	 * An item query is one `$elemMatch` on `items` (QueryTranslator), so a compound index on two item fields is used
+	 * whole: `items.status` first, since few instances have waiting items once many have ended.
+	 */
+	static readonly QUERY_INDEXES: Record<string, 1 | -1>[] = [
+		{ "items.status": 1, "items.elementId": 1 },	// the waiting items of an element; counts of waiting
+		{ "items.status": 1, "items.type": 1 },			// task lists: the waiting user tasks
+		{ name: 1, status: 1 },							// a process's instances, running or ended
+		{ status: 1 },									// counts by status
+	];
+
 	dbConfiguration;
 	/** The storage adapter: the server's shared `documentStore`, else this data store's own MongoDB connection. */
 	db: IDocumentStore | any;
@@ -332,6 +344,10 @@ class DataStore extends ServerComponent  implements IDataStore {
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: 1 }, { unique: true });
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { "items.id": 1 });
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { "tag.process": 1 });
+		// what task lists and dashboards ask: the waiting items (by element, by type), a process's instances, counts by
+		// status; without them each such query reads every instance, the ended ones too (test/indexes.mongo.test.mjs)
+		for (const index of DataStore.QUERY_INDEXES)
+			await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, index);
 		if (this.locker instanceof InstanceLocker) await this.locker.install();
 	}
 	

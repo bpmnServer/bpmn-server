@@ -112,6 +112,12 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
+- **Indexes for task lists and dashboards on MongoDB.** `dataStore.install()` (setup, and each start of bpmn-web) also
+  makes `{items.status, items.elementId}`, `{items.status, items.type}`, `{name, status}` and `{status}` on the
+  instances (`DataStore.QUERY_INDEXES`). Before, the waiting tasks, a process's instances and the dashboard counts read
+  every instance, ended ones included. With 50,000 ended and 1,000 waiting, a task list took about 300 ms (a user's
+  about 1,100 ms) and now takes about 30 ms; the counts take under 5 ms. Existing databases get them at their next start.
+  The in-memory and SQLite stores are unchanged. Test: `test/indexes.mongo.test.mjs`.
 - **A new application's `.gitignore` leaves out `api-trace.jsonl`**, the API trace `bpmn-server setup` turns on
   (`API_TRACE`): what the running app writes is not committed.
 - **A page of a list is cut in the database.** The storage port's `find` takes an optional `limit` (the first that

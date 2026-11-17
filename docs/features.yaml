@@ -455,10 +455,10 @@ features:
   - id: mongodb
     area: data
     name: "MongoDB storage"
-    what: "Instances, models, locks and users in MongoDB; indexes made at install."
+    what: "Instances, models, locks and users in MongoDB; indexes made at install, the task lists' and dashboards' queries among them."
     docs: [docs/docs/setup.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/datastore/MongoDB.ts, packages/bpmn-server/src/datastore/DataStore.ts]
-    tests: [packages/bpmn-server/test/mongo.integration.test.mjs, packages/bpmn-server/test/integration.mongo.test.mjs, packages/bpmn-server/test/database-name.test.mjs]
+    tests: [packages/bpmn-server/test/mongo.integration.test.mjs, packages/bpmn-server/test/integration.mongo.test.mjs, packages/bpmn-server/test/database-name.test.mjs, packages/bpmn-server/test/indexes.mongo.test.mjs]
   - id: sqlite
     area: data
     name: "SQLite storage"
@@ -701,8 +701,8 @@ features:
   - id: performance
     area: performance
     name: "Performance, load and memory"
-    what: "Throughput of starts and steps, long-running load, memory over time, and a benchmark."
-    docs: [docs/docs/advanced.md]
+    what: "Throughput of starts and steps, long-running load, memory over time, and a benchmark; the figures published."
+    docs: [docs/docs/performance.md, docs/docs/advanced.md]
     code: [packages/bpmn-server/src/server/CacheManager.ts]
     tests: [packages/bpmn-server/test/perf.test.mjs, packages/bpmn-server/test/load/speed.test.mjs, packages/bpmn-server/test/load/stress.test.mjs, packages/bpmn-server/test/load/memory.test.mjs]
 # --------------------------------------------------------------------------------------------------------------- cli

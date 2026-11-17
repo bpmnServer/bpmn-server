@@ -152,6 +152,26 @@ As an example if the api calls
  -  returns on instance with several items
  -  it filters the items and returns only the 1 item as required
 
+### Indexes
+
+On MongoDB, setup (`npm run setup`, and each start of bpmn-web) creates these indexes on the instances. Creating an index that already exists does nothing, so an existing database gets any new ones at its next start:
+
+| index | serves |
+| --- | --- |
+| `id` (unique) | one instance |
+| `items.id` | one item, as invoked |
+| `tag.process` | queries by tag |
+| `items.status`, `items.elementId` | the waiting items of an element; the count of waiting instances |
+| `items.status`, `items.type` | task lists: the waiting user tasks, for an administrator or a user |
+| `name`, `status` | a process's instances, running or ended |
+| `status` | counts by status |
+
+An item query becomes one `$elemMatch` on `items`, so both fields of an `items.*` index are used. `items.status` comes first because once many instances have ended, few still have a waiting item. With 50,000 ended instances and 1,000 waiting, these indexes take the task list from about 300 ms to about 30 ms (a user's list from about 1,100 ms to about 35 ms), and the dashboard counts from 80–330 ms to under 5 ms.
+
+A query on your own fields (`data.caseId`, a label) still reads every instance. If you run it often on a large database, add an index for it yourself in MongoDB.
+
+The in-memory and SQLite stores make only the unique indexes. They check each instance on every query, and are meant for tests and small installs.
+
 ### Instance Query
 
 Instance Queries are similar to Items Query but return entire Instances with all the items
