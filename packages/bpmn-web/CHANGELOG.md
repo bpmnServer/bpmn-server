@@ -92,6 +92,12 @@ and here
   `ENFORCE_SECURITY` as every other page does; before, they kept the rules on while the task forms and the instance
   page turned them off with `ENFORCE_SECURITY=false`. API v3 keeps them on for its clients, as before.
 
+### Fixed
+- **A sequence flow with no condition shows its Condition group as empty again** in the editor's panel: the Language
+  (JavaScript, the default) counted as a value; it counts only when it is not the default (FEEL).
+- **The editor's History tab: a version's row wider than its list scrolls in it** (`.history-list`), no longer under
+  the comparison beside it, where its buttons (Delete, Restore, View) could not be clicked. Seen with Linux's wider fonts.
+
 ### Removed
 - **`/user`, a second copy of the workflow pages** (`routes/endUser.ts`, the `user/` views): nothing linked to it. Its
   addresses go to the same page of the one set (`/user/tasks` to `/tasks`, a form posted to `/user/invokeItem` sent on

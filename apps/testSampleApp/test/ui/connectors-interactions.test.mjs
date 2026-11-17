@@ -66,6 +66,16 @@ test.before(async () => {
     await page.fill('#password', PASSWORD);
     await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
 });
+// TEST_SCREENSHOTS=<folder>: the page as a test that failed left it (CI keeps the folder: the browser job's artifact)
+test.afterEach(async (t) => {
+    const folder = process.env.TEST_SCREENSHOTS;
+    if (!folder || t.passed !== false || !page || page.isClosed()) return;
+    fs.mkdirSync(folder, { recursive: true });
+    const name = 'connectors - ' + t.name.replace(/[^\w -]+/g, '').slice(0, 80);
+    await page.screenshot({ path: path.join(folder, name + '.png'), fullPage: true }).catch(() => { });
+    fs.writeFileSync(path.join(folder, name + '.html'), await page.content().catch(() => ''));
+});
+
 test.after(async () => {
     api?.close();
     await browser?.close();
