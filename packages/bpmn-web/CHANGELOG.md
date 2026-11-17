@@ -97,6 +97,11 @@ and here
   addresses go to the same page of the one set (`/user/tasks` to `/tasks`, a form posted to `/user/invokeItem` sent on
   to `/invokeItem` with 307), so an old link still works.
 
+## Release 3.6.1 (2026-11-16)
+### Fixed
+- **The MongoDB address is logged without its password** at start (`MongoDB URL mongodb://user:***@...`): it was logged
+  whole.
+
 ## Release 3.6.0 (2026-11-10)
 ### Removed
 - **Guest access**: `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone, and only signed-in
