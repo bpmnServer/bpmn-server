@@ -2,6 +2,9 @@
 # order their dependencies need. The versions and the changelogs are set by hand before the tag (bpmn-internal's
 # PUBLISHING.md); this does what follows. npm trusts this workflow (trusted publishing, OIDC): no npm token is kept in
 # the repository's secrets, and each package is published with its provenance.
+# On npmjs.com, each package's trusted publisher (Settings → Trusted Publisher → GitHub Actions: bpmnServer,
+# bpmn-server, publish.yml, environment npm) must allow "npm publish" under Allowed actions: an entry made after
+# 2026-09-03 allows only `npm stage publish` by default, and npm then answers 403 "OIDC permission denied for this action".
 #
 # A tag on a release branch (release/3.6.1) publishes from there, so a patch to the version on npm does not take main's
 # unreleased work with it. A version lower than npm's `latest` is published under `release-<major>.<minor>`, so it
