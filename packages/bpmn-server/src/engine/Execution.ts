@@ -543,9 +543,14 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
     }
     getItems(): Item[] {
+        // each item once: a loop's token with an empty path borrows its first round's item (Token.goNext, issue 186),
+        // and it was saved twice, once for each token
         const items = [];
+        const seen = new Set<Item>();
         this.tokens.forEach(t => {
             t.path.forEach(i => {
+                if (seen.has(i)) return;
+                seen.add(i);
                 items.push(i);
             })
         }

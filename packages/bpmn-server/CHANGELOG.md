@@ -145,6 +145,12 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **A multi-instance task on a branch an exclusive merge cancels no longer keeps the instance running.** When
+  another branch reached the merge first, the loop's rounds were cancelled but the loop's own token stayed running,
+  so the instance never ended. Test: `test/loop-exclusive-merge.test.mjs`; testSampleApp's Complex Approval Process.
+- **An item is saved once.** A loop's token with an empty path borrows its first round's item (issue 186's
+  workaround); `Execution.getItems` listed it, and the instance saved it, twice. Same test.
+- `Loop.cancel` with no other round no longer throws (#289), as on 3.6.1 and main.
 - **`this.token.loop.end()` ends a parallel or sequential multi-instance loop.** Called by a round's script or
   listener, the loop ends when that round does: the rounds still waiting are cancelled and the process goes on, as
   when a completion condition holds. Before, a parallel loop ended this way waited for ever (not even its last round
