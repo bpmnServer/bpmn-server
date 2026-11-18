@@ -12,13 +12,24 @@ use, its roles, its APIs, its pages. Today most of this is code no one can read 
 name fails only when it runs, and an unknown variable reads as `null`. The editor can't offer these names, and
 `verifyModel` can't check them.
 
-## 2. One integration point: `appDelegate`, in two parts
+## 2. One entry point: `app-contract.json`
 
-The application already gives us its delegate. The delegate carries the contract too, in two parts:
+**Decided 2026-11-18:** the application's entry point is one JSON file, `app-contract.json`, in the application's
+folder. It holds the application's configuration and its roles, declares what the application offers (below), and
+says where its code is: the delegate's module for a Node application, or `appUrl` for a remote one (§4.5). The file
+points to the delegate, not the other way round. It can be read without running anything, and it works for an
+application in any language.
+
+Policies (assignment, security, notification) and connectors are not part of it: they belong to the workflows and
+are kept with the models.
+
+An application that passes `appDelegate` in code and has no `app-contract.json` runs as today.
+
+The contract has two parts:
 
 | | What | Who reads it | Where |
 |---|---|---|---|
-| **Declarative** | what exists: the names (variables and functions, with their types), roles, APIs, pages | the editor, `verifyModel`, tests, agents; without running anything | `appDelegate.describe()`: JSON, from a file or built in code |
+| **Declarative** | what exists: the names (variables and functions, with their types), roles, APIs, pages | the editor, `verifyModel`, tests, agents; without running anything | `app-contract.json`; `appDelegate.describe()` answers it, and an application without the file may build it in code |
 | **Code** | what it does: the functions and the variables (`getAppServices`, `getAppVars`, §2.1), `notify`, the hooks | the engine, when it runs | the delegate's methods, as today |
 
 The rule: the declarative part says **what** and never **how**. Every name it lists is carried out by the code part.
@@ -27,7 +38,7 @@ The rule: the declarative part says **what** and never **how**. Every name it li
 class HrDelegate extends DefaultAppDelegate {
     getAppServices(context) { return new HrFunctions(context); }     // code: appServices.x(...)
     getAppVars(context) { return new HrVars(context); }           // code: appVars.x
-    describe() { return JSON.parse(fs.readFileSync('processes/application.json', 'utf8')); }   // declarative
+    describe() { return JSON.parse(fs.readFileSync('app-contract.json', 'utf8')); }   // declarative
     async notify(notification) { /* send it */ }                           // code: hooks
 }
 ```
@@ -197,7 +208,7 @@ Through API v3, as the person or as the service account:
 The declarative part is a file, and the application calls us through API v3, so both work from any language. A
 service task calls the application's REST API as a connector. What doesn't carry over is the delegate's code, which
 runs in our Node process. For a remote application we provide a **remote delegate**, which makes the same calls
-over HTTP to the application's URL (`appUrl` in its `application.json`):
+over HTTP to the application's URL (`appUrl` in its `app-contract.json`):
 
 | The delegate's | Over HTTP |
 |---|---|
@@ -272,6 +283,6 @@ Everything is optional and additive:
 ## 9. Questions
 
 1. **Types:** JSON Schema (proposed), or a simpler list?
-2. **The file's name**, when `describe()` reads one: `application.json` (proposed), or `owf.json` (following the
-   `owf:` rule)?
+2. ~~The file's name~~ **Decided 2026-11-18:** `app-contract.json`, the application's entry point (§2). Not
+   `owf.json`: it is the application's configuration, not the workflow's.
 3. ~~Which first~~ **Decided 2026-11-14:** the HR demo's own `describe()`, by hand; the MDE adapter after.
