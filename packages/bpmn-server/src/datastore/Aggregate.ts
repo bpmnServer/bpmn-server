@@ -106,10 +106,11 @@ export class Aggregate {
 					includeItems=true;
 					const sortField2=sortField.substring(6);
 					matchItems.$and = matchItems.$and || [];
+					// a row per item: the cursor's own instance has other items after it, so a later value is enough
+					// (as DocumentPager pages); only a tie is broken by the instance's _id
 					matchItems.$and.push({
 						$or: [
-							{ [sortField]: { [comparator]: sortVal } ,
-								_id: { "$ne": new ObjectId(idPart) }},
+							{ [sortField]: { [comparator]: sortVal } },
 							{
 							[sortField]: sortVal,
 							_id: { [comparator]: new ObjectId(idPart) }
