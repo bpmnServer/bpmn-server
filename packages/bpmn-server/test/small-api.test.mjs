@@ -88,3 +88,18 @@ test('invoke with noWait answers before the rest runs; the rest runs, is saved, 
   assert.deepEqual(await store.find('bpmn_test', 'wf_locks', {}), [], 'its lock was released');
   await srv.shutdown();
 });
+
+test('a script handler: an input expression (a script, a template, a list, a date); a thrown text becomes an Error', async () => {
+  const srv = await server();
+  const execution = await srv.engine.start('Accessors', { who: 'ann', when: '2026-01-02T00:00:00Z' });
+  const item = execution.getItems().find(i => i.elementId === 'Wait');
+  const handler = srv.scriptHandler;
+  assert.equal(await handler.evaluateInputExpression(item, ''), undefined);
+  assert.equal(await handler.evaluateInputExpression(item, '$(data.who + "!")'), 'ann!');
+  assert.equal(await handler.evaluateInputExpression(item, 'Dear ${data.who}'), 'Dear ann');
+  assert.deepEqual(await handler.evaluateInputExpression(item, 'a,b'), ['a', 'b'], 'a text with commas: a list');
+  assert.equal((await handler.evaluateInputExpression(item, '$(data.when)', true)).toISOString(), '2026-01-02T00:00:00.000Z');
+  await assert.rejects(handler.evaluateExpression(item, '$((() => { throw "plain"; })())'), err => err instanceof Error && /plain/.test(err.message));
+  await assert.rejects(handler.executeScript(item, 'throw "plain";'), err => err instanceof Error && /plain/.test(err.message));
+  await srv.shutdown();
+});
