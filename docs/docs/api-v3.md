@@ -20,8 +20,10 @@ Errors are `{ "error": { "code", "message" } }`, with the status the error's kin
 | [GET /me](#get-me) | Who this call acts as, and what they may do |
 | [GET /processes/startable](#get-processesstartable) | The start events this user may use, with their forms |
 | [POST /processes/{name}/start](#post-processesnamestart) | Start a process as this user |
+| [POST /processes/{name}/choices/{field}](#post-processesnamechoicesfield) | A field of a start form with a list or a lookup (&lt;owf:list>, &lt;owf:lookup>): its choices, from the source the model names |
 | [GET /tasks](#get-tasks) | The waiting tasks this user has a part in, oldest first; with status=completed, the ones they completed, newest first |
 | [GET /tasks/{id}](#get-tasksid) | One task, with its instance's data and its form |
+| [POST /tasks/{id}/choices/{field}](#post-tasksidchoicesfield) | A field of a task form with a list or a lookup (&lt;owf:list>, &lt;owf:lookup>): its choices, from the source the model names |
 | [POST /tasks/{id}/claim](#post-tasksidclaim) | The task becomes this user's |
 | [POST /tasks/{id}/complete](#post-tasksidcomplete) | Complete the task, recording this user |
 | [GET /instances](#get-instances) | The instances this user may see, newest first |
@@ -100,6 +102,31 @@ Body (JSON):
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 404 | No such thing, or not this user's to see | [Error](#error) |
 
+### POST /processes/{name}/choices/{field}
+
+A field of a start form with a list or a lookup (<owf:list>, <owf:lookup>): its choices, from the source the model names.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `name` | path | string | yes | The model |
+| `field` | path | string | yes | The form field |
+
+Body (JSON):
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `text` | string |  | What the person typed: a lookup is searched by it; a list ignores it |
+| `data` | object |  | The form values as they are: a filter reads them, then the case data |
+| `startNodeId` | string |  | The start event; its first when not given |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | The choices: each key (saved as the value of the field; its label as &lt;id>Display) and what is shown | { items, next } |
+| 400 | The input is not right | [Error](#error) |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+| 502 | A connector the call needs failed | [Error](#error) |
+
 ## Tasks
 
 ### GET /tasks
@@ -136,6 +163,30 @@ One task, with its instance's data and its form.
 | 200 | The task | [TaskWithForm](#taskwithform) |
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 404 | No such thing, or not this user's to see | [Error](#error) |
+
+### POST /tasks/{id}/choices/{field}
+
+A field of a task form with a list or a lookup (<owf:list>, <owf:lookup>): its choices, from the source the model names.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `id` | path | string | yes | The task |
+| `field` | path | string | yes | The form field |
+
+Body (JSON):
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `text` | string |  | What the person typed: a lookup is searched by it; a list ignores it |
+| `data` | object |  | The form values as they are: a filter reads them, then the case data |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | The choices: each key (saved as the value of the field; its label as &lt;id>Display) and what is shown | { items, next } |
+| 400 | The input is not right | [Error](#error) |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+| 502 | A connector the call needs failed | [Error](#error) |
 
 ### POST /tasks/{id}/claim
 
@@ -762,7 +813,7 @@ Credential: The service key (API_KEY): the service account only.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `fields` | list of { id, label, type, defaultValue, values, validation } |  |  |
+| `fields` | list of { id, label, type, defaultValue, values, validation, list: [Choices](#choices), lookup: [Choices](#choices) } |  |  |
 | `formKey` | string |  |  |
 
 ### Startable
@@ -807,6 +858,22 @@ Credential: The service key (API_KEY): the service account only.
 | `name` | string |  |  |
 | `path` | string |  | The data path it reads |
 | `value` | any |  |  |
+
+### Choice
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `key` | string |  | Saved as the value of the field |
+| `display` | string |  | Shown, and saved as &lt;id>Display |
+
+### Choices
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `source` | string |  | service:&lt;name> or connector:&lt;connector>/&lt;operationId> |
+| `key` | string |  |  |
+| `display` | string |  |  |
+| `filter` | string |  | A data path, ${data.&lt;field>} |
 
 ### TaskWithForm
 

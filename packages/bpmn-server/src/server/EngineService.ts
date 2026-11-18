@@ -4,6 +4,7 @@ import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { canEncrypt } from '../connectors/Secrets.js';
 import { Definition } from '../elements/Definition.js';
+import { formFieldLookup, lookupChoices } from '../elements/FormLookup.js';
 import type { IExecutionResult } from '../interfaces/engine.js';
 import type { BPMNServer } from './BPMNServer.js';
 
@@ -104,6 +105,19 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         connectorRemoved: async (id: string) => server.connectors.forget(id),
         testConnector: async (id: string, operationId?: string, input = {}) => server.connectors.test(id, operationId, input),
         releaseClaim: async (key: string) => { await server.dataStore.locker.release(`claim:${key}`); return true; },
+        /**
+         * A form field's choices (elements/FormLookup.ts; docs/design/form-lookups.md): the source its list or lookup
+         * names in the model, the application's service or a connector's operation, is called here, where the
+         * application's code and the connectors' keys are. The host has decided who may ask, and the criteria.
+         */
+        formChoices: async (processName: string, elementId: string, fieldId: string, criteria = {}, context = {}) => {
+            const definition = await server.definitions.load(processName);
+            const field = (definition.getNodeInfo(elementId)?.fields ?? []).find(f => f.id === fieldId);
+            const lookup = field && formFieldLookup(field);
+            if (!lookup)
+                throw Object.assign(new Error(`The form of '${elementId}' has no field '${fieldId}' with a list or a lookup`), { code: 'NO_CHOICES' });
+            return lookupChoices(server, lookup, criteria, context);
+        },
         /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
         invokeDecision: async (ref: string, data = {}) => {
             const found = await DMNEngine.find(server.configuration.definitionsPath, ref);

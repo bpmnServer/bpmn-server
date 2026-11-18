@@ -15,6 +15,19 @@ and here
 
 ## [Unreleased]
 ### Added
+- **Lists and lookups in forms** (docs/design/form-lookups.md, `elements/FormLookup.ts`): a form field's choices from
+  a source, asked for while the form is filled. `<owf:list>` (a drop-down) or `<owf:lookup>` (a search) on a
+  `camunda:formField`:
+  - `source`: `service:<name>`, a function of the application's services, called with `{ text, filter }` and who
+    asks; or `connector:<connector>/<operationId>`, with the text and the filter as its inputs `text` and
+    `filterInput`.
+  - `key` (saved), `display` (shown), `filter` (a data path, `${data.<field>}`), `items` (the rows in the answer).
+  - `formFieldLookup(field)`, `lookupChoices(server, lookup, criteria, context)`, `choicesOf`; the engine call
+    `formChoices`, so the source runs where the application's code and the connectors' keys are.
+  - `verifyModel` checks the source (`lookup-source`, `lookup-service-unknown`, `connector-unknown`, ...), its
+    inputs and its filter.
+
+  Test: `test/form-lookup.test.mjs`.
 - **Security policies**, a first slice (docs/design/security-policies.md, `engine/SecurityPolicy.ts`): who sees a
   case, which of its data, and what they may do with it and its tasks. A process names one (`owf:securityPolicy`), a
   user task may too, for its actions: a DMN table in `policies/security/<name>.dmn.xml`, hit policy COLLECT, a denial

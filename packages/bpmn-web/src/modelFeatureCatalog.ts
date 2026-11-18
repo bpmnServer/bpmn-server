@@ -243,6 +243,15 @@ export const MODEL_FEATURES: { id: string, name: string, area: string, xml: stri
         ]
     },
     {
+        "id": "form-lookups",
+        "name": "Lists and lookups in forms",
+        "area": "modeling",
+        "xml": [
+            "camunda:formField owf:list",
+            "camunda:formField owf:lookup"
+        ]
+    },
+    {
         "id": "input-output",
         "name": "Input and output mapping",
         "area": "modeling",

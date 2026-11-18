@@ -3,7 +3,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 
 import { BPMNServer, dateDiff, Behaviour_names, labelInstances, labelItems, actorsOf, actorElements } from '../index.js';
-import { BPMNAPI , SecureUser } from '../index.js';
+import { BPMNAPI , SecureUser, formFieldLookup } from '../index.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
@@ -211,8 +211,10 @@ export class Workflow extends Common {
             let vars = ViewHelper.formatData(caseAccess.data(instance, access, item.elementId) || {});
 
             if (fields && fields.length > 0) {
+                // the fields whose choices come from a connector operation (owf:list, owf:lookup)
+                const lookups = Object.fromEntries(fields.map(f => [f.id, formFieldLookup(f)]).filter(([, lookup]) => lookup));
                 response.render('invokeItem', { node,
-                    id, fields, processName, elementId ,instance,vars ,returnTo
+                    id, fields, lookups, processName, elementId ,instance,vars ,returnTo
                 });
                 return;
             }

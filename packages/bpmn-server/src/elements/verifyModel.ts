@@ -8,6 +8,7 @@ import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
 import { templateProblems } from '../engine/Labels.js';
 import { owfAttribute, legacyAttributes } from './owfAttributes.js';
+import { formFieldLookup, lookupElements, filterPath } from './FormLookup.js';
 import { actorElements, BUILT_IN_ACTORS, ACTOR_ELEMENTS } from '../engine/DecisionContext.js';
 import { SECURITY_FOLDER, DEFAULT_SECURITY_POLICY } from '../engine/SecurityPolicy.js';
 import { notificationPolicyFile, notificationTemplateFile, NOTIFICATION_FOLDER, NOTIFICATION_TEMPLATES, NOTIFICATION_OUTPUTS } from '../engine/NotificationPolicy.js';
@@ -365,31 +366,9 @@ class ModelVerifier {
                 : 'The task calls a connector but does not name it: choose the connector and its operation.', def);
             return;
         }
-        const connectors = this.server?.connectors;
-        if (!connectors)
+        const operation = await this.operationOf(ref, def, 'the task fails');
+        if (!operation)
             return;
-        const id = ref.slice(0, slash), operationId = ref.slice(slash + 1);
-        const found = await connectors.get(id).catch(() => undefined);
-        if (!found) {
-            this.add('error', 'connector-unknown', `The server has no connector '${id}': an administrator adds it (Administration, Connectors).`, def);
-            return;
-        }
-        if (!found.enabled)
-            this.add('warning', 'connector-disabled', `The connector '${id}' is disabled: the task fails until an administrator enables it.`, def);
-        let operation;
-        try {
-            operation = (await connectors.operations(id)).find(op => op.operationId === operationId);
-        }
-        catch (exc) {
-            this.add('error', 'connector-unreadable', `The connector '${id}' can not be read: ${exc.message}`, def);
-            return;
-        }
-        if (!operation) {
-            this.add('error', 'connector-operation-unknown', `The connector '${id}' has no operation '${operationId}'.`, def);
-            return;
-        }
-        if (!operation.enabled)
-            this.add('warning', 'connector-operation-disabled', `The operation '${ref}' is disabled: the task fails until an administrator enables it.`, def);
         const given = new Set(((connector.io?.parameters ?? []) as any[]).filter(p => p.isInput()).map(p => p.name));
         const bodyFields = operation.body?.schema?.properties ? Object.keys(operation.body.schema.properties) : [];
         const inputs = [
@@ -409,6 +388,96 @@ class ModelVerifier {
         for (const name of given)
             if (!known.has(name))
                 this.add('warning', 'connector-input-unknown', `'${name}' is not an input of '${ref}': it is not sent.`, def);
+    }
+
+    /**
+     * A connector's operation a model names, `<connector>/<operationId>` (already checked to be one), with the server's
+     * connectors: the connector and the operation there and enabled. `fails`: what happens when one is disabled.
+     * Undefined, with the error added, when it is not there; and when the server has no connectors.
+     */
+    private async operationOf(ref: string, def, fails: string) {
+        const connectors = this.server?.connectors;
+        if (!connectors)
+            return undefined;
+        const slash = ref.indexOf('/');
+        const id = ref.slice(0, slash), operationId = ref.slice(slash + 1);
+        const found = await connectors.get(id).catch(() => undefined);
+        if (!found) {
+            this.add('error', 'connector-unknown', `The server has no connector '${id}': an administrator adds it (Administration, Connectors).`, def);
+            return undefined;
+        }
+        if (!found.enabled)
+            this.add('warning', 'connector-disabled', `The connector '${id}' is disabled: ${fails} until an administrator enables it.`, def);
+        let operation;
+        try {
+            operation = (await connectors.operations(id)).find(op => op.operationId === operationId);
+        }
+        catch (exc) {
+            this.add('error', 'connector-unreadable', `The connector '${id}' can not be read: ${exc.message}`, def);
+            return undefined;
+        }
+        if (!operation) {
+            this.add('error', 'connector-operation-unknown', `The connector '${id}' has no operation '${operationId}'.`, def);
+            return undefined;
+        }
+        if (!operation.enabled)
+            this.add('warning', 'connector-operation-disabled', `The operation '${ref}' is disabled: ${fails} until an administrator enables it.`, def);
+        return operation;
+    }
+
+    /**
+     * A form's lists and lookups (elements/FormLookup.ts; docs/design/form-lookups.md): one per field, its source a
+     * service the application has or a connector's operation the server has; a filter is a data path. A connector's
+     * text and filter go to inputs it has, and it needs no other input (only those are sent).
+     */
+    private async checkFormLookups(node, def) {
+        const fields = node.getBehaviour(Behaviour_names.CamundaFormData)?.fields ?? [];
+        for (const field of fields) {
+            const elements = lookupElements(field);
+            if (!elements.length)
+                continue;
+            const where = `The field '${field.id}'`;
+            if (elements.length > 1)
+                this.add('warning', 'lookup-and-list', `${where} has ${elements.length} lists and lookups: only the first is used; remove the others.`, def);
+            const lookup = formFieldLookup(field);
+            if (!lookup) {
+                const written = elements[0].$attrs?.source ?? elements[0].source;
+                this.add('error', 'lookup-source', written
+                    ? `${where}: '${written}' is not a source: service:<name> or connector:<connector>/<operationId>.`
+                    : `${where} has a ${elements[0].$type} with no source: service:<name> or connector:<connector>/<operationId>.`, def);
+                continue;
+            }
+            if (lookup.filter && filterPath(lookup.filter) === undefined)
+                this.add('error', 'lookup-filter', `${where}: the filter '${lookup.filter}' is not a data path, such as $` + `{data.department}.`, def);
+            if (lookup.source.type === 'service') {
+                if (this.services && !resolvePath(this.services, lookup.source.name))
+                    this.add('error', 'lookup-service-unknown', `${where}: the application's services have no '${lookup.source.name}'.`, def);
+                continue;
+            }
+            const ref = lookup.source.operation;
+            const slash = ref.indexOf('/');
+            if (slash <= 0 || slash === ref.length - 1) {
+                this.add('error', 'lookup-source', `${where}: '${ref}' does not name a connector's operation: connector:<connector>/<operationId>.`, def);
+                continue;
+            }
+            if (lookup.kind === 'lookup' && !lookup.text)
+                this.add('info', 'lookup-no-text', `${where} names no text input: '${ref}' is read whole at each search, and searched by the server.`, def);
+            if (lookup.filter && !lookup.filterInput)
+                this.add('error', 'lookup-filter-unsent', `${where} has a filter but no filterInput: '${ref}' is not given it.`, def);
+            const operation = await this.operationOf(ref, def, `the field's ${lookup.kind} is empty`);
+            if (!operation)
+                continue;
+            const names = new Set((operation.parameters ?? []).map(p => p.name));
+            for (const [what, name] of [['text', lookup.text], ['filterInput', lookup.filterInput]])
+                if (name && !names.has(name))
+                    this.add('error', 'lookup-input-unknown', `${where}: '${name}' (its ${what}) is not an input of '${ref}': it is not sent.`, def);
+            const sent = [lookup.text, lookup.filterInput].filter(Boolean);
+            for (const p of operation.parameters ?? [])
+                if (p.required && !sent.includes(p.name))
+                    this.add('error', 'lookup-input-missing', `${where}: '${ref}' needs the input '${p.name}', and a ${lookup.kind} sends ${sent.length ? sent.map(n => `'${n}'`).join(' and ') : 'none'}.`, def);
+            if (operation.body?.required)
+                this.add('error', 'lookup-input-missing', `${where}: '${ref}' needs a request body, and a ${lookup.kind} sends none.`, def);
+        }
     }
 
     async verifyExecutables(definition: Definition) {
@@ -457,6 +526,8 @@ class ModelVerifier {
 
             const timer = node.getBehaviour(Behaviour_names.TimerEventDefinition);
             if (timer) this.checkTimer(timer, def, checkScripts);
+
+            await this.checkFormLookups(node, def);
 
             const connector = node instanceof ServiceTask ? node.connector : undefined;
             if (connector)

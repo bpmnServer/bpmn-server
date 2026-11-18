@@ -7,7 +7,19 @@ mixin startForm(start)
     input(type='hidden', name='startNodeId', value=start.startNodeId)
     each field in start.fields
       label(for=`${start.startNodeId}-${field.id}`)= field.label || field.id
-      if field.type === 'enum' && field.values && field.values.length
+      //- its choices from a source (<owf:list>, <owf:lookup>): public/javascripts/formLookup.js; its label saved as <id>Display
+      - var choicesUrl = (field.list || field.lookup) ? `/dashboard/choices/start/${encodeURIComponent(start.processName)}/${encodeURIComponent(field.id)}` : null
+      - var fid = `${start.startNodeId}-${field.id}`
+      if field.list
+        select(id=fid, name=`field.${field.id}`, data-choices-url=choicesUrl, data-start=start.startNodeId, data-value=field.defaultValue || '', data-filtered=(field.list.filter ? 'true' : 'false'), data-display-for=`${fid}-display`)
+          option(value='')
+        input(id=`${fid}-display`, type='hidden', name=`field.${field.id}Display`)
+      else if field.lookup
+        input(id=fid, type='text', autocomplete='off', list=`${fid}-choices`, data-choices-url=choicesUrl, data-start=start.startNodeId, data-value-for=`${fid}-key`, data-display-for=`${fid}-display`)
+        input(id=`${fid}-key`, type='hidden', name=`field.${field.id}`)
+        input(id=`${fid}-display`, type='hidden', name=`field.${field.id}Display`)
+        datalist(id=`${fid}-choices`)
+      else if field.type === 'enum' && field.values && field.values.length
         select(id=`${start.startNodeId}-${field.id}`, name=`field.${field.id}`)
           each v in field.values
             option(value=v.id, selected=(v.id === field.defaultValue))= v.name || v.id

@@ -156,6 +156,19 @@ export class Dashboards extends Common {
             render(req, res, 'start', { title: 'Start a process', processName, starts: startsOf(startable.filter(s => s.processName === processName)) });
         }));
 
+        // a form field's choices (<owf:list>, <owf:lookup>), for the drawn forms' drop-downs and searches
+        // (public/javascripts/formLookup.js): as the person, through API v3's operations; JSON
+        const choicesAnswer = (fn) => async (req, res) => {
+            try {
+                res.json(await fn(await pageApi(req, server), req));
+            }
+            catch (error) {
+                res.status(error?.status ?? 500).json({ error: { code: error?.code ?? 'ERROR', message: error?.message ?? String(error) } });
+            }
+        };
+        router.post('/choices/task/:id/:field', choicesAnswer((api, req) => api.choices(req.params.id, req.params.field, req.body ?? {})));
+        router.post('/choices/start/:processName/:field', choicesAnswer((api, req) => api.startChoices(req.params.processName, req.params.field, req.body ?? {})));
+
         // start a process at one of its start events, with the start form's fields
         router.post('/start', handler(async (req, res) => {
             const { processName, startNodeId } = req.body;

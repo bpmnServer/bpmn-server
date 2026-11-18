@@ -1,4 +1,4 @@
-import { BPMNAPI, SecureUser } from '../../index.js';
+import { BPMNAPI, SecureUser, formFieldLookup, filterValue } from '../../index.js';
 import { notATest } from '../../testing/scenarios.js';
 import { CaseAccess } from '../caseAccess.js';
 
@@ -41,10 +41,13 @@ function asField(field) {
     const children = field.$children ?? [];
     const values = field.values ?? children.filter(c => c.$type === 'camunda:value');
     const validation = field.validation?.constraints ?? children.filter(c => c.$type === 'camunda:validation').flatMap(v => v.$children ?? []);
+    const lookup = formFieldLookup(field);
     return {
         id: field.id, label: field.label ?? field.id, type: field.type, defaultValue: field.defaultValue,
         ...(values.length ? { values: values.map(v => ({ id: v.id, name: v.name ?? v.id })) } : {}),
         ...(validation.length ? { validation: validation.map(c => ({ name: c.name, config: c.config })) } : {}),
+        // its choices come from a source (elements/FormLookup.ts): list, a drop-down; lookup, a search. Its label is saved as <id>Display
+        ...(lookup ? { [lookup.kind]: { source: lookup.sourceText, key: lookup.key, display: lookup.display, ...(lookup.filter ? { filter: lookup.filter } : {}) } } : {}),
     };
 }
 
@@ -61,6 +64,11 @@ function isAfter(item, after: string) {
     const itemTime = new Date(item.startedAt ?? 0).getTime();
     return itemTime > time || (itemTime === time && item.id > id);
 }
+
+/** The form's values a client sends: an object, else none. */
+const asData = data => data && typeof data === 'object' && !Array.isArray(data) ? data : {};
+/** Who asks, as a source is told. */
+const userOf = (user: SecureUser) => ({ userName: user.userName, userGroups: user.userGroups ?? [] });
 
 const assertWaiting = item => {
     if (item.status !== 'wait')
@@ -140,6 +148,45 @@ export class TaskOperations {
         return { ...asTask(item), data, form: definition ? formOf(definition, item.elementId) : { fields: [] } };
     }
 
+    /**
+     * A field's choices on this task's form (docs/design/form-lookups.md): { items: [{ key, display }] }. `text`: what
+     * the person typed (a lookup's); `data`: the form's values as they are, read with the case's data by the field's
+     * filter. As the person who would complete the task: the same 404 for one that is not theirs. The source is the
+     * model's, never the caller's.
+     */
+    async choices(user: SecureUser, id: string, fieldId: string, { text = '', data = {} }: { text?: string, data?: Record<string, any> } = {}) {
+        const item = await this.find(id, user);
+        const decided = await this.taskAccess(user, item);
+        if (decided?.access.complete === false) throw notFound();
+        const caseData = (item as any).instanceData ?? {};
+        return this.choicesOf(await this.server.definitions.load(item.processName), item.elementId, fieldId, text, { ...caseData, ...asData(data) },
+            { user: userOf(user), processName: item.processName, elementId: item.elementId, instanceId: item.instanceId, taskId: item.id });
+    }
+
+    /** A field's choices on a start form, for a process this user may start (at `startNodeId`, else its first start). */
+    async startChoices(user: SecureUser, name: string, fieldId: string, { text = '', data = {}, startNodeId }: { text?: string, data?: Record<string, any>, startNodeId?: string } = {}) {
+        const start = await this.startOf(user, name, startNodeId);
+        return this.choicesOf(await this.server.definitions.load(name), start.elementId, fieldId, text, asData(data),
+            { user: userOf(user), processName: name, elementId: start.elementId });
+    }
+
+    private async choicesOf(definition, elementId: string, fieldId: string, text: unknown, data: Record<string, any>, context: Record<string, any>) {
+        const field = (definition.getNodeInfo(elementId).fields ?? []).find(f => f.id === fieldId);
+        const lookup = field && formFieldLookup(field);
+        if (!lookup)
+            throw new TaskError(404, `The form has no field '${fieldId}' with a list or a lookup`, 'NO_CHOICES');
+        if (text !== undefined && typeof text !== 'string')
+            throw new TaskError(400, 'text is a string', 'BAD_TEXT');
+        try {
+            // the source is called by the engine, where the application's code and the connectors' keys are
+            return { items: await this.server.engine.formChoices(context.processName, elementId, fieldId, { text: (text as string | undefined) ?? '', filter: filterValue(lookup, data) }, context) };
+        }
+        catch (exc) {
+            throw new TaskError(502, `The ${lookup.kind} of '${fieldId}' (${lookup.sourceText}) failed: ${exc?.message ?? exc}`, 'CHOICES_FAILED');
+        }
+    }
+
+
     /** The task becomes this user's: { task }. Two claims at the same moment can not both win. */
     async claim(user: SecureUser, id: string) {
         const item = await this.find(id, user);
@@ -199,13 +246,19 @@ export class TaskOperations {
         return starts.sort((a, b) => a.processName.localeCompare(b.processName) || a.startNodeId.localeCompare(b.startNodeId));
     }
 
-    /** Starts a process as this user, at a start event they may use: { instance, task } (task: their first, or null). */
-    async start(user: SecureUser, name: string, { data = {}, startNodeId }: { data?: any, startNodeId?: string } = {}) {
-        assertData(data);
+    /** A start event of this process this user may use: `startNodeId`, else its first; or a 404. */
+    private async startOf(user: SecureUser, name: string, startNodeId?: string) {
         const starts = (await this.api.model.findStartEvents({}, user)).filter(event => event.modelName === name);
         const start = startNodeId ? starts.find(event => event.elementId === startNodeId) : starts[0];
         if (!start)
             throw new TaskError(404, `No process ${name} that this user may start${startNodeId ? ` at ${startNodeId}` : ''}`, 'NOT_STARTABLE');
+        return start;
+    }
+
+    /** Starts a process as this user, at a start event they may use: { instance, task } (task: their first, or null). */
+    async start(user: SecureUser, name: string, { data = {}, startNodeId }: { data?: any, startNodeId?: string } = {}) {
+        assertData(data);
+        const start = await this.startOf(user, name, startNodeId);
         const { instance } = await this.api.engine.start(name, data, user, { startNodeId: start.elementId });
         const first = instance.items
             .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && hasPart(item, user))

@@ -123,6 +123,7 @@ nav:
   - Features: features.md
   - Performance and test coverage: performance.md
   - Labels: labels.md
+  - Lists and lookups in forms: form-lookups.md
   - 'Assignment policies': assignment-policies.md
   - 'Notification policies': notification-policies.md
   - Advanced Topics: advanced.md

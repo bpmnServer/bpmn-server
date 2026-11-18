@@ -15,6 +15,15 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Lists and lookups in forms** (docs/docs/form-lookups.md): the drawn forms show a field with `<owf:list>` as a
+  drop-down and one with `<owf:lookup>` as a search box (`public/javascripts/formLookup.js`); the key is the value,
+  its label is sent as `<id>Display`. API v3:
+  - `POST /tasks/{id}/choices/{field}` and `POST /processes/{name}/choices/{field}`, with `{ text, data }`: the
+    choices, as the user. The source is the model's, called by the engine. A filter reads `data` (the form's values),
+    then the case's data. Errors: 404 `NO_CHOICES`, 400 `BAD_TEXT`, 502 `CHOICES_FAILED`.
+  - A form's fields say `list` or `lookup`: `{ source, key, display, filter }`.
+  - Test: `apps/testSampleApp/test/web/form-choices.test.mjs`. The HR demo's Leave Application asks for a Department
+    (a list) and who covers (a lookup).
 - **API v3's Task says what decided who works on it:** `assignedBy`, its assignment policy and rule (`{ policy,
   rule }`), or who reassigned it (`{ userName }`); absent when nothing did (PR #286's question).
 - **Security policies**, a first slice (docs/design/security-policies.md, `routes/caseAccess.ts`), when an application

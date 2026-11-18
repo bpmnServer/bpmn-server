@@ -110,6 +110,8 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         const { instance, task } = await tasks.start(user, req.params.name, { data: req.body?.data ?? {}, startNodeId: req.body?.startNodeId });
         return { instance: (await labeledInstances(server, [instance]))[0], task: task ? (await labeledTasks(server, [task]))[0] : null };
     }, 201));
+    // a start form's field with a list or a lookup: its choices, for { text, data, startNodeId } (docs/design/form-lookups.md)
+    router.post('/processes/:name/choices/:field', handler(async (req, user) => tasks.startChoices(user, req.params.name, req.params.field, req.body ?? {})));
 
     // ---- tasks: the waiting tasks this user has a part in; one with its form; claim; complete. Each labeled (labels.ts).
 
@@ -128,6 +130,8 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         return { items: await labeledTasks(server, items), ...(next ? { next: toCursor(next) } : {}) };
     }));
     router.get('/tasks/:id', handler(async (req, user) => oneTask(await tasks.get(user, req.params.id))));
+    // a form field with a list or a lookup: its choices, for { text, data } (docs/design/form-lookups.md)
+    router.post('/tasks/:id/choices/:field', handler(async (req, user) => tasks.choices(user, req.params.id, req.params.field, req.body ?? {})));
     router.post('/tasks/:id/claim', handler(async (req, user) => ({ task: await oneTask((await tasks.claim(user, req.params.id)).task) })));
     router.post('/tasks/:id/complete', handler(async (req, user) => {
         const { task, instance } = await tasks.complete(user, req.params.id, req.body?.data ?? {});

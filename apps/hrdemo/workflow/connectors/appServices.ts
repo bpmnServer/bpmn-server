@@ -33,6 +33,25 @@ class AppServices {
         if (!managerId || managerId === employee.employeeId) return null;
         return nameOf(employees.find(e => e.employeeId === managerId));
     }
+    /**
+     * Leave Application's Department field, a drop-down (docs/design/form-lookups.md):
+     * <owf:list source="service:departments" key="departmentId" display="name" />. HR's departments (server/data.js).
+     */
+    async departments(criteria, context) {
+        return departments.map(({ departmentId, name }) => ({ departmentId, name }));
+    }
+    /**
+     * Leave Application's Covered by field, a search: <owf:lookup source="service:employees" key="userName"
+     * display="name" filter="${data.Department}" />. Called with { text, filter }: the active employees whose name has
+     * the text, in the department chosen; each with its user name (the demo's sign-in name) and full name.
+     */
+    async employees({ text = '', filter }: { text?: string, filter?: string } = {}, context?) {
+        const search = String(text).trim().toLowerCase();
+        return employees
+            .filter(e => e.status === 'Active' && (!filter || e.departmentId === filter))
+            .map(e => ({ userName: String(e.email).split('@')[0], name: `${e.firstName} ${e.lastName}`, jobTitle: e.jobTitle }))
+            .filter(e => !search || e.name.toLowerCase().includes(search));
+    }
     /** Hello.bpmn's Greet task: input { name }, the result stored as data.greeting. */
     async greet({ name }, context) {
         return `Hello ${name || 'there'}, from ${context.instance?.name ?? context.item?.token?.execution?.name}`;

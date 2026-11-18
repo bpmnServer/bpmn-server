@@ -93,6 +93,8 @@ export class LaunchedEngine {
     upgrade(...args: any[]) { return this.#ask('upgrade', args); }
     upgradeRunning(...args: any[]) { return this.#ask('upgradeRunning', args); }
     invokeDecision(...args: any[]) { return this.#ask('invokeDecision', args); }
+    /** A form field's choices, from the source its list or lookup names: the engine's, where the code and keys are. */
+    formChoices(processName: string, elementId: string, fieldId: string, criteria = {}, context = {}) { return this.#ask('formChoices', [processName, elementId, fieldId, criteria, context]); }
     facts() { return this.#ask('facts', []); }
     checkModel(name: string, source: string) { return this.#ask('checkModel', [name, source]); }
     /** A call added to the engine's (`calls` of launch, and of startEngineService where the engine is). */

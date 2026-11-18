@@ -55,6 +55,12 @@
           <camunda:formField id="StartDate" label="Start Date" type="date" />
           <camunda:formField id="EndDate" label="End Date" type="date" />
           <camunda:formField id="RequestReason" label="Reason" type="string" />
+          <camunda:formField id="Department" label="Department" type="string">
+            <owf:list source="service:departments" key="departmentId" display="name" />
+          </camunda:formField>
+          <camunda:formField id="CoveredBy" label="Covered by" type="string">
+            <owf:lookup source="service:employees" key="userName" display="name" filter="${data.Department}" />
+          </camunda:formField>
         </camunda:formData>
       </bpmn2:extensionElements>
       <bpmn2:incoming>toRequestTask</bpmn2:incoming>

@@ -60,6 +60,10 @@ export async function pageApi(req, server) {
         completed: (limit: number, query?: object) => asApi(() => tasks.completed(user, { limit, query })),
         /** The processes they may start, with each start form (GET /processes/startable). */
         startable: () => asApi(() => tasks.startable(user)),
+        /** A task form's field's choices (POST /tasks/{id}/choices/{field}). */
+        choices: (id: string, field: string, body: object) => asApi(() => tasks.choices(user, id, field, body)),
+        /** A start form's field's choices (POST /processes/{name}/choices/{field}). */
+        startChoices: (name: string, field: string, body: object) => asApi(() => tasks.startChoices(user, name, field, body)),
         /** A process started as them (POST /processes/{name}/start). */
         start: (processName: string, options: { data?: object; startNodeId?: string }) => tasks.start(user, processName, { data: options.data ?? {}, startNodeId: options.startNodeId }),
     };
