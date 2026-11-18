@@ -209,3 +209,42 @@ test('an empty list, [], clears the candidates the lane gave: this assignee, and
     assert.deepEqual(task.candidateGroups, ['Managers'], 'an empty cell: as the lane gave');
     await srv.shutdown();
 });
+
+test('a models folder\'s policies and roles: names that leave the folder, a roles.json that is not a list, role names, where roles are used', async () => {
+  const { policyFile, policyNames, roleNames, roleNameProblem, saveRoleNames, roleUses } = await import('../dist/index.js');
+  const dir = definitionsFolder();
+  const policies = path.join(dir, 'policies', 'assignment');
+  fs.mkdirSync(policies, { recursive: true });
+  const table = (outputs, cells) => `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="N" namespace="t"><decision id="N" name="N"><decisionTable id="t" hitPolicy="FIRST">
+<input id="i"><inputExpression id="e" typeRef="string"><text>task</text></inputExpression></input>
+${outputs.map((o, i) => `<output id="o${i}" name="${o}" typeRef="string" />`).join('')}
+<rule id="r"><inputEntry id="ri"><text></text></inputEntry>${cells.map((c, i) => `<outputEntry id="ro${i}"><text>${c}</text></outputEntry>`).join('')}</rule>
+</decisionTable></decision></definitions>`;
+  fs.writeFileSync(path.join(policies, 'Groups.dmn.xml'), table(['candidateGroups'], ['"Managers, Directors"']));
+  fs.writeFileSync(path.join(policies, 'People.dmn.xml'), table(['assignee'], ['"ann"']));
+  fs.writeFileSync(path.join(policies, 'Broken.dmn.xml'), '<not a decision');
+
+  assert.ok(policyFile(dir, 'Groups'));
+  for (const name of ['../Groups', 'a/b', 'a\b', '..', '']) assert.equal(policyFile(dir, name), null, JSON.stringify(name));
+  assert.equal(policyFile('', 'Groups'), null);
+  assert.deepEqual(policyNames(''), []);
+  assert.deepEqual(policyNames(dir), ['Broken', 'Groups', 'People']);
+
+  assert.equal(roleNames(dir), null, 'no roles.json');
+  fs.writeFileSync(path.join(dir, 'roles.json'), '{"Manager": true}');
+  assert.throws(() => roleNames(dir), /roles.json is a list of role names/);
+  assert.deepEqual(saveRoleNames(dir, ['Managers', ' Managers ', 'Directors']), ['Managers', 'Directors'], 'each once');
+  assert.deepEqual(roleNames(dir), ['Managers', 'Directors']);
+  assert.throws(() => saveRoleNames(dir, ['a,b']), /not a role name/);
+  assert.equal(roleNameProblem(''), 'A role needs a name');
+  assert.equal(roleNameProblem(7), 'A role needs a name');
+  assert.equal(roleNameProblem('x'.repeat(65)), 'A role name is at most 64 characters');
+  assert.equal(roleNameProblem('Front desk'), null);
+
+  const uses = await roleUses(dir);
+  assert.deepEqual(uses.get('Managers'), ['policy Groups, rule 1']);
+  assert.deepEqual(uses.get('Directors'), ['policy Groups, rule 1']);
+  assert.equal(uses.has('ann'), false, 'an assignee is not a role');
+  assert.equal((await roleUses(path.join(dir, 'nowhere'))).size, 0);
+});
