@@ -70,9 +70,9 @@ class SignalEventBehaviour extends Behaviour {
     }
     describe() {
         if (this.node.isCatching)
-            return ['Signal', `catches signal '${this.signalId}'`];
+            return [['Signal', `catches signal '${this.signalId}'`]];
         else
-            return ['Signal', `throws signal '${this.signalId}'`];
+            return [['Signal', `throws signal '${this.signalId}'`]];
     }
     get signalId() {
         if (this.definition['signalRef'])

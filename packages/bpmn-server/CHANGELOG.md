@@ -145,6 +145,11 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **Error, escalation and signal events describe themselves rightly.** An error event said "catches message 'E1'" (as
+  did an escalation), and a signal event's `describe()` gave one `[label, text]` pair instead of a list of them, so the
+  designer's descriptions (which keep only the pairs) left signals out. Now `Error` / `catches error 'E1'` (`'any'`
+  with no code), `Escalation` / `throws escalation 'Late'`, and `[['Signal', …]]`. `Definition.getJson()` carries the
+  same. Test: `test/describe.test.mjs`, which also covers every behaviour's description and `BehaviourLoader.register`.
 - **A `$py` script on a server without Python fails the script, not the server.** The spawn's error (ENOENT) had no
   handler, so it was an uncaught exception that ended the whole process. Now the script fails with "Python could not
   be started". Test: `test/python-missing.test.mjs`.

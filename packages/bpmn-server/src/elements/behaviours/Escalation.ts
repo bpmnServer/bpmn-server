@@ -41,9 +41,9 @@ class EscalationEventBehaviour extends Behaviour {
     }
     describe() {
         if (this.node.isCatching) 
-            return [['Message', `catches message '${this.escalationId}'`]];
+            return [['Escalation', `catches escalation '${this.escalationId ?? 'any'}'`]];
         else
-            return [['Message', `throws message '${this.escalationId}'`]];
+            return [['Escalation', `throws escalation '${this.escalationId}'`]];
     }
 }
 export { EscalationEventBehaviour}
