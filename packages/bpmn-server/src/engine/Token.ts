@@ -819,12 +819,5 @@ class Token implements IToken {
 function yieldToEventLoop(): Promise<void> {
     return new Promise(resolve => setImmediate(resolve));
 }
-async function delay(time, result) {
-    return new Promise(function (resolve) {
-        setTimeout(function () {
-            resolve(result);
-        }, time);
-    });
-}
 // ---------------------------------------------
 export { Token , TOKEN_TYPE }

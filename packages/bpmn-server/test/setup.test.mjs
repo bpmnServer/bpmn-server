@@ -177,3 +177,62 @@ test('setup: sqlite:<file> is a database too: DATABASE is set, its folder checke
   assert.ok(fs.existsSync(path.join(dir, 'data')), 'its folder made');
   assert.ok(!JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')).dependencies['mongodb-memory-server']);
 });
+
+/** terminalIO in a process of its own, answers piped in: what it printed, and how it ended. */
+function piped(script, input) {
+  const code = `import { terminalIO } from ${JSON.stringify(new URL('../dist/setup.js', import.meta.url).href)};
+const io = terminalIO();
+try { ${script} } catch (error) { console.log('ERROR ' + error.message); }
+io.close();`;
+  return spawnSync(process.execPath, ['--input-type=module', '-e', code], { input, encoding: 'utf8' });
+}
+
+test('the terminal, piped: answers given before their questions wait for them, shown after; a secret as ***', () => {
+  const run = piped(`
+    const name = await io.question('Name? ');
+    const key = await io.secret('Key? ');
+    io.print('got ' + name + ' and ' + key.length + ' characters');`, 'Ann\ns3cret\n');
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /Name\? Ann\n/, 'the answer after its question');
+  assert.match(run.stdout, /Key\? \*\*\*\n/, 'the secret not shown');
+  assert.ok(!run.stdout.includes('s3cret'));
+  assert.match(run.stdout, /got Ann and 6 characters/);
+});
+
+test('the terminal, piped: input that ends before the questions do is said, for a question waiting and one asked after', () => {
+  const run = piped(`
+    await io.question('One? ');
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await io.question('Two? ');`, 'only\n');
+  assert.match(run.stdout, /ERROR setup: the input ended before the questions did/);
+  const waiting = piped(`await io.question('One? '); await io.question('Two? ');`, 'only\n');
+  assert.match(waiting.stdout, /ERROR setup: the input ended before the questions did/);
+});
+
+test('setup stopped part way (the answers ran out): it says so, and writes nothing', async () => {
+  const dir = app('PORT=3000\nMONGO_DB_URL=memory\n');
+  const before = fs.readFileSync(path.join(dir, '.env'), 'utf8');
+  const { io } = scripted(['production']);
+  const errors = [];
+  const error = console.error;
+  console.error = (...args) => errors.push(args.join(' '));
+  try { assert.equal(await setup([dir, '--no-check'], io), 1); }
+  finally { console.error = error; }
+  assert.match(errors.join('\n'), /no answer for: .*; nothing written/);
+  assert.equal(fs.readFileSync(path.join(dir, '.env'), 'utf8'), before);
+});
+
+test('the database check: a SQLite file whose folder can not be made, a MongoDB that does not answer, one that does', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-setup-'));
+  fs.writeFileSync(path.join(dir, 'a-file'), '');
+  const sqlite = await checkDatabase('sqlite:a-file/app.db', dir);
+  assert.equal(sqlite.ok, false);
+  assert.match(sqlite.message, /can not be written/);
+  const nowhere = await checkDatabase('mongodb://127.0.0.1:9/app');
+  assert.equal(nowhere.ok, false);
+  assert.match(nowhere.message, /does not answer/);
+  if (process.env.BPMN_TEST_MONGO_URL) {
+    const there = await checkDatabase(process.env.BPMN_TEST_MONGO_URL);
+    assert.equal(there.ok, true, there.message);
+  }
+});
