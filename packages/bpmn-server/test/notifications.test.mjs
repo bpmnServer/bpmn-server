@@ -146,3 +146,26 @@ test('the HR demo\'s LeaveNotices (docs/docs/notification-policies.md\'s example
     assert.equal(sent[1].message, 'Your Vacation leave from 2026-12-01 to 2026-12-05 is approved by manager1.\n\nEnjoy');
     await srv.shutdown();
 });
+
+test('a policy that cannot be read, a rule that notifies nobody, a rule that fails: said or kept as failed; the process goes on', async () => {
+    const decided = async (srv, id) => (await srv.dataStore.findInstances({ id }, 'full'))[0].logs.filter(l => l.type === 'decision').map(l => l.message).join('\n');
+
+    const broken = await server({ policy: '<not a decision' });
+    const first = await broken.server.engine.start('Leave', { requester: 'ann' }, null, 'ann');
+    assert.match(await decided(broken.server, first.id), /notifies no one\nwhy:\n\s+policy Notices\n\s+it failed: /);
+    assert.equal(broken.delivered.length, 0);
+    await broken.server.shutdown();
+
+    const odd = await server({ policy: POLICY([
+        ['"assigned"', '"Approve"', '""', '"nobody gets this"', ''],
+        ['"assigned"', '"Approve"', '$(appServices.noSuchService())', '"never composed"', ''],
+    ]) });
+    const second = await odd.server.engine.start('Leave', { requester: 'ann' }, null, 'ann');
+    assert.match(await decided(odd.server, second.id), /policy Notices, rule 1\n\s+its notify comes to nobody/);
+    const kept = await notificationsOf(odd.server, second.id);
+    assert.deepEqual(kept.map(n => [n.rule, n.status]), [[2, 'failed']], 'the failing rule kept as failed; nobody\'s not kept');
+    assert.match(kept[0].error, /^its rule failed: /);
+    assert.equal(odd.delivered.length, 0, 'a failed one is not delivered');
+    assert.equal((await odd.server.dataStore.findInstances({ id: second.id }, 'full'))[0].items.find(i => i.elementId === 'Approve').status, 'wait');
+    await odd.server.shutdown();
+});
