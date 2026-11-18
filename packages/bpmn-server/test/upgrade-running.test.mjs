@@ -106,3 +106,20 @@ test('with no model named, it covers every model that has instances running', as
   for (const name of ['Plan', 'Renamed', 'Held', 'Broken'])
     assert.ok(reports.some(r => r.model === name), name);
 });
+
+test('a model with no saved source is refused, said, and its instances are left as they are', async () => {
+  await save('Gone', model('g'));
+  const id = await start('Gone');
+  const before = (await instance(id)).source;
+  const getSource = server.definitions.getSource;
+  try {
+    server.definitions.getSource = async (name) => name === 'Gone' ? '' : getSource.call(server.definitions, name);
+    const [empty] = await server.engine.upgradeRunning(['Gone']);
+    assert.equal(empty.refused, 'no saved model');
+    server.definitions.getSource = async (name) => { if (name === 'Gone') throw new Error('not found'); return getSource.call(server.definitions, name); };
+    const [missing] = await server.engine.upgradeRunning(['Gone']);
+    assert.equal(missing.refused, 'no saved model: not found');
+  }
+  finally { server.definitions.getSource = getSource; }
+  assert.equal((await instance(id)).source, before, 'untouched');
+});
