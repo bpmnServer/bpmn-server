@@ -43,7 +43,7 @@ export function definitionsFolder() {
  * A server on `store` (a new one when absent: see newStore), its definitions in `dir`.
  * `cron: false` unless asked; locks retry quickly.
  */
-export async function makeServer({ store = newStore(), dir = definitionsFolder(), services = {}, serverId, cron = false, locks = {}, timers = {}, logger = quiet(), extra = {}, launched = false, engine } = {}) {
+export async function makeServer({ store = newStore(), dir = definitionsFolder(), services = {}, serverId, cron = false, locks = {}, timers = {}, logger = quiet(), extra = {}, launched = false, engine, engineKey, engineTimeout } = {}) {
   const configuration = new Configuration({
     definitionsPath: dir,
     timers: { precision: 1000, pollInterval: 0, ...timers },
@@ -59,7 +59,7 @@ export async function makeServer({ store = newStore(), dir = definitionsFolder()
     cacheManager: (s) => new NoCacheManager(s),
     ...extra,
   });
-  const server = launched ? BPMNServer.launch(configuration, logger, { cron, engine }) : new BPMNServer(configuration, logger, { cron });
+  const server = launched ? BPMNServer.launch(configuration, logger, { cron, engine, engineKey, engineTimeout }) : new BPMNServer(configuration, logger, { cron });
   await server.ready;
   if (launched) {
     // the engine sets up its own stores and index (docs/design/engine-isolation.md); with none, nothing is set up

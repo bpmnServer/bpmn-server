@@ -145,6 +145,11 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **A signal that reached an instance is not issued as uncaught.** `DefaultAppDelegate.signalThrown` checked
+  `throwSignal`'s answer for `.instance`, but it is a list of what the signal reached, so `issueSignal` (for a signal
+  nobody catches) was called for every signal, caught or not. Test: `test/throw-events.test.mjs`, the first of a model's
+  throw events through the default delegate. Removed: `Model.ts`'s `DataQuery`, `InstanceQuery` and `ItemQuery`, and
+  `DefaultAppDelegate.ts`'s `delay`, none of them exported or used (the exported `Query` stays).
 - **Error, escalation and signal events describe themselves rightly.** An error event said "catches message 'E1'" (as
   did an escalation), and a signal event's `describe()` gave one `[label, text]` pair instead of a list of them, so the
   designer's descriptions (which keep only the pairs) left signals out. Now `Error` / `catches error 'E1'` (`'any'`

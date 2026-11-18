@@ -80,17 +80,6 @@ class LoopObject {
 
 // Query Objects
 
-class DataQuery {
-    instance;
-    item;
-
-    constructor(instance,item) {
-
-    }
-}
-function test() {
-//    new DataQuery(new InstanceQuery())
-}
 class Query {
     private _instanceId;
     private _instanceName;
@@ -164,78 +153,6 @@ class Query {
     itemStatus(val:ITEM_STATUS): Query { this._itemStatus = val; return this; }
     itemElementId(val): Query { this._itemElementId = val; return this; }
 }
-
-class InstanceQuery 
-{
-    _id;
-    _name;
-    _status: EXECUTION_STATUS;
-    _startedAt;
-    _endedAt;
-    _saved;
-    _data;
-    items : ItemQuery = new ItemQuery();
-    _source;
-    _parentNodeId;
-
-    constructor({ id = null,
-        name = null,
-        status = null,
-        startedAt = null,
-        endedAt = null,
-        saved = null,
-        data = null,
-        items = new ItemQuery()
-    }: { id?, name?, status?: EXECUTION_STATUS , startedAt?, endedAt?, saved?,data?,items?: ItemQuery} = {})
-    {
-        this._id = id;
-        this._name = name;
-        this._status = status;
-    }
-    id(val):InstanceQuery { this._id = val; return this;}
-    name(val): InstanceQuery { this._name = val; return this; }
-}
-class ItemQuery {
-    _id;
-    _seq;
-    _itemKey;
-    _name;
-    _type: BPMN_TYPE;
-    _status: ITEM_STATUS;
-    _startedAt;
-    _endedAt;
-    _tokenId;
-    _elementId;
-    constructor({ id = null,
-        name = null,
-        seq = null,
-        status = null,
-        itemKey = null,
-        type = null,
-        startedAt = null,
-        endedAt = null,
-        tokenId = null,
-        elementId = null,
-
-    }: { id?, name?, seq?, status?: ITEM_STATUS, itemKey?, type?: BPMN_TYPE, startedAt?, endedAt?, tokenId?, elementId?} = {}) {
-        this._id = id;
-        this._seq = seq;
-        this._itemKey = itemKey;
-        this._name = name;
-        this._type = type;
-        this._status = status;
-        this._startedAt = startedAt;
-        this._endedAt = endedAt;
-        this._tokenId = tokenId;
-        this._elementId = elementId;
-
-    }
-    id(val) { this._id = val; return this;}
-    name(val) { this._name = val; return this;}
-    status(val) { this._status = val; return this;}
-
-}
-
 
 
 export {Query, InstanceObject , ItemObject, TokenObject , LoopObject}

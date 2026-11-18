@@ -76,9 +76,11 @@ class DefaultAppDelegate implements IAppDelegate {
         item.log("Signal Issued" + signalId);
         // issue it back for others to receive
 
+        // throwSignal answers what it reached: a list (started instances' ids, invoked items' { instanceId, itemId })
         const resp = await item.context.engine.throwSignal(signalId, data, messageMatchingKey, item);
-        if (resp && resp.instance) {
-            item.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
+        const reached = Array.isArray(resp) ? resp : [];
+        if (reached.length) {
+            item.log(" signal " + signalId + " reached " + reached.length + " instance(s)");
         }
         else
             await this.issueSignal(signalId, data);
@@ -90,16 +92,6 @@ class DefaultAppDelegate implements IAppDelegate {
 
 }
 
-
-async function delay(time, result) {
-    console.log("delaying ... " + time)
-    return new Promise(function (resolve) {
-        setTimeout(function () {
-            console.log("delayed is done.");
-            resolve(result);
-        }, time);
-    });
-}
 export { DefaultAppDelegate }
 
 
