@@ -34,6 +34,12 @@ The contract has two parts:
 
 The rule: the declarative part says **what** and never **how**. Every name it lists is carried out by the code part.
 
+**The model is self-contained; the contract is guidance, not execution** (decided 2026-11-18). A model names
+everything it uses: a function, an operation, a role, a form field's lookup (its operation and fields). At run time
+the engine resolves those names against what is there (the delegate's code, the connectors), never against the
+contract. The contract only lets the editor offer names and `verifyModel` check them; without it, or with it out of
+date, a model still runs. A model can be moved, tested or run without the contract.
+
 ```ts
 class HrDelegate extends DefaultAppDelegate {
     getAppServices(context) { return new HrFunctions(context); }     // code: appServices.x(...)
