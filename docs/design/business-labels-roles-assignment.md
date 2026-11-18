@@ -34,7 +34,7 @@ It asked three questions, answered here:
 | Layer | Owns | Where |
 |---|---|---|
 | Installation | Port, database, logging, secrets, what differs per machine | `.env` / environment |
-| Model | Its case's and its elements' labels; which assignment policy a user task uses | `camunda:label`, `camunda:endLabel`, `camunda:assignmentPolicy`, lanes |
+| Model | Its case's and its elements' labels; which assignment policy a user task uses | `owf:label`, `owf:endLabel`, `owf:assignmentPolicy`, lanes |
 | Application | Its roles; its assignment policies; code that finds a person or labels a case | The models folder: `roles.json`, `policies/assignment/<name>.dmn.xml`. The delegate: `instanceLabel`. Its services: what a policy's `$(...)` calls |
 | Engine | Fills in labels when they're shown; evaluates a policy when a task starts and saves the result; enforces lifecycle and permissions | bpmn-server |
 
@@ -51,10 +51,10 @@ Rules:
 
 ## 3. Display label
 
-Built on `3.7.1`, as its labels design says:
+### Built on `3.7.1` today
 
-- **In the model:** `camunda:label` on the process (the case), and `camunda:label` and `camunda:endLabel` on any
-  element, are templates. `${Name = data.path}` is a *named value*; `${data.path}` is plain text.
+- **In the model:** `owf:label` on the process (the case), and `owf:label` and `owf:endLabel` on any element, are
+  templates. `${Name = data.path}` is a *named value*; `${data.path}` is plain text.
 - **Data, never scripts:** placeholders are data paths, with #281's checks:
   - plain names only;
   - no `__proto__`, `prototype` or `constructor`;
@@ -64,7 +64,7 @@ Built on `3.7.1`, as its labels design says:
   Filling a label in runs no model code. `verifyModel` reports a label that isn't a template of data paths
   (`label-template`).
 - **Computed when shown, never stored:** `labelInstances()` and `labelItems()` fill labels in from the case's data
-  and its own model version. A changed template relabels every case.
+  and its own model version. A changed label relabels every case.
 - **Missing values:** a value that is missing, `null`, empty or only spaces takes the text just before it along, so
   `Client: ` goes too. `0` and `false` are values. When every value is missing, the default applies.
 - **The default:** the delegate's optional `instanceLabel(instance)`, else `<model> #<caseId>`.
@@ -83,15 +83,38 @@ Built on `3.7.1`, as its labels design says:
   - all of it is in the OpenAPI document and `BPMNClient3`'s types;
   - `/api` and `/api2` are unchanged.
 
+### Agreed on #286, to be built
+
+**A case's label is a list of pairs: a name and the data field it shows.**
+
+```
+Car   → data.car
+Buyer → data.buyer
+```
+
+- **Shown** as one Label column, `Car: Mustang · Buyer: staff`. A pair with no value is left out, by the
+  missing-value rule above.
+- **Sorted by the database** on the values in order (`data.car`, then `data.buyer`), so sorting pages properly. A
+  client can sort the same way.
+- **No free text and no template parsing.** Pairs replace `${Name = path}` templates. A template made only of
+  `Name: ${Name = path}` pieces converts one to one.
+- **Computed values are data.** A total, say, is written into `data` the usual way, by a script or an output
+  mapping, and a pair points to it. Models that write the same field name can be sorted together in one list.
+- **Given up:** sentence-style labels such as *Repair the Porsche 911*.
+- **API v3 returns only the computed label:** `label`, and `caseLabel` on tasks. `labelValues` and
+  `caseLabelValues` go: the values are in `data`. Task lists can take a parameter saying which columns to return.
+
 ## 4. Extra list columns
 
 #281's `.env` settings (`INSTANCE_COLUMNS`, `TASK_COLUMNS`) are not introduced, and no columns setting replaces
 them. What #281 contributed is the safe reading and showing of values, which the label code uses.
 
-The lists show each case's label (the Case column) and each task's (the Label column), and filter by the labels'
-data paths.
+**Agreed on #286:**
 
-**Open:** whether a label's named values also become list columns, decided once labels have been tried.
+- **One label column, not a column per named value.** With several models in one list, each has its own named
+  values, so per-value columns would be mostly empty. One label column works for any mix of models.
+- **The lists sort by that label** (§3).
+- **Filtering stays as it is:** by a named value (*Field*), or *Any*.
 
 The end-user task page (`user/userTasks.pug`) keeps its columns: its filters address columns by position.
 
@@ -101,7 +124,7 @@ Built on `3.7.1`, as its assignment policies design says. It replaces this note'
 `assignmentPolicy` in `camunda:properties`, a lane as the default role, an `assignment` setting in
 `settings/config.ts`, and an `appDelegate.resolveAssignment()` hook.
 
-- **A user task names a policy:** `camunda:assignmentPolicy="Approval"` names `processes/policies/assignment/Approval.dmn.xml`,
+- **A user task names a policy:** `owf:assignmentPolicy="Approval"` names `processes/policies/assignment/Approval.dmn.xml`,
   a DMN decision table. A policy still kept directly in `policies/` is moved there on first use.
 - **The policy's rules:**
   - Inputs are FEEL on the case's data, as a business rule task's are.
@@ -154,7 +177,10 @@ This design fits that note's workspaces, each with its own database, models fold
 
 ## 8. Compatibility
 
-- No change for a model without `camunda:label`, `camunda:endLabel` or `camunda:assignmentPolicy`.
+- No change for a model without `owf:label`, `owf:endLabel` or `owf:assignmentPolicy`.
+- **Attribute names:** OWF's attributes are in the `owf:` namespace; `camunda:` is only for what Camunda defines.
+  The earlier `camunda:label`, `camunda:endLabel` and `camunda:assignmentPolicy` are still read, and `verifyModel`
+  warns of them (`owf-attribute-legacy`).
 - **Lanes:** a task in a lane keeps the lane as a candidate group, as today, unless its policy sets
   `candidateGroups`.
 - **Stored fields:** labels add none. `item.assignment` is a new, optional field.
@@ -163,8 +189,12 @@ This design fits that note's workspaces, each with its own database, models fold
 
 ## 9. Security and privacy
 
-- **Labels are visible.** A label and its named values are shown in every list and in API results. Anyone who can
-  see a case sees them, so templates should use business references, not personal data.
+- **Labels are visible.** A label is shown in every list and in API results, so labels should use business
+  references, not personal data.
+- **Labels and a security policy's `data`:** on `3.7.1` a label is filled in from the case's whole data. It is
+  returned even where the case's security policy shows the case only as a summary, or lets the person read only
+  some of its data. A label can therefore show a value the policy hides, and a filter or sort by label can reveal
+  one. See §10.
 - **Labels run no code:** templates are data paths, never scripts.
 - **A policy's `$(...)` output runs with the server's rights,** when the task starts, as the model's other
   expressions do. A slow service delays the task's start. A failing one assigns nobody; it never fails the task.
@@ -180,10 +210,22 @@ Decided:
 4. Missing values: none, `null`, empty or only spaces is missing; `0` and `false` are values.
 5. Assignment is by DMN policies (`policies/assignment/`) and `roles.json`, not settings or a delegate hook.
 6. API v3's Task returns what decided as `assignedBy`, absent when nothing did.
+7. A case's label is a list of pairs (name, data field), shown as one Label column, sorted by the database; API v3
+   returns only the computed label (§3, §4).
 
 Still open:
 
-1. **Named values as list columns** (§4), once labels have been tried.
+1. **Labels under a security policy** (§9). Which should hold:
+   - a label's pairs count as part of the case's summary, readable by anyone who sees the case, and the docs say so;
+   - or a pair whose path the person may not read is left out, as a missing one is, and a filter or sort on it
+     doesn't use it?
+
+   The second keeps a label within what the policy allows, and makes "the values are in `data`" true for every
+   reader.
+2. **Sorting a list of several models** whose pairs have different fields: what is the order, and does it still
+   page properly?
+3. **Element labels:** do `owf:label` and `owf:endLabel` on activities (*Bought by ${completedBy}*) become pairs
+   too, or stay templates?
 
 ## 11. Status
 
@@ -192,7 +234,7 @@ Still open:
 | This note, and the integration proposal's §6 and §8 | This PR |
 | Labels: model, pages, filters, editor, API v3 | Built on `3.7.1` |
 | Assignment policies and roles: engine, editor, Administration page, checks | Built on `3.7.1` (a first try) |
-| Named values as list columns | Open (§4) |
+| Labels as pairs; one sorted Label column; v3 without `labelValues` | Agreed, to be built (§3, §4) |
 | `assignedBy` in API v3; claim and reassignment in the Rationale; the reassignment log line | Built on `3.7.1` |
 
 PR #281 can close once this PR is merged: its need is met by labels, and its code lives on in the label code.
