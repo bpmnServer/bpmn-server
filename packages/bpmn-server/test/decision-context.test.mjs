@@ -281,3 +281,42 @@ test('a column whose label is a plain name is the table\'s own variable: its out
     assert.deepEqual(result, { assignee: 'sarah.chen', asking: 'mia' }, 'the column\'s value over a data field; "user" stays the protocol\'s');
     assert.equal(calls, 1, 'worked out once');
 });
+
+test('the context\'s parts, from items of every shape: their element read from the item, its element or its node', async () => {
+  const { initiatorOf, actorsOf, itemView, instanceView, feelView, decisionContext } = await import('../dist/index.js');
+  assert.equal(initiatorOf({ userName: 'owner' }, []), 'owner', 'no items: the instance\'s user');
+  assert.equal(initiatorOf(null, [{ userName: 'b' }, { seq: 1, userName: 'a' }]), 'b', 'no start event: the first item\'s user (no seq counts as 0)');
+  assert.equal(initiatorOf(undefined), null);
+
+  const items = [
+    { seq: 2, node: { id: 'Ask', type: 'bpmn:UserTask', name: 'Ask' }, status: 'wait', candidateUsers: 'ann, bob', candidateGroups: ['Managers'] },
+    { seq: 1, element: { id: 'S', type: 'bpmn:StartEvent' }, status: 'end', userName: 'eve' },
+  ];
+  const actors = actorsOf({ items, elements: new Map([['S', 'starter']]) });
+  assert.deepEqual(actors, { initiator: 'eve', starter: 'eve', assignee: null, candidate: ['ann', 'bob', 'Managers'] });
+
+  assert.equal(itemView(null), null);
+  const seen = itemView(items[0]);
+  assert.deepEqual([seen.elementId, seen.type, seen.name, seen.userName, seen.assignee], ['Ask', 'bpmn:UserTask', 'Ask', null, null]);
+  assert.deepEqual([seen.input, seen.output], [{}, {}]);
+  assert.equal(instanceView(null), null);
+  assert.deepEqual(instanceView({ id: 'i' }).data, {});
+
+  assert.equal(feelView(null), undefined);
+  assert.equal(feelView('text'), undefined);
+  const service = { ok: 1, get broken() { throw new Error('no'); }, _hidden: 1, nested: { deeper: { deepest: { gone: 1 } } }, call(...args) { return args; } };
+  const view = feelView(service);
+  assert.equal('broken' in view, false, 'a getter that throws is left out');
+  assert.equal('_hidden' in view, false);
+  assert.deepEqual(view.call('x', null), ['x'], 'trailing nulls (FEEL\'s missing arguments) dropped');
+  assert.equal(feelView(service), view, 'kept for the same object');
+
+  const logged = [];
+  const context = await decisionContext({ kind: 'decision', data: 'not an object', appDelegate: { decisionContext: async () => { throw new Error('facts down'); } }, log: m => logged.push(m) });
+  assert.deepEqual(context.data, {});
+  assert.deepEqual(context.decision, { kind: 'decision', name: '' });
+  assert.match(logged.join(), /decisionContext failed \(decision \): facts down; decided without the application's facts/);
+  const grouped = await decisionContext({ kind: 'security', user: { userName: 'ann' }, appDelegate: { decisionContext: async () => ({ userGroups: ['Admins'], region: 'EU' }) } });
+  assert.deepEqual(grouped.user.userGroups, ['Admins'], 'the application\'s groups for the user');
+  assert.equal(grouped.region, 'EU');
+});
