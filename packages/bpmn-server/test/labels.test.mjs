@@ -205,3 +205,24 @@ test('verifyModel: a label that is not a template of data paths is an error', as
   assert.ok(!result.issues.some(i => i.code === 'label-template' && i.elementId !== 'Approve'));
   await srv.shutdown();
 });
+
+test('a model that cannot be read has no labels; many models are read, the oldest let go and read again', async () => {
+  const broken = await modelLabels('<not a model');
+  assert.equal(broken.caseLabel, undefined);
+  const source = n => EXPENSE(`Case ${n}: \${Order = data.orderNo}`);
+  const first = await modelLabels(source(0));
+  for (let n = 1; n <= 60; n++) await modelLabels(source(n));
+  const again = await modelLabels(source(0));
+  assert.notEqual(again, first, 'read again: it had been let go');
+  assert.deepEqual(again.caseLabel, first.caseLabel, 'the same labels');
+});
+
+test('a search with no label fields to look in finds nothing; a model\'s own fields only, when it is named', () => {
+  assert.deepEqual(labelQuery([], { search: 'x' }), { $and: [{ id: { $in: [] } }] });
+  assert.deepEqual(labelQuery([], { value: 'x', field: 'Order' }), { $and: [{ id: { $in: [] } }] });
+  const fields = [{ model: 'A', name: 'Order', path: 'data.orderNo' }, { model: 'B', name: 'Order', path: 'data.no' }];
+  const query = labelQuery(fields, { model: 'A', search: '7' });
+  assert.equal(query.$and[0].name, 'A');
+  assert.deepEqual(query.$and[1].$or.map(c => c.name), ['A'], 'only A\'s paths');
+  assert.equal(labelQuery(fields, {}), undefined, 'nothing asked: no condition');
+});
