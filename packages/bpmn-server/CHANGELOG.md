@@ -145,6 +145,23 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **MongoDB paging by a field many instances share** (`dataStore.find` with `sort` and `after`, Aggregate.ts;
+  discussion #247). Page after page repeated some instances and left others out:
+  - The sort had no tie-break, so MongoDB could order a tie differently from one page to the next, while the cursor
+    broke ties by `_id`. Rows are now sorted by `_id` after the sort field.
+  - The cursor read the type of its value from the text. Text that reads as a date ("Stage 1", "A-1") was compared
+    as a date, and text that reads as a number ("007") as a number, so the next page found nothing.
+    - The cursor now writes the value's own type: `d:` for a date, `n:` for a missing value, a number as it is.
+    - Text is written as it is, or as `s:<text>` when it would read as one of those.
+    - Cursors from before still read as they did.
+  - A missing value gave an `undefined` cursor. Sorted descending, the instances without the value were left out.
+  - A nested path (`data.a.b`) gave the cursor `[object Object]`.
+  - A value with a `|` in it split the cursor.
+  - A sort field that an inclusion `projection` leaves out sorted every row as a tie. It is now kept in the
+    projection and returned.
+
+  Test: `test/paging.mongo.test.mjs` pages each sort one, two and three rows at a time and checks every instance
+  comes once, in the unpaged order.
 - **Logging a `null` no longer throws.** `Logger.toString` read `null.constructor`, so a `null` among a log call's
   values (or `[null]`, or an object without a prototype) threw a TypeError in the caller: `engine.throwSignal(null)`
   threw where it means to answer `null`. Tests: `test/logger.test.mjs`; `test/throw-events.test.mjs`, which also covers

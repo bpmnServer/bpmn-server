@@ -62,6 +62,12 @@ export class Aggregate {
 
 			const sortField = Object.keys(sort)[0] || '_id';
 			const sortDirection = sort[sortField] ?? -1;
+			// the rows are sorted after they are projected: a sort field a projection leaves out would sort as
+			// missing (every row a tie) and give an empty cursor; it is returned too
+			if (projection && sortField !== '_id'
+				&& Object.entries(projection).some(([key, value]) => key !== '_id' && value !== 0 && value !== false)
+				&& !Object.keys(projection).some(key => key === sortField || sortField.startsWith(key + '.') || key.startsWith(sortField + '.')))
+				projection = { ...projection, [sortField]: 1 };
 		
 			const matchInstances: Record<string, any>= { };
 			const matchItems: Record<string, any> = {};
@@ -77,62 +83,23 @@ export class Aggregate {
 
 			});
 		
-			let sortFieldIsDate=false;
-			let sortVal;
-
 			if (after) {
-			  const [sortValRaw, idPart] = sortField === '_id' ? [after, null] : after.split('|');
-			  if (sortValRaw.startsWith('d:'))
-			  {
-				sortFieldIsDate=true;
-				sortVal=new Date();
-				sortVal.setTime(Number(sortValRaw.substring(2)));
-			  }
-			  else if (isNaN(Number(sortValRaw)))	
-				sortVal=sortValRaw;
-			  else
-				sortVal=Number(sortValRaw);
-			  
 			  const comparator = sortDirection === -1 ? '$lt' : '$gt';
-		
-			  // for items:
-			  // {"items":{"$elemMatch":{"candidateGroups":"Owner"}}},
 
 			  if (sortField === '_id') {
-				matchInstances._id = { [comparator]: new ObjectId(sortValRaw) };
+				matchInstances._id = { [comparator]: new ObjectId(after) };
 			  } else {
-
-				if (sortField.startsWith('items.')) {	
-					includeItems=true;
-					const sortField2=sortField.substring(6);
-					matchItems.$and = matchItems.$and || [];
-					// a row per item: the cursor's own instance has other items after it, so a later value is enough
-					// (as DocumentPager pages); only a tie is broken by the instance's _id
-					matchItems.$and.push({
-						$or: [
-							{ [sortField]: { [comparator]: sortVal } },
-							{
-							[sortField]: sortVal,
-							_id: { [comparator]: new ObjectId(idPart) }
-							}
-						]
-						});
-			
-				}
-				else {
-
-					matchInstances.$and = matchInstances.$and || [];
-					matchInstances.$and.push({
-					$or: [
-						{ [sortField]: { [comparator]: sortVal } ,
-							_id: { "$ne": new ObjectId(idPart) }},
-						{
-						[sortField]: sortVal,
-						_id: { [comparator]: new ObjectId(idPart) }
-						}
-					]
-					});
-				}
+				// the cursor is "<value>|<_id>"; the value may hold a '|' itself, an ObjectId never does
+				const bar = after.lastIndexOf('|');
+				const sortVal = parseCursorValue(after.substring(0, bar));
+				const condition = afterCondition(sortField, sortVal, new ObjectId(after.substring(bar + 1)), comparator);
+				// by an item's field there is a row per item: the cursor's own instance has other items after it,
+				// so a later value is enough (as DocumentPager pages); only a tie is broken by the instance's _id
+				const match = sortField.startsWith('items.') ? matchItems : matchInstances;
+				if (match === matchItems)
+					includeItems = true;
+				match.$and = match.$and || [];
+				match.$and.push(condition);
 			  }
 			}
 
@@ -168,7 +135,8 @@ export class Aggregate {
 					pipeline.push({ $match: matchItems });
 				}
 			}
-			pipeline.push({ $sort: sort });
+			// ties broken by _id, as the cursor breaks them: else MongoDB may order a tie differently on the next page
+			pipeline.push({ $sort: sortField === '_id' || '_id' in sort ? sort : { ...sort, _id: sortDirection } });
 			pipeline.push({ $limit: limit });
 
 		
@@ -182,22 +150,9 @@ export class Aggregate {
 
 			const last = data[data.length - 1];
 
-			const sortFieldValue=getFieldValue(last,sortField);
-
-			if (isDateString(sortFieldValue)===true)
-				sortFieldIsDate=true;
-			let lastSortField;
-
-			if (sortFieldIsDate===true)
-				lastSortField='d:'+new Date(sortFieldValue).getTime();
-			else
-				lastSortField=sortFieldValue;
-				
-			const nextCursor = last
-			  ? sortField === '_id'
+			const nextCursor = sortField === '_id'
 				? last._id.toString()
-				: `${lastSortField}|${last._id}`
-			  : null;
+				: `${cursorValue(getFieldValue(last, sortField))}|${last._id}`;
 
 			  let ret: FindResult = { data, nextCursor };
 
@@ -294,25 +249,51 @@ function matchToFilterCond(match, varName = "item") {
 	};
   }
 
-  function isDateString(value: any): boolean {
+/**
+ * The sort value in a cursor, by its type: a date is `d:<ms>`, a missing value `n:`, a number as it is, text as it is
+ * unless it would read as one of those (`007`, `n:x`), then `s:<text>`. Text that looks like a date ("Stage 1") stays
+ * text: it is compared as stored.
+ */
+function cursorValue(value: any): string {
 	if (value instanceof Date)
-		return true;
-return !isNaN(Date.parse(value)) && isNaN(Number(value));
+		return 'd:' + value.getTime();
+	if (value === null || value === undefined)
+		return 'n:';
+	if (typeof value === 'number')
+		return String(value);
+	const text = String(value);
+	return /^[dns]:/.test(text) || !isNaN(Number(text)) ? 's:' + text : text;
 }
 
-function getFieldValue(doc,fieldName)
-{
-let dp=fieldName.split('.');
-if (dp.length===1)
-	return doc[dp[0]];
-if (dp[0]==='data') {
-	return doc.data[dp[1]];
-}
-else if (dp[0]==='items')
-{
-	return doc.items[dp[1]];
+function parseCursorValue(raw: string): any {
+	if (raw.startsWith('d:'))
+		return new Date(Number(raw.substring(2)));
+	if (raw === 'n:')
+		return null;
+	if (raw.startsWith('s:'))
+		return raw.substring(2);
+	return raw !== '' && !isNaN(Number(raw)) ? Number(raw) : raw;
 }
 
+/**
+ * The rows after the cursor's: a later value, or the same value and a later _id. A missing value sorts before any
+ * other, so ascending every value comes after the missing ones, and descending the missing ones come after every
+ * value ($lt does not match them: MongoDB compares only values of a type).
+ */
+function afterCondition(field: string, value: any, id: ObjectId, comparator: '$lt' | '$gt') {
+	if (value === null)
+		return comparator === '$gt'
+			? { $or: [{ [field]: { $ne: null } }, { [field]: null, _id: { $gt: id } }] }
+			: { [field]: null, _id: { $lt: id } };
+	const or: Document[] = [{ [field]: { [comparator]: value } }, { [field]: value, _id: { [comparator]: id } }];
+	if (comparator === '$lt')
+		or.push({ [field]: null });
+	return { $or: or };
+}
+
+/** A dotted path's value in a row: `data.a.b`, `items.seq` (a row per item), `latestItem.endedAt`. */
+function getFieldValue(doc, fieldName: string) {
+	return fieldName.split('.').reduce((value, key) => value?.[key], doc);
 }
 
 

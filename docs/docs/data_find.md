@@ -41,7 +41,10 @@
  - `projection` is an object that specifies which fields to include or exclude in the returned documents.
       You need to list all fields that are part of output
 
- - `after` is a string that specifies the cursor for pagination, allowing you to retrieve results after a specific document.	
+ - `after` is a string that specifies the cursor for pagination, allowing you to retrieve results after a specific document.
+   Pass the `nextCursor` of the previous page, with the same `filter`, `sort` and `projection`.
+   Any field can be the sort field, even one that many instances share: rows with the same value are ordered by `_id`, so each comes once across the pages.
+   Instances without the field come first in ascending order and last in descending order.
 
  - `getTotalCount` returns the total number of records. (this requires additional processing, so you may call it only once.)
 

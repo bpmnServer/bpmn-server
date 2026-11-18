@@ -68,3 +68,40 @@ test('MongoDB: the paged search, as the other stores page', { skip: !URL && 'BPM
   const failing = await find({ filter: { $bad: 1 } });
   assert.ok(typeof failing.error === 'string' && failing.error.length, `an error is given as an answer: ${failing.error}`);
 });
+
+// Discussion #247: paging by a field many instances share, or by text that reads as a date or a number, repeated some
+// rows and lost others. Every page, one row at a time, must give each instance once and in the unpaged order.
+test('MongoDB: paging by a shared value, by text that reads as a date or a number, by a missing or nested value',
+  { skip: !URL && 'BPMN_TEST_MONGO_URL is not set' }, async (t) => {
+  const client = new MongoClient(URL);
+  await client.connect();
+  const db = DB + '_ties';
+  t.after(async () => { await client.db(db).dropDatabase(); await client.close(); });
+  const store = new MongoDB({ db_url: URL }, quiet());
+  const { server } = await makeServer({ store, extra: { database: { MongoDB: { db_url: URL, db } } } });
+  t.after(async () => { await server.shutdown(); await (await store.getClient()).close(); });
+
+  const instances = client.db(db).collection('wf_instances');
+  await instances.deleteMany({});
+  const states = ['Stage 1', 'Stage 1', 'Stage 1', '007', 'A|B', 'Review', 'Stage 1', undefined, 'n:x', undefined, 'Review'];
+  await instances.insertMany(states.map((state, i) => ({
+    id: 'i' + i, name: 'm', items: [], data: { ...(state === undefined ? {} : { state }), deep: { rank: i % 3 } },
+  })));
+
+  for (const sort of [{ 'data.state': 1 }, { 'data.state': -1 }, { 'data.deep.rank': 1 }, { 'data.deep.rank': -1 }, { name: 1 }]) {
+    const whole = (await server.dataStore.find({ sort, limit: 100, projection: { id: 1, data: 1 } })).data.map(r => r.id);
+    assert.equal(whole.length, states.length, `${JSON.stringify(sort)}: all of them`);
+    for (const limit of [1, 2, 3]) {
+      const paged = [];
+      let after;
+      for (let n = 0; n < 20; n++) {
+        const page = await server.dataStore.find({ sort, limit, after, projection: { id: 1, data: 1 } });
+        assert.equal(page.error, undefined, page.error);
+        paged.push(...page.data.map(r => r.id));
+        if (page.data.length < limit) break;
+        after = page.nextCursor;
+      }
+      assert.deepEqual(paged, whole, `${JSON.stringify(sort)} by ${limit}: each once, in order`);
+    }
+  }
+});
