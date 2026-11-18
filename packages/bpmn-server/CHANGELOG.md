@@ -145,6 +145,12 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **A `$py` script on a server without Python fails the script, not the server.** The spawn's error (ENOENT) had no
+  handler, so it was an uncaught exception that ended the whole process. Now the script fails with "Python could not
+  be started". Test: `test/python-missing.test.mjs`.
+- **A log saved to a file can be read on Linux.** `Logger.save` (and `saveForInstance`, with `logFolder`) created the
+  file with mode `666` in decimal (octal 1232): its owner could not read it. Now `0o666`. Windows ignores the mode, so
+  only Linux and macOS were affected. Test: `test/logger.test.mjs`, which failed on Linux.
 - **An escalation is caught by an escalation event, and an error by an error event.** Looking for a catcher, any
   boundary event without the thrown kind's definition counted as a catch-all: a script's escalation went to the
   task's error boundary event, and an error could go to an escalation boundary event. And an escalation boundary

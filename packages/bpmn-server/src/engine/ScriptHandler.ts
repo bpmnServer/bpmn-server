@@ -321,6 +321,10 @@ ${code.trim()}`;
     let output = '';
     let error = '';
 
+    // Python not installed (ENOENT): the script fails, not the server; without these the error is uncaught and ends the process
+    python.on('error', (err) => reject(new Error(`Python could not be started (${pythonCmd}): ${err.message}`)));
+    python.stdin.on('error', () => { /* the process is gone; 'error' or 'close' says why */ });
+
     // Handle stdout
     python.stdout.on('data', (data) => {
       output += data.toString();
