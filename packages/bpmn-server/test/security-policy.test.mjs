@@ -152,3 +152,44 @@ test('off until an application has policies/security, or SECURITY_POLICY=default
   try { assert.equal(policies(none).on, true); }
   finally { delete process.env.SECURITY_POLICY; }
 });
+
+test('a policy is a file of the folder\'s policies alone: a name that leaves it is not one', () => {
+  const dir = folder({ policies: { Cases: policy([]), Other: policy([]) } });
+  const p = policies(dir);
+  assert.ok(p.file('Cases'));
+  for (const name of ['../Cases', 'x/../Cases', 'a\b', '..', ''])
+    assert.equal(p.file(name), null, `${JSON.stringify(name)}: not a policy`);
+  assert.equal(anyFolder.file('Cases'), null, 'no folder: none');
+  assert.deepEqual(p.names(), ['Cases', 'Other']);
+  assert.deepEqual(anyFolder.names(), []);
+});
+
+test('SECURITY_POLICY=off turns them off, policies or not; a policy that cannot be read is said, and decides nothing', async () => {
+  const dir = folder({ policies: { Cases: '<not a decision' } });
+  process.env.SECURITY_POLICY = 'off';
+  try { assert.equal(policies(dir).on, false); }
+  finally { delete process.env.SECURITY_POLICY; }
+  const errors = [];
+  const access = await decideAccess(dir, ann, CASE, undefined, errors);
+  assert.equal(access.see, 'none');
+  assert.match(errors.join(), /^policy Cases: /);
+});
+
+test('combined: data paths as text, actions as true and false, restart and events only when allowed', () => {
+  const rows = (...outputs) => outputs.map((o, i) => ({ policy: 'P', rule: i + 1, outputs: o }));
+  assert.deepEqual(anyFolder.combine(rows({ data: 'salary, customer.name' })).data.paths, ['salary', 'customer.name']);
+  assert.deepEqual(anyFolder.combine(rows({ data: 'none' }, { data: 'all' })).data, { all: false, forms: false, paths: [] }, 'none wins as deny does');
+  assert.equal(anyFolder.combine(rows({ complete: true })).complete, true);
+  assert.equal(anyFolder.combine(rows({ complete: true }, { complete: false })).complete, false);
+  assert.equal(anyFolder.combine(rows({ restart: 'allow', events: 'ALLOW' })).restart, true);
+  assert.equal(anyFolder.combine(rows({ restart: 'allow', events: 'ALLOW' })).events, true, 'any case');
+  assert.equal(anyFolder.combine(rows({ see: 'Summary' })).see, 'summary');
+});
+
+test('visible data: not an object, nothing; a path that is not there, left out', () => {
+  const access = data => anyFolder.combine([{ policy: 'P', rule: 1, outputs: { data } }]);
+  assert.deepEqual(anyFolder.visibleData(null, access(['a'])), {});
+  assert.deepEqual(anyFolder.visibleData('text', access(['a'])), {});
+  assert.deepEqual(anyFolder.visibleData({ a: { b: 1 } }, access(['a.c', 'x', 'a.b.c'])), {});
+  assert.deepEqual(anyFolder.visibleData({ a: { b: 1 }, n: 0 }, access(['a.b', 'n'])), { a: { b: 1 }, n: 0 });
+});

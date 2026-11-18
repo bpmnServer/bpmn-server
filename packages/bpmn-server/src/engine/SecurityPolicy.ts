@@ -203,13 +203,15 @@ export class SecurityPolicy {
         const keep = (pathText: string) => {
             const parts = String(pathText).replace(/^data\./, '').split('.').filter(Boolean);
             if (!parts.length) return;
-            let from: any = data, to: any = out;
-            for (let i = 0; i < parts.length; i++) {
-                if (from == null || typeof from !== 'object' || !(parts[i] in from)) return;
-                if (i === parts.length - 1) { to[parts[i]] = from[parts[i]]; return; }
-                to = to[parts[i]] ??= {};
-                from = from[parts[i]];
+            // the value found first: a path that is not there adds nothing, not even its branches
+            let from: any = data;
+            for (const part of parts) {
+                if (from == null || typeof from !== 'object' || !(part in from)) return;
+                from = from[part];
             }
+            let to: any = out;
+            for (const part of parts.slice(0, -1)) to = to[part] ??= {};
+            to[parts[parts.length - 1]] = from;
         };
         if (access.data.forms) formFields.forEach(keep);
         access.data.paths.forEach(keep);

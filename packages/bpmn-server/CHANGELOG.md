@@ -145,6 +145,10 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **A security policy's data path that is not there shows nothing.** `SecurityPolicy.visibleData` with the path
+  `a.b.c`, where `a.b` is not an object, showed `a: { b: {} }`: a wrong value, and the data's shape. Now the path adds
+  nothing. Tests in `test/security-policy.test.mjs` (now tagged security-policies), with a policy name that leaves the
+  folder (`../x`) refused, `SECURITY_POLICY=off`, a policy that cannot be read, and paths given as text.
 - **On MongoDB, paging items by an item's field no longer skips the rest of the cursor's instance.** `dataStore.find`
   with an item filter gives a row per item; its cursor (`<value>|<instance _id>`) left out every row of that instance,
   so its later items never appeared on the next page (a task list sorted by an item's field lost tasks). Now a later
