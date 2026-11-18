@@ -76,3 +76,12 @@ test('an instance\'s log goes to logFolder, when there is one', async (t) => {
   assert.match(fs.readFileSync(path.join(folder, 'inst-1.log'), 'utf8'), /step/);
   assert.equal(new Logger({ toConsole: false }).keepMessages, true, 'a logFolder needs the messages kept');
 });
+
+test('null is logged as null: in a list, alone, or an object without a prototype', () => {
+  const logger = new Logger({ toConsole: false, keepMessages: true });
+  assert.doesNotThrow(() => logger.log('a', null, undefined));
+  assert.doesNotThrow(() => logger.log([null]));
+  assert.doesNotThrow(() => logger.log(Object.create(null)));
+  assert.equal(logger.toString('a', null, undefined), 'a ,null ,undefined');
+  assert.equal(logger.toString([null]), 'null');
+});

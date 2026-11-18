@@ -145,6 +145,10 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **Logging a `null` no longer throws.** `Logger.toString` read `null.constructor`, so a `null` among a log call's
+  values (or `[null]`, or an object without a prototype) threw a TypeError in the caller: `engine.throwSignal(null)`
+  threw where it means to answer `null`. Tests: `test/logger.test.mjs`; `test/throw-events.test.mjs`, which also covers
+  a signal starting a process and reaching the throwing instance's own waiting branch.
 - **A security policy's data path that is not there shows nothing.** `SecurityPolicy.visibleData` with the path
   `a.b.c`, where `a.b` is not an object, showed `a: { b: {} }`: a wrong value, and the data's shape. Now the path adds
   nothing. Tests in `test/security-policy.test.mjs` (now tagged security-policies), with a policy name that leaves the

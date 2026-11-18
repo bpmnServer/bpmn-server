@@ -94,3 +94,57 @@ test('a signal thrown reaches every instance waiting for it; one nobody waits fo
   assert.deepEqual(issued.filter(([kind]) => kind === 'signal').map(([, id]) => id), ['Silence'], 'Go was caught; Silence was issued');
   await srv.shutdown();
 });
+
+/** Started by the signal Go: it waits at Started. */
+const signalStarted = head.replace('D_ID', 'D_OnGo') + `
+  <bpmn:process id="OnGo" isExecutable="true">
+    <bpmn:startEvent id="GoStart"><bpmn:outgoing>g1</bpmn:outgoing><bpmn:signalEventDefinition signalRef="G1" /></bpmn:startEvent>
+    <bpmn:userTask id="Started"><bpmn:incoming>g1</bpmn:incoming></bpmn:userTask>
+    <bpmn:sequenceFlow id="g1" sourceRef="GoStart" targetRef="Started" />
+  </bpmn:process>
+</bpmn:definitions>`;
+
+/** One instance: a branch waits for Go while the other throws it. */
+const selfSignal = head.replace('D_ID', 'D_Self') + `
+  <bpmn:process id="Self" isExecutable="true">
+    <bpmn:startEvent id="S"><bpmn:outgoing>s0</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:parallelGateway id="Split"><bpmn:incoming>s0</bpmn:incoming><bpmn:outgoing>s1</bpmn:outgoing><bpmn:outgoing>s2</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:intermediateCatchEvent id="Hear"><bpmn:incoming>s1</bpmn:incoming><bpmn:outgoing>s3</bpmn:outgoing><bpmn:signalEventDefinition signalRef="G1" /></bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="Heard"><bpmn:incoming>s3</bpmn:incoming></bpmn:userTask>
+    <bpmn:userTask id="Before"><bpmn:incoming>s2</bpmn:incoming><bpmn:outgoing>s4</bpmn:outgoing></bpmn:userTask>
+    <bpmn:intermediateThrowEvent id="Say"><bpmn:incoming>s4</bpmn:incoming><bpmn:outgoing>s5</bpmn:outgoing><bpmn:signalEventDefinition signalRef="G1" /></bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="E"><bpmn:incoming>s5</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="s0" sourceRef="S" targetRef="Split" />
+    <bpmn:sequenceFlow id="s1" sourceRef="Split" targetRef="Hear" />
+    <bpmn:sequenceFlow id="s2" sourceRef="Split" targetRef="Before" />
+    <bpmn:sequenceFlow id="s3" sourceRef="Hear" targetRef="Heard" />
+    <bpmn:sequenceFlow id="s4" sourceRef="Before" targetRef="Say" />
+    <bpmn:sequenceFlow id="s5" sourceRef="Say" targetRef="E" />
+  </bpmn:process>
+</bpmn:definitions>`;
+
+test('a signal starts the processes whose start event catches it, and reaches the throwing instance\'s own branch', async () => {
+  const issued = [];
+  const srv = await server(issued);
+  fs.writeFileSync(path.join(srv.configuration.definitionsPath, 'OnGo.bpmn'), signalStarted);
+  fs.writeFileSync(path.join(srv.configuration.definitionsPath, 'Self.bpmn'), selfSignal);
+  await srv.definitions.rebuild();
+
+  const reached = await srv.engine.throwSignal('Go', { from: 'outside' });
+  assert.equal(reached.length, 1, 'one process started');
+  assert.equal((await waitingAt(srv, 'OnGo', 'Started')).length, 1);
+
+  const { instance } = await srv.engine.start('Self', {});
+  const done = await srv.engine.invoke({ id: instance.id, 'items.elementId': 'Before' }, {});
+  const heard = done.instance.items.filter(i => i.elementId === 'Heard').map(i => i.status);
+  assert.deepEqual(heard, ['wait'], 'its own branch heard it');
+  assert.equal((await waitingAt(srv, 'OnGo', 'Started')).length, 2, 'and another OnGo started');
+  await srv.shutdown();
+});
+
+test('a throw with no message or signal named does nothing', async () => {
+  const srv = await server([]);
+  assert.equal(await srv.engine.throwSignal(null, {}), null);
+  assert.equal(await srv.engine.throwMessage(null, {}), null);
+  await srv.shutdown();
+});
