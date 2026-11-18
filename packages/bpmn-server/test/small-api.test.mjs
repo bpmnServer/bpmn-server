@@ -60,3 +60,31 @@ test('a Query is built by its setters, each giving the query back', () => {
     .itemId('t1').itemName('Wait').itemStatus('wait').itemElementId('Wait');
   assert.equal(same, query);
 });
+
+test('invoke with noWait answers before the rest runs; the rest runs, is saved, and the lock is released', async () => {
+  const dir = definitionsFolder();
+  fs.writeFileSync(path.join(dir, 'Later.bpmn'), `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="D_L" targetNamespace="x">
+  <bpmn:process id="Later" isExecutable="true">
+    <bpmn:startEvent id="S"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:userTask id="First"><bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:userTask>
+    <bpmn:scriptTask id="Work" scriptFormat="JavaScript"><bpmn:incoming>f2</bpmn:incoming><bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:script>data.worked = true;</bpmn:script></bpmn:scriptTask>
+    <bpmn:userTask id="Second"><bpmn:incoming>f3</bpmn:incoming></bpmn:userTask>
+    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="First" />
+    <bpmn:sequenceFlow id="f2" sourceRef="First" targetRef="Work" />
+    <bpmn:sequenceFlow id="f3" sourceRef="Work" targetRef="Second" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  const { server: srv, store } = await makeServer({ dir });
+  const { instance } = await srv.engine.start('Later', {});
+  const execution = await srv.engine.invoke({ id: instance.id, 'items.elementId': 'First' }, { given: 1 }, null, { noWait: true });
+  assert.equal(execution.isLocked, true, 'answered while the rest still runs, under the lock');
+  await execution.worker;
+  const [saved] = await store.find('bpmn_test', 'wf_instances', { id: instance.id });
+  assert.equal(saved.data.given, 1);
+  assert.equal(saved.data.worked, true);
+  assert.deepEqual(saved.items.filter(i => i.elementId === 'Second').map(i => i.status), ['wait']);
+  assert.deepEqual(await store.find('bpmn_test', 'wf_locks', {}), [], 'its lock was released');
+  await srv.shutdown();
+});
