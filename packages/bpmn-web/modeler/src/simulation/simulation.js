@@ -100,7 +100,67 @@ export function frameDetails(frame, steps) {
     return [...new Set(lines)];
 }
 
-/** A simulation: its frames, where it is, paused or playing. `paint(frame)` shows one; `reset()` clears them all; `changed()` after each move. */
+/** Whether the person asked their system for less motion: then the changes show without moving. */
+const lessMotion = () => {
+    try { return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true; } catch { return false; }
+};
+
+/** A CSS animation run again on an element: its class off, a reflow, on again. */
+function replay(node, name) {
+    if (!node?.classList) return;
+    node.classList.remove(name);
+    void node.getBoundingClientRect();
+    node.classList.add(name);
+}
+
+/**
+ * A change, moving (simulation.css): an element that starts glows blue, one done flashes green; a flow taken draws
+ * itself and a token travels it, from the element it leaves to the next. `gfx`: the element's drawing (its
+ * .djs-element group, in the editor and in an instance page's diagram alike). Nothing moves for less motion.
+ */
+export function animateChange(gfx, frame) {
+    if (!gfx || lessMotion()) return;
+    replay(gfx, 'sim-anim');
+    if (frame.marker === 'test-passed' && gfx.classList.contains('djs-connection')) travel(gfx);
+}
+
+/** A token along a flow's line, as long as the line is (within a change's time), its line drawn as it goes. */
+function travel(gfx) {
+    const line = gfx.querySelector('.djs-visual > path');
+    if (!line?.getTotalLength) return;
+    let length;
+    try { length = line.getTotalLength(); } catch { return; }
+    if (!length) return;
+    const duration = Math.min(SIMULATION_STEP - 60, 220 + length * 0.8);
+    line.style.setProperty('--sim-len', String(length));
+    line.style.setProperty('--sim-dur', `${duration}ms`);
+    const token = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    token.setAttribute('r', '6');
+    token.setAttribute('class', 'sim-token');
+    gfx.querySelectorAll('.sim-token').forEach(old => old.remove());
+    gfx.appendChild(token);
+    const start = performance.now();
+    const ease = t => t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+    const move = now => {
+        const t = Math.min(1, (now - start) / duration);
+        const at = line.getPointAtLength(ease(t) * length);
+        token.setAttribute('cx', String(at.x));
+        token.setAttribute('cy', String(at.y));
+        if (t < 1 && token.isConnected) requestAnimationFrame(move);
+        else token.remove();
+    };
+    requestAnimationFrame(move);
+}
+
+/** A number's badge, popping in (an element's order in the run). */
+export function popBadge(node) {
+    if (node && !lessMotion()) replay(node, 'sim-pop');
+}
+
+/**
+ * A simulation: its frames, where it is, paused or playing. `paint(frame, moving)` shows one (moving: as it happens,
+ * animated; not when Back draws the changes before again); `reset()` clears them all; `changed()` after each move.
+ */
 export class Simulation {
     constructor(frames, { paint, reset, changed, steps }) {
         Object.assign(this, { frames, paint, reset, changed, steps });
@@ -124,7 +184,7 @@ export class Simulation {
             this.changed?.();
             return false;
         }
-        this.paint(this.frames[this.index++]);
+        this.paint(this.frames[this.index++], true);
         this._status();
         this.changed?.();
         return true;
@@ -137,7 +197,7 @@ export class Simulation {
         this.paused = true;
         this.reset();
         this.index--;
-        this.frames.slice(0, this.index).forEach(frame => this.paint(frame));
+        this.frames.slice(0, this.index).forEach(frame => this.paint(frame, false));
         this._status();
         this.changed?.();
     }

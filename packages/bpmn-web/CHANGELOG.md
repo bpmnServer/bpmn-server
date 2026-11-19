@@ -26,6 +26,9 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Simulate moves** (the Test tab, an instance's page): a flow taken draws itself as a token travels it, an element
+  that starts glows, one that ends flashes, a waiting one's dashes crawl, each number pops in; Back redraws without
+  moving; none for less motion (`modeler/src/simulation`). Test: `apps/testSampleApp/test/ui/instance-filters.test.mjs`.
 - A connector's page has **Outside production**: answers from the real API, its document's examples, or a sandbox,
   where APP_ENV is development or test (docs/docs/connectors.md#outside-production).
 - **The case lists read only what a security policy could show** (API v3's instances, the Workbench): narrowed in the

@@ -29,7 +29,7 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { el, json, parse, parseValue, showValue, request, CHECK_OPS } from './common.js';
 import { coverageOf, reachedIn } from '../../../src/testing/coverage.js';
 import { conditionValues, explore, modelGraph, withValue } from './paths.js';
-import { Simulation, simulationFrames, simulationPanel, updateSimulationPanel } from '../simulation/simulation.js';
+import { Simulation, simulationFrames, simulationPanel, updateSimulationPanel, animateChange } from '../simulation/simulation.js';
 
 const STATUSES = ['', 'end', 'wait', 'running', 'terminated'];
 /** The steps (src/testing/scenarios.ts isStep): user tasks, receive tasks and events. */
@@ -760,7 +760,7 @@ export default class TestPanel {
         this._config.showDiagram?.();       // it shows on the diagram
         this._unmark();
         this._simulation = new Simulation(this._simulationFrames(instance), {
-            paint: frame => this._simulateItem(frame.item, frame.marker, frame.number),
+            paint: (frame, moving) => this._simulateItem(frame.item, frame.marker, frame.number, moving ? frame : null),
             reset: () => this._unmark(),
             changed: () => this._simulationControls(),
             steps: instance.steps,
@@ -795,17 +795,19 @@ export default class TestPanel {
     }
 
     /** Show an item's element in a state; with a number, label it. */
-    _simulateItem(item, marker, number) {
+    /** `moving`: the frame, when it happens now (Simulate's Step or Play): it moves (simulation.js, animateChange). */
+    _simulateItem(item, marker, number, moving = null) {
         const element = this._elementRegistry.get(item.elementId);
         if (!element) return;      // not drawn (a flow without a line): nothing to show
         MARKERS.forEach(m => this._canvas.removeMarker(element, m));
         this._canvas.addMarker(element, marker);
+        if (moving) animateChange(this._elementRegistry.getGraphics(element), moving);
         if (!this._marked.includes(element)) this._marked.push(element);
         if (number !== undefined && !element.waypoints) {
             this._overlays.remove({ element, type: 'test-seq' });
             this._overlays.add(element, 'test-seq', {
                 position: { top: -14, left: -8 },
-                html: `<div class="test-seq ${marker}" data-seq="${number}">${number}</div>`
+                html: `<div class="test-seq ${marker}${moving ? ' sim-pop' : ''}" data-seq="${number}">${number}</div>`
             });
         }
     }

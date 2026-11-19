@@ -5,7 +5,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
-import { startWebApp, PASSWORD } from '../support/webApp.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { startWebApp, PASSWORD, FIXTURES } from '../support/webApp.mjs';
 
 let web, browser, instanceId;
 test.before(async () => {
@@ -21,7 +23,7 @@ test.after(async () => {
     setImmediate(() => process.exit(0));
 });
 
-async function openInstance() {
+async function openInstance(id = instanceId) {
     const context = await browser.newContext({ viewport: { width: 1400, height: 1000 } });
     await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());
     const page = await context.newPage();
@@ -32,7 +34,7 @@ async function openInstance() {
     await page.fill('#userName', 'admin');
     await page.fill('#password', PASSWORD);
     await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
-    await page.goto(`${web.base}/instanceDetails?id=${instanceId}`);
+    await page.goto(`${web.base}/instanceDetails?id=${id}`);
     await page.click('#logs-heading');       // the logs, open: by their heading
     return { page, errors, close: () => context.close() };
 }
@@ -151,6 +153,54 @@ test('the diagram numbers its elements by their items\' seq, as the items table;
     assert.equal(await page.locator('.djs-element.test-passed, .djs-element.test-waiting, .djs-element.test-started').count(), 0, 'the diagram as it was');
     assert.deepEqual(errors, []);
     await close();
+});
+
+test('Simulate moves: a flow taken draws itself and a token travels it, a started element glows; Back moves nothing; less motion, none', async () => {
+    // a model drawn with its flows (Invoice), past its first task
+    fs.copyFileSync(path.join(FIXTURES, 'Invoice.bpmn'), path.join(web.definitionsPath, 'Invoice.bpmn'));
+    const started = await web.bpmnServer.engine.start('Invoice', {}, null, 'admin');
+    const invoice = started.id ?? started.instance?.id;
+    await web.bpmnServer.engine.invoke({ id: invoice, 'items.elementId': 'task_issue_invoice', 'items.status': 'wait' }, {}, 'admin');
+    const { page, errors, close } = await openInstance(invoice);
+    await page.waitForSelector('#startSimulation:not([disabled])');
+    await page.click('#startSimulation');
+    const panel = page.locator('#simulation .test-sim-panel');
+    // a token comes and goes within a change: watched for as it is added
+    await page.evaluate(() => {
+        window.__tokens = 0;
+        new MutationObserver(list => list.forEach(m => m.addedNodes.forEach(n => { if (n.classList?.contains('sim-token')) window.__tokens++; })))
+            .observe(document.querySelector('.instance-diagram'), { childList: true, subtree: true });
+    });
+    // step until a flow is taken: its line drawn as it goes, a token on it, gone when it arrives
+    for (let i = 0; i < 8 && !(await page.evaluate(() => window.__tokens)); i++) {
+        await panel.locator('.test-sim-step').click();
+        await page.waitForTimeout(50);
+    }
+    assert.ok(await page.evaluate(() => window.__tokens) > 0, 'a token travels the flow taken');
+    assert.ok(await page.locator('.djs-connection.sim-anim').count() > 0, 'the flow taken, drawn');
+    await page.waitForFunction(() => !document.querySelector('.sim-token'), null, { timeout: 3000 });
+    assert.ok(await page.locator('.djs-shape.sim-anim').count() > 0, 'the elements that changed, animated');
+    // Back draws the changes before again, without moving them
+    await page.evaluate(() => document.querySelectorAll('.sim-anim').forEach(e => e.classList.remove('sim-anim')));
+    await panel.locator('.test-sim-back').click();
+    assert.equal(await page.locator('.sim-anim, .sim-token').count(), 0, 'Back: nothing moves');
+    await panel.locator('.test-sim-stop').click();
+    assert.deepEqual(errors, []);
+    await close();
+    // less motion asked for: the changes show without moving
+    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    const still = await context.newPage();
+    await still.goto(web.base + '/login');
+    await still.fill('#userName', 'admin');
+    await still.fill('#password', PASSWORD);
+    await Promise.all([still.waitForURL(url => !url.pathname.startsWith('/login')), still.click('button[type=submit]')]);
+    await still.goto(`${web.base}/instanceDetails?id=${invoice}`);
+    await still.waitForSelector('#startSimulation:not([disabled])');
+    await still.click('#startSimulation');
+    for (let i = 0; i < 5; i++) await still.locator('#simulation .test-sim-step').click();
+    assert.equal(await still.locator('.sim-anim, .sim-token').count(), 0);
+    assert.ok(await still.locator('.djs-element.test-passed').count() > 0, 'the changes still shown');
+    await context.close();
 });
 
 test('the Model report and the logs open by their headings', async () => {

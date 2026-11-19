@@ -16,3 +16,28 @@
 .djs-element.test-waiting .djs-visual > :first-child { stroke: #dc6803 !important; stroke-width: 3px !important; stroke-dasharray: 6 3; }
 /* a flow's line (its first child is the arrowhead's <defs>) */
 .djs-connection.test-passed .djs-visual > path { stroke: #067647 !important; stroke-width: 2px !important; }
+
+/* The changes, moving (simulation.js, animateChange): an element that starts glows blue, one done flashes green, a
+   flow taken draws itself as a token travels it, a waiting one's dashes crawl, a number pops in. None for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .djs-element.sim-anim.test-started .djs-visual > :first-child { animation: sim-start 0.7s ease-out; }
+  .djs-element.sim-anim.test-passed:not(.djs-connection) .djs-visual > :first-child { animation: sim-done 0.6s ease-out; }
+  .djs-element.test-waiting .djs-visual > :first-child { animation: sim-wait 1.2s linear infinite; }
+  .djs-connection.sim-anim.test-passed .djs-visual > path {
+    stroke-dasharray: var(--sim-len); animation: sim-draw var(--sim-dur, 0.4s) ease-in-out;
+  }
+  .sim-token { fill: #1f62c8; stroke: #fff; stroke-width: 2px; pointer-events: none; filter: drop-shadow(0 0 3px rgba(31, 98, 200, 0.8)); }
+  .sim-pop { animation: sim-pop 0.35s ease-out; transform-box: fill-box; transform-origin: center; }
+}
+@keyframes sim-start {
+  0% { filter: drop-shadow(0 0 0 rgba(31, 98, 200, 0)); }
+  35% { filter: drop-shadow(0 0 9px rgba(31, 98, 200, 0.9)); }
+  100% { filter: drop-shadow(0 0 0 rgba(31, 98, 200, 0)); }
+}
+@keyframes sim-done {
+  0% { fill: #b7ebc6; filter: drop-shadow(0 0 7px rgba(6, 118, 71, 0.7)); }
+  100% { filter: drop-shadow(0 0 0 rgba(6, 118, 71, 0)); }
+}
+@keyframes sim-wait { to { stroke-dashoffset: -18; } }
+@keyframes sim-draw { from { stroke-dashoffset: var(--sim-len); } to { stroke-dashoffset: 0; } }
+@keyframes sim-pop { 0% { transform: scale(0.2); opacity: 0; } 70% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(1); } }

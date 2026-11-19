@@ -4,7 +4,7 @@
 import { BpmnModdle } from 'bpmn-moddle';
 import { moddleExtensions } from '../moddle.js';
 import './instance.css';
-import { Simulation, simulationFrames, simulationPanel, updateSimulationPanel, SIMULATION_MARKERS } from '../simulation/simulation.js';
+import { Simulation, simulationFrames, simulationPanel, updateSimulationPanel, SIMULATION_MARKERS, animateChange, popBadge } from '../simulation/simulation.js';
 
 const json = id => {
     try { return JSON.parse(document.getElementById(id)?.textContent || 'null'); } catch { return null; }
@@ -45,15 +45,20 @@ async function setUp() {
         clear();
         badges().forEach(b => { b.style.display = 'none'; });
     };
-    const paint = frame => {
+    // moving: as it happens (animated, simulation.css); not when Back draws the changes before again
+    const paint = (frame, moving) => {
         const element = shape(frame.item.elementId);
         if (!element) return;
         element.classList.remove(...SIMULATION_MARKERS);
         element.classList.add(frame.marker);
+        if (moving) animateChange(element, frame);
         // its own number, as the items table and the Rationale give it
         if (frame.number !== undefined && frame.item.seq != null) {
             const badge = document.getElementById('seq_' + frame.item.seq);
-            if (badge) badge.style.display = '';
+            if (badge) {
+                badge.style.display = '';
+                if (moving) popBadge(badge);
+            }
         }
     };
 

@@ -144,6 +144,9 @@ and the commands for that run, **Simulate** and **Debug** each opening its panel
   still waits, numbered in the order they started; **Back**, **Step**, **Play** and **Stop**. **Show details** says
   what the Rationale says of each change: who did it, with what data, and why (a flow's condition and the values it
   read, a gateway's choice). An instance's page has the same Simulate.
+  It moves: a flow taken draws itself as a token travels it, an element that starts glows blue and one that ends
+  flashes green, a waiting one's dashed outline crawls, and each number pops in. **Back** redraws without moving, and
+  nothing moves when the system asks for less motion.
 - **Debug** changes the instance's variables for the next steps; **Restart here**, on a step done, goes back to it.
   Debugging a kept run changes that run only: the scenario's steps and their data stay as they were.
 
