@@ -26,6 +26,8 @@ and here
 
 ## [Unreleased]
 ### Added
+- A load test of security policies (`test/load/security.test.mjs`): what one case's check costs, with the built-in
+  default, a decision table, and an application hook that waits.
 - `findNotifications` lists test runs' notifications with the others (marked `test`); `test: true` gives only
   theirs, `test: false` none of them.
 - `bpmn-server setup` asks for the environment as `development`, `test` or `production`.

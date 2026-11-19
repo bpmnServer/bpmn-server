@@ -3,6 +3,9 @@ import { ownUsers } from '../userAccess/UserManager.js';
 import { isAdminGroups } from '../userAccess/roles.js';
 import type { IAccess, ISecurityUser, SecureUser } from '../index.js';
 
+/** How many cases a list's page decides at once (CaseAccess.decideAll). */
+export const DECIDE_AT_ONCE = 16;
+
 /*
  * Security policies, as the pages and API v3 ask them (docs/design/security-policies.md, engine/SecurityPolicy.ts):
  * who sees a case, which of its data, and whether they may claim, complete, restart or fire its start events. Off
@@ -47,13 +50,23 @@ export class CaseAccess {
         return access;
     }
 
-    /** The cases this user sees (`see` not none), as they were given. */
+    /** The cases this user sees (`see` not none), as they were given: decided several at once (decideAll). */
     async seen<T>(user: SecureUser, instances: T[]): Promise<T[]> {
         if (!this.on) return instances;
-        const shown = [];
-        for (const instance of instances)
-            if ((await this.decide(user, instance)).see !== 'none') shown.push(instance);
-        return shown;
+        const decided = await this.decideAll(user, instances.map(instance => ({ instance })));
+        return instances.filter((_, i) => decided[i].see !== 'none');
+    }
+
+    /**
+     * Each case (and task) decided, DECIDE_AT_ONCE at a time, in their order: a list's page asks them together, so an
+     * application's decisionContext hook that waits (it asks another system) waits for several at once
+     * (docs/docs/performance.md#security-policies).
+     */
+    async decideAll(user: SecureUser, entries: { instance: any; task?: { elementId: string; itemId?: string } }[]): Promise<IAccess[]> {
+        const out: IAccess[] = new Array(entries.length);
+        for (let i = 0; i < entries.length; i += DECIDE_AT_ONCE)
+            await Promise.all(entries.slice(i, i + DECIDE_AT_ONCE).map(async (e, k) => { out[i + k] = await this.decide(user, e.instance, e.task); }));
+        return out;
     }
 
     /** The cases of these tasks, by id: what a policy decides on (their items, data and model). */
@@ -68,10 +81,8 @@ export class CaseAccess {
     async tasksAllowed<T extends { id?: string; instanceId?: string; elementId?: string }>(user: SecureUser, items: T[]): Promise<T[]> {
         if (!this.on) return items;
         const cases = await this.casesOf(items);
-        const allowed = [];
-        for (const item of items)
-            if ((await this.decide(user, cases.get(item.instanceId), { elementId: item.elementId, itemId: item.id })).complete !== false) allowed.push(item);
-        return allowed;
+        const decided = await this.decideAll(user, items.map(item => ({ instance: cases.get(item.instanceId), task: { elementId: item.elementId, itemId: item.id } })));
+        return items.filter((_, i) => decided[i].complete !== false);
     }
 
     /** A case's data as this access lets them read it; for a task, its own form's fields too. */

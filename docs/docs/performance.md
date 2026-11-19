@@ -89,6 +89,26 @@ The indexes made no measurable difference to the speed of writes: the difference
 
 On MongoDB, a process takes the same time with 5,000 more instances stored (21 ms against 22 ms). The **in-memory store** has no indexes. Each query checks every instance, so with 5,000 more instances stored a process takes 66 ms instead of 19 ms. The store is meant for tests and small embedded use. **SQLite** narrows queries by plain equalities, but it doesn't index fields inside `items`.
 
+## Security policies
+
+A security policy is asked once for each case a list shows, and once for each task the task list shows. Measured by
+`test/load/security.test.mjs` (in `npm run test:load`), on Windows, Node.js 24, on 2026-11-19:
+
+| What a case's check costs | Per case | A page of 50 cases |
+| --- | ---: | ---: |
+| The built-in default | 0.14 ms | 7 ms |
+| A decision table of 3 rules | 0.59 ms | 29 ms |
+| An application's `decisionContext` hook that waits 5 ms, one case at a time | 15.6 ms | 780 ms |
+| The same hook, 16 cases at a time, as the lists ask them | 1.3 ms | 65 ms |
+
+- **A policy table is cheap.** Its file is read and parsed once, until it changes.
+- **What costs is a hook that waits.** An application whose `decisionContext` asks another system pays that wait for
+  every case. The lists decide 16 cases at once (`CaseAccess.decideAll`), and the task list stops once its page is full.
+  (The wait above is 15 ms on Windows, whose timers are coarser than the 5 ms asked.) Keep the hook fast, or cache what
+  it reads.
+- **Not built yet:** narrowing the database query by the actors a policy's `see` rules name. Until then, a list reads
+  its cases and asks the policy for each, reading on past the ones it hides, a few times at most.
+
 ## Limits and what isn't measured
 
 - The load suites measure the engine directly. There is no load test of the web layer yet: the REST API and the pages under many concurrent users.

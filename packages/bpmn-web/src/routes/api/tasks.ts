@@ -124,10 +124,10 @@ export class TaskOperations {
             .sort((a, b) => new Date(a.startedAt ?? 0).getTime() - new Date(b.startedAt ?? 0).getTime() || (a.id < b.id ? -1 : 1));
         // a task the case's policy doesn't let this user complete is not theirs to see here (the requester's approval)
         if (this.access.on) {
-            const cases = await this.access.casesOf(waiting);
+            // only as many as the page needs (and one more: whether there is a next), several at once
             const shown = [];
-            for (const item of waiting)
-                if ((await this.access.decide(user, cases.get(item.instanceId), { elementId: item.elementId, itemId: item.id })).complete !== false) shown.push(item);
+            for (let i = 0; i < waiting.length && shown.length <= limit; i += 64)
+                shown.push(...await this.access.tasksAllowed(user, waiting.slice(i, i + 64)));
             waiting.splice(0, waiting.length, ...shown);
         }
         const page = waiting.slice(0, limit);

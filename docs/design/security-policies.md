@@ -156,7 +156,7 @@ cases the policy hides afterwards:
 
 - *not built:* narrowing the store's query by the actors a rule allowing `see` names (`items.userName` of the
   actor's elements, `items.assignee`, `items.candidateGroups`). Today every instance of a page is asked;
-- the policy is asked for each case of the page; the page is read again past what it hid, until it is full or there
+- the policy is asked for each case of the page, 16 at once (`CaseAccess.decideAll`; the figures: docs/docs/performance.md#security-policies); the page is read again past what it hid, until it is full or there
   is no more (a bound on the reads; a page can be short when reached).
 
 ## The feature catalog

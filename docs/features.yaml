@@ -763,7 +763,7 @@ features:
     what: "Throughput of starts and steps, long-running load, memory over time, and a benchmark; the figures published."
     docs: [docs/docs/performance.md, docs/docs/advanced.md]
     code: [packages/bpmn-server/src/server/CacheManager.ts]
-    tests: [packages/bpmn-server/test/perf.test.mjs, packages/bpmn-server/test/load/speed.test.mjs, packages/bpmn-server/test/load/stress.test.mjs, packages/bpmn-server/test/load/memory.test.mjs]
+    tests: [packages/bpmn-server/test/perf.test.mjs, packages/bpmn-server/test/load/speed.test.mjs, packages/bpmn-server/test/load/stress.test.mjs, packages/bpmn-server/test/load/memory.test.mjs, packages/bpmn-server/test/load/security.test.mjs]
 # --------------------------------------------------------------------------------------------------------------- cli
   - id: bpmn-server-cli
     area: cli

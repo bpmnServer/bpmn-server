@@ -140,6 +140,9 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **Security policies decide a list's cases several at once** (16; `CaseAccess.decideAll`), so an application's
+  `decisionContext` hook that waits waits for several cases together; the task list stops deciding once its page is
+  full. Measured in docs/docs/performance.md#security-policies.
 - **The workflow pages ask API v3's operations** (the Workbench, the task and assign forms, the instance page, the
   task list), as the person signed in: the operations decide who sees and does what, and the pages hold no security
   rules of their own (`routes/workflow.ts`). The Workbench lists instances a page at a time (50, *Older instances*);
