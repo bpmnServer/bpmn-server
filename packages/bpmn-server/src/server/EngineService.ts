@@ -197,7 +197,7 @@ export function startEngineService(server: BPMNServer, { port = 3001, host = '12
                 send(response, 200, { result: await calls[method](...args) });
             }
             catch (error) {
-                send(response, 200, { error: { name: error?.name, message: error?.message ?? String(error), code: error?.code, status: error?.status } });
+                send(response, 200, { error: { name: error?.name, message: error?.message ?? String(error), code: error?.code, status: error?.status, ...(error?.details ? { details: error.details } : {}) } });
             }
         });
     });

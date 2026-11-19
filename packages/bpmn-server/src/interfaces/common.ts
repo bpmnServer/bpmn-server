@@ -54,6 +54,11 @@ interface IConfiguration
     demo?: boolean,
     /** Each save of a model keeps a version in `.history/<name>/` beside it, for the editor's History tab (default true). */
     modelHistory?: boolean,
+    /**
+     * false: a form's rules (a field's type, its constraints, a list's choices: elements/FormRules.ts) are not checked
+     * when a user task is completed (the validate event still runs). Default true.
+     */
+    formRules?: boolean,
     /** Connectors' calls (docs/docs/connectors.md): the defaults a connector's own timeout and retries override. */
     connectors?: IConnectorsConfiguration,
 }

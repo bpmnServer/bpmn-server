@@ -18,7 +18,7 @@ test('the requester requests, and an approved request is processed', async () =>
     await run.complete('Request', { days: 3 });
     assert.ok(run.waiting().includes('Approve'));
 
-    await run.complete('Approve', { approval: 'Approved' });
+    await run.complete('Approve', { approval: 'A' });
     assert.ok(run.item('Activity_1rx1txe'), 'Process ran');
     assert.equal(run.status, 'end');
 });

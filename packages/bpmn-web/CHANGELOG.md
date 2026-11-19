@@ -9,6 +9,11 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **Form rules** (docs/docs/form-rules.md): a task's completion that breaks its form's rules is refused, 400
+  `FORM_INVALID` with `details` (API v3, the task API) or a 400 page that says why (the drawn task form). The drawn
+  task form carries the rules as its inputs' attributes (`routes/formAttributes.ts`); a task's form shows the case's values,
+  and a read-only drop-down is disabled. `FORM_RULES=false` turns the checks off. Test:
+  `apps/testSampleApp/test/web/form-rules.test.mjs`.
 
 
 ### Changed

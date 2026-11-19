@@ -9,6 +9,14 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **Form rules** (docs/design/form-rules.md, `elements/FormRules.ts`): when a user task is completed, its validate
+  step (`Node.validate`) checks its form's rules, before anything is saved: each field's
+  type (`long`, `boolean`, `date`, `enum`), its constraints (`required`, `readonly`, `minlength`, `maxlength`,
+  `min`, `max`) an `<owf:list>`'s choices, and the `validate` event's scripts' `{ error }`. Refused: `FormInvalidError`, code `FORM_INVALID`, status 400,
+  `details: [{ field, rule, message }]` (sent by a launched engine too). `validator` and a lookup's value are not
+  checked, nor a start event's fields. **Compatibility:** a model whose rules were ignored before is now held to them;
+  `formRules: false` in the configuration turns the rules off. A validate script's error, an execution error before,
+  is now `FORM_INVALID`. Test: `test/form-rules.test.mjs`.
 
 ### Changed
 -->

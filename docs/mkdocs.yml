@@ -124,6 +124,7 @@ nav:
   - Performance and test coverage: performance.md
   - Labels: labels.md
   - Lists and lookups in forms: form-lookups.md
+  - Form rules: form-rules.md
   - 'Assignment policies': assignment-policies.md
   - 'Notification policies': notification-policies.md
   - Advanced Topics: advanced.md

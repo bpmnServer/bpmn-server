@@ -518,6 +518,14 @@
       "x-restart": true,
       "default": true
     },
+    "FORM_RULES": {
+      "description": "`false`: a form's rules (a field's type, its constraints, a list's choices) are not checked when a task is completed",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
     "VERIFY_MODELS_ON_IMPORT": {
       "description": "`warn`, `enforce` or `off`, for models saved through the APIs",
       "x-where": "env",

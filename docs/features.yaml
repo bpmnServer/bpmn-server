@@ -275,8 +275,16 @@ features:
     xml: ["camunda:formField owf:list", "camunda:formField owf:lookup"]
     docs: [docs/docs/form-lookups.md, docs/design/form-lookups.md]
     code: [packages/bpmn-server/src/elements/FormLookup.ts, packages/bpmn-web/src/routes/api/tasks.ts, packages/bpmn-web/public/javascripts/formLookup.js]
-    tests: [packages/bpmn-server/test/form-lookup.test.mjs, apps/testSampleApp/test/web/form-choices.test.mjs]
+    tests: [packages/bpmn-server/test/form-lookup.test.mjs, apps/testSampleApp/test/web/form-choices.test.mjs, apps/testSampleApp/test/ui/form-lookups.test.mjs]
     examples: ["apps/hrdemo/workflow/processes/Leave Application.bpmn"]
+  - id: form-rules
+    area: modeling
+    name: "Form rules"
+    what: "A user task's form rules checked when it is completed, with its validate event: each field's type, its constraints (required, readonly, minlength, maxlength, min, max), a list's choices and a validate script's error; refused as FORM_INVALID with what each field breaks. The drawn task form carries them as its inputs' attributes."
+    xml: ["camunda:validation", "camunda:constraint"]
+    docs: [docs/docs/form-rules.md, docs/design/form-rules.md]
+    code: [packages/bpmn-server/src/elements/FormRules.ts, packages/bpmn-server/src/elements/Node.ts, packages/bpmn-web/src/routes/formAttributes.ts]
+    tests: [packages/bpmn-server/test/form-rules.test.mjs, apps/testSampleApp/test/web/form-rules.test.mjs]
   - id: input-output
     area: modeling
     name: "Input and output mapping"

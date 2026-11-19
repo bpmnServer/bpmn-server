@@ -252,6 +252,15 @@ export const MODEL_FEATURES: { id: string, name: string, area: string, xml: stri
         ]
     },
     {
+        "id": "form-rules",
+        "name": "Form rules",
+        "area": "modeling",
+        "xml": [
+            "camunda:validation",
+            "camunda:constraint"
+        ]
+    },
+    {
         "id": "input-output",
         "name": "Input and output mapping",
         "area": "modeling",

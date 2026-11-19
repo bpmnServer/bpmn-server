@@ -103,6 +103,8 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 		runServiceTasks: runSetting('SERVICE_TASKS'),
 		// MODEL_HISTORY=false: saves keep no versions, and the editor has no History tab
 		modelHistory: process.env.MODEL_HISTORY?.toLowerCase() !== 'false',
+		// FORM_RULES=false: a task's form rules are not checked when it is completed
+		formRules: process.env.FORM_RULES?.toLowerCase() !== 'false',
 		cacheManager: server => new NoCacheManager(server),
 		// DATABASE=sqlite:<file>: everything in one SQLite file (instances, models, locks, users, sessions)
 		...(sqliteFile() ? { documentStore: () => sqliteStore(sqliteFile()) } : {}),

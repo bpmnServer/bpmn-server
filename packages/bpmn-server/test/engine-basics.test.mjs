@@ -182,7 +182,7 @@ test('validation listener rejects invalid Buy task data', async () => {
 
   await assert.rejects(
     () => server.engine.invoke({ "items.id": buy.id }, { needsRepairs: '' }, 'buyer-e'),
-    /Validation failed with error:Invalid values/,
+    (error) => error.code === 'FORM_INVALID' && error.details.some(d => d.rule === 'validate' && d.message === 'Invalid values'),
   );
 });
 

@@ -135,7 +135,8 @@ in the instance data under the field's ID.
 | Type | `type` | `enum`: a list to choose from; `date`: a date picker; others (`string`, `long`, `boolean`, `custom`): a text box. |
 | Default value | `defaultValue` | The preselected choice of an `enum`. |
 | Values | `camunda:value` | An `enum`'s choices: an ID (stored) and a name (shown). |
-| Constraints, Properties | `camunda:validation`, `camunda:properties` | Recorded; bpmn-web's form does not apply them. |
+| Constraints | `camunda:validation` | `required`, `readonly`, `minlength`, `maxlength`, `min`, `max`: a task's are checked by the engine when it is completed, and by the drawn task form in the browser. See [Form rules](https://bpmnserver.github.io/docs/form-rules). `validator` is recorded, not run. |
+| Properties | `camunda:properties` | Recorded. |
 | Choices | `<owf:list>` or `<owf:lookup>` in the field | The field's choices from a source: a list is a drop-down of every choice, a lookup a search as the person types. See [Lists and lookups in forms](https://bpmnserver.github.io/docs/form-lookups). |
 | Source | `source` | `service:<name>` (a function of the application's services) or `connector:<connector>/<operation>`. |
 | Key, Display | `key`, `display` | The row's field saved (default `id`), and the one shown (default the key). The label is saved too, as `<id>Display`. |

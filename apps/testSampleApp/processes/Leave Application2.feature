@@ -8,7 +8,7 @@ Feature: Leave Application2
       | RequestReason | "Holidays" |
     Then @check :i last element:Approve assignee is "Supervisor"
     When @invoke element:Approve in :i
-      | approval | "Approve" |
+      | approval | "A"       |
     Then @check :i passed element:Activity_1rx1txe with status "end"
       And @check :i passed element:Event_1qg3mz1
       And @check :i status is "end"

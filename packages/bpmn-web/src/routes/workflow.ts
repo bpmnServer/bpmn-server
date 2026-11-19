@@ -15,6 +15,7 @@ import { CaseAccess, accessDirectory } from './caseAccess.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import { guardModelParams } from './middleware/modelName.js';
 import { afterWork, canDesign, isAdminGroups } from '../userAccess/roles.js';
+import { ruleAttributes } from './formAttributes.js';
 
 /** Designers and administrators: who may do what with a case is theirs to see (the instance page's Assignment and access). */
 const worksOnModels = user => !!user && (isAdminGroups(user.userGroups) || canDesign(user));
@@ -213,8 +214,10 @@ export class Workflow extends Common {
             if (fields && fields.length > 0) {
                 // the fields whose choices come from a connector operation (owf:list, owf:lookup)
                 const lookups = Object.fromEntries(fields.map(f => [f.id, formFieldLookup(f)]).filter(([, lookup]) => lookup));
+                // each field's rules as its input's attributes (formAttributes.ts)
+                const attrs = Object.fromEntries(fields.map(f => [f.id, ruleAttributes(f)]));
                 response.render('invokeItem', { node,
-                    id, fields, lookups, processName, elementId ,instance,vars ,returnTo
+                    id, fields, lookups, attrs, processName, elementId ,instance,vars ,returnTo
                 });
                 return;
             }

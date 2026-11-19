@@ -106,6 +106,7 @@ by `npm run features`: edit the schema, not these tables.
 | `CONNECTORS_KEY` | **A secret.** Encrypts connectors' keys. Required to give a connector a key, and keep it: backups need the same one |
 | `CONNECTOR_CATALOG_URL` | The connector catalog to offer |
 | `MODEL_HISTORY` | `false` keeps no saved versions of models |
+| `FORM_RULES` | `false`: a form's rules (a field's type, its constraints, a list's choices) are not checked when a task is completed |
 | `VERIFY_MODELS_ON_IMPORT` | `warn`, `enforce` or `off`, for models saved through the APIs |
 
 ### Email

@@ -91,7 +91,7 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
             const [code, body] = v2TaskError(error) as [number, any];
             if (body.code === 'BAD_AFTER')
                 return res.status(400).json({ error: { code: 'BAD_CURSOR', message: 'cursor is a page\'s next' } });
-            res.status(code).json({ error: { code: body.code, message: body.errors } });
+            res.status(code).json({ error: { code: body.code, message: body.errors, ...(body.details ? { details: body.details } : {}) } });
         }
     };
 

@@ -16,6 +16,9 @@ export function v2TaskError(error): [number, object] {
     // a security policy refused it (caseAccess.ts)
     if (error?.code === 'POLICY_DENIED')
         return [403, { errors: error.message, code: error.code }];
+    // the form's rules (bpmn-server's elements/FormRules.ts): what each field breaks
+    if (error?.code === 'FORM_INVALID')
+        return [400, { errors: error.message, code: error.code, details: error.details }];
     // the engine's own check, under the instance's lock: another call got there first
     if (error?.code === 'ITEM_NOT_WAITING')
         return [409, { errors: error.message, code: error.code }];

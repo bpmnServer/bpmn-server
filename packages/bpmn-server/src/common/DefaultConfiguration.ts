@@ -58,6 +58,8 @@ export class Configuration implements IConfiguration {
 	runServiceTasks?: boolean;
 	connectors?: IConnectorsConfiguration;
 	modelHistory?: boolean;
+	/** false: a form's rules are not checked (elements/FormRules.ts). Default true. */
+	formRules?: boolean;
 
 	/** Each factory given replaces the default one; one left out keeps it. */
 	constructor({
@@ -67,7 +69,7 @@ export class Configuration implements IConfiguration {
 		appDelegate = undefined,
 		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined,
 		runTimers = undefined, runServiceTasks = undefined,
-		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined }: any) {
+		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined, formRules = undefined }: any) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -91,6 +93,7 @@ export class Configuration implements IConfiguration {
 		this.runServiceTasks = runServiceTasks ?? !demo;
 		this.connectors = connectors;
 		this.modelHistory = modelHistory;
+		this.formRules = formRules;
 	
 	}
 
