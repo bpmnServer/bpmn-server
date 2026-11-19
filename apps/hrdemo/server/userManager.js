@@ -106,6 +106,10 @@ export class HrUserManager {
     const admin = (req, res, next) => (req.user?.role === 'HR Administrator' ? next() : res.status(403).json({ error: 'HR Administrator only' }));
     const signedIn = (req, res, next) => (req.user ? next() : res.status(401).json({ error: 'Not signed in' }));
     const fail = (res, error) => res.status(400).json({ error: error.message });
+    // READ_ONLY=true (a public demo, as BPMN Server's): the demo's accounts and their passwords stay as they are
+    const writable = (req, res, next) => ((process.env.READ_ONLY ?? '').toLowerCase() === 'true'
+      ? res.status(403).json({ error: 'This demo is read-only: its users and passwords can not be changed' })
+      : next());
 
     // who is signed in; signing in; signing out
     app.get('/api/hr/session', (req, res) => (req.user ? res.json(this.hr.get(req.user.userName)) : res.status(401).json({ error: 'Not signed in' })));
@@ -133,14 +137,14 @@ export class HrUserManager {
     // the HR users, for HR Administrators
     app.get('/api/hr/roles', (req, res) => res.json(Object.keys(ROLES)));
     app.get('/api/hr/users', signedIn, admin, (req, res) => res.json(this.hr.list()));
-    app.post('/api/hr/users', json, signedIn, admin, (req, res) => { try { res.status(201).json(this.hr.add(req.body ?? {})); } catch (e) { fail(res, e); } });
-    app.put('/api/hr/users/:userName', json, signedIn, admin, (req, res) => { try { res.json(this.hr.update(req.params.userName, req.body ?? {})); } catch (e) { fail(res, e); } });
-    app.delete('/api/hr/users/:userName', signedIn, admin, (req, res) => {
+    app.post('/api/hr/users', json, signedIn, admin, writable, (req, res) => { try { res.status(201).json(this.hr.add(req.body ?? {})); } catch (e) { fail(res, e); } });
+    app.put('/api/hr/users/:userName', json, signedIn, admin, writable, (req, res) => { try { res.json(this.hr.update(req.params.userName, req.body ?? {})); } catch (e) { fail(res, e); } });
+    app.delete('/api/hr/users/:userName', signedIn, admin, writable, (req, res) => {
       if (req.params.userName === req.user.userName) return res.status(409).json({ error: 'You do not delete yourself' });
       res.json({ deleted: this.hr.remove(req.params.userName) });
     });
     // their own password
-    app.put('/api/hr/session/password', json, signedIn, (req, res) => {
+    app.put('/api/hr/session/password', json, signedIn, writable, (req, res) => {
       if (!this.hr.verify(req.user.userName, req.body?.current)) return res.status(400).json({ error: 'The current password is wrong' });
       try { this.hr.update(req.user.userName, { password: req.body?.password }); res.json({ changed: true }); } catch (e) { fail(res, e); }
     });

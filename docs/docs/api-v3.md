@@ -808,6 +808,7 @@ Credential: The service key (API_KEY): the service account only.
 | `groups` | list of string |  |  |
 | `credential` | `"token"` or `"service"` |  |  |
 | `may` | { start, design, administer } |  |  |
+| `environment` | { name, label, readOnly, shown } |  | The environment of the server: APP_ENV (null when not set), its label, READ_ONLY, and whether pages show it |
 
 ### Form
 

@@ -26,6 +26,14 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The environment on every page** (docs/docs/environments.md): `APP_ENV` takes `development`, `test` or
+  `production`, shown as a band above the menu bar (Development blue, Test amber) and a badge in the editors;
+  `APP_ENV_LABEL` names it otherwise (`Staging`, `Public demo`). API v3's `/me` says it (`environment`). Unset
+  `APP_ENV` shows nothing, as before. Test: `apps/testSampleApp/test/web/environment.test.mjs`.
+- **Read-only servers** (`READ_ONLY=true`, docs/docs/environments.md#read-only): people start cases and complete tasks;
+  changes to the models, decision tables, policies, tests, roles, connectors, settings and bpmn-web's users are refused
+  with 403 `READ_ONLY`, through the pages and every API (`runtime/readOnly.ts`, one guard in front of every route).
+  The editors' Save is off. For a public demo, such as the HR demo's.
 - **The Integration page** (docs/docs/integration-settings.md): Dashboard ▸ Integration (`/dashboard/integration`),
   for administrators and designers. One section per integration point (the application's delegate and its functions,
   connectors, roles and policies, notifications, the API the application calls, forms and scripts, AI agents): what is

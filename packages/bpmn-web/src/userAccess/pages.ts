@@ -2,6 +2,7 @@ import flash from 'express-flash';
 import lusca from 'lusca';
 import { adminDisabled, canDesign, isAdminGroups, signupDisabled } from './roles.js';
 import { firstRunPending } from './firstRun.js';
+import { serverEnvironment } from '../runtime/environment.js';
 
 /*
  * What bpmn-web's pages need on every request, whichever user manager signs people in (IUserManager): messages
@@ -67,6 +68,8 @@ export function pageLocals(app) {
 		res.locals.canAdminister = !adminDisabled()
 			&& (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups));
 		res.locals.currentPath = req.path;
+		// the environment's band (views/includes/environment.pug): APP_ENV, APP_ENV_LABEL, READ_ONLY
+		res.locals.environment = serverEnvironment();
 		// a page shown inside a page of this site (the application's own layout, `framed`): without its menu bar, as the
 		// application's layout has the places. Browsers say so on HTTPS and localhost (Sec-Fetch-Dest, Sec-Fetch-Site);
 		// a page opened by itself, or framed by another site, keeps its menu (the Fable Review, M7)

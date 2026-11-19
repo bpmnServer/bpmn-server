@@ -35,6 +35,21 @@ const exact = to => to === '/' || to === '/workflow' || to === '/workflow/dashbo
 // opens over them, from its button
 const EDITOR = /^\/workflow\/model\/(edit|editNoProp|decision|policy|security-policy|notification-policy)\//;
 
+/**
+ * The server's environment (BPMN Server's /api/v3/me: APP_ENV, APP_ENV_LABEL, READ_ONLY), as its own pages show it:
+ * Development blue, Test amber, the label always written. None in production unless labelled or read-only.
+ */
+function EnvironmentBadge({ environment }) {
+  if (!environment?.shown) return null;
+  const text = [environment.label, environment.readOnly ? 'read-only' : null].filter(Boolean).join(' · ');
+  return (
+    <div className={`env-badge env-${environment.name || 'other'}`} data-environment={environment.name || ''}
+      title={environment.readOnly ? 'Read-only: you can start cases and complete tasks, not change the processes' : undefined}>
+      {text}
+    </div>
+  );
+}
+
 export default function Layout({ children }) {
   const { user, signOut, may } = useAuth();
   const navigate = useNavigate();
@@ -65,6 +80,7 @@ export default function Layout({ children }) {
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
         <span className="mobile-bar-title">HR System</span>
+        <EnvironmentBadge environment={may.environment} />
         {waiting !== null && (
           <button className="mobile-bar-button mobile-bar-tasks" onClick={() => window.dispatchEvent(new Event('task-panel-toggle'))} aria-label="Tasks to do">
             To do{waiting > 0 && <span className="task-count">{waiting}</span>}
@@ -77,6 +93,7 @@ export default function Layout({ children }) {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           HR System
         </div>
+        <EnvironmentBadge environment={may.environment} />
         <nav className="sidebar-nav">
           {items.map((item, i) =>
             item.section

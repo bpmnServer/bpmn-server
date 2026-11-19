@@ -15,6 +15,7 @@ import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 import { invokeDecision } from '../decisions.js';
 import { labelFilterQuery, labeledTasks, labeledInstances, LabelFilterError } from './labels.js';
+import { serverEnvironment } from '../../runtime/environment.js';
 
 /*
  * API v3, /api/v3 (docs/design/api-v3.md): every call through the door (a user's token, or the service key) and as
@@ -101,6 +102,8 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         groups: user.userGroups,
         credential: req.apiCredential,
         may: { start: true, design: canDesign(user), administer: isAdminGroups(user.userGroups) },
+        // the server's environment, for an application's own layout to show (runtime/environment.ts)
+        environment: serverEnvironment(),
     })));
 
     // ---- processes: what this user may start, and starting one as them

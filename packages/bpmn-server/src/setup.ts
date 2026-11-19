@@ -314,7 +314,7 @@ const STEPS: Array<(c: Context) => Promise<void>> = [
     async function diagnostics(c) {
         heading(c, '8. Environment and diagnostics', 'APP_ENV', 'API_TRACE');
         const profile = PROFILES[c.profile];
-        set(c, 'APP_ENV', await ask(c, 'APP_ENV', profile.APP_ENV ?? current(c, 'APP_ENV'), 'environment: production, or test (the test services)'));
+        set(c, 'APP_ENV', await ask(c, 'APP_ENV', profile.APP_ENV ?? current(c, 'APP_ENV'), 'environment: development, test (the test services) or production'));
         const trace = await confirm(c, 'Record every API call to a file (API_TRACE)', !!(current(c, 'API_TRACE') ?? profile.API_TRACE));
         set(c, 'API_TRACE', trace ? (current(c, 'API_TRACE') || 'api-trace.jsonl') : null);
     },

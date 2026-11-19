@@ -534,16 +534,36 @@
       "x-restart": true
     },
     "APP_ENV": {
-      "description": "The environment: `test` makes the sample application use its test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Default: production",
+      "description": "The environment: `development`, `test` or `production`. The pages show it as a band (Development blue, Test amber), and API v3's `/me` says it. `test` also makes the sample applications use their test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Unset: not declared, as before 3.7.2 (no band; the real services). See [Environments](environments.md)",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "enum": ["development", "test", "production"],
+      "x-restart": true,
+      "examples": [
+        "development",
+        "test",
+        "production"
+      ]
+    },
+    "APP_ENV_LABEL": {
+      "description": "What the environment's band says instead of its name, in any environment: `Staging`, `Public demo`. Shown in production too",
       "x-where": "env",
       "x-group": "server",
       "type": "string",
       "x-restart": true,
-      "default": "production",
       "examples": [
-        "production",
-        "test"
+        "Staging",
+        "Public demo"
       ]
+    },
+    "READ_ONLY": {
+      "description": "`true`: people use the server but can't change it. They start cases and complete tasks; the models, decision tables, policies, tests, roles, connectors, settings and users can't be changed, through a page or an API. For a public demo. See [Environments](environments.md#read-only)",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true,
+      "default": false
     },
     "BODY_LIMIT": {
       "description": "The largest request. Default `50mb`",

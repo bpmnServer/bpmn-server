@@ -651,3 +651,10 @@ a:hover { color: var(--color-primary-dark); }
   z-index: 125; width: 32px; height: 32px; border: 0; border-radius: 6px; background: var(--color-sidebar); color: #e2e8f0; cursor: pointer;
   box-shadow: 0 1px 4px rgba(15, 23, 42, 0.3); }
 .app-layout.editor-layout.menu-open .editor-menu-button { display: none; }
+
+/* The server's environment (components/Layout.jsx, EnvironmentBadge): the name written, the colour a second cue */
+.env-badge { display: inline-block; margin: 0 20px 12px; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.mobile-bar .env-badge { margin: 0 8px; }
+.env-development { background: #dbeafe; color: #1e3a8a; }
+.env-test { background: #fef3c7; color: #78350f; }
+.env-production, .env-other { background: #e5e7eb; color: #1f2937; }

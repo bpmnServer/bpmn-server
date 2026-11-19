@@ -34,9 +34,13 @@ function siteOwnGuide(): string | null {
 /** Which environment this site is (APP_ENV): a test one has its own services, which reach nothing outside. */
 function environment(): string {
     const env = process.env.APP_ENV || 'production';
-    return env === 'test'
+    // READ_ONLY=true (runtime/readOnly.ts): an agent can run cases here, not save models
+    const readOnly = (process.env.READ_ONLY ?? '').toLowerCase() === 'true'
+        ? '. **Read-only** (READ_ONLY=true): cases can be started and tasks completed; models, decisions, policies and tests can\'t be saved here'
+        : '';
+    return (env === 'test'
         ? '**test** (APP_ENV=test): its services are the test environment\'s, with the same names; nothing is sent or recorded outside. Test here freely'
-        : `**${env}**: services are real (they send, they record). Build and test models on a test site; a scenario can still replace a service with \`@stub service:<name>\``;
+        : `**${env}**: services are real (they send, they record). Build and test models on a test site; a scenario can still replace a service with \`@stub service:<name>\``) + readOnly;
 }
 
 async function facts(webApp, origin: string) {

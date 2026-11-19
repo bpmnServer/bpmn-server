@@ -11,22 +11,25 @@ html(lang="en")
     //- before the modeler: it adds the token to the modeler's save request
     script(src=asset("/javascripts/csrf.js"))
     link(rel="stylesheet" href=asset("/modeler/modeler.css"))
+    link(rel="stylesheet" href=asset("/stylesheets/environment.css"))
   body(class=(typeof framed !== 'undefined' && framed) ? 'framed' : undefined)
     #modeler-page(data-process-name=processName)
       header.modeler-header
         include includes/editorMenu.pug
+        include includes/environment.pug
         //- framed in a page of this site: its layout has the places; the editor's own actions stay
         unless typeof framed !== 'undefined' && framed
           a.brand(href="/" title="Home")
             img(src="/images/omniworkflow_icon.png" alt="Home")
           +editorMenu
         h1= processName
+        +environmentBadge
         span#js-save-status.modeler-status(role="status")
         nav.modeler-actions
           a(href=`/execute/${processName}` target="execute") Run
           button#js-download(type="button" title="Download this model as a .bpmn file") Download
-          button#js-save-run(type="button") Save &amp; Run
-          button#js-save.primary(type="button" title="Ctrl+S") Save
+          button#js-save-run(type="button" disabled=(typeof environment !== 'undefined' && environment && environment.readOnly)) Save &amp; Run
+          button#js-save.primary(type="button" title=(typeof environment !== 'undefined' && environment && environment.readOnly) ? 'This server is read-only' : 'Ctrl+S' disabled=(typeof environment !== 'undefined' && environment && environment.readOnly)) Save
         +editorUser
       .modeler-body
         .modeler-main

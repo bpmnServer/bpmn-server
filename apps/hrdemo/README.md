@@ -28,6 +28,10 @@ designers, Design and the model editors to designers, Administration to administ
 group ADMIN), Integration (the settings of the connector, the policies, notifications, the API) to both. Everyone has My Work and their tasks. An address they may not open goes to My Work
 (`mayOpenWorkflow`, `src/auth.jsx`); BPMN Server refuses those pages to them anyway.
 
+The environment (`APP_ENV`, `APP_ENV_LABEL` in `.env`) shows in the sidebar, as BPMN Server's pages show it. For a public
+demo, `READ_ONLY=true`: visitors start cases and complete tasks, but the processes, the settings, the users and their
+passwords stay as they are (docs/docs/environments.md).
+
 The notification policy `LeaveNotices` tells the approver and the employee. The workflows hand each notification to
 the delegate's `notify`, which keeps it in the HR application's own database: table `notifications` of `data/hr.sqlite`
 (`server/notifications.js`). BPMN Server keeps its own record of every one, delivered or not: **Notifications**, under

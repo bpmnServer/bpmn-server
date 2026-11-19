@@ -26,6 +26,7 @@ and here
 
 ## [Unreleased]
 ### Added
+- `bpmn-server setup` asks for the environment as `development`, `test` or `production`.
 - The engine's `facts()` also says the application's delegate: its class and the methods it defines
   (`delegate: { name, methods }`), for bpmn-web's Integration page. `parseEnv` and `renderEnv` (a `.env` read and
   changed in place) are exported from the package; `renderEnv` takes who set the lines it adds.

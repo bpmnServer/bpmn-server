@@ -684,6 +684,20 @@ features:
     docs: [docs/docs/integration-settings.md]
     code: [packages/bpmn-web/src/routes/integration.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/dashboards/integration.pug, packages/bpmn-server/src/common/settingValue.ts]
     tests: [apps/testSampleApp/test/web/integration.test.mjs]
+  - id: environment-band
+    area: pages
+    name: "The environment's band"
+    what: "APP_ENV (development, test, production) and APP_ENV_LABEL shown on every page as a band above the menu bar (Development blue, Test amber, the name always written) and as a badge in the model and decision editors; none in production unless labelled. API v3's /me says it (environment: name, label, readOnly, shown), and the HR demo shows it in its sidebar. Unset APP_ENV: not declared, no band, as before."
+    docs: [docs/docs/environments.md]
+    code: [packages/bpmn-web/src/runtime/environment.ts, packages/bpmn-web/src/views/includes/environment.pug, packages/bpmn-web/src/routes/api/v3.ts, apps/hrdemo/src/components/Layout.jsx]
+    tests: [apps/testSampleApp/test/web/environment.test.mjs]
+  - id: read-only
+    area: security
+    name: "Read-only servers"
+    what: "READ_ONLY=true: people start cases and complete tasks, open every page, run the tests; saving, importing, renaming and deleting models, decision tables, policies, tests and modeling rules, roles, connectors, the Integration page's settings, bpmn-web's users and passwords, restarting and deleting every case are refused with 403 READ_ONLY, through the pages and every API (one guard in front of every route). The editors' Save is off and the band says read-only. The HR demo also refuses changes to its users and passwords."
+    docs: [docs/docs/environments.md]
+    code: [packages/bpmn-web/src/runtime/readOnly.ts, packages/bpmn-web/src/app.ts, apps/hrdemo/server/userManager.js]
+    tests: [apps/testSampleApp/test/web/environment.test.mjs]
 # ---------------------------------------------------------------------------------------------------------- security
   - id: web-security
     area: security

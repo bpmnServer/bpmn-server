@@ -33,6 +33,8 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         about: 'Its code: the delegate, whose functions (appServices) scripts and expressions call, and its hooks (notify, loadDataObject, the events).',
         settings: [
             { name: 'APP_ENV', label: 'Environment' },
+            { name: 'APP_ENV_LABEL', label: 'Environment label' },
+            { name: 'READ_ONLY', label: 'Read-only (a public demo)' },
             { name: 'SITE_URL', label: 'Site address' },
         ],
     },

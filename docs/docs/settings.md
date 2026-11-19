@@ -16,6 +16,8 @@ An application has two places for settings. One rule decides which:
 1. A real environment variable wins over the same name in `.env`.
 2. A value in `settings/config.ts` wins over bpmn-web's defaults, including defaults that come from `.env`, such as `MODEL_HISTORY`. So a setting belongs in one place only.
 
+**Which environment a server is** (`APP_ENV`), shown on every page, and **read-only servers** (`READ_ONLY`): [Environments](environments.md).
+
 **Administrators and designers can change many of them in the browser:** [the Integration page](integration-settings.md) (Dashboard ▸ Integration) writes them to `.env`.
 
 **With a separate engine,** give the host and the engine the same `.env`. Only the settings marked *engine* below have to be on the engine, but sharing one file keeps them in step. `ENGINE_AT` is only read by the host.
@@ -30,7 +32,8 @@ by `npm run features`: edit the schema, not these tables.
 
 | Setting | Means |
 |---|---|
-| `APP_ENV` | The environment: `test` makes the sample application use its test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Default: production |
+| `APP_ENV` | The environment: `development`, `test` or `production`. The pages show it as a band (Development blue, Test amber), and API v3's `/me` says it. `test` also makes the sample applications use their test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Unset: not declared, as before 3.7.2 (no band; the real services). See [Environments](environments.md) |
+| `APP_ENV_LABEL` | What the environment's band says instead of its name, in any environment: `Staging`, `Public demo`. Shown in production too |
 | `BODY_LIMIT` | The largest request. Default `50mb` |
 | `DOCS_PATH` | The folder of the docs pages the server shows |
 | `HTTPS`, `SSL_CERT_PATH`, `SSL_KEY_PATH` | Serve HTTPS directly |
@@ -85,6 +88,7 @@ by `npm run features`: edit the schema, not these tables.
 | `SECURITY_POLICY` | Security policies (docs/design/security-policies.md): unset, they are on when the models folder has `policies/security/`; `default` turns them on with the built-in default policy; `off` turns them off |
 | `SESSION_SECRET` | **A secret, required in production.** Secures sessions and CSRF tokens |
 | `SIGNUP_GROUPS`, `SIGNUP_VERIFY_EMAIL` | Sign-up sends a verification email, and gives these groups once verified |
+| `READ_ONLY` | `true`: people use the server but can't change it. They start cases and complete tasks; the models, decision tables, policies, tests, roles, connectors, settings and users can't be changed, through a page or an API. For a public demo. See [Environments](environments.md#read-only) |
 
 ### REST APIs
 

@@ -20,7 +20,8 @@ export function AuthProvider({ children }) {
     if (!user) return;
     let current = true;
     fetch('/api/v3/me').then(r => (r.ok ? r.json() : null)).then(
-      me => current && setMay({ known: true, design: !!me?.may?.design, administer: !!me?.may?.administer }),
+      // environment: the server's (APP_ENV, APP_ENV_LABEL, READ_ONLY), for the layout's badge
+      me => current && setMay({ known: true, design: !!me?.may?.design, administer: !!me?.may?.administer, environment: me?.environment ?? null }),
       () => current && setMay({ ...NOTHING, known: true }));
     return () => { current = false; };
   }, [user?.userName, user?.role]);
@@ -45,7 +46,7 @@ export function AuthProvider({ children }) {
 }
 
 /** known: the workflow server has answered (or could not) */
-const NOTHING = { known: false, design: false, administer: false };
+const NOTHING = { known: false, design: false, administer: false, environment: null };
 
 /**
  * May this user open a workflow page (an address under /workflow)? The Workbench (/workflow) is for administrators
