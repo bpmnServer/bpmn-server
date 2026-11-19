@@ -8,9 +8,11 @@ const PREFIX = '/workflow';
 
 // owf's Workbench is its address, /: asked as /?owf, which the server answers with the Workbench in this frame
 // (server/userManager.js: / opened anywhere else is the HR home page)
+// A place on the page (#start-events: My Work's Start a process) is passed on: asked again while the page is there,
+// it is opened again, there (the frame's own address, once loaded, is kept without it)
 const owfPath = location => {
   const path = (location.pathname.slice(PREFIX.length) || '/') + location.search;
-  return path === '/' ? '/?owf' : path;
+  return (path === '/' ? '/?owf' : path) + (location.hash || '');
 };
 /** The frame's address as the HR address shows it: /?owf is the Workbench, /hr/workflow. */
 const shownPath = at => (at.pathname === '/' && at.search === '?owf' ? '/' : at.pathname + at.search);
@@ -55,6 +57,13 @@ export default function Workflow() {
     const wanted = owfPath(location);
     // "owf is not behind these pages" is for that page: another one is tried again
     setMissing(false);
+    // a place on the page the frame shows already (asked again: each time): there, without loading it again
+    const [path, place] = wanted.split('#');
+    const page = framePage();
+    if (place && page && page.at.pathname + page.at.search === path) {
+      page.doc.getElementById(place)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     if (wanted !== shown.current) {
       shown.current = wanted;
       setSrc(wanted);

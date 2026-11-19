@@ -137,7 +137,7 @@ export default function TaskPanel({ onToggle, onCount }) {
                 : <p className="task-empty">Nothing completed yet.</p>}
             </>
           )}
-          <button className="btn btn-sm task-all" onClick={() => go('/workflow/dashboard')}>My Work: start a process</button>
+          <button className="btn btn-sm task-all" onClick={() => go('/workflow/dashboard#start-events')}>My Work: start a process</button>
         </aside>
       )}
     </>
