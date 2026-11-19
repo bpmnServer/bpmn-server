@@ -21,7 +21,7 @@ condition can use, such as the fields of the forms before it, and checks it as y
 
 ## Joining paths
 
-Request can be reached three ways (the start, wrong dates, information required); **Record the leave** two (approved,
+Request can be reached two ways (the start, information required); **Record the leave** two (approved,
 and after HR's fix); **Tell the employee** two (recorded, rejected). Each has a gateway in front of it that **joins**
 those flows. Without one, the Problems tab warns *Incoming flows do not join*: flows arriving straight at a task each
 start it, which is rarely meant.

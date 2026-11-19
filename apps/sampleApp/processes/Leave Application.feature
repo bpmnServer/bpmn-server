@@ -27,16 +27,25 @@ Feature: Leave Application
       And @check :leave data.recordId is "LV-1"
       And @check :leave passed element:Tell 1 times
 
-  Scenario: Wrong dates go back to the employee
+  Scenario: Wrong dates are refused by the form; the request waits for the employee
     When user:user1 @login with role of "Employee"
       And @start process:"Leave Application" as :leave
-      And @invoke element:Request in :leave
+      And @invoke element:Request in :leave is refused
         | LeaveType | Vacation   |
         | StartDate | 2026-12-05 |
         | EndDate   | 2026-12-01 |
-    Then @check :leave has 2 items of element:Request
+      And @invoke element:Request in :leave is refused
+        | LeaveType | Vacation   |
+        | StartDate | 2026-12-05 |
+    Then @check :leave has 1 items of element:Request
       And @check :leave last element:Request status is "wait"
       And @check :leave passed element:Approve 0 times
+    When @invoke element:Request in :leave
+        | LeaveType | Vacation   |
+        | StartDate | 2026-12-01 |
+        | EndDate   | 2026-12-05 |
+    Then @check :leave data.days is 5
+      And @check :leave last element:Approve status is "wait"
 
   Scenario: A rejected request is not recorded, and the employee is told
     Given @stub service:notifyUsers with

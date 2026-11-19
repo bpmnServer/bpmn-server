@@ -50,7 +50,7 @@ Open **Leave Application** in the model editor (Workbench → Models → **Open 
 
 | Lane | Elements |
 |---|---|
-| Employee | **Request**, **Check the dates** and its gateway, **Tell the employee** |
+| Employee | **Request** (its form checks the dates), **Tell the employee** |
 | Manager | **Approve**, its reminder timer, **Remind the managers**, the **Outcome?** gateway |
 | HR | **Record the leave**, its error event **Not recorded**, **Fix the record** |
 
