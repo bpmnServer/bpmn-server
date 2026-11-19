@@ -236,7 +236,7 @@ await click(page.locator('.test-simulate'));
 await wait(600);
 await click(page.locator('.test-sim-play'));
 await caption('Blue: started  ·  Green: done  ·  Orange: waiting');
-await page.locator('.test-sim-text', { hasText: 'Done (' }).waitFor({ timeout: 60000 });
+await page.locator('.test-sim-text', { hasText: 'End of the run (' }).waitFor({ timeout: 60000 });
 await wait(1500);
 await caption('', 0);
 

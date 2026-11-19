@@ -144,8 +144,14 @@ test('the diagram numbers its elements by their items\' seq, as the items table;
     assert.equal(await panel.locator('.test-sim-details').isVisible(), true);
     assert.ok((await panel.locator('.test-sim-details li').count()) > 0);
     assert.match(await panel.locator('.test-sim-details .test-sim-details-item').innerText(), /^#\d+ \S/, 'which item: its number first');
+    // what it is at this change, not at the run's end: back at the first, the start event has only started
+    await panel.locator('.test-sim-back').click();
+    assert.match(await panel.locator('.test-sim-text').innerText(), /^1 of \d+: .*started$/);
+    assert.match(await panel.locator('.test-sim-details .test-sim-details-item').innerText(), /· started$/, 'started, not done: it ends at a later change');
+    await panel.locator('.test-sim-step').click();
+    assert.match(await panel.locator('.test-sim-details .test-sim-details-item').innerText(), /· (done|taken)$/);
     await panel.locator('.test-sim-play').click();
-    await page.waitForFunction(() => /^Done \(/.test(document.querySelector('#simulation .test-sim-text')?.textContent || ''), null, { timeout: 30000 });
+    await page.waitForFunction(() => /^End of the run \(/.test(document.querySelector('#simulation .test-sim-text')?.textContent || ''), null, { timeout: 30000 });
     assert.ok(await page.locator('.djs-element.test-passed').count() > 0, 'done: green');
     assert.equal(await page.locator('.djs-element.test-waiting').count(), 1, 'Approve still waits: orange');
     await panel.locator('.test-sim-stop').click();

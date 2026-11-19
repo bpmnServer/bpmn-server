@@ -180,7 +180,7 @@ export class Simulation {
         if (this.atEnd) {
             clearTimeout(this.timer);
             this.paused = true;
-            this.text = `Done (${this.frames.length} changes): blue started, green done, orange still waiting; the numbers are the order they started in`;
+            this.text = `End of the run (${this.frames.length} changes): blue started, green done, orange still waiting; the numbers are the order they started in`;
             this.changed?.();
             return false;
         }
@@ -267,6 +267,16 @@ export function simulationPanel(sim, actions) {
     return panel;
 }
 
+/**
+ * What an item is at a change of the simulation: started, done (ended, its next flow taken), waits (still waiting
+ * when the run stopped), or, for a flow, taken. Never its status at the run's end.
+ */
+export function frameState(frame) {
+    if (!frame) return '';
+    if (frame.number === undefined && frame.marker === 'test-passed') return 'taken';
+    return { 'test-started': 'started', 'test-passed': 'done', 'test-waiting': 'waits' }[frame.marker] ?? '';
+}
+
 /** The panel as the simulation now stands (`root`: the panel, or what holds it). */
 export function updateSimulationPanel(root, sim) {
     const panel = root?.matches?.('.test-sim-panel') ? root : root?.querySelector?.('.test-sim-panel');
@@ -282,10 +292,11 @@ export function updateSimulationPanel(root, sim) {
     play.disabled = atEnd;
     find('.test-sim-text').textContent = sim?.text ?? '';
     const details = find('.test-sim-details');
-    const lines = showDetails() && sim && !(sim.atEnd && sim.paused && /^Done/.test(sim.text)) ? frameDetails(sim.current, sim.steps) : [];
-    // which item this change is: its number, its element, what it is now
+    const lines = showDetails() && sim && !(sim.atEnd && sim.paused && /^End of the run/.test(sim.text)) ? frameDetails(sim.current, sim.steps) : [];
+    // which item this change is: its number, its element, and what it is at this change (not at the run's end: an
+    // item that ended later is only started here)
     const item = showDetails() && sim?.current?.item;
-    const status = item && ({ wait: 'waits', end: 'done', start: 'started' }[item.status] ?? item.status ?? '');
+    const status = item && frameState(sim.current);
     const heading = item ? el('li', { class: 'test-sim-details-item' }, `#${item.seq ?? '?'} ${item.name || item.elementId || ''}${status ? ` · ${status}` : ''}`) : null;
     details.replaceChildren(...(heading ? [heading] : []), ...lines.map(line => el('li', {}, line)));
     details.hidden = !showDetails() || !sim;

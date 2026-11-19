@@ -26,6 +26,9 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- Simulate's **Show details** says what an item is at the change shown (started, done, waits; a flow: taken), not
+  its status at the run's end: an activity that ended later no longer reads *done* where it starts. The end reads
+  *End of the run*, not *Done*.
 - **Simulate moves** (the Test tab, an instance's page): a flow taken draws itself as a token travels it, an element
   that starts glows, one that ends flashes, a waiting one's dashes crawl, each number pops in; Back redraws without
   moving; none for less motion (`modeler/src/simulation`). Test: `apps/testSampleApp/test/ui/instance-filters.test.mjs`.

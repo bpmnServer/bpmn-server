@@ -81,7 +81,7 @@ async function addCheck(page, { at = 'end', kind, node, count, status, path, op,
 async function simulateAll(page) {
     await page.click('.test-simulate');
     await page.click('.test-sim-play');
-    await page.waitForSelector('.test-sim-text:text("Done (")', { timeout: 30000 });
+    await page.waitForSelector('.test-sim-text:text("End of the run (")', { timeout: 30000 });
 }
 
 const marked = (page, marker) => page.evaluate(m => [...document.querySelectorAll(`.djs-element.${m}`)].map(e => e.dataset.elementId).sort(), marker);
@@ -214,7 +214,7 @@ test('Run repeats the saved steps on a new instance; Simulate numbers its path; 
     await page.locator('.test-sim-details-on').uncheck();
     assert.equal(await page.locator('.test-sim-details').isVisible(), false);
     await page.click('.test-sim-play');                       // play the rest
-    await page.waitForSelector('.test-sim-text:text("Done (")', { timeout: 20000 });
+    await page.waitForSelector('.test-sim-text:text("End of the run (")', { timeout: 20000 });
     const numbers = await page.evaluate(() => [...document.querySelectorAll('.test-seq')]
         .map(b => [b.closest('.djs-overlays').getAttribute('data-container-id'), Number(b.textContent)]));
     const order = numbers.sort((a, b) => a[1] - b[1]).map(([id]) => id);
