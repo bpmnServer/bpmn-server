@@ -70,7 +70,8 @@ person the HR application signed in (`server/userManager.js`, bpmn-web's `IUserM
 
 - `npm start`: build the HR pages and start the server.
 - `npm run setup`: the settings step by step, then prepare the database.
-- `npm test`: the models' tests, in memory.
+- `npm test`: the models' tests, in memory (the `hr` connector answers them from its own answers: `APP_ENV=test`), then
+  the HR server's sign-in tests (`npm run test:server`: with `READ_ONLY=true`, no user or password changed).
 - `npm run dev`: the HR application on its own, nothing else needed: http://localhost:5173/hr/, the pages (changes shown
   as they are saved) and the HR API. With `HR_API=http://localhost:3100`, the API of the running server instead, with
   the data the workflows see.
