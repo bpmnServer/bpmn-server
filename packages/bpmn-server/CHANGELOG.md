@@ -26,6 +26,10 @@ and here
 
 ## [Unreleased]
 ### Added
+- A connector's own answers outside production can depend on the input (`cases`: `when`, `status`, `output`; a
+  status other than 2xx fails as the API would), and `testing.environments` limits it to development or test.
+- `invokeDecision(server, ref, data)` is exported, and finds a policy by its tests' name (`<name>.policy`,
+  `<name>.security-policy`, `<name>.notification-policy`).
 - **Connectors outside production** (docs/docs/connectors.md#outside-production): a connector's `testing`, where
   APP_ENV is development or test: its OpenAPI document's examples (nothing called; `exampleOf` makes one from a
   schema; `testing.answers` by operationId first) or a sandbox's address. Production, or no APP_ENV, always calls the
@@ -184,6 +188,8 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- A scenario's `@evaluate` failed in an engine in the same process (`npm test`): `server.engine.invokeDecision is not
+  a function`. It evaluates the decision itself, and finds a policy by its tests' name.
 - **MongoDB paging by a field many instances share** (`dataStore.find` with `sort` and `after`, Aggregate.ts;
   discussion #247). Page after page repeated some instances and left others out:
   - The sort had no tie-break, so MongoDB could order a tie differently from one page to the next, while the cursor

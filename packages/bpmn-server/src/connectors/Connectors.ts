@@ -76,16 +76,24 @@ export interface Connector {
  * - `real` (the default): the real API, as in production;
  * - `examples`: no call: each operation answers its document's example (else one made from its schema);
  * - `sandbox`: the same calls, to `baseUrl` (a sandbox of the API), with the same key.
- * `answers`, by operationId: an operation's own answer, in place of the example (`examples`).
+ * `answers`, by operationId: an operation's own answer, in place of the example (`examples`): the answer itself, or
+ * `{ cases: [{ when, status, output }] }`: the first case whose `when` its input matches (each value, as text; a
+ * case without `when` matches any); a status other than 2xx fails as the API's would (HTTP_<status>).
+ * `environments`: where it applies, development and test (the default), or one of them.
  */
 export interface ConnectorTesting {
     answer: 'real' | 'examples' | 'sandbox';
     baseUrl?: string;
     answers?: Record<string, any>;
+    environments?: ('development' | 'test')[];
 }
 
-/** Whether connectors may answer as their `testing` says: APP_ENV says development or test, and nothing else. */
-export const connectorsTesting = (env = process.env) => ['development', 'test'].includes(String(env.APP_ENV ?? '').trim().toLowerCase());
+const TESTING_ENVIRONMENTS = ['development', 'test'];
+/** The environment connectors may answer outside production in: APP_ENV, when it says development or test; else none. */
+export const connectorsTesting = (env = process.env): string | null => {
+    const name = String(env.APP_ENV ?? '').trim().toLowerCase();
+    return TESTING_ENVIRONMENTS.includes(name) ? name : null;
+};
 
 /** What `add` takes: the document as text (JSON or YAML) or an object, or its URL. */
 export interface ConnectorInput {
@@ -528,8 +536,10 @@ export class Connectors {
         if (connector.operations[operationId] === false && !options.test) throw new Error(`The operation '${ref}' is disabled`);
 
         // outside production, as its testing says: an example for an answer, or a sandbox for the API
-        const testing = connectorsTesting() && !options.test ? connector.testing : undefined;
-        if (testing?.answer === 'examples') return this.exampleAnswer(connector, op, ref, options.log);
+        // where its testing applies (APP_ENV development or test, as its environments say); never the Test button's call
+        const environment = connectorsTesting();
+        const testing = environment && !options.test && (connector.testing?.environments ?? TESTING_ENVIRONMENTS).includes(environment) ? connector.testing : undefined;
+        if (testing?.answer === 'examples') return this.exampleAnswer(connector, op, ref, input ?? {}, options.log);
         const request = this.buildRequest(testing?.answer === 'sandbox' && testing.baseUrl ? { ...connector, baseUrl: testing.baseUrl } : connector, op, input ?? {});
         const timeout = connector.timeout ?? this.settings.timeout ?? 30_000;
         const tries = 1 + (IDEMPOTENT.includes(op.method) ? (connector.retries ?? this.settings.retries ?? 2) : 0);
@@ -566,14 +576,26 @@ export class Connectors {
      * An operation's answer outside production, with no call: the connector's own answer for it (testing.answers),
      * else its document's example of its first success response, else one made from that response's schema.
      */
-    private exampleAnswer(connector: Connector, op: Operation, ref: string, log?: (line: string) => void): CallResult {
+    private exampleAnswer(connector: Connector, op: Operation, ref: string, input: Record<string, any>, log?: (line: string) => void): CallResult {
         const own = connector.testing?.answers ?? {};
         const success = Object.keys(op.responses ?? {}).filter(s => /^2\d\d$/.test(s)).sort()[0];
         const response = success ? op.responses[success] : undefined;
-        const output = op.operationId in own ? own[op.operationId]
-            : response?.example !== undefined ? response.example : exampleOf(response?.schema);
-        log?.(`connector ${ref}: answered by its example (testing: examples, APP_ENV=${process.env.APP_ENV}); nothing called`);
-        return { status: Number(success ?? 200), output: output ?? null, url: `example:${ref}`, ms: 0 };
+        let status = Number(success ?? 200);
+        let output = response?.example !== undefined ? response.example : exampleOf(response?.schema);
+        const mine = own[op.operationId];
+        if (mine && typeof mine === 'object' && Array.isArray(mine.cases)) {
+            // the first case its input matches: { when, status, output }
+            const matches = (when: any) => !when || Object.entries(when).every(([key, value]) => String(inputValue(input, key)) === String(value));
+            const chosen = mine.cases.find(c => matches(c?.when));
+            if (chosen) {
+                status = Number(chosen.status ?? status);
+                output = chosen.output ?? null;
+            }
+        }
+        else if (op.operationId in own) output = mine;
+        log?.(`connector ${ref}: answered ${status} by its testing (examples, APP_ENV=${process.env.APP_ENV}); nothing called`);
+        if (status < 200 || status > 299) throw new ConnectorError(status, output, ref);
+        return { status, output: output ?? null, url: `example:${ref}`, ms: 0 };
     }
 
     /** A connector's testing, checked: its answer one of real, examples, sandbox; a sandbox's address an http(s) URL. */
@@ -584,7 +606,12 @@ export class Connectors {
         if (testing.answer === 'sandbox') testing.baseUrl = this.checkBaseUrl(testing.baseUrl);
         if (testing.answers !== undefined && (typeof testing.answers !== 'object' || Array.isArray(testing.answers)))
             throw new Error('testing.answers is an object: an answer by operationId');
-        return { answer: testing.answer, ...(testing.baseUrl ? { baseUrl: testing.baseUrl } : {}), ...(testing.answers ? { answers: testing.answers } : {}) };
+        if (testing.environments !== undefined && (!Array.isArray(testing.environments) || !testing.environments.length || testing.environments.some(e => !TESTING_ENVIRONMENTS.includes(e))))
+            throw new Error('testing.environments is development, test, or both');
+        return {
+            answer: testing.answer, ...(testing.baseUrl ? { baseUrl: testing.baseUrl } : {}), ...(testing.answers ? { answers: testing.answers } : {}),
+            ...(testing.environments ? { environments: testing.environments } : {}),
+        };
     }
 
     private backoff(attempt: number) {
@@ -712,4 +739,10 @@ export class Connectors {
         if (!allowed.some(a => a === host || (a.startsWith('*.') && host.endsWith(a.slice(1)))))
             throw new Error(`${host} is not in CONNECTORS_ALLOW_HOSTS`);
     }
+}
+
+/** An input's value by its name, a dotted one (body.employeeId) read inside it. */
+function inputValue(input: Record<string, any>, key: string) {
+    if (key in (input ?? {})) return input[key];
+    return key.split('.').reduce((v, k) => v?.[k], input);
 }

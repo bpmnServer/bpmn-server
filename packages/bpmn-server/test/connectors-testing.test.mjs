@@ -84,3 +84,18 @@ test('a value made from a schema: an example, a default, an enum, a type', () =>
   assert.deepEqual(exampleOf({ allOf: [{ properties: { a: { type: 'boolean' } } }, { properties: { b: { type: 'number' } } }] }), { a: false, b: 0 });
   assert.equal(exampleOf(undefined), null);
 });
+
+test('own answers by case: the first whose input matches, its status; a failing one fails as the API would; environments', async () => {
+  setEnv('test');
+  await connectors.update('staff', { testing: { answer: 'examples', environments: ['test'], answers: { getEmployee: { cases: [
+    { when: { id: 'E-2' }, output: { id: 'E-2', name: 'James' } },
+    { status: 404, output: { error: 'not found' } },
+  ] } } } });
+  assert.deepEqual((await connectors.call('staff/getEmployee', { id: 'E-2' })).output, { id: 'E-2', name: 'James' });
+  await assert.rejects(connectors.call('staff/getEmployee', { id: 'E-9' }), err => err.status === 404 && err.name === 'ConnectorError' || /404/.test(err.message));
+  // only in test: development calls the real API
+  setEnv('development');
+  assert.equal((await connectors.call('staff/getEmployee', { id: 'E-2' })).output.from, 'real');
+  await assert.rejects(connectors.update('staff', { testing: { answer: 'examples', environments: ['production'] } }), /development, test, or both/);
+  await connectors.update('staff', { testing: null });
+});

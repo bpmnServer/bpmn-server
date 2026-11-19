@@ -13,6 +13,20 @@ import type { BPMNServer } from './BPMNServer.js';
  * read (`.id`, `.status`, `.instance`, with `instance.items` and `instance.tokens`). Nothing in it reaches a running
  * process, and it can cross a network as it is.
  */
+/**
+ * A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id;
+ * a policy by its tests' name (`LeaveApproval.policy`, `Cases.security-policy`, `Notices.notification-policy`). The
+ * engine's own (EngineService's invokeDecision, and a scenario's @evaluate, which runs in the engine).
+ */
+export async function invokeDecision(server: any, ref: string, data = {}) {
+    // a policy by its tests' name: <name>.policy (assignment), <name>.security-policy, <name>.notification-policy
+    const policy = /^(.+)\.(?:(security|notification)-)?policy$/.exec(ref);
+    const folder = policy ? path.join(server.configuration.definitionsPath, 'policies', policy[2] ?? 'assignment') : server.configuration.definitionsPath;
+    const found = await DMNEngine.find(folder, policy ? policy[1] : ref);
+    const decision = await new DMNEngine().load(found.filePath, found.decision.id);
+    return { decision: found.decision.id, file: path.basename(found.filePath), result: decision.evaluate(data) };
+}
+
 /** The application's delegate: its class, and the methods it defines itself (not those of bpmn-server's or bpmn-web's base). */
 export function delegateFacts(delegate): { name: string | null; methods: string[] } {
     const found = new Set<string>();
@@ -131,11 +145,7 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
             return lookupChoices(server, lookup, criteria, context);
         },
         /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
-        invokeDecision: async (ref: string, data = {}) => {
-            const found = await DMNEngine.find(server.configuration.definitionsPath, ref);
-            const decision = await new DMNEngine().load(found.filePath, found.decision.id);
-            return { decision: found.decision.id, file: path.basename(found.filePath), result: decision.evaluate(data) };
-        },
+        invokeDecision: (ref: string, data = {}) => invokeDecision(server, ref, data),
         /** What is being run now. */
         live: async () => (server.cache.list() || []).map(execution => {
             const answer: any = executionResult(execution);

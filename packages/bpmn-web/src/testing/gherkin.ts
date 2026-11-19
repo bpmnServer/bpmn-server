@@ -9,7 +9,7 @@ import vm from 'node:vm';
 import { randomUUID } from 'node:crypto';
 import { AstBuilder, compile, GherkinClassicTokenMatcher, Parser } from '@cucumber/gherkin';
 import { IdGenerator } from '@cucumber/messages';
-import { runSandboxed, SandboxScriptHandler, SecureUser, notificationsOf, type StubSet } from 'bpmn-server';
+import { runSandboxed, SandboxScriptHandler, SecureUser, notificationsOf, invokeDecision, type StubSet } from 'bpmn-server';
 import { matched, outputAt } from './decisionTests.js';
 import { compare, valueAt } from './scenarios.js';
 
@@ -240,7 +240,8 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
     async evaluate(server, scenario, { rest, rows }) {
         const match = new RegExp(`^decision:${NAME} as :(\\w+)$`).exec(rest);
         if (!match) throw new Error('@evaluate: @evaluate decision:<name> as :<name>');
-        const { result } = await server.engine.invokeDecision(unquoted(match[1]), await scenario.table(rows));
+        // in the engine, where the scenario runs: the decision of its models folder (EngineService's invokeDecision)
+        const { result } = await invokeDecision(server, unquoted(match[1]), await scenario.table(rows));
         scenario.names[match[2]] = { result, evaluated: true };
     },
 

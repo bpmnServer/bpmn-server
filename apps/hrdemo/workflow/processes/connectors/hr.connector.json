@@ -247,5 +247,84 @@
         }
       }
     }
+  },
+  "testing": {
+    "answer": "examples",
+    "environments": [
+      "test"
+    ],
+    "answers": {
+      "getEmployee": {
+        "cases": [
+          {
+            "when": {
+              "id": "EMP-002"
+            },
+            "output": {
+              "employeeId": "EMP-002",
+              "firstName": "James",
+              "lastName": "Morgan",
+              "email": "james.morgan@company.com",
+              "status": "Active",
+              "departmentId": "DEP-002",
+              "managerId": null,
+              "jobTitle": "Director of Consulting",
+              "employmentType": "FullTime"
+            }
+          },
+          {
+            "when": {
+              "id": "EMP-009"
+            },
+            "output": {
+              "employeeId": "EMP-009",
+              "firstName": "Anna",
+              "lastName": "Petrov",
+              "email": "anna.petrov@company.com",
+              "status": "Active",
+              "departmentId": "DEP-002",
+              "managerId": "EMP-002",
+              "jobTitle": "Consultant",
+              "employmentType": "FullTime"
+            }
+          },
+          {
+            "status": 404,
+            "output": {
+              "error": "Employee not found"
+            }
+          }
+        ]
+      },
+      "listEmployees": [
+        {
+          "employeeId": "EMP-002",
+          "firstName": "James",
+          "lastName": "Morgan",
+          "email": "james.morgan@company.com",
+          "status": "Active",
+          "departmentId": "DEP-002",
+          "managerId": null,
+          "jobTitle": "Director of Consulting",
+          "employmentType": "FullTime"
+        },
+        {
+          "employeeId": "EMP-009",
+          "firstName": "Anna",
+          "lastName": "Petrov",
+          "email": "anna.petrov@company.com",
+          "status": "Active",
+          "departmentId": "DEP-002",
+          "managerId": "EMP-002",
+          "jobTitle": "Consultant",
+          "employmentType": "FullTime"
+        }
+      ],
+      "createAssignment": {
+        "assignmentId": "ASG-TEST",
+        "projectName": "Test project",
+        "status": "Active"
+      }
+    }
   }
 }

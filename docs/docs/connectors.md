@@ -175,6 +175,19 @@ In development and test, a connector doesn't have to reach the real API. Its pag
 **Own answers** give an operation's answer by its operationId (`{ "getEmployee": { "id": "E-1" } }`), in place of
 the document's example.
 
+An own answer can also depend on the input, with **cases**: the first whose `when` the call's input matches, with its
+`status`. A status other than 2xx fails as the API's would (`HTTP_404` in the model):
+
+```json
+{ "getEmployee": { "cases": [
+    { "when": { "id": "EMP-002" }, "output": { "employeeId": "EMP-002", "firstName": "James" } },
+    { "status": 404, "output": { "error": "Employee not found" } }
+] } }
+```
+
+In the connector's file, `testing.environments` limits it to `["test"]` or `["development"]` (both by default). The HR
+demo's `hr` connector answers this way in `npm test` only (`APP_ENV=test`); in development it calls the HR API.
+
 It applies only where `APP_ENV` is `development` or `test`
 ([Environments](environments.md)). **Production, or a server that doesn't set `APP_ENV`, always calls the real
 API**, whatever the connector says. The connector's **Test** button always calls the real API too. With a separate
