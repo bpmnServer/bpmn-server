@@ -112,6 +112,8 @@ block content
             | Back to instances
         h1 #{testCase ? 'Test case' : title}
         p.instance-subtitle #{instance.label && instance.label !== instance.name ? instance.label + ' · ' + instance.name : instance.name}
+          | &nbsp;·&nbsp;
+          a.guide-link(href=`/guide/${encodeURIComponent(instance.name)}`) How this process goes
       span.instance-id(title=instance.id) ID: #{instance.id}
         if String(instance.id || '').startsWith('test-')
           span.status-badge.status-test(title="A test run's case: an ordinary case, marked so") test

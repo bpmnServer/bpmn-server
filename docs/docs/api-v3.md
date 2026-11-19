@@ -19,6 +19,7 @@ Errors are `{ "error": { "code", "message" } }`, with the status the error's kin
 |---|---|
 | [GET /me](#get-me) | Who this call acts as, and what they may do |
 | [GET /processes/startable](#get-processesstartable) | The start events this user may use, with their forms |
+| [GET /processes/{name}/guide](#get-processesnameguide) | A process explained, for whoever may start it or works in it: its steps (who does each, what its form asks, where it goes next), its policies, and its scenarios in plain words, each with its test case |
 | [POST /processes/{name}/start](#post-processesnamestart) | Start a process as this user |
 | [POST /processes/{name}/choices/{field}](#post-processesnamechoicesfield) | A field of a start form with a list or a lookup (&lt;owf:list>, &lt;owf:lookup>): its choices, from the source the model names |
 | [GET /tasks](#get-tasks) | The waiting tasks this user has a part in, oldest first; with status=completed, the ones they completed, newest first |
@@ -79,6 +80,20 @@ The start events this user may use, with their forms.
 |---|---|---|
 | 200 | A list | { items, next } |
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+
+### GET /processes/{name}/guide
+
+A process explained, for whoever may start it or works in it: its steps (who does each, what its form asks, where it goes next), its policies, and its scenarios in plain words, each with its test case.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `name` | path | string | yes | The model |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | The guide | { name, description, steps, policies, examples } |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
 
 ### POST /processes/{name}/start
 

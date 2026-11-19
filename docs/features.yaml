@@ -684,6 +684,13 @@ features:
     docs: [docs/docs/integration-settings.md]
     code: [packages/bpmn-web/src/routes/integration.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/dashboards/integration.pug, packages/bpmn-server/src/common/settingValue.ts]
     tests: [apps/testSampleApp/test/web/integration.test.mjs]
+  - id: process-guide
+    area: pages
+    name: "A process explained (the guide)"
+    what: "/guide/<process> and API v3's GET /processes/{name}/guide, for whoever may start the process or works in it (and designers and administrators; anyone else a 404): the model's description and diagram; its steps in the order a case meets them (who does each, what each form asks and which fields are required, where it goes next and each decision's ways); the policies that decide who works on it and who is told; and its examples, the .feature's scenarios in plain words, each with its test case. Scripts, expressions, connectors and keys left out. Linked from My Work's Start a process and from each case's page."
+    docs: [docs/docs/process-guide.md]
+    code: [packages/bpmn-web/src/routes/api/guide.ts, packages/bpmn-web/src/views/guide.pug, packages/bpmn-web/src/routes/workflow.ts]
+    tests: [apps/testSampleApp/test/web/guide.test.mjs]
   - id: test-cases
     area: web
     name: "Test cases"

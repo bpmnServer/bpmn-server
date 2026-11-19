@@ -93,6 +93,8 @@ block dash
 							b= start.processName
 							if start.name !== start.processName
 								|  · #{start.name}
+						p.dash-muted
+							a.guide-link(href=`/guide/${encodeURIComponent(start.processName)}`) How #{start.processName} goes
 						+startForm(start)
 			else
 				p.dash-empty No process can be started by hand.

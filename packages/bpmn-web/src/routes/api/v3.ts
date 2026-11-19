@@ -16,6 +16,7 @@ import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } f
 import { invokeDecision } from '../decisions.js';
 import { labelFilterQuery, labeledTasks, labeledInstances, LabelFilterError } from './labels.js';
 import { serverEnvironment } from '../../runtime/environment.js';
+import { GuideOperations, GuideError } from './guide.js';
 
 /*
  * API v3, /api/v3 (docs/design/api-v3.md): every call through the door (a user's token, or the service key) and as
@@ -36,6 +37,7 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
     const router = express.Router();
     const tokens = new Tokens(server);
     const tasks = new TaskOperations(server);
+    const guides = new GuideOperations(server);
     const instances = new InstanceOperations(server);
     const models = new ModelOperations(server);
     const settings = new SettingsOperations(server);
@@ -86,7 +88,7 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         catch (error) {
             if (error instanceof ModelError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
-            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError || error instanceof LabelFilterError)
+            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError || error instanceof LabelFilterError || error instanceof GuideError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
@@ -109,6 +111,8 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
     // ---- processes: what this user may start, and starting one as them
 
     router.get('/processes/startable', handler(async (req, user) => ({ items: await tasks.startable(user) })));
+    // a process explained, for whoever may start it or works in it (guide.ts)
+    router.get('/processes/:name/guide', handler((req, user) => guides.guide(user, req.params.name)));
     router.post('/processes/:name/start', handler(async (req, user) => {
         const { instance, task } = await tasks.start(user, req.params.name, { data: req.body?.data ?? {}, startNodeId: req.body?.startNodeId });
         return { instance: (await labeledInstances(server, [instance]))[0], task: task ? (await labeledTasks(server, [task]))[0] : null };

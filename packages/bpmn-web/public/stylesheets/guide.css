@@ -1,0 +1,20 @@
+/* A process explained (views/guide.pug) */
+.guide-diagram { overflow-x: auto; }
+.guide-diagram svg { max-width: 100%; max-height: 520px; height: auto; }
+.guide-steps { padding-left: 20px; }
+.guide-step { margin: 0 0 14px; }
+.guide-step-head b { font-size: 14px; }
+.guide-kind { margin-left: 8px; font-size: 12px; color: #8597a8; }
+.guide-doc { white-space: pre-line; margin: 4px 0; }
+.guide-who, .guide-next, .guide-form { margin: 4px 0; font-size: 13px; }
+.guide-form ul, .guide-next ul { margin: 2px 0 0; padding-left: 18px; }
+.guide-muted { color: #8597a8; }
+.guide-example { border-top: 1px solid #e6ebf0; padding-top: 10px; margin-top: 10px; }
+.guide-example h3 { font-size: 14px; margin: 0 0 6px; }
+.guide-example-steps { padding-left: 20px; font-size: 13px; }
+.guide-example-steps li { margin: 3px 0; }
+.guide-example-steps .guide-setup { color: #8597a8; }
+.guide-example-steps .guide-result { font-weight: 600; }
+.guide-values { margin: 4px 0 6px; font-size: 12px; width: auto !important; }
+.guide-values td { padding: 1px 10px 1px 0; }
+.guide-case { font-size: 13px; }

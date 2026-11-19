@@ -71,17 +71,37 @@ export class Workflow extends Common {
 
         // ---- test cases (testing/testCases.ts): each scenario's last case, from its file beside the models; what
         // production shows of the tests (it runs none). Read-only: no action on them
+        // a process explained (routes/api/guide.ts), for whoever may start it or works in it: the API decides
+        router.get('/guide/:process', awaitAppDelegateFactory(async (request, response) => {
+            const name = request.params.process;
+            const read = await asPage(request, response, async api => ({ guide: await api.guide(name), svg: await api.guideDiagram(name) }));
+            if (!read) return;
+            let svg = read.svg;
+            if (!svg || !svg.includes('data-element-id'))
+                svg = await bpmnToSvg(await serverOf(request).definitions.getSource(name)).catch(() => null) || svg;
+            response.render('guide', { title: name, guide: read.guide, svg: svg ? ViewHelper.withoutRunMarks(svg) : null });
+        }));
+
+        // whoever may read a process's guide sees its test cases (the API decides)
+        const mayRead = async (request, name: string) => {
+            try { return await (await pageApi(request, serverOf(request))).mayReadGuide(name); }
+            catch (exc) { if (exc instanceof ApiError) return false; throw exc; }
+        };
         router.get('/test-cases', awaitAppDelegateFactory(async (request, response) => {
             const folder = serverOf(request).configuration.definitionsPath;
-            const models = modelsWithTestCases(folder).map(model => ({ model, cases: listTestCases(folder, model) }));
+            const readable = [];
+            for (const model of modelsWithTestCases(folder)) if (await mayRead(request, model)) readable.push(model);
+            const models = readable.map(model => ({ model, cases: listTestCases(folder, model) }));
             response.render('testCases', { title: 'Test cases', models, testsRun: testsRun() });
         }));
         router.get('/test-cases/:process', awaitAppDelegateFactory(async (request, response) => {
             const folder = serverOf(request).configuration.definitionsPath;
             const model = request.params.process;
+            if (!await mayRead(request, model)) return answerMessage(request, response, 404, `No test cases of ${model}`);
             response.render('testCases', { title: `Test cases: ${model}`, models: [{ model, cases: listTestCases(folder, model) }], testsRun: testsRun(), one: model });
         }));
         router.get('/test-cases/:process/:testCase', awaitAppDelegateFactory(async (request, response) => {
+            if (!await mayRead(request, request.params.process)) return answerMessage(request, response, 404, `No test cases of ${request.params.process}`);
             const c = readTestCase(serverOf(request).configuration.definitionsPath, request.params.process, request.params.testCase);
             if (!c) return answerMessage(request, response, 404, `No test case ${request.params.testCase} of ${request.params.process}`);
             const instance = { ...c.instance, source: c.source };

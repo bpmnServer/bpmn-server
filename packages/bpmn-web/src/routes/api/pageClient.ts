@@ -2,6 +2,7 @@ import { SecureUser } from '../../index.js';
 import { hostUserManager } from '../../userAccess/UserManager.js';
 import { TaskOperations } from './tasks.js';
 import { InstanceOperations, InstanceError } from './instances.js';
+import { GuideOperations, GuideError } from './guide.js';
 import { v2TaskError } from '../taskApi.js';
 
 /*
@@ -44,7 +45,7 @@ async function asApi<T>(operation: () => Promise<T>): Promise<T> {
     catch (error) {
         if (error instanceof ApiError) throw error;
         // an instance operation's answer (404 for one not seen, 403 refused, 422 the engine's)
-        if (error instanceof InstanceError) throw Object.assign(new ApiError(error.status, error.code, error.message), { cause: error });
+        if (error instanceof InstanceError || error instanceof GuideError) throw Object.assign(new ApiError(error.status, error.code, error.message), { cause: error });
         const [status, body] = v2TaskError(error) as [number, any];
         if (status === 500) throw error;
         throw Object.assign(new ApiError(status, body.code, body.errors), { cause: error });
@@ -56,6 +57,7 @@ export async function pageApi(req, server) {
     const user = await pageUser(req);
     const tasks = new TaskOperations(server);
     const instances = new InstanceOperations(server);
+    const guides = new GuideOperations(server);
     return {
         user,
         /** The waiting tasks they have a part in (GET /tasks); `query`, a label filter's conditions. */
@@ -82,6 +84,12 @@ export async function pageApi(req, server) {
         complete: (id: string, data: object) => asApi(() => tasks.complete(user, id, data)),
         /** The task given to someone else, as the case's policy allows: the engine's execution. */
         assign: (id: string, assignment: Record<string, any>, data: object) => asApi(() => tasks.assign(user, id, assignment, data)),
+        /** A process explained, for whoever may start it or works in it (GET /processes/{name}/guide). */
+        guide: (name: string) => asApi(() => guides.guide(user, name)),
+        /** Its diagram, for whoever may read its guide. */
+        guideDiagram: (name: string) => asApi(() => guides.diagram(user, name)),
+        /** Whether they may read its guide and its test cases: a 404 ApiError when not. */
+        mayReadGuide: (name: string) => asApi(async () => { await guides.access(user, name); return true; }),
         /** A process started as them (POST /processes/{name}/start). */
         start: (processName: string, options: { data?: object; startNodeId?: string }) => tasks.start(user, processName, { data: options.data ?? {}, startNodeId: options.startNodeId }),
     };

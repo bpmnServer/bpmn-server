@@ -1,0 +1,104 @@
+extends dashboards/layout
+
+//- A process explained (routes/api/guide.ts, docs/docs/process-guide.md): for the people who work in it. What it is
+//- for, its diagram, its steps (who, what each form asks, where it goes next), its policies, and its examples: the
+//- scenarios of its tests in plain words, each with the case it made (a test case).
+
+block intro
+  if guide.description
+    p.dash-intro.guide-description= guide.description
+  else
+    p.dash-intro How #{guide.name} goes: its steps, who does each, and examples of it.
+
+block dash
+  link(rel='stylesheet', href=asset('/stylesheets/guide.css'))
+  .dash-grid
+    if svg
+      section.dash-card.wide#diagram
+        h2 The process
+        .guide-diagram!= svg
+
+    section.dash-card.wide#steps
+      h2 Its steps
+      ol.guide-steps
+        each step in guide.steps
+          li.guide-step(data-step=step.id, class='guide-' + step.kind)
+            .guide-step-head
+              b= step.name
+              span.guide-kind= { task: 'a task', start: 'the start', end: 'the end', decision: 'a decision', automatic: 'done by the system' }[step.kind]
+            if step.documentation
+              p.guide-doc= step.documentation
+            if step.who
+              p.guide-who
+                | Who:&nbsp;
+                - const names = [].concat(step.who.assignee ? [step.who.assignee] : [], step.who.users, step.who.groups, step.who.lane && !step.who.groups.includes(step.who.lane) ? [step.who.lane] : [])
+                if names.length
+                  = names.join(', ')
+                if step.who.decidedWhenItRuns
+                  span.guide-muted= (names.length ? '; ' : '') + (step.who.policy ? `decided by the policy ${step.who.policy} when it runs` : 'decided when it runs')
+                else if !names.length
+                  span.guide-muted anyone who may work on it
+            if step.fields && step.fields.length
+              .guide-form
+                | Asks for:
+                ul
+                  each f in step.fields
+                    li
+                      = f.label
+                      if f.required
+                        span.guide-muted  (required)
+            if step.next && step.next.length && step.kind !== 'end'
+              p.guide-next
+                if step.kind === 'decision'
+                  | Then, by what was decided:
+                  ul
+                    each n in step.next
+                      li #{n.name ? n.name + ': ' : ''}#{n.to}
+                else
+                  | Then: #{step.next.map(n => n.to).join(', ')}
+
+    if guide.policies.assignment.length || guide.policies.notification.length || guide.policies.security.length
+      section.dash-card#policies
+        h2 Rules
+        ul
+          if guide.policies.assignment.length
+            li Who a task goes to: decided by #{guide.policies.assignment.join(', ')}
+          if guide.policies.notification.length
+            li Who is told what: decided by #{guide.policies.notification.join(', ')}
+          if guide.policies.security.length
+            li Who sees and does what with a case: decided by #{guide.policies.security.join(', ')}
+
+    section.dash-card.wide#examples
+      h2 Examples
+        span.count= guide.examples.scenarios.length
+      if guide.examples.description
+        p.guide-doc= guide.examples.description
+      if !guide.examples.scenarios.length
+        p.dash-empty No examples yet: they are the scenarios of its tests.
+      each ex in guide.examples.scenarios
+        article.guide-example(data-scenario=ex.name)
+          h3= ex.name
+          if ex.description
+            p.guide-doc= ex.description
+          ol.guide-example-steps
+            each st in ex.steps
+              li(class='guide-' + st.kind)
+                = st.text
+                if st.values && st.values.length
+                  table.guide-values
+                    each v in st.values
+                      tr
+                        td= v[0]
+                        td= v[1]
+          if ex.testCase
+            p.guide-case
+              a(href=`/test-cases/${encodeURIComponent(guide.name)}/${encodeURIComponent(ex.testCase.file)}`) See the case it made
+              |  ·&nbsp;
+              if ex.testCase.ok
+                span.dash-badge.is-ok passed
+              else
+                span.dash-badge.is-error failed
+              |  · ran #{new Date(ex.testCase.ranAt).toLocaleDateString()}
+              if !ex.testCase.current
+                |  ·&nbsp;
+                span.dash-badge.is-warning(title='The process was changed after this ran') before the last change

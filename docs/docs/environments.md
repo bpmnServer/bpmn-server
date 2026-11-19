@@ -29,6 +29,8 @@ Tests run only in development and test. Production runs none, so its database ho
   The test cases are the files deployed with the models: **Test cases** (`/test-cases`, linked from the Design page)
   lists them, and each opens on the instance page, read-only, with the scenario that ran and whether it passed. A case
   whose model has changed since it ran is marked *changed since*.
+- **The people who work in a process** see its test cases too, as the examples of its guide
+  ([A process explained](process-guide.md)): whoever may read the guide may open them.
 
 ## Read-only
 

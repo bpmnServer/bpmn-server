@@ -26,6 +26,11 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **A process explained** (docs/docs/process-guide.md): `/guide/<process>`, **How this process goes**, for the people
+  who work in it (whoever may start it or works in it): its description and diagram, its steps (who does each, what
+  each form asks, where it goes next), its rules, and its examples, the scenarios of its tests in plain words, each
+  with the case it made. API v3: `GET /processes/{name}/guide`. Linked from My Work and from each case's page. Test:
+  `apps/testSampleApp/test/web/guide.test.mjs`.
 - **Test cases** (docs/docs/environments.md#test-cases): tests run in development and test only. A scenario's run is
   an ordinary case, listed with the others and marked **test**; nothing filters test runs out any more (API v3's
   instances and tasks say `test: true`). Each scenario's last case is also saved as a file with the models,

@@ -40,6 +40,7 @@ export function openApiV3(origin: string) {
         paths: {
             '/me': { get: { operationId: 'me', summary: 'Who this call acts as, and what they may do', responses: { 200: answer('The user', ref('Me')), ...errors(401) } } },
             '/processes/startable': { get: { operationId: 'startableProcesses', summary: 'The start events this user may use, with their forms', responses: { 200: answer('A list', list(ref('Startable'))), ...errors(401) } } },
+            '/processes/{name}/guide': { get: { operationId: 'processGuide', summary: 'A process explained, for whoever may start it or works in it: its steps (who does each, what its form asks, where it goes next), its policies, and its scenarios in plain words, each with its test case', parameters: [id('name', 'The model')], responses: { 200: answer('The guide', { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, steps: { type: 'array', items: { type: 'object' } }, policies: { type: 'object' }, examples: { type: 'object' } } }), ...errors(401, 404) } } },
             '/processes/{name}/start': { post: {
                 operationId: 'startProcess', summary: 'Start a process as this user', parameters: [id('name', 'The model')],
                 requestBody: body({ type: 'object', properties: { data, startNodeId: { type: 'string' } } }),
