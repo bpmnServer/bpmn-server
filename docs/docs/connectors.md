@@ -161,6 +161,28 @@ or one whose `errorCode` is the exception's code (`ECONNREFUSED`, `ETIMEDOUT`).
 In **demo mode** (`DEMO_MODE=true`), connectors are not called: the task ends with no output, and the run's
 decisions say so.
 
+## Outside production
+
+In development and test, a connector doesn't have to reach the real API. Its page in Administration ▸ Connectors has
+**Outside production**, kept in its file with the models:
+
+| Answers | What happens |
+|---|---|
+| **from the real API** (the default) | The call goes to the real API, as in production. |
+| **from its document's examples** | Nothing is called. Each operation answers the example of its first success response in the OpenAPI document, else a value made from that response's schema. |
+| **from a sandbox of the API** | The same call goes to the sandbox's address instead, with the same key. |
+
+**Own answers** give an operation's answer by its operationId (`{ "getEmployee": { "id": "E-1" } }`), in place of
+the document's example.
+
+It applies only where `APP_ENV` is `development` or `test`
+([Environments](environments.md)). **Production, or a server that doesn't set `APP_ENV`, always calls the real
+API**, whatever the connector says. The connector's **Test** button always calls the real API too. With a separate
+engine, it is the engine's `APP_ENV` that counts: give both the same `.env`.
+
+A scenario can still stub what it needs for itself (`@stub service:<name>`); the connector's answers are for every
+case on the server.
+
 ## Checking models
 
 [`verifyModel`](verify.md) and the editor's Problems tab check connector tasks:

@@ -41,6 +41,28 @@ block dash
 				button.btn.btn-primary.btn-sm(type='submit') Save
 			p.dash-muted(style='margin-top:10px') The groups may design with this connector. Once a model uses it, it runs for anyone who may run the model.
 
+		//- what it answers outside production (bpmn-server's ConnectorTesting): APP_ENV development or test only
+		section.dash-card#connector-testing
+			h2 Outside production
+			- const testing = connector.testing || { answer: 'real' }
+			p.dash-muted Where APP_ENV is development or test, this connector may answer without reaching the real API. Production, or a server that doesn't say, always calls it.
+			if testingOn
+				p This server is #[b= appEnv]: the setting below applies here.
+			else
+				p This server calls the real API whatever is set here (APP_ENV is #{appEnv || 'not set'}).
+			+post('/testing').dash-form
+				label(for='t-answer') Answers
+				select#t-answer(name='answer')
+					option(value='real', selected=testing.answer === 'real') from the real API
+					option(value='examples', selected=testing.answer === 'examples') from its document's examples: nothing called
+					option(value='sandbox', selected=testing.answer === 'sandbox') from a sandbox of the API
+				label(for='t-base') Sandbox URL
+				input#t-base(name='baseUrl', type='url', value=testing.baseUrl || '', placeholder='https://sandbox.example.com')
+				label(for='t-answers') Own answers
+				textarea#t-answers(name='answers', rows='4', placeholder='{ "getEmployee": { "id": "E-1", "name": "Ann" } }')= testing.answers ? JSON.stringify(testing.answers, null, 2) : ''
+				button.btn.btn-primary.btn-sm(type='submit') Save
+			p.dash-muted(style='margin-top:10px') With examples, each operation answers its own answer here, else the example of its first success response in the document, else one made from that response's schema. A scenario can still stub what it needs.
+
 		section.dash-card#connector-key
 			h2 Authorization key
 			if connector.auth && connector.auth.last4

@@ -11,7 +11,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications, connectorsTesting } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
@@ -475,6 +475,8 @@ export class Dashboards extends Common {
             render(req, res, 'connector', {
                 title: `Connector: ${connector.name}`, connector, operations: await connectors().operations(connector.id),
                 schemes, models: this.connectorUse().get(connector.id) ?? [], canEncrypt: await keysSettable(), message: req.query.message,
+                // outside production (ConnectorTesting): whether this server answers as the connector's testing says
+                testingOn: connectorsTesting(), appEnv: process.env.APP_ENV || '',
             });
         }));
 
@@ -488,6 +490,19 @@ export class Dashboards extends Common {
             backToConnectors(res, 'Settings saved.', req.params.id);
         }));
 
+        // what it answers outside production (APP_ENV development or test): bpmn-server's ConnectorTesting
+        router.post('/admin/connectors/:id/testing', this.isAdmin, action(async (req, res) => {
+            const { answer, baseUrl, answers } = req.body;
+            let own;
+            if (String(answers ?? '').trim()) {
+                try { own = JSON.parse(answers); }
+                catch (exc) { throw new Error(`Own answers: not JSON (${exc.message})`); }
+            }
+            await connectors().update(req.params.id, {
+                testing: answer === 'real' && !own ? null : { answer, ...(String(baseUrl ?? '').trim() ? { baseUrl: String(baseUrl).trim() } : {}), ...(own ? { answers: own } : {}) },
+            } as any);
+            backToConnectors(res, 'Outside production: saved.', req.params.id);
+        }));
         router.post('/admin/connectors/:id/enabled', this.isAdmin, action(async (req, res) => {
             const on = req.body.enabled === 'true';
             await connectors().update(req.params.id, { enabled: on });

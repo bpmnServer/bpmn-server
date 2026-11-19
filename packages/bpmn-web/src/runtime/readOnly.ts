@@ -24,7 +24,7 @@ const REFUSED: RegExp[] = [
     // the dashboards: the catalog's import, administration, the Integration page (routes/dashboards.ts)
     /^\/dashboard\/catalog\/import$/,
     /^\/dashboard\/admin\/(users|roles|roles\/delete|restart)$/,
-    /^\/dashboard\/admin\/connectors(\/[^/]+(\/(settings|enabled|operations|key|refresh|delete))?)?$/,
+    /^\/dashboard\/admin\/connectors(\/[^/]+(\/(settings|testing|enabled|operations|key|refresh|delete))?)?$/,
     /^\/dashboard\/integration\//,
     // every case deleted at once (routes/workflow.ts)
     /^\/resetData$/,

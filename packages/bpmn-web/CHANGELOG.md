@@ -26,6 +26,8 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- A connector's page has **Outside production**: answers from the real API, its document's examples, or a sandbox,
+  where APP_ENV is development or test (docs/docs/connectors.md#outside-production).
 - **The case lists read only what a security policy could show** (API v3's instances, the Workbench): narrowed in the
   database (`CaseAccess.seeQuery`), then the policy decides each case. Fewer cases read, the same ones shown.
 - **A process explained** (docs/docs/process-guide.md): `/guide/<process>`, **How this process goes**, for the people

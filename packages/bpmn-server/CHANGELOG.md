@@ -26,6 +26,10 @@ and here
 
 ## [Unreleased]
 ### Added
+- **Connectors outside production** (docs/docs/connectors.md#outside-production): a connector's `testing`, where
+  APP_ENV is development or test: its OpenAPI document's examples (nothing called; `exampleOf` makes one from a
+  schema; `testing.answers` by operationId first) or a sandbox's address. Production, or no APP_ENV, always calls the
+  real API. Test: `test/connectors-testing.test.mjs`.
 - **A security policy narrows the store's query** (`SecurityPolicy.seeQuery`, `engine/SecurityQuery.ts`): a superset of
   the cases a user may see, from the rules that may grant `see` (their tests on the user, and on an actor as a
   condition on the items). The policy still decides each case. Test: `test/security-query.test.mjs`.

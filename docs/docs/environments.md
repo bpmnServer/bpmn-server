@@ -16,6 +16,10 @@
 - **Unset**, the environment isn't declared: the server works as before 3.7.2 and shows no band. Set it on every
   server. `bpmn-server setup` asks for it, and its production profile writes `production`.
 
+**Connectors outside production:** in development and test, a connector can answer from its OpenAPI document's
+examples, or call a sandbox, instead of the real API ([Connectors](connectors.md#outside-production)). Production
+always calls the real one.
+
 ## Test cases
 
 Tests run only in development and test. Production runs none, so its database holds no test cases.

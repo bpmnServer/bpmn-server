@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import type { IBPMNServer } from '../interfaces/server.js';
-import { parseDocument, listOperations, type Operation } from './OpenAPI.js';
+import { parseDocument, listOperations, exampleOf, type Operation } from './OpenAPI.js';
 import { encrypt, decrypt } from './Secrets.js';
 
 const COLLECTION = 'wf_connectors';
@@ -64,9 +64,28 @@ export interface Connector {
     retries?: number;
     auth?: ConnectorAuth;
     test?: { at: string; operation: string; ok: boolean; status?: number; message?: string };
+    /** what it answers outside production (APP_ENV development or test only): ConnectorTesting */
+    testing?: ConnectorTesting;
     createdAt: string;
     updatedAt: string;
 }
+
+/**
+ * What a connector answers outside production (docs/docs/connectors.md#outside-production): only where APP_ENV is
+ * development or test; production, or a server that does not say, always calls the real API.
+ * - `real` (the default): the real API, as in production;
+ * - `examples`: no call: each operation answers its document's example (else one made from its schema);
+ * - `sandbox`: the same calls, to `baseUrl` (a sandbox of the API), with the same key.
+ * `answers`, by operationId: an operation's own answer, in place of the example (`examples`).
+ */
+export interface ConnectorTesting {
+    answer: 'real' | 'examples' | 'sandbox';
+    baseUrl?: string;
+    answers?: Record<string, any>;
+}
+
+/** Whether connectors may answer as their `testing` says: APP_ENV says development or test, and nothing else. */
+export const connectorsTesting = (env = process.env) => ['development', 'test'].includes(String(env.APP_ENV ?? '').trim().toLowerCase());
 
 /** What `add` takes: the document as text (JSON or YAML) or an object, or its URL. */
 export interface ConnectorInput {
@@ -330,15 +349,16 @@ export class Connectors {
     }
 
     /** Changes a connector's name, description, base URL, operations, groups, enabled, timeout or retries. */
-    async update(id: string, patch: Partial<Pick<Connector, 'name' | 'description' | 'baseUrl' | 'operations' | 'groups' | 'enabled' | 'timeout' | 'retries'>>): Promise<Connector> {
+    async update(id: string, patch: Partial<Pick<Connector, 'name' | 'description' | 'baseUrl' | 'operations' | 'groups' | 'enabled' | 'timeout' | 'retries' | 'testing'>>): Promise<Connector> {
         await this.required(id);
         const definition = { ...this.readDefinition(id) };
-        const allowed = ['name', 'description', 'baseUrl', 'operations', 'groups', 'enabled', 'timeout', 'retries'];
+        const allowed = ['name', 'description', 'baseUrl', 'operations', 'groups', 'enabled', 'timeout', 'retries', 'testing'];
         const set: any = { updatedAt: now() };
         for (const key of allowed)
             if (patch[key] !== undefined) set[key] = patch[key];
         if (set.baseUrl !== undefined) set.baseUrl = this.checkBaseUrl(set.baseUrl);
         if (set.operations) set.operations = { ...definition.operations, ...set.operations };
+        if (set.testing !== undefined) set.testing = this.checkTesting(set.testing);
         this.writeDefinition({ ...definition, ...set });
         return this.get(id);
     }
@@ -507,7 +527,10 @@ export class Connectors {
         if (!op) throw new Error(`The connector '${id}' has no operation '${operationId}'`);
         if (connector.operations[operationId] === false && !options.test) throw new Error(`The operation '${ref}' is disabled`);
 
-        const request = this.buildRequest(connector, op, input ?? {});
+        // outside production, as its testing says: an example for an answer, or a sandbox for the API
+        const testing = connectorsTesting() && !options.test ? connector.testing : undefined;
+        if (testing?.answer === 'examples') return this.exampleAnswer(connector, op, ref, options.log);
+        const request = this.buildRequest(testing?.answer === 'sandbox' && testing.baseUrl ? { ...connector, baseUrl: testing.baseUrl } : connector, op, input ?? {});
         const timeout = connector.timeout ?? this.settings.timeout ?? 30_000;
         const tries = 1 + (IDEMPOTENT.includes(op.method) ? (connector.retries ?? this.settings.retries ?? 2) : 0);
         const started = Date.now();
@@ -537,6 +560,31 @@ export class Connectors {
         if (response.status < 200 || response.status > 299)
             throw new ConnectorError(response.status, output, ref);
         return { status: response.status, output, url: request.logUrl, ms };
+    }
+
+    /**
+     * An operation's answer outside production, with no call: the connector's own answer for it (testing.answers),
+     * else its document's example of its first success response, else one made from that response's schema.
+     */
+    private exampleAnswer(connector: Connector, op: Operation, ref: string, log?: (line: string) => void): CallResult {
+        const own = connector.testing?.answers ?? {};
+        const success = Object.keys(op.responses ?? {}).filter(s => /^2\d\d$/.test(s)).sort()[0];
+        const response = success ? op.responses[success] : undefined;
+        const output = op.operationId in own ? own[op.operationId]
+            : response?.example !== undefined ? response.example : exampleOf(response?.schema);
+        log?.(`connector ${ref}: answered by its example (testing: examples, APP_ENV=${process.env.APP_ENV}); nothing called`);
+        return { status: Number(success ?? 200), output: output ?? null, url: `example:${ref}`, ms: 0 };
+    }
+
+    /** A connector's testing, checked: its answer one of real, examples, sandbox; a sandbox's address an http(s) URL. */
+    private checkTesting(testing: any): ConnectorTesting | undefined {
+        if (testing === null || testing === '' || testing?.answer === 'real' && !testing.answers) return undefined;
+        if (!testing || !['real', 'examples', 'sandbox'].includes(testing.answer))
+            throw new Error('testing.answer is real, examples or sandbox');
+        if (testing.answer === 'sandbox') testing.baseUrl = this.checkBaseUrl(testing.baseUrl);
+        if (testing.answers !== undefined && (typeof testing.answers !== 'object' || Array.isArray(testing.answers)))
+            throw new Error('testing.answers is an object: an answer by operationId');
+        return { answer: testing.answer, ...(testing.baseUrl ? { baseUrl: testing.baseUrl } : {}), ...(testing.answers ? { answers: testing.answers } : {}) };
     }
 
     private backoff(attempt: number) {
