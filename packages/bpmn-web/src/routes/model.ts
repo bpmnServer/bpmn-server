@@ -722,8 +722,19 @@ export class Model extends Common {
             catch (exc) {
                 provider = null;    // a provider that needs a running execution
             }
-            const services = appServiceNames(provider);
-            response.json({ services });
+            const services: { name: string; kind: string; description?: string }[] = appServiceNames(provider);
+            // the application's contract (app-contract.json): its functions' descriptions, those the provider doesn't
+            // list (made as it runs), and its variables (appVars.<name>)
+            let contract = null;
+            try { contract = bpmnServer.appDelegate?.describe?.() ?? null; } catch { contract = null; }
+            for (const e of (contract?.expressions ?? []).filter(e => e.kind === 'function')) {
+                const listed = services.find(s => s.name === e.name);
+                const description = [e.params ? `(${e.params.map(p => p.name).join(', ')})` : '', e.description ?? ''].filter(Boolean).join(' ');
+                if (listed) listed.description = description || undefined;
+                else services.push({ name: e.name, kind: 'function', ...(description ? { description } : {}) });
+            }
+            const vars = (contract?.expressions ?? []).filter(e => e.kind === 'var').map(e => ({ name: e.name, kind: 'variable', ...(e.description ? { description: e.description } : {}) }));
+            response.json({ services, vars });
         }));
 
         // ---- the editor's History tab: every save of a model (ModelHistory: files in the models folder's .history)

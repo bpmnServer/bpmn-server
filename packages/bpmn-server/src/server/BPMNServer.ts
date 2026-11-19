@@ -17,6 +17,7 @@ import { Cron } from './Cron.js';
 import { Listener } from './Listener.js';
 import { Connectors } from '../connectors/Connectors.js';
 import type { ILifecycleListener } from '../interfaces/lifecycle.js';
+import { contractProblems, compareWithCode, methodNames } from '../engine/AppContract.js';
 
 /**
  *	The main class of Server Layer
@@ -135,8 +136,29 @@ class BPMNServer implements IBPMNServer {
 	}
 	private async start(options) {
 		await this.appDelegate.startUp(options);
+		await this.checkAppContract();
 		if (options['cron'] == false) return;
 		await this.cron.start();
+	}
+	/**
+	 * The application's contract (app-contract.json, docs/design/app-contract.md §5) against its delegate's code, at
+	 * start: its problems, a declared function or variable the code lacks (an error), one the code has that it doesn't
+	 * declare (a warning). Said in the log; nothing stops.
+	 */
+	private async checkAppContract() {
+		const delegate: any = this.appDelegate;
+		let contract;
+		try { contract = typeof delegate?.describe === 'function' ? delegate.describe() : null; }
+		catch (error) { this.logger.log(`[app contract] can not be read: ${error?.message ?? error}`); return; }
+		if (!contract) return;
+		for (const problem of contractProblems(contract)) this.logger.log(`[app contract] error: ${problem}`);
+		let provider = null;
+		try { provider = await delegate.getServicesProvider(null); } catch { provider = null; }
+		// the delegate itself (DefaultAppDelegate's): its own methods are not the application's functions
+		const services = provider && provider !== delegate ? [...new Set([...methodNames(provider.constructor), ...Object.keys(provider).filter(k => typeof provider[k] === 'function')])] : null;
+		const vars = delegate.appVarsClass ? methodNames(delegate.appVarsClass) : null;
+		for (const { severity, message } of compareWithCode(contract, { services, vars }))
+			this.logger.log(`[app contract] ${severity}: ${message}`);
 	}
 	/** Subscribe without coupling the engine to application implementations. */
 	onLifecycle(listener: ILifecycleListener): () => void {

@@ -8,12 +8,14 @@ import { dataObjectName } from '../dataObjects.js';
 const ITEM_NAMES = [
     ['data', 'the instance data'], ['input', 'the item\'s input'], ['output', 'the item\'s output'],
     ['item', 'the item (this)'], ['instance', 'the instance'], ['appServices', 'the application\'s services'],
-    ['appUtils', 'the application\'s helpers'], ['appDelegate', 'the application delegate']
+    ['appUtils', 'the application\'s helpers'], ['appDelegate', 'the application delegate'],
+    ['appVars', 'the application\'s variables (app-contract.json)']
 ];
 /** In a process's scripts `this` is the execution. */
 const EXECUTION_NAMES = [
     ['instance', 'the instance; instance.data holds the data'], ['appServices', 'the application\'s services'],
-    ['appUtils', 'the application\'s helpers'], ['appDelegate', 'the application delegate']
+    ['appUtils', 'the application\'s helpers'], ['appDelegate', 'the application delegate'],
+    ['appVars', 'the application\'s variables (app-contract.json)']
 ];
 const ITEM_MEMBERS = ['data', 'input', 'output', 'id', 'itemKey', 'elementId', 'name', 'type', 'status', 'userName',
     'assignee', 'candidateGroups', 'candidateUsers', 'dueDate', 'followUpDate', 'priority', 'startedAt', 'endedAt',
@@ -25,10 +27,11 @@ export default class ScriptContext {
     constructor(config, bpmnjs) {
         this._bpmnjs = bpmnjs;
         this.services = [];
+        this.vars = [];
         const url = config?.servicesUrl;
         if (url)
-            fetch(url).then(r => r.ok ? r.json() : { services: [] }).then(({ services }) => { this.services = services || []; })
-                .catch(() => { this.services = []; });
+            fetch(url).then(r => r.ok ? r.json() : { services: [] }).then(({ services, vars }) => { this.services = services || []; this.vars = vars || []; })
+                .catch(() => { this.services = []; this.vars = []; });
     }
 
     /** Names in scope for a script of `element` (a process's scripts see the execution). */
@@ -43,7 +46,10 @@ export default class ScriptContext {
             case 'appServices':
             case 'this.appServices':
             case 'this.servicesProvider':
-                return this.services.filter(s => !s.name.includes('.')).map(s => [s.name, s.kind]);
+                // with the contract's description, when it says one
+                return this.services.filter(s => !s.name.includes('.')).map(s => [s.name, s.description || s.kind]);
+            case 'appVars':
+                return this.vars.map(v => [v.name, v.description || 'variable']);
             case 'data':
             case 'this.data':
             case 'item.data':

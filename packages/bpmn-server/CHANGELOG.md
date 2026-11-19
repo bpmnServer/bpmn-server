@@ -26,6 +26,11 @@ and here
 
 ## [Unreleased]
 ### Added
+- **The application's contract** (docs/docs/app-contract.md): `app-contract.json` read and checked (`AppContract.ts`;
+  `DefaultAppDelegate.describe()`); `appVars.<name>` from the delegate's `appVarsClass` (or `getAppVars`), worked out
+  before an expression runs, in scripts, conditions, FEEL and decision tables, with `evaluatingSource`; `verifyModel`
+  checks a model against it (`function-unknown`, `function-arguments`, `variable-unknown`, `page-unknown`, its roles,
+  `function-write-in-decision`); the start compares it with the delegate's code. Test: `test/app-contract.test.mjs`.
 - A connector's own answers outside production can depend on the input (`cases`: `when`, `status`, `output`; a
   status other than 2xx fails as the API would), and `testing.environments` limits it to development or test.
 - `invokeDecision(server, ref, data)` is exported, and finds a policy by its tests' name (`<name>.policy`,

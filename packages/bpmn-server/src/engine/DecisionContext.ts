@@ -16,6 +16,7 @@
  * A decision table also reads the data's fields by name (`amount`) and its task's prepared inputs by name, under the
  * names above, which the data can't set. Then the application's facts: appDelegate.decisionContext(context, about).
  */
+import { appVarsFor } from './AppContract.js';
 
 /** What is deciding: a business rule task's decision, an assignment, security or notification policy. */
 export type DecisionKind = 'decision' | 'assignment' | 'security' | 'notification';
@@ -226,6 +227,17 @@ export async function decisionContext({ data, input, user, instance, task, kind,
         instance: instanceView(instance),
         appServices: feelView(appServices) ?? {},
     };
+    // the application's variables (appVars.<name>, docs/design/app-contract.md §2.1): its variables class's, worked
+    // out before the table is asked, for this decision (evaluatingSource)
+    if (appDelegate && (appDelegate.appVarsClass || typeof appDelegate.getAppVars === 'function')) {
+        try {
+            context.appVars = await appVarsFor(appDelegate, { ...context, evaluatingSource: { type: 'decision', id: name ?? '', ...(kind !== 'decision' ? { policy: kind } : {}) } });
+        }
+        catch (error) {
+            log?.(`appVars failed (${kind} ${name ?? ''}): ${error?.message ?? error}`);
+            context.appVars = {};
+        }
+    }
     if (typeof appDelegate?.decisionContext === 'function') {
         try {
             const facts = await appDelegate.decisionContext(context, { kind, name, user: person, instance, task } as IDecisionAbout);

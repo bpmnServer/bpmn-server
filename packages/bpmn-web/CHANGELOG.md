@@ -26,6 +26,10 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The application's contract on the web:** API v3's `GET /application` answers it, `/llms.txt` links it, and the
+  editor completes its functions (with their descriptions) and its variables (`appVars.`). The HR demo has one
+  (`apps/hrdemo/app-contract.json`, its variables in `workflow/delegates/appVars.ts`), and its unused sample services
+  are gone.
 - **Red is for errors only:** names, ids and values shown as code are no longer Bootstrap's pink-red; the docs pages' tables, a connector's DELETE operations and a model history's removed or earlier values are no longer red.
 - Simulate's **Show details** says what an item is at the change shown (started, done, waits; a flow: taken), not
   its status at the run's end: an activity that ended later no longer reads *done* where it starts. The end reads

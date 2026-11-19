@@ -58,6 +58,7 @@ Errors are `{ "error": { "code", "message" } }`, with the status the error's kin
 | [POST /settings/checks/{name}](#post-settingschecksname) | Run a check: database, engine, url (SITE_URL) or email |
 | [POST /tokens](#post-tokens) | A token for one of the application's users (the service key) |
 | [DELETE /tokens](#delete-tokens) | Revoke every token of a user (the service key) |
+| [GET /application](#get-application) | The application's contract (app-contract.json): the variables (appVars) and functions (appServices) an expression may use, with their types; its roles, APIs and pages; and its problems |
 
 ## Who am I
 
@@ -806,6 +807,18 @@ Credential: The service key (API_KEY): the service account only.
 | 400 | The input is not right | [Error](#error) |
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 403 | Not this user's to do | [Error](#error) |
+
+## Other
+
+### GET /application
+
+The application's contract (app-contract.json): the variables (appVars) and functions (appServices) an expression may use, with their types; its roles, APIs and pages; and its problems.
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | The contract | { name, expressions, types, roles, apis, pages, problems } |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
 
 ## Shapes
 

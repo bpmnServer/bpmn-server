@@ -14,3 +14,4 @@ export * from './SecurityPolicy.js';
 export * from './SecurityQuery.js';
 export * from './DecisionContext.js';
 export * from './NotificationPolicy.js';
+export * from './AppContract.js';

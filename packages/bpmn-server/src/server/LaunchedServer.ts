@@ -3,6 +3,7 @@ import path from 'node:path';
 import { moddleOptions as defaultModdleOptions } from '../elements/js-bpmn-moddle.js';
 import type { BPMNServer } from './BPMNServer.js';
 import { engineCalls } from './EngineService.js';
+import { readAppContract, APP_CONTRACT_FILE } from '../engine/AppContract.js';
 
 /** Running or testing a process, when nothing can run it: the rest (models, their history, their checks) goes on. */
 export class EngineNotRunningError extends Error {
@@ -140,6 +141,11 @@ class ApplicationFacts {
             if (!this.engine.running) return null;
             return this.engine.facts().then(facts => providerOf(facts.services), () => null);
         }
+    }
+
+    /** The application's contract (app-contract.json): a file, read here as the engine reads it (DefaultAppDelegate.describe). */
+    describe() {
+        return readAppContract(this.configuration.appContract ?? path.resolve(APP_CONTRACT_FILE)).contract;
     }
 
     /** The application's own checks, which are its code: the engine's to run. Without one, it is said they did not. */

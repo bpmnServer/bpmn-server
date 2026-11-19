@@ -2,9 +2,19 @@ import type { IAppDelegate, IServiceProvider } from '../interfaces/common.js';
 import type { IExecution } from '../interfaces/engine.js';
 import { Item } from './Item.js';
 import { moddleOptions} from '../elements/js-bpmn-moddle.js';
+import path from 'node:path';
+import { readAppContract, APP_CONTRACT_FILE } from './AppContract.js';
+import type { IAppContract } from './AppContract.js';
 
 class DefaultAppDelegate implements IAppDelegate {
     server;
+    /**
+     * The application's variables (docs/design/app-contract.md §2.1): a class whose methods are the names an expression
+     * reads as appVars.<name>, made for each evaluation from its context. None: appVars is empty.
+     */
+    appVarsClass?: new (context: any) => any;
+    /** The application's functions, as a class (appServices.<method>): its method names, for checks without a context. */
+    appServicesClass?: new (context: any) => any;
 
 
     constructor(server) {
@@ -13,6 +23,21 @@ class DefaultAppDelegate implements IAppDelegate {
         server.listener.on('all', async function ({ context, event }) {
             await self.executionEvent(context, event);
         });
+    }
+
+    /** The variables for one evaluation (appVars.<name>): the variables class, made from its context. */
+    getAppVars(context): any {
+        return this.appVarsClass ? new this.appVarsClass(context) : null;
+    }
+
+    /**
+     * The application's contract, its declarative part (docs/design/app-contract.md): its app-contract.json (the
+     * configuration's appContract, else the working folder's), or null when it has none. An application may build it
+     * in code instead.
+     */
+    describe(): IAppContract | null {
+        const file = this.server?.configuration?.appContract ?? path.resolve(APP_CONTRACT_FILE);
+        return readAppContract(file).contract;
     }
 
     async getServicesProvider(context): Promise<IServiceProvider>  {

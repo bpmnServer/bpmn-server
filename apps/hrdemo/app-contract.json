@@ -1,0 +1,26 @@
+{
+  "name": "hr",
+  "description": "The HR application: employees, departments, clients, projects, assignments, leave. What its workflows may use of it (docs/design/app-contract.md).",
+  "expressions": [
+    { "kind": "var", "name": "employeeManager", "type": "string", "description": "The acting user's manager, as a user name; null for someone without one" },
+    { "kind": "var", "name": "endFiscalYear", "type": "date", "description": "The last day of the fiscal year (31 March)" },
+    { "kind": "function", "name": "managerOf", "params": [{ "name": "userName", "type": "string" }], "returns": "string", "effect": "read", "description": "An employee's own manager, as a user name; null for someone without one" },
+    { "kind": "function", "name": "departments", "params": [{ "name": "criteria", "type": "object" }], "returns": "Department[]", "async": true, "effect": "read", "description": "The departments, for a form's drop-down" },
+    { "kind": "function", "name": "employees", "params": [{ "name": "criteria", "type": "object" }], "returns": "Employee[]", "async": true, "effect": "read", "description": "The employees matching a search, for a form's lookup" },
+    { "kind": "function", "name": "greet", "params": [{ "name": "input", "type": "object" }], "returns": "object", "async": true, "effect": "none", "description": "A greeting for a name" },
+    { "kind": "function", "name": "recordLeave", "params": [{ "name": "leave", "type": "object" }], "returns": "object", "async": true, "effect": "write", "description": "Records an approved leave in HR's system" },
+    { "kind": "function", "name": "notifyUsers", "params": [{ "name": "message", "type": "object" }], "returns": "object", "async": true, "effect": "write", "description": "Sends a message to users and groups" }
+  ],
+  "types": {
+    "Department": { "type": "object", "properties": { "departmentId": { "type": "string" }, "name": { "type": "string" }, "managerId": { "type": "string" } } },
+    "Employee": { "type": "object", "properties": { "employeeId": { "type": "string" }, "firstName": { "type": "string" }, "lastName": { "type": "string" }, "email": { "type": "string" }, "jobTitle": { "type": "string" } } }
+  },
+  "roles": [
+    { "name": "Employee", "title": "Employee", "description": "Everyone: asks for leave, sees their own" },
+    { "name": "Manager", "title": "Manager", "description": "Approves their reports' leave and assignments" },
+    { "name": "HR", "title": "HR", "description": "Approves long leave, records it" },
+    { "name": "ADMIN", "title": "Administrator", "description": "Administers the workflows" }
+  ],
+  "apis": [{ "id": "hr", "openapi": "/api/hr/openapi.json" }],
+  "pages": []
+}

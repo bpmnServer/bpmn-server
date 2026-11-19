@@ -18,6 +18,8 @@ import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { DMNParser } from '../dmn/DMNParser.js';
 import { policyFile, roleNames, POLICY_FIELDS, POLICIES_FOLDER } from '../engine/AssignmentPolicy.js';
+import { contractNames, readAppContract, APP_CONTRACT_FILE } from '../engine/AppContract.js';
+import type { IAppContract } from '../engine/AppContract.js';
 
 /**
  * Static verification of a BPMN model: reports what would stop the engine from loading or
@@ -159,6 +161,7 @@ class ModelVerifier {
             if (definition) {
                 await this.verifyExecutables(definition);
                 await this.verifyActors(source, definition);
+                await this.verifyContract(source);
                 await this.verifyApplication(name, source, definition);
             }
         }
@@ -569,7 +572,7 @@ class ModelVerifier {
         if (roles)
             for (const [lane, def] of lanes)
                 if (!roles.includes(lane))
-                    this.add('warning', 'role-unknown', `Lane '${lane}' is not a role of roles.json (${roles.join(', ')}).`, def);
+                    this.add('warning', 'role-unknown', `Lane '${lane}' is not a role (roles.json, app-contract.json: ${roles.join(', ')}).`, def);
 
         if (checkScripts) {
             definition.flows.forEach(flow => {
@@ -630,12 +633,80 @@ class ModelVerifier {
             this.add('warning', 'actor-unknown', `actors.${actor} (${where.join(', ')}): no element of the model is the actor '${actor}' (owf:actor); its actors are ${[...known].join(', ')}.`);
     }
 
-    /** The roles of the models folder's roles.json; null without one (or a folder); a bad file is an error. */
+    /**
+     * The roles: the models folder's roles.json and the application's contract (app-contract.json), together; null with
+     * neither. A bad roles.json is an error.
+     */
     roles(): string[] | null {
         if (this.#roles !== undefined) return this.#roles;
-        try { this.#roles = this.decisionsFolder ? roleNames(this.decisionsFolder) : null; }
-        catch (exc) { this.add('error', 'roles-invalid', exc.message); this.#roles = null; }
+        let fromFile: string[] | null = null;
+        try { fromFile = this.decisionsFolder ? roleNames(this.decisionsFolder) : null; }
+        catch (exc) { this.add('error', 'roles-invalid', exc.message); }
+        const declared = this.contract()?.roles?.map(r => r.name) ?? null;
+        this.#roles = fromFile || declared ? [...new Set([...(fromFile ?? []), ...(declared ?? [])])] : null;
         return this.#roles;
+    }
+
+    /** The application's contract (its delegate's describe(): app-contract.json), or null. */
+    contract(): IAppContract | null {
+        if (this.#contract !== undefined) return this.#contract;
+        const delegate = this.server && (this.server as any).appDelegate;
+        // the delegate's describe(); with no delegate (the command line's verify), the application folder's file
+        try { this.#contract = typeof delegate?.describe === 'function' ? delegate.describe() ?? null : readAppContract(path.resolve(APP_CONTRACT_FILE)).contract; }
+        catch (exc) { this.add('warning', 'contract-unreadable', `The application's contract can not be read: ${exc.message}`); this.#contract = null; }
+        return this.#contract;
+    }
+    #contract: IAppContract | null | undefined = undefined;
+
+    /**
+     * The model against the application's contract (docs/design/app-contract.md §5), when it has one: each
+     * appServices.<name> a function it declares, with as many arguments as it takes; each appVars.<name> a variable it
+     * declares; each app:<page> form key one of its pages; and no decision the model uses (its business rule tasks',
+     * its policies) calling a function that changes things (effect write). Warnings, but the last: the contract is
+     * guidance; the model runs as it is.
+     */
+    async verifyContract(source: string) {
+        const contract = this.contract();
+        if (!contract) return;
+        const names = contractNames(contract);
+        const text = decodeXml(source);
+        const reported = new Set<string>();
+        const once = (key: string, report: () => void) => { if (!reported.has(key)) { reported.add(key); report(); } };
+        if (contract.expressions) {
+            for (const call of appServicesCalls(text)) {
+                const fn = names.functions.get(call.name);
+                if (!fn) once('f:' + call.name, () => this.add('warning', 'function-unknown', `appServices.${call.name}: ${APP_CONTRACT_FILE} declares no such function (${[...names.functions.keys()].join(', ') || 'none'}).`));
+                else if (call.args !== null && fn.params && call.args !== fn.params.length)
+                    once(`a:${call.name}:${call.args}`, () => this.add('warning', 'function-arguments', `appServices.${call.name} is called with ${call.args} argument${call.args === 1 ? '' : 's'}; it takes ${fn.params.length} (${fn.params.map(p => p.name).join(', ')}).`));
+            }
+            for (const [, name] of text.matchAll(/\bappVars\s*\.\s*([A-Za-z_$][\w$]*)/g))
+                if (!names.vars.has(name)) once('v:' + name, () => this.add('warning', 'variable-unknown', `appVars.${name}: ${APP_CONTRACT_FILE} declares no such variable (${[...names.vars.keys()].join(', ') || 'none'}).`));
+        }
+        if (contract.pages)
+            for (const [, page] of text.matchAll(/\bformKey\s*=\s*"app:([^"]+)"/g))
+                if (!names.pages.includes(page)) once('p:' + page, () => this.add('warning', 'page-unknown', `Form key app:${page}: ${APP_CONTRACT_FILE} has no page '${page}' (${names.pages.join(', ') || 'none'}).`));
+        // the decisions it uses: none may call a function that changes things
+        const writes = [...names.functions.values()].filter(f => f.effect === 'write').map(f => f.name);
+        if (!writes.length || !this.decisionsFolder) return;
+        for (const { what, file } of this.decisionFilesUsed(text)) {
+            let table: string;
+            try { table = decodeXml(fs.readFileSync(file, 'utf8')); } catch { continue; }
+            for (const call of appServicesCalls(table))
+                if (writes.includes(call.name))
+                    once(`w:${what}:${call.name}`, () => this.add('error', 'function-write-in-decision', `${what} calls appServices.${call.name}, which changes things (effect write): a decision may only read.`));
+        }
+    }
+
+    /** The decision files a model uses: its business rule tasks' decisions and the policies it names. */
+    decisionFilesUsed(text: string): { what: string; file: string }[] {
+        const folder = this.decisionsFolder, out = [];
+        const add = (what: string, file: string | null) => { if (file && fs.existsSync(file)) out.push({ what, file }); };
+        for (const [, ref] of text.matchAll(/\bdecisionRef\s*=\s*"([^"]+)"/g))
+            add(`Decision '${ref}'`, [path.join(folder, ref), path.join(folder, ref + '.dmn'), path.join(folder, ref + '.dmn.xml')].find(f => fs.existsSync(f)) ?? null);
+        for (const [kind, sub] of [['assignmentPolicy', 'assignment'], ['securityPolicy', 'security'], ['notificationPolicy', 'notification']])
+            for (const [, name] of text.matchAll(new RegExp(`\\b${kind}\\s*=\\s*"([^"]+)"`, 'g')))
+                add(`The ${sub} policy '${name}'`, path.join(folder, 'policies', sub, name + '.dmn.xml'));
+        return out;
     }
     #roles: string[] | null | undefined = undefined;
 
@@ -710,7 +781,7 @@ class ModelVerifier {
             const literal = /^"([^"]*)"$/.exec(cell);
             for (const group of literal ? literal[1].split(',').map(g => g.trim()).filter(Boolean) : [])
                 if (!roles.includes(group))
-                    this.add('warning', 'role-unknown', `Assignment policy '${policy}', rule ${r + 1}: '${group}' is not a role of roles.json (${roles.join(', ')}).`, def);
+                    this.add('warning', 'role-unknown', `Assignment policy '${policy}', rule ${r + 1}: '${group}' is not a role (roles.json, app-contract.json: ${roles.join(', ')}).`, def);
         }
     }
 
@@ -889,3 +960,29 @@ async function verifyModel(source: string, server?: IBPMNServer, name = 'model',
 
 export { verifyModel, ModelVerifier };
 export type { IModelIssue, IModelVerification, ModelIssueSeverity, IVerifyOptions };
+
+/** A model's or a table's text as its expressions read: XML's entities decoded. */
+function decodeXml(text: string): string {
+    return String(text ?? '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&#10;/g, '\n').replace(/&amp;/g, '&');
+}
+
+/** Each appServices.<name> a text reads, and how many arguments it is called with (null: not called there). */
+function appServicesCalls(text: string): { name: string; args: number | null }[] {
+    const calls = [];
+    for (const m of text.matchAll(/\bappServices\s*\.\s*([A-Za-z_$][\w$]*)\s*(\()?/g)) {
+        if (!m[2]) { calls.push({ name: m[1], args: null }); continue; }
+        // its arguments: the commas at its own depth, up to its closing parenthesis
+        let depth = 0, args = 0, any = false, quote: string | null = null;
+        for (let i = m.index + m[0].length; i < text.length; i++) {
+            const c = text[i];
+            if (quote) { if (c === '\\') i++; else if (c === quote) quote = null; continue; }
+            if (c === '"' || c === "'" || c === '`') { quote = c; any = true; continue; }
+            if (c === '(' || c === '[' || c === '{') { depth++; any = true; continue; }
+            if (c === ')' || c === ']' || c === '}') { if (depth === 0) break; depth--; continue; }
+            if (c === ',' && depth === 0) { args++; continue; }
+            if (!/\s/.test(c)) any = true;
+        }
+        calls.push({ name: m[1], args: any ? args + 1 : 0 });
+    }
+    return calls;
+}

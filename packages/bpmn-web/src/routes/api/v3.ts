@@ -17,6 +17,7 @@ import { invokeDecision } from '../decisions.js';
 import { labelFilterQuery, labeledTasks, labeledInstances, LabelFilterError } from './labels.js';
 import { serverEnvironment } from '../../runtime/environment.js';
 import { GuideOperations, GuideError } from './guide.js';
+import { contractProblems } from '../../index.js';
 
 /*
  * API v3, /api/v3 (docs/design/api-v3.md): every call through the door (a user's token, or the service key) and as
@@ -97,6 +98,14 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
             res.status(code).json({ error: { code: body.code, message: body.errors, ...(body.details ? { details: body.details } : {}) } });
         }
     };
+
+    // the application's contract (app-contract.json, docs/design/app-contract.md): what a model may use of it; 404 without one
+    router.get('/application', (req, res) => {
+        let contract = null;
+        try { contract = server.appDelegate?.describe?.() ?? null; } catch { contract = null; }
+        if (!contract) return res.status(404).json({ error: { code: 'NO_CONTRACT', message: 'This application publishes no contract (app-contract.json)' } });
+        res.json({ ...contract, problems: contractProblems(contract) });
+    });
 
     // who I am, and what I may do
     router.get('/me', handler(async (req, user) => ({

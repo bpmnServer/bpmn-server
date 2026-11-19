@@ -1,6 +1,6 @@
 # The application's contract: what it publishes, and how we talk
 
-Status: **draft for discussion**. 2026-11-13, revised 2026-11-14 with Ralph's feedback. Related:
+Status: **first slice built in 3.7.2** (docs/docs/app-contract.md): the file read and checked, `describe()`, `appVars` (`appVarsClass`, `getAppVars`, `evaluatingSource`), `verifyModel`'s checks, the start's comparison with the code, the editor's completion, `GET /api/v3/application`, the HR demo's contract. Not built: the remote delegate (`appUrl`, §4.5), the form protocol (§4.1-4.2), `await` in expressions (§4.6), the MDE adapter (§6). Draft 2026-11-13, revised 2026-11-14 with Ralph's feedback. Related:
 [expressions.md](expressions.md) (the names an expression reads), [decision-context.md](decision-context.md) (the
 application's facts), [form-keys.md](form-keys.md) (its pages), [connectors-as-files.md](connectors-as-files.md)
 (its APIs), [host-users.md](host-users.md) (its users).

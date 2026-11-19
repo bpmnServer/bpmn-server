@@ -3,6 +3,7 @@ import { Item, IExecution, WebAppDelegate } from 'bpmn-web';
 import { AppServices } from '../connectors/appServices.js';
 import { AppUtils } from './appUtils.js';
 import { HrNotifications } from '../../server/notifications.js';
+import { HrVars } from './appVars.js';
 
 
 var seq = 1;
@@ -13,6 +14,8 @@ console.log('appDelegate from ', import.meta.filename);
 
 
 class AppDelegate extends WebAppDelegate{
+    /** The application's variables, appVars.<name> (./appVars.ts; declared in app-contract.json) */
+    appVarsClass = HrVars;
     winSocket;
     appServices;
     appUtils;
