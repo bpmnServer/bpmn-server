@@ -1,5 +1,4 @@
 import { BPMNAPI, SecureUser, formFieldLookup, filterValue } from '../../index.js';
-import { notATest } from '../../testing/scenarios.js';
 import { CaseAccess } from '../caseAccess.js';
 
 /*
@@ -39,7 +38,9 @@ export function asTask(item) {
     const { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, userName, assignment } = item;
     return { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, completedBy: endedAt ? userName : undefined,
         // what decided who works on it: { policy, rule }, or { userName } of who reassigned it
-        assignedBy: assignment ?? undefined };
+        assignedBy: assignment ?? undefined,
+        // a test run's task (a scenario's, development and test only): an ordinary task, marked so
+        ...(String(instanceId ?? '').startsWith('test-') ? { test: true } : {}) };
 }
 
 /** A form field as the model has it (camunda:formField), as plain JSON: its options and validation too. */
@@ -102,7 +103,7 @@ export class TaskOperations {
 
     /** The task this user has a part in, or the same 404. */
     private async find(id: string, user: SecureUser) {
-        const [item] = await this.api.data.findItems({ 'items.id': id, ...notATest }, user);
+        const [item] = await this.api.data.findItems({ 'items.id': id }, user);
         // an administrator also forces any other waiting item (an event, a receive task), as the instance page offers
         if (!item || (item.type !== 'bpmn:UserTask' && !user.isAdmin()) || !mayAct(item, user))
             throw notFound();
@@ -118,7 +119,7 @@ export class TaskOperations {
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new TaskError(400, 'after is a list\'s next', 'BAD_AFTER');
         // lean: the instances' data is not read for a list (fable-review.md H5); the labels read it for the page's tasks
-        const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest, ...query }, user, { lean: true }))
+        const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...query }, user, { lean: true }))
             .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && (all && user.isAdmin() ? true : hasPart(item, user)) && (after === undefined || isAfter(item, String(after))))
             .sort((a, b) => new Date(a.startedAt ?? 0).getTime() - new Date(b.startedAt ?? 0).getTime() || (a.id < b.id ? -1 : 1));
         // a task the case's policy doesn't let this user complete is not theirs to see here (the requester's approval)
@@ -137,7 +138,7 @@ export class TaskOperations {
     async completed(user: SecureUser, { limit = 10, query = {} }: { limit?: number, query?: object } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
-        const ended = await this.api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': user.userName, ...notATest, ...query }, user, { lean: true });
+        const ended = await this.api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': user.userName, ...query }, user, { lean: true });
         return ended
             .filter(item => item.userName === user.userName && item.status === 'end' && item.type === 'bpmn:UserTask')
             .sort((a, b) => new Date(b.endedAt ?? 0).getTime() - new Date(a.endedAt ?? 0).getTime())

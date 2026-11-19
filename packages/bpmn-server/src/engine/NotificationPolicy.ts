@@ -212,7 +212,7 @@ export interface INotificationQuery {
     instanceId?: string;
     instanceName?: string;
     status?: INotification['status'];
-    /** test runs' too (default: left out) */
+    /** test runs' (marked `test`): true only theirs, false none of them; by default listed with the others */
     test?: boolean;
     /** at most this many, the newest (default 200, at most 1000) */
     limit?: number;
@@ -228,7 +228,8 @@ export async function findNotifications(server: any, query: INotificationQuery =
     if (query.instanceId) where.instanceId = query.instanceId;
     if (query.instanceName) where.instanceName = query.instanceName;
     if (query.status) where.status = query.status;
-    if (!query.test) where.test = { $ne: true };
+    if (query.test === true) where.test = true;
+    else if (query.test === false) where.test = { $ne: true };
     const found = await store.find(database, NOTIFICATION_COLLECTION, where, null, { createdAt: -1 }, limit);
     // an adapter written before `limit` may return more
     return (found ?? []).slice(0, limit).map(({ _id, ...n }) => n);

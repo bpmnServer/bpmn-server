@@ -102,12 +102,38 @@ block content
   main#instances.instance-page
     header.instance-page-header
       div
-        a.instance-back(href="/#instances")
-          i.fa.fa-arrow-left(aria-hidden="true")
-          | Back to instances
-        h1 #{title}
+        if testCase
+          a.instance-back(href=`/test-cases/${encodeURIComponent(testCase.model)}`)
+            i.fa.fa-arrow-left(aria-hidden="true")
+            | Back to test cases
+        else
+          a.instance-back(href="/#instances")
+            i.fa.fa-arrow-left(aria-hidden="true")
+            | Back to instances
+        h1 #{testCase ? 'Test case' : title}
         p.instance-subtitle #{instance.label && instance.label !== instance.name ? instance.label + ' · ' + instance.name : instance.name}
       span.instance-id(title=instance.id) ID: #{instance.id}
+        if String(instance.id || '').startsWith('test-')
+          span.status-badge.status-test(title="A test run's case: an ordinary case, marked so") test
+    //- a test case from its file (testing/testCases.ts): the scenario that ran, read-only
+    if testCase
+      section.instance-card.test-case-card(aria-label="Test case")
+        p
+          b Scenario:
+          |  #{testCase.scenario} ·#{' '}
+          if testCase.ok
+            span.status-badge.status-end passed
+          else
+            span.status-badge.status-error(title=testCase.error || undefined) failed
+          |  · ran #{prettyDate(testCase.ranAt)}
+        if !testCase.ok && testCase.error
+          p.instance-hint #{testCase.error}
+        p.instance-hint
+          if testCase.current
+            | It ran against the model as it is now.
+          else
+            | The model was changed after this ran: this is the model as it ran then. Run the tests again for the case as it is now.
+          |  Kept as a file with the models; read-only.
 
     .instance-summary-grid
       section.instance-card(aria-labelledby="instance-info-heading")
@@ -375,12 +401,13 @@ block content
                 td.instance-nowrap #{item.type}
                 td #{item.userName}
                 td.instance-actions
-                  if item.status === 'error' && user && user.isAdmin()
+                  //- a test case from its file: nothing to act on
+                  if !testCase && item.status === 'error' && user && user.isAdmin()
                     form.retry-form(action="/retryItem" method="post")
                       input(type="hidden" name="_csrf" value=_csrf)
                       input(type="hidden" name="itemId" value=item.id)
                       button.btn.btn-primary.btn-xs(type="submit" title="Run the task's work again") Retry
-                  if label
+                  if label && !testCase
                     a.btn.btn-primary.btn-xs(href=`/invokeItem${ref}`) #{label}
                     if label2
                       a.btn.btn-default.btn-xs(href=`/assign${ref}`) #{label2}

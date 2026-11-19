@@ -103,3 +103,7 @@
 
 /* the instance's actors, under its data */
 .instance-subheading { font-size: 15px; margin: 14px 0 6px; }
+
+/* a test run's case (testing/testCases.ts), and a test case from its file */
+.status-test { background: #fef3c7; color: #78350f; margin-left: 8px; }
+.test-case-card { margin: 0 0 16px; }

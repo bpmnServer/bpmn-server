@@ -7,3 +7,5 @@
 .env-production, .env-other { background: #e5e7eb; color: #1f2937; }
 /* READ_ONLY: the editors' Save, off */
 .modeler-actions button[disabled] { opacity: .45; cursor: not-allowed; }
+/* a test run's case or task (an ordinary one, marked so: testing/testCases.ts) */
+.test-mark { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 8px; font-size: 11px; background: #fef3c7; color: #78350f; }

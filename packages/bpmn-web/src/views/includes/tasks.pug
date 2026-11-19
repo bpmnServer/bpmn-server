@@ -30,6 +30,8 @@ div.tasks-content
 
 			tr
 				td #{item.name} - #{item.elementId}
+					if item.test
+						span.test-mark(title="A test run's case") test
 				td #{item.processName} 
 				//- its label and its case's (engine/Labels.ts)
 				td #{item.label || ''}

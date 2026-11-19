@@ -26,6 +26,13 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Test cases** (docs/docs/environments.md#test-cases): tests run in development and test only. A scenario's run is
+  an ordinary case, listed with the others and marked **test**; nothing filters test runs out any more (API v3's
+  instances and tasks say `test: true`). Each scenario's last case is also saved as a file with the models,
+  `test-cases/<model>/<scenario>.json`. Production (`APP_ENV=production`) refuses every test run (403 `TESTS_OFF`) and
+  shows those files: **Test cases** (`/test-cases`), each on the instance page, read-only, marked *changed since* when
+  the model changed after it ran. The Notifications page lists test runs' notifications with the others, marked.
+  Test: `apps/testSampleApp/test/web/test-cases.test.mjs`.
 - **The environment on every page** (docs/docs/environments.md): `APP_ENV` takes `development`, `test` or
   `production`, shown as a band above the menu bar (Development blue, Test amber) and a badge in the editors;
   `APP_ENV_LABEL` names it otherwise (`Staging`, `Public demo`). API v3's `/me` says it (`environment`). Unset

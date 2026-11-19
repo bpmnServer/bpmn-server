@@ -87,7 +87,7 @@ The tenant is the service account's (`API_SERVICE_TENANT_ID`), never taken from 
 - A task assigned to someone else: 403 to complete, 409 to claim. A task that has ended: 409, with the code `ITEM_NOT_WAITING`.
 - Errors are `{ errors, code }`, with a real status. An instance still busy after the lock's retries is a 503: try again.
 
-Anyone holding the key can act as any user, so it belongs on the application's server, never in a browser. The Test tab's instances are not listed.
+Anyone holding the key can act as any user, so it belongs on the application's server, never in a browser. The Test tab's tasks are listed with the others (development and test servers only).
 
 > **`/api` and `/api2` are deprecated** since 3.7: they keep working, with fixes only, until they go (v1 at 4.0). Their
 > answers say so (`Deprecation`, and a `Link` to the API's document); their documents are `/api/openapi.json` and

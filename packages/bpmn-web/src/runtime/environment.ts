@@ -31,3 +31,10 @@ export function serverEnvironment(env: NodeJS.ProcessEnv = process.env): ServerE
     const readOnly = (env.READ_ONLY ?? '').trim().toLowerCase() === 'true';
     return { name, label, readOnly, shown: !!label || readOnly };
 }
+
+/**
+ * Whether tests run on this server: everywhere but production (APP_ENV=production). In development and test, a
+ * scenario's case is an ordinary case in the database, and is also saved as a file beside the model
+ * (testing/testCases.ts); production runs none, and shows those files (docs/docs/environments.md#test-cases).
+ */
+export const testsRun = (env: NodeJS.ProcessEnv = process.env) => serverEnvironment(env).name !== 'production';

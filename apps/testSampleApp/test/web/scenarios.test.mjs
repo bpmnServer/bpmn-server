@@ -1,4 +1,4 @@
-// @features: models-files, parallel-gateway, test-tab
+// @features: models-files, parallel-gateway, test-cases, test-tab
 // Test scenarios of the model editor's Test tab (src/testing/scenarios.ts): kept per model, run on the saved
 // model, with the steps choosing the path and the expectations checked.
 import test from 'node:test';
@@ -138,7 +138,7 @@ test('modelHistory off (MODEL_HISTORY=false): saves keep no versions, and the ed
     }
 });
 
-test('a test instance is not in the lists of instances and work; it opens by its id', async () => {
+test('a test instance is an ordinary case: in the lists of instances and work, marked test; it opens by its id', async () => {
     const waitingId = instance => instance.items.find(i => i.status === 'wait').id;
     const real = (await web.bpmnServer.engine.start('leave-request', {}, null, 'designer')).instance;
     const res = await designer.request('POST', '/model/test/start', { json: { processName: 'leave-request', data: {} } });
@@ -150,9 +150,10 @@ test('a test instance is not in the lists of instances and work; it opens by its
     for (const [url, user] of [['/', designer], ['/dashboard', staff], ['/tasks', staff]]) {
         const page = await user.get(url);
         assert.equal(page.status, 200, `${url}: ${why(page)}`);
-        // a list of instances has their ids, a list of tasks the tasks'
-        assert.ok(![tested, waitingId(instance)].some(id => page.text.includes(id)), `${url} does not list the test instance`);
+        // a list of instances has their ids, a list of tasks the tasks': the test one listed as the real one, marked
+        assert.ok([tested, waitingId(instance)].some(id => page.text.includes(id)), `${url} lists the test instance`);
         assert.ok([real.id, waitingId(real)].some(id => page.text.includes(id)), `${url} lists the real one`);
+        if (url !== '/tasks') assert.match(page.text, /class="test-mark"/, `${url} marks it`);
     }
     assert.equal((await designer.get(`/instanceDetails?id=${tested}`)).status, 200);
 });

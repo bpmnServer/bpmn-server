@@ -8,6 +8,8 @@ mixin taskRow(item)
 	tr
 		td
 			a(href=`/invokeItem?id=${item.id}&processName=${item.processName}&elementId=${item.elementId}`)= item.name || item.elementId
+			if item.test
+				span.test-mark(title="A test run's case") test
 			//- its own label, when it has one (engine/Labels.ts)
 			if item.ownLabel
 				.task-label= item.ownLabel
@@ -70,6 +72,8 @@ block dash
 						tr
 							td
 								= item.name || item.elementId
+								if item.test
+									span.test-mark(title="A test run's case") test
 								if item.ownLabel
 									.task-label= item.ownLabel
 							td= item.caseLabel && item.caseLabel !== item.processName ? item.caseLabel : ''

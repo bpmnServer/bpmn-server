@@ -170,24 +170,25 @@ test('a policy that cannot be read, a rule that notifies nobody, a rule that fai
     await odd.server.shutdown();
 });
 
-test('findNotifications: across the instances, newest first; by whom, instance, process, status; test runs left out', async () => {
+test('findNotifications: across the instances, newest first; by whom, instance, process, status; test runs\' listed and marked, singled out or left out when asked', async () => {
     const { server: srv } = await server();
     const first = await srv.engine.start('Leave', { requester: 'ann', days: 3 }, null, 'ann');
     await srv.engine.invoke({ id: first.id, 'items.elementId': 'Approve' }, { decision: 'approved' }, 'bob');
     const second = await srv.engine.start('Leave', { requester: 'carl', days: 1 }, null, 'carl');
     await srv.engine.start('Leave', { requester: 'dora', days: 2 }, null, 'dora', { instanceId: `test-${Date.now()}` });
 
-    const toBob = await findNotifications(srv, { to: ['bob'] });
+    const toBob = await findNotifications(srv, { to: ['bob'], test: false });
     assert.deepEqual(toBob.map(n => [n.instanceId, n.event]), [[second.id, 'assigned'], [first.id, 'ended'], [first.id, 'assigned']],
-        'to bob: newest first, a test run\'s left out');
+        'to bob: newest first, the test run\'s left out when asked');
     assert.deepEqual((await findNotifications(srv, { to: ['ann', 'nobody'] })).map(n => n.rule), [3, 2], 'to any of them');
     assert.deepEqual((await findNotifications(srv, { instanceId: second.id })).map(n => n.event), ['assigned']);
-    assert.equal((await findNotifications(srv, { instanceName: 'Leave' })).length, 5);
+    assert.equal((await findNotifications(srv, { instanceName: 'Leave' })).length, 6, 'the test run\'s with the others');
     assert.equal((await findNotifications(srv, { instanceName: 'Other' })).length, 0);
     assert.equal((await findNotifications(srv, { status: 'failed' })).length, 0);
-    assert.deepEqual((await findNotifications(srv, { limit: 1 })).map(n => n.instanceId), [second.id], 'the newest');
-    const all = await findNotifications(srv, { test: true });
-    assert.equal(all.length, 6, 'test runs too, when asked');
-    assert.ok(all.some(n => n.test && n.status === 'recorded'), 'a test run\'s: kept, not delivered');
+    assert.deepEqual((await findNotifications(srv, { limit: 1, test: false })).map(n => n.instanceId), [second.id], 'the newest');
+    const all = await findNotifications(srv);
+    assert.equal(all.length, 6, 'test runs\' too');
+    const tests = await findNotifications(srv, { test: true });
+    assert.ok(tests.length === 1 && tests[0].test && tests[0].status === 'recorded', 'a test run\'s, singled out: marked, kept, not delivered');
     assert.ok(all.every(n => !('_id' in n)));
 });

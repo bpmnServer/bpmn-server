@@ -28,6 +28,8 @@ table
 		if user && user.isAdmin()
 		tr
 			td #{instance.name}
+				if instance.test
+					span.test-mark(title="A test run's case") test
 			//- its label, from its model (engine/Labels.ts)
 			td #{instance.label || ''}
 			td #{instance.fromNow}

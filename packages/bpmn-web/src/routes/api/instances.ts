@@ -1,6 +1,5 @@
 import { BPMNAPI, SecureUser, notificationsOf } from '../../index.js';
 import { rationaleSteps } from '../../testing/rationale.js';
-import { notATest } from '../../testing/scenarios.js';
 import { labeledInstances } from './labels.js';
 import { CaseAccess } from '../caseAccess.js';
 
@@ -34,7 +33,9 @@ const SUMMARY_AND_ITEMS = { ...SUMMARY, items: 1, tokens: 1, userName: 1 };
 
 /** Its label, once labeled (labels.ts): nothing when it was not. */
 const labelOf = i => i.label === undefined ? {} : { label: i.label, labelValues: i.labelValues };
-const summary = i => ({ id: i.id, name: i.name, status: i.status, startedAt: i.startedAt, endedAt: i.endedAt ?? null, ...labelOf(i) });
+/** A test run's case (a scenario's, development and test only): an ordinary case, marked so. */
+export const isTestCase = (id: unknown) => String(id ?? '').startsWith('test-');
+const summary = i => ({ id: i.id, name: i.name, status: i.status, startedAt: i.startedAt, endedAt: i.endedAt ?? null, ...labelOf(i), ...(isTestCase(i.id) ? { test: true } : {}) });
 const asItem = i => ({
     id: i.id, elementId: i.elementId, name: i.name, type: i.type, status: i.status, startedAt: i.startedAt, endedAt: i.endedAt ?? null,
     userName: i.userName, assignee: i.assignee, candidateUsers: i.candidateUsers, candidateGroups: i.candidateGroups, ...labelOf(i),
@@ -74,7 +75,7 @@ export class InstanceOperations {
             throw new InstanceError(400, 'cursor is a page\'s next', 'BAD_CURSOR');
         /** The query from a bookmark on. $and: the user's rules put their own $or on it, and a filter by label may have its own. */
         const from = (bookmark?: string) => {
-            const query: any = { ...notATest, ...(status ? { status } : {}), ...(name ? { name } : {}) };
+            const query: any = { ...(status ? { status } : {}), ...(name ? { name } : {}) };
             const conditions = [...(Object.keys(more).length ? [more] : []), ...(bookmark !== undefined ? [afterCondition(String(bookmark))] : [])];
             if (conditions.length) query.$and = conditions;
             return query;
@@ -98,9 +99,9 @@ export class InstanceOperations {
         return { instances: page.map(summary), next: found.length > limit ? position(page.at(-1)) : undefined };
     }
 
-    /** The instance, if this user may see it; never a test run's (notATest is a condition on the id). */
+    /** The instance, if this user may see it; a test run's too (an ordinary case, marked `test`). */
     private async find(user: SecureUser, id: string) {
-        if (typeof id !== 'string' || id.startsWith('test-')) throw notFound();
+        if (typeof id !== 'string') throw notFound();
         const [instance] = await this.findInstances({ id }, user, 'full');
         if (!instance) throw notFound();
         return instance;

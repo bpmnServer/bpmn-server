@@ -1,0 +1,47 @@
+extends dashboards/layout
+
+//- Test cases (testing/testCases.ts): each scenario's last case, from its file beside the models (test-cases/<model>/).
+//- What production shows of the tests, which it doesn't run; in development and test, saved when a run is saved.
+
+block intro
+  p.dash-intro
+    | Each scenario's last run: the case it made, kept as a file with the models, so it can be examined here as it ran.
+    if !testsRun
+      |  Tests don't run on this server (production): these are the files deployed with the models.
+
+block dash
+  if !models.length
+    p.dash-empty No test cases yet. They are saved when a model's tests are run and saved (the Test tab, Design's Run tests).
+  each m in models
+    section.dash-card.wide(id='model-' + m.model)
+      h2
+        if one
+          = m.model
+        else
+          a(href=`/test-cases/${encodeURIComponent(m.model)}`)= m.model
+        span.count= m.cases.length
+      if m.cases.length
+        table.test-cases
+          tr
+            th Scenario
+            th Result
+            th Ran
+            th Case
+            th Model
+          each c in m.cases
+            tr(data-test-case=c.file)
+              td: a(href=`/test-cases/${encodeURIComponent(c.model)}/${encodeURIComponent(c.file)}`)= c.scenario
+              td
+                if c.ok
+                  span.dash-badge.is-ok passed
+                else
+                  span.dash-badge.is-error(title=c.error || undefined) failed
+              td= c.ranAt ? new Date(c.ranAt).toLocaleString() : ''
+              td= c.status || ''
+              td
+                if c.current
+                  span.dash-badge.is-ok as it is now
+                else
+                  span.dash-badge.is-warning(title='The model was changed after this ran: run the tests again') changed since
+      else
+        p.dash-empty No test cases for this model.

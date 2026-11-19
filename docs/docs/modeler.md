@@ -165,8 +165,10 @@ rows. Its filters open the steps with a row of what they show, and hide the othe
 **Full window**, in the bar of the tabs, puts them over the whole page; **Back to the editor** or Esc returns, and so does
 Simulate, which shows on the diagram.
 
-Test runs are ordinary instances whose ids start with `test-`, tagged in the database with their process and scenario:
-run tests on a development or test server. They are left out of the lists of instances and tasks; **Open instance** opens one.
+Test runs are ordinary instances whose ids start with `test-`, tagged in the database with their process and scenario.
+Tests run on a development or test server (`APP_ENV`), never in production. Their instances and tasks are listed with
+the others, marked **test**. Each scenario's last case is also saved as a file with the models, which production shows:
+see [Test cases](environments.md#test-cases).
 
 The **Design dashboard** (`/dashboard/design`) shows each model's and decision's tests with the last run's result
 (and why it failed), runs one model's or decision's tests, or **Run all tests**. Each model also shows its description

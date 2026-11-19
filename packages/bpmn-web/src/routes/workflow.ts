@@ -13,6 +13,8 @@ import { labelFilterOf } from './labelFilter.js';
 import { accessDirectory } from './caseAccess.js';
 import { pageApi, ApiError } from './api/pageClient.js';
 import { ProcessRunError } from './runErrors.js';
+import { listTestCases, modelsWithTestCases, readTestCase } from '../testing/testCases.js';
+import { testsRun } from '../runtime/environment.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import { guardModelParams } from './middleware/modelName.js';
 import { afterWork, canDesign, isAdminGroups } from '../userAccess/roles.js';
@@ -66,6 +68,27 @@ export class Workflow extends Common {
         router.use(this.isAuthenticated);
 
         router.get('/home', awaitAppDelegateFactory(home));
+
+        // ---- test cases (testing/testCases.ts): each scenario's last case, from its file beside the models; what
+        // production shows of the tests (it runs none). Read-only: no action on them
+        router.get('/test-cases', awaitAppDelegateFactory(async (request, response) => {
+            const folder = serverOf(request).configuration.definitionsPath;
+            const models = modelsWithTestCases(folder).map(model => ({ model, cases: listTestCases(folder, model) }));
+            response.render('testCases', { title: 'Test cases', models, testsRun: testsRun() });
+        }));
+        router.get('/test-cases/:process', awaitAppDelegateFactory(async (request, response) => {
+            const folder = serverOf(request).configuration.definitionsPath;
+            const model = request.params.process;
+            response.render('testCases', { title: `Test cases: ${model}`, models: [{ model, cases: listTestCases(folder, model) }], testsRun: testsRun(), one: model });
+        }));
+        router.get('/test-cases/:process/:testCase', awaitAppDelegateFactory(async (request, response) => {
+            const c = readTestCase(serverOf(request).configuration.definitionsPath, request.params.process, request.params.testCase);
+            if (!c) return answerMessage(request, response, 404, `No test case ${request.params.testCase} of ${request.params.process}`);
+            const instance = { ...c.instance, source: c.source };
+            return renderInstance(request, response, instance, undefined, {
+                model: c.model, scenario: c.scenario, ranAt: c.ranAt, ok: c.ok, error: c.error, current: c.current, file: request.params.testCase,
+            });
+        }));
 
         router.get('/', this.isAuthenticated, awaitAppDelegateFactory(async (request, response) => {
             let output = [];
@@ -549,14 +572,19 @@ async function afterOperation(request,response,result) {
 
 }
 async function instanceDetails(request,response,instanceId,version) {
-
-    let user = getSecureUser(request);
-
     // the whole case for whoever sees it fully, its data as the policy lets them read it: API v3's operations decide
     const page = await asPage(request, response, api => api.instancePage(instanceId));
     if (!page) return;
-    const instance = page.instance;
-    await labelInstances(serverOf(request), [instance]);
+    return renderInstance(request, response, page.instance, version);
+}
+
+/**
+ * An instance's page: a case from the store, or a test case from its file (`testCase`: testing/testCases.ts), shown
+ * read-only, with the scenario it ran and the model it ran against.
+ */
+async function renderInstance(request, response, instance, version?, testCase: any = null) {
+    let user = getSecureUser(request);
+    await labelInstances(serverOf(request), [instance]).catch(() => { });
 
     let logs = instance.logs;
     if (!logs)
@@ -564,8 +592,9 @@ async function instanceDetails(request,response,instanceId,version) {
     
     let svg = null;
     try {
-        svg= instance.svg;
-        if (!svg)
+        // a test case's diagram is its own model's, as it ran
+        svg = testCase ? null : instance.svg;
+        if (!svg && !testCase)
             svg = await serverOf(request).definitions.getSVG(instance.name);
         // decorations and the replay animation find elements by data-element-id; older generated
         // previews lack it, so draw the diagram again from the instance's model
@@ -600,7 +629,7 @@ async function instanceDetails(request,response,instanceId,version) {
         .filter(([, who]) => who != null && !(Array.isArray(who) && !who.length))
         .map(([name, who]) => ({ name, who: Array.isArray(who) ? who.join(', ') : String(who) }));
     // whom its notification policies told what (docs/docs/notification-policies.md), delivered or not
-    const notifications = await notificationsOf(serverOf(request), instance.id).catch(() => []);
+    const notifications = testCase ? [] : await notificationsOf(serverOf(request), instance.id).catch(() => []);
 
     let decorations = JSON.stringify(ViewHelper.calculateDecorations(items,instance.tokens));
 
@@ -613,7 +642,9 @@ async function instanceDetails(request,response,instanceId,version) {
             decorations, definition: defJson, lastItem,
             rationale: rationaleSteps(logs, items, instance.startedAt),
             // under it: its user tasks' assignment, after the fact; who may do what, for those who work on the models
-            access: await (await pageApi(request, serverOf(request))).instanceAccess({ ...instance, items, logs }, worksOnModels(request.user)
+            // a test case: what ran, read-only (no access asked, no actions)
+            testCase,
+            access: testCase ? null : await (await pageApi(request, serverOf(request))).instanceAccess({ ...instance, items, logs }, worksOnModels(request.user)
                 ? await accessDirectory(request, serverOf(request)) : {}).catch(() => null),
             accessDetails: worksOnModels(request.user),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's

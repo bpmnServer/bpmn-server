@@ -24,9 +24,6 @@ block dash
 				option(value='sent', selected=filter.status === 'sent') sent
 				option(value='recorded', selected=filter.status === 'recorded') kept, not delivered
 				option(value='failed', selected=filter.status === 'failed') failed
-		label.checkbox-inline
-			input(type='checkbox', name='test', checked=filter.test)
-			|  test runs too
 		button.btn.btn-default.btn-sm(type='submit') Show
 	section.dash-card#notifications
 		h2 Notifications

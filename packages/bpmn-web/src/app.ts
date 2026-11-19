@@ -42,6 +42,7 @@ import { errorDetailsHandler } from './routes/middleware/errorDetails.js';
 import { processRunErrorHandler } from './routes/runErrors.js';
 import { gracefulShutdown } from './runtime/shutdown.js';
 import { readOnlyGuard } from './runtime/readOnly.js';
+import { testRunsGuard } from './runtime/testRuns.js';
 
 const __dirname = import.meta.dirname;
 console.log('app.ts from ', import.meta.filename);
@@ -151,6 +152,8 @@ export class WebApp {
 		// READ_ONLY=true: the processes and the server's setup can't be changed, through a page or an API (runtime/readOnly.ts);
 		// before every route, the sign-in's account pages too
 		app.use(readOnlyGuard);
+		// APP_ENV=production: no tests run, so its database holds no test cases (runtime/testRuns.ts)
+		app.use(testRunsGuard);
 
 		// Unauthenticated health/readiness probe for load balancers (before auth).
 		app.get('/healthz', (req, res) => {

@@ -18,6 +18,7 @@ import { randomUUID } from 'node:crypto';
 import { rationaleSteps } from './rationale.js';
 import { readFeature, sourceFeature, writeFeature } from './featureFiles.js';
 import { SecureUser, notificationsOf } from 'bpmn-server';
+import { saveTestCases } from './testCases.js';
 
 export interface ScenarioStep {
     /** the waiting element to complete */
@@ -222,7 +223,10 @@ export async function withRuns(server, model: string, scenarios: any[]) {
     });
 }
 
-/** The scenarios' runs as tags on their test instances. The instances of a scenario no longer there go with it. */
+/**
+ * The scenarios' runs as tags on their test instances. The instances of a scenario no longer there go with it. Each
+ * scenario's last case is also saved as a file beside the models (testCases.ts), which production shows.
+ */
 export async function saveRuns(server, model: string, scenarios: any[]) {
     const names = new Set(scenarios.map(scenario => String(scenario.name).trim()));
     for (const scenario of scenarios)
@@ -233,6 +237,7 @@ export async function saveRuns(server, model: string, scenarios: any[]) {
     for (const { id, tag } of tagged)
         if (!names.has(tag.scenario) && String(id).startsWith('test-'))
             await server.engine.deleteInstances({ id });
+    await saveTestCases(modelsFolder(), model, scenarios, id => findTest(server, id));
 }
 
 /** Whether the set's .feature already holds these tests. */
@@ -414,9 +419,6 @@ export function isStep(item): boolean {
 
 const clone = value => JSON.parse(JSON.stringify(value ?? {}));
 const message = err => String(err?.message ?? err);
-
-/** For the lists of work and instances: not the Test tab's instances (they open by their id, as any other). */
-export const notATest = { id: { $not: { $regex: '^test-' } } };
 
 /**
  * Start an instance of the model for a test (the Test tab's recording, and runScenario): its flags keep save points

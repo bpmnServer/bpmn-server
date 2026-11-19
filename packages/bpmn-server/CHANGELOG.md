@@ -26,6 +26,8 @@ and here
 
 ## [Unreleased]
 ### Added
+- `findNotifications` lists test runs' notifications with the others (marked `test`); `test: true` gives only
+  theirs, `test: false` none of them.
 - `bpmn-server setup` asks for the environment as `development`, `test` or `production`.
 - The engine's `facts()` also says the application's delegate: its class and the methods it defines
   (`delegate: { name, methods }`), for bpmn-web's Integration page. `parseEnv` and `renderEnv` (a `.env` read and

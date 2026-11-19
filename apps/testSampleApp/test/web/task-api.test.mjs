@@ -1,4 +1,4 @@
-// @features: task-api
+// @features: task-api, test-cases
 // Application integration, phase 1 (docs/docs/application-integration-design.md): the task API an application builds
 // its inbox on. Two parts:
 //   - "today": what the server does now, which the design has to work with. These pass.
@@ -261,12 +261,14 @@ test('contract: once claimed, the task is that user\'s alone', async () => {
     assert.equal((await tasks('POST', `/${task}/complete`, { ...MANAGER, body: {} })).status, 200);
 });
 
-test('contract: a task of a test run is not an application\'s', async () => {
+test('contract: a task of a test run is an ordinary task, marked test (development and test; production runs none)', async () => {
     const started = await web.bpmnServer.engine.start(MODEL, {}, null, null, { instanceId: `test-${Date.now()}` });
     await engine().invoke({ id: started.id, 'items.elementId': 'Submit' }, { days: 6 });
     const task = await approveId(started.id);
-    assert.equal((await tasks('GET', `/${task}`, MANAGER)).status, 404);
-    assert.ok(!(await tasks('GET', '?limit=200', MANAGER)).body.tasks.some(t => t.id === task));
+    const one = await tasks('GET', `/${task}`, MANAGER);
+    assert.equal(one.status, 200, why(one));
+    const listed = (await tasks('GET', '?limit=200', MANAGER)).body.tasks.find(t => t.id === task);
+    assert.ok(listed, 'listed with the others');
 });
 
 test('contract: a task has its instance\'s data; the list only its own fields, not the engine\'s', async () => {

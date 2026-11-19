@@ -18,7 +18,7 @@ import { pageApi } from './api/pageClient.js';
 import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
 import { modelFeatures } from '../modelFeatures.js';
 import { MODEL_FEATURES } from '../modelFeatureCatalog.js';
-import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
+import { listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
 import { reachedIn } from '../testing/coverage.js';
 import { loadDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
@@ -161,7 +161,7 @@ export class Dashboards extends Common {
 
         // ---- notifications ----------------------------------------------------------------------------------
         // what the notification policies made (docs/docs/notification-policies.md), newest first: an administrator's
-        // all of them, filtered by whom, process, status (and test runs', when asked); anyone else's, those to them
+        // all of them, filtered by whom, process, status (test runs' with them, marked); anyone else's, those to them
         // (their name or one of their groups)
         router.get('/notifications', handler(async (req, res) => {
             const { isAdmin } = roles(req);
@@ -169,12 +169,11 @@ export class Dashboards extends Common {
             const filter = {
                 to: one(req.query.to), process: one(req.query.process),
                 status: ['recorded', 'sent', 'failed'].includes(one(req.query.status)) ? one(req.query.status) : '',
-                test: req.query.test === 'on',
             };
             const mine = req.user ? [...new Set([req.user.userName, ...toList(req.user.userGroups)].filter(Boolean))] : [];
             const to = isAdmin ? (filter.to ? toList(filter.to) : undefined) : mine.filter(w => !filter.to || toList(filter.to).includes(w));
             const list = !isAdmin && !to.length ? [] : await findNotifications(server, {
-                to, instanceName: filter.process || undefined, status: (filter.status || undefined) as any, test: filter.test, limit: 200,
+                to, instanceName: filter.process || undefined, status: (filter.status || undefined) as any, limit: 200,
             });
             render(req, res, 'notifications', { title: 'Notifications', notifications: list, filter, all: isAdmin, mine });
         }));

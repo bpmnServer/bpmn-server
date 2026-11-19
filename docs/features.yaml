@@ -684,6 +684,13 @@ features:
     docs: [docs/docs/integration-settings.md]
     code: [packages/bpmn-web/src/routes/integration.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/dashboards/integration.pug, packages/bpmn-server/src/common/settingValue.ts]
     tests: [apps/testSampleApp/test/web/integration.test.mjs]
+  - id: test-cases
+    area: web
+    name: "Test cases"
+    what: "Tests run in development and test only (APP_ENV): a scenario's run is an ordinary case, listed with the others and marked test (no list filters them out); its last case is also saved as a file beside the models, test-cases/<model>/<scenario>.json (the case as it ran, its model and the model's fingerprint), when the run is saved. Production (APP_ENV=production) refuses every test run (403 TESTS_OFF, pages and APIs) and shows the files: Test cases (/test-cases) lists them, each opens on the instance page read-only, marked changed since when the model changed after it ran."
+    docs: [docs/docs/environments.md, docs/docs/modeler.md]
+    code: [packages/bpmn-web/src/testing/testCases.ts, packages/bpmn-web/src/runtime/testRuns.ts, packages/bpmn-web/src/testing/scenarios.ts, packages/bpmn-web/src/routes/workflow.ts, packages/bpmn-web/src/views/testCases.pug]
+    tests: [apps/testSampleApp/test/web/test-cases.test.mjs, apps/testSampleApp/test/web/scenarios.test.mjs, apps/testSampleApp/test/web/task-api.test.mjs]
   - id: pages-through-api
     area: pages
     name: "The pages through API v3"

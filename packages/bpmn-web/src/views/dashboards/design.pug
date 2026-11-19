@@ -36,6 +36,8 @@ mixin runButton(field, name)
 
 block intro
 	p.dash-intro The models, what their checks find, their tests, decisions and configured tasks.
+		|  Each scenario's last case:#{' '}
+		a#test-cases-link(href='/test-cases') Test cases
 
 block dash
 	.dash-grid

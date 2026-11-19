@@ -13,7 +13,7 @@ const MODEL = path.join(import.meta.dirname, '..', '..', '..', 'sampleApp', 'pro
 let web;
 
 test.before(async () => {
-  web = await startWebApp({ env: { APP_ENV: 'production', API_TRACE: '' } });
+  web = await startWebApp({ env: { APP_ENV: 'development', API_TRACE: '' } });
   fs.copyFileSync(MODEL, path.join(web.definitionsPath, 'Leave Application.bpmn'));
   await web.bpmnServer.engine.install({ rebuild: true });
 });

@@ -16,6 +16,20 @@
 - **Unset**, the environment isn't declared: the server works as before 3.7.2 and shows no band. Set it on every
   server. `bpmn-server setup` asks for it, and its production profile writes `production`.
 
+## Test cases
+
+Tests run only in development and test. Production runs none, so its database holds no test cases.
+
+- **In development and test,** a scenario's run makes an ordinary case in the database, listed with the others and
+  marked **test**, so you can examine it later. The lists don't hide them.
+- **Each scenario's last case is also saved as a file** with the models: `test-cases/<model>/<scenario>.json`, when its
+  run is saved (the Test tab, the Design page's **Run tests**). The file holds the case as it ran, the model it ran
+  against, and its fingerprint. Commit them with the models.
+- **In production** (`APP_ENV=production`), running tests is refused (403 `TESTS_OFF`), through the pages and the APIs.
+  The test cases are the files deployed with the models: **Test cases** (`/test-cases`, linked from the Design page)
+  lists them, and each opens on the instance page, read-only, with the scenario that ran and whether it passed. A case
+  whose model has changed since it ran is marked *changed since*.
+
 ## Read-only
 
 `READ_ONLY=true` makes a server people can use but not change, such as a public demo.
