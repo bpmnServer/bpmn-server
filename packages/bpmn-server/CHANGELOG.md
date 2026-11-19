@@ -26,6 +26,9 @@ and here
 
 ## [Unreleased]
 ### Added
+- The engine's `facts()` also says the application's delegate: its class and the methods it defines
+  (`delegate: { name, methods }`), for bpmn-web's Integration page. `parseEnv` and `renderEnv` (a `.env` read and
+  changed in place) are exported from the package; `renderEnv` takes who set the lines it adds.
 - **Lists and lookups in forms** (docs/design/form-lookups.md, `elements/FormLookup.ts`): a form field's choices from
   a source, asked for while the form is filled. `<owf:list>` (a drop-down) or `<owf:lookup>` (a search) on a
   `camunda:formField`:

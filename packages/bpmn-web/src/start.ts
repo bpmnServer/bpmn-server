@@ -57,6 +57,8 @@ export interface StartOptions {
 	userManager?: IUserManager;
 	/** The API's settings (keys, service account, impersonation) of this server; default `.env`'s (runtime/hostSettings.ts). */
 	hostSettings?: WorkflowApplication['hostSettings'];
+	/** The .env the Integration page (/dashboard/integration) changes; default the working folder's. */
+	envFile?: string;
 }
 
 function isTrue(param) {
@@ -220,6 +222,7 @@ export async function start(options: StartOptions = {}) {
 		routes: options.routes,
 		userManager: options.userManager,
 		hostSettings: options.hostSettings,
+		envFile: options.envFile,
 		serverOptions: options.setupOnly || options.console ? { cron: false } : {},
 	};
 	const { WebApp } = await import('./app.js');

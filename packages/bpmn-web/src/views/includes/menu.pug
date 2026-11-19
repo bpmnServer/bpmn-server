@@ -1,6 +1,6 @@
 //- The one menu of every page (layouts include it; the editors have a compact copy in their header), error pages too;
 //- a page's own links go in the page, not in this bar:
-//- Workbench, the home; Dashboard: My work and Notifications for everyone, a drop-down with Design and Administration for designers
+//- Workbench, the home; Dashboard: My work and Notifications for everyone, a drop-down with Design, Administration and Integration for designers
 //- and administrators (as their role and DISABLE_DESIGN / DISABLE_ADMIN allow). res.locals: user, canDesign,
 //- canAdminister, canSignup, currentPath, account (who is signed in), signInOff (UserManager). It goes by account, not
 //- `user`: a page may pass its own `user`. With sign-in off, everyone has the places, and there is nothing to sign in to.
@@ -21,6 +21,7 @@ ul.nav.navbar-nav.app-menu
             li(class=on('/dashboard/design')): a(href='/dashboard/design') Design
           if canAdminister
             li(class=on('/dashboard/admin')): a(href='/dashboard/admin') Administration
+          li(class=on('/dashboard/integration')): a(href='/dashboard/integration') Integration
     else
       li(class=here === '/dashboard' ? 'active' : undefined): a(href='/dashboard') My work
       li(class=on('/dashboard/notifications')): a(href='/dashboard/notifications') Notifications

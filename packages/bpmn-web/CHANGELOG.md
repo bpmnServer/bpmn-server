@@ -26,6 +26,15 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The Integration page** (docs/docs/integration-settings.md): Dashboard ▸ Integration (`/dashboard/integration`),
+  for administrators and designers. One section per integration point (the application's delegate and its functions,
+  connectors, roles and policies, notifications, the API the application calls, forms and scripts, AI agents): what is
+  in place, and its settings from the settings schema. An administrator changes every setting, a designer the
+  design-side ones (`FORM_RULES`, `ELEMENT_TEMPLATES`, `VERIFY_MODELS_ON_IMPORT`, `MODEL_HISTORY`). A change is checked
+  against the schema and written to the server's `.env` (the one before kept as `.env.bak`); it applies on restart.
+  Secrets are never shown; a setting the environment or the application's `hostSettings` gives is not changed there.
+  `envFile` (`start()`, `WorkflowApplication`) names the `.env` it writes. In the menu and the HR demo's Workflow menu.
+  Test: `apps/testSampleApp/test/web/integration.test.mjs`.
 - **Lists and lookups in forms** (docs/docs/form-lookups.md): the drawn forms show a field with `<owf:list>` as a
   drop-down and one with `<owf:lookup>` as a search box (`public/javascripts/formLookup.js`); the key is the value,
   its label is sent as `<id>Display`. API v3:

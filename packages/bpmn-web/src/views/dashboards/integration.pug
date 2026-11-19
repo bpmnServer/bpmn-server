@@ -1,0 +1,204 @@
+extends layout
+
+//- The Integration page (routes/integration.ts): one section per integration point, what is in place and its settings.
+//- An administrator changes every setting; a designer the design-side ones. Changes go to .env, applied on restart.
+
+mixin names(list)
+  if list && list.length
+    each name, i in list
+      code= name
+      if i < list.length - 1
+        | ,&nbsp;
+  else
+    span.dash-muted none
+
+mixin application(info)
+  dl
+    dt Delegate
+    dd
+      if info.delegate
+        code= info.delegate
+      else
+        span.dash-muted none
+    dt Its own methods
+    dd: +names(info.methods)
+    dt Functions (appServices)
+    dd
+      if info.servicesError
+        span.dash-muted Made only while a process runs (#{info.servicesError})
+      else
+        +names(info.services.filter(s => s.kind === 'function').map(s => s.name))
+    dt Who signs in
+    dd= info.hostUsers ? 'the application (its own user manager)' : "BPMN Server's own users"
+  p.dash-muted The delegate is code: the application changes it. #[a(href='https://bpmnserver.github.io/bpmn-server/delegates/' target='docs') About the delegate]
+
+mixin connectors(info)
+  if info.list.length
+    table
+      tr
+        th Connector
+        th Status
+        th Key
+        th Used by
+      each c in info.list
+        tr
+          td
+            if isAdmin
+              a(href=`/dashboard/admin/connectors/${encodeURIComponent(c.id)}`)= c.name
+            else
+              = c.name
+            |
+            code= c.id
+          td
+            if c.enabled
+              span.dash-badge.is-ok enabled
+            else
+              span.dash-badge.is-warning disabled
+          td= c.auth && c.auth.last4 ? `${c.auth.type} …${c.auth.last4}` : 'none'
+          td: +names(c.models)
+  else
+    p.dash-empty No connectors yet.
+  if !info.canEncrypt
+    p.dash-muted Connector keys need CONNECTORS_KEY (below): they are stored encrypted with it.
+  if isAdmin
+    a.btn.btn-default.btn-sm(href='/dashboard/admin/connectors') Manage connectors
+
+mixin policies(info)
+  dl
+    dt Roles
+    dd
+      if info.roles.error
+        span.dash-badge.is-warning= info.roles.error
+      else
+        +names(info.roles.list.map(r => r.name))
+        if info.roles.unlisted.length
+          .dash-muted Used but not in roles.json: #{info.roles.unlisted.map(r => r.name).join(', ')}
+    dt Assignment policies
+    dd: +names(info.assignment)
+    dt Security policies
+    dd
+      +names(info.security)
+      if info.security.length
+        |  (#{info.securityOn ? 'on' : 'off'})
+    dt Notification policies
+    dd: +names(info.notification)
+  p
+    if isDesigner
+      a.btn.btn-default.btn-sm(href='/dashboard/design#policies') Edit the policies
+      | &nbsp;
+    if isAdmin
+      a.btn.btn-default.btn-sm(href='/dashboard/admin#roles') Manage the roles
+
+mixin notifications(info)
+  dl
+    dt Delivered by
+    dd= info.notify ? "the application's notify" : 'email (the delegate has no notify of its own)'
+    dt Kept
+    dd
+      | #{info.total}
+      if info.total
+        | (#{Object.entries(info.byStatus).map(([s, n]) => `${n} ${s === 'recorded' ? 'kept, not delivered' : s}`).join(', ')})
+  a.btn.btn-default.btn-sm(href='/dashboard/notifications') See the notifications
+
+mixin api(info)
+  dl
+    dt API v3
+    dd: code /api/v3
+    dt Task API (acting for a user)
+    dd
+      code /api2/tasks
+      |  #{info.taskApi ? 'on' : 'off: it needs a task API key'}
+  if info.hostSettings
+    p.dash-muted The application gives these settings itself (hostSettings): they are not changed here.
+
+mixin setting(s)
+  tr(data-setting=s.name)
+    td
+      b= s.label
+      .dash-muted
+        code= s.name
+        if s.editor === 'designer'
+          |  · designers too
+      if s.description
+        .dash-muted= s.description
+    td
+      if s.secret
+        = s.set ? 'set' : 'not set'
+      else if s.value !== ''
+        code= s.value
+      else
+        span.dash-muted= s.default !== undefined ? `default (${s.default})` : 'not set'
+      if s.source !== 'default'
+        .dash-muted= s.source
+      if s.pending
+        span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply
+    td
+      if !s.editable
+        span.dash-muted= s.source === 'the environment' ? 'set outside .env: change it there' : s.source === 'the application' ? "the application's" : 'administrators'
+      else if s.secret
+        input.form-control(type='password', name=s.name, autocomplete='new-password', placeholder=s.set ? 'a new value replaces it' : 'not set')
+        if s.generate
+          label.checkbox-inline
+            input(type='checkbox', name='generate:' + s.name)
+            |  generate a new one
+        if s.set
+          label.checkbox-inline
+            input(type='checkbox', name='clear:' + s.name)
+            |  remove
+      else if s.choices
+        - const current = s.fileValue === undefined ? '' : s.fileValue
+        select.form-control(name=s.name)
+          option(value='', selected=current === '') default#{s.default !== undefined ? ` (${s.default})` : ''}
+          each c in s.choices
+            option(value=c, selected=current === String(c))= c
+      else
+        input.form-control(type='text', name=s.name, value=s.fileValue === undefined ? '' : s.fileValue, placeholder=s.default !== undefined ? `default: ${s.default}` : (s.examples[0] || ''))
+
+block intro
+  p.dash-intro How the workflows meet the application, and the settings of each. #{isAdmin ? 'You change every setting' : 'You change the settings marked "designers too"; an administrator the others'}: they are saved to #[code= envFile] and apply when the server restarts.
+  if separateEngine
+    p.dash-intro The engine runs separately (ENGINE_AT): copy a change to its .env too.
+  nav.integration-points
+    each p, i in points
+      a(href='#' + p.id)= p.title
+      if i < points.length - 1
+        | &nbsp;·&nbsp;
+
+block dash
+  .dash-grid
+    each p in points
+      section.dash-card.wide(id=p.id)
+        h2= p.title
+        p.dash-muted= p.about
+        case p.id
+          when 'application'
+            +application(p.info)
+          when 'connectors'
+            +connectors(p.info)
+          when 'policies'
+            +policies(p.info)
+          when 'notifications'
+            +notifications(p.info)
+          when 'api'
+            +api(p.info)
+        if p.settings.length
+          h3 Settings
+          form(method='post', action='/dashboard/integration/' + p.id)
+            input(type='hidden', name='_csrf', value=_csrf)
+            table.integration-settings
+              tr
+                th Setting
+                th Now
+                th Change
+              each s in p.settings
+                +setting(s)
+            if p.settings.some(s => s.editable)
+              button.btn.btn-primary.btn-sm(type='submit') Save
+    if isAdmin
+      section.dash-card.wide#restart
+        h2 Restart
+        if supervisor
+          p.dash-muted Saved settings apply when the server restarts: #{supervisor} starts it again.
+          a.btn.btn-default.btn-sm(href='/dashboard/admin#server') Restart from Administration
+        else
+          p.dash-muted Saved settings apply when the server restarts. Nothing restarts this server when it stops: restart it where it runs.

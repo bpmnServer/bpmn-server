@@ -677,6 +677,13 @@ features:
     docs: [docs/docs/architecture.md, docs/design/host-users.md]
     code: [packages/bpmn-web/src/userAccess/IUserManager.ts, packages/bpmn-web/src/userAccess/pages.ts, packages/bpmn-web/src/routes/api/door.ts, packages/bpmn-web/src/routes/api/pageClient.ts, apps/hrdemo/server/userManager.js]
     tests: [apps/testSampleApp/test/web/host-user-manager.test.mjs]
+  - id: integration-page
+    area: pages
+    name: "The Integration page"
+    what: "Dashboard → Integration (/dashboard/integration), for administrators and designers: one section per integration point (the application's delegate and its functions, connectors, roles and policies, notifications, the API the application calls, forms and scripts, AI agents), what is in place and its settings from the settings schema. An administrator changes every setting, a designer the design-side ones (FORM_RULES, ELEMENT_TEMPLATES, VERIFY_MODELS_ON_IMPORT, MODEL_HISTORY); each value checked against the schema, written to the server's .env (the one before kept as .env.bak), applied on restart. Secrets never shown (set, generated, removed); a setting the environment or the application (hostSettings) gives is not changed there."
+    docs: [docs/docs/integration-settings.md]
+    code: [packages/bpmn-web/src/routes/integration.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/dashboards/integration.pug, packages/bpmn-server/src/common/settingValue.ts]
+    tests: [apps/testSampleApp/test/web/integration.test.mjs]
 # ---------------------------------------------------------------------------------------------------------- security
   - id: web-security
     area: security

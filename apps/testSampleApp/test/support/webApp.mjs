@@ -76,7 +76,10 @@ function startEngineProcess(port = '0') {
     });
 }
 
-export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true, userManager, hostSettings } = {}) {
+export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true, userManager, hostSettings, envFile } = {}) {
+    // the .env the Integration page writes: a file of this test's own, never the folder's
+    const envDir = envFile ? null : fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-env-'));
+    envFile ??= path.join(envDir, '.env');
     const dbUrl = testDatabaseUrl();
     // TEST_DATABASE=sqlite: the same tests on a SQLite file of this app's own (DATABASE=sqlite:<file>)
     const sqliteDir = process.env.TEST_DATABASE === 'sqlite' ? fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-sqlite-')) : null;
@@ -132,6 +135,7 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
         userManager,
         // the API's settings of this server (keys, service account), else .env's
         hostSettings,
+        envFile,
     });
     const bpmnServer = webApp.bpmnServer;
     await bpmnServer.ready;
@@ -151,7 +155,7 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     const base = `http://127.0.0.1:${webApp.server.address().port}`;
 
     const web = {
-        base, webApp, bpmnServer, definitionsPath, dbUrl, embedded,
+        base, webApp, bpmnServer, definitionsPath, dbUrl, embedded, envFile,
         engineAt: engineProcess?.at, enginePid: engineProcess?.child.pid,
         /** Killed, not asked to stop: what a crash leaves behind. */
         async killEngine() {
@@ -195,6 +199,7 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
             } catch { /* best effort */ }
             await mongoose.disconnect().catch(() => { });
             fs.rmSync(definitionsPath, { recursive: true, force: true });
+            if (envDir) fs.rmSync(envDir, { recursive: true, force: true });
             if (sqliteDir) {
                 // what the store's last writes started ends first: exiting on it crashes Node on Windows (UV_HANDLE_CLOSING)
                 await new Promise(resolve => setTimeout(resolve, 200));

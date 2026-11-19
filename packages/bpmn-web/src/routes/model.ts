@@ -19,6 +19,7 @@ import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
 import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest, withNotifications } from '../testing/scenarios.js';
 import { withReached, idsByName } from '../testing/modelCoverage.js';
+import { appServiceNames } from './integration.js';
 
 
 const awaitHandlerFactory = (middleware) => {
@@ -721,24 +722,7 @@ export class Model extends Common {
             catch (exc) {
                 provider = null;    // a provider that needs a running execution
             }
-            const names = (obj) => {
-                const found = new Set<string>();
-                for (let o = obj; o && o !== Object.prototype && o !== Function.prototype; o = Object.getPrototypeOf(o))
-                    for (const key of Object.getOwnPropertyNames(o))
-                        if (key !== 'constructor' && !key.startsWith('_')) found.add(key);
-                return [...found];
-            };
-            const services = [];
-            if (provider && typeof provider === 'object') {
-                for (const name of names(provider)) {
-                    let value;
-                    try { value = provider[name]; } catch { continue; }
-                    services.push({ name, kind: typeof value === 'function' ? 'function' : 'property' });
-                    if (value && typeof value === 'object' && !Array.isArray(value) && name !== 'appDelegate')
-                        for (const inner of names(value).slice(0, 50))
-                            services.push({ name: `${name}.${inner}`, kind: typeof value[inner] === 'function' ? 'function' : 'property' });
-                }
-            }
+            const services = appServiceNames(provider);
             response.json({ services });
         }));
 

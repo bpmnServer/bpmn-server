@@ -4,6 +4,7 @@
  *   /dashboard/design   designers: models and their problems, tests, decisions, templates
  *   /dashboard/admin    administrators: the server, users, operations (locks, hung items), backup, restart
  *   /dashboard/catalog  designers: browse the model catalog (CATALOG_URL) and import its models
+ *   /dashboard/integration  administrators and designers: how the workflows meet the application, and its settings
  */
 import express from 'express';
 import FS from 'node:fs';
@@ -31,6 +32,8 @@ import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatal
 import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
+import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
+import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames } from './integration.js';
 
 const handler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
@@ -602,7 +605,74 @@ export class Dashboards extends Common {
             res.redirect('/model/edit/' + encodeURIComponent(name));
         }));
 
+        // ---- integration (routes/integration.ts): administrators and designers; each changes the settings that are theirs
+        const integrationViewer = (req) => { const r = roles(req); return { isAdmin: r.isAdmin, isDesigner: r.isDesigner }; };
+        const mayIntegrate = (req, res, next) => {
+            const viewer = integrationViewer(req);
+            if (viewer.isAdmin || viewer.isDesigner) return next();
+            return res.status(403).send('Administrator or designer permission required');
+        };
+        const appHostSettings = () => !!this.webApp.application?.hostSettings;
+        router.get('/integration', mayIntegrate, handler(async (req, res) => {
+            const viewer = integrationViewer(req);
+            const dir = folder();
+            const delegate = server.appDelegate;
+            let services = [], servicesError = null;
+            try { services = appServiceNames(await delegate?.getServicesProvider(null)); }
+            catch (exc) { servicesError = exc.message; }    // a provider that needs a running execution
+            const own = ownUsers(this.webApp.userManager);
+            const users = own && viewer.isAdmin ? await own.listUsers() : null;
+            const used = this.connectorUse();
+            const notifications = await findNotifications(server, { limit: 1000 }).catch(() => []);
+            const byStatus: Record<string, number> = {};
+            for (const n of notifications) byStatus[n.status] = (byStatus[n.status] ?? 0) + 1;
+            const security = new SecurityPolicy(dir);
+            // the application's delegate is the engine's: it says its class and methods (none, an engine that does not run or is older)
+            const facts: any = await server.engine.facts().catch(() => ({}));
+            const methods: string[] = facts.delegate?.methods ?? [];
+            const info = {
+                application: {
+                    delegate: facts.delegate?.name ?? null, methods, services, servicesError,
+                    hostUsers: !own, hostSettings: appHostSettings(),
+                },
+                connectors: {
+                    list: (await server.connectors.list()).map(c => ({ ...c, models: used.get(c.id) ?? [] })),
+                    canEncrypt: await keysSettable(),
+                },
+                policies: {
+                    roles: await this.roles(dir, users),
+                    assignment: policyNames(dir), security: security.names(), securityOn: security.on,
+                    notification: notificationPolicyNames(dir),
+                },
+                notifications: { byStatus, total: notifications.length, notify: methods.includes('notify') },
+                api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
+            };
+            render(req, res, 'integration', {
+                title: 'Integration',
+                points: INTEGRATION_POINTS.map(p => ({ ...p, settings: settingsOf(p, viewer, this.envFile(), appHostSettings()), info: info[p.id] ?? {} })),
+                envFile: this.envFile().file, supervisor: supervisor(), separateEngine: !!process.env.ENGINE_AT,
+                message: req.query.message,
+            });
+        }));
+        router.post('/integration/:point', mayIntegrate, handler(async (req, res) => {
+            const point = INTEGRATION_POINTS.find(p => p.id === req.params.point);
+            if (!point) return res.status(404).send('No such integration point');
+            const back = (message: string) => res.redirect('/dashboard/integration?message=' + encodeURIComponent(message) + '#' + point.id);
+            const { changes, problems } = changesFrom(point, req.body ?? {}, integrationViewer(req), this.envFile(), appHostSettings());
+            if (problems.length) return back('Nothing saved. ' + problems.join('; ') + '.');
+            const names = Object.keys(changes);
+            if (!names.length) return back('Nothing changed.');
+            this.envFile().write(changes);
+            back(`Saved to .env: ${names.join(', ')}. ${names.length > 1 ? 'They apply' : 'It applies'} when the server restarts.`);
+        }));
+
         return router;
+    }
+
+    /** The .env the Integration page writes: the application's (envFile), else the working folder's. */
+    private env: EnvFile;
+    envFile(): EnvFile {
+        return this.env ??= new EnvFile(this.webApp.application?.envFile ?? path.resolve('.env'));
     }
 
     /** The models that call each connector (camunda:connectorId <connector>/<operation>), by connector id. */

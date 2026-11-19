@@ -14,7 +14,10 @@ import crypto from 'node:crypto';
 import readline from 'node:readline';
 import { createRequire } from 'node:module';
 import { init, MEMORY_SERVER_VERSION } from './init.js';
-import { settingProblem } from './common/settingValue.js';
+import { settingProblem, parseEnv, renderEnv } from './common/settingValue.js';
+
+// the .env's reading and writing, kept here too for setup's callers
+export { parseEnv, renderEnv };
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
 
@@ -88,45 +91,6 @@ export function terminalIO(): SetupIO {
         print: text => console.log(text),
         close: () => rl.close(),
     };
-}
-
-// ---- .env: read, and changed in place (comments and other settings kept)
-
-/** NAME=value lines; a value's quotes taken off. */
-export function parseEnv(text: string): Record<string, string> {
-    const values: Record<string, string> = {};
-    for (const line of text.split(/\r?\n/)) {
-        const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=(.*)$/);
-        if (!m) continue;
-        let value = m[2].trim();
-        if (/^(["']).*\1$/.test(value)) value = value.slice(1, -1);
-        values[m[1]] = value;
-    }
-    return values;
-}
-
-const quote = (value: string) => /[\s#"']/.test(value) ? JSON.stringify(value) : value;
-
-/** The .env with the changes: a setting's line replaced (or its commented #NAME= line), else added; null removes it. */
-export function renderEnv(text: string, changes: Record<string, string | null>): string {
-    const lines = text.split(/\r?\n/);
-    if (lines.length && lines[lines.length - 1] === '') lines.pop();
-    const added: string[] = [];
-    for (const [name, value] of Object.entries(changes)) {
-        const active = lines.findIndex(l => new RegExp(`^\\s*${name}\\s*=`).test(l));
-        if (value === null) {
-            if (active >= 0) lines.splice(active, 1);
-            continue;
-        }
-        const line = `${name}=${quote(value)}`;
-        const commented = lines.findIndex(l => new RegExp(`^\\s*#\\s*${name}\\s*=`).test(l));
-        if (active >= 0) lines[active] = line;
-        else if (commented >= 0) lines[commented] = line;
-        else added.push(line);
-    }
-    if (added.length)
-        lines.push('', '# set by bpmn-server setup', ...added);
-    return lines.join('\n') + '\n';
 }
 
 // ---- the schema

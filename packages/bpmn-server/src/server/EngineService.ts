@@ -13,6 +13,18 @@ import type { BPMNServer } from './BPMNServer.js';
  * read (`.id`, `.status`, `.instance`, with `instance.items` and `instance.tokens`). Nothing in it reaches a running
  * process, and it can cross a network as it is.
  */
+/** The application's delegate: its class, and the methods it defines itself (not those of bpmn-server's or bpmn-web's base). */
+export function delegateFacts(delegate): { name: string | null; methods: string[] } {
+    const found = new Set<string>();
+    for (let o = Object.getPrototypeOf(delegate ?? {}); o && o !== Object.prototype; o = Object.getPrototypeOf(o)) {
+        if (['WebAppDelegate', 'DefaultAppDelegate'].includes(o.constructor?.name)) break;
+        // by descriptor: a getter (moddleOptions) is not run on the prototype
+        for (const [key, d] of Object.entries(Object.getOwnPropertyDescriptors(o)))
+            if (key !== 'constructor' && typeof d.value === 'function') found.add(key);
+    }
+    return { name: delegate?.constructor?.name ?? null, methods: [...found].sort() };
+}
+
 export function executionResult(execution): IExecutionResult {
     const { id, name, status, userName, operation, errors, action, instance } = execution;
     return JSON.parse(JSON.stringify({
@@ -138,7 +150,8 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
             try { provider = await server.appDelegate.getServicesProvider(null); }
             catch { /* a provider that needs a running execution */ }
             // connectorKeys: whether a connector's key can be stored here (CONNECTORS_KEY is the engine's)
-            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt() };
+            // delegate: the application's class and the methods it defines (the Integration page)
+            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt(), delegate: delegateFacts(server.appDelegate) };
         },
         /** The application's own checks of a model (appDelegate.verifyModel): its code, so here. */
         checkModel: async (name: string, source: string) => {

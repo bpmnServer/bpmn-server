@@ -54,3 +54,12 @@
 
 /* what a task is for: its label and its case's (engine/Labels.ts) */
 .task-label { color: #667085; font-size: 0.85em; }
+
+/* the Integration page: its points, and each point's settings */
+.integration-points { margin: 6px 0 4px; font-size: 13px; }
+.dash-card h3 { font-size: 14px; margin: 16px 0 8px; }
+.integration-settings td { vertical-align: top; }
+.integration-settings td:first-child { max-width: 420px; }
+.integration-settings td:last-child { min-width: 240px; }
+.integration-settings .form-control { height: 30px; padding: 4px 8px; font-size: 13px; }
+.integration-settings .checkbox-inline { font-size: 12px; margin-right: 8px; }

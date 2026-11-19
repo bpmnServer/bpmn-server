@@ -52,3 +52,42 @@ export function settingsProblems(env: Record<string, string | undefined>, schema
     }
     return problems;
 }
+
+// ---- a .env file: read and changed in place (bpmn-server setup, the Integration page)
+
+/** A .env file's values, by name (quotes removed). */
+export function parseEnv(text: string): Record<string, string> {
+    const values: Record<string, string> = {};
+    for (const line of text.split(/\r?\n/)) {
+        const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=(.*)$/);
+        if (!m) continue;
+        let value = m[2].trim();
+        if (/^(["']).*\1$/.test(value)) value = value.slice(1, -1);
+        values[m[1]] = value;
+    }
+    return values;
+}
+
+const quote = (value: string) => /[\s#"']/.test(value) ? JSON.stringify(value) : value;
+
+/** The .env with the changes (lines it adds go under a comment saying who set them, `by`): a setting's line replaced (or its commented #NAME= line), else added; null removes it. */
+export function renderEnv(text: string, changes: Record<string, string | null>, by = 'bpmn-server setup'): string {
+    const lines = text.split(/\r?\n/);
+    if (lines.length && lines[lines.length - 1] === '') lines.pop();
+    const added: string[] = [];
+    for (const [name, value] of Object.entries(changes)) {
+        const active = lines.findIndex(l => new RegExp(`^\\s*${name}\\s*=`).test(l));
+        if (value === null) {
+            if (active >= 0) lines.splice(active, 1);
+            continue;
+        }
+        const line = `${name}=${quote(value)}`;
+        const commented = lines.findIndex(l => new RegExp(`^\\s*#\\s*${name}\\s*=`).test(l));
+        if (active >= 0) lines[active] = line;
+        else if (commented >= 0) lines[commented] = line;
+        else added.push(line);
+    }
+    if (added.length)
+        lines.push('', `# set by ${by}`, ...added);
+    return lines.join('\n') + '\n';
+}

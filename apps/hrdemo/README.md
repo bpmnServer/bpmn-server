@@ -15,17 +15,17 @@ Open http://localhost:3100: the demo's home page explains it and lists its accou
 |---|---|
 | `/hr/welcome` | the home page (where `/` and `/hr/` go before signing in); `/hr/login` signs in |
 | `/hr/` | the HR pages: Dashboard, Employees, Performance Reviews, Clients, Projects, Assignments; Users and My Account |
-| `/hr/workflow/...` | BPMN Server's pages in the HR layout: the Workbench, My Work, Design, Administration |
+| `/hr/workflow/...` | BPMN Server's pages in the HR layout: the Workbench, My Work, Design, Administration, Integration |
 | `/` (signed in) | BPMN Server's pages on their own |
 | `/api/hr/...` | the HR REST API; `/api/hr/openapi.json` describes it |
 
-The HR pages show owf's pages too: the sidebar's **Workflow** section (Workbench, My Work, Design, Administration) opens
+The HR pages show owf's pages too: the sidebar's **Workflow** section (Workbench, My Work, Design, Administration, Integration) opens
 them in the HR layout, at `/hr/workflow/<owf address>` (`src/pages/Workflow.jsx`), with owf's own menu
 bar hidden. Moving inside them keeps the address in step, so a refresh or a link opens the same page.
 
 Each shows only to whoever may open it, as BPMN Server says (`/api/v3/me`): the Workbench to administrators and
 designers, Design and the model editors to designers, Administration to administrators (here the HR Administrator,
-group ADMIN). Everyone has My Work and their tasks. An address they may not open goes to My Work
+group ADMIN), Integration (the settings of the connector, the policies, notifications, the API) to both. Everyone has My Work and their tasks. An address they may not open goes to My Work
 (`mayOpenWorkflow`, `src/auth.jsx`); BPMN Server refuses those pages to them anyway.
 
 The notification policy `LeaveNotices` tells the approver and the employee. The workflows hand each notification to

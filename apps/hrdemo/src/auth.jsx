@@ -56,6 +56,7 @@ export function mayOpenWorkflow(path, may) {
   const at = path.replace(/^\/workflow/, '') || '/';
   if (at === '/' || at === '/?owf') return may.design || may.administer;
   if (/^\/dashboard\/admin\b/.test(at)) return may.administer;
+  if (/^\/dashboard\/integration\b/.test(at)) return may.design || may.administer;
   if (/^\/dashboard\/(design|catalog)\b/.test(at) || /^\/model\//.test(at)) return may.design;
   return true;
 }

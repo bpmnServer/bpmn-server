@@ -16,6 +16,8 @@ An application has two places for settings. One rule decides which:
 1. A real environment variable wins over the same name in `.env`.
 2. A value in `settings/config.ts` wins over bpmn-web's defaults, including defaults that come from `.env`, such as `MODEL_HISTORY`. So a setting belongs in one place only.
 
+**Administrators and designers can change many of them in the browser:** [the Integration page](integration-settings.md) (Dashboard ▸ Integration) writes them to `.env`.
+
 **With a separate engine,** give the host and the engine the same `.env`. Only the settings marked *engine* below have to be on the engine, but sharing one file keeps them in step. `ENGINE_AT` is only read by the host.
 
 ## Everything `.env` can hold
