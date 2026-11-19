@@ -28,6 +28,11 @@ designers, Design and the model editors to designers, Administration to administ
 group ADMIN). Everyone has My Work and their tasks. An address they may not open goes to My Work
 (`mayOpenWorkflow`, `src/auth.jsx`); BPMN Server refuses those pages to them anyway.
 
+The notification policy `LeaveNotices` tells the approver and the employee. The workflows hand each notification to
+the delegate's `notify`, which keeps it in the HR application's own database: table `notifications` of `data/hr.sqlite`
+(`server/notifications.js`). BPMN Server keeps its own record of every one, delivered or not: **Notifications**, under
+Workflow, lists those to you (all of them for an administrator), and a case's page lists its own.
+
 The models (`workflow/processes/`) call the HR API through the connector `hr`, made from `/api/hr/openapi.json` and
 pointed at this server at every start, with the key `HR_SERVICE_KEY`. Assign Employee's assignment shows on the HR
 pages.

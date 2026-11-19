@@ -8,6 +8,7 @@ block content
   - var docs = JSON.parse(definition || '{}');
   - var info = (logs || []).filter(l => l.type === 'info');
   include includes/dates.pug
+  include includes/notifications.pug
   - var lastAt = lastItem && (lastItem.endedAt || lastItem.startedAt);
 
   script(type="text/javascript").
@@ -310,6 +311,18 @@ block content
                         td #{yes(row.complete)}
                         td #{yes(row.assign)}
                         td.instance-hint #{row.rules}
+
+    //- whom its notification policies told what, delivered or not (wf_notifications)
+    if notifications && notifications.length
+      section.instance-card.instance-collapsible(aria-labelledby="notifications-heading")
+        .instance-card-heading
+          div
+            h2#notifications-heading Notifications
+            p.instance-hint Whom its notification policies told what, oldest first, delivered or not. All of them: #[a(href='/dashboard/notifications') Notifications].
+          button#showNotifications.btn.btn-default(type="button", onclick="toggleDetails('notifications', 'showNotifications')", aria-expanded="true", aria-controls="notifications", aria-label="Toggle notifications")
+            i.fa.fa-chevron-up(aria-hidden="true")
+        #notifications.instance-table-scroll
+          +notificationsTable(notifications, false)
 
     section.instance-card(aria-labelledby="items-heading")
       .instance-card-heading

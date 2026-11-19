@@ -24,9 +24,10 @@ service task wired to a service, a user task for a group. Checked against what b
 
 ## Notification policies
 
-Built as a first slice ([notification-policies.md](notification-policies.md)). Next: the `overdue` event (a task
-past its due date) and `started`; the notifications on the instance page; the Design page's list; a scenario step
-(*Then "ann" is notified with "approval-request"*).
+Built ([notification-policies.md](notification-policies.md)): the policies, the Design page's list, the scenario check
+(`@check :i notified "ann" with template "approval-request"`), the instance page's notifications and the
+Notifications page. Next: the `overdue` event (a task past its due date: its own notification, and the task's
+reminder without a boundary timer) and `started`.
 
 ## Security policies
 

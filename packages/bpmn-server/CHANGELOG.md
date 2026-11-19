@@ -9,6 +9,9 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **Notifications across the instances** (docs/design/notification-policies.md): `findNotifications(server, { to,
+  instanceId, instanceName, status, test, limit })`, newest first; `to` matches any of the names (a user and their
+  groups), a test run's are left out unless asked. Test: `test/notifications.test.mjs`.
 - **Form rules** (docs/design/form-rules.md, `elements/FormRules.ts`): when a user task is completed, its validate
   step (`Node.validate`) checks its form's rules, before anything is saved: each field's
   type (`long`, `boolean`, `date`, `enum`), its constraints (`required`, `readonly`, `minlength`, `maxlength`,

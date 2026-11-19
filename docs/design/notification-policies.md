@@ -77,8 +77,13 @@ instance when the server says so (`NOTIFICATIONS=record`), has its notifications
 **A notification never fails the process:** a policy that is not there or fails, a template that can't be filled, an
 application's `notify` that throws: the Rationale says it, the notification is kept as `failed`, and the process goes on.
 
-**Shown:** the Rationale (*notified ann: approval-request — policy LeaveNotices, rule 1*); API v3's
-`GET /instances/{id}/notifications`, for whoever sees the instance fully.
+**Shown:**
+- the Rationale (*notified ann: approval-request — policy LeaveNotices, rule 1*);
+- API v3's `GET /instances/{id}/notifications`, for whoever sees the instance fully;
+- the instance page's **Notifications** (`notificationsOf`), oldest first;
+- the **Notifications** page (`/dashboard/notifications`, `findNotifications`), newest first, the 200 newest that
+  match: an administrator's all of them, filtered by whom (`to`: any of the names), process and status, a test
+  run's only when asked; anyone else's, those whose `to` names them or one of their groups.
 
 ## Checks
 
@@ -93,5 +98,6 @@ application's `notify` that throws: the Rationale says it, the notification is k
 
 ## Not built yet
 
-`overdue` and `started` events; the instance page's list; the Design page's list of notification policies; a
-scenario step to say who was notified.
+`overdue` (a task past its due date) and `started` events. Built since: the Design page's list of notification
+policies; the scenario check (`@check :i notified "ann" with template "approval-request"`); the instance page's list
+and the Notifications page.

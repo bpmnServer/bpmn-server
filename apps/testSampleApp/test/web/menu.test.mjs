@@ -22,11 +22,11 @@ function menu(html) {
 }
 const hrefs = html => menu(html).map(([, href]) => href);
 
-test('an end user: Workbench, then My work alone (no Dashboard drop-down)', async () => {
+test('an end user: Workbench, then My work and Notifications (no Dashboard drop-down)', async () => {
     const page = await staff.get('/dashboard');
     assert.equal(page.status, 200, why(page));
     const links = hrefs(page.text);
-    assert.deepEqual(links.slice(0, 2), ['/', '/dashboard']);
+    assert.deepEqual(links.slice(0, 3), ['/', '/dashboard', '/dashboard/notifications']);
     assert.ok(!links.includes('/dashboard/design') && !links.includes('/dashboard/admin'));
     assert.doesNotMatch(page.text, />\s*Dashboard\s*<span class="caret"/);
 });
@@ -77,12 +77,12 @@ test('the model list links to pages that exist', async () => {
     assert.doesNotMatch((await admin.get('/model/list')).text, /\/wf\//);
 });
 
-test('a designer: Dashboard is a drop-down with My work and Design; an administrator also has Administration', async () => {
+test('a designer: Dashboard is a drop-down with My work, Notifications and Design; an administrator also has Administration', async () => {
     let links = hrefs((await designer.get('/dashboard')).text);
-    assert.deepEqual(links.slice(0, 3), ['/', '/dashboard', '/dashboard/design']);
+    assert.deepEqual(links.slice(0, 4), ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design']);
     assert.ok(!links.includes('/dashboard/admin'));
     links = hrefs((await admin.get('/dashboard')).text);
-    assert.deepEqual(links.slice(0, 4), ['/', '/dashboard', '/dashboard/design', '/dashboard/admin']);
+    assert.deepEqual(links.slice(0, 5), ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design', '/dashboard/admin']);
 });
 
 test('the same menu on the Workbench, a dashboard and an instance page; the editors have its places', async () => {
@@ -90,14 +90,14 @@ test('the same menu on the Workbench, a dashboard and an instance page; the edit
     const dashboard = (await admin.get('/dashboard/admin')).text;
     const { instance } = await web.bpmnServer.engine.start('leave-request', {});
     const instancePage = (await admin.get('/instanceDetails?id=' + instance.id)).text;
-    const first = page => hrefs(page).slice(0, 4);
+    const first = page => hrefs(page).slice(0, 5);
     assert.deepEqual(first(workbench), first(dashboard));
     assert.deepEqual(first(instancePage), first(dashboard));
     const sections = workbench.indexOf('workbench-navigation');
     assert.ok(sections > workbench.indexOf('</nav>'), "the Workbench's own sections are in the page, not in the bar");
     const editor = (await admin.get('/model/edit/leave-request')).text;
     assert.match(editor, /class="editor-menu"/);
-    for (const href of ['/', '/dashboard', '/dashboard/design', '/dashboard/admin'])
+    for (const href of ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design', '/dashboard/admin'])
         assert.match(editor, new RegExp(`editor-menu[^]*href="${href}"`));
 });
 

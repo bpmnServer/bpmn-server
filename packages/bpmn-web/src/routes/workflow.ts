@@ -2,7 +2,7 @@ import express from 'express';
 import FS from 'node:fs';
 import path from 'node:path';
 
-import { BPMNServer, dateDiff, Behaviour_names, labelInstances, labelItems, actorsOf, actorElements } from '../index.js';
+import { BPMNServer, dateDiff, Behaviour_names, labelInstances, labelItems, actorsOf, actorElements, notificationsOf } from '../index.js';
 import { BPMNAPI , SecureUser, formFieldLookup } from '../index.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
@@ -605,12 +605,14 @@ async function instanceDetails(request,response,instanceId,version) {
     const actors = Object.entries(actorsOf({ instance: { ...instance, items }, elements: actorElements(source || '') }))
         .filter(([, who]) => who != null && !(Array.isArray(who) && !who.length))
         .map(([name, who]) => ({ name, who: Array.isArray(who) ? who.join(', ') : String(who) }));
+    // whom its notification policies told what (docs/docs/notification-policies.md), delivered or not
+    const notifications = await notificationsOf(serverOf(request), instance.id).catch(() => []);
 
     let decorations = JSON.stringify(ViewHelper.calculateDecorations(items,instance.tokens));
 
     response.render('InstanceDetails',
         {
-            instance, vars, actors, request, user,
+            instance, vars, actors, notifications, request, user,
             accessRules: def.accessRules,
             title: 'Instance Details',
             logs,items:items, svg,

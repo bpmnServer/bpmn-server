@@ -10,7 +10,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
@@ -154,6 +154,26 @@ export class Dashboards extends Common {
             const processName = req.params.processName;
             const startable = await (await pageApi(req, server)).startable();
             render(req, res, 'start', { title: 'Start a process', processName, starts: startsOf(startable.filter(s => s.processName === processName)) });
+        }));
+
+        // ---- notifications ----------------------------------------------------------------------------------
+        // what the notification policies made (docs/docs/notification-policies.md), newest first: an administrator's
+        // all of them, filtered by whom, process, status (and test runs', when asked); anyone else's, those to them
+        // (their name or one of their groups)
+        router.get('/notifications', handler(async (req, res) => {
+            const { isAdmin } = roles(req);
+            const one = (v) => (typeof v === 'string' ? v.trim() : '');
+            const filter = {
+                to: one(req.query.to), process: one(req.query.process),
+                status: ['recorded', 'sent', 'failed'].includes(one(req.query.status)) ? one(req.query.status) : '',
+                test: req.query.test === 'on',
+            };
+            const mine = req.user ? [...new Set([req.user.userName, ...toList(req.user.userGroups)].filter(Boolean))] : [];
+            const to = isAdmin ? (filter.to ? toList(filter.to) : undefined) : mine.filter(w => !filter.to || toList(filter.to).includes(w));
+            const list = !isAdmin && !to.length ? [] : await findNotifications(server, {
+                to, instanceName: filter.process || undefined, status: (filter.status || undefined) as any, test: filter.test, limit: 200,
+            });
+            render(req, res, 'notifications', { title: 'Notifications', notifications: list, filter, all: isAdmin, mine });
         }));
 
         // a form field's choices (<owf:list>, <owf:lookup>), for the drawn forms' drop-downs and searches

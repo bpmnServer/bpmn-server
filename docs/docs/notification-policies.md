@@ -106,6 +106,13 @@ writes each notification to the console.
 the Rationale says it, and the process goes on. The Rationale says each one sent: *notified Manager — policy
 LeaveNotices, rule 1, template approval-request, delivered*.
 
+**Seeing them.** A case's page lists its notifications (**Notifications**, under its data), oldest first: when, the
+task, the event, whom, the message, the channel, and whether it was delivered. The **Notifications** page (Dashboard →
+Notifications, `/dashboard/notifications`) lists them across the cases, newest first: an administrator's all of
+them, filtered by whom, process and status (a test run's when asked); anyone else's, those to them or one of their
+groups. API v3: `GET /instances/{id}/notifications`. bpmn-server: `notificationsOf(server, instanceId)`,
+`findNotifications(server, { to, instanceId, instanceName, status, test, limit })`.
+
 ## Testing them
 
 Nothing is delivered in tests: an instance the model editor's Test tab runs has its notifications kept as `recorded`,

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { Item, IExecution, WebAppDelegate } from 'bpmn-web';
 import { AppServices } from '../connectors/appServices.js';
 import { AppUtils } from './appUtils.js';
+import { HrNotifications } from '../../server/notifications.js';
 
 
 var seq = 1;
@@ -15,7 +16,9 @@ class AppDelegate extends WebAppDelegate{
     winSocket;
     appServices;
     appUtils;
-    
+    /** the HR application's notifications (server/notifications.js), opened on the first */
+    notifications: HrNotifications;
+
     constructor(server) {
         super(server);
         this.appUtils = new AppUtils(server);
@@ -56,15 +59,14 @@ class AppDelegate extends WebAppDelegate{
     // startUp (housekeeping) and sendEmail (notifications) come from WebAppDelegate
 
     /**
-     * A notification policy's notification (policies/notification/LeaveNotices.dmn.xml): delivered here. The demo
-     * writes it to the console; an application sends it by its channel (email, its inbox, ...). Not called for a test
-     * run's instance, nor with NOTIFICATIONS=record: those are only kept (wf_notifications).
+     * A notification policy's notification (policies/notification/LeaveNotices.dmn.xml): delivered here, into the HR
+     * application's own table of notifications (server/notifications.js, in its database); an application would send
+     * it by its channel too (email, ...). Not called for a test run's instance, nor with NOTIFICATIONS=record: those
+     * are only kept (wf_notifications). A notify that throws: the notification is kept as failed, the process goes on.
      */
     async notify(notification) {
-        const by = notification.channel ? ` by ${notification.channel}` : '';
-        const body = notification.message && notification.message !== notification.subject
-            ? '\n  ' + notification.message.replace(/\n/g, '\n  ') : '';
-        console.log(`notify ${notification.to.join(', ')}${by}: ${notification.subject}${body}`);
+        this.notifications ??= new HrNotifications();
+        this.notifications.save(notification);
     }
 
     

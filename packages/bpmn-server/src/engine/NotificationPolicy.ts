@@ -205,6 +205,35 @@ async function keep(execution, notification: INotification) {
     }
 }
 
+/** Which notifications {@link findNotifications} lists. */
+export interface INotificationQuery {
+    /** to any of these (user names, groups), as the rule said whom */
+    to?: string[];
+    instanceId?: string;
+    instanceName?: string;
+    status?: INotification['status'];
+    /** test runs' too (default: left out) */
+    test?: boolean;
+    /** at most this many, the newest (default 200, at most 1000) */
+    limit?: number;
+}
+
+/** Notifications across the instances, newest first: to whom, of which instance or process, in which status. */
+export async function findNotifications(server: any, query: INotificationQuery = {}): Promise<INotification[]> {
+    const { store, database } = storeOf(server);
+    if (typeof store?.find !== 'function') return [];
+    const limit = Math.min(Math.max(1, Number(query.limit) || 200), 1000);
+    const where: Record<string, any> = {};
+    if (query.to) where.to = { $in: query.to };
+    if (query.instanceId) where.instanceId = query.instanceId;
+    if (query.instanceName) where.instanceName = query.instanceName;
+    if (query.status) where.status = query.status;
+    if (!query.test) where.test = { $ne: true };
+    const found = await store.find(database, NOTIFICATION_COLLECTION, where, null, { createdAt: -1 }, limit);
+    // an adapter written before `limit` may return more
+    return (found ?? []).slice(0, limit).map(({ _id, ...n }) => n);
+}
+
 /** An instance's notifications, oldest first. */
 export async function notificationsOf(server: any, instanceId: string): Promise<INotification[]> {
     const { store, database } = storeOf(server);

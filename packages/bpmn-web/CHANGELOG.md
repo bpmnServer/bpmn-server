@@ -9,6 +9,12 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **Notifications on the pages** (docs/docs/notification-policies.md): an instance's page lists its notifications
+  (whom, the message, delivered or not); the **Notifications** page (`/dashboard/notifications`, in the menu for
+  everyone) lists them across the instances: an administrator's all of them, filtered by whom, process and status;
+  anyone else's, those to them or their groups. Test: `apps/testSampleApp/test/web/notifications.test.mjs`.
+- The HR demo keeps the notifications it is sent in its own database (`apps/hrdemo/server/notifications.js`, table
+  `notifications`), not the console; its Workflow menu has Notifications.
 - **Form rules** (docs/docs/form-rules.md): a task's completion that breaks its form's rules is refused, 400
   `FORM_INVALID` with `details` (API v3, the task API) or a 400 page that says why (the drawn task form). The drawn
   task form carries the rules as its inputs' attributes (`routes/formAttributes.ts`); a task's form shows the case's values,

@@ -1,5 +1,5 @@
 //- The menu in the editors' header (they have no navbar): the pages' menu (menu.pug), drawn without Bootstrap.
-//- +editorMenu: Workbench, Dashboard (My work, Design, Administration); +editorUser: the user's menu and About.
+//- +editorMenu: Workbench, Dashboard (My work, Notifications, Design, Administration); +editorUser: the user's menu and About.
 //- A drop-down opens on hover or focus (CSS: modeler.css).
 mixin editorMenu
   nav.editor-menu(aria-label="Menu")
@@ -11,12 +11,14 @@ mixin editorMenu
           span.editor-caret
         .editor-dropdown-menu
           a(href='/dashboard') My work
+          a(href='/dashboard/notifications') Notifications
           if canDesign
             a(href='/dashboard/design') Design
           if canAdminister
             a(href='/dashboard/admin') Administration
     else
       a(href='/dashboard') My work
+      a(href='/dashboard/notifications') Notifications
 
 mixin editorUser
   nav.editor-menu.editor-menu-right(aria-label="Account")

@@ -92,7 +92,7 @@ export default function Welcome() {
         <ol className="card-body">
           <li>Sign in as <code>david.kim</code> (an employee). Under Workflow, open <b>My Work</b> and start <b>Leave Application</b>; fill in the request.</li>
           <li>Sign out, and sign in as <code>sarah.chen</code> (a manager). Her <b>My Work</b> has <b>Approve</b>: approve it, reject it, or ask for more information.</li>
-          <li>Approved, it is recorded and the employee told (here, in the server's log). As <code>admin</code>, follow it in the <b>Workbench</b>, and see the model in <b>Design</b>.</li>
+          <li>Approved, it is recorded and the employee told: each of them sees what they were sent under Workflow, <b>Notifications</b>. As <code>admin</code>, follow it in the <b>Workbench</b>, and see the model in <b>Design</b>.</li>
           <li>As <code>admin</code>, <b>Users</b> (under Administration) adds people and sets their role: what they may do in the workflows follows.</li>
         </ol>
       </section>

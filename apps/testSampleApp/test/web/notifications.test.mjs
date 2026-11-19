@@ -1,6 +1,8 @@
 // @features: notification-policies
 // Notification policies through API v3 (docs/design/notification-policies.md): what an instance's policy notified,
 // kept in wf_notifications, for whoever sees it; the web app's delegate has no notify, so each is kept as recorded.
+// The pages: an instance's Notifications, and the Notifications page (/dashboard/notifications): an administrator's
+// all of them, filtered; anyone else's, those to them or their groups.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -13,7 +15,7 @@ const SOURCE = `<?xml version="1.0" encoding="UTF-8"?>
     xmlns:owf="http://omniworkflow.com/schema/owf/1.0" id="D_V3Notices" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="V3Notices" isExecutable="true" owf:notificationPolicy="V3Notices">
     <bpmn:startEvent id="S"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
-    <bpmn:userTask id="Approve" name="Approve" camunda:assignee="bob"><bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:userTask>
+    <bpmn:userTask id="Approve" name="Approve" camunda:assignee="manager"><bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:userTask>
     <bpmn:endEvent id="E"><bpmn:incoming>f2</bpmn:incoming></bpmn:endEvent>
     <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Approve" /><bpmn:sequenceFlow id="f2" sourceRef="Approve" targetRef="E" />
   </bpmn:process>
@@ -37,6 +39,8 @@ async function tokenFor(userName, groups) {
     return res.body.token;
 }
 
+let instanceId;
+
 test.before(async () => {
     web = await startWebApp();
     fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'notification'), { recursive: true });
@@ -53,6 +57,33 @@ test('an instance\'s notifications: whom, what, kept as recorded (no delivery he
     assert.equal(res.status, 200, why(res));
     assert.equal(res.body.items.length, 1, JSON.stringify(res.body.items));
     const [n] = res.body.items;
-    assert.deepEqual([n.event, n.elementId, n.to, n.message, n.status, n.policy, n.rule], ['assigned', 'Approve', ['bob'], 'Please approve 3 days', 'recorded', 'V3Notices', 1]);
+    instanceId = started.body.instance.id;
+    assert.deepEqual([n.event, n.elementId, n.to, n.message, n.status, n.policy, n.rule], ['assigned', 'Approve', ['manager'], 'Please approve 3 days', 'recorded', 'V3Notices', 1]);
     assert.equal((await v3('GET', '/instances/no-such-instance/notifications', 'service')).status, 404);
+});
+
+test('the pages: the instance\'s Notifications; the Notifications page, all for an administrator, their own for anyone else', async () => {
+    assert.ok(instanceId, 'the test before started one');
+    const [admin, manager, staff] = [await web.login('admin'), await web.login('manager'), await web.login('staff')];
+    const row = new RegExp(`data-notification="[^"]+" data-status="recorded" data-event="assigned"`);
+
+    const details = await admin.get(`/instanceDetails?id=${instanceId}`);
+    assert.equal(details.status, 200, why(details));
+    assert.match(details.text, /id="notifications-heading"/);
+    assert.match(details.text, row);
+    assert.match(details.text, /Please approve 3 days/);
+    assert.match(details.text, /kept, not delivered/);
+
+    const theirs = await manager.get('/dashboard/notifications');
+    assert.equal(theirs.status, 200, why(theirs));
+    assert.match(theirs.text, row, 'to them: listed');
+    assert.ok(theirs.text.includes(`href="/instanceDetails?id=${instanceId}"`), 'with its instance');
+    assert.match(theirs.text, /href="\/dashboard\/notifications"/, 'in the menu');
+    assert.doesNotMatch((await staff.get('/dashboard/notifications')).text, row, 'to someone else: not listed');
+    assert.doesNotMatch((await manager.get('/dashboard/notifications?to=staff')).text, row, 'their own, filtered');
+
+    assert.match((await admin.get('/dashboard/notifications')).text, row, 'an administrator: all of them');
+    assert.match((await admin.get('/dashboard/notifications?to=manager&process=v3-notices&status=recorded')).text, row);
+    for (const filter of ['to=nobody', 'process=other', 'status=failed'])
+        assert.doesNotMatch((await admin.get(`/dashboard/notifications?${filter}`)).text, row, filter);
 });
