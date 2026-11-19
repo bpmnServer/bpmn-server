@@ -164,3 +164,6 @@ a:link {
     padding-right: 20px !important;
     vertical-align: middle !important;
 }
+
+/* Red is for errors only: names, ids and values shown as code are data, not Bootstrap's pink-red (app.css comes after it) */
+code { color: #1f2937; background-color: #f1f3f6; }

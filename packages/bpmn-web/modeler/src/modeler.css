@@ -1201,7 +1201,7 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .connector-wizard-method.get { color: #1a7f37; }
 .connector-wizard-method.post { color: #1f62c8; }
 .connector-wizard-method.put, .connector-wizard-method.patch { color: #9a5b00; }
-.connector-wizard-method.delete { color: #b42318; }
+.connector-wizard-method.delete { color: #6e3a8c; }
 .connector-wizard-path { font-family: monospace; overflow-wrap: anywhere; }
 .connector-wizard-id { color: #52575f; overflow-wrap: anywhere; }
 .connector-wizard-summary { grid-column: 2 / 4; color: #6b7079; font-size: 12px; }
@@ -1255,7 +1255,7 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .history-comparison h4 { margin: 0 0 6px; font-size: 14px; }
 .history-changes h5 { margin: 8px 0 2px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
 .history-changes.added h5 { color: #1a7f37; }
-.history-changes.removed h5 { color: #b42318; }
+.history-changes.removed h5 { color: #52575f; }
 .history-changes.changed h5 { color: #9a5b00; }
 .history-changes.moved h5 { color: #52575f; }
 .history-changes ul { margin: 0; padding-left: 18px; }
@@ -1265,7 +1265,7 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .history-settings { margin: 2px 0 6px; border-collapse: collapse; font-size: 12px; }
 .history-settings th, .history-settings td { text-align: left; vertical-align: top; padding: 1px 8px 1px 0; max-width: 360px; overflow-wrap: anywhere; }
 .history-settings th { color: #52575f; font-weight: 600; }
-.history-settings .before { color: #b42318; text-decoration: line-through; }
+.history-settings .before { color: #6b7280; text-decoration: line-through; }
 .history-settings .after { color: #1a7f37; }
 .history-text { margin: 4px 0; font-size: 12px; line-height: 1.4; white-space: pre-wrap; }
 .history-text .line.added { background: #e6f4ea; color: #1a5e2a; }

@@ -26,6 +26,7 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Red is for errors only:** names, ids and values shown as code are no longer Bootstrap's pink-red; the docs pages' tables, a connector's DELETE operations and a model history's removed or earlier values are no longer red.
 - Simulate's **Show details** says what an item is at the change shown (started, done, waits; a flow: taken), not
   its status at the run's end: an activity that ended later no longer reads *done* where it starts. The end reads
   *End of the run*, not *Done*.
