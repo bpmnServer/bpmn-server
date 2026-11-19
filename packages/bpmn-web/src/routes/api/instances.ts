@@ -122,6 +122,27 @@ export class InstanceOperations {
         return { ...summary(instance), data: this.access.data(instance, access), items: (instance.items ?? []).map(asItem) };
     }
 
+/**
+     * An instance's page (the instance page): the whole instance, its items, logs and model, for whoever sees it fully;
+     * its data as the policy lets them read it. A test run's too (the Test tab examines them). Not seen in full: the
+     * same 404 as no such instance.
+     */
+    async page(user: SecureUser, id: string) {
+        if (typeof id !== 'string') throw notFound();
+        const [instance] = await this.findInstances({ id }, user, 'full');
+        if (!instance) throw notFound();
+        if (!this.access.on) return { instance, access: null };
+        const access = await this.access.decide(user, instance);
+        if (access.see !== 'full') throw notFound();
+        if (!access.data.all) instance.data = this.access.data(instance, access);
+        return { instance, access };
+    }
+
+    /** Who was given its user tasks, and who may do what with it (CaseAccess.instanceAccess), for the instance page. */
+    async assignmentAndAccess(instance, directory) {
+        return this.access.instanceAccess(instance, directory);
+    }
+
     /** Why it went the way it did: the Rationale, step by step (each operation, its outcome, each decision). */
     /**
      * What its notification policies notified (docs/design/notification-policies.md): every notification kept,

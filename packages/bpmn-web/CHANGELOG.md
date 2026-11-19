@@ -128,6 +128,12 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **The workflow pages ask API v3's operations** (the Workbench, the task and assign forms, the instance page, the
+  task list), as the person signed in: the operations decide who sees and does what, and the pages hold no security
+  rules of their own (`routes/workflow.ts`). The Workbench lists instances a page at a time (50, *Older instances*);
+  its Case Id column is gone (a list carries no case data). The task and assign forms no longer show case data a
+  security policy hides from the person. API v3: an administrator may open, complete and claim any waiting task, and
+  force any other waiting item, as the pages always allowed. Test: `apps/testSampleApp/test/web/pages-through-api.test.mjs`.
 - **Lists read less.** `/api/v3/instances` filters, sorts and cuts its page in the database, reading only the fields
   it shows; the task lists (`/api/v3/tasks`, `/api2/tasks`, My work) read the tasks without their instances' data. The
   answers are as before. The HR demo's To do panel no longer reads the tasks every 30 seconds and on each return to the

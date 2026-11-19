@@ -8,10 +8,11 @@ import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
 import { rationaleSteps } from '../testing/rationale.js';
-import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
 import { labelFilterOf } from './labelFilter.js';
-import { CaseAccess, accessDirectory } from './caseAccess.js';
+import { accessDirectory } from './caseAccess.js';
+import { pageApi, ApiError } from './api/pageClient.js';
+import { ProcessRunError } from './runErrors.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import { guardModelParams } from './middleware/modelName.js';
 import { afterWork, canDesign, isAdminGroups } from '../userAccess/roles.js';
@@ -195,21 +196,14 @@ export class Workflow extends Common {
             
 
 
-            // findItem authorizes the task; findInstances no longer returns data or items to non-admins
-            const item = await apiOf(request).data.findItem({ "items.id": id }, getSecureUser(request));
-            if (!item) return answerMessage(request, response, 403, 'Item not found or not authorized');
-            const instance = await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');
-            // the case's security policy (caseAccess.ts): completing it may be refused; its data, what it lets them read
-            const caseAccess = new CaseAccess(serverOf(request));
-            const access = await caseAccess.decide(getSecureUser(request), instance, { elementId: item.elementId, itemId: item.id });
-            if (access.complete === false) return answerMessage(request, response, 403, 'This task is not yours to complete (security policy)');
-
-            let definition=await serverOf(request).definitions.loadFromInstance(instance);
-
-            let { node, fields } =definition.getNodeInfo(elementId);
-
-            
-            let vars = ViewHelper.formatData(caseAccess.data(instance, access, item.elementId) || {});
+            // the task and its case as this user may read them: API v3's operations decide (their part in it, the
+            // case's security policy); this page only shows them
+            const page = await asPage(request, response, api => api.taskPage(id));
+            if (!page) return;
+            const { node, fields, instance } = page;
+            elementId = page.task.elementId;
+            processName = page.task.processName ?? instance.name;
+            let vars = ViewHelper.formatData(instance.data || {});
 
             if (fields && fields.length > 0) {
                 // the fields whose choices come from a connector operation (owf:list, owf:lookup)
@@ -221,8 +215,8 @@ export class Workflow extends Common {
                 });
                 return;
             }
-            let result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.invoke({ "items.id": id }, {}, getSecureUser(request)));
-
+            const result = await completeTask(request, response, id, {});
+            if (!result) return;
             return await afterOperation(request,response,result);
         }));
         router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
@@ -233,18 +227,9 @@ export class Workflow extends Common {
             for (const [key, value] of Object.entries(request.body))
                 if (!FORM_ONLY.has(key)) data[key] = value;
 
-            // the case's security policy may refuse completing it (caseAccess.ts)
-            const caseAccess = new CaseAccess(serverOf(request));
-            if (caseAccess.on) {
-                const item = await apiOf(request).data.findItem({ "items.id": id }, getSecureUser(request));
-                const instance = item && await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');
-                if (!item || (await caseAccess.decide(getSecureUser(request), instance, { elementId: item.elementId, itemId: item.id })).complete === false)
-                    return answerMessage(request, response, 403, 'This task is not yours to complete (security policy)');
-            }
-
-
-            let result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.invoke({ "items.id": id }, data, getSecureUser(request)));
-
+            // completed through API v3's operations, which decide whether this user may (completeTask)
+            const result = await completeTask(request, response, id, data);
+            if (!result) return;
             return await afterOperation(request,response,result);
 
         }));
@@ -256,20 +241,13 @@ export class Workflow extends Common {
             let processName = request.query.processName;
             let elementId = request.query.elementId;
             let itemId = request.query.itemId;
-            let item = await apiOf(request).data.findItem({"items.id": id},getSecureUser(request));
-            //console.log('item:', item);
-            if (!item) {
-                request.flash('errors', [{ msg: 'Item not found or not authorized' }]);
-                response.redirect('/');
-                return;
-            }
-
-            const instance = await serverOf(request).dataStore.findInstance({ id: item.instanceId }, 'full');   // item authorized above
+            // the task and its case as this user may read them (API v3's operations decide)
+            const page = await asPage(request, response, api => api.taskPage(id, 'assign'));
+            if (!page) return;
+            const { task: item, instance, fields } = page;
+            elementId = item.elementId;
+            processName = item.processName ?? instance.name;
             const lastItem = instance.items[instance.items.length - 1];
-            let definition=await serverOf(request).definitions.loadFromInstance(instance);
-
-            let { node, fields } =definition.getNodeInfo(elementId);
-
             let vars = ViewHelper.formatData(instance.data || {});
             response.render('assign', {
                     item, instance, vars, lastItem,
@@ -305,15 +283,9 @@ export class Workflow extends Common {
             assignment['candidateUsers'] = assignment['candidateUsers'].split(',');
             assignment['candidateGroups'] = assignment['candidateGroups'].split(',');
 
-            // the case's security policy may refuse giving it to someone else (caseAccess.ts)
-            try {
-                await new CaseAccess(serverOf(request)).requireAssignment(getSecureUser(request), { "items.id": id }, assignment);
-            } catch (exc) {
-                if (exc?.code === 'POLICY_DENIED') return answerMessage(request, response, 403, `This task is not yours to assign (security policy): ${exc.message}`);
-                throw exc;
-            }
-            let result = await runProcess(serverOf(request), { itemId: id }, () => apiOf(request).engine.assign({ "items.id": id }, data, assignment, getSecureUser(request)));
-
+            // given through API v3's operations, which decide whether this user may, and to whom (the case's policy)
+            const result = await asPage(request, response, api => runProcess(serverOf(request), { itemId: id }, () => api.assign(id, assignment, data)));
+            if (!result) return;
             return await afterOperation(request,response,result);
 
         }));
@@ -362,7 +334,9 @@ export class Workflow extends Common {
     async tasks(request, response) {
 
 
-        let items = await apiOf(request).data.findItems({ "items.type": "bpmn:UserTask", "items.status": "wait", ...notATest }, getSecureUser(request));
+        // the waiting tasks through API v3's operations, as the person (an administrator's, every one): they decide
+        const items: any[] = await asPage(request, response, api => api.allWaiting(MAX_TASKS));
+        if (!items) return;
 
         items.forEach(item => {
             item['fromNow'] = dateDiff(item.startedAt);
@@ -466,6 +440,9 @@ function setForUser(req) {
     }
 }
 
+/** The Workbench's lists: a page of instances (the API's paging), and up to the API's most waiting tasks. */
+const WORKBENCH_PAGE = 50, MAX_TASKS = 200;
+
 async function display(req,res, title, output, logs = [], items = []) {
 
     let user = getSecureUser(req);
@@ -473,16 +450,17 @@ async function display(req,res, title, output, logs = [], items = []) {
     // each list's own filter by the labels' named values, as the URL says (routes/labelFilter.ts)
     const labelFilter = await labelFilterOf(serverOf(req), req, '/#instances', { other: 'task_' });
     const taskFilter = await labelFilterOf(serverOf(req), req, '/#tasks', { prefix: 'task_', other: '' });
-    var instances = await apiOf(req).data.findInstances({ ...notATest, ...(labelFilter.query ?? {}) }, user,{sort:{saved:-1}});
-    let waiting = await apiOf(req).data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest, ...(taskFilter.query ?? {}) }, getSecureUser(req));
-    // the cases' security policies (caseAccess.ts): the cases this user sees, the tasks they may complete
-    const caseAccess = new CaseAccess(serverOf(req));
-    if (caseAccess.on) {
-        instances = await caseAccess.seen(user, instances);
-        waiting = await caseAccess.tasksAllowed(user, waiting);
-    }
-    // labels, filled in from each case's model (engine/Labels.ts)
-    await labelInstances(serverOf(req), instances);
+    // the lists through API v3's operations (pageClient.ts), as the person: what they may see, a page of instances
+    // (newest first; ?after= the next page) and an administrator's every waiting task, labeled. No security rules here
+    const lists = await asPage(req, res, async api => ({
+        instances: await api.instances(WORKBENCH_PAGE, typeof req.query.after === 'string' ? req.query.after : undefined, labelFilter.query ?? undefined),
+        waiting: await api.allWaiting(MAX_TASKS, taskFilter.query ?? undefined),
+    }));
+    if (!lists) return;
+    const instances: any[] = lists.instances.instances;
+    const nextInstances = lists.instances.next;
+    const waiting: any[] = lists.waiting;
+    // what each task is for: its label and its case's (engine/Labels.ts), as My work has them
     await labelItems(serverOf(req), waiting);
 
     waiting.forEach(item => {
@@ -512,7 +490,7 @@ async function display(req,res, title, output, logs = [], items = []) {
             procs: await getProcs(req),
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
-            instances,
+            instances, nextInstances,
             labelFilter: labelFilter.view,
             taskFilter: taskFilter.view,
             request: req,
@@ -531,6 +509,32 @@ function isAdmin(request) {
         return request.isAdmin;
 
 }
+/**
+ * What a page asks of API v3's operations (pageClient.ts), as the person signed in: the operations decide who may see
+ * and do what (their part in it, the case's security policy), so the pages hold no security rules of their own. A
+ * refusal (403, 404, 409) is a page that says so, and `undefined` here; a run that failed is the run's error page.
+ */
+type PageApi = Awaited<ReturnType<typeof pageApi>>;
+async function asPage<T>(request, response, operation: (api: PageApi) => Promise<T>): Promise<T | undefined> {
+    try {
+        return await operation(await pageApi(request, serverOf(request)));
+    }
+    catch (exc) {
+        const refusal = exc instanceof ApiError ? exc : exc instanceof ProcessRunError && exc.cause instanceof ApiError ? exc.cause : null;
+        // a form refused, or a task already done: the run's own page says why, as before
+        if (!refusal || ['FORM_INVALID', 'ITEM_NOT_WAITING'].includes(refusal.code) || refusal.status >= 500) throw exc;
+        answerMessage(request, response, refusal.status === 404 ? 403 : refusal.status,
+            refusal.status === 404 ? 'This task or case is not there, or not yours to open' : refusal.message);
+        return undefined;
+    }
+}
+
+/** A task completed with this data, through API v3's operations: { execution } for afterOperation, or undefined when refused. */
+async function completeTask(request, response, id: string, data: object) {
+    const done = await asPage(request, response, api => runProcess(serverOf(request), { itemId: id }, () => api.complete(id, data)));
+    return done && { execution: { id: done.instance.id } };
+}
+
 async function afterOperation(request,response,result) {
 
     //console.log("isAuthenticated", request.isAuthenticated(), 'user', request.user);
@@ -548,20 +552,10 @@ async function instanceDetails(request,response,instanceId,version) {
 
     let user = getSecureUser(request);
 
-    // the case's security policy decides, when there are policies (caseAccess.ts): its page is for `see: full`
-    const caseAccess = new CaseAccess(serverOf(request));
-    if (!caseAccess.on) {
-        const visibleItems = await apiOf(request).data.findItems({ id: instanceId }, user);
-        if (visibleItems.length === 0) return response.status(403).send('Instance access denied');
-    }
-
-    let instance = await serverOf(request).dataStore.findInstance({ id: instanceId }, 'Full');
-    if (caseAccess.on) {
-        const access = instance && await caseAccess.decide(user, instance);
-        if (!instance || access.see !== 'full')
-            return answerMessage(request, response, 403, 'This case is not yours to open (security policy)');
-        if (!access.data.all) instance.data = caseAccess.data(instance, access);
-    }
+    // the whole case for whoever sees it fully, its data as the policy lets them read it: API v3's operations decide
+    const page = await asPage(request, response, api => api.instancePage(instanceId));
+    if (!page) return;
+    const instance = page.instance;
     await labelInstances(serverOf(request), [instance]);
 
     let logs = instance.logs;
@@ -619,7 +613,7 @@ async function instanceDetails(request,response,instanceId,version) {
             decorations, definition: defJson, lastItem,
             rationale: rationaleSteps(logs, items, instance.startedAt),
             // under it: its user tasks' assignment, after the fact; who may do what, for those who work on the models
-            access: await caseAccess.instanceAccess({ ...instance, items, logs }, worksOnModels(request.user)
+            access: await (await pageApi(request, serverOf(request))).instanceAccess({ ...instance, items, logs }, worksOnModels(request.user)
                 ? await accessDirectory(request, serverOf(request)) : {}).catch(() => null),
             accessDetails: worksOnModels(request.user),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's

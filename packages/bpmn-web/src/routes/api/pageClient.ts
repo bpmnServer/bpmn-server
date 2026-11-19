@@ -1,6 +1,7 @@
 import { SecureUser } from '../../index.js';
 import { hostUserManager } from '../../userAccess/UserManager.js';
 import { TaskOperations } from './tasks.js';
+import { InstanceOperations, InstanceError } from './instances.js';
 import { v2TaskError } from '../taskApi.js';
 
 /*
@@ -42,16 +43,19 @@ async function asApi<T>(operation: () => Promise<T>): Promise<T> {
     }
     catch (error) {
         if (error instanceof ApiError) throw error;
+        // an instance operation's answer (404 for one not seen, 403 refused, 422 the engine's)
+        if (error instanceof InstanceError) throw Object.assign(new ApiError(error.status, error.code, error.message), { cause: error });
         const [status, body] = v2TaskError(error) as [number, any];
         if (status === 500) throw error;
         throw Object.assign(new ApiError(status, body.code, body.errors), { cause: error });
     }
 }
 
-/** API v3's task operations, as the page's user: what My work and starting a process need. */
+/** API v3's operations, as the page's user: what the pages need (My work, the Workbench, a task's and an instance's pages). */
 export async function pageApi(req, server) {
     const user = await pageUser(req);
     const tasks = new TaskOperations(server);
+    const instances = new InstanceOperations(server);
     return {
         user,
         /** The waiting tasks they have a part in (GET /tasks); `query`, a label filter's conditions. */
@@ -64,6 +68,20 @@ export async function pageApi(req, server) {
         choices: (id: string, field: string, body: object) => asApi(() => tasks.choices(user, id, field, body)),
         /** A start form's field's choices (POST /processes/{name}/choices/{field}). */
         startChoices: (name: string, field: string, body: object) => asApi(() => tasks.startChoices(user, name, field, body)),
+        /** The instances they may see, newest first, a page at a time (GET /instances); `query`, a label filter's conditions. */
+        instances: (limit: number, after?: string, query?: object) => asApi(() => instances.list(user, { limit, after, query })),
+        /** An instance's page: the whole instance for whoever sees it fully, its data as the policy lets them read it. */
+        instancePage: (id: string) => asApi(() => instances.page(user, id)),
+        /** Its user tasks' assignment, and who may do what with it (GET /instances/{id}/access). */
+        instanceAccess: (instance, directory) => instances.assignmentAndAccess(instance, directory),
+        /** Every waiting task an administrator may see (the Workbench's); anyone else's, their own. */
+        allWaiting: (limit: number, query?: object) => asApi(async () => (await tasks.list(user, { limit, query, all: true })).tasks),
+        /** A task's page: the task, its case as they may read it, its element and fields. */
+        taskPage: (id: string, purpose?: 'complete' | 'assign') => asApi(() => tasks.page(user, id, { purpose })),
+        /** The task completed with this data (POST /tasks/{id}/complete). */
+        complete: (id: string, data: object) => asApi(() => tasks.complete(user, id, data)),
+        /** The task given to someone else, as the case's policy allows: the engine's execution. */
+        assign: (id: string, assignment: Record<string, any>, data: object) => asApi(() => tasks.assign(user, id, assignment, data)),
         /** A process started as them (POST /processes/{name}/start). */
         start: (processName: string, options: { data?: object; startNodeId?: string }) => tasks.start(user, processName, { data: options.data ?? {}, startNodeId: options.startNodeId }),
     };

@@ -18,7 +18,6 @@ table
 	tr
 		td Name
 		td Case
-		td Case Id
 		td Started
 		td Ended
 		td Examine Log
@@ -31,7 +30,6 @@ table
 			td #{instance.name}
 			//- its label, from its model (engine/Labels.ts)
 			td #{instance.label || ''}
-			td #{instance.data ? instance.data.caseId : ''}
 			td #{instance.fromNow}
 			td #{instance.endFromNow} 
 			td
@@ -42,3 +40,7 @@ table
 						input(type='hidden', name='_csrf', value=_csrf)
 						input(type='hidden', name='id', value=instance.id)
 						button(type='submit') Delete
+//- a page at a time, newest first (API v3's paging): the next page's bookmark
+if typeof nextInstances !== 'undefined' && nextInstances
+	p.instances-more
+		a(href=`/?after=${encodeURIComponent(nextInstances)}#instances`) Older instances

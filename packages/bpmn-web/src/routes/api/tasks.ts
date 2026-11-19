@@ -28,6 +28,12 @@ export function hasPart(item, user: SecureUser): boolean {
     return item.assignee === user.userName || users.includes(user.userName) || groups.some(group => user.userGroups.includes(group));
 }
 
+/**
+ * Whether this user may act on the task: their part in it, or an administrator's, who acts on any (as BPMNAPI's rules
+ * always let them: SecureUser.canInvoke). A security policy still decides, case by case.
+ */
+export const mayAct = (item, user: SecureUser): boolean => user.isAdmin() || hasPart(item, user);
+
 /** What an application sees of a task: not the engine's own fields. */
 export function asTask(item) {
     const { id, instanceId, processName, elementId, name, status, assignee, candidateUsers, candidateGroups, startedAt, endedAt, dueDate, followUpDate, priority, userName, assignment } = item;
@@ -97,21 +103,23 @@ export class TaskOperations {
     /** The task this user has a part in, or the same 404. */
     private async find(id: string, user: SecureUser) {
         const [item] = await this.api.data.findItems({ 'items.id': id, ...notATest }, user);
-        if (!item || item.type !== 'bpmn:UserTask' || !hasPart(item, user))
+        // an administrator also forces any other waiting item (an event, a receive task), as the instance page offers
+        if (!item || (item.type !== 'bpmn:UserTask' && !user.isAdmin()) || !mayAct(item, user))
             throw notFound();
         return item;
     }
 
     /** The waiting tasks this user has a part in, oldest first, a page at a time: { tasks, next } (next: the bookmark, or null). */
     /** `query`: more conditions on the items' instances (a label filter: routes/labelFilter.ts), in the store's query. */
-    async list(user: SecureUser, { limit = DEFAULT_LIMIT, after, query = {} }: { limit?: number, after?: string, query?: object } = {}) {
+    /** `all`: an administrator's every waiting task (the Workbench's), not only those they have a part in. */
+    async list(user: SecureUser, { limit = DEFAULT_LIMIT, after, query = {}, all = false }: { limit?: number, after?: string, query?: object, all?: boolean } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new TaskError(400, 'after is a list\'s next', 'BAD_AFTER');
         // lean: the instances' data is not read for a list (fable-review.md H5); the labels read it for the page's tasks
         const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest, ...query }, user, { lean: true }))
-            .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && hasPart(item, user) && (after === undefined || isAfter(item, String(after))))
+            .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && (all && user.isAdmin() ? true : hasPart(item, user)) && (after === undefined || isAfter(item, String(after))))
             .sort((a, b) => new Date(a.startedAt ?? 0).getTime() - new Date(b.startedAt ?? 0).getTime() || (a.id < b.id ? -1 : 1));
         // a task the case's policy doesn't let this user complete is not theirs to see here (the requester's approval)
         if (this.access.on) {
@@ -221,7 +229,7 @@ export class TaskOperations {
         assertWaiting(item);
         const decided = await this.taskAccess(user, item);
         if (decided) CaseAccess.require(decided.access, 'complete', true);
-        if (item.assignee && item.assignee !== user.userName)
+        if (item.assignee && item.assignee !== user.userName && !user.isAdmin())
             throw new TaskError(403, 'The task is assigned to someone else', 'TASK_ASSIGNED');
         const { instance } = await this.api.engine.invoke({ id: item.instanceId, 'items.id': id }, data, user);
         const done = instance.items.find(i => i.id === id);
@@ -229,6 +237,40 @@ export class TaskOperations {
             task: asTask({ ...done, instanceId: instance.id, processName: instance.name }),
             instance: { id: instance.id, name: instance.name, status: instance.status, data: instance.data },
         };
+    }
+
+/**
+     * A task's page (the task form, the assign form): the task, its case as this user may read it (its data as the
+     * policy lets them, the task's own fields always; its items), and its element and fields. Not theirs to complete
+     * (`purpose` assign: the case not seen) under the case's policy: the same 404.
+     */
+    async page(user: SecureUser, id: string, { purpose = 'complete' }: { purpose?: 'complete' | 'assign' } = {}) {
+        const item = await this.find(id, user);
+        const decided = await this.taskAccess(user, item);
+        // to complete it, the policy's complete; to give it to someone else, the case seen (assign decides who, on saving)
+        if (purpose === 'complete' ? decided?.access.complete === false : decided?.access.see === 'none') throw notFound();
+        const [instance] = await this.server.dataStore.findInstances({ id: item.instanceId }, 'full');
+        if (!instance) throw notFound();
+        const data = decided ? this.access.data(instance, decided.access, item.elementId) : instance.data;
+        const definition = await this.server.definitions.loadFromInstance(instance);
+        const { node, fields } = definition.getNodeInfo(item.elementId);
+        return {
+            task: item,
+            instance: { id: instance.id, name: instance.name, status: instance.status, startedAt: instance.startedAt, endedAt: instance.endedAt, data: data ?? {}, items: instance.items ?? [] },
+            node, fields: fields ?? [],
+        };
+    }
+
+    /**
+     * Gives the task to someone else (its assignee, candidates, due dates), with this data: the engine's execution.
+     * The case's policy decides whether this user may, and whether it allows the new assignee (CaseAccess.requireAssignment).
+     */
+    async assign(user: SecureUser, id: string, assignment: Record<string, any>, data = {}) {
+        assertData(data);
+        const item = await this.find(id, user);
+        assertWaiting(item);
+        if (this.access.on) await this.access.requireAssignment(user, { 'items.id': id }, assignment);
+        return this.api.engine.assign({ 'items.id': id }, data, assignment, user);
     }
 
     /** The processes this user may start: each start event, with its form. */

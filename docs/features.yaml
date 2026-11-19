@@ -684,6 +684,13 @@ features:
     docs: [docs/docs/integration-settings.md]
     code: [packages/bpmn-web/src/routes/integration.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/dashboards/integration.pug, packages/bpmn-server/src/common/settingValue.ts]
     tests: [apps/testSampleApp/test/web/integration.test.mjs]
+  - id: pages-through-api
+    area: pages
+    name: "The pages through API v3"
+    what: "The workflow pages (the Workbench, the task and assign forms, the instance page, the task list) ask API v3's operations in-process (pageClient.ts) as the person signed in; the operations decide who may see and do what (their part in a task, the case's security policy), so the pages hold no security rules of their own. The Workbench lists instances a page at a time (50, Older instances). An administrator may open and complete any waiting task, and force any other waiting item, as the pages always allowed."
+    docs: [docs/design/security-policies.md]
+    code: [packages/bpmn-web/src/routes/workflow.ts, packages/bpmn-web/src/routes/api/pageClient.ts, packages/bpmn-web/src/routes/api/tasks.ts, packages/bpmn-web/src/routes/api/instances.ts]
+    tests: [apps/testSampleApp/test/web/pages-through-api.test.mjs, apps/testSampleApp/test/web/workflow.test.mjs, apps/testSampleApp/test/web/security-policies.test.mjs]
   - id: environment-band
     area: pages
     name: "The environment's band"

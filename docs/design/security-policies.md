@@ -146,6 +146,9 @@ engine is asked to act: the engine runs nothing new and stores nothing new.
 - **Its answer is said:** a refused action answers 403 with the rule that denied it
   (`POLICY_DENIED`: *policy LeaveCases, rule 5*), and the decision editor's preview shows which rules matched.
 
+**One place:** the pages ask API v3's operations (`routes/api/pageClient.ts`), as the person signed in, and the operations
+ask the policy; `routes/workflow.ts` holds no security rules of its own (3.7.2).
+
 ## Lists, and paging
 
 A policy is asked per case, and API v3's lists page in the store (Fable Review H5). So that a page isn't emptied by
