@@ -23,6 +23,11 @@ The HR pages show owf's pages too: the sidebar's **Workflow** section (Workbench
 them in the HR layout, at `/hr/workflow/<owf address>` (`src/pages/Workflow.jsx`), with owf's own menu
 bar hidden. Moving inside them keeps the address in step, so a refresh or a link opens the same page.
 
+Each shows only to whoever may open it, as BPMN Server says (`/api/v3/me`): the Workbench to administrators and
+designers, Design and the model editors to designers, Administration to administrators (here the HR Administrator,
+group ADMIN). Everyone has My Work and their tasks. An address they may not open goes to My Work
+(`mayOpenWorkflow`, `src/auth.jsx`); BPMN Server refuses those pages to them anyway.
+
 The models (`workflow/processes/`) call the HR API through the connector `hr`, made from `/api/hr/openapi.json` and
 pointed at this server at every start, with the key `HR_SERVICE_KEY`. Assign Employee's assignment shows on the HR
 pages.

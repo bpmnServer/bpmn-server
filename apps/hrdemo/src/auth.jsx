@@ -7,9 +7,23 @@ const Auth = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined); // undefined: not known yet; null: nobody
 
+  // what the workflow pages let this user do (BPMN Server's /api/v3/me: design, administer), asked again for each
+  // user; none known (no BPMN Server behind these pages), only their own work
+  const [may, setMay] = useState(NOTHING);
+
   useEffect(() => {
     fetch('/api/hr/session').then(r => (r.ok ? r.json() : null)).then(setUser, () => setUser(null));
   }, []);
+
+  useEffect(() => {
+    setMay(NOTHING);
+    if (!user) return;
+    let current = true;
+    fetch('/api/v3/me').then(r => (r.ok ? r.json() : null)).then(
+      me => current && setMay({ known: true, design: !!me?.may?.design, administer: !!me?.may?.administer }),
+      () => current && setMay({ ...NOTHING, known: true }));
+    return () => { current = false; };
+  }, [user?.userName, user?.role]);
 
   async function signIn(userName, password, returnTo) {
     const r = await fetch('/api/hr/session', {
@@ -27,7 +41,23 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
-  return <Auth.Provider value={{ user, setUser, signIn, signOut }}>{children}</Auth.Provider>;
+  return <Auth.Provider value={{ user, setUser, signIn, signOut, may }}>{children}</Auth.Provider>;
+}
+
+/** known: the workflow server has answered (or could not) */
+const NOTHING = { known: false, design: false, administer: false };
+
+/**
+ * May this user open a workflow page (an address under /workflow)? The Workbench (/workflow) is for administrators
+ * and designers; Design, the catalog and the model editors for designers; Administration for administrators. Their
+ * tasks, My Work and the rest are everyone's: BPMN Server decides what each shows them.
+ */
+export function mayOpenWorkflow(path, may) {
+  const at = path.replace(/^\/workflow/, '') || '/';
+  if (at === '/' || at === '/?owf') return may.design || may.administer;
+  if (/^\/dashboard\/admin\b/.test(at)) return may.administer;
+  if (/^\/dashboard\/(design|catalog)\b/.test(at) || /^\/model\//.test(at)) return may.design;
+  return true;
 }
 
 export const useAuth = () => useContext(Auth);

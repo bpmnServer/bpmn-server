@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Employees from './pages/Employees';
@@ -15,7 +15,18 @@ import Login from './pages/Login';
 import Welcome from './pages/Welcome';
 import Account from './pages/Account';
 import Users from './pages/Users';
-import { AuthProvider, RequireUser, useAuth, isHrAdmin } from './auth';
+import { AuthProvider, RequireUser, useAuth, isHrAdmin, mayOpenWorkflow } from './auth';
+
+/**
+ * A workflow page this user may open (mayOpenWorkflow); else their own work, My Work. Not known yet (the workflow
+ * server is asked once signed in): nothing yet, then the page or My Work.
+ */
+function WorkflowPage() {
+  const { may } = useAuth();
+  const location = useLocation();
+  if (!may.known) return null;
+  return mayOpenWorkflow(location.pathname + location.search, may) ? <Workflow /> : <Navigate to="/workflow/dashboard" replace />;
+}
 
 /** HR Administrators only. */
 function AdminOnly({ children }) {
@@ -44,7 +55,7 @@ export default function App() {
                 <Route path="/reviews/:id" element={<ReviewDetail />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/users" element={<AdminOnly><Users /></AdminOnly>} />
-                <Route path="/workflow/*" element={<Workflow />} />
+                <Route path="/workflow/*" element={<WorkflowPage />} />
               </Routes>
             </Layout>
           </RequireUser>

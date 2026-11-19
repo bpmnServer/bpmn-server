@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TaskPanel from './TaskPanel';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth, isHrAdmin } from '../auth';
+import { useAuth, isHrAdmin, mayOpenWorkflow } from '../auth';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> },
@@ -12,7 +12,7 @@ const navItems = [
   { to: '/clients', label: 'Clients', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> },
   { to: '/projects', label: 'Projects', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> },
   { to: '/assignments', label: 'Assignments', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> },
-  // BPMN Server's pages, in the HR layout (pages/Workflow.jsx)
+  // BPMN Server's pages, in the HR layout (pages/Workflow.jsx): each shown to whoever may open it (mayOpenWorkflow)
   { section: 'Workflow' },
   { to: '/workflow', label: 'Workbench', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><path d="M7 12h5m0 0V5h5m-5 7v7h5"/></svg> },
   { to: '/workflow/dashboard', label: 'My Work', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
@@ -34,9 +34,12 @@ const exact = to => to === '/' || to === '/workflow' || to === '/workflow/dashbo
 const EDITOR = /^\/workflow\/model\/(edit|editNoProp|decision|policy|security-policy|notification-policy)\//;
 
 export default function Layout({ children }) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, may } = useAuth();
   const navigate = useNavigate();
-  const items = isHrAdmin(user) ? [...navItems, ...adminItems] : navItems;
+  const allowed = (isHrAdmin(user) ? [...navItems, ...adminItems] : navItems)
+    .filter(item => !item.to?.startsWith('/workflow') || mayOpenWorkflow(item.to, may));
+  // a section with nothing left in it is not shown
+  const items = allowed.filter((item, i) => !item.section || (allowed[i + 1] && !allowed[i + 1].section));
   const [panelOpen, setPanelOpen] = useState(false);
   // on a phone: the menu is a drawer, opened from the top bar, closed when a page opens
   const [menuOpen, setMenuOpen] = useState(false);
