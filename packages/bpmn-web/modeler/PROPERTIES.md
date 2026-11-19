@@ -136,6 +136,11 @@ in the instance data under the field's ID.
 | Default value | `defaultValue` | The preselected choice of an `enum`. |
 | Values | `camunda:value` | An `enum`'s choices: an ID (stored) and a name (shown). |
 | Constraints, Properties | `camunda:validation`, `camunda:properties` | Recorded; bpmn-web's form does not apply them. |
+| Choices | `<owf:list>` or `<owf:lookup>` in the field | The field's choices from a source: a list is a drop-down of every choice, a lookup a search as the person types. See [Lists and lookups in forms](https://bpmnserver.github.io/docs/form-lookups). |
+| Source | `source` | `service:<name>` (a function of the application's services) or `connector:<connector>/<operation>`. |
+| Key, Display | `key`, `display` | The row's field saved (default `id`), and the one shown (default the key). The label is saved too, as `<id>Display`. |
+| Filter | `filter` | `${data.<field>}`: the form's value, or else the case's, given to the source. |
+| Text input, Filter input, Rows at | `text`, `filterInput`, `items` | A connector's: the operation's input for the text typed (a lookup) and for the filter, and where the rows are in its answer. |
 
 ## Service task (and send task)
 

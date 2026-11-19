@@ -108,10 +108,16 @@ The drawn forms send both; an application's own form sends `<id>Display` itself 
 | `lookup-no-text` (info) | a connector lookup with no `text`: the whole answer is read at each search |
 | `lookup-and-list` | more than one on a field: the first is used |
 
-## 8. Not yet
+## 8. The editor
+
+Each field of the properties panel's Form fields list has **Choices** (none, List, Lookup) and, once set, Source, Key,
+Display and Filter; a `connector:` source also has Text input (a lookup), Filter input and Rows at
+(`modeler/src/properties/FormChoicesEntries.jsx`). The editor's descriptors (`modeler/src/moddle.js`) define
+`owf:List` and `owf:Lookup`: without them it dropped the elements, as unknown, when it saved the model.
+
+## 9. Not yet
 
 - Choosing several (`multiple`).
 - Checking, when a task is completed, that the value sent is one of the choices.
-- The editor's properties panel: the element is written in the XML for now.
 - A data object or data store as a source. Decided against for now: BPMN's data objects and stores are data flow, loaded
   when a task starts and written when it completes; a lookup is interaction, asked for on demand.

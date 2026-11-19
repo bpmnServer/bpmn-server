@@ -66,5 +66,8 @@ POST /api/v3/processes/{name}/choices/{field}    { "text": "mar", "startNodeId":
 
 A task's form (`GET /api/v3/tasks/{id}`) says which fields have one: `"lookup": { "source", "key", "display", "filter" }`.
 
+In the model editor, a form field's **Choices** (in its Form fields entry) sets these: List or Lookup, then the
+source and the other attributes.
+
 `verifyModel` checks the source: that the service or the connector's operation exists, and that the inputs named are
 its own. The HR demo's Leave Application has both, on its Request form.

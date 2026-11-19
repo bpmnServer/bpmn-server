@@ -62,7 +62,33 @@ export const owf = {
             isAbstract: true,
             extends: ['bpmn:ServiceTask', 'bpmn:SendTask', 'bpmn:ScriptTask'],
             properties: [{ name: 'exceptionsAsErrors', isAttr: true, type: 'Boolean' }]
-        }
+        },
+        {
+            // a form field's choices from a source (engine/elements/FormLookup.ts): <owf:list> or <owf:lookup> inside
+            // a camunda:formField; without these the editor dropped them as unknown when it saved the model
+            name: 'FormFieldChoices',
+            isAbstract: true,
+            extends: ['camunda:FormField'],
+            properties: [
+                { name: 'list', type: 'owf:List' },
+                { name: 'lookup', type: 'owf:Lookup' }
+            ]
+        },
+        {
+            name: 'Choices',
+            isAbstract: true,
+            properties: [
+                { name: 'source', isAttr: true, type: 'String' },
+                { name: 'key', isAttr: true, type: 'String' },
+                { name: 'display', isAttr: true, type: 'String' },
+                { name: 'filter', isAttr: true, type: 'String' },
+                { name: 'filterInput', isAttr: true, type: 'String' },
+                { name: 'text', isAttr: true, type: 'String' },
+                { name: 'items', isAttr: true, type: 'String' }
+            ]
+        },
+        { name: 'List', superClass: ['owf:Choices'] },
+        { name: 'Lookup', superClass: ['owf:Choices'] }
     ]
 };
 
