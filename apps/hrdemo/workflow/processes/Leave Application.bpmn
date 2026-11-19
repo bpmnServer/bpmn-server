@@ -4,18 +4,16 @@
     <bpmn2:participant id="LeaveParticipant" name="Leave Application" processRef="LeaveProcess" />
   </bpmn2:collaboration>
   <bpmn2:error id="RecordFailedError" name="Not recorded" errorCode="RecordFailed" />
-  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true" owf:securityPolicy="LeaveCases" owf:notificationPolicy="LeaveNotices" owf:label="Leave by ${data.requester}">
+  <bpmn2:process id="LeaveProcess" name="Leave Application" isExecutable="true" owf:label="Leave by ${data.requester}" owf:securityPolicy="LeaveCases" owf:notificationPolicy="LeaveNotices">
     <bpmn2:documentation>An employee asks for leave; a manager decides; HR's system records it; the employee is told.</bpmn2:documentation>
     <bpmn2:laneSet id="LeaveLanes">
       <bpmn2:lane id="EmployeeLane" name="Employee">
         <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>MergeRequest</bpmn2:flowNodeRef>
-        <bpmn2:flowNodeRef>Request</bpmn2:flowNodeRef>
-        <bpmn2:flowNodeRef>CheckDates</bpmn2:flowNodeRef>
-        <bpmn2:flowNodeRef>DatesOk</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>MergeTell</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>Tell</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>Done</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Request</bpmn2:flowNodeRef>
       </bpmn2:lane>
       <bpmn2:lane id="ManagerLane" name="Manager">
         <bpmn2:flowNodeRef>Approve</bpmn2:flowNodeRef>
@@ -36,49 +34,10 @@
       <bpmn2:outgoing>toRequest</bpmn2:outgoing>
     </bpmn2:startEvent>
     <bpmn2:exclusiveGateway id="MergeRequest">
-      <bpmn2:documentation>Joins the three ways to Request: the start, wrong dates, information required.</bpmn2:documentation>
+      <bpmn2:documentation>Joins the two ways to Request: the start, and information required.</bpmn2:documentation>
       <bpmn2:incoming>toRequest</bpmn2:incoming>
-      <bpmn2:incoming>datesWrong</bpmn2:incoming>
       <bpmn2:incoming>needInformation</bpmn2:incoming>
       <bpmn2:outgoing>toRequestTask</bpmn2:outgoing>
-    </bpmn2:exclusiveGateway>
-    <bpmn2:userTask id="Request" name="Request" camunda:assignee="$(this.data.requester)">
-      <bpmn2:documentation>The employee's request: what kind of leave, when, and why. It comes back here when the dates are wrong or the manager needs more information.</bpmn2:documentation>
-      <bpmn2:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="LeaveType" label="Leave Type" type="enum">
-            <camunda:value id="Vacation" name="Vacation" />
-            <camunda:value id="Sick" name="Sick Leave" />
-            <camunda:value id="Study" name="Study" />
-            <camunda:value id="Parental" name="Parental" />
-          </camunda:formField>
-          <camunda:formField id="StartDate" label="Start Date" type="date" />
-          <camunda:formField id="EndDate" label="End Date" type="date" />
-          <camunda:formField id="RequestReason" label="Reason" type="string" />
-          <camunda:formField id="Department" label="Department" type="string">
-            <owf:list source="service:departments" key="departmentId" display="name" />
-          </camunda:formField>
-          <camunda:formField id="CoveredBy" label="Covered by" type="string">
-            <owf:lookup source="service:employees" key="userName" display="name" filter="${data.Department}" />
-          </camunda:formField>
-        </camunda:formData>
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>toRequestTask</bpmn2:incoming>
-      <bpmn2:outgoing>toCheck</bpmn2:outgoing>
-    </bpmn2:userTask>
-    <bpmn2:scriptTask id="CheckDates" name="Check the dates" scriptFormat="JavaScript">
-      <bpmn2:documentation>Counts the days asked for (data.days) and whether the dates make sense (data.datesValid): both given, the end not before the start.</bpmn2:documentation>
-      <bpmn2:incoming>toCheck</bpmn2:incoming>
-      <bpmn2:outgoing>toDatesOk</bpmn2:outgoing>
-      <bpmn2:script>const day = 24 * 60 * 60 * 1000;
-const days = Math.round((new Date(item.data.EndDate) - new Date(item.data.StartDate)) / day) + 1;
-item.data.days = Number.isNaN(days) ? 0 : days;
-item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
-    </bpmn2:scriptTask>
-    <bpmn2:exclusiveGateway id="DatesOk" name="Dates valid?" default="datesRight">
-      <bpmn2:incoming>toDatesOk</bpmn2:incoming>
-      <bpmn2:outgoing>datesRight</bpmn2:outgoing>
-      <bpmn2:outgoing>datesWrong</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:userTask id="Approve" name="Approve" owf:assignmentPolicy="LeaveApproval" owf:actor="approver">
       <bpmn2:documentation>Assigned by the policy LeaveApproval (policies/LeaveApproval.dmn.xml): over 10 days to HR, else to the Manager group. The outcome decides the path; the comment goes to the employee.</bpmn2:documentation>
@@ -92,7 +51,7 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
           <camunda:formField id="comment" label="Comment" type="string" />
         </camunda:formData>
       </bpmn2:extensionElements>
-      <bpmn2:incoming>datesRight</bpmn2:incoming>
+      <bpmn2:incoming>toApprove</bpmn2:incoming>
       <bpmn2:outgoing>toDecision</bpmn2:outgoing>
     </bpmn2:userTask>
     <bpmn2:boundaryEvent id="ReminderTimer" name="Every 2 days" cancelActivity="false" attachedToRef="Approve">
@@ -173,12 +132,7 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="toRequest" sourceRef="StartEvent_1" targetRef="MergeRequest" />
     <bpmn2:sequenceFlow id="toRequestTask" sourceRef="MergeRequest" targetRef="Request" />
-    <bpmn2:sequenceFlow id="toCheck" sourceRef="Request" targetRef="CheckDates" />
-    <bpmn2:sequenceFlow id="toDatesOk" sourceRef="CheckDates" targetRef="DatesOk" />
-    <bpmn2:sequenceFlow id="datesRight" name="Yes" sourceRef="DatesOk" targetRef="Approve" />
-    <bpmn2:sequenceFlow id="datesWrong" name="No: ask again" sourceRef="DatesOk" targetRef="MergeRequest">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">!data.datesValid</bpmn2:conditionExpression>
-    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="toApprove" sourceRef="Request" targetRef="Approve" />
     <bpmn2:sequenceFlow id="toDecision" sourceRef="Approve" targetRef="Decision" />
     <bpmn2:sequenceFlow id="toRemind" sourceRef="ReminderTimer" targetRef="Remind" />
     <bpmn2:sequenceFlow id="toReminded" sourceRef="Remind" targetRef="Reminded" />
@@ -195,6 +149,48 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
     <bpmn2:sequenceFlow id="toFix" sourceRef="RecordFailed" targetRef="FixRecord" />
     <bpmn2:sequenceFlow id="retryRecord" sourceRef="FixRecord" targetRef="MergeRecord" />
     <bpmn2:sequenceFlow id="toDone" sourceRef="Tell" targetRef="Done" />
+    <bpmn2:userTask id="Request" name="Request" camunda:assignee="$(this.data.requester)">
+      <bpmn2:documentation>The employee's request: what kind of leave, when, and why. Its form checks the dates when it is completed (the validate listener): the end not before the start; it counts the days asked for (data.days). It comes back here when the manager needs more information.</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="LeaveType" label="Leave Type" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+            <camunda:value id="Vacation" name="Vacation" />
+            <camunda:value id="Sick" name="Sick Leave" />
+            <camunda:value id="Study" name="Study" />
+            <camunda:value id="Parental" name="Parental" />
+          </camunda:formField>
+          <camunda:formField id="StartDate" label="Start Date" type="date">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="EndDate" label="End Date" type="date">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="RequestReason" label="Reason" type="string" />
+          <camunda:formField id="Department" label="Department" type="string">
+            <owf:list source="service:departments" key="departmentId" display="name" />
+          </camunda:formField>
+          <camunda:formField id="CoveredBy" label="Covered by" type="string">
+            <owf:lookup source="service:employees" key="userName" display="name" filter="${data.Department}" />
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">if (!data.StartDate || !data.EndDate) return;
+const day = 24 * 60 * 60 * 1000;
+const days = Math.round((new Date(data.EndDate) - new Date(data.StartDate)) / day) + 1;
+if (!(days &gt;= 1)) return { error: 'The end date is before the start date', field: 'EndDate' };
+data.days = days;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>toRequestTask</bpmn2:incoming>
+      <bpmn2:outgoing>toApprove</bpmn2:outgoing>
+    </bpmn2:userTask>
   </bpmn2:process>
   <bpmndi:BPMNDiagram id="LeaveDiagram">
     <bpmndi:BPMNPlane id="LeavePlane" bpmnElement="LeaveCollaboration">
@@ -218,18 +214,6 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="MergeRequest_di" bpmnElement="MergeRequest" isMarkerVisible="true">
         <dc:Bounds x="220" y="115" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Request_di" bpmnElement="Request">
-        <dc:Bounds x="300" y="100" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CheckDates_di" bpmnElement="CheckDates">
-        <dc:Bounds x="440" y="100" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="DatesOk_di" bpmnElement="DatesOk" isMarkerVisible="true">
-        <dc:Bounds x="585" y="115" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="645" y="133" width="64" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve">
         <dc:Bounds x="560" y="270" width="100" height="80" />
@@ -270,6 +254,9 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
           <dc:Bounds x="1240" y="165" width="36" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Request_di" bpmnElement="Request">
+        <dc:Bounds x="370" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="RecordFailed_di" bpmnElement="RecordFailed">
         <dc:Bounds x="922" y="522" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -288,31 +275,12 @@ item.data.datesValid = item.data.days &gt;= 1;</bpmn2:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toRequestTask_di" bpmnElement="toRequestTask">
         <di:waypoint x="270" y="140" />
-        <di:waypoint x="300" y="140" />
+        <di:waypoint x="370" y="140" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="toCheck_di" bpmnElement="toCheck">
-        <di:waypoint x="400" y="140" />
-        <di:waypoint x="440" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="toDatesOk_di" bpmnElement="toDatesOk">
-        <di:waypoint x="540" y="140" />
-        <di:waypoint x="585" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="datesRight_di" bpmnElement="datesRight">
-        <di:waypoint x="610" y="165" />
+      <bpmndi:BPMNEdge id="toApprove_di" bpmnElement="toApprove">
+        <di:waypoint x="470" y="140" />
+        <di:waypoint x="610" y="140" />
         <di:waypoint x="610" y="270" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="618" y="200" width="20" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="datesWrong_di" bpmnElement="datesWrong">
-        <di:waypoint x="610" y="115" />
-        <di:waypoint x="610" y="80" />
-        <di:waypoint x="245" y="80" />
-        <di:waypoint x="245" y="115" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="400" y="62" width="76" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toDecision_di" bpmnElement="toDecision">
         <di:waypoint x="660" y="310" />
