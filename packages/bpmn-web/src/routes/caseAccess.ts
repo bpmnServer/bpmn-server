@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { SecurityPolicy, FULL_ACCESS, roleNames } from '../index.js';
 import { ownUsers } from '../userAccess/UserManager.js';
 import { isAdminGroups } from '../userAccess/roles.js';
@@ -48,6 +49,19 @@ export class CaseAccess {
         const access = await this.policy.decide(securityUser(user), instance, task, errors);
         for (const error of errors) this.server.logger?.log?.(`security policy: ${error}`);
         return access;
+    }
+
+    /**
+     * The store's condition for the cases this user may see, from the policies (SecurityPolicy.seeQuery): a superset,
+     * so a list reads fewer cases before asking the policy for each; null when off, or any case may be seen.
+     */
+    async seeQuery(user: SecureUser): Promise<object | null> {
+        if (!this.on) return null;
+        const dir = this.server.configuration?.definitionsPath;
+        let models: string[] = [];
+        try { models = fs.readdirSync(dir).filter(f => f.endsWith('.bpmn')).map(f => f.slice(0, -'.bpmn'.length)); } catch { /* none */ }
+        try { return await this.policy.seeQuery(securityUser(user), models); }
+        catch (error) { this.server.logger?.log?.(`security policy: no narrowing: ${error?.message ?? error}`); return null; }
     }
 
     /** The cases this user sees (`see` not none), as they were given: decided several at once (decideAll). */

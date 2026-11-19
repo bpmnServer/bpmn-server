@@ -154,8 +154,14 @@ ask the policy; `routes/workflow.ts` holds no security rules of its own (3.7.2).
 A policy is asked per case, and API v3's lists page in the store (Fable Review H5). So that a page isn't emptied by
 cases the policy hides afterwards:
 
-- *not built:* narrowing the store's query by the actors a rule allowing `see` names (`items.userName` of the
-  actor's elements, `items.assignee`, `items.candidateGroups`). Today every instance of a page is asked;
+- **the store's query is narrowed** (`SecurityPolicy.seeQuery`, `engine/SecurityQuery.ts`, 3.7.2) to a superset of the
+  cases the user may see: from each rule that may grant `see`, its tests on the user worked out now (one that fails:
+  the rule doesn't apply), a rule testing a task left out (a list asks of the case), and its test on an actor as a
+  condition on the items (`initiator`: `items.userName` or the instance's `userName`; `assignee`: `items.assignee`;
+  `candidate`: `items.candidateUsers`, `items.candidateGroups`; a model's own actor: `items.userName`). A test it
+  can't read leaves the rule wider; a rule that may grant any case means no narrowing for its policy. The default's
+  narrowing covers every model; a model's own policy adds its models' branch. Never exact, never narrower than the
+  policy: it decides each case it reads;
 - the policy is asked for each case of the page, 16 at once (`CaseAccess.decideAll`; the figures: docs/docs/performance.md#security-policies); the page is read again past what it hid, until it is full or there
   is no more (a bound on the reads; a page can be short when reached).
 

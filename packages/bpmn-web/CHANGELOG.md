@@ -26,6 +26,8 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The case lists read only what a security policy could show** (API v3's instances, the Workbench): narrowed in the
+  database (`CaseAccess.seeQuery`), then the policy decides each case. Fewer cases read, the same ones shown.
 - **A process explained** (docs/docs/process-guide.md): `/guide/<process>`, **How this process goes**, for the people
   who work in it (whoever may start it or works in it): its description and diagram, its steps (who does each, what
   each form asks, where it goes next), its rules, and its examples, the scenarios of its tests in plain words, each

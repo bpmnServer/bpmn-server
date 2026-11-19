@@ -74,8 +74,10 @@ export class InstanceOperations {
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new InstanceError(400, 'cursor is a page\'s next', 'BAD_CURSOR');
         /** The query from a bookmark on. $and: the user's rules put their own $or on it, and a filter by label may have its own. */
+        // with security policies, narrowed in the store to the cases they may see (a superset: the policy decides each)
+        const narrowed = this.access.on ? await this.access.seeQuery(user) : null;
         const from = (bookmark?: string) => {
-            const query: any = { ...(status ? { status } : {}), ...(name ? { name } : {}) };
+            const query: any = { ...(status ? { status } : {}), ...(name ? { name } : {}), ...(narrowed ?? {}) };
             const conditions = [...(Object.keys(more).length ? [more] : []), ...(bookmark !== undefined ? [afterCondition(String(bookmark))] : [])];
             if (conditions.length) query.$and = conditions;
             return query;

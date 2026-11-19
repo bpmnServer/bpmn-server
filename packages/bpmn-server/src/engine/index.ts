@@ -11,5 +11,6 @@ export * from './TestStubs.js';
 export * from './Labels.js';
 export * from './AssignmentPolicy.js';
 export * from './SecurityPolicy.js';
+export * from './SecurityQuery.js';
 export * from './DecisionContext.js';
 export * from './NotificationPolicy.js';

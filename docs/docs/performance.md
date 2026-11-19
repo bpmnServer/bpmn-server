@@ -106,8 +106,9 @@ A security policy is asked once for each case a list shows, and once for each ta
   every case. The lists decide 16 cases at once (`CaseAccess.decideAll`), and the task list stops once its page is full.
   (The wait above is 15 ms on Windows, whose timers are coarser than the 5 ms asked.) Keep the hook fast, or cache what
   it reads.
-- **Not built yet:** narrowing the database query by the actors a policy's `see` rules name. Until then, a list reads
-  its cases and asks the policy for each, reading on past the ones it hides, a few times at most.
+- **Narrowed in the database:** a list's query reads only the cases the policy's `see` rules could show the user
+  (who started it, is assigned, is offered it, did a step), then asks the policy for each. A policy whose rules may
+  show any case (one testing only the data, say) isn't narrowed.
 
 ## Limits and what isn't measured
 

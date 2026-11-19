@@ -17,6 +17,8 @@ import { DMNEngine } from '../dmn/DMNEngine.js';
 import { decisionContext, actorsOf, actorElements, actorNamesOf, dataPathOf } from './DecisionContext.js';
 import type { Actor } from './DecisionContext.js';
 import { DataHandler } from './DataHandler.js';
+import { seeConditionsOfTable, builtInSeeConditions, combineSeeConditions } from './SecurityQuery.js';
+import type { SeeConditions } from './SecurityQuery.js';
 
 export const SECURITY_FOLDER = 'policies/security';
 /** The application's default policy, for a process that names none. */
@@ -101,6 +103,29 @@ export class SecurityPolicy {
         if (!this.definitionsPath || !name || /[\\/]|\.\./.test(name)) return null;
         const file = path.join(this.definitionsPath, SECURITY_FOLDER, `${name}.dmn.xml`);
         return fs.existsSync(file) ? file : null;
+    }
+
+    /**
+     * The store's condition for the cases this user may see (SecurityQuery.ts): a superset, so a list reads fewer
+     * cases before asking the policy for each; null when any case may be seen (no narrowing). `modelNames`: the
+     * models whose own policy narrows its cases; any other case goes by the default's.
+     */
+    async seeQuery(user: ISecurityUser, modelNames: string[]): Promise<object | null> {
+        if (user.unrestricted) return null;
+        const policyOf = async (name: string): Promise<SeeConditions> => {
+            const file = this.file(name);
+            if (file) return seeConditionsOfTable(file, user);
+            return name === DEFAULT_SECURITY_POLICY ? builtInSeeConditions(user) : [];   // a missing policy decides nothing
+        };
+        const fallback = await policyOf(DEFAULT_SECURITY_POLICY);
+        const groups = new Map<string, string[]>();
+        for (const model of modelNames) {
+            const named = this.model(model).policy;
+            if (named && named !== DEFAULT_SECURITY_POLICY) groups.set(named, [...(groups.get(named) ?? []), model]);
+        }
+        const byPolicy = [];
+        for (const [policy, models] of groups) byPolicy.push({ models, conditions: await policyOf(policy) });
+        return combineSeeConditions(byPolicy, fallback);
     }
 
     /** The folder's policies, by name. */

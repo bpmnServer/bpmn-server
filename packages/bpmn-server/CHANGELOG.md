@@ -26,6 +26,9 @@ and here
 
 ## [Unreleased]
 ### Added
+- **A security policy narrows the store's query** (`SecurityPolicy.seeQuery`, `engine/SecurityQuery.ts`): a superset of
+  the cases a user may see, from the rules that may grant `see` (their tests on the user, and on an actor as a
+  condition on the items). The policy still decides each case. Test: `test/security-query.test.mjs`.
 - A load test of security policies (`test/load/security.test.mjs`): what one case's check costs, with the built-in
   default, a decision table, and an application hook that waits.
 - `findNotifications` lists test runs' notifications with the others (marked `test`); `test: true` gives only

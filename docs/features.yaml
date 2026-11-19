@@ -684,6 +684,13 @@ features:
     docs: [docs/docs/integration-settings.md]
     code: [packages/bpmn-web/src/routes/integration.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/dashboards/integration.pug, packages/bpmn-server/src/common/settingValue.ts]
     tests: [apps/testSampleApp/test/web/integration.test.mjs]
+  - id: security-narrowing
+    area: security
+    name: "Security policies narrow the database query"
+    what: "With security policies, a case list's query (API v3's instances, the Workbench) is narrowed in the database to a superset of the cases the user may see (SecurityPolicy.seeQuery): from each rule that may grant see, its tests on the user worked out, a rule testing a task left out, its test on an actor (initiator, assignee, candidate, a model's owf:actor) as a condition on the items; the built-in default likewise; a rule it can't read leaves it wider, a rule that may grant any case means no narrowing. The policy still decides each case read."
+    docs: [docs/design/security-policies.md, docs/docs/performance.md]
+    code: [packages/bpmn-server/src/engine/SecurityQuery.ts, packages/bpmn-server/src/engine/SecurityPolicy.ts, packages/bpmn-web/src/routes/caseAccess.ts, packages/bpmn-web/src/routes/api/instances.ts]
+    tests: [packages/bpmn-server/test/security-query.test.mjs, apps/testSampleApp/test/web/security-policies.test.mjs]
   - id: process-guide
     area: pages
     name: "A process explained (the guide)"
