@@ -1,5 +1,5 @@
 import { v4 as uuid } from '@lukeed/uuid';
-import { addOnsOf, callAddOns, ASSIGNMENT_FIELDS } from './AddOns.js';
+import { ASSIGNMENT_FIELDS } from './AddOns.js';
 import { Item } from './Item.js';
 import { Token, TOKEN_TYPE  } from './Token.js';
 import { Loop} from './Loop.js';
@@ -101,7 +101,6 @@ class Execution extends ServerComponent implements IExecution {
             await CallActivity.executionEnded(this);
         }
         await this.process.end(this);
-        await callAddOns(addOnsOf(this.server), 'executionEnded', [this], message => this.logger.warn(message));     // engine/AddOns.ts
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_end);
     }
     /**
@@ -210,18 +209,16 @@ class Execution extends ServerComponent implements IExecution {
                 this.item=i;
             }
         });
-        // a change of who works on it: the add-ons are told (an assignment policy says so in the Rationale)
+        // who worked on it before: the `assign` event's details, for whoever says what changed (an assignment policy)
         const reassigning = ASSIGNMENT_FIELDS.some(f => f in assignment);
         const before = Object.fromEntries(ASSIGNMENT_FIELDS.map(f => [f, this.item[f]]));
         Object.keys(assignment).forEach(key => {
             this.item[key]=assignment[key];
         });
-        if (reassigning)
-            await callAddOns(addOnsOf(this.server), 'taskReassigned', [this, this.item, before, assignment, this.userName], message => this.logger.warn(message));
 
         this.appendData(inputData, this.item, null, assignment);
 
-        await this.item.node.doEvent(this.item, EXECUTION_EVENT.node_assign);
+        await this.item.node.doEvent(this.item, EXECUTION_EVENT.node_assign, null, { before, assignment, userName: this.userName });
 
         await this.item.node.validate(this.item);
         this.info(`Task ${this.item.node.name} -${this.item.node.id} Assigned by ${this.userName} to:${JSON.stringify(assignment)}`

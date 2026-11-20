@@ -1,6 +1,5 @@
 
 import { runningDecisionContext } from '../engine/DecisionContext.js';
-import { addOnsOf, callAddOns } from '../engine/AddOns.js';
 import { owfAttribute, legacyAttributes } from './owfAttributes.js';
 import { Node } from './Node.js';
 
@@ -274,13 +273,6 @@ class SendTask extends ServiceTask {
 
 class UserTask extends Node {
 
-    async end(item: Item,cancel=false) {
-        const wasEnded = item?.status == ITEM_STATUS.end;
-        const result = await super.end(item,cancel);
-        // the add-ons told it is completed (engine/AddOns.ts)
-        if (!cancel && !wasEnded && item?.status == ITEM_STATUS.end) await this.addOns(item, 'taskCompleted');
-        return result;
-    }
     async start(item: Item): Promise<NODE_ACTION> {
         if (this.def.$attrs)
             {
@@ -299,9 +291,6 @@ class UserTask extends Node {
                 groups.push(this.lane);
             item.candidateGroups = groups;
             }
-        // the add-ons, last: one may decide who works on it (an assignment policy), then it waits (engine/AddOns.ts)
-        await this.addOns(item, 'taskStarting');
-        await this.addOns(item, 'taskWaiting');
 
         return await super.start(item);
     }
@@ -331,11 +320,6 @@ class UserTask extends Node {
         item[attr] = val;
         item.token.log('..setting attribute '+attr+' exp: '+exp+'='+val);
         //console.log('----setAttVal', attr, exp, val);
-    }
-    /** Its add-ons' hook, each called in turn; one that fails is logged (engine/AddOns.ts). */
-    private async addOns(item: Item, hook: 'taskStarting' | 'taskWaiting' | 'taskCompleted') {
-        const execution = item.token.execution;
-        await callAddOns(addOnsOf(execution.server), hook, [item, this], message => execution.logger.warn(message));
     }
     describe() {
         let attrs = ["assignee","candidateGroups", "candidateUsers", "label", "endLabel", "dueDate", "followUpDate", "priority"];

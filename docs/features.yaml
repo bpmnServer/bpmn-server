@@ -312,7 +312,7 @@ features:
   - id: add-ons
     area: engine
     name: "Add-ons"
-    what: "What is built on the engine plugs into its hooks (engine/AddOns.ts: taskStarting, taskWaiting, taskCompleted, taskReassigned, executionEnded, verifyNode, verifyProcess, decisionFiles, decisionByName) and the engine imports nothing of it; an add-on imports no other add-on. The assignment, notification and security policies are add-ons (src/addons/); a server has its configuration's addOns(server), by default the policies; addOns: () => [] is the engine alone; an application adds its own. A hook that throws is logged and fails nothing."
+    what: "What is built on the engine registers for the engine's own events (register(server): server.listener.subscribe; wait, assigned, assign, end, process.end) and says what it adds where there is no event (engine/AddOns.ts: verifyNode, verifyProcess, decisionFiles, decisionByName); the engine imports nothing of it, and an add-on imports no other add-on. The engine fires assigned after a user task's wait, once who works on it is decided. The assignment, notification and security policies are add-ons (src/addons/); a server has its configuration's addOns(server), by default the policies; addOns: () => [] is the engine alone; an application adds its own. A subscriber that throws is reported and fails nothing."
     docs: [docs/design/add-ons.md]
     code: [packages/bpmn-server/src/engine/AddOns.ts, packages/bpmn-server/src/addons/index.ts, packages/bpmn-server/src/common/DefaultConfiguration.ts]
     tests: [packages/bpmn-server/test/add-ons.test.mjs]

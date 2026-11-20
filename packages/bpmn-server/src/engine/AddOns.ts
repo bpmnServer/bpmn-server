@@ -1,13 +1,15 @@
 /**
- * Add-ons: what is built on the engine and plugs into it here (docs/design/add-ons.md). The engine runs BPMN and knows
- * nothing of any add-on: it calls these hooks at its points, and an add-on does its work in them. The policies
- * (assignment, notification, security: src/policies/) are add-ons; so is anything an application adds.
+ * Add-ons: what is built on the engine (docs/design/add-ons.md). The engine runs BPMN and knows nothing of any add-on.
+ * An add-on registers for the engine's own events (`server.listener.subscribe`: `wait`, `assigned`, `assign`, `end`,
+ * `process.end`, ...) and does its work there; for what has no event (checking a model, a decision by its tests' name)
+ * it says what it adds here. The policies (assignment, notification, security: src/addons/) are add-ons; so is anything
+ * an application adds.
  *
  * The rule: an add-on depends on the engine and on nothing else of ours, no other add-on; the engine imports nothing
  * from an add-on (test/add-ons.test.mjs checks both). Which add-ons a server has is its configuration's: `addOns(server)`,
- * by default the policies (common/DefaultConfiguration.ts).
+ * by default the policies (common/DefaultConfiguration.ts). Each is registered as the server is built.
  *
- * A hook that throws is logged and the process goes on: an add-on never fails a process.
+ * An event's subscriber that throws is reported and the process goes on (server/Listener.ts): an add-on never fails a process.
  */
 import type { IModelIssue } from '../elements/verifyModel.js';
 
@@ -39,16 +41,11 @@ export interface IAddOn {
     /** its name, for the log */
     name: string;
 
-    /** A user task starts, before it waits and is saved: the add-on may decide who works on it (ASSIGNMENT_FIELDS). */
-    taskStarting?(item: any, node: any): Promise<void> | void;
-    /** A user task is waiting for someone, its assignment decided. */
-    taskWaiting?(item: any, node: any): Promise<void> | void;
-    /** A user task was completed (not cancelled). */
-    taskCompleted?(item: any, node: any): Promise<void> | void;
-    /** A person changed who works on a waiting task (Execution.assign): its fields before, and the ones given. */
-    taskReassigned?(execution: any, item: any, before: Record<string, any>, changed: Record<string, any>, userName: string): Promise<void> | void;
-    /** An instance ended. */
-    executionEnded?(execution: any): Promise<void> | void;
+    /**
+     * Registers for what it needs, as the server is built: its events (`server.listener.subscribe`). Its subscriptions
+     * end with the server.
+     */
+    register?(server: any): void;
 
     /** Checks of a process's element (`node` the engine's, `def` its model element) when a model is verified. */
     verifyNode?(check: IAddOnModelCheck, node: any, def: any): Promise<void> | void;
@@ -68,17 +65,4 @@ export function addOnsOf(server: any): IAddOn[] {
     if (Array.isArray(server?.addOns)) return server.addOns;
     const make = server?.configuration?.addOns;
     return typeof make === 'function' ? (make.call(server.configuration, server) ?? []) : [];
-}
-
-/**
- * Each add-on's hook called in turn, awaited. One that throws is logged (`log`) and the next is called: an add-on
- * never fails the engine's work.
- */
-export async function callAddOns(addOns: IAddOn[], hook: keyof IAddOn, args: any[], log?: (message: string) => void): Promise<void> {
-    for (const addOn of addOns) {
-        const fn = addOn[hook];
-        if (typeof fn !== 'function') continue;
-        try { await (fn as Function).apply(addOn, args); }
-        catch (error) { log?.(`add-on ${addOn.name} (${String(hook)}): ${error?.message ?? error}`); }
-    }
 }

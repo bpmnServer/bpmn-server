@@ -55,11 +55,19 @@ async function checkPolicy(check: IAddOnModelCheck, policy: string, def) {
 export const notificationAddOn: IAddOn = {
     name: 'notification',
 
-    // it waits for someone: its assignment is decided (taskStarting), so whom to tell is known
-    async taskWaiting(item) { await notifyEvent(item.token.execution, 'assigned', item); },
-    // who completed it is its actor
-    async taskCompleted(item) { await notifyEvent(item.token.execution, 'completed', item); },
-    async executionEnded(execution) { await notifyEvent(execution, 'ended'); },
+    register(server) {
+        server.listener.subscribe({
+            async onEvent({ type, context, details }) {
+                const item = context?.item;
+                const userTask = item?.node?.type === 'bpmn:UserTask';
+                // it waits for someone, who is decided (the engine's `assigned`, after an assignment policy's `wait`)
+                if (type === 'assigned' && userTask) await notifyEvent(context, 'assigned', item);
+                // completed, not cancelled: who completed it is its actor
+                else if (type === 'end' && userTask && !(details as any)?.cancel) await notifyEvent(context, 'completed', item);
+                else if (type === 'process.end') await notifyEvent(context, 'ended');
+            },
+        });
+    },
 
     async verifyProcess(check, proc, def) {
         const policy = policyOf(def);

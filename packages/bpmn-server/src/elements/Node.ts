@@ -260,6 +260,9 @@ class Node extends Element {
         }
         else if (ret ==NODE_ACTION.wait) {
             await this.doEvent(item, EXECUTION_EVENT.node_wait, ITEM_STATUS.wait);
+            // a user task: who works on it is decided now (an add-on, an assignment policy, may decide on `wait`)
+            if (this.type == 'bpmn:UserTask')
+                await this.doEvent(item, EXECUTION_EVENT.node_assigned);
             item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Waiting'}`);
             item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;

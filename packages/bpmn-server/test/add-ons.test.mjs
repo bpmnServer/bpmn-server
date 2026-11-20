@@ -85,7 +85,7 @@ test('by default a server has the policies: the task is assigned by its policy, 
     const { id } = await server.engine.start('Request', { amount: 1 }, null, 'ann');
     const [instance] = await server.dataStore.findInstances({ id }, 'full');
     assert.equal(instance.items.find(i => i.elementId === 'Approve').assignee, 'boss');
-    assert.deepEqual((await notifications(server)).map(n => n.event), ['assigned']);
+    assert.deepEqual((await notifications(server)).map(n => n.event), ['assigned'], 'after the policy: on the engine\'s assigned');
     await server.shutdown();
 });
 
@@ -107,28 +107,34 @@ test('the engine alone (addOns: () => []): the policies the model names are not 
     await server.shutdown();
 });
 
-test('an application\'s own add-on: its hooks in order, it may assign; one that throws fails nothing', async () => {
+test('an application\'s own add-on registers for the engine\'s events: it may assign on wait; one that throws fails nothing', async () => {
     const heard = [];
     const mine = {
         name: 'mine',
-        taskStarting(item) { heard.push('taskStarting'); item.assignee = 'mine'; },
-        taskWaiting(item) { heard.push(`taskWaiting ${item.assignee}`); },
-        taskCompleted() { heard.push('taskCompleted'); },
-        taskReassigned(execution, item, before, changed, userName) { heard.push(`taskReassigned ${before.assignee}>${item.assignee} by ${userName}`); },
-        executionEnded() { heard.push('executionEnded'); },
+        register(server) {
+            server.listener.subscribe({
+                onEvent({ type, context, details }) {
+                    const item = context.item;
+                    if (type === 'wait' && item?.elementId === 'Approve') item.assignee = 'mine';
+                    if (['wait', 'assigned', 'assign', 'end'].includes(type) && item?.elementId === 'Approve')
+                        heard.push(type === 'assign' ? `assign ${details.before.assignee}>${item.assignee} by ${details.userName}` : `${type} ${item.assignee}`);
+                    if (type === 'process.end') heard.push('process.end');
+                },
+            });
+        },
         verifyNode(check, node, def) { if (node.id === 'Approve') check.add('warning', 'mine', 'Mine', def); },
     };
-    const broken = { name: 'broken', taskStarting() { throw new Error('broken'); }, executionEnded() { throw new Error('broken'); } };
+    const broken = { name: 'broken', register(server) { server.listener.subscribe({ onEvent() { throw new Error('broken'); } }); } };
     const { server } = await makeServer({ dir: folder(), extra: { addOns: () => [broken, mine] } });
     const { id } = await server.engine.start('Request', { amount: 1 }, null, 'ann');
     let [instance] = await server.dataStore.findInstances({ id }, 'full');
     const task = instance.items.find(i => i.elementId === 'Approve');
-    assert.equal(task.assignee, 'mine');
+    assert.equal(task.assignee, 'mine', 'decided on wait, saved');
     await server.engine.assign({ 'items.id': task.id }, {}, { assignee: 'bob' }, 'ann');
     await server.engine.invoke({ 'items.id': task.id }, {}, 'bob');
     [instance] = await server.dataStore.findInstances({ id }, 'full');
     assert.equal(instance.status, 'end');
-    assert.deepEqual(heard, ['taskStarting', 'taskWaiting mine', 'taskReassigned mine>bob by ann', 'taskCompleted', 'executionEnded']);
+    assert.deepEqual(heard, ['wait mine', 'assigned mine', 'assign mine>bob by ann', 'end bob', 'process.end']);
     const issues = (await verifyModel(MODEL, server, 'Request')).issues;
     assert.ok(issues.some(i => i.code === 'mine' && i.elementId === 'Approve'));
     assert.ok(!issues.some(i => /policy/.test(i.code)), 'the policies are not this server\'s');

@@ -58,13 +58,21 @@ async function checkPolicy(check: IAddOnModelCheck, policy: string, def) {
 export const assignmentAddOn: IAddOn = {
     name: 'assignment',
 
-    // last of what decides who works on it: it wins over the attributes and the lane
-    async taskStarting(item, node) {
-        const policy = policyOf(node.def);
-        if (policy) await applyPolicy(node, item, policy);
-    },
-    taskReassigned(execution, item, before, changed, userName) {
-        reassigned(execution, item, before, changed, userName);
+    register(server) {
+        server.listener.subscribe({
+            async onEvent({ type, context, details }) {
+                const item = context?.item;
+                if (item?.node?.type !== 'bpmn:UserTask') return;
+                // it waits: the last of what decides who works on it, so it wins over the attributes and the lane
+                if (type === 'wait') {
+                    const policy = policyOf(item.node.def);
+                    if (policy) await applyPolicy(item.node, item, policy);
+                }
+                // a person changed who works on it (Execution.assign): the Rationale says what it was
+                else if (type === 'assign' && details?.before && POLICY_FIELDS.some(f => f in (details.assignment ?? {})))
+                    reassigned(context, item, details.before, details.assignment, details.userName);
+            },
+        });
     },
 
     async verifyNode(check, node, def) {

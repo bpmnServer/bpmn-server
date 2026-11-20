@@ -131,6 +131,8 @@ class BPMNServer implements IBPMNServer {
 		this.connectors = new Connectors(this);
 		// what is built on the engine: the configuration's, none for one that has no addOns (engine/AddOns.ts)
 		this.addOns = typeof configuration.addOns === 'function' ? configuration.addOns(this) ?? [] : [];
+		// each registers for the engine's events it needs
+		for (const addOn of this.addOns) addOn.register?.(this);
 
 		this.logger.log('bpmn-server version ' + BPMNServer.getVersion());
 

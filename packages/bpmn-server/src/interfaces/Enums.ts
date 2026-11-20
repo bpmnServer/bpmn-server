@@ -43,6 +43,8 @@ enum EXECUTION_EVENT {
     node_validate = 'validate',
     node_start = 'start',
     node_wait = 'wait',
+    /** a user task waits, and who works on it is decided (after `wait`, where an assignment policy decides) */
+    node_assigned = 'assigned',
     node_end = 'end',
     node_terminated = 'terminated',
     transform_input = 'transformInput',
