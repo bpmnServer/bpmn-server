@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import { Item, IExecution, WebAppDelegate } from 'bpmn-web';
 import { AppServices } from '../connectors/appServices.js';
-import { AppUtils } from './appUtils.js';
 import { HrNotifications } from '../../server/notifications.js';
 import { HrVars } from './appVars.js';
 
@@ -18,13 +17,11 @@ class AppDelegate extends WebAppDelegate{
     appVarsClass = HrVars;
     winSocket;
     appServices;
-    appUtils;
     /** the HR application's notifications (server/notifications.js), opened on the first */
     notifications: HrNotifications;
 
     constructor(server) {
         super(server);
-        this.appUtils = new AppUtils(server);
     }
 
     async getServicesProvider(context) {
