@@ -101,6 +101,30 @@ export function sortRecords<T>(records: T[], valueOf: (r: T) => unknown, directi
     });
 }
 
+const formFieldsCache = new Map<string, { id: string; label: string }[]>();
+const ATTRIBUTE = (tag: string, name: string) => tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+const unescapeXml = (text: string) => text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+
+/**
+ * A model's form fields, each once, in the order the model has them: their ids (each a field of the case's data,
+ * `data.<id>`) and labels. What a person knows a case's data by, to choose a list's columns.
+ */
+export function modelFormFields(source: string | undefined): { id: string; label: string }[] {
+    if (!source) return [];
+    const cached = formFieldsCache.get(source);
+    if (cached) return cached;
+    const fields = new Map<string, string>();
+    for (const [tag] of source.matchAll(/<camunda:formField\b[^>]*>/g)) {
+        const id = ATTRIBUTE(tag, 'id');
+        if (!id || pathProblem(id) || fields.has(id)) continue;
+        fields.set(id, unescapeXml(ATTRIBUTE(tag, 'label') || id));
+    }
+    const found = [...fields].map(([id, label]) => ({ id, label }));
+    if (formFieldsCache.size > 50) formFieldsCache.clear();
+    formFieldsCache.set(source, found);
+    return found;
+}
+
 /** The order asked: asc or desc (a 400 BAD_SORT otherwise); `fallback` when none. */
 export function sortOrder(order: unknown, fallback: 1 | -1): 1 | -1 {
     if (order === undefined || order === '') return fallback;

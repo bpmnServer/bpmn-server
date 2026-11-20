@@ -14,7 +14,9 @@ const SOURCE = `<?xml version="1.0" encoding="UTF-8"?>
     id="D_Columns" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="Columns" isExecutable="true" camunda:label="Client: \${Client = data.clientId}">
     <bpmn:startEvent id="S"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
-    <bpmn:userTask id="Approve" name="Approve"><bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:userTask>
+    <bpmn:userTask id="Approve" name="Approve"><bpmn:extensionElements><camunda:formData>
+      <camunda:formField id="amount" label="Amount (USD)" type="long" /><camunda:formField id="note" label="Note" type="string" />
+    </camunda:formData></bpmn:extensionElements><bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:userTask>
     <bpmn:endEvent id="E"><bpmn:incoming>f2</bpmn:incoming></bpmn:endEvent>
     <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Approve" /><bpmn:sequenceFlow id="f2" sourceRef="Approve" targetRef="E" />
   </bpmn:process>
@@ -104,7 +106,7 @@ test('the Workbench: the picker, the columns added, sorted by a heading, kept fo
 
     const chosen = (await admin.get(`/?columns_set=1&columns=Client&columns_add=amount&model=${MODEL}&sort=data.amount&order=asc#instances`)).text;
     const list = instancesOf(chosen);
-    assert.match(list, /<th aria-sort="ascending"><a class="sort-heading sorted"[^>]*>amount<span class="sort-mark"[^>]*> ▲<\/span><\/a><\/th>/);
+    assert.match(list, /<th aria-sort="ascending"><a class="sort-heading sorted"[^>]*>Amount \(USD\)<span class="sort-mark"[^>]*> ▲<\/span><\/a><\/th>/);
     const order = ['gamma', 'beta', 'alpha'].map(c => list.indexOf(`<td class="list-column">${c}</td>`));
     assert.ok(order.every(i => i > 0) && order[0] < order[1] && order[1] < order[2], `by amount: ${order}`);
     assert.match(list, /<td class="list-column">1200<\/td>/);

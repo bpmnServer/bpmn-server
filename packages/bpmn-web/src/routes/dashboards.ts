@@ -27,7 +27,7 @@ import { userNameProblem } from '../userAccess/UserService.js';
 import { ownUsers } from '../userAccess/UserManager.js';
 import validator from 'validator';
 import { labelFilterOf } from './labelFilter.js';
-import { listViewOf, TASK_SORTS } from './listView.js';
+import { listViewOf, withChoices, TASK_SORTS } from './listView.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
 import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
@@ -152,6 +152,8 @@ export class Dashboards extends Common {
             const completed = done.map(task => ({ ...task, fromNow: dateDiff(task.endedAt) }));
             // what each task is for: its label and its case's (engine/Labels.ts)
             await labelItems(server, [...mine, ...available, ...completed]);
+            // the column picker offers the models of the waiting tasks, their label values and form fields
+            await withChoices(server, listView, [...mine, ...available].map(t => t.processName));
             render(req, res, 'user', { labelFilter: labelFilter.view, listView: listView.view, title: 'My work', mine, available, completed, starts: startsOf(startable) });
         }));
 

@@ -27,7 +27,7 @@ and here
 ## [Unreleased]
 ### Added
 - **The lists as each person wants them** (docs/docs/list-columns.md): the Workbench's Instances and Pending Tasks
-  and My work have a **Columns** picker: a value the models' labels name, or any field of the cases' data
+  and My work have an **Add columns** picker: for each model in the list, the values its label names and its form fields by their labels, or any other field of the cases' data
   (`data.amount`); their headings sort the list; the filter bar offers the data columns too, and more than / less
   than. The view is in the URL (bookmark, share) and remembered for the session (`routes/listView.ts`). API v3's
   `GET /instances` and `GET /tasks` take `columns`, `sort` and `order` (each item answers `columns`), and the filter's

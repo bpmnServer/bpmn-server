@@ -5,16 +5,21 @@ have a **Columns** picker above the list, headings that sort it, and the filter 
 
 ## Columns
 
-Open **Columns** and choose:
+Open **Add columns**. For each model in the list (the one the filter chooses, or every model whose cases are shown),
+it offers:
 
-- **A value the cases' labels name.** Each name a model's [case label](labels.md) gives (`${Client = data.clientId}`
-  is *Client*) has a box. One column reads each model's own path, so *Client* shows `data.clientId` for one model's
-  cases and `data.customer.name` for another's.
-- **A field of the cases' data.** Type its path (`amount`, `data.amount` or `region.name`): it reads the same path in
-  every model's cases.
+- **What the case's label shows:** each value its [case label](labels.md) names (`${Client = data.clientId}` is
+  *Client*). One column reads each model's own path, so *Client* shows `data.clientId` for one model's cases and
+  `data.customer.name` for another's.
+- **Its form fields, by their labels:** *Leave Type*, *Start Date*. Each is the field of the case's data the form
+  saves (`data.LeaveType`).
 
-**Show** adds them; **Reset** goes back to the list as it was. A list has at most 12 columns. Values are shown as
-text: a date in ISO form, a list joined with commas, an object as JSON. A case without the field shows nothing.
+**Another field** takes any other field of the cases' data by its name (`amount`, `region.name`). Fields added that
+way are listed under **Other fields**, to uncheck.
+
+**Show** adds the columns checked; **Reset to the default** goes back to the list as it was. A list has at most 12
+columns. A form field's column is headed by its label. Values are shown as text: a date in ISO form, a list joined
+with commas, an object as JSON. A case without the field shows nothing.
 
 ## Sorting
 

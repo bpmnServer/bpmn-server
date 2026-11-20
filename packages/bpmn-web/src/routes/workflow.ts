@@ -10,7 +10,7 @@ import { ViewHelper } from './ViewHelper.js';
 import { rationaleSteps } from '../testing/rationale.js';
 import { runProcess } from './runErrors.js';
 import { labelFilterOf } from './labelFilter.js';
-import { listViewOf, hrefWith, INSTANCE_SORTS, TASK_SORTS } from './listView.js';
+import { listViewOf, withChoices, hrefWith, INSTANCE_SORTS, TASK_SORTS } from './listView.js';
 import { accessDirectory } from './caseAccess.js';
 import { pageApi, ApiError } from './api/pageClient.js';
 import { ProcessRunError } from './runErrors.js';
@@ -507,6 +507,9 @@ async function display(req,res, title, output, logs = [], items = []) {
     const instances: any[] = lists.instances.instances;
     const nextInstances = lists.instances.next;
     const waiting: any[] = lists.waiting;
+    // the column pickers offer the models in each list, their label values and form fields
+    await withChoices(serverOf(req), instanceView, instances.map(i => i.name));
+    await withChoices(serverOf(req), taskView, waiting.map(t => t.processName));
     // what each task is for: its label and its case's (engine/Labels.ts), as My work has them
     await labelItems(serverOf(req), waiting);
 

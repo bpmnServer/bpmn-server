@@ -7,7 +7,7 @@ mixin listColumnsPicker(v)
 	link(rel="stylesheet", href=asset("/stylesheets/list-columns.css"))
 	details.list-columns(data-list=v.list)
 		summary
-			| Columns
+			| Add columns
 			if v.columns.length
 				span.count= v.columns.length
 		form(method="get", action=v.action, aria-label="Choose the columns")
@@ -23,21 +23,30 @@ mixin listColumnsPicker(v)
 				if c.current
 					input(type="hidden", name=v.prefix + "sort", value=c.key)
 					input(type="hidden", name=v.prefix + "order", value=c.order)
-			if v.choices.length
+			p.list-columns-hint Choose what to show for each case, besides its name and label.
+			//- each model in the list: the values its label shows, then its form fields
+			each g in v.groups
 				fieldset
-					legend Values the cases' labels name
-					each c in v.choices
+					legend= g.model
+					each c in g.items
+						label(title=c.where)
+							input(type="checkbox", name=v.prefix + "columns", value=c.key, checked=c.checked)
+							|  #{c.title}
+			if v.others.length
+				fieldset
+					legend Other fields
+					each c in v.others
 						label(title=c.where)
 							input(type="checkbox", name=v.prefix + "columns", value=c.key, checked=c.checked)
 							|  #{c.title}
 			label.list-columns-add
-				span Add a field of the data
-				input(type="text", name=v.prefix + "columns_add", placeholder="data.amount", aria-label="A field of the cases' data")
+				span Another field
+				input(type="text", name=v.prefix + "columns_add", placeholder="e.g. amount", aria-label="Another field: its name in the case's data")
 			if v.dataProblem
 				p.list-columns-problem= v.dataProblem
 			.list-columns-actions
 				button(type="submit") Show
-				a(href=v.reset) Reset
+				a(href=v.reset) Reset to the default
 
 //- a heading that sorts the list: by it, the other way when it already is
 mixin sortHeading(h)

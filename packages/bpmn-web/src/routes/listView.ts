@@ -7,7 +7,7 @@
  * The values come from API v3's operations (instances.ts, tasks.ts), which read only what the person may read; this
  * only says what is asked, and what the page offers.
  */
-import { labelFields, listColumns, columnKeys, columnSortPath, isLabelPath, pathProblem } from '../index.js';
+import { labelFields, listColumns, columnKeys, columnSortPath, isLabelPath, pathProblem, modelFormFields } from '../index.js';
 import type { IListColumn, ILabelField } from '../index.js';
 import { CaseAccess } from './caseAccess.js';
 
@@ -89,11 +89,8 @@ export async function listViewOf(server, request, options: IListViewOptions) {
         const next = current ? (order === 'asc' ? 'desc' : 'asc') : (key === 'started' || key === 'ended' ? 'desc' : 'asc');
         return { key, title, current, order: current ? order : undefined, href: hrefWith(path, q, { ...base, [prefix + 'sort']: key, [prefix + 'order']: next }, hash) };
     };
-    // the picker: every name the labels give (the model's, when one is chosen), then the data fields chosen
-    const names = [...new Set(scope.map(f => f.name))].sort((a, b) => a.localeCompare(b));
-    const chosen = new Set(columns.map(c => c.key));
     return {
-        columns,
+        columns, fields, model,
         sort, order,
         /** What the operations take: the columns, and the sort when it isn't the list's default. */
         asked: { columns, fields, sort, order },
@@ -101,10 +98,9 @@ export async function listViewOf(server, request, options: IListViewOptions) {
             prefix, action: options.action, list: options.list,
             columns: columns.map(c => ({ ...heading(c.key, c.title), sortable: sortable(c), data: !!c.path })),
             sorts: Object.fromEntries(Object.entries(options.sorts).map(([key, title]) => [key, heading(key, title)])),
-            choices: [
-                ...names.map(name => ({ key: name, title: name, checked: chosen.has(name), where: scope.filter(f => f.name === name).map(f => `${f.model}: ${f.path}`).join('; ') })),
-                ...columns.filter(c => c.path).map(c => ({ key: c.key, title: c.key, checked: true, where: 'the cases\' data' })),
-            ],
+            /** The picker's boxes, by model (withChoices, once the list's rows are known). */
+            groups: [] as { model: string; items: { key: string; title: string; checked: boolean; where: string }[] }[],
+            others: [] as { key: string; title: string; checked: boolean; where: string }[],
             /** The data columns the filter bar offers too. */
             filterFields: columns.filter(c => c.path && open(c)).map(c => c.key),
             // the rest of the page's query, kept by the picker's form
@@ -114,4 +110,44 @@ export async function listViewOf(server, request, options: IListViewOptions) {
             dataProblem: (() => { const added = text(q[prefix + 'columns_add']); return added && pathProblem(added.startsWith('data.') ? added : `data.${added}`); })() || undefined,
         },
     };
+}
+
+/**
+ * The picker's choices, once the list's rows are known: for each model in the list (the one the filter chooses; with
+ * no rows, every model), the values its label names, then its form fields by their labels, each field once. A data
+ * column that is neither is listed apart. A data column's heading is its form field's label.
+ */
+export async function withChoices(server, list: Awaited<ReturnType<typeof listViewOf>>, rowModels: string[]) {
+    const all = async () => [...new Set<string>((await server.definitions.getList()).map(m => m?.name ?? m))];
+    const models = list.model ? [list.model] : rowModels.length ? [...new Set(rowModels)] : await all();
+    models.sort((a, b) => a.localeCompare(b));
+    const chosen = new Set(list.columns.map(c => c.key));
+    const shown = new Set<string>(), titles = new Map<string, string>(), forms = new Map<string, { id: string; label: string }[]>();
+    for (const model of models) {
+        let source: string | undefined;
+        try { source = await server.definitions.getSource(model); } catch { source = undefined; }
+        forms.set(model, modelFormFields(source));
+        for (const f of forms.get(model)) if (!titles.has(`data.${f.id}`)) titles.set(`data.${f.id}`, f.label);
+    }
+    for (const model of models) {
+        const items = [];
+        const labelPaths = new Set<string>();
+        for (const f of list.fields.filter(f => f.model === model)) {
+            labelPaths.add(f.path);
+            if (shown.has(f.name)) continue;
+            shown.add(f.name);
+            items.push({ key: f.name, title: f.name === 'caseId' ? 'Case id' : f.name, checked: chosen.has(f.name), where: `Shown in the case's label (${f.path})` });
+        }
+        for (const f of forms.get(model)) {
+            const key = `data.${f.id}`;
+            if (shown.has(key) || labelPaths.has(key)) continue;
+            shown.add(key);
+            items.push({ key, title: f.label, checked: chosen.has(key), where: `A form field (${key})` });
+        }
+        if (items.length) list.view.groups.push({ model, items });
+    }
+    list.view.others = list.columns.filter(c => c.path && !shown.has(c.key))
+        .map(c => ({ key: c.key, title: c.title, checked: true, where: c.key }));
+    for (const c of list.view.columns) if (c.data && titles.has(c.key)) c.title = titles.get(c.key);
+    return list;
 }
