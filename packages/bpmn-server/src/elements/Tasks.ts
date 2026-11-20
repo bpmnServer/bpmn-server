@@ -1,9 +1,8 @@
 
 import { runningDecisionContext } from '../engine/DecisionContext.js';
-import { notifyEvent } from '../engine/NotificationPolicy.js';
-import { owfAttribute } from './owfAttributes.js';
+import { addOnsOf, callAddOns } from '../engine/AddOns.js';
+import { owfAttribute, legacyAttributes } from './owfAttributes.js';
 import { Node } from './Node.js';
-import { applyPolicy } from '../engine/AssignmentPolicy.js';
 
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
 import { BPMN_TYPE, ITEM_STATUS, NODE_ACTION, TOKEN_STATUS } from '../interfaces/Enums.js'
@@ -278,8 +277,8 @@ class UserTask extends Node {
     async end(item: Item,cancel=false) {
         const wasEnded = item?.status == ITEM_STATUS.end;
         const result = await super.end(item,cancel);
-        // its notification policies, asked once it is completed: who completed it is its actor (engine/NotificationPolicy.ts)
-        if (!cancel && !wasEnded && item?.status == ITEM_STATUS.end) await notifyEvent(item.token.execution, 'completed', item);
+        // the add-ons told it is completed (engine/AddOns.ts)
+        if (!cancel && !wasEnded && item?.status == ITEM_STATUS.end) await this.addOns(item, 'taskCompleted');
         return result;
     }
     async start(item: Item): Promise<NODE_ACTION> {
@@ -300,12 +299,9 @@ class UserTask extends Node {
                 groups.push(this.lane);
             item.candidateGroups = groups;
             }
-        // its assignment policy, last: it wins over the attributes and the lane (engine/AssignmentPolicy.ts)
-        const policy = owfAttribute(this.def, 'assignmentPolicy');
-        if (policy)
-            await applyPolicy(this, item, String(policy).trim());
-        // its notification policies, asked: it waits for someone (engine/NotificationPolicy.ts)
-        await notifyEvent(item.token.execution, 'assigned', item);
+        // the add-ons, last: one may decide who works on it (an assignment policy), then it waits (engine/AddOns.ts)
+        await this.addOns(item, 'taskStarting');
+        await this.addOns(item, 'taskWaiting');
 
         return await super.start(item);
     }
@@ -336,8 +332,13 @@ class UserTask extends Node {
         item.token.log('..setting attribute '+attr+' exp: '+exp+'='+val);
         //console.log('----setAttVal', attr, exp, val);
     }
+    /** Its add-ons' hook, each called in turn; one that fails is logged (engine/AddOns.ts). */
+    private async addOns(item: Item, hook: 'taskStarting' | 'taskWaiting' | 'taskCompleted') {
+        const execution = item.token.execution;
+        await callAddOns(addOnsOf(execution.server), hook, [item, this], message => execution.logger.warn(message));
+    }
     describe() {
-        let attrs = ["assignee","candidateGroups", "candidateUsers", "assignmentPolicy", "label", "endLabel", "dueDate", "followUpDate", "priority"];
+        let attrs = ["assignee","candidateGroups", "candidateUsers", "label", "endLabel", "dueDate", "followUpDate", "priority"];
         let desc = super.describe();
 
         attrs.forEach(attr => {
@@ -345,6 +346,12 @@ class UserTask extends Node {
             if (val)
                 desc.push([attr, val]);
         });
+        // the OWF attributes the engine doesn't read itself: an add-on's (owf:assignmentPolicy, owf:notificationPolicy)
+        const shown = new Set(attrs);
+        const others = [...Object.keys(this.def?.$attrs ?? {}).filter(k => k.startsWith('owf:')).map(k => k.slice(4)), ...legacyAttributes(this.def)];
+        for (const attr of new Set(others))
+            if (!shown.has(attr) && owfAttribute(this.def, attr) != null)
+                desc.push([attr, owfAttribute(this.def, attr)]);
         return desc;
     }
     get requiresWait() { return true; }

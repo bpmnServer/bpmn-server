@@ -28,7 +28,7 @@ export const owf = {
             ]
         },
         {
-            // a user task's assignment policy (engine/AssignmentPolicy.ts)
+            // a user task's assignment policy (addons/assignment/AssignmentPolicy.ts)
             name: 'AssignmentPolicy',
             isAbstract: true,
             extends: ['bpmn:UserTask'],
@@ -43,14 +43,14 @@ export const owf = {
             properties: [{ name: 'actor', isAttr: true, type: 'String' }]
         },
         {
-            // a process's or a task's security policy (engine/SecurityPolicy.ts)
+            // a process's or a task's security policy (addons/security/SecurityPolicy.ts)
             name: 'SecurityPolicy',
             isAbstract: true,
             extends: ['bpmn:Process', 'bpmn:UserTask', 'bpmn:StartEvent'],
             properties: [{ name: 'securityPolicy', isAttr: true, type: 'String' }]
         },
         {
-            // a process's or a user task's notification policy (engine/NotificationPolicy.ts)
+            // a process's or a user task's notification policy (addons/notification/NotificationPolicy.ts)
             name: 'NotificationPolicy',
             isAbstract: true,
             extends: ['bpmn:Process', 'bpmn:UserTask'],

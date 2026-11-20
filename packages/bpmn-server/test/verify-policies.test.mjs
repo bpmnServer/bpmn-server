@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { verifyModel } from '../dist/index.js';
+import { verifyModel, policyAddOns } from '../dist/index.js';
 
 const NS = 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:owf="http://omniworkflow.com/schema/owf/1.0"';
 const model = (processAttrs, body) => `<?xml version="1.0" encoding="UTF-8"?>
@@ -32,7 +32,7 @@ function folder(files) {
 }
 
 const linear = '<bpmn:startEvent id="S"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent><bpmn:userTask id="T" ATTRS><bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="E"><bpmn:incoming>f2</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="T" /><bpmn:sequenceFlow id="f2" sourceRef="T" targetRef="E" />';
-const issues = async (source, dir) => (await verifyModel(source, undefined, 'm', { decisionsFolder: dir })).issues;
+const issues = async (source, dir) => (await verifyModel(source, undefined, 'm', { decisionsFolder: dir, addOns: policyAddOns() })).issues;
 const find = (list, code) => list.filter(i => i.code === code);
 
 test('a policy file that cannot be read is an error, for an assignment and a notification policy', async () => {

@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { invokeDecision } from '../dist/index.js';
+import { invokeDecision, policyAddOns } from '../dist/index.js';
 
 const TABLE = (id, out) => `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="${id}" namespace="t">
@@ -25,10 +25,12 @@ test('a decision by its file or id; a policy by its tests\' name, from its folde
     fs.mkdirSync(path.join(dir, 'policies', kind), { recursive: true });
     fs.writeFileSync(path.join(dir, 'policies', kind, 'Leave.dmn.xml'), TABLE('Leave', kind));
   }
-  const server = { configuration: { definitionsPath: dir } };
+  const server = { configuration: { definitionsPath: dir }, addOns: policyAddOns() };   // a policy by its tests' name: the add-ons'
   assert.equal((await invokeDecision(server, 'Plain', { days: 12 })).result.who, 'plain');
   assert.equal((await invokeDecision(server, 'Leave.policy', { days: 12 })).result.who, 'assignment');
   assert.equal((await invokeDecision(server, 'Leave.security-policy', { days: 12 })).result.who, 'security');
   assert.equal((await invokeDecision(server, 'Leave.notification-policy', { days: 12 })).result.who, 'notification');
   await assert.rejects(invokeDecision(server, 'Leave', {}), /not found/);
+  // the engine alone knows no policy
+  await assert.rejects(invokeDecision({ configuration: { definitionsPath: dir }, addOns: [] }, 'Leave.policy', {}), /not found/);
 });

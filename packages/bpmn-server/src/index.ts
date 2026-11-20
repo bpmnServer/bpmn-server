@@ -7,3 +7,4 @@ export * from './interfaces/index.js';
 export * from './API/index.js';
 export * from './dmn/index.js';
 export * from './connectors/index.js';
+export * from './addons/index.js';

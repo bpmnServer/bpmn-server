@@ -1,5 +1,5 @@
 /**
- * Assignment policies (docs/design/assignment.md): a user task names one, `owf:assignmentPolicy="Approval"`, and
+ * The assignment add-on's policies (docs/design/assignment.md): a user task names one, `owf:assignmentPolicy="Approval"`, and
  * when it starts the policy says who works on it. A policy is a DMN decision table in the models folder,
  * `policies/assignment/<name>.dmn.xml`: conditions on the case's data in FEEL, the first rule that matches assigns. Its outputs
  * are the task's usual fields, `assignee`, `candidateUsers` and `candidateGroups`; a cell is a FEEL value, or a model
@@ -10,12 +10,14 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { DMNEngine } from '../dmn/DMNEngine.js';
-import { expressionScript } from './Expressions.js';
-import { label } from '../elements/Flow.js';
-import { runningDecisionContext } from './DecisionContext.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { expressionScript, isExpression } from '../../engine/Expressions.js';
+import { label } from '../../elements/Flow.js';
+import { runningDecisionContext } from '../../engine/DecisionContext.js';
+import { ASSIGNMENT_FIELDS } from '../../engine/AddOns.js';
 
-export const POLICY_FIELDS = ['assignee', 'candidateUsers', 'candidateGroups'] as const;
+/** What a policy's rule sets: the engine's assignment fields. */
+export const POLICY_FIELDS = ASSIGNMENT_FIELDS;
 /** The models folder's policies, one folder per kind: assignment here, security in policies/security (to come). */
 export const POLICIES_FOLDER = 'policies/assignment';
 /** Where assignment policies were at first (3.7.1's first try): moved into POLICIES_FOLDER when read. */
@@ -63,17 +65,6 @@ export function policyNames(definitionsPath: string): string[] {
     return fs.readdirSync(folder).filter(f => /\.dmn\.xml$/i.test(f)).map(f => f.replace(/\.dmn\.xml$/i, '')).sort();
 }
 
-/** The roles of a models folder (`roles.json`, a list of names), or null when it has none. */
-export function roleNames(definitionsPath: string): string[] | null {
-    const file = definitionsPath && path.join(definitionsPath, 'roles.json');
-    if (!file || !fs.existsSync(file)) return null;
-    const roles = JSON.parse(fs.readFileSync(file, 'utf8'));
-    if (!Array.isArray(roles) || roles.some(r => typeof r !== 'string'))
-        throw new Error('roles.json is a list of role names: ["Manager", "Director"]');
-    return roles;
-}
-
-export const isExpression = (cell: string) => typeof cell === 'string' && /^\$[({]/.test(cell.trim());
 const asList = (value): string[] => (Array.isArray(value) ? value : String(value).split(','))
     .map(v => String(v ?? '').trim()).filter(Boolean);
 
@@ -163,25 +154,6 @@ export function reassigned(execution, item, before: Record<string, any>, changed
     execution.decision({ seq: item.seq, element, action: `is reassigned by ${userName ?? 'the system'}: ${whom(now)}`, why: [was] });
 }
 
-/** Why a role name can't be used, or null: a name of letters, digits, spaces, `_`, `-` or `.`, at most 64. */
-export function roleNameProblem(name: unknown): string | null {
-    if (typeof name !== 'string' || !name.trim()) return 'A role needs a name';
-    if (name.trim().length > 64) return 'A role name is at most 64 characters';
-    if (!/^[\p{L}\p{N}][\p{L}\p{N} _.-]*$/u.test(name.trim())) return `'${name}' is not a role name: letters, digits, spaces, _ - . (no commas)`;
-    return null;
-}
-
-/** Writes roles.json: the names, each once, in the order given. */
-export function saveRoleNames(definitionsPath: string, roles: string[]): string[] {
-    const names = [...new Set(roles.map(r => String(r).trim()))];
-    for (const name of names) {
-        const problem = roleNameProblem(name);
-        if (problem) throw new Error(problem);
-    }
-    fs.writeFileSync(path.join(definitionsPath, 'roles.json'), JSON.stringify(names, null, 2) + '\n');
-    return names;
-}
-
 /**
  * Where each name is used as a role in a models folder: the lanes of its models (`<model>: lane`), and the groups its
  * policies assign as literals (`policy <name>, rule <n>`). By name.
@@ -195,7 +167,7 @@ export async function roleUses(definitionsPath: string): Promise<Map<string, str
         for (const m of source.matchAll(/<(?:\w+:)?lane\b[^>]*?\bname="([^"]*)"/g))
             add(m[1].trim(), `${file.replace(/\.bpmn$/i, '')}: lane`);
     }
-    const { DMNParser } = await import('../dmn/DMNParser.js');
+    const { DMNParser } = await import('../../dmn/DMNParser.js');
     for (const policy of policyNames(definitionsPath)) {
         try {
             const definitions = await DMNParser.loadFile(path.join(definitionsPath, POLICIES_FOLDER, `${policy}.dmn.xml`));

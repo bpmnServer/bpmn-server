@@ -18,6 +18,7 @@ import { Listener } from './Listener.js';
 import { Connectors } from '../connectors/Connectors.js';
 import type { ILifecycleListener } from '../interfaces/lifecycle.js';
 import { contractProblems, compareWithCode, methodNames } from '../engine/AppContract.js';
+import type { IAddOn } from '../engine/AddOns.js';
 
 /**
  *	The main class of Server Layer
@@ -66,6 +67,8 @@ class BPMNServer implements IBPMNServer {
 	locker: ILockManager;
 	/** The connectors an administrator added: REST APIs service tasks call (docs/docs/connectors.md). */
 	connectors: Connectors;
+	/** What is built on the engine and plugs into its hooks (engine/AddOns.ts): the configuration's. */
+	addOns: IAddOn[] = [];
 	/** What the tests running in here replace: no call of the engine reaches them. */
 	testStubs = new TestStubs(this);
 	error;
@@ -126,6 +129,8 @@ class BPMNServer implements IBPMNServer {
 		this.scriptHandler = configuration.scriptHandler(this);
 		this.locker = configuration.locker ? configuration.locker(this) : this.dataStore.locker;
 		this.connectors = new Connectors(this);
+		// what is built on the engine: the configuration's, none for one that has no addOns (engine/AddOns.ts)
+		this.addOns = typeof configuration.addOns === 'function' ? configuration.addOns(this) ?? [] : [];
 
 		this.logger.log('bpmn-server version ' + BPMNServer.getVersion());
 

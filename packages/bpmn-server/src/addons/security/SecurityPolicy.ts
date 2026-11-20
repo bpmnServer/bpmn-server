@@ -13,10 +13,10 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { DMNEngine } from '../dmn/DMNEngine.js';
-import { decisionContext, actorsOf, actorElements, actorNamesOf, dataPathOf } from './DecisionContext.js';
-import type { Actor } from './DecisionContext.js';
-import { DataHandler } from './DataHandler.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { decisionContext, actorsOf, actorElements, actorNamesOf, dataPathOf } from '../../engine/DecisionContext.js';
+import type { Actor } from '../../engine/DecisionContext.js';
+import { DataHandler } from '../../engine/DataHandler.js';
 import { seeConditionsOfTable, builtInSeeConditions, combineSeeConditions } from './SecurityQuery.js';
 import type { SeeConditions } from './SecurityQuery.js';
 

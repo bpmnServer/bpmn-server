@@ -3,6 +3,7 @@ import { NODE_ACTION, FLOW_ACTION } from './Enums.js';
 import type { IModelsDatastore, IDataStore } from './datastore.js';
 import type { IExecution, IItem, IScriptHandler } from './engine.js';
 import type { ICacheManager } from './server.js';
+import type { IAddOn } from '../engine/AddOns.js';
 
 
 interface IConfiguration 
@@ -38,6 +39,11 @@ interface IConfiguration
     documentStore?(server): IDocumentStore,
     /** The lock adapter (the data store's own when absent). */
     locker?(server): ILockManager,
+    /**
+     * What is built on the engine and plugs into its hooks (engine/AddOns.ts): by default the policies (assignment,
+     * notification, security). `() => []`: the engine alone.
+     */
+    addOns?(server): IAddOn[],
     /** This process's identity as a lock owner (default `SERVER_ID`, else host, process id and a random suffix). */
     serverId?: string,
     locks?: {
@@ -201,7 +207,7 @@ interface IAppDelegate {
     decisionContext?(context: Record<string, any>, about: { kind: 'decision' | 'assignment' | 'security'; name?: string; user: { userName?: string | null; userGroups?: string[] }; instance?: any; task?: string }): Record<string, any> | void | Promise<Record<string, any> | void>;
 
     /**
-     * Optional. Delivers a notification a notification policy decided on (engine/NotificationPolicy.ts,
+     * Optional. Delivers a notification a notification policy decided on (addons/notification/NotificationPolicy.ts,
      * docs/design/notification-policies.md): whom (`to`: user names and groups), `subject`, `message`, `channel`.
      * It is kept in wf_notifications either way; not called for a test run's instance, nor with NOTIFICATIONS=record.
      * A failure is kept with the notification and said in the Rationale; the process goes on.

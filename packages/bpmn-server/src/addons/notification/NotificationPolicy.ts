@@ -10,11 +10,10 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { DMNEngine } from '../dmn/DMNEngine.js';
-import { runningDecisionContext, decisionContext, actorElements } from './DecisionContext.js';
-import { isExpression } from './AssignmentPolicy.js';
-import { expressionScript, evaluateTemplate, templateParts } from './Expressions.js';
-import { owfAttribute } from '../elements/owfAttributes.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { runningDecisionContext, decisionContext, actorElements } from '../../engine/DecisionContext.js';
+import { expressionScript, evaluateTemplate, templateParts, isExpression } from '../../engine/Expressions.js';
+import { owfAttribute } from '../../elements/owfAttributes.js';
 
 export const NOTIFICATION_FOLDER = 'policies/notification';
 export const NOTIFICATION_TEMPLATES = 'policies/notification/templates';

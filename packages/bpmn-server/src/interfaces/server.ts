@@ -5,6 +5,7 @@ import type { IExecution, IItem, IScriptHandler } from './engine.js';
 import type { EventEmitter } from 'eventemitter3';
 import type { EventEmitter as NodeEventEmitter } from 'events';
 import type { IDocumentStore, ILockManager } from './storage.js';
+import type { IAddOn } from '../engine/AddOns.js';
 
 interface IBPMNServer {
 
@@ -26,6 +27,8 @@ interface IBPMNServer {
     connectors?: Connectors;
     /** What the tests running in here replace. */
     testStubs?: any;
+    /** What is built on the engine and plugs into its hooks (engine/AddOns.ts): by default the policies. */
+    addOns?: IAddOn[];
 
 }
 

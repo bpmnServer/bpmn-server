@@ -10,14 +10,14 @@ import { templateProblems } from '../engine/Labels.js';
 import { owfAttribute, legacyAttributes } from './owfAttributes.js';
 import { formFieldLookup, lookupElements, filterPath } from './FormLookup.js';
 import { actorElements, BUILT_IN_ACTORS, ACTOR_ELEMENTS } from '../engine/DecisionContext.js';
-import { SECURITY_FOLDER, DEFAULT_SECURITY_POLICY } from '../engine/SecurityPolicy.js';
-import { notificationPolicyFile, notificationTemplateFile, NOTIFICATION_FOLDER, NOTIFICATION_TEMPLATES, NOTIFICATION_OUTPUTS } from '../engine/NotificationPolicy.js';
+import { addOnsOf } from '../engine/AddOns.js';
+import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile } from '../engine/AddOns.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { DMNParser } from '../dmn/DMNParser.js';
-import { policyFile, roleNames, POLICY_FIELDS, POLICIES_FOLDER } from '../engine/AssignmentPolicy.js';
+import { roleNames } from '../engine/Roles.js';
 import { contractNames, readAppContract, APP_CONTRACT_FILE } from '../engine/AppContract.js';
 import type { IAppContract } from '../engine/AppContract.js';
 
@@ -46,6 +46,8 @@ interface IModelIssue {
 interface IVerifyOptions {
     /** the folder of the decision files (`<name>.dmn.xml`) business rule tasks name; the server's definitionsPath by default */
     decisionsFolder?: string;
+    /** the add-ons whose checks run too (engine/AddOns.ts); the server's by default, none without a server */
+    addOns?: IAddOn[];
 }
 
 interface IModelVerification {
@@ -74,6 +76,34 @@ class ModelVerifier {
     services: any = null;
 
     constructor(private server?: IBPMNServer, private options: IVerifyOptions = {}) { }
+
+    get addOns(): IAddOn[] {
+        return this.options.addOns ?? addOnsOf(this.server);
+    }
+
+    /** What an add-on's checks are given: the folder, the roles, and a way to report (engine/AddOns.ts). */
+    get addOnCheck(): IAddOnModelCheck {
+        return { folder: this.decisionsFolder, roles: () => this.roles(), add: (severity, code, message, element) => this.add(severity, code, message, element) };
+    }
+
+    /** Each add-on's model check, in turn; one that throws is a warning. */
+    async addOnChecks(hook: 'verifyNode' | 'verifyProcess', ...args: any[]) {
+        for (const addOn of this.addOns) {
+            if (typeof addOn[hook] !== 'function') continue;
+            try { await (addOn[hook] as Function).call(addOn, this.addOnCheck, ...args); }
+            catch (exc) { this.add('warning', 'add-on-check-failed', `The ${addOn.name} add-on's check failed: ${exc?.message ?? exc}`); }
+        }
+    }
+
+    /** The decision files the model uses through its add-ons (its policies). */
+    async addOnDecisionFiles(definition): Promise<IAddOnDecisionFile[]> {
+        const folder = this.decisionsFolder;
+        if (!folder) return [];
+        const files: IAddOnDecisionFile[] = [];
+        for (const addOn of this.addOns)
+            try { files.push(...(await addOn.decisionFiles?.(definition, folder) ?? [])); } catch { /* its own checks say why */ }
+        return files;
+    }
 
     get decisionsFolder(): string {
         return this.options.decisionsFolder
@@ -161,7 +191,7 @@ class ModelVerifier {
             if (definition) {
                 await this.verifyExecutables(definition);
                 await this.verifyActors(source, definition);
-                await this.verifyContract(source);
+                await this.verifyContract(source, definition);
                 await this.verifyApplication(name, source, definition);
             }
         }
@@ -492,10 +522,8 @@ class ModelVerifier {
         this.services = services;
 
         for (const proc of definition.processes.values()) {
-            const notices = (proc.def || proc)?.$attrs?.['owf:notificationPolicy'];
             this.processId = proc.id;
-            if (typeof notices == 'string' && notices.trim())
-                await this.checkNotificationPolicy(notices.trim(), proc.def || proc);
+            await this.addOnChecks('verifyProcess', proc, proc.def || proc);
         }
         definition.processes.forEach(proc => {
             this.processId = proc.id;
@@ -556,12 +584,7 @@ class ModelVerifier {
             if (node instanceof BusinessRuleTask)
                 await this.checkDecision(node, def);
 
-            const policy = owfAttribute(def, 'assignmentPolicy');
-            if (typeof policy == 'string' && policy.trim())
-                await this.checkPolicy(policy.trim(), def);
-            const notices = def.$attrs?.['owf:notificationPolicy'];
-            if (typeof notices == 'string' && notices.trim())
-                await this.checkNotificationPolicy(notices.trim(), def);
+            await this.addOnChecks('verifyNode', node, def);
             if (node.lane) lanes.set(node.lane, def);
 
             if (node instanceof CallActivity && node.calledElement && knownModels && !knownModels.has(node.calledElement))
@@ -607,18 +630,11 @@ class ModelVerifier {
         const read = (file: string | null) => { try { return file ? fs.readFileSync(file, 'utf8') : null; } catch { return null; } };
         if (folder) {
             const named = new Map<string, string>();     // a file, and what it is
-            for (const node of definition.nodes.values()) {
-                const policy = owfAttribute(node.def, 'assignmentPolicy');
-                if (typeof policy == 'string' && policy.trim()) named.set(policyFile(folder, policy.trim()) ?? '', `assignment policy ${policy.trim()}`);
-                const security = node.def?.$attrs?.['owf:securityPolicy'];
-                if (security) named.set(path.join(folder, SECURITY_FOLDER, `${security}.dmn.xml`), `security policy ${security}`);
+            for (const { what, file, actors } of await this.addOnDecisionFiles(definition))
+                if (actors !== false) named.set(file, what);
+            for (const node of definition.nodes.values())
                 if (node instanceof BusinessRuleTask && node.decisionRef)
                     try { named.set((await DMNEngine.find(folder, node.decisionRef)).filePath, `decision ${node.decisionRef}`); } catch { }
-            }
-            for (const proc of definition.processes.values()) {
-                const security = (proc.def || proc)?.$attrs?.['owf:securityPolicy'] || DEFAULT_SECURITY_POLICY;
-                named.set(path.join(folder, SECURITY_FOLDER, `${security}.dmn.xml`), `security policy ${security}`);
-            }
             for (const [file, what] of named) {
                 const text = read(file);
                 if (text) places.push([what, text]);
@@ -665,7 +681,7 @@ class ModelVerifier {
      * its policies) calling a function that changes things (effect write). Warnings, but the last: the contract is
      * guidance; the model runs as it is.
      */
-    async verifyContract(source: string) {
+    async verifyContract(source: string, definition?) {
         const contract = this.contract();
         if (!contract) return;
         const names = contractNames(contract);
@@ -688,7 +704,7 @@ class ModelVerifier {
         // the decisions it uses: none may call a function that changes things
         const writes = [...names.functions.values()].filter(f => f.effect === 'write').map(f => f.name);
         if (!writes.length || !this.decisionsFolder) return;
-        for (const { what, file } of this.decisionFilesUsed(text)) {
+        for (const { what, file } of await this.decisionFilesUsed(text, definition)) {
             let table: string;
             try { table = decodeXml(fs.readFileSync(file, 'utf8')); } catch { continue; }
             for (const call of appServicesCalls(table))
@@ -697,93 +713,18 @@ class ModelVerifier {
         }
     }
 
-    /** The decision files a model uses: its business rule tasks' decisions and the policies it names. */
-    decisionFilesUsed(text: string): { what: string; file: string }[] {
+    /** The decision files a model uses: its business rule tasks' decisions and its add-ons' (the policies it names). */
+    async decisionFilesUsed(text: string, definition?): Promise<{ what: string; file: string }[]> {
         const folder = this.decisionsFolder, out = [];
         const add = (what: string, file: string | null) => { if (file && fs.existsSync(file)) out.push({ what, file }); };
         for (const [, ref] of text.matchAll(/\bdecisionRef\s*=\s*"([^"]+)"/g))
             add(`Decision '${ref}'`, [path.join(folder, ref), path.join(folder, ref + '.dmn'), path.join(folder, ref + '.dmn.xml')].find(f => fs.existsSync(f)) ?? null);
-        for (const [kind, sub] of [['assignmentPolicy', 'assignment'], ['securityPolicy', 'security'], ['notificationPolicy', 'notification']])
-            for (const [, name] of text.matchAll(new RegExp(`\\b${kind}\\s*=\\s*"([^"]+)"`, 'g')))
-                add(`The ${sub} policy '${name}'`, path.join(folder, 'policies', sub, name + '.dmn.xml'));
+        if (definition)
+            for (const { what, file, calls } of await this.addOnDecisionFiles(definition))
+                if (calls !== false) add(what.charAt(0).toUpperCase() + what.slice(1), file);
         return out;
     }
     #roles: string[] | null | undefined = undefined;
-
-    /**
-     * A user task's assignment policy (engine/AssignmentPolicy.ts): in policies/assignment/, a readable decision whose outputs
-     * are the assignment's fields; the groups it names, roles of roles.json (when there is one).
-     */
-    /**
-     * A process's or user task's notification policy (engine/NotificationPolicy.ts): in policies/notification/, a
-     * readable decision whose outputs are notify, template, channel; a template cell that is a name, a template file.
-     */
-    async checkNotificationPolicy(policy: string, def) {
-        const folder = this.decisionsFolder;
-        if (!folder) return;
-        const file = notificationPolicyFile(folder, policy);
-        if (!file) {
-            this.add('error', 'notification-policy-not-found', `Notification policy '${policy}': there is no ${NOTIFICATION_FOLDER}/${policy}.dmn.xml.`, def);
-            return;
-        }
-        let definitions;
-        try { definitions = await DMNParser.loadFile(file); }
-        catch (exc) {
-            this.add('error', 'notification-policy-invalid', `Notification policy '${policy}': ${exc.message}`, def);
-            return;
-        }
-        for (const issue of DMNParser.check(definitions))
-            this.add('error', 'notification-policy-invalid', `Notification policy '${policy}': ${issue.message}`, def);
-        const table = DMNEngine.topDecision(definitions)?.table;
-        if (!table) return;
-        const outputs: readonly string[] = NOTIFICATION_OUTPUTS;
-        for (const output of table.outputs)
-            if (!outputs.includes(output.name))
-                this.add('warning', 'notification-policy-output', `Notification policy '${policy}': output '${output.name}' is not ${NOTIFICATION_OUTPUTS.join(', ')}; it is not used.`, def);
-        const template = table.outputs.findIndex(o => o.name === 'template');
-        if (template < 0) return;
-        for (const [r, rule] of table.rules.entries()) {
-            // a name ("approval-request"): a template file; a text with spaces or ${...} is the message itself
-            const name = /^"([\w.-]+)"$/.exec((rule.outputEntries[template] ?? '').trim())?.[1];
-            if (name && !notificationTemplateFile(folder, name))
-                this.add('warning', 'notification-template-not-found', `Notification policy '${policy}', rule ${r + 1}: there is no template '${name}' (${NOTIFICATION_TEMPLATES}/${name}.md); the name itself would be the message.`, def);
-        }
-    }
-
-    async checkPolicy(policy: string, def) {
-        const folder = this.decisionsFolder;
-        if (!folder) return;
-        const file = policyFile(folder, policy);
-        if (!file) {
-            this.add('error', 'assignment-policy-not-found', `Assignment policy '${policy}': there is no ${POLICIES_FOLDER}/${policy}.dmn.xml.`, def);
-            return;
-        }
-        let definitions;
-        try { definitions = await DMNParser.loadFile(file); }
-        catch (exc) {
-            this.add('error', 'assignment-policy-invalid', `Assignment policy '${policy}': ${exc.message}`, def);
-            return;
-        }
-        for (const issue of DMNParser.check(definitions))
-            this.add('error', 'assignment-policy-invalid', `Assignment policy '${policy}': ${issue.message}`, def);
-        const table = DMNEngine.topDecision(definitions)?.table;
-        if (!table) return;
-        const fields: readonly string[] = POLICY_FIELDS;
-        for (const output of table.outputs)
-            if (!fields.includes(output.name))
-                this.add('warning', 'assignment-policy-output', `Assignment policy '${policy}': output '${output.name}' is not ${POLICY_FIELDS.join(', ')}; it is not used.`, def);
-        const roles = this.roles();
-        const groups = table.outputs.findIndex(o => o.name === 'candidateGroups');
-        if (!roles || groups < 0) return;
-        for (const [r, rule] of table.rules.entries()) {
-            const cell = (rule.outputEntries[groups] ?? '').trim();
-            // a literal: "Director", or "A,B"; an expression is known only when it runs
-            const literal = /^"([^"]*)"$/.exec(cell);
-            for (const group of literal ? literal[1].split(',').map(g => g.trim()).filter(Boolean) : [])
-                if (!roles.includes(group))
-                    this.add('warning', 'role-unknown', `Assignment policy '${policy}', rule ${r + 1}: '${group}' is not a role (roles.json, app-contract.json: ${roles.join(', ')}).`, def);
-        }
-    }
 
     /**
      * A business rule task's decision: named, found in the decisions folder, readable and valid, and its result

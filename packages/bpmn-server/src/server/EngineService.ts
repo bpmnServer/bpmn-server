@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import http from 'node:http';
 import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
+import { addOnsOf } from '../engine/AddOns.js';
 import { canEncrypt } from '../connectors/Secrets.js';
 import { Definition } from '../elements/Definition.js';
 import { formFieldLookup, lookupChoices } from '../elements/FormLookup.js';
@@ -15,14 +16,13 @@ import type { BPMNServer } from './BPMNServer.js';
  */
 /**
  * A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id;
- * a policy by its tests' name (`LeaveApproval.policy`, `Cases.security-policy`, `Notices.notification-policy`). The
- * engine's own (EngineService's invokeDecision, and a scenario's @evaluate, which runs in the engine).
+ * an add-on's by its tests' name (a policy: `LeaveApproval.policy`, `Cases.security-policy`), as the add-on says
+ * (decisionByName). The engine's own (EngineService's invokeDecision, and a scenario's @evaluate, which runs in the engine).
  */
 export async function invokeDecision(server: any, ref: string, data = {}) {
-    // a policy by its tests' name: <name>.policy (assignment), <name>.security-policy, <name>.notification-policy
-    const policy = /^(.+)\.(?:(security|notification)-)?policy$/.exec(ref);
-    const folder = policy ? path.join(server.configuration.definitionsPath, 'policies', policy[2] ?? 'assignment') : server.configuration.definitionsPath;
-    const found = await DMNEngine.find(folder, policy ? policy[1] : ref);
+    const definitionsPath = server.configuration.definitionsPath;
+    const own = addOnsOf(server).map(addOn => addOn.decisionByName?.(ref, definitionsPath)).find(Boolean);
+    const found = await DMNEngine.find(own?.folder ?? definitionsPath, own?.name ?? ref);
     const decision = await new DMNEngine().load(found.filePath, found.decision.id);
     return { decision: found.decision.id, file: path.basename(found.filePath), result: decision.evaluate(data) };
 }

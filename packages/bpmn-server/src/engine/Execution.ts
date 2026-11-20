@@ -1,5 +1,5 @@
 import { v4 as uuid } from '@lukeed/uuid';
-import { notifyEvent } from './NotificationPolicy.js';
+import { addOnsOf, callAddOns, ASSIGNMENT_FIELDS } from './AddOns.js';
 import { Item } from './Item.js';
 import { Token, TOKEN_TYPE  } from './Token.js';
 import { Loop} from './Loop.js';
@@ -10,7 +10,6 @@ import type { IDefinition } from '../interfaces/elements.js';
 import type { IInstanceData } from '../interfaces/DataObjects.js';
 import type { IExecution } from '../interfaces/engine.js';
 import { DataHandler } from './DataHandler.js';
-import { POLICY_FIELDS, reassigned } from './AssignmentPolicy.js';
 import { ServerComponent } from '../server/ServerComponent.js';
 import { InstanceObject } from './Model.js';
 
@@ -102,7 +101,7 @@ class Execution extends ServerComponent implements IExecution {
             await CallActivity.executionEnded(this);
         }
         await this.process.end(this);
-        await notifyEvent(this, 'ended');      // its notification policy, asked (engine/NotificationPolicy.ts)
+        await callAddOns(addOnsOf(this.server), 'executionEnded', [this], message => this.logger.warn(message));     // engine/AddOns.ts
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_end);
     }
     /**
@@ -211,13 +210,14 @@ class Execution extends ServerComponent implements IExecution {
                 this.item=i;
             }
         });
-        // a change of who works on it is said in the Rationale, and replaces what its policy decided
-        const reassigning = POLICY_FIELDS.some(f => f in assignment);
-        const before = Object.fromEntries(POLICY_FIELDS.map(f => [f, this.item[f]]));
+        // a change of who works on it: the add-ons are told (an assignment policy says so in the Rationale)
+        const reassigning = ASSIGNMENT_FIELDS.some(f => f in assignment);
+        const before = Object.fromEntries(ASSIGNMENT_FIELDS.map(f => [f, this.item[f]]));
         Object.keys(assignment).forEach(key => {
             this.item[key]=assignment[key];
         });
-        if (reassigning) reassigned(this, this.item, before, assignment, this.userName);
+        if (reassigning)
+            await callAddOns(addOnsOf(this.server), 'taskReassigned', [this, this.item, before, assignment, this.userName], message => this.logger.warn(message));
 
         this.appendData(inputData, this.item, null, assignment);
 

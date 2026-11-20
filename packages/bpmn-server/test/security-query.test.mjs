@@ -1,5 +1,5 @@
 // @features: security-narrowing
-// A security policy as a condition of the store's query (engine/SecurityQuery.ts): a superset of the cases a user may
+// A security policy as a condition of the store's query (addons/security/SecurityQuery.ts): a superset of the cases a user may
 // see, so a list reads fewer before the policy decides each. Every case the policy shows meets it; it never needs to
 // be exact. A rule it can't read leaves it wider.
 import test from 'node:test';

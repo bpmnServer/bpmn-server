@@ -26,6 +26,17 @@ and here
 
 ## [Unreleased]
 ### Added
+- **Add-ons** (docs/design/add-ons.md, `engine/AddOns.ts`): the engine no longer calls the policies. It calls its
+  add-ons' hooks (`taskStarting`, `taskWaiting`, `taskCompleted`, `taskReassigned`, `executionEnded`, `verifyNode`,
+  `verifyProcess`, `decisionFiles`, `decisionByName`), and the assignment, notification and security policies are
+  add-ons in `src/addons/`, each depending on the engine only. A server has its configuration's `addOns(server)`, by
+  default `policyAddOns()`; `addOns: () => []` is the engine alone, and an application may add its own. A hook that
+  throws is logged and fails nothing. `roleNames`, `roleNameProblem` and `saveRoleNames` moved to `engine/Roles.ts`,
+  `isExpression` to `engine/Expressions.ts`. **Compatibility:** everything is still exported from the package's entry.
+  A model checked without a server (`verifyModel(source, undefined, …)`) and `invokeDecision` on an object that isn't a
+  server have no add-ons unless given (`options.addOns`, `addOns`): no policy checks, no `<name>.policy`. A
+  configuration that isn't a `Configuration` has no policies unless it gives `addOns`. A user task's description shows
+  every `owf:` attribute the engine doesn't read. Test: `test/add-ons.test.mjs`.
 - **The services' names from the configuration** (`serviceNames`, set by the host as it starts: bpmn-web reads them
   from the delegate's source, `delegateFile`): a launched server with no application code knows them so, else asks the
   engine. `servicesFile` (a services.json) is no longer read.

@@ -19,7 +19,7 @@ import type { DMNDefinitions, Decision, DecisionTable } from './DMNParser.js';
 type DMNOptions = {
     debug?: boolean;
     log?: (message: string) => void;
-    /** an output cell to keep as its text, not evaluated as FEEL (an assignment policy's `$(...)`: engine/AssignmentPolicy.ts) */
+    /** an output cell to keep as its text, not evaluated as FEEL (an assignment policy's `$(...)`: addons/assignment/AssignmentPolicy.ts) */
     keepOutput?: (cell: string) => boolean;
     /** an input whose value is a list matches a rule's test when the list or one of its values does (every decision: engine/DecisionContext.ts) */
     listInputs?: boolean;
