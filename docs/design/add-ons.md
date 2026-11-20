@@ -19,8 +19,8 @@ further feature is an **add-on** that is turned on when it's needed.
    the engine's registration points: checks, query filters, columns, editor properties and pages.
 4. **An add-on depends on the engine only, never on another add-on.** What two add-ons share belongs to the engine.
    One add-on reads another's work only as data, such as the fields on a task.
-5. **An add-on that's off isn't loaded.** Nothing is hidden. Its attributes in a model are kept as written and shown
-   read-only in the model report.
+5. **An add-on that's off isn't loaded.** Nothing is hidden. Only its manifest is read: its attributes in a model are
+   kept as written, shown read-only in the model report, and verify warns that the model uses an add-on that's off.
 6. **An add-on never fails a process.** A subscriber or check that throws is reported, and the engine goes on.
 
 `test/add-ons.test.mjs` checks rules 2 and 4 by reading the sources, and rule 6 by running a broken add-on.
@@ -129,6 +129,7 @@ addons/assignment/
   test/       its tests, run alone with the engine
   docs/       its page
   index.ts    { name, register } for each side
+  addon.json  its manifest: name, title, the model attributes it owns (read even when it's off)
 ```
 
 - **Open:** which package it ships in. The engine part needs only bpmn-server; the editor part needs bpmn-js and
@@ -139,9 +140,31 @@ addons/assignment/
 ## A model that uses an add-on that's off
 
 Its attributes (`owf:assignmentPolicy`, `camunda:candidateGroups`, `owf:list`) are kept as written: moddle keeps
-attributes it doesn't know, and saving writes them back. The editor doesn't show them, since the add-on's properties
-aren't loaded. The model report shows them read-only, marked *add-on off*. The engine ignores them, and verify says
-nothing about them.
+attributes it doesn't know, and saving writes them back. The editor's properties panel doesn't show them, since the
+add-on's properties aren't loaded. The engine ignores them.
+
+What says they are the add-on's is its **manifest**, `addons/<name>/addon.json`, read for every add-on bpmn-server
+comes with, on or off. It has no code:
+
+```json
+{
+  "name": "assignment",
+  "title": "Assignment",
+  "attributes": ["camunda:assignee", "camunda:candidateUsers", "camunda:candidateGroups",
+                 "camunda:candidateStarterUsers", "camunda:candidateStarterGroups", "owf:assignmentPolicy"]
+}
+```
+
+With the manifests:
+
+- **The model report** shows an add-on's attributes read-only under its title, marked *add-on off*:
+  *Assignment (add-on off): candidateGroups = Managers*. When the add-on is on, its report section shows them instead.
+- **Verify** warns once for each add-on a model uses that is off: *This model uses Assignment (candidateGroups on
+  Approve, ...), which is off; the engine ignores it.* Code `add-on-off`, a warning: the model still runs.
+- **The Integration page** says, for an add-on that's off, which models use it.
+- **The AI guide** can say what an attribute is for, and that its add-on is off.
+
+An attribute no manifest claims and no loaded module reads is shown read-only under *Other attributes*.
 
 ## Order
 
