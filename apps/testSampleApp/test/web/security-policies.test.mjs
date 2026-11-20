@@ -1,4 +1,4 @@
-// @features: pages-through-api, security-narrowing
+// @features: list-columns, pages-through-api, security-narrowing
 // Security policies through API v3 and the pages (docs/design/security-policies.md, routes/caseAccess.ts): the models
 // folder's policies/security/default.dmn.xml decides who sees a case, which of its data, and who may complete its tasks.
 import test from 'node:test';
@@ -156,4 +156,18 @@ test('who may do what with a case: under the Rationale on the instance page, and
     const managers = waitingApprove.who.find(w => w.who.label === 'manager' && w.who.kind === 'role');
     assert.equal(managers.complete, true, 'any other manager may');
     assert.equal((await v3('GET', `/instances/${monasCase}/access`, sam)).status, 403);
+});
+
+// @features: list-columns
+test('a list\'s columns show only what the policy lets them read; sorting or filtering on other data is refused', async () => {
+  const own = (await v3('GET', '/instances?name=leave-request&columns=data.days,data.note', sam)).body.items.find(i => i.id === samsCase);
+  assert.deepEqual(own.columns, { 'data.days': '10', 'data.note': '' }, 'entered on a form, and not');
+  const all = (await v3('GET', '/instances?name=leave-request&columns=data.note', mona)).body.items.find(i => i.id === samsCase);
+  assert.equal(all.columns['data.note'], 'not from a form', 'a manager reads all of it');
+  const sorted = await v3('GET', '/instances?columns=data.note&sort=data.note', mona);
+  assert.equal(sorted.status, 400, why(sorted));
+  assert.equal(sorted.body.error.code, 'SORT_REFUSED', 'its order would tell the values the policy hides from others');
+  const filtered = await v3('GET', '/tasks?field=data.note&value=form', sam);
+  assert.equal(filtered.status, 400, why(filtered));
+  assert.equal(filtered.body.error.code, 'FILTER_REFUSED');
 });

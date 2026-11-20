@@ -10,6 +10,7 @@ import { ViewHelper } from './ViewHelper.js';
 import { rationaleSteps } from '../testing/rationale.js';
 import { runProcess } from './runErrors.js';
 import { labelFilterOf } from './labelFilter.js';
+import { listViewOf, hrefWith, INSTANCE_SORTS, TASK_SORTS } from './listView.js';
 import { accessDirectory } from './caseAccess.js';
 import { pageApi, ApiError } from './api/pageClient.js';
 import { ProcessRunError } from './runErrors.js';
@@ -490,14 +491,17 @@ async function display(req,res, title, output, logs = [], items = []) {
 
     let user = getSecureUser(req);
     
+    // each list's columns and sort, as the person chose them (routes/listView.ts)
+    const instanceView = await listViewOf(serverOf(req), req, { list: 'workbench-instances', action: '/#instances', sorts: INSTANCE_SORTS, defaultSort: { sort: 'started', order: 'desc' }, sortsInStore: true });
+    const taskView = await listViewOf(serverOf(req), req, { list: 'workbench-tasks', prefix: 'task_', action: '/#tasks', sorts: TASK_SORTS, defaultSort: { sort: 'started', order: 'asc' } });
     // each list's own filter by the labels' named values, as the URL says (routes/labelFilter.ts)
-    const labelFilter = await labelFilterOf(serverOf(req), req, '/#instances', { other: 'task_' });
-    const taskFilter = await labelFilterOf(serverOf(req), req, '/#tasks', { prefix: 'task_', other: '' });
+    const labelFilter = await labelFilterOf(serverOf(req), req, '/#instances', { other: 'task_', dataFields: instanceView.view.filterFields });
+    const taskFilter = await labelFilterOf(serverOf(req), req, '/#tasks', { prefix: 'task_', other: '', dataFields: taskView.view.filterFields });
     // the lists through API v3's operations (pageClient.ts), as the person: what they may see, a page of instances
     // (newest first; ?after= the next page) and an administrator's every waiting task, labeled. No security rules here
     const lists = await asPage(req, res, async api => ({
-        instances: await api.instances(WORKBENCH_PAGE, typeof req.query.after === 'string' ? req.query.after : undefined, labelFilter.query ?? undefined),
-        waiting: await api.allWaiting(MAX_TASKS, taskFilter.query ?? undefined),
+        instances: await api.instances(WORKBENCH_PAGE, typeof req.query.after === 'string' ? req.query.after : undefined, labelFilter.query ?? undefined, instanceView.asked),
+        waiting: await api.allWaiting(MAX_TASKS, taskFilter.query ?? undefined, taskView.asked),
     }));
     if (!lists) return;
     const instances: any[] = lists.instances.instances;
@@ -536,6 +540,9 @@ async function display(req,res, title, output, logs = [], items = []) {
             instances, nextInstances,
             labelFilter: labelFilter.view,
             taskFilter: taskFilter.view,
+            instanceView: instanceView.view, taskView: taskView.view,
+            // the next page keeps the lists' filters and views
+            nextInstancesHref: nextInstances ? hrefWith('/', req.query, { after: nextInstances }, 'instances') : undefined,
             request: req,
             logs, items,
             forUserGroups: req.session.forUserGroups, forUserName: req.session.forUserName

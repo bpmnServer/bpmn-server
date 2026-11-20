@@ -21,6 +21,8 @@ mixin labelFilter(f)
 		select(name=(f.prefix || '') + "op", aria-label="How it matches")
 			option(value="contains", selected=f.filter.op !== 'is') contains
 			option(value="is", selected=f.filter.op === 'is') is
+			option(value="gt", selected=f.filter.op === 'gt') more than
+			option(value="lt", selected=f.filter.op === 'lt') less than
 		input(type="text", name=(f.prefix || '') + "value", value=f.filter.value || '', placeholder="value", aria-label="Value")
 		input(type="search", name=(f.prefix || '') + "search", value=f.filter.search || '', placeholder="Search everything", aria-label="Search everything")
 		button(type="submit") Filter

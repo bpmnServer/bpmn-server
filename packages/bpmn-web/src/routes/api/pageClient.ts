@@ -60,8 +60,8 @@ export async function pageApi(req, server) {
     const guides = new GuideOperations(server);
     return {
         user,
-        /** The waiting tasks they have a part in (GET /tasks); `query`, a label filter's conditions. */
-        waiting: (limit: number, query?: object) => asApi(async () => (await tasks.list(user, { limit, query })).tasks),
+        /** The waiting tasks they have a part in (GET /tasks); `query`, a label filter's conditions; `view`, the person's columns and sort (routes/listView.ts). */
+        waiting: (limit: number, query?: object, view: object = {}) => asApi(async () => (await tasks.list(user, { limit, query, ...view })).tasks),
         /** The ones they completed, newest first (GET /tasks?status=completed). */
         completed: (limit: number, query?: object) => asApi(() => tasks.completed(user, { limit, query })),
         /** The processes they may start, with each start form (GET /processes/startable). */
@@ -71,13 +71,13 @@ export async function pageApi(req, server) {
         /** A start form's field's choices (POST /processes/{name}/choices/{field}). */
         startChoices: (name: string, field: string, body: object) => asApi(() => tasks.startChoices(user, name, field, body)),
         /** The instances they may see, newest first, a page at a time (GET /instances); `query`, a label filter's conditions. */
-        instances: (limit: number, after?: string, query?: object) => asApi(() => instances.list(user, { limit, after, query })),
+        instances: (limit: number, after?: string, query?: object, view: object = {}) => asApi(() => instances.list(user, { limit, after, query, ...view })),
         /** An instance's page: the whole instance for whoever sees it fully, its data as the policy lets them read it. */
         instancePage: (id: string) => asApi(() => instances.page(user, id)),
         /** Its user tasks' assignment, and who may do what with it (GET /instances/{id}/access). */
         instanceAccess: (instance, directory) => instances.assignmentAndAccess(instance, directory),
         /** Every waiting task an administrator may see (the Workbench's); anyone else's, their own. */
-        allWaiting: (limit: number, query?: object) => asApi(async () => (await tasks.list(user, { limit, query, all: true })).tasks),
+        allWaiting: (limit: number, query?: object, view: object = {}) => asApi(async () => (await tasks.list(user, { limit, query, all: true, ...view })).tasks),
         /** A task's page: the task, its case as they may read it, its element and fields. */
         taskPage: (id: string, purpose?: 'complete' | 'assign') => asApi(() => tasks.page(user, id, { purpose })),
         /** The task completed with this data (POST /tasks/{id}/complete). */

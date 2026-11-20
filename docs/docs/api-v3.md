@@ -155,10 +155,13 @@ The waiting tasks this user has a part in, oldest first; with status=completed, 
 | `cursor` | query | string |  | A page's `next` |
 | `status` | query | `"waiting"` or `"completed"` |  | completed: the latest this user completed (limit, default 10) |
 | `model` | query | string |  | Only this model's tasks; its named values for field and search |
-| `field` | query | string |  | A value the models' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path's last name (`${data.caseId}` is caseId); none: any of them |
-| `op` | query | `"contains"` or `"is"` |  | contains: any case; is: exactly (a number also matches as a number); default "contains" |
+| `field` | query | string |  | A value the models' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path's last name (`${data.caseId}` is caseId); or a field of the cases' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels' values |
+| `op` | query | `"contains"` or `"is"` or `"gt"` or `"lt"` |  | contains: any case; is: exactly (a number also matches as a number); gt, lt: more, less than (a number as a number, else as text); default "contains" |
 | `value` | query | string |  |  |
 | `search` | query | string |  | Contained in any named value |
+| `columns` | query | string |  | Comma-separated, at most 12: a value the labels name (`Client`) or a data path (`data.amount`). Each item answers `columns`, its values as text, from what this user may read of its case |
+| `sort` | query | string |  | started, due, model, name, priority, or one of the columns (default started, oldest first); 400 BAD_SORT for another. With security policies, a data column no label reads is 400 SORT_REFUSED. A sorted list's cursor is its position |
+| `order` | query | `"asc"` or `"desc"` |  |  |
 
 | Answer | Means | Body |
 |---|---|---|
@@ -254,10 +257,13 @@ The instances this user may see, newest first.
 | `name` | query | string |  | Only this model's instances; its named values for field and search |
 | `limit` | query | integer |  | default 50, at least 1, at most 200 |
 | `cursor` | query | string |  | A page's `next` |
-| `field` | query | string |  | A value the models' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path's last name (`${data.caseId}` is caseId); none: any of them |
-| `op` | query | `"contains"` or `"is"` |  | contains: any case; is: exactly (a number also matches as a number); default "contains" |
+| `field` | query | string |  | A value the models' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path's last name (`${data.caseId}` is caseId); or a field of the cases' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels' values |
+| `op` | query | `"contains"` or `"is"` or `"gt"` or `"lt"` |  | contains: any case; is: exactly (a number also matches as a number); gt, lt: more, less than (a number as a number, else as text); default "contains" |
 | `value` | query | string |  |  |
 | `search` | query | string |  | Contained in any named value |
+| `columns` | query | string |  | Comma-separated, at most 12: a value the labels name (`Client`) or a data path (`data.amount`). Each item answers `columns`, its values as text, from what this user may read of its case |
+| `sort` | query | string |  | started, ended, model, status, or one of the columns (default started, newest first); 400 BAD_SORT for another. With security policies, a data column no label reads is 400 SORT_REFUSED. A sorted list's cursor is its position |
+| `order` | query | `"asc"` or `"desc"` |  |  |
 
 | Answer | Means | Body |
 |---|---|---|
@@ -879,6 +885,7 @@ The application's contract (app-contract.json): the variables (appVars) and func
 | `labelValues` | list of [LabelValue](#labelvalue) |  |  |
 | `caseLabel` | string |  | Its case's label |
 | `caseLabelValues` | list of [LabelValue](#labelvalue) |  |  |
+| `columns` | object |  | The columns asked (?columns=), by key: their values as text, from its case |
 
 ### LabelValue
 
@@ -925,6 +932,7 @@ Everything of [Task](#task), and:
 | `data` | object |  |  |
 | `label` | string |  | Its label (the model's owf:label, the application's, else &lt;model> #&lt;caseId>): on the lists, one instance, a start and a completion |
 | `labelValues` | list of [LabelValue](#labelvalue) |  |  |
+| `columns` | object |  | On a list, the columns asked (?columns=), by key: their values as text |
 
 ### User
 

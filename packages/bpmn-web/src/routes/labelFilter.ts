@@ -6,19 +6,24 @@
  * A page with two lists gives each its own: `prefix` names this filter's parameters (task_field=...), and `other` the
  * other filter's, which this bar keeps, so that using one does not clear the other.
  */
-import { labelFields, labelQuery } from '../index.js';
+import { labelFields, labelQuery, isLabelPath, pathProblem } from '../index.js';
 import type { ILabelFilter } from '../index.js';
+import { CaseAccess } from './caseAccess.js';
 
 const PARAMETERS = ['model', 'field', 'op', 'value', 'search'];
 const text = (value: unknown) => (typeof value === 'string' && value.trim() ? value.trim() : undefined);
 
-export async function labelFilterOf(server, request, action: string, { prefix = '', other }: { prefix?: string; other?: string } = {}) {
+export async function labelFilterOf(server, request, action: string, { prefix = '', other, dataFields = [] }: { prefix?: string; other?: string; dataFields?: string[] } = {}) {
     const q = request.query ?? {};
+    const op = q[prefix + 'op'];
     const filter: ILabelFilter = {
-        model: text(q[prefix + 'model']), field: text(q[prefix + 'field']), op: q[prefix + 'op'] === 'is' ? 'is' : 'contains',
+        model: text(q[prefix + 'model']), field: text(q[prefix + 'field']), op: op === 'is' || op === 'gt' || op === 'lt' ? op : 'contains',
         value: text(q[prefix + 'value']), search: text(q[prefix + 'search']),
     };
     const fields = await labelFields(server);
+    // a field of the cases' data (a column the person added, routes/listView.ts): with security policies, only one a label reads
+    if (filter.field?.startsWith('data.') && (pathProblem(filter.field) || (new CaseAccess(server).on && !isLabelPath(fields, filter.field))))
+        filter.field = undefined;
     const models = [...new Set<string>((await server.definitions.getList()).map(m => m?.name ?? m))].sort();
     // the fields offered: the chosen model's, else every model's, each name once, with where it is read
     const groups = new Map<string, string[]>();
@@ -34,7 +39,8 @@ export async function labelFilterOf(server, request, action: string, { prefix = 
         view: {
             action, filter, models, prefix, keep,
             clear: path + (kept ? '?' + kept : '') + (hash ? '#' + hash : ''),
-            groups: [...groups].map(([name, where]) => ({ name, where: where.join('; ') })),
+            groups: [...[...groups].map(([name, where]) => ({ name, where: where.join('; ') })),
+                ...[...new Set([...dataFields, ...(filter.field?.startsWith('data.') ? [filter.field] : [])])].map(name => ({ name, where: "the cases' data" }))],
             active: !!(filter.model || filter.value || filter.search),
         },
     };

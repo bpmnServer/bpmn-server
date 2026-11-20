@@ -444,6 +444,13 @@ features:
     code: [packages/bpmn-server/src/engine/Labels.ts, packages/bpmn-server/src/engine/LabelTemplate.ts, packages/bpmn-web/modeler/src/properties/LabelGroup.jsx, packages/bpmn-web/src/routes/labelFilter.ts, packages/bpmn-web/src/routes/api/labels.ts]
     examples: [apps/testSampleApp/processes/Buy Used Car.bpmn]
     tests: [packages/bpmn-server/test/labels.test.mjs, apps/testSampleApp/test/web/labels.test.mjs, apps/testSampleApp/test/ui/labels.test.mjs, apps/testSampleApp/test/web/api-v3-labels.test.mjs]
+  - id: list-columns
+    area: application
+    name: "List columns, filters and sorting"
+    what: "Each person adds columns to the lists (Workbench Instances and Pending Tasks, My work): a value the labels name or a field of the cases' data; sorts by a heading; filters on them (contains, is, more than, less than). In the URL and remembered for the session; API v3's columns, sort and order. Values as the person may read them; with security policies, sorting and filtering only on what labels name."
+    docs: [docs/docs/list-columns.md]
+    code: [packages/bpmn-server/src/engine/ListColumns.ts, packages/bpmn-web/src/routes/listView.ts, packages/bpmn-web/src/views/includes/listColumns.pug, packages/bpmn-web/src/routes/api/instances.ts, packages/bpmn-web/src/routes/api/tasks.ts]
+    tests: [packages/bpmn-server/test/list-columns.test.mjs, apps/testSampleApp/test/web/list-columns.test.mjs, apps/testSampleApp/test/web/security-policies.test.mjs]
 # -------------------------------------------------------------------------------------------------------- connectors
   - id: connectors
     area: connectors

@@ -2,6 +2,7 @@ extends layout
 
 include ../includes/startForm.pug
 include ../includes/labelFilter.pug
+include ../includes/listColumns.pug
 
 //- the Case column: a case's label, unless it only repeats its model's name (no label, no case id)
 mixin taskRow(item)
@@ -15,8 +16,26 @@ mixin taskRow(item)
 				.task-label= item.ownLabel
 		td= item.caseLabel && item.caseLabel !== item.processName ? item.caseLabel : ''
 		td= item.processName
+		+columnCells(listView, item)
 		td= item.fromNow
 		td= item.dueDate ? new Date(item.dueDate).toLocaleDateString() : ''
+
+//- the waiting tasks' headings: sortable, and the person's columns (routes/listView.ts)
+mixin taskHeadings()
+	tr
+		if listView
+			+sortHeading(listView.sorts.name)
+			th Case
+			+sortHeading(listView.sorts.model)
+			+columnHeadings(listView)
+			+sortHeading(listView.sorts.started)
+			+sortHeading(listView.sorts.due)
+		else
+			th Task
+			th Case
+			th Process
+			th Waiting
+			th Due
 
 block intro
 	p.dash-intro Tasks waiting for you, the ones you completed, and the processes you can start.
@@ -24,18 +43,15 @@ block intro
 block dash
 	if labelFilter
 		+labelFilter(labelFilter)
+	if listView
+		+listColumnsPicker(listView)
 	.dash-grid
 		section.dash-card#my-tasks
 			h2 Assigned to me
 				span.count= mine.length
 			if mine.length
 				table
-					tr
-						th Task
-						th Case
-						th Process
-						th Waiting
-						th Due
+					+taskHeadings()
 					each item in mine
 						+taskRow(item)
 			else
@@ -47,12 +63,7 @@ block dash
 			p.dash-muted Not assigned yet: for you, for one of your groups, or for anyone.
 			if available.length
 				table
-					tr
-						th Task
-						th Case
-						th Process
-						th Waiting
-						th Due
+					+taskHeadings()
 					each item in available
 						+taskRow(item)
 			else

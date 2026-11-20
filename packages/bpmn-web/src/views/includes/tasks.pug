@@ -1,9 +1,12 @@
 include labelFilter.pug
+include listColumns.pug
 div.tasks-content
 	h3 Pending Tasks
 	//- this list's filter (routes/labelFilter.ts): by the named values of the tasks' cases
 	if taskFilter
 		+labelFilter(taskFilter)
+	if taskView
+		+listColumnsPicker(taskView)
 	if !waiting.length
 		if taskFilter && taskFilter.active
 			p.empty-state No pending tasks match this filter.
@@ -11,11 +14,19 @@ div.tasks-content
 			p.empty-state There are no pending tasks for this user.
 	table
 		tr
-			th Name -id
-			th Model
+			if taskView
+				+sortHeading(taskView.sorts.name)
+				+sortHeading(taskView.sorts.model)
+			else
+				th Name -id
+				th Model
 			th Label
 			th CaseId
-			th Started
+			+columnHeadings(taskView)
+			if taskView
+				+sortHeading(taskView.sorts.started)
+			else
+				th Started
 			th Action 
 			th Assignee
 			th Candidate Users
@@ -36,6 +47,7 @@ div.tasks-content
 				//- its label and its case's (engine/Labels.ts)
 				td #{item.label || ''}
 				td #{caseId}
+				+columnCells(taskView, item)
 				td #{item.fromNow}
 				td
 					//- assignment is optional: whoever may see a task (assignee, candidate, unassigned) may execute it

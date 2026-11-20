@@ -1,8 +1,12 @@
 include labelFilter.pug
+include listColumns.pug
 h3 Instances
 //- this list's filter (routes/labelFilter.ts): the other sections are not filtered
 if labelFilter
 	+labelFilter(labelFilter)
+//- the columns the person added, and what it is sorted by (routes/listView.ts)
+if instanceView
+	+listColumnsPicker(instanceView)
 if !instances.length
 	if labelFilter && labelFilter.active
 		p.empty-state No instances match this filter.
@@ -16,10 +20,17 @@ if user && user.isAdmin()
 				button(type='submit') Delete All Instances Data
 table
 	tr
-		td Name
-		td Case
-		td Started
-		td Ended
+		if instanceView
+			+sortHeading(instanceView.sorts.model)
+			th Case
+			+columnHeadings(instanceView)
+			+sortHeading(instanceView.sorts.started)
+			+sortHeading(instanceView.sorts.ended)
+		else
+			td Name
+			td Case
+			td Started
+			td Ended
 		td Examine Log
 		if user && user.isAdmin()
 			td Delete
@@ -32,6 +43,7 @@ table
 					span.test-mark(title="A test run's case") test
 			//- its label, from its model (engine/Labels.ts)
 			td #{instance.label || ''}
+			+columnCells(instanceView, instance)
 			td #{instance.fromNow}
 			td #{instance.endFromNow} 
 			td
@@ -45,4 +57,5 @@ table
 //- a page at a time, newest first (API v3's paging): the next page's bookmark
 if typeof nextInstances !== 'undefined' && nextInstances
 	p.instances-more
-		a(href=`/?after=${encodeURIComponent(nextInstances)}#instances`) Older instances
+		//- newest first: older ones; sorted otherwise, the next page (keeping the filters and views)
+		a(href=typeof nextInstancesHref !== 'undefined' && nextInstancesHref ? nextInstancesHref : `/?after=${encodeURIComponent(nextInstances)}#instances`)= String(nextInstances).startsWith('o:') ? 'Next page' : 'Older instances'

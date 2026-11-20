@@ -1,4 +1,5 @@
-import { BPMNAPI, SecureUser, formFieldLookup, filterValue } from '../../index.js';
+import { BPMNAPI, SecureUser, formFieldLookup, filterValue, columnRaw, columnValues, sortOrder, sortRecords, ListColumnError, isLabelPath } from '../../index.js';
+import type { IListColumn, ILabelField } from '../../index.js';
 import { CaseAccess } from '../caseAccess.js';
 
 /*
@@ -113,25 +114,81 @@ export class TaskOperations {
     /** The waiting tasks this user has a part in, oldest first, a page at a time: { tasks, next } (next: the bookmark, or null). */
     /** `query`: more conditions on the items' instances (a label filter: routes/labelFilter.ts), in the store's query. */
     /** `all`: an administrator's every waiting task (the Workbench's), not only those they have a part in. */
-    async list(user: SecureUser, { limit = DEFAULT_LIMIT, after, query = {}, all = false }: { limit?: number, after?: string, query?: object, all?: boolean } = {}) {
+    async list(user: SecureUser, { limit = DEFAULT_LIMIT, after, query = {}, all = false, columns = [], sort, order, fields = [] }: {
+        limit?: number, after?: string, query?: object, all?: boolean,
+        /** The person's columns (engine/ListColumns.ts): each task's values of them, from its case, as `columns`. */
+        columns?: IListColumn[],
+        /** What it is sorted by: started (the default, oldest first), due, model, name, priority, or a column's key; `order` asc or desc. */
+        sort?: string, order?: string,
+        /** The labels' fields: with security policies, a data column is sorted by only when a label reads it. */
+        fields?: ILabelField[],
+    } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
-        if (after !== undefined && !/^\d+_./.test(String(after)))
+        const sorting = this.sorting(sort, order, columns, fields);
+        if (after !== undefined && !(sorting ? /^o:\d+$/ : /^\d+_./).test(String(after)))
             throw new TaskError(400, 'after is a list\'s next', 'BAD_AFTER');
         // lean: the instances' data is not read for a list (fable-review.md H5); the labels read it for the page's tasks
-        const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...query }, user, { lean: true }))
-            .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && (all && user.isAdmin() ? true : hasPart(item, user)) && (after === undefined || isAfter(item, String(after))))
+        let waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...query }, user, { lean: true }))
+            .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && (all && user.isAdmin() ? true : hasPart(item, user)) && (sorting || after === undefined || isAfter(item, String(after))))
             .sort((a, b) => new Date(a.startedAt ?? 0).getTime() - new Date(b.startedAt ?? 0).getTime() || (a.id < b.id ? -1 : 1));
+        // sorted by something else: all of them, by its value (a column's from each task's case), a page at a time by position
+        const cases: Map<string, any> = sorting?.column ? await this.access.casesOf(waiting) : new Map();
+        if (sorting) {
+            const valueOf = sorting.column
+                ? (item) => columnRaw(sorting.column, item.processName, cases.get(item.instanceId)?.data)
+                : (item) => item[sorting.field];
+            waiting = sortRecords(waiting, valueOf, sorting.direction);
+        }
+        // sorted: the page's position among the tasks they may see
+        const skip = sorting && after !== undefined ? Number(String(after).slice(2)) : 0;
         // a task the case's policy doesn't let this user complete is not theirs to see here (the requester's approval)
         if (this.access.on) {
             // only as many as the page needs (and one more: whether there is a next), several at once
             const shown = [];
-            for (let i = 0; i < waiting.length && shown.length <= limit; i += 64)
+            for (let i = 0; i < waiting.length && shown.length <= skip + limit; i += 64)
                 shown.push(...await this.access.tasksAllowed(user, waiting.slice(i, i + 64)));
             waiting.splice(0, waiting.length, ...shown);
         }
+        if (skip) waiting = waiting.slice(skip);
         const page = waiting.slice(0, limit);
-        return { tasks: page.map(asTask), next: waiting.length > limit ? position(page.at(-1)) : null };
+        const next = waiting.length > limit ? (sorting ? `o:${skip + limit}` : position(page.at(-1))) : null;
+        return { tasks: await this.withColumns(user, page, columns, cases), next };
+    }
+
+    /**
+     * What `sort`/`order` sort by (undefined: the default, oldest first, paged by bookmark): a task's own field, or a
+     * column, from each task's case. With security policies on, a data column only when a label reads its path: sorting
+     * by a field the policy may hide would tell its values.
+     */
+    private sorting(sort: string | undefined, order: string | undefined, columns: IListColumn[], fields: ILabelField[]) {
+        const key = sort || 'started';
+        if (key === 'started' && (order === undefined || order === '' || order === 'asc')) return undefined;
+        const direction = sortOrder(order, 1);
+        const BUILT_IN: Record<string, string> = { started: 'startedAt', due: 'dueDate', model: 'processName', name: 'name', priority: 'priority' };
+        if (BUILT_IN[key]) return { field: BUILT_IN[key], direction, column: undefined as IListColumn | undefined };
+        const column = columns.find(c => c.key === key);
+        if (!column) throw new ListColumnError(`sort is started, due, model, name, priority, or one of the columns, not ${key}`, 'BAD_SORT');
+        if (this.access.on && !(column.paths ? [...column.paths.values()] : [column.path]).every(path => isLabelPath(fields, path)))
+            throw new ListColumnError(`with security policies, a list is sorted by the values its labels name, not by ${key}`, 'SORT_REFUSED');
+        return { field: undefined, direction, column };
+    }
+
+    /** The page's tasks as a list shows them; each with its values of the person's columns, from what they may read of its case. */
+    private async withColumns(user: SecureUser, page: any[], columns: IListColumn[], cases: Map<string, any>) {
+        if (!columns.length) return page.map(asTask);
+        // the page's cases, when they were not read for the sort
+        const missing = page.filter(item => !cases.has(item.instanceId));
+        if (missing.length) for (const [id, instance] of await this.access.casesOf(missing)) cases.set(id, instance);
+        const decided = this.access.on
+            ? await this.access.decideAll(user, page.map(item => ({ instance: cases.get(item.instanceId), task: { elementId: item.elementId, itemId: item.id } })))
+            : [];
+        return page.map((item, i) => {
+            const instance = cases.get(item.instanceId) ?? { data: {} };
+            // with a policy, what it lets them read of the case for this task: its form's fields too
+            const data = decided[i] ? this.access.data(instance, decided[i], item.elementId) : instance.data;
+            return { ...asTask(item), columns: columnValues(columns, item.processName, data ?? {}) };
+        });
     }
 
     /** The tasks this user completed, newest first: the latest `limit`. */

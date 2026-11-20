@@ -26,6 +26,8 @@ and here
 
 ## [Unreleased]
 ### Added
+- **List columns** (`engine/ListColumns.ts`): `listColumns`, `columnValues`, `columnSortPath`, `sortRecords`; the
+  label filter (`labelQuery`) takes a data path as its field, and `gt`/`lt`. Test: `test/list-columns.test.mjs`.
 - **The application's contract** (docs/docs/app-contract.md): `app-contract.json` read and checked (`AppContract.ts`;
   `DefaultAppDelegate.describe()`); `appVars.<name>` from the delegate's `appVarsClass` (or `getAppVars`), worked out
   before an expression runs, in scripts, conditions, FEEL and decision tables, with `evaluatingSource`; `verifyModel`

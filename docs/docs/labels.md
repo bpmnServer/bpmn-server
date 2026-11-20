@@ -175,4 +175,4 @@ GET /api/v3/instances?name=Buy%20Used%20Car&search=porsche
 
 `/api` and `/api2` are unchanged: they answer no labels.
 
-Columns of named values in the lists are next. See the design, `docs/design/labels.md`.
+Each person can add the named values (and any field of the data) to the lists as columns, and sort by them: see [List columns](list-columns.md).

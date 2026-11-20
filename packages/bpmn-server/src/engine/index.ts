@@ -9,6 +9,7 @@ export * from './SandboxScriptHandler.js';
 export * from './DataHandler.js';
 export * from './TestStubs.js';
 export * from './Labels.js';
+export * from './ListColumns.js';
 export * from './AssignmentPolicy.js';
 export * from './SecurityPolicy.js';
 export * from './SecurityQuery.js';

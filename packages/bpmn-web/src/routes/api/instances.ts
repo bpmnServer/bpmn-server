@@ -1,4 +1,5 @@
-import { BPMNAPI, SecureUser, notificationsOf } from '../../index.js';
+import { BPMNAPI, SecureUser, notificationsOf, columnValues, columnSortPath, sortOrder, ListColumnError, isLabelPath } from '../../index.js';
+import type { IListColumn, ILabelField } from '../../index.js';
 import { rationaleSteps } from '../../testing/rationale.js';
 import { labeledInstances } from './labels.js';
 import { CaseAccess } from '../caseAccess.js';
@@ -68,9 +69,19 @@ export class InstanceOperations {
      * labels.ts). Through BPMNAPI, so the user's rules apply to the items. Each is labeled. The store filters, sorts
      * and cuts the page (fable-review.md H5), reading only what the list and the labels need.
      */
-    async list(user: SecureUser, { status, name, limit = DEFAULT_LIMIT, after, query: more = {} }: { status?: string, name?: string, limit?: number, after?: string, query?: object } = {}) {
+    async list(user: SecureUser, { status, name, limit = DEFAULT_LIMIT, after, query: more = {}, columns = [], sort, order, fields = [] }: {
+        status?: string, name?: string, limit?: number, after?: string, query?: object,
+        /** The person's columns (engine/ListColumns.ts): each instance's values of them, as `columns`. */
+        columns?: IListColumn[],
+        /** What it is sorted by: started (the default, newest first), ended, model, status, or a column's key; `order` asc or desc. */
+        sort?: string, order?: string,
+        /** The labels' fields (labelFields): with security policies, a data column is sorted by only when a label reads it. */
+        fields?: ILabelField[],
+    } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new InstanceError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
+        const sorting = this.sorting(sort, order, columns, fields);
+        if (sorting) return this.listSorted(user, { status, name, limit, after, more, columns, sorting });
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new InstanceError(400, 'cursor is a page\'s next', 'BAD_CURSOR');
         /** The query from a bookmark on. $and: the user's rules put their own $or on it, and a filter by label may have its own. */
@@ -98,7 +109,61 @@ export class InstanceOperations {
             found = seen;
         }
         const page = await labeledInstances(this.server, found.slice(0, limit));
-        return { instances: page.map(summary), next: found.length > limit ? position(page.at(-1)) : undefined };
+        return { instances: await this.withColumns(user, page, columns), next: found.length > limit ? position(page.at(-1)) : undefined };
+    }
+
+    /**
+     * The store's sort for `sort`/`order` (undefined: the default, newest first, paged by bookmark): a built-in field,
+     * or a column that reads one path in every case. With security policies on, a data column only when a label reads
+     * its path: sorting by a field the policy may hide would tell its values.
+     */
+    private sorting(sort: string | undefined, order: string | undefined, columns: IListColumn[], fields: ILabelField[]): Record<string, 1 | -1> | undefined {
+        const key = sort || 'started';
+        if (key === 'started' && (order === undefined || order === '' || order === 'desc')) return undefined;
+        const direction = sortOrder(order, key === 'started' || key === 'ended' ? -1 : 1);
+        const BUILT_IN: Record<string, string> = { started: 'startedAt', ended: 'endedAt', model: 'name', status: 'status' };
+        let path = BUILT_IN[key];
+        if (!path) {
+            const column = columns.find(c => c.key === key);
+            if (!column) throw new ListColumnError(`sort is started, ended, model, status, or one of the columns, not ${key}`, 'BAD_SORT');
+            path = columnSortPath(column);
+            if (!path) throw new ListColumnError(`${key} is read from different fields in different models: choose a model to sort by it`, 'BAD_SORT');
+            if (this.access.on && !isLabelPath(fields, path))
+                throw new ListColumnError(`with security policies, a list is sorted by the values its labels name, not by ${key}`, 'SORT_REFUSED');
+        }
+        return { [path]: direction, id: direction };
+    }
+
+    /** A sorted list, a page at a time by its position: `after` is `o:<how many come before it>`. */
+    private async listSorted(user: SecureUser, { status, name, limit, after, more, columns, sorting }) {
+        if (after !== undefined && !/^o:\d+$/.test(String(after)))
+            throw new InstanceError(400, 'cursor is a page\'s next', 'BAD_CURSOR');
+        const skip = after === undefined ? 0 : Number(String(after).slice(2));
+        const narrowed = this.access.on ? await this.access.seeQuery(user) : null;
+        const query: any = { ...(status ? { status } : {}), ...(name ? { name } : {}), ...(narrowed ?? {}) };
+        if (Object.keys(more).length) query.$and = [more];
+        // the ones before the page, the page and one more (whether there is a next); with a policy, those it lets them see
+        let want = skip + limit + 1, found: any[] = [];
+        for (let reads = 0; reads < 5; reads++) {
+            const batch = await this.findInstances(query, user, { projection: this.access.on ? SUMMARY_AND_ITEMS : SUMMARY, sort: sorting, limit: want });
+            found = await this.access.seen(user, batch);
+            if (found.length >= skip + limit + 1 || batch.length < want) break;
+            want *= 2;
+        }
+        const page = await labeledInstances(this.server, found.slice(skip, skip + limit));
+        return { instances: await this.withColumns(user, page, columns), next: found.length > skip + limit ? `o:${skip + limit}` : undefined };
+    }
+
+    /** The page's instances as a list shows them; each with its values of the person's columns, from what they may read of its data. */
+    private async withColumns(user: SecureUser, page: any[], columns: IListColumn[]) {
+        if (!columns.length) return page.map(summary);
+        const decided = this.access.on ? await this.access.decideAll(user, page.map(instance => ({ instance }))) : [];
+        return page.map((instance, i) => {
+            const access = decided[i];
+            // a case they see as a line only: its label, none of its data
+            const data = !access ? instance.data : access.see === 'full' ? this.access.data(instance, access) : {};
+            return { ...summary(instance), columns: columnValues(columns, instance.name, data ?? {}) };
+        });
     }
 
     /** The instance, if this user may see it; a test run's too (an ordinary case, marked `test`). */

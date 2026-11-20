@@ -26,6 +26,14 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The lists as each person wants them** (docs/docs/list-columns.md): the Workbench's Instances and Pending Tasks
+  and My work have a **Columns** picker: a value the models' labels name, or any field of the cases' data
+  (`data.amount`); their headings sort the list; the filter bar offers the data columns too, and more than / less
+  than. The view is in the URL (bookmark, share) and remembered for the session (`routes/listView.ts`). API v3's
+  `GET /instances` and `GET /tasks` take `columns`, `sort` and `order` (each item answers `columns`), and the filter's
+  `op` takes `gt` and `lt`. A column shows what the person may read of the case; with security policies, sorting and
+  filtering on data no label reads are refused (`SORT_REFUSED`, `FILTER_REFUSED`). Tests:
+  `apps/testSampleApp/test/web/list-columns.test.mjs`, `security-policies.test.mjs`.
 - **The application's contract on the web:** API v3's `GET /application` answers it, `/llms.txt` links it, and the
   editor completes its functions (with their descriptions) and its variables (`appVars.`). The HR demo has one
   (`apps/hrdemo/app-contract.json`, its variables in `workflow/delegates/appVars.ts`), and its unused sample services

@@ -1,0 +1,61 @@
+//- A list's view, as the person chose it (routes/listView.ts): the columns they added (a value the labels name, a
+//- field of the cases' data), and headings that sort it. A GET form: the view is in the URL, to bookmark and share,
+//- and remembered for the session.
+
+//- the picker: a box for each name the labels give, the data fields added, and one to type
+mixin listColumnsPicker(v)
+	link(rel="stylesheet", href=asset("/stylesheets/list-columns.css"))
+	details.list-columns(data-list=v.list)
+		summary
+			| Columns
+			if v.columns.length
+				span.count= v.columns.length
+		form(method="get", action=v.action, aria-label="Choose the columns")
+			each k in v.keep || []
+				input(type="hidden", name=k.name, value=k.value)
+			input(type="hidden", name=v.prefix + "columns_set", value="1")
+			if v.sorts
+				each h, key in v.sorts
+					if h.current
+						input(type="hidden", name=v.prefix + "sort", value=key)
+						input(type="hidden", name=v.prefix + "order", value=h.order)
+			each c in v.columns
+				if c.current
+					input(type="hidden", name=v.prefix + "sort", value=c.key)
+					input(type="hidden", name=v.prefix + "order", value=c.order)
+			if v.choices.length
+				fieldset
+					legend Values the cases' labels name
+					each c in v.choices
+						label(title=c.where)
+							input(type="checkbox", name=v.prefix + "columns", value=c.key, checked=c.checked)
+							|  #{c.title}
+			label.list-columns-add
+				span Add a field of the data
+				input(type="text", name=v.prefix + "columns_add", placeholder="data.amount", aria-label="A field of the cases' data")
+			if v.dataProblem
+				p.list-columns-problem= v.dataProblem
+			.list-columns-actions
+				button(type="submit") Show
+				a(href=v.reset) Reset
+
+//- a heading that sorts the list: by it, the other way when it already is
+mixin sortHeading(h)
+	th(aria-sort=h.current ? (h.order === 'asc' ? 'ascending' : 'descending') : undefined)
+		a.sort-heading(href=h.href, class=h.current ? 'sorted' : undefined)
+			= h.title
+			if h.current
+				span.sort-mark(aria-hidden="true")= h.order === 'asc' ? ' ▲' : ' ▼'
+
+//- the person's columns' headings, sortable where the list can sort by them
+mixin columnHeadings(v)
+	each c in v ? v.columns : []
+		if c.sortable
+			+sortHeading(c)
+		else
+			th(title="This list can't be sorted by it here") #{c.title}
+
+//- a row's values of them
+mixin columnCells(v, row)
+	each c in v ? v.columns : []
+		td.list-column= row.columns ? row.columns[c.key] : ''

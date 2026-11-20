@@ -204,8 +204,9 @@ export interface ILabelField {
 /** A filter of cases by their labels: a model; a value of a label (`field`, or any) that contains, or is, `value`; a search of them all. */
 export interface ILabelFilter {
     model?: string;
+    /** A named value's name, or a data path (`data.amount`). */
     field?: string;
-    op?: 'contains' | 'is';
+    op?: 'contains' | 'is' | 'gt' | 'lt';
     value?: string;
     search?: string;
 }
@@ -243,9 +244,17 @@ const escapeRegex = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'
 /** A value's condition: contains (any case), or is; a number also matches as a number. */
 function condition(op: string, value: string) {
     const asNumber = value.trim() !== '' && !Number.isNaN(Number(value)) ? Number(value) : undefined;
+    // more or less than: a number as a number, else as text (an ISO date compares as its text)
+    if (op === 'gt' || op === 'lt') {
+        const bound = { [op === 'gt' ? '$gt' : '$lt']: asNumber ?? value };
+        return (path: string) => ({ [path]: bound });
+    }
     const text = op === 'is' ? { $in: [value] } : { $regex: escapeRegex(value), $options: 'i' };
     return (path: string) => asNumber === undefined ? { [path]: text } : { $or: [{ [path]: text }, { [path]: asNumber }] };
 }
+
+/** The filter's ops: contains (any case), is, more than, less than. */
+export const FILTER_OPS = ['contains', 'is', 'gt', 'lt'] as const;
 
 /**
  * A filter as a query on the cases (findInstances, and findItems for their tasks): the model, then the named value
@@ -259,8 +268,14 @@ export function labelQuery(fields: ILabelField[], filter: ILabelFilter = {}): Re
         list.map(f => ({ name: f.model, ...make(f.path) }));
     if (filter.value?.trim()) {
         // a field's paths; with no field, every field's
-        const named = filter.field ? scope.filter(f => f.name === filter.field) : scope;
-        and.push(named.length ? { $or: byPath(named, condition(filter.op ?? 'contains', filter.value.trim())) } : { id: { $in: [] } });
+        const match = condition(filter.op ?? 'contains', filter.value.trim());
+        // a field of the cases' data (a column the person added: data.amount), the same path in every model
+        if (filter.field?.startsWith('data.') && !pathProblem(filter.field))
+            and.push(match(filter.field));
+        else {
+            const named = filter.field ? scope.filter(f => f.name === filter.field) : scope;
+            and.push(named.length ? { $or: byPath(named, match) } : { id: { $in: [] } });
+        }
     }
     if (filter.search?.trim())
         and.push(scope.length ? { $or: byPath(scope, condition('contains', filter.search.trim())) } : { id: { $in: [] } });

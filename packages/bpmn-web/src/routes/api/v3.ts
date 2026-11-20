@@ -14,7 +14,8 @@ import { hostUserManager } from '../../userAccess/UserManager.js';
 import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 import { invokeDecision } from '../decisions.js';
-import { labelFilterQuery, labeledTasks, labeledInstances, LabelFilterError } from './labels.js';
+import { labelFilterQuery, labeledTasks, labeledInstances, LabelFilterError, listViewOf } from './labels.js';
+import { ListColumnError } from '../../index.js';
 import { serverEnvironment } from '../../runtime/environment.js';
 import { GuideOperations, GuideError } from './guide.js';
 import { contractProblems } from '../../index.js';
@@ -89,7 +90,7 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         catch (error) {
             if (error instanceof ModelError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
-            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError || error instanceof LabelFilterError || error instanceof GuideError)
+            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError || error instanceof LabelFilterError || error instanceof ListColumnError || error instanceof GuideError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
@@ -138,10 +139,12 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         // the ones this user completed, newest first
         if (req.query.status === 'completed')
             return { items: await labeledTasks(server, await tasks.completed(user, { limit: req.query.limit === undefined ? 10 : Number(req.query.limit), query })) };
+        // the person's columns, and what it is sorted by: ?columns=Client,data.amount&sort=Client&order=asc
+        const view = await listViewOf(server, req.query, typeof req.query.model === 'string' ? req.query.model : undefined);
         const { tasks: items, next } = await tasks.list(user, {
             limit: req.query.limit === undefined ? DEFAULT_LIMIT : Number(req.query.limit),
             after: fromCursor(req.query.cursor),
-            query,
+            query, ...view,
         });
         return { items: await labeledTasks(server, items), ...(next ? { next: toCursor(next) } : {}) };
     }));
@@ -166,6 +169,8 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
             after: fromCursor(req.query.cursor),
             // a filter by label, within the model named: ?field=&op=&value=&search=
             query: await labelFilterQuery(server, req.query, name),
+            // the person's columns, and what it is sorted by: ?columns=Client,data.amount&sort=Client&order=asc
+            ...await listViewOf(server, req.query, name),
         });
         return { items, ...(next ? { next: toCursor(next) } : {}) };
     }));

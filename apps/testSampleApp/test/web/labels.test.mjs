@@ -36,14 +36,15 @@ test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0));
 test("the lists: each case's label, and each task's with its case's", async () => {
     const home = (await admin.get('/')).text;
     assert.match(home, /<td>Claim<\/td>\s*<td>Client: abc · Order: 1234<\/td>\s*<td>[^<]*<\/td>/, 'Name, Case, Case Id');
-    assert.match(home, /<td>Case<\/td>/);
+    assert.match(home, /<th>Case<\/th>/);
     assert.match(home, /<th>Label<\/th>/);
     assert.match(home, /<td>Amount: 240 — Client: abc · Order: 1234<\/td>/, "the task's own label, then its case's");
 });
 
 test("My work: a task's own label under its name, its case's in the Case column", async () => {
     const mine = (await manager.get('/dashboard')).text;
-    assert.match(mine, /<th>Task<\/th>\s*<th>Case<\/th>\s*<th>Process<\/th>/);
+    // the headings sort the list (routes/listView.ts)
+    assert.match(mine, /<th><a class="sort-heading" href="[^"]*">Task<\/a><\/th>\s*<th>Case<\/th>\s*<th><a class="sort-heading" href="[^"]*">Process<\/a><\/th>/);
     assert.match(mine, /Approve<\/a>\s*<div class="task-label">Amount: 240<\/div><\/td>\s*<td>Client: abc · Order: 1234<\/td>\s*<td>Claim<\/td>/);
 });
 

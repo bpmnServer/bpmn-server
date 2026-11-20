@@ -27,6 +27,7 @@ import { userNameProblem } from '../userAccess/UserService.js';
 import { ownUsers } from '../userAccess/UserManager.js';
 import validator from 'validator';
 import { labelFilterOf } from './labelFilter.js';
+import { listViewOf, TASK_SORTS } from './listView.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
 import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
@@ -138,9 +139,11 @@ export class Dashboards extends Common {
             const api = await pageApi(req, server);
             const me = api.user.userName;
             // filtered by the labels' named values, as the URL says (routes/labelFilter.ts)
-            const labelFilter = await labelFilterOf(server, req, '/dashboard');
+            // the waiting tasks' columns and sort, as the person chose them (routes/listView.ts)
+            const listView = await listViewOf(server, req, { list: 'my-work', action: '/dashboard', sorts: TASK_SORTS, defaultSort: { sort: 'started', order: 'asc' } });
+            const labelFilter = await labelFilterOf(server, req, '/dashboard', { dataFields: listView.view.filterFields });
             const filtered = labelFilter.query ?? {};
-            const [waiting, done, startable] = await Promise.all([api.waiting(200, filtered), api.completed(10, filtered), api.startable()]);
+            const [waiting, done, startable] = await Promise.all([api.waiting(200, filtered, listView.asked), api.completed(10, filtered), api.startable()]);
             const mine = [], available = [];
             for (const task of waiting as any[]) {
                 task.fromNow = dateDiff(task.startedAt);
@@ -149,7 +152,7 @@ export class Dashboards extends Common {
             const completed = done.map(task => ({ ...task, fromNow: dateDiff(task.endedAt) }));
             // what each task is for: its label and its case's (engine/Labels.ts)
             await labelItems(server, [...mine, ...available, ...completed]);
-            render(req, res, 'user', { labelFilter: labelFilter.view, title: 'My work', mine, available, completed, starts: startsOf(startable) });
+            render(req, res, 'user', { labelFilter: labelFilter.view, listView: listView.view, title: 'My work', mine, available, completed, starts: startsOf(startable) });
         }));
 
         // the start page of a model: its start events a user can start, each with its start form
