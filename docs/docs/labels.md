@@ -1,15 +1,15 @@
 # Labels
 
 A case is known by what identifies it: *Car: Porsche 911 · Buyer: staff*, not only by its case id. Its model says
-what that is, with a **label**: a template saved in the model, with its values named. The pages show each case and
-task by its label: the Instances and Pending Tasks lists, My work, and the instance page; and the lists can be
-filtered by its named values.
+what that is, with a **label** saved in the model: a few parts, each some text and a value from the case's data.
+The pages show each case and task by its label: the Instances and Pending Tasks lists, My work, and the instance
+page. Each of its values is also a column of the lists, and what they can be filtered and sorted by.
 
 The pictures on this page are the sample application's *Buy Used Car*, whose model has these labels:
 
 | Element | Label | Label once done |
 |---|---|---|
-| The process | `Car: ${Car = data.carModel} · Buyer: ${Buyer = data.starterUserId}` | |
+| The process | `Car: ${data.carModel}; Buyer: ${data.starterUserId}` | |
 | Buy | `Buy the ${data.carModel}` | `Bought by ${completedBy}` |
 | Repair | `Repair the ${data.carModel}` | `Repaired by ${completedBy}` |
 | Clean | `Clean the ${data.carModel}` | `Cleaned by ${completedBy}` |
@@ -20,26 +20,31 @@ The pictures on this page are the sample application's *Buy Used Car*, whose mod
 On the process, in the editor's **Label** group (*Case label*), or in the XML:
 
 ```xml
-<bpmn:process id="Expense" owf:label="Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}">
+<bpmn:process id="Expense" owf:label="Client: ${data.clientId}; Order: ${data.orderNo}">
 ```
 
 ![The process selected: its Label group, Case label](images/labels/editor-case-label.png)
 
-- **`${Name = data.path}`** is a **named value**: shown in the text, and known by its name.
-- **`${data.path}`** is plain text: shown, not named.
-- **The text around the placeholders** is shown as written.
+- **Parts** are separated by `;`. Each part is some text and at most one value, `${data.path}`.
+- **Shown:** the parts, joined with ` · `. A case with `{ clientId: 'abc', orderNo: 1234 }` is shown as
+  `Client: abc · Order: 1234`.
+- **A missing value takes its part along.** If `data.clientId` is missing (none, null, empty, or only spaces),
+  `Client:` goes too, and the case is shown as `Order: 1234`. Zero and `false` are values. When every value is
+  missing, the default applies.
+- **Each value is a column**, named by its part's text without the value and a trailing `:`: *Client*, *Order*. A
+  part that is only a value is named by its path's last name: `${data.caseId}` is *caseId*.
+- **A part with no value** (`Leave; ${data.days} days`) is always shown, and is not a column.
 
-A case with `{ clientId: 'abc', orderNo: 1234 }` is shown as `Client: abc · Order: 1234`.
+One part needs no `;`: `Buy the ${data.carModel}` is shown as *Buy the Porsche 911*, and its column is *Buy the*.
 
-**A missing value takes its name along.** If `data.clientId` is missing (none, null, empty, or only spaces),
-`Client: ` goes too, and the case is shown as `Order: 1234`. Zero and `false` are values. When every value is
-missing, the default applies.
+A label written before 3.7.5, `Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}`, is still read,
+`Name =` naming its value; `verifyModel` suggests the parts instead (`label-old-form`).
 
 ## An element's label
 
 Any element on the diagram may have its own, in the **Label** group:
 
-- **Label**, while it runs: `Approve ${Amount = data.amount} for ${instance.Client}`.
+- **Label**, while it runs: `Amount: ${data.amount}; Client: ${instance.Client}`.
 - **Label once done**, once it has ended: `Approved by ${completedBy}`.
 
 ![Drive selected: its Label and Label once done](images/labels/editor-element-label.png)
@@ -82,11 +87,11 @@ Placeholders are **data, never scripts**:
 | | `model` | The model's name |
 | An element's label | `data.…` | Its data: the case's, or a loop round's or a sub-process's own |
 | | `completedBy`, `assignee`, `userName`, `status`, `startedAt`, `endedAt`, `name` | Its own fields |
-| | `instance.<Name>` | A named value of its case's label: `${instance.Client}` |
+| | `instance.<Name>` | A value of its case's label, by its name: `${instance.Client}` |
 
 Paths are names separated by dots; `__proto__`, `prototype` and `constructor` are refused. The editor marks a
-placeholder that isn't a path, or a name used twice, as you type, and `verifyModel` (Problems) reports it
-(`label-template`).
+value that isn't a path, a part with two values, or a name used twice, as you type, and `verifyModel` (Problems)
+reports it (`label-template`).
 
 A value is shown as text: a date in ISO form, a list joined with commas, an object as JSON.
 
@@ -119,26 +124,25 @@ class AppDelegate extends WebAppDelegate {
 ## In code
 
 The pages fill labels in with `labelInstances(server, instances)` and `labelItems(server, items)` (bpmn-server):
-each case gets `label` and `labelValues` (its named values), each task `label`, `ownLabel`, `caseLabel` and
+each case gets `label` and `labelValues` (its values), each task `label`, `ownLabel`, `caseLabel` and
 `labelValues`. `fillTemplate(template, scope)` and `templateProblems(template)` fill in and check one template.
 
 ## Filters
 
 The Workbench's Instances and Pending Tasks sections each have a filter bar, and so does My work. Each filters its own
-list, and using one doesn't clear the other. Tasks are filtered by the named values of their cases:
+list, and using one doesn't clear the other. Tasks are filtered by the values of their cases' labels:
 
 ![The filter bar: Car contains porsche](images/labels/filter-bar.png)
 
 - **Model:** only that model's cases.
-- **Field:** a value the models' case labels show, which **contains** or **is** a value. A named value is offered by
-  its name (`${Car = data.carModel}` is *Car*), a plain one by its path's last name (`${data.caseId}` is *caseId*); a
-  model with no case label offers *caseId*, the value its default label shows. Its tooltip says where each model
+- **Field:** a value the models' case labels show, which **contains** or **is** a value. Each is offered by its
+  name (`Car: ${data.carModel}` is *Car*, `${data.caseId}` is *caseId*); a model with no case label offers *caseId*, the value its default label shows. Its tooltip says where each model
   reads it from (`Buy Used Car: data.carModel`). **Any** looks for the value in every field.
 - **Search everything:** any field of any model.
 
 *Contains* is on text: a number matches when it's typed whole (*caseId contains 4772*), not part of it (*477*).
 
-The filter is a database query on the data paths the named values read: *Car contains porsche* is `data.carModel`
+The filter is a database query on the data paths the labels' values read: *Car contains porsche* is `data.carModel`
 contains "porsche" (any case) for Buy Used Car's cases, and on each model's own path when several models name a
 *Car*. A number matches as a number too (*Order is 1234*). It's in the URL (`/?field=Car&op=contains&value=porsche#instances`),
 so a filtered list can be bookmarked and shared.

@@ -20,7 +20,7 @@ Open **Columns**:
 - **Shown:** the columns the list shows, in their order. Uncheck one to hide it; **←** and **→** move it.
 - **More of this list's columns:** its own columns not shown, to show again.
 - **Each model in the list** (the one the filter chooses, or every model whose cases are shown):
-    - the values its case label names (`${Client = data.clientId}` is *Client*); one column reads each model's own
+    - the values of its case label (`Client: ${data.clientId}` is *Client*); one column reads each model's own
       path, so *Client* shows `data.clientId` for one model's cases and `data.customer.name` for another's;
     - its form fields, by their labels: *Leave Type*, *Start Date*. Each is the field of the case's data the form
       saves (`data.LeaveType`), and its column is headed by that label.

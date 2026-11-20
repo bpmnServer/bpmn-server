@@ -8,7 +8,7 @@ namespace:
 
 ```xml
 <bpmn:definitions xmlns:owf="http://omniworkflow.com/schema/owf/1.0" ...>
-  <bpmn:process id="Leave" owf:securityPolicy="LeaveCases" owf:label="Leave of ${Who = data.requester}">
+  <bpmn:process id="Leave" owf:securityPolicy="LeaveCases" owf:label="Leave of ${data.requester}">
     <bpmn:userTask id="Approve" owf:assignmentPolicy="Approval" owf:endLabel="Approved by ${completedBy}" />
     <bpmn:serviceTask id="Notify" implementation="notify" owf:exceptionsAsErrors="true" />
 ```

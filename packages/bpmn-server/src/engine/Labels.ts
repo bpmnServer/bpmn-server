@@ -15,7 +15,7 @@ import { Definition } from '../elements/Definition.js';
 import { owfAttribute } from '../elements/owfAttributes.js';
 import { moddleOptions as defaultModdleOptions } from '../elements/js-bpmn-moddle.js';
 import { DataHandler } from './DataHandler.js';
-import { fillTemplate, parseTemplate, pathProblem } from './LabelTemplate.js';
+import { fillTemplate, labelParts, pathProblem } from './LabelTemplate.js';
 import type { ILabel, ILabelValue } from './LabelTemplate.js';
 export * from './LabelTemplate.js';
 
@@ -191,9 +191,9 @@ export async function labelItems(server, items: any[]): Promise<any[]> {
 // ---- filters: on the data paths the labels' named values read (docs/design/labels.md, Mixed lists and filters)
 
 /**
- * A value a model's case label shows, as the filters offer it: its name, the model, and the data path it reads. Every
- * `${data.…}` placeholder is one: a named one by its name, a plain one by its path's last name (`${data.caseId}` is
- * caseId). A model with no case label shows `<model> #<caseId>`, so it offers caseId.
+ * A value a model's case label shows, as the filters and columns offer it: its name, the model, and the data path it
+ * reads. Every `${data.…}` value is one, named by its part's text (`Client: ${data.clientId}` is Client), else its
+ * path's last name (LabelTemplate.ts). A model with no case label shows `<model> #<caseId>`, so it offers caseId.
  */
 export interface ILabelField {
     name: string;
@@ -227,10 +227,10 @@ export async function labelFields(server, models?: string[]): Promise<ILabelFiel
             continue;
         }
         const seen = new Set<string>();
-        for (const part of parseTemplate(template)) {
+        for (const part of labelParts(template)) {
             // the case's data only (a case label's scope is its data and its model's name)
-            if ('text' in part || pathProblem(part.path) || !part.path.startsWith('data.')) continue;
-            const name = part.name ?? part.path.slice(part.path.lastIndexOf('.') + 1);
+            if (!part.path || pathProblem(part.path) || !part.path.startsWith('data.')) continue;
+            const name = part.name;
             if (seen.has(`${name}=${part.path}`)) continue;
             seen.add(`${name}=${part.path}`);
             fields.push({ name, model, path: part.path });

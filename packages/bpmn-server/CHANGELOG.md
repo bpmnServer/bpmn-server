@@ -26,6 +26,13 @@ and here
 
 ## [Unreleased]
 ### Added
+- **Labels in parts** (docs/docs/labels.md, `engine/LabelTemplate.ts`): a label is parts separated by `;`, each its
+  text and at most one value: `Client: ${data.clientId}; Order: ${data.orderNo}` is shown as `Client: abc · Order:
+  1234`. A part whose value is missing is left out, its text too. Each value is a column and a filter of the lists,
+  named by its part's text without a trailing `:` (*Client*), else its path's last name. A part with no value is always
+  shown. `labelParts(template)` replaces `parseTemplate`. **Compatibility:** the earlier `${Name = path}` form is still
+  read, and `verifyModel` suggests the parts (`label-old-form`, a warning). A plain `${data.x}` in an earlier label is
+  now one of its values, named by the text before it. Test: `test/labels.test.mjs`.
 - **Add-ons** (docs/design/add-ons.md, `engine/AddOns.ts`): the engine no longer calls the policies. They are
   add-ons in `src/addons/`, each depending on the engine only, that register (`register(server)`) for the engine's own
   events: the assignment policy decides on `wait` and records a person's change on `assign`, the notification policy

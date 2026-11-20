@@ -122,6 +122,9 @@ class ModelVerifier {
             if (template == null) continue;
             for (const problem of templateProblems(template))
                 this.add('error', 'label-template', `Label '${template}': ${problem}.`, def);
+            // written before 3.7.5: still read
+            if (typeof template == 'string' && /\$\{[^}]*=/.test(template))
+                this.add('warning', 'label-old-form', `Label '${template}': \${Name = path} is the earlier form. Write the label in parts, each its text and its value: Client: \${data.clientId}; Order: \${data.orderNo}.`, def);
         }
     }
 

@@ -155,7 +155,7 @@ The waiting tasks this user has a part in, oldest first; with status=completed, 
 | `cursor` | query | string |  | A page's `next` |
 | `status` | query | `"waiting"` or `"completed"` |  | completed: the latest this user completed (limit, default 10) |
 | `model` | query | string |  | Only this model's tasks; its named values for field and search |
-| `field` | query | string |  | A value the models' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path's last name (`${data.caseId}` is caseId); or a field of the cases' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels' values |
+| `field` | query | string |  | A value the models' case labels show: by its name (`Client: ${data.clientId}` is Client; `${data.caseId}` alone is caseId); or a field of the cases' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels' values |
 | `op` | query | `"contains"` or `"is"` or `"gt"` or `"lt"` |  | contains: any case; is: exactly (a number also matches as a number); gt, lt: more, less than (a number as a number, else as text); default "contains" |
 | `value` | query | string |  |  |
 | `search` | query | string |  | Contained in any named value |
@@ -257,7 +257,7 @@ The instances this user may see, newest first.
 | `name` | query | string |  | Only this model's instances; its named values for field and search |
 | `limit` | query | integer |  | default 50, at least 1, at most 200 |
 | `cursor` | query | string |  | A page's `next` |
-| `field` | query | string |  | A value the models' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path's last name (`${data.caseId}` is caseId); or a field of the cases' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels' values |
+| `field` | query | string |  | A value the models' case labels show: by its name (`Client: ${data.clientId}` is Client; `${data.caseId}` alone is caseId); or a field of the cases' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels' values |
 | `op` | query | `"contains"` or `"is"` or `"gt"` or `"lt"` |  | contains: any case; is: exactly (a number also matches as a number); gt, lt: more, less than (a number as a number, else as text); default "contains" |
 | `value` | query | string |  |  |
 | `search` | query | string |  | Contained in any named value |

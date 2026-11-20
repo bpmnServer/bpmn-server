@@ -1,5 +1,9 @@
 # Design: labels that say what their values are
 
+> **3.7.5:** a label is now written in parts, `Client: ${data.clientId}; Order: ${data.orderNo}`, each part its
+> text and one value, named by its text ([Labels](../docs/labels.md)). The `${Name = path}` form below is the
+> earlier one, still read.
+
 Status: **draft for discussion.** 2026-11-04, on branch `labels-rebuild`. Labels only: roles, assignment and
 approvals are separate designs.
 

@@ -445,7 +445,7 @@ features:
   - id: labels
     area: application
     name: "Labels of cases and tasks"
-    what: "owf:label (and owf:endLabel) templates (camunda:, as saved before, is read too) in the model, their values named (Client: ${Client = data.clientId}); filled in when shown, from the case's own model; the lists, My work, the instance page; filters by named value; the editor's Label group; labels and their filter in API v3."
+    what: "owf:label (and owf:endLabel) templates (camunda:, as saved before, is read too) in the model, written in parts, each its text and one value (Client: ${data.clientId}; Order: ${data.orderNo}), a part whose value is missing left out, each value a column named by its part's text (the earlier ${Name = path} form still read, verifyModel's label-old-form); filled in when shown, from the case's own model; the lists, My work, the instance page; filters by named value; the editor's Label group; labels and their filter in API v3."
     xml: ["[owf:label]", "[owf:endLabel]"]
     docs: [docs/docs/labels.md, docs/design/labels.md]
     code: [packages/bpmn-server/src/engine/Labels.ts, packages/bpmn-server/src/engine/LabelTemplate.ts, packages/bpmn-web/modeler/src/properties/LabelGroup.jsx, packages/bpmn-web/src/routes/labelFilter.ts, packages/bpmn-web/src/routes/api/labels.ts]

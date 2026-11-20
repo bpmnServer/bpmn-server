@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_0memx95">
     <bpmn:participant id="Participant_1c0lpx5" processRef="Process_1hf9394" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_1hf9394" owf:label="Car: ${Car = data.carModel} · Buyer: ${Buyer = data.starterUserId}" isExecutable="true">
+  <bpmn:process id="Process_1hf9394" owf:label="Car: ${data.carModel}; Buyer: ${data.starterUserId}" isExecutable="true">
     <bpmn:documentation>Demo Model, to show: \n User Tasks \n Conditional Flow
 Gateways</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_15ojlwy">

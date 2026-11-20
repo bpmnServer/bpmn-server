@@ -17,7 +17,7 @@ const page = [
 ];
 /** The pages' filter by label (docs/design/labels.md): on the data paths the models' case labels name. */
 const byLabel = [
-    { name: 'field', in: 'query', schema: { type: 'string' }, description: 'A value the models\' case labels show: a named one by its name (`${Client = data.clientId}` is Client), a plain one by its path\'s last name (`${data.caseId}` is caseId); or a field of the cases\' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels\' values' },
+    { name: 'field', in: 'query', schema: { type: 'string' }, description: 'A value the models\' case labels show: by its name (`Client: ${data.clientId}` is Client; `${data.caseId}` alone is caseId); or a field of the cases\' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels\' values' },
     { name: 'op', in: 'query', schema: { enum: ['contains', 'is', 'gt', 'lt'], default: 'contains' }, description: 'contains: any case; is: exactly (a number also matches as a number); gt, lt: more, less than (a number as a number, else as text)' },
     { name: 'value', in: 'query', schema: { type: 'string' } },
     { name: 'search', in: 'query', schema: { type: 'string' }, description: 'Contained in any named value' },

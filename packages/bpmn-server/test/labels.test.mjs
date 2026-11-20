@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { parseTemplate, fillTemplate, templateProblems, modelLabels, labelInstances, labelItems, labelFields, labelQuery, verifyModel } from '../dist/index.js';
+import { labelParts, fillTemplate, templateProblems, modelLabels, labelInstances, labelItems, labelFields, labelQuery, verifyModel } from '../dist/index.js';
 import { makeServer, definitionsFolder } from './helpers.mjs';
 
 const EXPENSE = (caseLabel = 'Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}') => `<?xml version="1.0" encoding="UTF-8"?>
@@ -40,9 +40,21 @@ async function server(source = EXPENSE(), services = {}) {
 const load = async (srv, id) => (await srv.dataStore.findInstances({ id }, 'full'))[0];
 const byElement = (instance, id) => instance.items.filter(i => i.elementId === id);
 
-test('a template: text, named values, plain placeholders; a missing value takes its name along', () => {
-  assert.deepEqual(parseTemplate('Client: ${Client = data.clientId} (${data.x})'),
-    [{ text: 'Client: ' }, { name: 'Client', path: 'data.clientId' }, { text: ' (' }, { path: 'data.x' }, { text: ')' }]);
+test('a label in parts: each part text and one value; shown joined with · ; a missing value takes its part along', () => {
+  const scope = { data: { clientId: 'abc', orderNo: 1234, days: 5, carModel: 'Porsche 911' } };
+  assert.deepEqual(labelParts('Client: ${data.clientId}; Order: ${data.orderNo}').map(p => [p.name, p.path]),
+    [['Client', 'data.clientId'], ['Order', 'data.orderNo']], 'each value named by its part\'s text, without a trailing :');
+  assert.deepEqual(fillTemplate('Client: ${data.clientId}; Order: ${data.orderNo}', scope),
+    { text: 'Client: abc · Order: 1234', values: [{ name: 'Client', path: 'data.clientId', value: 'abc' }, { name: 'Order', path: 'data.orderNo', value: 1234 }] });
+  assert.equal(fillTemplate('Client: ${data.none}; Order: ${data.orderNo}', scope).text, 'Order: 1234', 'no dangling "Client:"');
+  // a part of text only is always shown, and is not a value; a value's name from the text after it, else its path
+  const leave = fillTemplate('Leave; ${data.days} days; ${data.clientId}', scope);
+  assert.equal(leave.text, 'Leave · 5 days · abc');
+  assert.deepEqual(leave.values.map(v => v.name), ['days', 'clientId']);
+  assert.deepEqual(fillTemplate('Buy the ${data.carModel}', scope), { text: 'Buy the Porsche 911', values: [{ name: 'Buy the', path: 'data.carModel', value: 'Porsche 911' }] });
+});
+
+test('a label written before 3.7.5 is still read: each value with the text before it, `Name =` naming it', () => {
   const scope = { data: { clientId: 'abc', orderNo: 1234, when: new Date('2026-01-02T00:00:00Z'), list: [1, 2] } };
   assert.deepEqual(fillTemplate('Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}', scope),
     { text: 'Client: abc · Order: 1234', values: [{ name: 'Client', path: 'data.clientId', value: 'abc' }, { name: 'Order', path: 'data.orderNo', value: 1234 }] });
@@ -52,8 +64,11 @@ test('a template: text, named values, plain placeholders; a missing value takes 
   assert.deepEqual(fillTemplate('${data.toString}${data.constructor}', scope), { text: '', values: [] }, 'own fields only, never internals');
 });
 
-test('a template is checked: data paths only, a name once', () => {
+test('a template is checked: data paths only, a name once, one value to a part', () => {
   assert.deepEqual(templateProblems('Client: ${Client = data.clientId} ${data.x}'), []);
+  assert.deepEqual(templateProblems('Client: ${data.clientId}; Order: ${data.orderNo}'), []);
+  assert.match(templateProblems('Client: ${data.clientId} ${data.x}; Order: ${data.orderNo}')[0], /more than one value: one to a part/);
+  assert.match(templateProblems('Client: ${data.a}; Client: ${data.b}')[0], /'Client' is named twice/);
   const problems = templateProblems('${A = data.a + 1} ${B = data.__proto__.x} ${A = data.c} ${1x = data.d}');
   for (const expected of [/'data\.a \+ 1' is not a path/, /__proto__/, /'A' is named twice/, /'1x' is not a name/])
     assert.ok(problems.some(p => expected.test(p)), `${expected}\n${problems.join('\n')}`);
@@ -174,12 +189,12 @@ test('filters: the named values the models offer, as queries on their data paths
   await srv.shutdown();
 });
 
-test('filters: a plain placeholder is a field too, by its last name; a model with no case label offers caseId; any field', async () => {
-  const { server: srv, dir } = await server(EXPENSE('Case Id :${data.caseId} for ${data.customer.name} (${model})'));
+test("filters: each value is a field, named by its part's text, else its path's last name; a model with no case label offers caseId; any field", async () => {
+  const { server: srv, dir } = await server(EXPENSE('${data.caseId}; Customer: ${data.customer.name}; (${model})'));
   fs.writeFileSync(path.join(dir, 'Plain.bpmn'), EXPENSE('').replace(' camunda:label=""', '').replace('id="Expense"', 'id="Plain"'));
   await srv.definitions.rebuild();
   assert.deepEqual(await labelFields(srv, ['Expense', 'Plain']), [
-    { name: 'caseId', model: 'Expense', path: 'data.caseId' }, { name: 'name', model: 'Expense', path: 'data.customer.name' },
+    { name: 'caseId', model: 'Expense', path: 'data.caseId' }, { name: 'Customer', model: 'Expense', path: 'data.customer.name' },
     { name: 'caseId', model: 'Plain', path: 'data.caseId' }], 'data paths only: not ${model}');
   for (const caseId of [4772, 4773]) await srv.engine.start('Expense', { caseId, customer: { name: 'acme' }, levels: [] }, null, 'ann');
   await srv.engine.start('Plain', { caseId: 9001, levels: [] }, null, 'ann');
