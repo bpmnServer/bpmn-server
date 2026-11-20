@@ -14,9 +14,7 @@
     "cli": "tsx index.ts --cli",
     "mcp": "bpmn-mcp",
     "verify": "bpmn-server verify workflow/processes",
-    "services": "bpmn-web-services workflow/delegates/appDelegate.ts workflow/services.json",
-    "services:check": "bpmn-web-services --check workflow/delegates/appDelegate.ts workflow/services.json",
-    "test": "npm run services:check && tsx workflow/test/features.ts && node --test server/userManager.test.mjs",
+    "test": "tsx workflow/test/features.ts && node --test server/userManager.test.mjs",
     "test:server": "node --test server/userManager.test.mjs"
   },
   "dependencies": {

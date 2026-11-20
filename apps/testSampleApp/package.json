@@ -15,7 +15,7 @@
     "setup": "node --import tsx index.ts --setup",
     "cli": "node --import tsx index.ts --cli",
     "setup:users": "node --import tsx scripts/setupDemoUsers.ts",
-    "test": "npm run services:check && npm run test:unit && npm run test:client && npm run test:engine && npm run test:web && npm run test:custom && npm run test:examples && npm run test:issues && npm run test:scenarios && npm run test:features",
+    "test": "npm run test:unit && npm run test:client && npm run test:engine && npm run test:web && npm run test:custom && npm run test:examples && npm run test:issues && npm run test:scenarios && npm run test:features",
     "test:unit": "node --test \"test/unit/*.test.mjs\"",
     "test:client": "node --test \"test/client/*.test.mjs\"",
     "test:engine": "node --import tsx --test \"test/engine/*.test.mjs\"",
@@ -30,9 +30,7 @@
     "test:scenario-coverage": "node --import tsx test/coverage/scenario-coverage.mjs",
     "pretest:ui": "npm run build:modeler -w bpmn-web",
     "test:ui": "node --import tsx --test --test-concurrency=1 \"test/ui/*.test.mjs\"",
-    "demo:video": "npm run build:modeler -w bpmn-web && node --import tsx test/demo/record-demo.mjs",
-    "services": "node ../../packages/bpmn-web/dist/scanServices.js delegates/appDelegate.ts services.json",
-    "services:check": "node ../../packages/bpmn-web/dist/scanServices.js --check delegates/appDelegate.ts services.json"
+    "demo:video": "npm run build:modeler -w bpmn-web && node --import tsx test/demo/record-demo.mjs"
   },
   "dependencies": {
     "axios": "^1.18.1",

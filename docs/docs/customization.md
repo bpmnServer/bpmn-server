@@ -150,10 +150,11 @@ export class AppDelegate extends WebAppDelegate {
 
 These are **abbreviated examples** of the starter's real implementation. In the sample, the delegate also inherits web-specific functionality (notifications/startup), implements lifecycle callbacks, and can load data objects. The `greet` method is wired by a BPMN service task and its input/output mappings, not by copying TypeScript into the BPMN XML. See [Service tasks](examples/serviceTask.md) and [Scripting](scripting.md).
 
-**`services.json`** lists the services' names, read from this source by `npm run services` (bpmn-web's
-`bpmn-web-services`), so the editor and the model checks know them where the application's code doesn't run. It is
-written, not read from the code at run time: after adding or removing a service, run `npm run services`. The sample's
-`npm test` runs `npm run services:check` first, which fails when the file no longer matches the code.
+**The services' names are read from this source when the server starts**: the delegate's file (the configuration's
+`delegateFile`, by default `delegates/appDelegate.ts`), the class its `getServicesProvider` makes, and the classes that
+one makes. Nothing of it runs. So the editor and the model checks know them even where the application's code doesn't
+run (the engine elsewhere, or none), and a service added or removed is known at the next start. The start's log says
+how many it found: `[services] 17 from delegates/appDelegate.ts`. `npx bpmn-web-services` prints them.
 
 For complex business rules, prefer maintainable, testable application services. Use [DMN](decisions.md) for decision tables, and [connectors](connectors.md) for REST operations that do not need custom application code.
 

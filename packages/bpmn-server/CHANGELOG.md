@@ -26,6 +26,9 @@ and here
 
 ## [Unreleased]
 ### Added
+- **The services' names from the configuration** (`serviceNames`, set by the host as it starts: bpmn-web reads them
+  from the delegate's source, `delegateFile`): a launched server with no application code knows them so, else asks the
+  engine. `servicesFile` (a services.json) is no longer read.
 - **List columns** (`engine/ListColumns.ts`): `listColumns`, `columnValues`, `columnSortPath`, `sortRecords`; the
   label filter (`labelQuery`) takes a data path as its field, and `gt`/`lt`. Test: `test/list-columns.test.mjs`.
 - **The application's contract** (docs/docs/app-contract.md): `app-contract.json` read and checked (`AppContract.ts`;

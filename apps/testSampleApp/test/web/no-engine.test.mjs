@@ -1,6 +1,6 @@
 // @features: verify-model
 // A server with no engine (ENGINE_AT=none): everything but running and testing a model works, and those say why they can't.
-// And the names of services, as the scan of an application's source gives them, against what its code really has.
+// And the names of services: read from the delegate's source when the server starts, the same as its code has.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -24,7 +24,8 @@ test('the designer works: the editor, saving, history, checking, services, the d
   assert.ok(JSON.parse((await designer.get(`/model/history/${MODEL}`)).text).versions.length >= 1);
   assert.equal((await designer.request('POST', '/model/verify', { json: { processName: MODEL, bpmn: source } })).status, 200);
   const { services } = JSON.parse((await designer.get('/model/services')).text);
-  assert.ok(services.some(s => s.name === 'echo'), 'from services.json, with no application code');
+  assert.ok(services.some(s => s.name === 'echo'), "from the delegate's source, read at start: with no application code running");
+  assert.ok(!fs.existsSync('services.json'), 'no file of them');
   assert.equal((await designer.get('/dashboard/design')).status, 200);
 });
 
@@ -42,6 +43,5 @@ test('the scan finds what the application\'s services really are', async () => {
   const real = Object.getOwnPropertyNames(AppServices.prototype).filter(name => name !== 'constructor' && !name.startsWith('_'));
   assert.deepEqual(scanned.services, [...real].sort());
   assert.equal(scanned.partial, false);
-  const kept = JSON.parse(fs.readFileSync('services.json', 'utf8'));
-  assert.deepEqual(kept.services, scanned.services, 'services.json is up to date: npm run services');
+  assert.deepEqual(await web.bpmnServer.configuration.serviceNames, scanned.services, 'the server read them at start');
 });

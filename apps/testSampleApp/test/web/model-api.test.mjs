@@ -143,7 +143,7 @@ test('/llms.txt: where an agent starts: this site\'s facts, then BPMN Server\'s 
   assert.match(text, /\/api\/v3\/openapi\.json/);
   assert.match(text, /Creating and changing models, running their tests: on/);
   assert.match(text, /Environment: \*\*development\*\*: services are real/, 'development: the real services');
-  assert.match(text, /Services a model can call[^\n]*`notifyUsers`/, 'the services of services.json');
+  assert.match(text, /Services a model can call[^\n]*`notifyUsers`/, "the services, read from the delegate's source");
   assert.match(text, /User groups in use[^\n]*`ADMIN`, `DESIGNER`, `manager`, `staff`/, 'the groups of its users');
   assert.doesNotMatch(text, /user1|manager1/, 'groups, not users');
   assert.match(text, /## How to build workflows on BPMN Server/);

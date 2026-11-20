@@ -50,7 +50,8 @@ async function facts(webApp, origin: string) {
     const server = webApp.bpmnServer;
     const list = items => items.length ? items.map(i => `\`${i}\``).join(', ') : 'none';
     let services: string[] = [];
-    try { services = JSON.parse(fs.readFileSync(server.configuration.servicesFile ?? path.resolve('services.json'), 'utf8')).services ?? []; } catch { /* none listed */ }
+    // read from the delegate's source when the server started (runtime/serviceNames.ts)
+    try { services = (await server.configuration.serviceNames) ?? []; } catch { /* none known */ }
     let connectors: string[] = [];
     try { connectors = (await server.connectors?.list() ?? []).filter(c => c.enabled !== false).map(c => c.id); } catch { /* none */ }
     let groups: string[] = [];

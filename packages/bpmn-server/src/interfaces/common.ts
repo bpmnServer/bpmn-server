@@ -19,7 +19,14 @@ interface IConfiguration
     apiKey: string,
     /** Extensions to the BPMN model's types (bpmn-moddle's); reading a model needs them, in and out of the engine. */
     moddleOptions?: any;
-    /** The names of the application's services (scanServices in bpmn-web), for what checks models outside the engine. Default: services.json in the current folder. */
+    /** Where the application's delegate's source is, read at start for its services' names (default delegates/appDelegate.ts). */
+    delegateFile?: string;
+    /**
+     * The names of the application's services, read from the delegate's source at start (bpmn-web: runtime/serviceNames.ts),
+     * for what checks models outside the engine; null when it could not be read (the engine is asked instead).
+     */
+    serviceNames?: string[] | null | Promise<string[] | null>;
+    /** No longer read (before 3.7.2: a services.json the scan wrote); the names come from the delegate's source. */
     servicesFile?: string;
     logger: ILogger,
     definitions(server): IModelsDatastore,

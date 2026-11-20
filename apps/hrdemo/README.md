@@ -63,7 +63,7 @@ person the HR application signed in (`server/userManager.js`, bpmn-web's `IUserM
 | `server/` | the HR application: `routes.js` (its API and the connector), `userManager.js` and `users.js` (its sign-in, users and sessions), `data.js`, `pages.js`, `openapi.json` |
 | `src/`, `index.html`, `vite.config.js` | the HR pages (React), built into `dist` |
 | `data/` | the HR users and sessions (`hr.sqlite`); not in git |
-| `workflow/` | everything of the workflows: `processes/` (the models and their tests), `settings/config.ts`, `delegates/`, `connectors/` (the services and the element templates), `services.json`, `test/` (runs the models' tests) |
+| `workflow/` | everything of the workflows: `processes/` (the models and their tests), `settings/config.ts`, `delegates/` (the delegate, its services and variables), `connectors/` (the element templates), `test/` (runs the models' tests) |
 | `.env` | the settings: `PORT` (3100), the database (`MONGO_DB_URL`, `mongodb://localhost:27017/hrdemo`), the keys |
 
 ## Commands

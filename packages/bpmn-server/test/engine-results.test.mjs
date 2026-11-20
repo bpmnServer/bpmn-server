@@ -4,8 +4,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
 import { CacheManager, verifyModel } from '../dist/index.js';
 import { makeLaunched, makeServer, coverage, TestDelegate, PROCESSES } from './helpers.mjs';
 
@@ -105,19 +103,17 @@ test('with no engine: models read and save, and what would run says so', async (
   await server.shutdown();
 });
 
-test('the application is known by the names its scan left in a file, not by its code', async (t) => {
-  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-services-')), 'services.json');
-  fs.writeFileSync(file, JSON.stringify({ services: ['echo', 'billing.charge'], extra: ['madeAsItRuns'] }));
-  const server = await makeLaunched({ extra: { servicesFile: file } });
+test('the application is known by the names read from its source at start, not by its code', async (t) => {
+  // as the host gives them (bpmn-web: read from the delegate's source as the server starts), still being read
+  const server = await makeLaunched({ extra: { serviceNames: Promise.resolve(['echo', 'billing.charge']) } });
   const provider = await server.appDelegate.getServicesProvider();
   assert.equal(typeof provider.echo, 'function');
   assert.equal(typeof provider.billing.charge, 'function');
-  assert.equal(typeof provider.madeAsItRuns, 'function');
   assert.equal(provider.other, undefined);
-  const asksEngine = await makeLaunched({ services: { fromTheEngine: async () => { } }, extra: { servicesFile: file + '.none' } });
-  assert.equal(typeof (await asksEngine.appDelegate.getServicesProvider()).fromTheEngine, 'function', 'no file: the engine knows');
-  const missing = await makeLaunched({ engine: 'none', extra: { servicesFile: file + '.none' } });
-  assert.equal(await missing.appDelegate.getServicesProvider(), null, 'no file and no engine: no names, so nothing is checked');
+  const asksEngine = await makeLaunched({ services: { fromTheEngine: async () => { } }, extra: { serviceNames: Promise.resolve(null) } });
+  assert.equal(typeof (await asksEngine.appDelegate.getServicesProvider()).fromTheEngine, 'function', 'not read: the engine knows');
+  const missing = await makeLaunched({ engine: 'none' });
+  assert.equal(await missing.appDelegate.getServicesProvider(), null, 'not read and no engine: no names, so nothing is checked');
   await server.shutdown();
   await asksEngine.shutdown();
   await missing.shutdown();

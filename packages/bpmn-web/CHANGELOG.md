@@ -29,10 +29,10 @@ and here
 - **The Integration page, simpler** (docs/docs/integration-settings.md): an overview of the integration points, each
   in a line or two with what needs setting up, opening its own page (`/dashboard/integration/<point>`) with its main
   settings first and the rest under More settings; the delegate's functions and methods folded.
-- **`services.json` checked against the code:** `bpmn-web-services --check` fails when the file no longer lists the
-  services the delegate's code has; the sample applications' and the HR demo's `npm test` run it first
-  (`npm run services:check`). The HR demo's file is regenerated: it still listed 14 services removed with the
-  application's contract.
+- **The services' names read from the delegate's source when the server starts** (`runtime/serviceNames.ts`): the
+  configuration's `delegateFile` (default `delegates/appDelegate.ts`), for the editor and the model checks where the
+  engine runs elsewhere or not at all, and `/llms.txt`. `services.json`, `npm run services` and `servicesFile` are gone
+  (a `servicesFile` setting is no longer read; the start says so); `bpmn-web-services` prints the names it finds.
 - **The services in `delegates/`:** the sample applications and the HR demo keep `appServices.ts` and
   `testServices.ts` with the delegate (they were in `connectors/`, the folder of the editor's element templates).
   The engine doesn't look for them by path; an application that keeps them elsewhere goes on working. The HR demo's

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /*
- * The names of an application's services, read from its source: nothing of it runs. A host keeps them in a file, so the
- * editor can offer and check services with no application code and no engine.
- *   node <bpmn-web>/dist/scanServices.js delegates/appDelegate.ts services.json
- *   node <bpmn-web>/dist/scanServices.js --check delegates/appDelegate.ts services.json   (fails when the file is stale)
+ * The names of an application's services, read from its delegate's source: nothing of it runs. The server reads them
+ * so when it starts (runtime/serviceNames.ts), for the editor and the model checks where the engine runs elsewhere or
+ * not at all, and /llms.txt. This command prints what it finds:
+ *   npx bpmn-web-services delegates/appDelegate.ts
  * What the source can't say is left out, so a name not listed may still exist: a service made as the application runs, a
- * class from a package (`partial` then says so). The file's `extra` names are kept, for those.
+ * class from a package (`partial` then says so).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -60,10 +60,9 @@ export interface ScannedServices {
     /** Something was out of reach (a class from a package, a provider made as it runs): the list may be short. */
     partial: boolean;
     services: string[];
-    extra: string[];
 }
 
-export async function scanServices(delegateFile: string): Promise<Omit<ScannedServices, 'extra'>> {
+export async function scanServices(delegateFile: string): Promise<ScannedServices> {
     const modules = new Map();
     const moduleOf = async (file: string) => {
         if (!modules.has(file)) modules.set(file, await readModule(file));
@@ -129,23 +128,8 @@ export async function scanServices(delegateFile: string): Promise<Omit<ScannedSe
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(fs.realpathSync(process.argv[1])).href) {
-    // --check: the file as it is against the code, without writing it; it fails when they differ (an app's npm test)
-    const check = process.argv.includes('--check');
-    const [delegateFile, output = 'services.json'] = process.argv.slice(2).filter(a => a !== '--check');
-    if (!delegateFile) throw new Error('Name the delegate: scanServices.js [--check] delegates/appDelegate.ts [services.json]');
-    const before = fs.existsSync(output) ? JSON.parse(fs.readFileSync(output, 'utf8')) : {};
+    const [delegateFile = 'delegates/appDelegate.ts'] = process.argv.slice(2);
     const scanned = await scanServices(delegateFile);
-    if (check) {
-        const listed: string[] = before.services ?? [];
-        const missing = scanned.services.filter(s => !listed.includes(s)), stale = listed.filter(s => !scanned.services.includes(s));
-        if (missing.length || stale.length) {
-            console.error(`${output} differs from the code: ${[...missing.map(s => `${s} not listed`), ...stale.map(s => `${s} gone`)].join(', ')}. Run npm run services`);
-            process.exit(1);
-        }
-        console.log(`${output}: the code's ${scanned.services.length} services`);
-    }
-    else {
-        fs.writeFileSync(output, JSON.stringify({ ...scanned, extra: before.extra ?? [] }, null, 2) + '\n');
-        console.log(`${output}: ${scanned.services.length} services${scanned.partial ? ', and some out of reach' : ''}`);
-    }
+    console.log(`${scanned.from}: ${scanned.services.length} services${scanned.partial ? ', and some out of reach' : ''}`);
+    for (const name of scanned.services) console.log('  ' + name);
 }

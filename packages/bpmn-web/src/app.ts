@@ -43,6 +43,7 @@ import { processRunErrorHandler } from './routes/runErrors.js';
 import { gracefulShutdown } from './runtime/shutdown.js';
 import { readOnlyGuard } from './runtime/readOnly.js';
 import { testRunsGuard } from './runtime/testRuns.js';
+import { serviceNamesAtStart } from './runtime/serviceNames.js';
 
 const __dirname = import.meta.dirname;
 console.log('app.ts from ', import.meta.filename);
@@ -86,6 +87,8 @@ export class WebApp {
 		this.userManager.init(this.app);
 		pageSessions(this.app);
 		const wflogger = application.logger ?? new Logger({ toConsole: true });
+		// the services' names, read from the delegate's source as the server starts (runtime/serviceNames.ts)
+		application.configuration.serviceNames ??= serviceNamesAtStart(application.configuration);
 		this.bpmnServer = BPMNServer.launch(
 			application.configuration,
 			wflogger,

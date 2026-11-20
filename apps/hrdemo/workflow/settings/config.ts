@@ -12,7 +12,7 @@ export const connectorsPath = path.join(ROOT, 'connectors');
 export function config() {
     return {
         definitionsPath: process.env.DEFINITIONS_PATH || path.join(ROOT, 'processes') + path.sep,
-        // the delegate's services, as npm run services lists them
-        servicesFile: path.join(ROOT, 'services.json'),
+        // the delegate's source: its services' names are read from it when the server starts
+        delegateFile: path.join(ROOT, 'delegates', 'appDelegate.ts'),
     };
 }

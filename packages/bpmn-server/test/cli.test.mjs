@@ -96,7 +96,8 @@ test('init: the sample application, on MongoDB with sign-in, by default', () => 
   assert.ok(pkg.dependencies.axios && pkg.dependencies.dayjs, 'the sample application\'s own dependencies');
   assert.equal(pkg.dependencies['mongodb-memory-server'], undefined);
   assert.equal(pkg.scripts.start, 'tsx index.ts');
-  assert.equal(pkg.scripts.test, 'npm run services:check && tsx test/features.ts', 'services.json checked against the code first');
+  assert.equal(pkg.scripts.test, 'tsx test/features.ts');
+  assert.ok(!app.exists('services.json'), 'the services are read from the delegate when the server starts');
   assert.match(app.read('README.md'), /^# app$/m, 'titled with the application\'s name');
   assert.match(app.r.stdout, /docker compose up -d/);
   assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the sample models pass');

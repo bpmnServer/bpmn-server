@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { moddleOptions as defaultModdleOptions } from '../elements/js-bpmn-moddle.js';
 import type { BPMNServer } from './BPMNServer.js';
@@ -119,8 +118,8 @@ function providerOf(names: string[]) {
 }
 
 /**
- * What a launched server knows of its application without any of its code: the names of its services, from the file its
- * scan made (scanServices in bpmn-web) or else from the engine, and the model extensions. The code is inside the engine,
+ * What a launched server knows of its application without any of its code: the names of its services, read from the
+ * delegate's source at start (configuration.serviceNames) or else from the engine, and the model extensions. The code is inside the engine,
  * which is asked for the application's own checks of a model.
  */
 class ApplicationFacts {
@@ -132,15 +131,12 @@ class ApplicationFacts {
     get moddleOptions() { return this.moddleFromEngine ?? this.configuration.moddleOptions ?? defaultModdleOptions; }
 
     async getServicesProvider() {
-        try {
-            const scanned = JSON.parse(fs.readFileSync(this.configuration.servicesFile ?? path.resolve('services.json'), 'utf8'));
-            return providerOf([...(scanned.services ?? []), ...(scanned.extra ?? [])]);
-        }
-        catch {
-            // no file: the engine knows, when there is one; else no names, so services are not checked
-            if (!this.engine.running) return null;
-            return this.engine.facts().then(facts => providerOf(facts.services), () => null);
-        }
+        // read from the delegate's source when the server started
+        const names = await this.configuration.serviceNames;
+        if (names) return providerOf(names);
+        // not read: the engine knows, when there is one; else no names, so services are not checked
+        if (!this.engine.running) return null;
+        return this.engine.facts().then(facts => providerOf(facts.services), () => null);
     }
 
     /** The application's contract (app-contract.json): a file, read here as the engine reads it (DefaultAppDelegate.describe). */
