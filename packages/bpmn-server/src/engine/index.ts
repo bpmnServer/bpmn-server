@@ -8,7 +8,7 @@ export * from './ScriptHandler.js';
 export * from './SandboxScriptHandler.js';
 export * from './DataHandler.js';
 export * from './TestStubs.js';
-export * from './Labels.js';
+export * from './DataPaths.js';
 export * from './ListColumns.js';
 export * from './DecisionContext.js';
 export * from './Roles.js';

@@ -1,0 +1,10 @@
+{
+  "name": "policies",
+  "title": "Policies",
+  "description": "Who works on each task (assignee, candidates, lanes, roles, assignment policies), who may see and do what (security policies), and who is told what (notification policies).",
+  "attributes": [
+    "camunda:assignee", "camunda:candidateUsers", "camunda:candidateGroups",
+    "camunda:candidateStarterUsers", "camunda:candidateStarterGroups",
+    "owf:assignmentPolicy", "owf:securityPolicy", "owf:notificationPolicy", "owf:actor"
+  ]
+}

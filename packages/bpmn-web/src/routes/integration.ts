@@ -1,5 +1,5 @@
 /**
- * The Integration page (/dashboard/integration): where an administrator and a designer set up how the workflows meet
+ * The Settings page (/dashboard/settings): where an administrator and a designer set up how the workflows meet
  * the application (docs/docs/integration-settings.md). One section per integration point: the application's code,
  * its APIs (connectors), roles and policies, notifications, the API the application calls, forms and scripts, AI
  * agents. Each shows what is in place and its settings, from the settings schema (settings/settings.schema.json).

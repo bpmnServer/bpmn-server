@@ -11,15 +11,17 @@ mixin editorMenu
           span.editor-caret
         .editor-dropdown-menu
           a(href='/dashboard') My work
-          a(href='/dashboard/notifications') Notifications
+          if addOnOn('policies')
+            a(href='/dashboard/notifications') Notifications
           if canDesign
             a(href='/dashboard/design') Design
           if canAdminister
             a(href='/dashboard/admin') Administration
-          a(href='/dashboard/integration') Integration
+          a(href='/dashboard/settings') Settings
     else
       a(href='/dashboard') My work
-      a(href='/dashboard/notifications') Notifications
+      if addOnOn('policies')
+        a(href='/dashboard/notifications') Notifications
 
 mixin editorUser
   nav.editor-menu.editor-menu-right(aria-label="Account")

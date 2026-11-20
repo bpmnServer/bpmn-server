@@ -8,7 +8,7 @@ import type { IAccess, ISecurityUser, SecureUser } from '../index.js';
 export const DECIDE_AT_ONCE = 16;
 
 /*
- * Security policies, as the pages and API v3 ask them (docs/design/security-policies.md, addons/security/SecurityPolicy.ts):
+ * Security policies, as the pages and API v3 ask them (docs/design/security-policies.md, addons/policies/security/SecurityPolicy.ts):
  * who sees a case, which of its data, and whether they may claim, complete, restart or fire its start events. Off
  * (every answer full, and today's rules hold) until the application has `policies/security/` or
  * SECURITY_POLICY=default.

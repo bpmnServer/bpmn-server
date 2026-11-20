@@ -13,10 +13,11 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { DMNEngine } from '../../dmn/DMNEngine.js';
-import { decisionContext, actorsOf, actorElements, actorNamesOf, dataPathOf } from '../../engine/DecisionContext.js';
-import type { Actor } from '../../engine/DecisionContext.js';
-import { DataHandler } from '../../engine/DataHandler.js';
+import { DMNEngine } from '../../../dmn/DMNEngine.js';
+import { decisionContext, dataPathOf } from '../../../engine/DecisionContext.js';
+import { actorsOf, actorElements, actorNamesOf } from '../actors.js';
+import type { Actor } from '../actors.js';
+import { DataHandler } from '../../../engine/DataHandler.js';
 import { seeConditionsOfTable, builtInSeeConditions, combineSeeConditions } from './SecurityQuery.js';
 import type { SeeConditions } from './SecurityQuery.js';
 
@@ -279,7 +280,7 @@ export class SecurityPolicy {
         const scope = item ? dataPathOf(item, instance?.tokens) : null;
         const data = scope ? DataHandler.getData(instance?.data ?? {}, scope) ?? {} : instance?.data;
         return decisionContext({ kind: 'security', name: model.policy, data, user, instance, task: task?.elementId, item,
-            elements: model.actors, scope, appDelegate: this.appDelegate });
+            names: { actors: actorsOf({ instance, elements: model.actors, scope }) }, appDelegate: this.appDelegate });
     }
 
     /**

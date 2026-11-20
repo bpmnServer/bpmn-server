@@ -1,3 +1,4 @@
+import type { IQueryFilter } from '../engine/AddOns.js';
 
 interface IUserInfo {
     userName:string;        //  Unique, saved in the workflow
@@ -15,27 +16,27 @@ interface ISecureUser extends IUserInfo {
      * @param query
      * @returns query
      */
-    qualifyInstances(query);
+    qualifyInstances(query, filters?: IQueryFilter[]);
 
     /**
      * alters the query adding conditions based on security rules
      * @param query
      * @returns query
      */
-    qualifyItems(query)
+    qualifyItems(query, filters?: IQueryFilter[])
     /**
      * alters the query adding conditions based on security rules
      * @param query
      * @returns query
      */
 
-    qualifyStartEvents(query);
+    qualifyStartEvents(query, filters?: IQueryFilter[]);
     /**
      * alters the query adding conditions based on security rules
      * @param query
      * @returns query
      */
-    qualifyDeleteInstances(query);
+    qualifyDeleteInstances(query, filters?: IQueryFilter[]);
     /**
      * alters the query adding conditions based on security rules
      * @param query

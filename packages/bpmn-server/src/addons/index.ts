@@ -1,17 +1,52 @@
 /**
- * The add-ons bpmn-server comes with (engine/AddOns.ts): the policies. Each is apart from the others; this is where
- * they are put together, and a server has them unless its configuration says otherwise (`addOns`).
+ * The add-ons bpmn-server comes with (engine/AddOns.ts), and which are on. Each is apart from the others; this is where
+ * they are put together. The application's `app-config.json` says which are on (`{ "addOns": ["policies"] }`); with no
+ * file, or no `addOns` in it, every one is on, so an application written before keeps what it had.
  */
-import type { IAddOn } from '../engine/AddOns.js';
-import { assignmentAddOn } from './assignment/index.js';
-import { notificationAddOn } from './notification/index.js';
-import { securityAddOn } from './security/index.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { IAddOn, IAddOnManifest } from '../engine/AddOns.js';
+import { policiesAddOn, policiesManifest } from './policies/index.js';
+import { labelsAddOn, labelsManifest } from './labels/index.js';
 
-export * from './assignment/index.js';
-export * from './notification/index.js';
-export * from './security/index.js';
+export * from './policies/index.js';
+export * from './labels/index.js';
 
-/** The policies, in the order their hooks are called: who works on a task is decided before anyone is told. */
+/** Every add-on bpmn-server comes with, by name, and its manifest (read even when it is off). */
+const AVAILABLE: { addOn: IAddOn; manifest: IAddOnManifest }[] = [
+    { addOn: policiesAddOn, manifest: policiesManifest },
+    { addOn: labelsAddOn, manifest: labelsManifest },
+];
+
+export const APP_CONFIG_FILE = 'app-config.json';
+
+/** The application's `app-config.json` (the working folder's, or the one given), or null when there is none. */
+export function readAppConfig(file = path.resolve(APP_CONFIG_FILE)): { addOns?: string[];[more: string]: any } | null {
+    if (!fs.existsSync(file)) return null;
+    const config = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (config.addOns !== undefined && (!Array.isArray(config.addOns) || config.addOns.some(a => typeof a !== 'string')))
+        throw new Error(`${file}: addOns is a list of add-on names: ["policies"]`);
+    return config;
+}
+
+/** The manifests of every add-on bpmn-server comes with, on or off. */
+export function addOnManifests(): IAddOnManifest[] {
+    return AVAILABLE.map(a => a.manifest);
+}
+
+/**
+ * The add-ons that are on: those `app-config.json` names, in bpmn-server's order; every one with no file or no
+ * `addOns`. A name that isn't an add-on is reported (`warn`) and left out.
+ */
+export function enabledAddOns(file?: string, warn: (message: string) => void = console.warn): IAddOn[] {
+    const names = readAppConfig(file)?.addOns;
+    if (!names) return AVAILABLE.map(a => a.addOn);
+    for (const name of names.filter(n => !AVAILABLE.some(a => a.manifest.name === n)))
+        warn(`[add-ons] ${APP_CONFIG_FILE} names '${name}', which is not an add-on (${AVAILABLE.map(a => a.manifest.name).join(', ')})`);
+    return AVAILABLE.filter(a => names.includes(a.manifest.name)).map(a => a.addOn);
+}
+
+/** The Policies add-on, alone: what a server had before `app-config.json`. */
 export function policyAddOns(): IAddOn[] {
-    return [assignmentAddOn, notificationAddOn, securityAddOn];
+    return [policiesAddOn];
 }

@@ -6,10 +6,11 @@ import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-pane
 import { useService } from 'bpmn-js-properties-panel';
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import { templateProblems, fillTemplate } from 'bpmn-server/dist/engine/LabelTemplate.js';
+import { templateProblems, fillTemplate } from 'bpmn-server/dist/addons/labels/LabelTemplate.js';
+import { usePreview } from '../../properties/preview.js';
 
-const CASE_HELP = 'What a case is called in the lists: text, with values named, e.g. Client: ${Client = data.clientId}';
-const ELEMENT_HELP = 'Shown in the lists and on the instance page, e.g. Approve ${Amount = data.amount} for ${instance.Client}';
+const CASE_HELP = 'What a case is called in the lists: parts separated by ;, each its text and one value, e.g. Client: ${data.clientId}; Order: ${data.orderNo}';
+const ELEMENT_HELP = 'Shown in the lists and on the instance page, e.g. Amount: ${data.amount}; Client: ${instance.Client}';
 const DONE_HELP = 'Once it has ended, e.g. Approved by ${completedBy}';
 
 /** The element whose attribute it is: a pool's label is its process's. */
@@ -22,21 +23,8 @@ function processOf(bo) {
     return at;
 }
 
-/** The Test tab's data for previews, again whenever the tab changes; null without a scenario (or a Test tab). */
-export function usePreview() {
-    const testPanel = useService('testPanel', false);
-    const eventBus = useService('eventBus');
-    const [, setVersion] = useState(0);
-    useEffect(() => {
-        const changed = () => setVersion(v => v + 1);
-        eventBus.on('testPanel.changed', changed);
-        return () => eventBus.off('testPanel.changed', changed);
-    }, [eventBus]);
-    return testPanel?.labelPreview?.() ?? null;
-}
-
 /**
- * What a template shows with the preview's data, as the engine fills it (engine/Labels.ts): the case's label sees
+ * What a template shows with the preview's data, as the engine fills it (addons/labels/Labels.ts): the case's label sees
  * the data; an element's also its own fields (from the run, when it ran) and the case's named values as `instance.*`.
  */
 export function previewLabel(template, { bo, attribute, preview }) {

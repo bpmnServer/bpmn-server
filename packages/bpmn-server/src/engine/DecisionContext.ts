@@ -8,7 +8,7 @@
  *   item, this    the item: item.element (its BPMN element), item.status, item.userName
  *   input, output the item's prepared inputs and its outputs
  *   user          who acts or asks, as the application defines it (IUserInfo: userName, userGroups, ...)
- *   actors        who did what in the instance: actors.initiator, actors.<name> (owf:actor), actors.assignee, actors.candidate
+ *   (add-ons')    the names an add-on registers (engine/AddOns.ts): the Policies add-on's `actors`, who did what
  *   task          the element a decision is about
  *   decision      what is deciding: { kind, name }
  *   appServices   the application's functions
@@ -17,6 +17,8 @@
  * names above, which the data can't set. Then the application's facts: appDelegate.decisionContext(context, about).
  */
 import { appVarsFor } from './AppContract.js';
+import { registrationsOf } from './AddOns.js';
+import type { IExpressionPlace } from './AddOns.js';
 
 /** What is deciding: a business rule task's decision, an assignment, security or notification policy. */
 export type DecisionKind = 'decision' | 'assignment' | 'security' | 'notification';
@@ -38,52 +40,8 @@ export interface IDecisionAbout {
     task?: string;
 }
 
-/** The elements that may name an actor: the user who completes a user task, or starts the process at a start event. */
-export const ACTOR_ELEMENTS = ['bpmn:UserTask', 'bpmn:StartEvent'];
-
-/** The actors every instance has; a model names its own with owf:actor. */
-export const BUILT_IN_ACTORS = ['initiator', 'assignee', 'candidate'] as const;
-
 /** The names the protocol sets: the data and the prepared inputs can't. */
 export const DECISION_KEYS = ['data', 'user', 'actors', 'task', 'decision', 'item', 'this', 'instance', 'appServices'] as const;
-
-/** An actor: a user's name, several (latest first), or none. */
-export type Actor = string | string[] | null;
-
-const asList = (value): string[] => (Array.isArray(value) ? value : value == null || value === '' ? [] : String(value).split(','))
-    .map(v => String(v ?? '').trim()).filter(Boolean);
-const attr = (tag: string, name: string) => new RegExp(`\\s(?:[\\w.-]+:)?${name}\\s*=\\s*"([^"]*)"`).exec(tag)?.[1];
-
-const elementsOfSource = new Map<string, Map<string, string>>();
-
-/**
- * The elements a model names as actors (`owf:actor="approver"`), by element id: an actor is the name for the user who
- * completes a user task, or starts the process at a start event; on any other element it means nothing (verifyModel
- * warns). `model`: its XML, or a loaded definition (its nodes).
- */
-export function actorElements(model: any): Map<string, string> {
-    if (!model) return new Map();
-    if (typeof model === 'string') {
-        let found = elementsOfSource.get(model);
-        if (found) return found;
-        found = new Map();
-        for (const [tag] of model.matchAll(/<(?:[\w.-]+:)?(?:userTask|startEvent)\b[^>]*\sowf:actor\s*=\s*"[^"]*"[^>]*>/g)) {
-            const id = attr(tag, 'id'), name = attr(tag, 'actor')?.trim();
-            if (id && name) found.set(id, name);
-        }
-        if (elementsOfSource.size > 200) elementsOfSource.delete(elementsOfSource.keys().next().value);
-        elementsOfSource.set(model, found);
-        return found;
-    }
-    const found = new Map<string, string>();
-    const nodes = model.nodes instanceof Map ? [...model.nodes.values()] : [];
-    for (const node of nodes) {
-        if (!ACTOR_ELEMENTS.includes(node?.type)) continue;
-        const name = node?.def?.$attrs?.['owf:actor'] ?? node?.def?.actor;
-        if (name && String(name).trim()) found.set(node.id, String(name).trim());
-    }
-    return found;
-}
 
 /** An item's data path (its scope): a running item's token's, else its saved token's ('' at the top). */
 export function dataPathOf(item: any, tokens?: any[]): string {
@@ -101,55 +59,8 @@ export function inScope(path: string, scope: string | null | undefined): boolean
     return path.startsWith(scope + '.') || scope.startsWith(path + '.');
 }
 
-/** Who started an instance: its start event's item's user, else its first item's, else the instance's. */
-export function initiatorOf(instance: any, items: any[] = instance?.items ?? []): string | null {
-    const start = items.find(i => elementType(i) === 'bpmn:StartEvent' && i.userName);
-    const first = [...items].sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0))[0];
-    return start?.userName ?? first?.userName ?? instance?.userName ?? null;
-}
-
-const elementType = (item: any) => item?.type ?? item?.element?.type ?? item?.node?.type;
-const elementIdOf = (item: any) => item?.elementId ?? item?.element?.id ?? item?.node?.id;
-const one = (names: string[]): Actor => {
-    const unique = [...new Set(names.filter(Boolean))];
-    return unique.length === 0 ? null : unique.length === 1 ? unique[0] : unique;
-};
-
-/**
- * An instance's actors, worked out from its items: who started it, who completed each element the model names
- * (`elements`, from actorElements), the waiting user tasks' assignees and candidates (users and groups). With
- * `scope` (an item's data path), only the items of its branch count, as its `data` does; without, all of them.
- */
-export function actorsOf({ instance, items = instance?.items ?? [], tokens = instance?.tokens, elements = new Map(), scope }:
-    { instance?: any; items?: any[]; tokens?: any[]; elements?: Map<string, string>; scope?: string | null }): Record<string, Actor> {
-    const latestFirst = [...items].sort((a, b) => (b.seq ?? 0) - (a.seq ?? 0))
-        .filter(item => inScope(dataPathOf(item, tokens), scope));
-    const actors: Record<string, Actor> = { initiator: initiatorOf(instance, items) };
-    const byName = new Map<string, string[]>();
-    for (const name of new Set(elements.values())) byName.set(name, []);
-    for (const item of latestFirst) {
-        const name = elements.get(elementIdOf(item));
-        if (name && item.status === 'end' && item.userName) byName.get(name)!.push(item.userName);
-    }
-    for (const [name, users] of byName)
-        if (!(BUILT_IN_ACTORS as readonly string[]).includes(name)) actors[name] = one(users);
-    // a user task starting is about to wait (its assignment set: a notification policy's `assigned`)
-    const waiting = latestFirst.filter(i => elementType(i) === 'bpmn:UserTask' && (i.status === 'wait' || i.status === 'start'));
-    actors.assignee = one(waiting.map(i => i.assignee).filter(Boolean));
-    actors.candidate = one(waiting.filter(i => !i.assignee).flatMap(i => [...asList(i.candidateUsers), ...asList(i.candidateGroups)]));
-    return actors;
-}
-
-/** The actors a user is: the names whose value is them (or, for a candidate, one of their groups). */
-export function actorNamesOf(user: IDecisionUser, actors: Record<string, Actor>): string[] {
-    const me = user?.userName;
-    const groups = user?.userGroups ?? [];
-    return Object.entries(actors).filter(([name, value]) => {
-        const values = value == null ? [] : Array.isArray(value) ? value : [value];
-        return values.some(v => (me && v === me) || (name === 'candidate' && groups.includes(v)));
-    }).map(([name]) => name);
-}
-
+export const elementType = (item: any) => item?.type ?? item?.element?.type ?? item?.node?.type;
+export const elementIdOf = (item: any) => item?.elementId ?? item?.element?.id ?? item?.node?.id;
 /**
  * An object's functions as FEEL can call them: a plain object of plain functions (FEEL reads an object's own
  * properties, and can't call a class's methods or `x => x`), its objects' too, two levels down.
@@ -202,14 +113,14 @@ export function instanceView(instance: any) {
 
 /**
  * The context a decision table reads (see above). `data`: the item's data (in its scope); `input`: its prepared
- * inputs; `items`: the instance's items, when they aren't `instance.items` (a running instance's); `elements`: the
- * model's actors (actorElements); `scope`: the item's data path; `appServices`: the application's functions.
+ * inputs; `names`: the names the add-ons give (namesAt: the Policies add-on's `actors`); `appServices`: the
+ * application's functions.
  */
 export async function decisionContext({ data, input, user, instance, task, kind, name, appDelegate, appServices, item,
-    items, elements, scope, log }: {
+    names, log }: {
     data?: Record<string, any>; input?: Record<string, any>; user?: IDecisionUser; instance?: any; task?: string;
-    kind: DecisionKind; name?: string; appDelegate?: any; appServices?: any; item?: any; items?: any[];
-    elements?: Map<string, string>; scope?: string | null; log?: (message: string) => void;
+    kind: DecisionKind; name?: string; appDelegate?: any; appServices?: any; item?: any;
+    names?: Record<string, any>; log?: (message: string) => void;
 }): Promise<Record<string, any>> {
     const scoped = data && typeof data === 'object' ? data : {};
     const person: IDecisionUser = { ...(user ?? {}), userName: user?.userName ?? null, userGroups: user?.userGroups ?? [] };
@@ -219,7 +130,7 @@ export async function decisionContext({ data, input, user, instance, task, kind,
         ...(input && typeof input === 'object' ? input : {}),
         data: scoped,
         user: person,
-        actors: actorsOf({ instance, items: items ?? instance?.items ?? [], elements, scope }),
+        ...(names ?? {}),
         task: task ?? '',
         decision: { kind, name: name ?? '' },
         item: itemSeen,
@@ -227,6 +138,8 @@ export async function decisionContext({ data, input, user, instance, task, kind,
         instance: instanceView(instance),
         appServices: feelView(appServices) ?? {},
     };
+    // a reserved name no one gave (`actors` without the Policies add-on) is not the data's either
+    for (const key of DECISION_KEYS) if (!(key in (names ?? {})) && context[key] === scoped[key] && key !== 'data') delete context[key];
     // the application's variables (appVars.<name>, docs/design/app-contract.md §2.1): its variables class's, worked
     // out before the table is asked, for this decision (evaluatingSource)
     if (appDelegate && (appDelegate.appVarsClass || typeof appDelegate.getAppVars === 'function')) {
@@ -253,8 +166,21 @@ export async function decisionContext({ data, input, user, instance, task, kind,
 }
 
 /**
+ * The names the add-ons give expressions and decisions (engine/AddOns.ts, addExpressionName) for a place in a running
+ * instance: its items, its model, the data path of the branch (`scope`).
+ */
+export function namesAt(server: any, at: IExpressionPlace): Record<string, any> {
+    const names: Record<string, any> = {};
+    for (const provider of registrationsOf(server).expressionNames) {
+        try { names[provider.name] = provider.of(at); }
+        catch { /* a provider that fails gives no name: the expression says what it misses */ }
+    }
+    return names;
+}
+
+/**
  * The context for a decision about a running item (a business rule task's, a user task's assignment policy): its
- * data in its scope, its prepared inputs, the operation's user, the running instance's items and its model's actors.
+ * data in its scope, its prepared inputs, the operation's user, and the add-ons' names for its place (actors).
  */
 export function runningDecisionContext(item: any, { kind, name, task }: { kind: DecisionKind; name?: string; task?: string }) {
     const token = item.token;
@@ -262,8 +188,8 @@ export function runningDecisionContext(item: any, { kind, name, task }: { kind: 
     return decisionContext({
         kind, name, data: token.data, input: item.input, task: task ?? item.elementId ?? item.node?.id, item,
         user: { userName: execution.userName ?? null }, instance: execution.instance,
-        items: typeof execution.getItems === 'function' ? execution.getItems() : undefined,
-        elements: actorElements(execution.definition), scope: token.dataPath ?? '',
+        names: namesAt(execution.server, { instance: execution.instance, definition: execution.definition, scope: token.dataPath ?? '', materialized: true,
+            items: typeof execution.getItems === 'function' ? execution.getItems() : undefined }),
         appServices: execution.servicesProvider, appDelegate: execution.appDelegate,
         log: message => token.log(message),
     });

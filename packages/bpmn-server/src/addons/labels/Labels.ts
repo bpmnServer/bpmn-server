@@ -11,11 +11,13 @@
  *
  * The path checks and the way values are shown come from PR #281 (bpmn-web's list columns).
  */
-import { Definition } from '../elements/Definition.js';
-import { owfAttribute } from '../elements/owfAttributes.js';
-import { moddleOptions as defaultModdleOptions } from '../elements/js-bpmn-moddle.js';
-import { DataHandler } from './DataHandler.js';
-import { fillTemplate, labelParts, pathProblem } from './LabelTemplate.js';
+import { Definition } from '../../elements/Definition.js';
+import { owfAttribute } from '../../elements/owfAttributes.js';
+import { moddleOptions as defaultModdleOptions } from '../../elements/js-bpmn-moddle.js';
+import { DataHandler } from '../../engine/DataHandler.js';
+import { pathProblem } from '../../engine/DataPaths.js';
+import { addOnsOf } from '../../engine/AddOns.js';
+import { fillTemplate, labelParts } from './LabelTemplate.js';
 import type { ILabel, ILabelValue } from './LabelTemplate.js';
 export * from './LabelTemplate.js';
 
@@ -66,6 +68,15 @@ async function readLabels(source: string, moddleOptions): Promise<IModelLabels> 
 }
 
 // ---- labels of cases and tasks, for the pages and the APIs
+
+/**
+ * Whether the Labels add-on is on for this server (app-config.json): off, a case is shown by its default (`<model>
+ * #<caseId>`) and a task by its name. A server that says nothing of add-ons (an object of the application's): on.
+ */
+export function labelsOn(server): boolean {
+    const known = server?.registrations || typeof server?.configuration?.addOns === 'function';
+    return !known || addOnsOf(server).some(a => a.name === 'labels');
+}
 
 /** A model's source for labels: the case's own (it keeps the source it started with), else the model's current. */
 async function sourceOf(server, name: string, source?: string): Promise<string | undefined> {
@@ -137,7 +148,7 @@ export async function labelInstances(server, instances: any[]): Promise<any[]> {
     }
     for (const instance of instances) {
         const source = await sourceOf(server, instance.name, instance.source ?? sources.get(instance.id));
-        const labels = source ? await modelLabels(source, moddleOptions) : undefined;
+        const labels = source && labelsOn(server) ? await modelLabels(source, moddleOptions) : undefined;
         const label = await caseLabel(server, instance, labels);
         instance.label = label.text;
         instance.labelValues = label.values;
@@ -175,7 +186,7 @@ export async function labelItems(server, items: any[]): Promise<any[]> {
     }
     for (const item of items) {
         const source = await sourceOf(server, item.processName, sources.get(item.instanceId));
-        const labels = source ? await modelLabels(source, moddleOptions) : undefined;
+        const labels = source && labelsOn(server) ? await modelLabels(source, moddleOptions) : undefined;
         const instance = { name: item.processName, data: item.instanceData ?? item.data ?? datas.get(item.instanceId) ?? {} };
         const label = await caseLabel(server, instance, labels);
         item.caseLabel = label.text;
@@ -220,7 +231,7 @@ export async function labelFields(server, models?: string[]): Promise<ILabelFiel
     const fields: ILabelField[] = [];
     for (const model of [...new Set<string>(names)]) {
         const source = await sourceOf(server, model);
-        const labels = source ? await modelLabels(source, moddleOptions) : undefined;
+        const labels = source && labelsOn(server) ? await modelLabels(source, moddleOptions) : undefined;
         const template = labels?.process;
         if (!template) {
             if (!hook) fields.push({ name: 'caseId', model, path: 'data.caseId' });

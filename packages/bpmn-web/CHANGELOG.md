@@ -26,6 +26,16 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The editor takes the add-ons' parts only when they are on** (`modeler/src/addons/`): the Policies add-on's
+  (the Assignment group, a start event's who may start, the process's policies) and the Labels add-on's (the Label
+  group) are bpmn-js modules the modeler loads for the add-ons the page names; the model report marks an off add-on's
+  attributes as its, off, and shows none of its policy tables. The preview of the panel's fields is
+  `properties/preview.js`. The menus offer Notifications, and the Settings page the Policies cards, only with the
+  Policies add-on on (`addOnOn(name)` in the views).
+- **The Integration page is the Settings page** (`/dashboard/settings`; `/dashboard/integration` and its pages
+  redirect), with an **Add-ons** section (docs/docs/integration-settings.md): each add-on, on or off, what it is and the
+  models using it; an administrator turns them on and off, saved to `app-config.json` (`appConfig`), applied when the
+  server restarts. Test: `test/web/integration.test.mjs`.
 - **The Integration page, simpler** (docs/docs/integration-settings.md): an overview of the integration points, each
   in a line or two with what needs setting up, opening its own page (`/dashboard/integration/<point>`) with its main
   settings first and the rest under More settings; the delegate's functions and methods folded.

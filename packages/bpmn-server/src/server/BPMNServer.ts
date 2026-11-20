@@ -19,6 +19,7 @@ import { Connectors } from '../connectors/Connectors.js';
 import type { ILifecycleListener } from '../interfaces/lifecycle.js';
 import { contractProblems, compareWithCode, methodNames } from '../engine/AppContract.js';
 import type { IAddOn } from '../engine/AddOns.js';
+import { Registrations } from '../engine/AddOns.js';
 
 /**
  *	The main class of Server Layer
@@ -69,6 +70,8 @@ class BPMNServer implements IBPMNServer {
 	connectors: Connectors;
 	/** What is built on the engine and plugs into its hooks (engine/AddOns.ts): the configuration's. */
 	addOns: IAddOn[] = [];
+	/** What the add-ons registered where the engine has no event: model checks, decision lookups (engine/AddOns.ts). */
+	registrations = new Registrations();
 	/** What the tests running in here replace: no call of the engine reaches them. */
 	testStubs = new TestStubs(this);
 	error;

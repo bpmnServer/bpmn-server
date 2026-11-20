@@ -4,7 +4,7 @@ import { Token } from './Token.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
 import { expressionScript, scriptOf, templateParts, evaluateTemplate, isFeel, conditionScript, freeNames } from './Expressions.js';
 import { evaluate as feelEvaluate } from 'feelin';
-import { actorElements, actorsOf, BUILT_IN_ACTORS, feelView, itemView, instanceView } from './DecisionContext.js';
+import { feelView, itemView, instanceView, namesAt } from './DecisionContext.js';
 import { spawn } from 'child_process';
 import vm from 'node:vm';
 import { appVarsFor, appVarsRead } from './AppContract.js';
@@ -28,23 +28,19 @@ class ScriptHandler implements IScriptHandler{
     }
 
     /**
-     * The names every expression sees besides the scope's own (docs/design/expressions.md): `actors` (who did what in
-     * the instance, in the item's branch; worked out when read) and `user` (the operation's, by name). An
+     * The names every expression sees besides the scope's own (docs/design/expressions.md): `user` (the operation's,
+     * by name), and the add-ons' names for the item's place (engine/AddOns.ts: the Policies add-on's `actors`). An
      * application's script context of the same name is used instead. `materialized`: plain values, for the sandbox.
      */
     standardValues(scope, materialized = false): Record<string, any> {
         const execution = ScriptHandler.executionOf(scope);
         if (!execution) return {};
         const token = scope?.token ?? (Object.prototype.hasOwnProperty.call(scope, 'startNodeId') ? scope : undefined);
-        const elements = actorElements(execution.definition);
-        let computed: Record<string, any>;
-        const compute = () => computed ??= actorsOf({ instance: execution.instance,
-            items: typeof execution.getItems === 'function' ? execution.getItems() : undefined, elements, scope: token ? token.dataPath ?? '' : null });
-        let actors: Record<string, any> = {};
-        if (materialized) actors = { ...compute() };
-        else for (const name of new Set([...BUILT_IN_ACTORS, ...elements.values()]))
-            Object.defineProperty(actors, name, { get: () => compute()[name], enumerable: true });
-        const standard = { actors, user: { userName: execution.userName ?? null } };
+        const standard = {
+            ...namesAt(execution.server, { instance: execution.instance, definition: execution.definition, materialized,
+                items: typeof execution.getItems === 'function' ? execution.getItems() : undefined, scope: token ? token.dataPath ?? '' : null }),
+            user: { userName: execution.userName ?? null },
+        };
         for (const name of Object.keys(this.context)) delete standard[name];
         return standard;
     }

@@ -91,14 +91,19 @@ const SETTINGS = ['implementation', 'camunda:delegateExpression', 'camunda:expre
     'owf:label', 'owf:endLabel', 'owf:assignmentPolicy', 'owf:securityPolicy', 'owf:exceptionsAsErrors', 'owf:actor', 'owf:notificationPolicy'];
 
 /** An element's settings as `key: value` lines, from the model being edited: what bpmn-server reads of it. */
-function settingsOf(bo) {
+/**
+ * An element's settings, in words. `off`: the model attributes of the add-ons that are off, each with its add-on's
+ * title (their manifests): shown as they are, marked as that add-on's, off.
+ */
+function settingsOf(bo, off = new Map()) {
     const lines = [];
-    const add = (key, value) => {
+    const add = (key, value, attr) => {
         const text = valueOf(value);
-        if (text !== undefined && !String(text).startsWith('##')) lines.push([key, String(text)]);
+        const title = off.get(attr) ?? off.get(String(attr ?? '').replace(/^owf:/, 'camunda:'));
+        if (text !== undefined && !String(text).startsWith('##')) lines.push([title ? `${key} (${title}, add-on off)` : key, String(text)]);
     };
     for (const key of SETTINGS)
-        if (bo.$descriptor?.propertiesByName?.[key] || bo.$attrs?.[key] !== undefined) add(key.replace(/^(camunda|owf):/, ''), bo.get(key));
+        if (bo.$descriptor?.propertiesByName?.[key] || bo.$attrs?.[key] !== undefined) add(key.replace(/^(camunda|owf):/, ''), bo.get(key), key);
     if (is(bo, 'bpmn:ScriptTask')) add('script', bo.get('script'));
     if (is(bo, 'bpmn:BoundaryEvent')) {
         add('attachedToRef', bo.get('attachedToRef')?.id);
@@ -343,6 +348,11 @@ export default class Report {
         return this._visible;
     }
 
+    /** The attributes of the add-ons that are off (their manifests, as the page gives them), each with its add-on's title. */
+    get off() {
+        return this._off ??= new Map((this._config.addOnsOff ?? []).flatMap(m => m.attributes.map(attr => [attr, m.title])));
+    }
+
     show() {
         this._visible = true;
         this.render();
@@ -430,12 +440,12 @@ export default class Report {
                 head('h3', bo, bo.get('triggeredByEvent') ? el('span', { class: 'report-type' }, 'event sub-process') : null),
                 el('div', { class: 'report-body' },
                     documentation ? el('p', { class: 'report-documentation' }, documentation) : null,
-                    settings(settingsOf(bo)),
+                    settings(settingsOf(bo, this.off)),
                     formTable(bo),
                     loadedBy(bo).length ? el('p', { class: 'report-loads' }, 'Loads ', loadedBy(bo).map(n => el('code', {}, dataField(n))).flatMap((c, i) => i ? [', ', c] : [c])) : null,
                     live && is(bo, 'bpmn:BusinessRuleTask') ? this.decisionSection(bo) : null,
-                    live && bo.get('owf:assignmentPolicy') ? this.policySection('assignment', bo.get('owf:assignmentPolicy')) : null,
-                    live && bo.get('owf:securityPolicy') ? this.policySection('security', bo.get('owf:securityPolicy')) : null,
+                    live && bo.get('owf:assignmentPolicy') && !this.off.has('owf:assignmentPolicy') ? this.policySection('assignment', bo.get('owf:assignmentPolicy')) : null,
+                    live && bo.get('owf:securityPolicy') && !this.off.has('owf:securityPolicy') ? this.policySection('security', bo.get('owf:securityPolicy')) : null,
                     issueList(issuesOf(bo.id)),
                     boundary.map(b => elementSection(b, placed)),
                     children.map(child => elementSection(child, placed)),
@@ -457,7 +467,7 @@ export default class Report {
             processes.map(process => el('section', { class: 'report-process', 'data-element-id': process.id },
                 head('h2', process),
                 documentationOf(process) ? el('p', { class: 'report-documentation' }, documentationOf(process)) : null,
-                settings(settingsOf(process)),
+                settings(settingsOf(process, this.off)),
                 live ? this.securitySection(process) : null,
                 issueList(issuesOf(process.id)),
                 (() => {

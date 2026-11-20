@@ -26,6 +26,25 @@ and here
 
 ## [Unreleased]
 ### Added
+- **The Policies add-on, whole** (docs/design/add-ons.md): what a user sees is narrowed by the add-ons' query filters
+  (`addQueryFilter`): the Policies add-on's, the tasks offered to them and the processes they may start, moved out of
+  `SecureUser`, which applies the filters it is given (`qualifyInstances(query, filters)`, and the API passes the
+  server's); a server that says nothing of add-ons keeps the narrowing as before, so nothing is opened by not knowing.
+  **Actors** are the add-on's (`addons/policies/actors.ts`): `actors` is a name it registers for every expression and
+  decision (`addExpressionName`; `namesAt(server, place)`), `decisionContext({ names })` takes them, and the actor and
+  lane-role checks are its model check (`verifyModel` hook). Off: `actors` is not a name, and `camunda:assignee` and the
+  candidates are not read.
+- **The Labels add-on** (`addons/labels/`): labels, their checks (`label-template`, `label-old-form`) and their values
+  as the lists' fields; off, a case is shown by its default (`<model> #<caseId>`) and a task by its name, and
+  `labelFields` offers caseId. The data paths the lists' columns read are the engine's (`engine/DataPaths.ts`:
+  `pathProblem`, `pathValue`, `valueText`); `ListColumns` takes `IListField`.
+- **`app-config.json`: which add-ons are on** (docs/design/add-ons.md): `{ "addOns": ["policies"] }` in the
+  application's folder (`appConfig` in the configuration names another); no file, or no `addOns`, is every add-on, as
+  before. The assignment, notification and security policies are one add-on, **Policies** (`src/addons/policies/`).
+  Each add-on has a manifest (`addon.json`: name, title, the model attributes it reads), read whether it is on or off
+  (`addOnManifests()`, the configuration's `addOnManifests()`): a model that uses one that's off gets one warning
+  (`add-on-off`), naming where. `enabledAddOns(file)`, `readAppConfig(file)`. `policyAddOns()` is the Policies add-on.
+  Test: `test/add-ons.test.mjs`.
 - **Labels in parts** (docs/docs/labels.md, `engine/LabelTemplate.ts`): a label is parts separated by `;`, each its
   text and at most one value: `Client: ${data.clientId}; Order: ${data.orderNo}` is shown as `Client: abc · Order:
   1234`. A part whose value is missing is left out, its text too. Each value is a column and a filter of the lists,
@@ -35,18 +54,25 @@ and here
   now one of its values, named by the text before it. Test: `test/labels.test.mjs`.
 - **Add-ons** (docs/design/add-ons.md, `engine/AddOns.ts`): the engine no longer calls the policies. They are
   add-ons in `src/addons/`, each depending on the engine only, that register (`register(server)`) for the engine's own
-  events: the assignment policy decides on `wait` and records a person's change on `assign`, the notification policy
-  tells on `assigned`, `end` and `process.end`. A new event, `assigned`, is fired after a user task's `wait`, once who
-  works on it is decided; `assign`'s details now carry `before`, `assignment` and `userName`. What has no event, an
-  add-on says on itself: `verifyNode`, `verifyProcess`, `decisionFiles`, `decisionByName`. A server has its
+  events. **Who works on a user task** is changed in one engine step, `Execution.assignItem(item, fields, why)`: it sets
+  the fields, records what decided it (`item.assignment`) and fires `assign`, with `before`, `assignment`, `why`,
+  `previous`, `changed` and `by` (the person; none as the task starts). A person's `assign` (a claim, a reassignment)
+  goes through it, and so does the assignment add-on as a user task starts: it evaluates `camunda:assignee`,
+  `candidateUsers` and `candidateGroups`, adds the lane's group, applies the policy, and sets them once. The
+  notification policy tells on `assign` (`assigned`: as the task starts, and when a person changes who works on it),
+  `end` (`completed`) and `process.end` (`ended`). What has no event, an
+  add-on registers in `server.registrations`: its model checks (`addModelCheck`: `verifyNode`, `verifyProcess`,
+  `decisionFiles`) and its decisions by their tests' name (`addDecisionLookup`); the engine runs what is registered. A server has its
   configuration's `addOns(server)`, by default `policyAddOns()`; `addOns: () => []` is the engine alone, and an
   application may add its own. A subscriber that throws is reported and fails nothing. `roleNames`, `roleNameProblem` and `saveRoleNames` moved to `engine/Roles.ts`,
   `isExpression` to `engine/Expressions.ts`. **Compatibility:** everything is still exported from the package's entry.
   A model checked without a server (`verifyModel(source, undefined, …)`) and `invokeDecision` on an object that isn't a
   server have no add-ons unless given (`options.addOns`, `addOns`): no policy checks, no `<name>.policy`. A
   configuration that isn't a `Configuration` has no policies unless it gives `addOns`. A user task's description shows
-  every `owf:` attribute the engine doesn't read. The assignment policy now decides on `wait`: a script or listener on
-  `wait` sees the task before it decides, one on `assigned` after. Test: `test/add-ons.test.mjs`.
+  every `owf:` attribute the engine doesn't read. Who works on a user task is decided on its `start` event, so a
+  `start` script sees no assignee yet (as before), and one on `wait` the final one. With no add-ons, a task's
+  `camunda:assignee` and candidates are not read. A person's reassignment is now told to the notification policy
+  (`assigned`). Test: `test/add-ons.test.mjs`.
 - **The services' names from the configuration** (`serviceNames`, set by the host as it starts: bpmn-web reads them
   from the delegate's source, `delegateFile`): a launched server with no application code knows them so, else asks the
   engine. `servicesFile` (a services.json) is no longer read.

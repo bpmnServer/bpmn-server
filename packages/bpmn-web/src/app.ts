@@ -20,7 +20,7 @@ import helmet from 'helmet';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import multer from 'multer';
-import { BPMNServer, Logger, databaseName } from 'bpmn-server';
+import { BPMNServer, Logger, databaseName, addOnsOf } from 'bpmn-server';
 
 import { UserManager, ownUsers, hostUserManager } from './userAccess/UserManager.js';
 import type { IUserManager } from './userAccess/IUserManager.js';
@@ -130,6 +130,9 @@ export class WebApp {
 				return file;
 			}
 		};
+		// whether an add-on is on (engine/AddOns.ts), as the server started: a page offers an add-on's parts only then
+		const addOnsOn = new Set(addOnsOf(this.bpmnServer).map(a => a.name));
+		app.locals.addOnOn = (name: string) => addOnsOn.has(name);
 		app.use(compression());
 		// Security headers. CSP is disabled because the modeler/UI loads inline scripts
 		// and a CDN; HSTS only takes effect over HTTPS (harmless over HTTP).

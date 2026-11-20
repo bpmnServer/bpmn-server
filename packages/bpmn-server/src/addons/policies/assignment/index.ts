@@ -3,10 +3,12 @@
  * (AssignmentPolicy.ts). It plugs into the engine's hooks (engine/AddOns.ts) and depends on nothing else of ours.
  */
 import path from 'node:path';
-import { DMNEngine } from '../../dmn/DMNEngine.js';
-import { DMNParser } from '../../dmn/DMNParser.js';
-import { owfAttribute } from '../../elements/owfAttributes.js';
-import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile } from '../../engine/AddOns.js';
+import { DMNEngine } from '../../../dmn/DMNEngine.js';
+import { DMNParser } from '../../../dmn/DMNParser.js';
+import { owfAttribute } from '../../../elements/owfAttributes.js';
+import { taskAttribute } from '../../../elements/Tasks.js';
+import { assignmentFilter } from './filters.js';
+import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
 import { applyPolicy, reassigned, policyFile, POLICY_FIELDS, POLICIES_FOLDER } from './AssignmentPolicy.js';
 
 export * from './AssignmentPolicy.js';
@@ -55,26 +57,32 @@ async function checkPolicy(check: IAddOnModelCheck, policy: string, def) {
     }
 }
 
-export const assignmentAddOn: IAddOn = {
+/**
+ * Who works on a user task as it starts: its attributes (`camunda:assignee`, `candidateUsers`, `candidateGroups`), the
+ * lane's group, then its policy, which wins for each field it sets. Set once, so `assign` is fired once.
+ */
+async function assignAtStart(execution, item) {
+    const node = item.node;
+    const set: Record<string, any> = {};
+    for (const field of POLICY_FIELDS) {
+        const found = await taskAttribute(item, node.def, field);
+        if (found) set[field] = found.value;
+    }
+    // a task in a lane is offered to the group of the lane's name too; a single candidate group is text, not a list
+    if (node.lane) {
+        const groups = set.candidateGroups == null ? [] : Array.isArray(set.candidateGroups) ? set.candidateGroups : [set.candidateGroups];
+        if (!groups.includes(node.lane)) groups.push(node.lane);
+        set.candidateGroups = groups;
+    }
+    // the policy reads the task as its attributes and lane made it
+    Object.assign(item, set);
+    const policy = policyOf(node.def);
+    const decided = policy ? await applyPolicy(node, item, policy) : null;
+    await execution.assignItem(item, { ...set, ...(decided?.set ?? {}) }, decided?.why);
+}
+
+const modelCheck: IModelCheck = {
     name: 'assignment',
-
-    register(server) {
-        server.listener.subscribe({
-            async onEvent({ type, context, details }) {
-                const item = context?.item;
-                if (item?.node?.type !== 'bpmn:UserTask') return;
-                // it waits: the last of what decides who works on it, so it wins over the attributes and the lane
-                if (type === 'wait') {
-                    const policy = policyOf(item.node.def);
-                    if (policy) await applyPolicy(item.node, item, policy);
-                }
-                // a person changed who works on it (Execution.assign): the Rationale says what it was
-                else if (type === 'assign' && details?.before && POLICY_FIELDS.some(f => f in (details.assignment ?? {})))
-                    reassigned(context, item, details.before, details.assignment, details.userName);
-            },
-        });
-    },
-
     async verifyNode(check, node, def) {
         const policy = policyOf(def);
         if (policy) await checkPolicy(check, policy, def);
@@ -88,8 +96,30 @@ export const assignmentAddOn: IAddOn = {
         }
         return files;
     },
-    decisionByName(ref, folder) {
-        const name = /^(.+)\.policy$/.exec(ref)?.[1];
-        return name ? { folder: path.join(folder, POLICIES_FOLDER), name } : null;
+};
+
+export const assignmentAddOn: IAddOn = {
+    name: 'assignment',
+
+    register(server) {
+        server.listener.subscribe({
+            async onEvent({ type, context, details }) {
+                const item = context?.item;
+                if (item?.node?.type !== 'bpmn:UserTask') return;
+                // it starts: who works on it, decided once and set through the engine (Execution.assignItem)
+                if (type === 'start') await assignAtStart(context, item);
+                // a person changed who works on it: the Rationale says what it was
+                else if (type === 'assign' && (details as any)?.by && (details as any).changed)
+                    reassigned(context, item, (details as any).before, (details as any).assignment ?? {}, (details as any).by, (details as any).previous);
+            },
+        });
+        server.registrations.addModelCheck(modelCheck);
+        // what each user sees: the tasks offered to them, the processes they may start
+        server.registrations.addQueryFilter(assignmentFilter);
+        server.registrations.addDecisionLookup((ref, folder) => {
+            const name = /^(.+)\.policy$/.exec(ref)?.[1];
+            return name ? { folder: path.join(folder, POLICIES_FOLDER), name } : null;
+        });
     },
+
 };

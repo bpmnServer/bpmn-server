@@ -11,8 +11,8 @@ import type { IConfiguration, IConnectorsConfiguration, ILogger, IAppDelegate } 
 import type { IModelsDatastore, IDataStore } from '../interfaces/datastore.js';
 import { NoCacheManager } from '../server/CacheManager.js';
 import { Logger } from './Logger.js';
-import { policyAddOns } from '../addons/index.js';
-import type { IAddOn } from '../engine/AddOns.js';import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
+import { enabledAddOns, addOnManifests } from '../addons/index.js';
+import type { IAddOn, IAddOnManifest } from '../engine/AddOns.js';import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
 
 export class Configuration implements IConfiguration {
 	definitionsPath?: string;
@@ -50,9 +50,15 @@ export class Configuration implements IConfiguration {
 	scriptHandler(server) {
 		return new ScriptHandler();
 	}
-	/** The add-ons (engine/AddOns.ts): the policies, unless the configuration gives its own. */
+	/** Where the application's app-config.json is (which add-ons are on); the working folder's by default. */
+	appConfig?: string;
+	/** The add-ons that are on (engine/AddOns.ts): those app-config.json names, every one without it; unless the configuration gives its own. */
 	addOns(server): IAddOn[] {
-		return policyAddOns();
+		return enabledAddOns(this.appConfig);
+	}
+	/** Every add-on bpmn-server comes with, on or off: their manifests. */
+	addOnManifests(): IAddOnManifest[] {
+		return addOnManifests();
 	}
 
 
@@ -75,7 +81,7 @@ export class Configuration implements IConfiguration {
 		logger = undefined,
 		definitions = undefined,
 		appDelegate = undefined,
-		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined, addOns = undefined,
+		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined, addOns = undefined, appConfig = undefined,
 		runTimers = undefined, runServiceTasks = undefined,
 		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined, formRules = undefined }: any) {
 		this.definitionsPath = definitionsPath;
@@ -94,6 +100,7 @@ export class Configuration implements IConfiguration {
 		if (cacheManager) this.cacheManager = cacheManager;
 		if (scriptHandler) this.scriptHandler = scriptHandler;
 		if (addOns) this.addOns = addOns;
+		this.appConfig = appConfig;
 		if (documentStore) this.documentStore = documentStore;
 		if (locker) this.locker = locker;
 		this.serverId = serverId;

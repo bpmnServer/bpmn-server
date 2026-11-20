@@ -6,12 +6,10 @@ import { ScriptHandler } from '../engine/ScriptHandler.js';
 import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames, isFeel, conditionScript } from '../engine/Expressions.js';
 import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
-import { templateProblems } from '../engine/Labels.js';
 import { owfAttribute, legacyAttributes } from './owfAttributes.js';
 import { formFieldLookup, lookupElements, filterPath } from './FormLookup.js';
-import { actorElements, BUILT_IN_ACTORS, ACTOR_ELEMENTS } from '../engine/DecisionContext.js';
-import { addOnsOf } from '../engine/AddOns.js';
-import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile } from '../engine/AddOns.js';
+import { registrationsOf, addOnsOf } from '../engine/AddOns.js';
+import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck, IAddOnManifest } from '../engine/AddOns.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IBPMNServer } from '../interfaces/server.js';
@@ -48,6 +46,8 @@ interface IVerifyOptions {
     decisionsFolder?: string;
     /** the add-ons whose checks run too (engine/AddOns.ts); the server's by default, none without a server */
     addOns?: IAddOn[];
+    /** every add-on's manifest, on or off, for a model that uses one that is off; the server configuration's by default */
+    manifests?: IAddOnManifest[];
 }
 
 interface IModelVerification {
@@ -77,8 +77,28 @@ class ModelVerifier {
 
     constructor(private server?: IBPMNServer, private options: IVerifyOptions = {}) { }
 
-    get addOns(): IAddOn[] {
-        return this.options.addOns ?? addOnsOf(this.server);
+    /**
+     * A model that uses an add-on that is off: its attributes (the add-on's manifest says which) are kept, and the
+     * engine doesn't read them. One warning for each such add-on, naming where.
+     */
+    verifyAddOnsOff(definition) {
+        const manifests: IAddOnManifest[] = this.options.manifests ?? this.server?.configuration?.addOnManifests?.() ?? [];
+        if (!manifests.length) return;
+        const on = new Set((this.options.addOns ?? addOnsOf(this.server)).map(a => a.name));
+        const elements = [...definition.processes.values()].map(p => p.def || p).concat([...definition.nodes.values()].map(n => n.def));
+        for (const manifest of manifests.filter(m => !on.has(m.name))) {
+            const uses = elements.flatMap(def => Object.keys(def?.$attrs ?? {}).filter(k => manifest.attributes.includes(k))
+                .map(k => `${k.replace(/^\w+:/, '')} on ${def.name || def.id}`));
+            if (!uses.length) continue;
+            const shown = uses.slice(0, 3).join(', ') + (uses.length > 3 ? `, and ${uses.length - 3} more` : '');
+            this.processId = undefined;
+            this.add('warning', 'add-on-off', `This model uses ${manifest.title} (${shown}), which is off; the engine ignores it.`);
+        }
+    }
+
+    /** The model checks the add-ons registered: the server's, else those of the add-ons given. */
+    get modelChecks(): IModelCheck[] {
+        return registrationsOf(this.server, this.options.addOns).modelChecks;
     }
 
     /** What an add-on's checks are given: the folder, the roles, and a way to report (engine/AddOns.ts). */
@@ -88,10 +108,10 @@ class ModelVerifier {
 
     /** Each add-on's model check, in turn; one that throws is a warning. */
     async addOnChecks(hook: 'verifyNode' | 'verifyProcess', ...args: any[]) {
-        for (const addOn of this.addOns) {
-            if (typeof addOn[hook] !== 'function') continue;
-            try { await (addOn[hook] as Function).call(addOn, this.addOnCheck, ...args); }
-            catch (exc) { this.add('warning', 'add-on-check-failed', `The ${addOn.name} add-on's check failed: ${exc?.message ?? exc}`); }
+        for (const check of this.modelChecks) {
+            if (typeof check[hook] !== 'function') continue;
+            try { await (check[hook] as Function).call(check, this.addOnCheck, ...args); }
+            catch (exc) { this.add('warning', 'add-on-check-failed', `The ${check.name} add-on's check failed: ${exc?.message ?? exc}`); }
         }
     }
 
@@ -100,8 +120,8 @@ class ModelVerifier {
         const folder = this.decisionsFolder;
         if (!folder) return [];
         const files: IAddOnDecisionFile[] = [];
-        for (const addOn of this.addOns)
-            try { files.push(...(await addOn.decisionFiles?.(definition, folder) ?? [])); } catch { /* its own checks say why */ }
+        for (const check of this.modelChecks)
+            try { files.push(...(await check.decisionFiles?.(definition, folder) ?? [])); } catch { /* its own checks say why */ }
         return files;
     }
 
@@ -111,21 +131,12 @@ class ModelVerifier {
     }
 
     /**
-     * Label templates (owf:label, owf:endLabel): data paths, names once (engine/Labels.ts). And OWF's attributes
+     * Label templates (owf:label, owf:endLabel): data paths, names once (addons/labels/Labels.ts). And OWF's attributes
      * still under their old camunda: names (elements/owfAttributes.ts).
      */
     checkLabel(def) {
         for (const name of legacyAttributes(def))
             this.add('warning', 'owf-attribute-legacy', `camunda:${name} is OWF's, not Camunda's: it is read, and the model editor saves it as owf:${name}.`, def);
-        for (const attr of ['label', 'endLabel']) {
-            const template = owfAttribute(def, attr);
-            if (template == null) continue;
-            for (const problem of templateProblems(template))
-                this.add('error', 'label-template', `Label '${template}': ${problem}.`, def);
-            // written before 3.7.5: still read
-            if (typeof template == 'string' && /\$\{[^}]*=/.test(template))
-                this.add('warning', 'label-old-form', `Label '${template}': \${Name = path} is the earlier form. Write the label in parts, each its text and its value: Client: \${data.clientId}; Order: \${data.orderNo}.`, def);
-        }
     }
 
     add(severity: ModelIssueSeverity, code: string, message: string, element?) {
@@ -193,9 +204,10 @@ class ModelVerifier {
             const definition = await this.loadDefinition(name, source);
             if (definition) {
                 await this.verifyExecutables(definition);
-                await this.verifyActors(source, definition);
+                await this.verifyWholeModel(source, definition);
                 await this.verifyContract(source, definition);
                 await this.verifyApplication(name, source, definition);
+                this.verifyAddOnsOff(definition);
             }
         }
         return this.result();
@@ -534,7 +546,6 @@ class ModelVerifier {
             if (checkScripts) proc.scripts?.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `process '${event}' script`, proc.def || proc)));
         });
 
-        const lanes = new Map<string, any>();
         for (const node of definition.nodes.values()) {
             this.processId = node.processId;
             const def = node.def || {};
@@ -588,17 +599,10 @@ class ModelVerifier {
                 await this.checkDecision(node, def);
 
             await this.addOnChecks('verifyNode', node, def);
-            if (node.lane) lanes.set(node.lane, def);
 
             if (node instanceof CallActivity && node.calledElement && knownModels && !knownModels.has(node.calledElement))
                 this.add('warning', 'called-model-missing', `Called process '${node.calledElement}' is not a saved model.`, def);
         }
-        // a lane is a role: one roles.json doesn't name
-        const roles = this.roles();
-        if (roles)
-            for (const [lane, def] of lanes)
-                if (!roles.includes(lane))
-                    this.add('warning', 'role-unknown', `Lane '${lane}' is not a role (roles.json, app-contract.json: ${roles.join(', ')}).`, def);
 
         if (checkScripts) {
             definition.flows.forEach(flow => {
@@ -618,17 +622,13 @@ class ModelVerifier {
     }
 
     /**
-     * The actors its expressions read (docs/design/expressions.md): an `actors.<name>` in the model, in the policies
-     * it names (assignment, security) or in its business rules' decisions that no element of it is (owf:actor), and
-     * not one every instance has (initiator, assignee, candidate).
+     * The whole model, once, by the add-ons' checks (engine/AddOns.ts, verifyModel): with its source, its definition,
+     * and the decision files it uses (its business rule tasks' and the add-ons' whose actors are read), each its text.
      */
-    async verifyActors(source: string, definition) {
-        // an actor is the user who completes a user task, or starts the process at a start event: nowhere else
-        for (const node of definition.nodes.values())
-            if (node.def?.$attrs?.['owf:actor'] && !ACTOR_ELEMENTS.includes(node.type))
-                this.add('warning', 'actor-element', `owf:actor '${node.def.$attrs['owf:actor']}' is on a ${String(node.type).replace('bpmn:', '')}: an actor is the user who completes a user task, or starts the process at a start event; it is ignored here.`, node.def);
-        const known = new Set<string>([...BUILT_IN_ACTORS, ...actorElements(source).values()]);
-        const places: [string, string][] = [['the model', source]];
+    async verifyWholeModel(source: string, definition) {
+        const checks = this.modelChecks.filter(c => typeof c.verifyModel === 'function');
+        if (!checks.length) return;
+        const decisions: { what: string; text: string }[] = [];
         const folder = this.decisionsFolder;
         const read = (file: string | null) => { try { return file ? fs.readFileSync(file, 'utf8') : null; } catch { return null; } };
         if (folder) {
@@ -640,16 +640,14 @@ class ModelVerifier {
                     try { named.set((await DMNEngine.find(folder, node.decisionRef)).filePath, `decision ${node.decisionRef}`); } catch { }
             for (const [file, what] of named) {
                 const text = read(file);
-                if (text) places.push([what, text]);
+                if (text) decisions.push({ what, text });
             }
         }
-        const unknown = new Map<string, string[]>();
-        for (const [what, text] of places)
-            for (const [, actor] of text.matchAll(/\bactors\.([A-Za-z_]\w*)/g))
-                if (!known.has(actor) && !(unknown.get(actor) ?? []).includes(what))
-                    unknown.set(actor, [...(unknown.get(actor) ?? []), what]);
-        for (const [actor, where] of unknown)
-            this.add('warning', 'actor-unknown', `actors.${actor} (${where.join(', ')}): no element of the model is the actor '${actor}' (owf:actor); its actors are ${[...known].join(', ')}.`);
+        this.processId = undefined;
+        for (const check of checks) {
+            try { await check.verifyModel(this.addOnCheck, { source, definition, decisions }); }
+            catch (exc) { this.add('warning', 'add-on-check-failed', `The ${check.name} add-on's check failed: ${exc?.message ?? exc}`); }
+        }
     }
 
     /**

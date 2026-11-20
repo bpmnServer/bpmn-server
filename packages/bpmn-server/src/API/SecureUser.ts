@@ -1,5 +1,6 @@
 import { QueryTranslator } from "../datastore/QueryTranslator.js";
 import type { ISecureUser, IUserInfo } from '../interfaces/User.js';
+import type { IQueryFilter } from '../engine/AddOns.js';
 
 enum USER_ROLE {
     SYSTEM = 'SYSTEM',  // SYSTEM ADMIN
@@ -78,15 +79,17 @@ class SecureUser implements ISecureUser {
         return (this.userGroups.includes(userGroup))
     }
     /**
-     * alters the query adding conditions based on security rules
-     * @param query
-     * @returns query
+     * The query narrowed to what this user may see: their tenant's, and, unless an administrator, what the add-ons'
+     * filters let them (`filters`: the server's, registrationsOf(server).queryFilters; the Policies add-on's, the
+     * tasks offered to them). Without `filters` (a caller from before add-ons), the tasks offered to them, as before.
      */
-    qualifyInstances(query) {
+    qualifyInstances(query, filters?: IQueryFilter[]) {
         if (this.#bypass)
             return query;
         if (this.tenantId)
             query['tenantId'] = this.tenantId;
+        if (!this.isAdmin() && filters)
+            return filters.reduce((q, f) => f.filter('instances', this, q) ?? q, query);
         if (!this.isAdmin()) {
 
             const grpQuery = [];
@@ -121,9 +124,13 @@ class SecureUser implements ISecureUser {
      * @param query
      * @returns query
      */
-    qualifyItems(query) {
+    qualifyItems(query, filters?: IQueryFilter[]) {
         if (this.#bypass)
             return query;
+        if (filters && !this.isAdmin()) {
+            if (this.tenantId) query['tenantId'] = this.tenantId;
+            return filters.reduce((q, f) => f.filter('items', this, q) ?? q, query);
+        }
         return this.qualifyInstances(query);
 
     }
@@ -133,7 +140,9 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
 
-    qualifyStartEvents(query) {
+    qualifyStartEvents(query, filters?: IQueryFilter[]) {
+        if (!this.isAdmin() && filters)
+            return filters.reduce((q, f) => f.filter('startEvents', this, q) ?? q, query);
         if (!this.isAdmin()) {
             const grpQuery = [];
             grpQuery.push({ "events.candidateUsers": null, "events.candidateGroups": null ,"events.lane": null });
@@ -155,9 +164,9 @@ class SecureUser implements ISecureUser {
      * @param query
      * @returns query
      */
-    qualifyDeleteInstances(query) {
+    qualifyDeleteInstances(query, filters?: IQueryFilter[]) {
         if (this.isAdmin())
-            return this.qualifyInstances(query);
+            return this.qualifyInstances(query, filters);
         else
             return false;
     }

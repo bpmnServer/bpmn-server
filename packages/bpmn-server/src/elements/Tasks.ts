@@ -271,55 +271,39 @@ class SendTask extends ServiceTask {
     } */
 }
 
+/**
+ * A user task's attribute (`camunda:<attr>`), evaluated: an expression, a `#` script, else its text with its `${...}`
+ * parts filled in (a text with commas a list). Null when the task has none. For the task's own attributes, and for the
+ * add-ons that read others (who works on it).
+ */
+export async function taskAttribute(item, def, attr: string, isDate = false): Promise<{ value: any } | null> {
+    const exp = def?.$attrs?.['camunda:' + attr];
+    if (!exp) return null;
+    let value;
+    if (expressionScript(exp) !== null)
+        value = await item.context.scriptHandler.evaluateExpression(item, exp, attr);
+    else if (exp.startsWith('#'))
+        value = await item.context.scriptHandler.executeScript(item, 'return ' + exp.substring(1), attr);
+    else {
+        // a text with ${...} parts is filled in first: group-${data.region}, ${data.a},${data.b}
+        const text = templateParts(exp) ? await evaluateTemplate(item.context.scriptHandler, item, exp) : exp;
+        value = text.includes(',') ? text.split(',') : text;
+    }
+    if (isDate) value = new Date(value);
+    item.token.log('..setting attribute ' + attr + ' exp: ' + exp + '=' + value);
+    return { value };
+}
+
 class UserTask extends Node {
 
     async start(item: Item): Promise<NODE_ACTION> {
-        if (this.def.$attrs)
-            {
-            await this.setAssignVal(item,"assignee");
-            await this.setAssignVal(item,"candidateGroups");
-            await this.setAssignVal(item,"candidateUsers");
-            await this.setAssignVal(item,"dueDate",true);
-            await this.setAssignVal(item,"followUpDate",true);
-            await this.setAssignVal(item,"priority");
-            }
-        // a task in a lane is offered to the group of the lane's name too; a single candidate group is text, not a list
-        if (this.lane && this.lane !=='')
-            {
-            const groups = item.candidateGroups == null ? [] : Array.isArray(item.candidateGroups) ? item.candidateGroups : [item.candidateGroups];
-            if (!groups.includes(this.lane))
-                groups.push(this.lane);
-            item.candidateGroups = groups;
-            }
-
+        // the task's own: when it is due, its follow-up, its priority. Who works on it (assignee, candidates, the
+        // lane's group) is an add-on's, as the task starts (addons/assignment, Execution.assignItem)
+        for (const [attr, isDate] of [['dueDate', true], ['followUpDate', true], ['priority', false]] as const) {
+            const found = await taskAttribute(item, this.def, attr, isDate);
+            if (found) item[attr] = found.value;
+        }
         return await super.start(item);
-    }
-    async setAssignVal(item,attr,dateFormat=false) {
-        const exp=this.def.$attrs["camunda:"+attr];
-
-        if (!exp)
-            return;
-        var val;
-        if (expressionScript(exp) !== null)
-        {
-            val = await item.context.scriptHandler.evaluateExpression(item, exp, attr);
-        }
-        else if (exp.startsWith('#')) {
-            val = await item.context.scriptHandler.executeScript(item, 'return '+exp.substring(1), attr);
-        }
-        else
-        {
-            // a text with ${...} parts is filled in first: group-${data.region}, ${data.a},${data.b}
-            const text = templateParts(exp) ? await evaluateTemplate(item.context.scriptHandler, item, exp) : exp;
-            val = text.includes(",") ? text.split(",") : text;
-        }
-
-        if (dateFormat)
-            val=new Date(val);
-
-        item[attr] = val;
-        item.token.log('..setting attribute '+attr+' exp: '+exp+'='+val);
-        //console.log('----setAttVal', attr, exp, val);
     }
     describe() {
         let attrs = ["assignee","candidateGroups", "candidateUsers", "label", "endLabel", "dueDate", "followUpDate", "priority"];

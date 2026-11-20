@@ -23,7 +23,7 @@ const CASE = {
 test('the names: the data by name and whole, prepared inputs over it, the protocol\'s names over both, the application\'s facts last', async () => {
     const context = await decisionContext({ kind: 'security', data: CASE.data, input: { amount: 70, manager: 'mia' },
         user: { userName: 'ann', userGroups: ['Employee'], department: 'Sales' }, instance: CASE, task: 'Approve',
-        item: CASE.items[2], elements: new Map([['Notes', 'noter']]), appServices: { double: x => x * 2 } });
+        item: CASE.items[2], names: { actors: actorsOf({ instance: CASE, elements: new Map([['Notes', 'noter']]) }) }, appServices: { double: x => x * 2 } });
     assert.equal(context.amount, 70, 'a prepared input over the data');
     assert.equal(context.data.amount, 50, 'the data whole, as it is');
     assert.equal(context.manager, 'mia');
@@ -274,8 +274,9 @@ test('a column whose label is a plain name is the table\'s own variable: its out
       <outputEntry id="c"><text>employeeManager</text></outputEntry><outputEntry id="d2"><text>user.userName</text></outputEntry></rule>
   </decisionTable></decision>
 </definitions>`);
+    const instance = { items: [{ seq: 1, type: 'bpmn:StartEvent', elementId: 'S', status: 'end', userName: 'david.kim' }] };
     const context = await decisionContext({ kind: 'assignment', data: { who: 'x', employeeManager: 'from the data' }, user: { userName: 'mia' },
-        instance: { items: [{ seq: 1, type: 'bpmn:StartEvent', elementId: 'S', status: 'end', userName: 'david.kim' }] },
+        instance, names: { actors: actorsOf({ instance }) },
         appServices: { managerOf: id => { calls++; return id === 'david.kim' ? 'sarah.chen' : null; } } });
     const result = await (await new DMNEngine({ listInputs: true }).load(file)).evaluateAsync(context);
     assert.deepEqual(result, { assignee: 'sarah.chen', asking: 'mia' }, 'the column\'s value over a data field; "user" stays the protocol\'s');

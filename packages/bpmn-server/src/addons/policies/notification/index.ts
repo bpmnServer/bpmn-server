@@ -4,9 +4,9 @@
  * hooks (engine/AddOns.ts) and depends on nothing else of ours.
  */
 import path from 'node:path';
-import { DMNEngine } from '../../dmn/DMNEngine.js';
-import { DMNParser } from '../../dmn/DMNParser.js';
-import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile } from '../../engine/AddOns.js';
+import { DMNEngine } from '../../../dmn/DMNEngine.js';
+import { DMNParser } from '../../../dmn/DMNParser.js';
+import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
 import { notifyEvent, notificationPolicyFile, notificationTemplateFile, NOTIFICATION_FOLDER, NOTIFICATION_TEMPLATES, NOTIFICATION_OUTPUTS } from './NotificationPolicy.js';
 
 export * from './NotificationPolicy.js';
@@ -52,23 +52,8 @@ async function checkPolicy(check: IAddOnModelCheck, policy: string, def) {
     }
 }
 
-export const notificationAddOn: IAddOn = {
+const modelCheck: IModelCheck = {
     name: 'notification',
-
-    register(server) {
-        server.listener.subscribe({
-            async onEvent({ type, context, details }) {
-                const item = context?.item;
-                const userTask = item?.node?.type === 'bpmn:UserTask';
-                // it waits for someone, who is decided (the engine's `assigned`, after an assignment policy's `wait`)
-                if (type === 'assigned' && userTask) await notifyEvent(context, 'assigned', item);
-                // completed, not cancelled: who completed it is its actor
-                else if (type === 'end' && userTask && !(details as any)?.cancel) await notifyEvent(context, 'completed', item);
-                else if (type === 'process.end') await notifyEvent(context, 'ended');
-            },
-        });
-    },
-
     async verifyProcess(check, proc, def) {
         const policy = policyOf(def);
         if (policy) await checkPolicy(check, policy, def);
@@ -88,8 +73,28 @@ export const notificationAddOn: IAddOn = {
         for (const node of definition.nodes.values()) add(node.def);
         return files;
     },
-    decisionByName(ref, folder) {
-        const name = /^(.+)\.notification-policy$/.exec(ref)?.[1];
-        return name ? { folder: path.join(folder, NOTIFICATION_FOLDER), name } : null;
+};
+
+export const notificationAddOn: IAddOn = {
+    name: 'notification',
+
+    register(server) {
+        server.listener.subscribe({
+            async onEvent({ type, context, details }) {
+                const item = context?.item;
+                const userTask = item?.node?.type === 'bpmn:UserTask';
+                // who works on it is decided: as it starts, or a person changed it (a claim, a reassignment)
+                if (type === 'assign' && userTask && (!(details as any)?.by || (details as any)?.changed)) await notifyEvent(context, 'assigned', item);
+                // completed, not cancelled: who completed it is its actor
+                else if (type === 'end' && userTask && !(details as any)?.cancel) await notifyEvent(context, 'completed', item);
+                else if (type === 'process.end') await notifyEvent(context, 'ended');
+            },
+        });
+        server.registrations.addModelCheck(modelCheck);
+        server.registrations.addDecisionLookup((ref, folder) => {
+            const name = /^(.+)\.notification-policy$/.exec(ref)?.[1];
+            return name ? { folder: path.join(folder, NOTIFICATION_FOLDER), name } : null;
+        });
     },
+
 };

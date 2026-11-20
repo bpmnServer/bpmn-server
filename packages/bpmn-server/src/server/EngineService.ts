@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import http from 'node:http';
 import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
-import { addOnsOf } from '../engine/AddOns.js';
+import { registrationsOf } from '../engine/AddOns.js';
 import { canEncrypt } from '../connectors/Secrets.js';
 import { Definition } from '../elements/Definition.js';
 import { formFieldLookup, lookupChoices } from '../elements/FormLookup.js';
@@ -21,7 +21,7 @@ import type { BPMNServer } from './BPMNServer.js';
  */
 export async function invokeDecision(server: any, ref: string, data = {}) {
     const definitionsPath = server.configuration.definitionsPath;
-    const own = addOnsOf(server).map(addOn => addOn.decisionByName?.(ref, definitionsPath)).find(Boolean);
+    const own = registrationsOf(server).decisionLookups.map(lookup => lookup(ref, definitionsPath)).find(Boolean);
     const found = await DMNEngine.find(own?.folder ?? definitionsPath, own?.name ?? ref);
     const decision = await new DMNEngine().load(found.filePath, found.decision.id);
     return { decision: found.decision.id, file: path.basename(found.filePath), result: decision.evaluate(data) };

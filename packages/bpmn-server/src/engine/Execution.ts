@@ -1,5 +1,13 @@
 import { v4 as uuid } from '@lukeed/uuid';
 import { ASSIGNMENT_FIELDS } from './AddOns.js';
+
+/** Whether two assignments name the same people: the assignee, and the candidates as lists (text with commas, or one). */
+function sameWho(a: Record<string, any>, b: Record<string, any>): boolean {
+    const list = (v) => (Array.isArray(v) ? v : v == null || v === '' ? [] : String(v).split(',')).map(x => String(x ?? '').trim()).filter(Boolean);
+    return String(a.assignee ?? '') === String(b.assignee ?? '')
+        && JSON.stringify(list(a.candidateUsers)) === JSON.stringify(list(b.candidateUsers))
+        && JSON.stringify(list(a.candidateGroups)) === JSON.stringify(list(b.candidateGroups));
+}
 import { Item } from './Item.js';
 import { Token, TOKEN_TYPE  } from './Token.js';
 import { Loop} from './Loop.js';
@@ -209,16 +217,17 @@ class Execution extends ServerComponent implements IExecution {
                 this.item=i;
             }
         });
-        // who worked on it before: the `assign` event's details, for whoever says what changed (an assignment policy)
         const reassigning = ASSIGNMENT_FIELDS.some(f => f in assignment);
         const before = Object.fromEntries(ASSIGNMENT_FIELDS.map(f => [f, this.item[f]]));
-        Object.keys(assignment).forEach(key => {
-            this.item[key]=assignment[key];
-        });
-
         this.appendData(inputData, this.item, null, assignment);
 
-        await this.item.node.doEvent(this.item, EXECUTION_EVENT.node_assign, null, { before, assignment, userName: this.userName });
+        // what decided who works on it: a person's change is theirs; a claim (taking an unassigned task oneself) keeps
+        // what offered it, and so does the same people again (a form sends every field)
+        const after = { ...before, ...Object.fromEntries(ASSIGNMENT_FIELDS.filter(f => f in assignment).map(f => [f, assignment[f]])) };
+        const claim = !!this.userName && !before.assignee && assignment['assignee'] === this.userName
+            && !ASSIGNMENT_FIELDS.some(f => f !== 'assignee' && f in assignment);
+        const why = reassigning && !claim && !sameWho(before, after) ? { userName: this.userName } : undefined;
+        await this.assignItem(this.item, assignment, why, this.userName ?? 'the system');
 
         await this.item.node.validate(this.item);
         this.info(`Task ${this.item.node.name} -${this.item.node.id} Assigned by ${this.userName} to:${JSON.stringify(assignment)}`
@@ -227,7 +236,22 @@ class Execution extends ServerComponent implements IExecution {
         this.log('Execution('+this.name+').assign: finished!');
     }
     /**
-     * 
+     * Who works on a task, changed: the one step for every change, a person's (assign, a claim) or an add-on's as the
+     * task starts (an assignment policy). Sets the fields given, records what decided it (`item.assignment`, when `why`
+     * is given), and fires `assign`, its details: `before` (who worked on it), `assignment` (the fields given), `why`,
+     * `previous` (what had decided it), `changed` (whether who works on it changed), `by` (the person; none for an
+     * add-on's as the task starts).
+     */
+    public async assignItem(item: Item, changes: Record<string, any>, why?: Record<string, any>, by?: string) {
+        const before = Object.fromEntries(ASSIGNMENT_FIELDS.map(f => [f, item[f]]));
+        const previous = item.assignment;
+        Object.keys(changes).forEach(key => { item[key] = changes[key]; });
+        if (why) item.assignment = why as any;
+        const changed = !sameWho(before, Object.fromEntries(ASSIGNMENT_FIELDS.map(f => [f, item[f]])));
+        await item.node.doEvent(item, EXECUTION_EVENT.node_assign, null, { before, assignment: changes, why, previous, changed, by });
+    }
+    /**
+     *
      * invoke scenarios:
      *      itemId
      *      elementId   - but only one is active

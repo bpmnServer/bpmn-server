@@ -1,9 +1,9 @@
-# The Integration page
+# The Settings page
 
-**Dashboard ▸ Integration** (`/dashboard/integration`) is where administrators and designers set up how the workflows
-meet the application. It opens on an overview: a card for each integration point, saying in a line or two what is in
+**Dashboard ▸ Settings** (`/dashboard/settings`; `/dashboard/integration` before 3.7.5, which still leads here) is
+where administrators and designers set up how the workflows meet the application, and turn the add-ons on and off. It opens on an overview: a card for each integration point, saying in a line or two what is in
 place, what needs setting up (*Site address not set*, *Email is off*), and *restart to apply* when a saved change
-waits for a restart. A card opens its point's page (`/dashboard/integration/<point>`): what is in place, its main
+waits for a restart. A card opens its point's page (`/dashboard/settings/<point>`): what is in place, its main
 settings, and the rest under **More settings**. Saving comes back to that page.
 
 | Point | Shows | Settings (main first) |
@@ -18,6 +18,22 @@ settings, and the rest under **More settings**. Saving comes back to that page.
 
 Each point's page links to where its parts are managed: the connectors, the roles (Administration), the policies (Design),
 the notifications.
+
+## Add-ons
+
+Below the cards, **Add-ons** lists what is built on the engine ([Add-ons](../design/add-ons.md)): each with what it is,
+whether it is on, and the models that use it. An administrator turns one on or off and saves; designers see them.
+
+- **Saved to `app-config.json`**, the application's, beside its `.env` (`appConfig` in the configuration names another):
+  `{ "addOns": ["policies"] }`. Its other settings are kept.
+- **No `app-config.json`, or no `addOns` in it:** every add-on is on, as before 3.7.5.
+- **It applies when the server restarts.** Until then the add-on shows how the server runs, marked *restart to apply*.
+- **A model that uses an add-on that's off** keeps its attributes; the engine ignores them, and the model's checks
+  say so (`add-on-off`).
+
+| Add-on | What it is |
+|---|---|
+| **Policies** | Who works on each task (assignee, candidates, lanes, roles, assignment policies), who may see and do what (security policies), and who is told what (notification policies) |
 
 ## Who changes what
 

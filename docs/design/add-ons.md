@@ -75,7 +75,7 @@ none names an add-on.
 
 | Point | Whose | What an add-on adds | Used today by |
 |---|---|---|---|
-| Events (`listener.subscribe`) | Engine | Work on `wait`, `assigned`, `assign`, `end`, `process.end`, ... | Assignment, notification (done) |
+| Events (`listener.subscribe`) | Engine | Work on `start`, `assign`, `wait`, `end`, `process.end`, ... | Assignment, notification (done) |
 | Model checks | Engine | Checks of an element or process, and the decision files it uses | Assignment, notification, security, lookups |
 | Decision folders | Engine | Its decisions by their tests' name (`Leave.policy`) | The three policies |
 | Query filters | Engine (API) | Narrowing what a user sees: tasks, cases, startable processes | Assignment (`SecureUser`), security (`caseAccess`) |
@@ -88,6 +88,23 @@ none names an add-on.
 
 The engine already has the first two in some form (events; `verifyModel` asks each add-on). The rest are to build.
 A registration point is small: a list the add-on adds to, and the engine or the web runs what's in it.
+
+### Who works on a user task: one engine step
+
+Who works on a task is changed in one engine step, `Execution.assignItem(item, fields, why)`, whoever decides it: it
+sets the fields, records what decided it (`item.assignment`: `{ policy, rule }`, `{ userName }`) and fires `assign`.
+An add-on never sets them itself, so `assign` is the one event for every change.
+
+| Event | When | The policies |
+|---|---|---|
+| `start` | A user task starts, before it waits | Assignment: its attributes, its lane's group, then its policy, set once through `assignItem` |
+| `assign` | Who works on it was set: as it starts, or by a person (a claim, a reassignment). Details: `before`, `assignment`, `why`, `previous`, `changed`, `by` (the person) | Notification: tells whom its policy says (`assigned`). Assignment: a person's change, in the Rationale |
+| `wait` | It waits, who works on it decided | |
+| `end` | An item ended. Details: `cancel` | Notification: a user task completed |
+| `process.end` | An instance ended | Notification |
+
+Deciding on `start` keeps the order the engine always had: a `start` script sees no assignee yet, a `wait` script the
+final one.
 
 ## Turning add-ons on: `app-config.json`
 
@@ -122,7 +139,7 @@ of the starter or to an add-on.
 Everything an add-on is, in one folder:
 
 ```text
-addons/assignment/
+addons/policies/
   engine/     what runs in the engine: its event subscribers, checks, query filters (TypeScript)
   editor/     its bpmn-js module: properties, model types, report section, lint rules
   web/        its routes, views, menu entries, Integration section, columns, guide section
@@ -188,7 +205,7 @@ own tests, run with the engine alone.
 | API | The same calls and data. Task and case lists are narrowed only by the add-ons that are on | `SecureUser`'s filters move to the assignment add-on |
 | Editor | The same, with every add-on on. With one off, its properties aren't there | The modeler loads the modules of the add-ons that are on; `PolicyEntries`, `AssignmentGroups`, the lookups' entries move |
 | Pages | The same, with every add-on on | Menus, the Integration page, the lists' columns and the dashboards take what the add-ons register |
-| Scripts and listeners on `wait` | See the assignment before its policy decides; `assigned` after (already so) | |
+| Scripts and listeners on `start` and `wait` | As before: `start` sees no assignee yet, `wait` the final one | |
 | Imports of moved files | A deep import (`dist/engine/AssignmentPolicy.js`) breaks; the package's entry still exports everything | |
 | Tests | | Each add-on's tests move to its folder; a test of the engine alone; the suites run with all on |
 | Docs | | A page per add-on; the tutorials say which add-ons each chapter needs |

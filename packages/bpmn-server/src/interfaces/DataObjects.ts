@@ -27,7 +27,7 @@ interface IItemData {
     assignee;
     candidateGroups;
     candidateUsers;
-    /** what decided the assignment: the task's policy and its rule, or who reassigned it (addons/assignment/AssignmentPolicy.ts) */
+    /** what decided the assignment: the task's policy and its rule, or who reassigned it (addons/policies/assignment/AssignmentPolicy.ts) */
     assignment?: { policy?: string; rule?: number; userName?: string };
     dueDate;
     followUpDate;

@@ -17,7 +17,7 @@ import { pathToFileURL } from 'node:url';
 
 import { verifyModel } from './elements/verifyModel.js';
 import type { IModelIssue } from './elements/verifyModel.js';
-import { policyAddOns } from './addons/index.js';
+import { enabledAddOns, addOnManifests } from './addons/index.js';
 import { init, INIT_USAGE } from './init.js';
 import { setup } from './setup.js';
 
@@ -55,7 +55,7 @@ async function verify(targets: string[], json: boolean): Promise<number> {
         if (!files.length)
             results.push({ file: target, valid: false, errors: 1, warnings: 0, issues: [{ severity: 'error', code: 'not-found', message: 'no .bpmn files' }] });
         for (const file of files) {
-            const result = await verifyModel(fs.readFileSync(file, 'utf8'), undefined, path.basename(file, '.bpmn'), { decisionsFolder: path.dirname(file), addOns: policyAddOns() });
+            const result = await verifyModel(fs.readFileSync(file, 'utf8'), undefined, path.basename(file, '.bpmn'), { decisionsFolder: path.dirname(file), addOns: enabledAddOns(), manifests: addOnManifests() });
             results.push({ file, ...result });
         }
     }

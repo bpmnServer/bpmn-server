@@ -6,8 +6,8 @@ import { SelectEntry, isSelectEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import { request } from '../testing/common.js';
-import { usePreview } from './LabelGroup.jsx';
+import { request } from '../../testing/common.js';
+import { usePreview } from '../../properties/preview.js';
 
 const ATTRIBUTE = 'owf:assignmentPolicy';
 

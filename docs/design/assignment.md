@@ -68,7 +68,7 @@ preview with the Test tab's data, as labels have: *offered to Director (rule 1)*
 ## Afterwards: a claim, a reassignment
 
 `Execution.assign` (claim, and a reassignment through any API) changes the fields, and says so in the Rationale
-(`reassigned` in `addons/assignment/AssignmentPolicy.ts`):
+(`reassigned` in `addons/policies/assignment/AssignmentPolicy.ts`):
 
 - **A claim**, a person taking an unassigned task as its assignee and changing nothing else, keeps `item.assignment`:
   the policy still explains why it was offered to them. Entry: `is claimed by dora`, why: what it was, and what decided.

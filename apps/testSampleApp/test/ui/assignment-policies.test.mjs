@@ -1,5 +1,5 @@
 // @features: assignment-policies
-// A user task's assignment policy in the model editor (properties/PolicyEntries.jsx): chosen from the policies of
+// A user task's assignment policy in the model editor (addons/policies/PolicyEntries.jsx): chosen from the policies of
 // the models folder, saved as owf:assignmentPolicy, and previewed with the Test tab's scenario.
 //   npm run test:ui
 import test from 'node:test';

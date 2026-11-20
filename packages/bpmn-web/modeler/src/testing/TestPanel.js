@@ -892,7 +892,7 @@ export default class TestPanel {
     }
 
     /**
-     * The data the Label group previews labels with (properties/LabelGroup.jsx): the scenario shown's last run (its
+     * The data the Label group previews labels with (addons/labels/LabelGroup.jsx): the scenario shown's last run (its
      * instance's data and items), else its start data; null when no scenario is shown.
      */
     labelPreview() {

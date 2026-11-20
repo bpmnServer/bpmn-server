@@ -128,7 +128,8 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
         constructor(server) { super(server); embedded = server; }
     }
     const webApp = new WebApp({
-        configuration: webConfiguration(config(), TestDelegate),
+        // which add-ons are on: the test's own app-config.json, beside its .env (none: every one)
+        configuration: webConfiguration({ ...config(), appConfig: path.join(path.dirname(envFile), 'app-config.json') }, TestDelegate),
         elementTemplatesPath: connectorsPath,
         serverOptions: { cron: false },
         // an application's own sign-in (IUserManager): bpmn-web then keeps no users of its own
@@ -155,7 +156,7 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     const base = `http://127.0.0.1:${webApp.server.address().port}`;
 
     const web = {
-        base, webApp, bpmnServer, definitionsPath, dbUrl, embedded, envFile,
+        base, webApp, bpmnServer, definitionsPath, dbUrl, embedded, envFile, appConfigFile: path.join(path.dirname(envFile), 'app-config.json'),
         engineAt: engineProcess?.at, enginePid: engineProcess?.child.pid,
         /** Killed, not asked to stop: what a crash leaves behind. */
         async killEngine() {

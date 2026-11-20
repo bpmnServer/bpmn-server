@@ -3,7 +3,7 @@ import { NODE_ACTION, FLOW_ACTION } from './Enums.js';
 import type { IModelsDatastore, IDataStore } from './datastore.js';
 import type { IExecution, IItem, IScriptHandler } from './engine.js';
 import type { ICacheManager } from './server.js';
-import type { IAddOn } from '../engine/AddOns.js';
+import type { IAddOn, IAddOnManifest } from '../engine/AddOns.js';
 
 
 interface IConfiguration 
@@ -44,6 +44,10 @@ interface IConfiguration
      * notification, security). `() => []`: the engine alone.
      */
     addOns?(server): IAddOn[],
+    /** Every add-on bpmn-server comes with, on or off: their manifests (which attributes each reads). */
+    addOnManifests?(): IAddOnManifest[],
+    /** Where the application's app-config.json is (which add-ons are on); the working folder's by default. */
+    appConfig?: string,
     /** This process's identity as a lock owner (default `SERVER_ID`, else host, process id and a random suffix). */
     serverId?: string,
     locks?: {
@@ -207,7 +211,7 @@ interface IAppDelegate {
     decisionContext?(context: Record<string, any>, about: { kind: 'decision' | 'assignment' | 'security'; name?: string; user: { userName?: string | null; userGroups?: string[] }; instance?: any; task?: string }): Record<string, any> | void | Promise<Record<string, any> | void>;
 
     /**
-     * Optional. Delivers a notification a notification policy decided on (addons/notification/NotificationPolicy.ts,
+     * Optional. Delivers a notification a notification policy decided on (addons/policies/notification/NotificationPolicy.ts,
      * docs/design/notification-policies.md): whom (`to`: user names and groups), `subject`, `message`, `channel`.
      * It is kept in wf_notifications either way; not called for a test run's instance, nor with NOTIFICATIONS=record.
      * A failure is kept with the notification and said in the Rationale; the process goes on.
@@ -224,7 +228,7 @@ interface IAppDelegate {
     verifyModel?(model: { name: string; source: string; definition: any }): IAppModelIssue[] | Promise<IAppModelIssue[]>;
 
     /**
-     * Optional. A case's label, for a model that has no camunda:label of its own (engine/Labels.ts): computed in
+     * Optional. A case's label, for a model that has no camunda:label of its own (addons/labels/Labels.ts): computed in
      * code when it is shown. Undefined: the default, `<model> #<caseId>`.
      */
     instanceLabel?(instance: any): string | undefined | Promise<string | undefined>;

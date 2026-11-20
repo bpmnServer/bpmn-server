@@ -8,6 +8,7 @@ import type { IDefinition } from '../interfaces/elements.js';
 import type { IExecution } from '../interfaces/engine.js';
 import type { IBPMNServer, IEngine } from '../interfaces/server.js';
 import { verifyModel, type IModelVerification } from '../elements/verifyModel.js';
+import { registrationsOf } from '../engine/AddOns.js';
 
 /**
  *  root object to api
@@ -65,6 +66,15 @@ class APIComponent {
     }
     public get server() {
         return this.api.server;
+    }
+    /**
+     * What the add-ons narrow a user's queries by (the Policies add-on: the tasks offered to them). A server that says
+     * nothing of add-ons (no registrations, no configuration's addOns): undefined, so the user's own narrowing applies,
+     * as before; nothing is opened by not knowing.
+     */
+    protected get filters() {
+        const server: any = this.server;
+        return server?.registrations || typeof server?.configuration?.addOns === 'function' ? registrationsOf(server).queryFilters : undefined;
     }
     getUser(user) {
         if (!user) throw new Error('A trusted authenticated principal is required');
@@ -252,13 +262,13 @@ class APIEngine extends APIComponent implements IAPIEngine {
     }
     public async invoke(query, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
-        query = user.qualifyItems(query);
+        query = user.qualifyItems(query, this.filters);
         return await this.server.engine.invoke(query, data, user.userName, options);
     }
 
     public async assign(query, data, assignment, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
-        query = user.qualifyItems(query);
+        query = user.qualifyItems(query, this.filters);
         return await this.server.engine.assign(query, data, assignment, user.userName, options);
     }
     public async throwMessage(messageId, data, messageMatchingKey, user?: ISecureUser, options:IEngineOptions = {}) {
@@ -273,17 +283,17 @@ class APIEngine extends APIComponent implements IAPIEngine {
     }
     public async startEvent(query, elementId, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
-        const instance = await this.server.dataStore.findInstance(user.qualifyInstances({ id: query }), 'summary');
+        const instance = await this.server.dataStore.findInstance(user.qualifyInstances({ id: query }, this.filters), 'summary');
         return await this.server.engine.startEvent(instance.id, elementId, data,user.userName,options);
     }
     /** Runs a failed item's work again (its status `error`), and the instance on from it. */
     public async retry(itemQuery, user?: ISecureUser): Promise<IExecution> {
         user = this.getUser(user);
-        return await this.server.engine.retry(user.qualifyItems({ ...itemQuery }), user.userName);
+        return await this.server.engine.retry(user.qualifyItems({ ...itemQuery }, this.filters), user.userName);
     }
     public async restart(itemQuery, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
         user = this.getUser(user);
-        return await this.server.engine.restart(user.qualifyItems({ ...itemQuery }), data,user.userName, options);
+        return await this.server.engine.restart(user.qualifyItems({ ...itemQuery }, this.filters), data,user.userName, options);
 
     }
     public async upgrade(model,afterNodeIds,user?: ISecureUser) {
@@ -304,25 +314,25 @@ class APIData extends APIComponent {
     /** `lean`: without the instances' data (for lists): see IDataStore.findItems. */
     public async findItems(query, user?: ISecureUser, options?: { lean?: boolean }): Promise<IItemData[]> {
         user=this.getUser(user);
-        query = user.qualifyInstances(query);
+        query = user.qualifyInstances(query, this.filters);
         return await this.server.dataStore.findItems(query, options);
     }
     public async findItem(query, user?: ISecureUser): Promise<IItemData> {
         user=this.getUser(user);
-        query = user.qualifyInstances(query);
+        query = user.qualifyInstances(query, this.filters);
         const items = await this.server.dataStore.findItems(query);
         return items[0];
     }
     public async findInstances(query, user?: ISecureUser, options?): Promise<IInstanceData[]> {
         user=this.getUser(user);
-        query = user.qualifyInstances(query);
+        query = user.qualifyInstances(query, this.filters);
         // The same visibility as findItems (qualifyInstances): an instance the principal may see is
         // returned whole. 3.1.0 stripped data and items for non-admins, which findItems still returned.
         return await this.server.dataStore.findInstances(query, options);
     }
     public async deleteInstances(query, user?: ISecureUser) {
         user=this.getUser(user);
-        query = user.qualifyDeleteInstances(query);
+        query = user.qualifyDeleteInstances(query, this.filters);
         // the engine's to do, under each instance's lock and with its timers, wherever it runs
         return await this.server.engine.deleteInstances(query)
     }
@@ -356,7 +366,7 @@ class APIModelReader extends APIComponent {
         user=this.getUser(user);
         query = { ...(query ?? {}) };
         query['events.subType'] = null;
-        query = user.qualifyStartEvents(query);
+        query = user.qualifyStartEvents(query, this.filters);
         return await this.server.definitions.findEvents(query, user.modelsOwner);
     }
     public async getSource(name, user?: ISecureUser) {

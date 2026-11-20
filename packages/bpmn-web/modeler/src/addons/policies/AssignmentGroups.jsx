@@ -2,7 +2,7 @@
 // Events.ts): a value starting with $ is an expression, # runs JavaScript, a comma-separated value is a list.
 import { Group } from '@bpmn-io/properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
-import { attributeEntry } from './AttributeEntry.jsx';
+import { attributeEntry } from '../../properties/AttributeEntry.jsx';
 import { policyEntries, kindPolicyEntries } from './PolicyEntries.jsx';
 
 const VALUE_HELP = 'A name, a comma-separated list, or an expression such as $data.manager';

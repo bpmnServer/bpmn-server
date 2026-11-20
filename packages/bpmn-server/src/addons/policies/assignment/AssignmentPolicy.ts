@@ -10,11 +10,11 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { DMNEngine } from '../../dmn/DMNEngine.js';
-import { expressionScript, isExpression } from '../../engine/Expressions.js';
-import { label } from '../../elements/Flow.js';
-import { runningDecisionContext } from '../../engine/DecisionContext.js';
-import { ASSIGNMENT_FIELDS } from '../../engine/AddOns.js';
+import { DMNEngine } from '../../../dmn/DMNEngine.js';
+import { expressionScript, isExpression } from '../../../engine/Expressions.js';
+import { label } from '../../../elements/Flow.js';
+import { runningDecisionContext } from '../../../engine/DecisionContext.js';
+import { ASSIGNMENT_FIELDS } from '../../../engine/AddOns.js';
 
 /** What a policy's rule sets: the engine's assignment fields. */
 export const POLICY_FIELDS = ASSIGNMENT_FIELDS;
@@ -80,10 +80,11 @@ export async function evaluatePolicy(file: string, context: Record<string, any>,
 }
 
 /**
- * Evaluates the task's policy and sets its assignment: what the matching rule's outputs give, each field it sets
- * replacing the model's. Writes a Rationale entry either way; never throws.
+ * Evaluates the task's policy: what the matching rule's outputs give (each field it sets to replace the model's), and
+ * what decided it; null when it assigns nothing. Writes a Rationale entry either way; never throws. The caller sets
+ * them (Execution.assignItem).
  */
-export async function applyPolicy(node, item, policy: string): Promise<void> {
+export async function applyPolicy(node, item, policy: string): Promise<{ set: Record<string, any>; why: IItemAssignment } | null> {
     const token = item.token;
     const element = `user task ${label(node)}`;
     const decide = (action: string, why: string[]) => token.decision({ seq: item.seq, element, action, why });
@@ -113,13 +114,13 @@ export async function applyPolicy(node, item, policy: string): Promise<void> {
         if (!Object.entries(set).some(([, value]) => Array.isArray(value) ? value.length : value))
             return unassigned([`rule ${rule} matched, and gave no one`]);
 
-        Object.assign(item, set);
-        item.assignment = { policy, rule } as IItemAssignment;
         token.log(`..assignment policy ${policy}, rule ${rule}: ${JSON.stringify(set)}`);
         decide(`is ${whom(set)}`, [`policy ${policy}, rule ${rule}`]);
+        return { set, why: { policy, rule } };
     }
     catch (exc) {
         unassigned([`the policy failed: ${exc?.message ?? exc}`]);
+        return null;
     }
 }
 
@@ -133,24 +134,22 @@ function whom(fields: { assignee?: any; candidateUsers?: any; candidateGroups?: 
 }
 
 /**
- * A person changed a waiting task's assignee or candidates (Execution.assign), and the Rationale says what it was and
- * what it is now. `before`: its fields beforehand; `changed`: the assignment's fields given.
- *
- * Taking an unassigned task oneself (a claim: only `assignee`, one's own name) keeps what decided it was offered to
- * them; any other change is that person's, in place of the policy that decided before.
+ * A person changed a waiting task's assignee or candidates (Execution.assign, its `assign` event), and the Rationale
+ * says what it was and what it is now. `before`: its fields beforehand; `changed`: the assignment's fields given;
+ * `previous`: what had decided it. A claim (taking an unassigned task oneself) keeps what offered it to them; any other
+ * change is that person's (the engine records it).
  */
-export function reassigned(execution, item, before: Record<string, any>, changed: Record<string, any>, userName: string): void {
+export function reassigned(execution, item, before: Record<string, any>, changed: Record<string, any>, userName: string, previous?: IItemAssignment): void {
     const now = Object.fromEntries(POLICY_FIELDS.map(f => [f, item[f]]));
     // the same people as before (a form sends every field): nothing to say, and what decided it stays
     if (whom(now) === whom(before)) return;
-    const earlier = item.assignment?.policy ? `policy ${item.assignment.policy}, rule ${item.assignment.rule}` : item.assignment?.userName;
+    const earlier = previous?.policy ? `policy ${previous.policy}, rule ${previous.rule}` : previous?.userName;
     const was = `it was ${whom(before)}${earlier ? ` (${earlier})` : ''}`;
     const element = `user task ${label(item.node)}`;
     const claim = userName && !before.assignee && changed.assignee === userName
         && !POLICY_FIELDS.some(f => f !== 'assignee' && f in changed);
     if (claim)
         return execution.decision({ seq: item.seq, element, action: `is claimed by ${userName}`, why: [was] });
-    item.assignment = { userName } as IItemAssignment;
     execution.decision({ seq: item.seq, element, action: `is reassigned by ${userName ?? 'the system'}: ${whom(now)}`, why: [was] });
 }
 
@@ -167,7 +166,7 @@ export async function roleUses(definitionsPath: string): Promise<Map<string, str
         for (const m of source.matchAll(/<(?:\w+:)?lane\b[^>]*?\bname="([^"]*)"/g))
             add(m[1].trim(), `${file.replace(/\.bpmn$/i, '')}: lane`);
     }
-    const { DMNParser } = await import('../../dmn/DMNParser.js');
+    const { DMNParser } = await import('../../../dmn/DMNParser.js');
     for (const policy of policyNames(definitionsPath)) {
         try {
             const definitions = await DMNParser.loadFile(path.join(definitionsPath, POLICIES_FOLDER, `${policy}.dmn.xml`));

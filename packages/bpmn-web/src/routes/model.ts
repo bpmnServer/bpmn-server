@@ -11,7 +11,7 @@ import path from 'node:path';
 import { layoutModel } from './layout.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
-import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS, SecurityPolicy, SECURITY_FOLDER, decisionContext, NOTIFICATION_FOLDER, notificationPolicyNames } from '../index.js';
+import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS, SecurityPolicy, SECURITY_FOLDER, decisionContext, actorsOf, NOTIFICATION_FOLDER, notificationPolicyNames } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
@@ -607,7 +607,7 @@ export class Model extends Common {
             const data = request.body?.data;
             try {
                 // what the task's policy reads: the one decision context (engine/DecisionContext.ts), of this data
-                const context = await decisionContext({ kind: 'assignment', name, data: data && typeof data === 'object' ? data : {}, appDelegate: bpmnServer.appDelegate });
+                const context = await decisionContext({ kind: 'assignment', name, data: data && typeof data === 'object' ? data : {}, names: { actors: actorsOf({}) }, appDelegate: bpmnServer.appDelegate });
                 const { rule, outputs } = await evaluatePolicy(policyPath(name), context);
                 const fields = outputs ? Object.fromEntries(POLICY_FIELDS.filter(f => outputs[f] != null && outputs[f] !== '')
                     .map(f => [f, outputs[f]])) : null;

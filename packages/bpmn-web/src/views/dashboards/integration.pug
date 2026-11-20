@@ -171,7 +171,7 @@ mixin settingsTable(list)
 
 block intro
   if point
-    p: a(href='/dashboard/integration') ← Integration
+    p: a(href='/dashboard/settings') ← Settings
     p.dash-intro= point.about
   else
     p.dash-intro How the workflows meet the application. Each area says what is in place; open one to set it up.
@@ -198,7 +198,7 @@ block dash
             +api(point.info)
         if point.settings.length
           - const main = point.settings.filter(s => s.main), more = point.settings.filter(s => !s.main)
-          form(method='post', action='/dashboard/integration/' + point.id)
+          form(method='post', action='/dashboard/settings/' + point.id)
             input(type='hidden', name='_csrf', value=_csrf)
             if main.length
               h3 Settings
@@ -214,14 +214,14 @@ block dash
     nav.integration-points
       each p, i in points
         if p.id !== point.id
-          a(href='/dashboard/integration/' + p.id)= p.title
+          a(href='/dashboard/settings/' + p.id)= p.title
           if i < points.length - 1
             | &nbsp;·&nbsp;
   else
     //- the overview: each point in a few words
     .integration-overview
       each p in points
-        a.integration-card(href='/dashboard/integration/' + p.id, id=p.id)
+        a.integration-card(href='/dashboard/settings/' + p.id, id=p.id)
           h2= p.title
           each line in p.summary.lines
             p= line
@@ -230,6 +230,34 @@ block dash
           if p.pending
             span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply
           span.integration-open Set up →
+    //- the add-ons: each on or off (app-config.json), what it is, the models using it
+    section.dash-card.wide#add-ons
+      h2 Add-ons
+      p.dash-muted What is built on the engine, each turned on when it's needed. Saved to #[code= appConfigFile]; a change applies when the server restarts.
+      if addOns.length && addOns[0].problem
+        p.integration-attention= addOns[0].problem
+      form(method='post', action='/dashboard/settings/add-ons')
+        input(type='hidden', name='_csrf', value=_csrf)
+        table.integration-settings
+          each a in addOns
+            tr(data-addon=a.name)
+              td
+                label
+                  input(type='checkbox', name='addon:' + a.name, checked=a.saved, disabled=!isAdmin)
+                  |  #[strong= a.title]
+              td
+                span.dash-badge(class=a.on ? 'is-success' : '')= a.on ? 'on' : 'off'
+                if a.pending
+                  |  #[span.dash-badge.is-warning restart to apply]
+              td
+                if a.description
+                  p= a.description
+                if a.models.length
+                  p.dash-muted Used by #{a.models.join(', ')}#{a.on ? '' : ': the engine ignores it while it is off'}.
+        if isAdmin
+          p
+            button.btn.btn-primary.btn-sm(type='submit') Save
+            span.dash-muted  Applies when the server restarts.
     if isAdmin
       section.dash-card.wide#restart
         h2 Restart

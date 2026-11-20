@@ -4,7 +4,7 @@
  *   /dashboard/design   designers: models and their problems, tests, decisions, templates
  *   /dashboard/admin    administrators: the server, users, operations (locks, hung items), backup, restart
  *   /dashboard/catalog  designers: browse the model catalog (CATALOG_URL) and import its models
- *   /dashboard/integration  administrators and designers: how the workflows meet the application, and its settings
+ *   /dashboard/settings     administrators and designers: the settings, how the workflows meet the application, the add-ons
  */
 import express from 'express';
 import FS from 'node:fs';
@@ -35,6 +35,8 @@ import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
 import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf } from './integration.js';
+import { addOnsOf, readAppConfig, APP_CONFIG_FILE } from '../index.js';
+import type { IAddOnManifest } from '../index.js';
 
 const handler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
@@ -150,7 +152,7 @@ export class Dashboards extends Common {
                 (task.assignee === me ? mine : task.assignee ? [] : available).push(task);
             }
             const completed = done.map(task => ({ ...task, fromNow: dateDiff(task.endedAt) }));
-            // what each task is for: its label and its case's (engine/Labels.ts)
+            // what each task is for: its label and its case's (addons/labels/Labels.ts)
             await labelItems(server, [...mine, ...available, ...completed]);
             // the column picker offers the models of the waiting tasks, their label values and form fields
             await withChoices(server, listView, [...mine, ...available].map(t => t.processName));
@@ -667,29 +669,63 @@ export class Dashboards extends Common {
                 notifications: { byStatus, total: notifications.length, notify: methods.includes('notify') },
                 api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
             };
-            return INTEGRATION_POINTS.map(p => {
+            // an add-on's cards only when it is on: Roles and policies, Notifications are the Policies add-on's
+            const policiesOn = addOnsRunning.includes('policies');
+            return INTEGRATION_POINTS.filter(p => policiesOn || !['policies', 'notifications'].includes(p.id)).map(p => {
                 const settings = settingsOf(p, viewer, this.envFile(), appHostSettings());
                 return { ...p, settings, info: info[p.id] ?? {}, summary: summaryOf(p.id, info[p.id] ?? {}, settings), pending: settings.filter(s => s.pending).length };
             });
         };
-        const integrationPage = (req, res, points, point?) => render(req, res, 'integration', {
-            title: point ? `Integration: ${point.title}` : 'Integration',
-            points, point,
+        // ---- the add-ons (engine/AddOns.ts): each with its manifest, on or off as app-config.json says; the models using it
+        const appConfigFile = () => path.resolve(server.configuration?.appConfig ?? APP_CONFIG_FILE);
+        const addOnsRunning = addOnsOf(server).map(a => a.name);       // as the server started: a change applies when it restarts
+        const addOnsOf_ = () => {
+            const manifests: IAddOnManifest[] = server.configuration?.addOnManifests?.() ?? [];
+            let config = null, problem = null;
+            try { config = readAppConfig(appConfigFile()); } catch (exc) { problem = exc.message; }
+            const dir = folder();
+            const models = (() => { try { return FS.readdirSync(dir).filter(f => f.endsWith('.bpmn')); } catch { return []; } })();
+            return manifests.map(m => {
+                const saved = config?.addOns ? config.addOns.includes(m.name) : true;
+                const uses = models.filter(file => {
+                    const xml = FS.readFileSync(path.join(dir, file), 'utf8');
+                    return m.attributes.some(attr => xml.includes(` ${attr}=`) || xml.includes(` ${attr.replace(/^owf:/, 'camunda:')}=`));
+                }).map(f => f.slice(0, -'.bpmn'.length));
+                return { ...m, on: addOnsRunning.includes(m.name), saved, pending: saved !== addOnsRunning.includes(m.name), models: uses };
+            }).map(a => ({ ...a, problem }));
+        };
+        const settingsPage = (req, res, points, point?) => render(req, res, 'integration', {
+            title: point ? `Settings: ${point.title}` : 'Settings',
+            points, point, addOns: point ? [] : addOnsOf_(), appConfigFile: appConfigFile(),
             envFile: this.envFile().file, supervisor: supervisor(), separateEngine: !!process.env.ENGINE_AT,
             message: req.query.message,
         });
-        // the overview: each point, what it has in a few words; and one point's page, its settings
-        router.get('/integration', mayIntegrate, handler(async (req, res) => integrationPage(req, res, await integrationPoints(req))));
-        router.get('/integration/:point', mayIntegrate, handler(async (req, res) => {
+        // what was /dashboard/integration before 3.7.5
+        router.get(['/integration', '/integration/:point'], (req, res) => res.redirect(301, '/dashboard/settings' + (req.params.point ? '/' + req.params.point : '')));
+        // the overview: each point, what it has in a few words, and the add-ons; and one point's page, its settings
+        router.get('/settings', mayIntegrate, handler(async (req, res) => settingsPage(req, res, await integrationPoints(req))));
+        // an administrator turns add-ons on and off: app-config.json, read when the server restarts
+        router.post('/settings/add-ons', mayIntegrate, handler(async (req, res) => {
+            const back = (message: string) => res.redirect('/dashboard/settings?message=' + encodeURIComponent(message) + '#add-ons');
+            if (!integrationViewer(req).isAdmin) return back('Nothing saved. Only an administrator turns add-ons on and off.');
+            const known = (server.configuration?.addOnManifests?.() ?? []).map(m => m.name);
+            const on = known.filter(name => req.body?.[`addon:${name}`] === 'on');
+            const file = appConfigFile();
+            let config = {};
+            try { config = readAppConfig(file) ?? {}; } catch (exc) { return back(`Nothing saved. ${exc.message}`); }
+            FS.writeFileSync(file, JSON.stringify({ ...config, addOns: on }, null, 2) + '\n');
+            back(`Saved to ${APP_CONFIG_FILE}: ${on.length ? on.join(', ') : 'no add-ons'} on. It applies when the server restarts.`);
+        }));
+        router.get('/settings/:point', mayIntegrate, handler(async (req, res) => {
             const points = await integrationPoints(req);
             const point = points.find(p => p.id === req.params.point);
-            if (!point) return res.status(404).send('No such integration point');
-            integrationPage(req, res, points, point);
+            if (!point) return res.status(404).send('No such settings page');
+            settingsPage(req, res, points, point);
         }));
-        router.post('/integration/:point', mayIntegrate, handler(async (req, res) => {
+        router.post(['/integration/:point', '/settings/:point'], mayIntegrate, handler(async (req, res) => {
             const point = INTEGRATION_POINTS.find(p => p.id === req.params.point);
-            if (!point) return res.status(404).send('No such integration point');
-            const back = (message: string) => res.redirect(`/dashboard/integration/${point.id}?message=` + encodeURIComponent(message));
+            if (!point) return res.status(404).send('No such settings page');
+            const back = (message: string) => res.redirect(`/dashboard/settings/${point.id}?message=` + encodeURIComponent(message));
             const { changes, problems } = changesFrom(point, req.body ?? {}, integrationViewer(req), this.envFile(), appHostSettings());
             if (problems.length) return back('Nothing saved. ' + problems.join('; ') + '.');
             const names = Object.keys(changes);

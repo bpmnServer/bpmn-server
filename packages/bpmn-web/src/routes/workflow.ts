@@ -510,7 +510,7 @@ async function display(req,res, title, output, logs = [], items = []) {
     // the column pickers offer the models in each list, their label values and form fields
     await withChoices(serverOf(req), instanceView, instances.map(i => i.name));
     await withChoices(serverOf(req), taskView, waiting.map(t => t.processName));
-    // what each task is for: its label and its case's (engine/Labels.ts), as My work has them
+    // what each task is for: its label and its case's (addons/labels/Labels.ts), as My work has them
     await labelItems(serverOf(req), waiting);
 
     waiting.forEach(item => {

@@ -10,10 +10,11 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { DMNEngine } from '../../dmn/DMNEngine.js';
-import { runningDecisionContext, decisionContext, actorElements } from '../../engine/DecisionContext.js';
-import { expressionScript, evaluateTemplate, templateParts, isExpression } from '../../engine/Expressions.js';
-import { owfAttribute } from '../../elements/owfAttributes.js';
+import { DMNEngine } from '../../../dmn/DMNEngine.js';
+import { runningDecisionContext, decisionContext } from '../../../engine/DecisionContext.js';
+import { actorsOf, actorElements } from '../actors.js';
+import { expressionScript, evaluateTemplate, templateParts, isExpression } from '../../../engine/Expressions.js';
+import { owfAttribute } from '../../../elements/owfAttributes.js';
 
 export const NOTIFICATION_FOLDER = 'policies/notification';
 export const NOTIFICATION_TEMPLATES = 'policies/notification/templates';
@@ -118,7 +119,8 @@ async function askPolicy(execution, folder: string, name: string, event: Notific
         const context = item
             ? await runningDecisionContext(item, { kind: 'notification', name, task: item.elementId })
             : await decisionContext({ kind: 'notification', name, data: execution.instance?.data, instance: execution.instance,
-                items: execution.getItems?.(), elements: actorElements(execution.definition), user: { userName: execution.userName ?? null },
+                names: { actors: actorsOf({ instance: execution.instance, items: execution.getItems?.() ?? execution.instance?.items ?? [], elements: actorElements(execution.definition) }) },
+                user: { userName: execution.userName ?? null },
                 appServices: execution.servicesProvider, appDelegate: execution.appDelegate });
         context.event = event;
         const dmn = await new DMNEngine({ listInputs: true, keepOutput: isExpression }).load(file);

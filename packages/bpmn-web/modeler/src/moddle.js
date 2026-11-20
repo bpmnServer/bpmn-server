@@ -18,7 +18,7 @@ export const owf = {
     associations: [],
     types: [
         {
-            // the labels (engine/Labels.ts): a template, with its values named
+            // the labels (addons/labels/Labels.ts): a template, with its values named
             name: 'Labeled',
             isAbstract: true,
             extends: ['bpmn:Process', 'bpmn:FlowNode'],
@@ -28,7 +28,7 @@ export const owf = {
             ]
         },
         {
-            // a user task's assignment policy (addons/assignment/AssignmentPolicy.ts)
+            // a user task's assignment policy (addons/policies/assignment/AssignmentPolicy.ts)
             name: 'AssignmentPolicy',
             isAbstract: true,
             extends: ['bpmn:UserTask'],
@@ -43,14 +43,14 @@ export const owf = {
             properties: [{ name: 'actor', isAttr: true, type: 'String' }]
         },
         {
-            // a process's or a task's security policy (addons/security/SecurityPolicy.ts)
+            // a process's or a task's security policy (addons/policies/security/SecurityPolicy.ts)
             name: 'SecurityPolicy',
             isAbstract: true,
             extends: ['bpmn:Process', 'bpmn:UserTask', 'bpmn:StartEvent'],
             properties: [{ name: 'securityPolicy', isAttr: true, type: 'String' }]
         },
         {
-            // a process's or a user task's notification policy (addons/notification/NotificationPolicy.ts)
+            // a process's or a user task's notification policy (addons/policies/notification/NotificationPolicy.ts)
             name: 'NotificationPolicy',
             isAbstract: true,
             extends: ['bpmn:Process', 'bpmn:UserTask'],

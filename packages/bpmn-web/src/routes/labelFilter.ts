@@ -1,6 +1,6 @@
 /**
  * The lists' filter by label (docs/design/labels.md): read from the request's query (?model=&field=&op=&value=&search=),
- * turned into a query on the cases' data paths (engine/Labels.ts labelQuery), and the filter bar's choices: the
+ * turned into a query on the cases' data paths (addons/labels/Labels.ts labelQuery), and the filter bar's choices: the
  * models, and the values their case labels show (views/includes/labelFilter.pug).
  *
  * A page with two lists gives each its own: `prefix` names this filter's parameters (task_field=...), and `other` the

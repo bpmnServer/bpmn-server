@@ -1,6 +1,6 @@
 # Notification policies
 
-**Status:** built on `3.7.1` (`addons/notification/NotificationPolicy.ts`), a first slice. How to use them, with the HR demo's
+**Status:** built on `3.7.1` (`addons/policies/notification/NotificationPolicy.ts`), a first slice. How to use them, with the HR demo's
 `LeaveNotices`: [docs/docs/notification-policies.md](../docs/notification-policies.md).
 
 The third policy, beside [assignment](assignment.md) and [security](security-policies.md): who is told what, and when.

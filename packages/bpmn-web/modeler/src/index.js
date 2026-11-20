@@ -19,6 +19,8 @@ import { ElementTemplatesPropertiesProviderModule } from 'bpmn-js-element-templa
 import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
 import { moddleExtensions, upgradeToOwf } from './moddle.js';
 import BpmnServerPropertiesModule from './properties/index.js';
+import PoliciesModule from './addons/policies/index.js';
+import LabelsModule from './addons/labels/index.js';
 import ProblemsModule from './problems/index.js';
 import ReportModule from './report/index.js';
 import TestModule from './testing/index.js';
@@ -37,6 +39,9 @@ const status = document.getElementById('js-save-status');
 /** What the page says the editor offers (views/modeler.pug): element templates only with ELEMENT_TEMPLATES=on. */
 const options = (() => { try { return JSON.parse(document.getElementById('modeler-options')?.textContent || '{}'); } catch { return {}; } })();
 const templateModules = options.elementTemplates ? [ElementTemplatesPropertiesProviderModule, ElementTemplateChooserModule] : [];
+// the add-ons that are on bring their parts of the editor (docs/design/add-ons.md); one that is off brings none
+const addOnOn = name => (options.addOns ?? ['policies', 'labels']).includes(name);
+const addOnModules = [...(addOnOn('policies') ? [PoliciesModule] : []), ...(addOnOn('labels') ? [LabelsModule] : [])];
 
 const modeler = new BpmnModeler({
     container: canvasElement,
@@ -48,6 +53,7 @@ const modeler = new BpmnModeler({
         CamundaBehaviorsModule,
         ...templateModules,
         BpmnServerPropertiesModule,
+        ...addOnModules,
         ProblemsModule,
         ReportModule,
         TestModule,
@@ -57,7 +63,7 @@ const modeler = new BpmnModeler({
         HistoryModule,
         { __init__: ['elementBehaviour'], elementBehaviour: ['type', ElementBehaviour] }
     ],
-    report: { container: '#js-report', processName },
+    report: { container: '#js-report', processName, addOnsOff: options.addOns ? (options.manifests ?? []).filter(m => !options.addOns.includes(m.name)) : [] },
     history: { container: '#js-history', processName },
     // what the selected element does, above the properties panel
     elementBehaviour: { parent: '#js-properties-panel' },

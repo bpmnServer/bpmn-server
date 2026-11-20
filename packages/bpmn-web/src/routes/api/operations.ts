@@ -1,4 +1,4 @@
-import { BPMNAdminAPI, SecureUser } from '../../index.js';
+import { BPMNAdminAPI, SecureUser, registrationsOf } from '../../index.js';
 import { ViewHelper } from '../ViewHelper.js';
 import { CaseAccess } from '../caseAccess.js';
 import { invokeDecision } from '../decisions.js';
@@ -82,7 +82,7 @@ export class Operations {
     }
     /** An instance, through the engine (its live copy if this server runs it). */
     get(user: SecureUser, query) {
-        return this.server.engine.get(user.qualifyInstances(query ?? {}));
+        return this.server.engine.get(user.qualifyInstances(query ?? {}, registrationsOf(this.server).queryFilters));
     }
     throwMessage(user: SecureUser, messageId: string, data, messageMatchingKey = {}, options = {}) {
         return this.api.engine.throwMessage(messageId, data, messageMatchingKey, user, options);

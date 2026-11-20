@@ -5,9 +5,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { verifyModel, policyAddOns, Configuration } from '../dist/index.js';
+import { verifyModel, policyAddOns, Configuration, enabledAddOns, addOnManifests } from '../dist/index.js';
 import { makeServer, definitionsFolder } from './helpers.mjs';
 
 const SRC = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src');
@@ -79,13 +80,24 @@ function folder() {
 const notifications = (srv) => srv.documentStore.find('bpmn_test', 'wf_notifications', {});
 
 test('by default a server has the policies: the task is assigned by its policy, and the notifications are kept', async () => {
-    assert.deepEqual(new Configuration({}).addOns().map(a => a.name), ['assignment', 'notification', 'security']);
+    assert.deepEqual(new Configuration({}).addOns().map(a => a.name), ['policies', 'labels']);
     const { server } = await makeServer({ dir: folder() });
-    assert.deepEqual(server.addOns.map(a => a.name), ['assignment', 'notification', 'security']);
+    assert.deepEqual(server.addOns.map(a => a.name), ['policies', 'labels']);
     const { id } = await server.engine.start('Request', { amount: 1 }, null, 'ann');
     const [instance] = await server.dataStore.findInstances({ id }, 'full');
     assert.equal(instance.items.find(i => i.elementId === 'Approve').assignee, 'boss');
-    assert.deepEqual((await notifications(server)).map(n => n.event), ['assigned'], 'after the policy: on the engine\'s assigned');
+    assert.deepEqual((await notifications(server)).map(n => n.event), ['assigned'], 'once, as the task starts, after its policy: on the engine\'s assign');
+    // a person reassigns it: through the same step, so told again; what decided it is theirs now
+    const task = instance.items.find(i => i.elementId === 'Approve');
+    await server.engine.assign({ 'items.id': task.id }, {}, { assignee: 'bob' }, 'ann');
+    let [after] = await server.dataStore.findInstances({ id }, 'full');
+    assert.deepEqual(after.items.find(i => i.elementId === 'Approve').assignment, { userName: 'ann' });
+    assert.deepEqual((await notifications(server)).map(n => n.event), ['assigned', 'assigned'], 'the new assignee is told');
+    // the same people again (a form sends every field): no one told, and what decided it stays
+    await server.engine.assign({ 'items.id': task.id }, {}, { assignee: 'bob' }, 'carl');
+    [after] = await server.dataStore.findInstances({ id }, 'full');
+    assert.deepEqual(after.items.find(i => i.elementId === 'Approve').assignment, { userName: 'ann' });
+    assert.equal((await notifications(server)).length, 2);
     await server.shutdown();
 });
 
@@ -107,34 +119,34 @@ test('the engine alone (addOns: () => []): the policies the model names are not 
     await server.shutdown();
 });
 
-test('an application\'s own add-on registers for the engine\'s events: it may assign on wait; one that throws fails nothing', async () => {
+test('an application\'s own add-on registers for the engine\'s events: it assigns through the engine as a task starts; one that throws fails nothing', async () => {
     const heard = [];
     const mine = {
         name: 'mine',
         register(server) {
             server.listener.subscribe({
-                onEvent({ type, context, details }) {
+                async onEvent({ type, context, details }) {
                     const item = context.item;
-                    if (type === 'wait' && item?.elementId === 'Approve') item.assignee = 'mine';
-                    if (['wait', 'assigned', 'assign', 'end'].includes(type) && item?.elementId === 'Approve')
-                        heard.push(type === 'assign' ? `assign ${details.before.assignee}>${item.assignee} by ${details.userName}` : `${type} ${item.assignee}`);
+                    if (type === 'start' && item?.elementId === 'Approve') await context.assignItem(item, { assignee: 'mine' });
+                    if (['wait', 'assign', 'end'].includes(type) && item?.elementId === 'Approve')
+                        heard.push(type === 'assign' ? `assign ${details.before.assignee ?? '-'}>${item.assignee} by ${details.by ?? 'the task'}` : `${type} ${item.assignee}`);
                     if (type === 'process.end') heard.push('process.end');
                 },
             });
+            server.registrations.addModelCheck({ name: 'mine', verifyNode(check, node, def) { if (node.id === 'Approve') check.add('warning', 'mine', 'Mine', def); } });
         },
-        verifyNode(check, node, def) { if (node.id === 'Approve') check.add('warning', 'mine', 'Mine', def); },
     };
     const broken = { name: 'broken', register(server) { server.listener.subscribe({ onEvent() { throw new Error('broken'); } }); } };
     const { server } = await makeServer({ dir: folder(), extra: { addOns: () => [broken, mine] } });
     const { id } = await server.engine.start('Request', { amount: 1 }, null, 'ann');
     let [instance] = await server.dataStore.findInstances({ id }, 'full');
     const task = instance.items.find(i => i.elementId === 'Approve');
-    assert.equal(task.assignee, 'mine', 'decided on wait, saved');
+    assert.equal(task.assignee, 'mine', 'decided as it starts, saved');
     await server.engine.assign({ 'items.id': task.id }, {}, { assignee: 'bob' }, 'ann');
     await server.engine.invoke({ 'items.id': task.id }, {}, 'bob');
     [instance] = await server.dataStore.findInstances({ id }, 'full');
     assert.equal(instance.status, 'end');
-    assert.deepEqual(heard, ['wait mine', 'assigned mine', 'assign mine>bob by ann', 'end bob', 'process.end']);
+    assert.deepEqual(heard, ['assign ->mine by the task', 'wait mine', 'assign mine>bob by ann', 'end bob', 'process.end']);
     const issues = (await verifyModel(MODEL, server, 'Request')).issues;
     assert.ok(issues.some(i => i.code === 'mine' && i.elementId === 'Approve'));
     assert.ok(!issues.some(i => /policy/.test(i.code)), 'the policies are not this server\'s');
@@ -158,4 +170,53 @@ test('what the package exported before the policies moved is still exported, fro
         'notificationsOf', 'notifyEvent', 'policyFile', 'policyNames', 'reassigned', 'roleNameProblem', 'roleNames', 'roleUses',
         'saveRoleNames', 'seeConditionsOfTable'];
     assert.deepEqual(before.filter(name => entry[name] === undefined), []);
+});
+
+test('app-config.json says which add-ons are on: none named, none on; no file, or no addOns, every one', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-app-config-'));
+    const file = path.join(dir, 'app-config.json');
+    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['policies', 'labels'], 'no file: every one, as before');
+    fs.writeFileSync(file, JSON.stringify({ addOns: [] }));
+    assert.deepEqual(enabledAddOns(file), []);
+    const warned = [];
+    fs.writeFileSync(file, JSON.stringify({ addOns: ['policies', 'nonsense'] }));
+    assert.deepEqual(enabledAddOns(file, m => warned.push(m)).map(a => a.name), ['policies']);
+    assert.match(warned[0], /'nonsense', which is not an add-on/);
+    fs.writeFileSync(file, JSON.stringify({ other: 1 }));
+    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['policies', 'labels'], 'no addOns: every one');
+    fs.writeFileSync(file, JSON.stringify({ addOns: 'policies' }));
+    assert.throws(() => enabledAddOns(file), /addOns is a list/);
+    assert.deepEqual(new Configuration({ appConfig: path.join(dir, 'none.json') }).addOns().map(a => a.name), ['policies', 'labels']);
+});
+
+test('a model that uses an add-on that is off: one warning, naming where; its attributes ignored', async () => {
+    const manifests = addOnManifests();
+    assert.ok(manifests.find(m => m.name === 'policies').attributes.includes('owf:assignmentPolicy'));
+    const off = (await verifyModel(MODEL, undefined, 'Request', { addOns: [], manifests })).issues.filter(i => i.code === 'add-on-off');
+    assert.equal(off.length, 1);
+    assert.match(off[0].message, /uses Policies \(notificationPolicy on Request, assignmentPolicy on Approve\), which is off/);
+    assert.equal(off[0].severity, 'warning');
+    const on = await verifyModel(MODEL, undefined, 'Request', { addOns: policyAddOns(), manifests });
+    assert.ok(!on.issues.some(i => i.code === 'add-on-off'));
+});
+
+test('Labels off: a case is shown by its default, a task by its name; its checks and columns are not asked', async () => {
+    const { labelInstances, labelFields } = await import('../dist/index.js');
+    const LABELLED = MODEL.replace('<bpmn:process id="Request"', '<bpmn:process id="Request" owf:label="Amount: ${data.amount}"');
+    const dir = folder();
+    fs.writeFileSync(path.join(dir, 'Request.bpmn'), LABELLED);
+    const without = await makeServer({ dir, extra: { addOns: () => policyAddOns() } });
+    const { id } = await without.server.engine.start('Request', { amount: 7, caseId: 12 }, null, 'ann');
+    let [instance] = await labelInstances(without.server, await without.server.dataStore.findInstances({ id }, 'full'));
+    assert.equal(instance.label, 'Request #12', 'its default, not its template');
+    assert.deepEqual(await labelFields(without.server, ['Request']), [{ name: 'caseId', model: 'Request', path: 'data.caseId' }]);
+    const off = (await verifyModel(LABELLED.replace('${data.amount}', '${data.amount + 1}'), without.server, 'Request')).issues;
+    assert.ok(!off.some(i => i.code === 'label-template'), 'its checks are not asked');
+    assert.ok(off.some(i => i.code === 'add-on-off' && /Labels \(label on Request\)/.test(i.message)));
+    await without.server.shutdown();
+    const withLabels = await makeServer({ dir });
+    const started = await withLabels.server.engine.start('Request', { amount: 7, caseId: 12 }, null, 'ann');
+    [instance] = await labelInstances(withLabels.server, await withLabels.server.dataStore.findInstances({ id: started.id }, 'full'));
+    assert.equal(instance.label, 'Amount: 7');
+    await withLabels.server.shutdown();
 });

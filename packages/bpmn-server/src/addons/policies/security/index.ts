@@ -6,7 +6,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import type { IAddOn, IAddOnDecisionFile } from '../../engine/AddOns.js';
+import type { IAddOn, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
 import { SECURITY_FOLDER, DEFAULT_SECURITY_POLICY } from './SecurityPolicy.js';
 
 export * from './SecurityPolicy.js';
@@ -17,9 +17,8 @@ const named = (def): string | null => {
     return typeof name == 'string' && name.trim() ? name.trim() : null;
 };
 
-export const securityAddOn: IAddOn = {
+const modelCheck: IModelCheck = {
     name: 'security',
-
     decisionFiles(definition, folder) {
         const files: IAddOnDecisionFile[] = [];
         const add = (name: string, explicit: boolean) => {
@@ -40,8 +39,16 @@ export const securityAddOn: IAddOn = {
         }
         return files;
     },
-    decisionByName(ref, folder) {
-        const name = /^(.+)\.security-policy$/.exec(ref)?.[1];
-        return name ? { folder: path.join(folder, SECURITY_FOLDER), name } : null;
+};
+
+export const securityAddOn: IAddOn = {
+    name: 'security',
+
+    register(server) {
+        server.registrations.addModelCheck(modelCheck);
+        server.registrations.addDecisionLookup((ref, folder) => {
+            const name = /^(.+)\.security-policy$/.exec(ref)?.[1];
+            return name ? { folder: path.join(folder, SECURITY_FOLDER), name } : null;
+        });
     },
 };

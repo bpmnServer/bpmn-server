@@ -1,7 +1,7 @@
 # Design: security policies
 
 Status: **a first slice built** (2026-11-12, branch `3.7.1`), to try before it is settled: the evaluation
-(`addons/security/SecurityPolicy.ts`), API v3 and the pages (`routes/caseAccess.ts`), the HR demo's `LeaveCases`. Not yet: the
+(`addons/policies/security/SecurityPolicy.ts`), API v3 and the pages (`routes/caseAccess.ts`), the HR demo's `LeaveCases`. Not yet: the
 editor, `verifyModel`'s checks, the "as whom" preview, the `owf` moddle descriptor (the attribute is read from the XML),
 and a policy giving claim or complete to someone the assignment doesn't offer the task to. A task the person may not
 complete is not theirs to claim either, unless a rule allows claiming it.
@@ -154,7 +154,7 @@ ask the policy; `routes/workflow.ts` holds no security rules of its own (3.7.2).
 A policy is asked per case, and API v3's lists page in the store (Fable Review H5). So that a page isn't emptied by
 cases the policy hides afterwards:
 
-- **the store's query is narrowed** (`SecurityPolicy.seeQuery`, `addons/security/SecurityQuery.ts`, 3.7.2) to a superset of the
+- **the store's query is narrowed** (`SecurityPolicy.seeQuery`, `addons/policies/security/SecurityQuery.ts`, 3.7.2) to a superset of the
   cases the user may see: from each rule that may grant `see`, its tests on the user worked out now (one that fails:
   the rule doesn't apply), a rule testing a task left out (a list asks of the case), and its test on an actor as a
   condition on the items (`initiator`: `items.userName` or the instance's `userName`; `assignee`: `items.assignee`;

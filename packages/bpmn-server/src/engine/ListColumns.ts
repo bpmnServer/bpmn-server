@@ -1,12 +1,14 @@
 /**
  * The lists' columns, chosen by the person looking at them (docs/docs/list-columns.md): a value the models' case
- * labels name (`Client`: each model's own path, engine/Labels.ts labelFields), or any field of a case's data
+ * labels name (`Client`: each model's own path, addons/labels/Labels.ts labelFields), or any field of a case's data
  * (`data.amount`). A list shows each column's value as text, and may be sorted by one.
  *
  * Nothing is stored here: the columns come with each request (a page's URL, API v3's ?columns=).
  */
-import { pathProblem, pathValue, valueText } from './LabelTemplate.js';
-import type { ILabelField } from './Labels.js';
+import { pathProblem, pathValue, valueText } from './DataPaths.js';
+
+/** A value the lists offer by name: what a model's case label shows (the Labels add-on's labelFields), its path. */
+export interface IListField { name: string; model: string; path: string; }
 
 /** At most this many columns in a list. */
 export const MAX_COLUMNS = 12;
@@ -37,7 +39,7 @@ export function columnKeys(asked: unknown): string[] {
  * The columns for these keys: a data path (`data.…`), or a name the case labels give (`Client`), within `model` when
  * one is chosen. A key that is neither is a 400 BAD_COLUMN.
  */
-export function listColumns(fields: ILabelField[], keys: string[], model?: string): IListColumn[] {
+export function listColumns(fields: IListField[], keys: string[], model?: string): IListColumn[] {
     if (keys.length > MAX_COLUMNS)
         throw new ListColumnError(`at most ${MAX_COLUMNS} columns`, 'BAD_COLUMN');
     return keys.map(key => {
@@ -77,7 +79,7 @@ export function columnValues(columns: IListColumn[], model: string | undefined, 
 }
 
 /** Whether a data path is one the models' case labels read: shown in every list already (a label is public by design). */
-export function isLabelPath(fields: ILabelField[], path: string): boolean {
+export function isLabelPath(fields: IListField[], path: string): boolean {
     return fields.some(f => f.path === path);
 }
 
