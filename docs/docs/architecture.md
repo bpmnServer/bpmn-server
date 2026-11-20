@@ -2,6 +2,9 @@
 
 BPMN Server has three layers: a **host** that people and other systems talk to, an **engine** that runs processes, and a **core** of model and data handling that both of them use. The host and the engine can share a process or run apart, and the application's code always stays with the engine.
 
+The engine runs the flow and nothing else. What is built on it, such as who works on each task, labels and form
+lists, is an **add-on**, turned on when it's needed ([Add-ons](#add-ons)).
+
 The **workflow pages and security** are one part of their own (the dashed box): sign-in, users and groups, and the
 pages people work in. bpmn-web has a set, a skeleton to start from; your own application can be that part instead,
 with the same server behind it, or inside it (a user manager: [Your application with the server inside](#your-application-with-the-server-inside)).
@@ -31,7 +34,9 @@ flowchart LR
     subgraph EngineZone["Engine: Secure and Isolated for tenants <br/>(ENGINE_AT, ENGINE_KEY)"]
       Engine["Engine<br/>executions, timers, decisions"]
       Code["Your code<br/>delegate, services, model scripts"]
+      AddOns["Add-ons (app-config.json)<br/>Policies, Labels, Forms and display, Modeling tools"]
       Engine --> Code
+      AddOns -. "register for its events" .-> Engine
     end
   end
 
@@ -78,6 +83,7 @@ them. What changes when your application replaces the box: [From the skeleton to
 | **Host** (`bpmn-web`) | Serves the pages, the model editor and the REST APIs. Signs users in. Reads and saves models, instances and tasks. | Run a process, a timer, a decision or a test. It asks the engine. |
 | **Engine** | Runs processes, timers, decisions and tests. Holds your delegate and services. | Face users. Nothing but its host should reach it. |
 | **Core** (`bpmn-server`) | Reads models, checks them, and stores data, for both of the above. | Depend on the web application. |
+| **Add-ons** | What is built on the engine: who works on each task, labels, form lists, the editor's Test and History tabs. Each brings its engine part, its editor part and its pages. | Be called by the engine. An add-on registers for what it needs, and depends on no other add-on. |
 
 Calls between the host and the engine carry JSON, in the same process or between processes. So code behaves the same in both setups, and a test that passes against one is testing the same calls as the other.
 
@@ -104,6 +110,41 @@ host keeps its own users, sessions and API tokens. See `docs/design/engine-isola
 
 The engine can also run as a user of its own, or in a container of its own, with only its private address open: what the
 separation makes possible, not what a default install does.
+
+## Add-ons
+
+The engine runs BPMN and nothing else. Everything built on it is an add-on, and an add-on that's off isn't loaded: the
+engine, the editor and the pages show none of it.
+
+| Add-on | What it is |
+|---|---|
+| **Policies** | Who works on each task (assignee, candidates, lanes as groups, roles, start permissions, assignment policies), who may see and do what (security policies), who is told what (notification policies), and the actors expressions read |
+| **Labels** | What each case and task is called (`owf:label`, `owf:endLabel`), and their values as the lists' columns |
+| **Forms and display** | A form field's choices from a source: a drop-down (`owf:list`) or a search (`owf:lookup`) |
+| **Modeling tools** | The editor's Test tab (scenarios) and History tab (each save kept as a version) |
+
+**Which are on:** the application's `app-config.json`, `{ "addOns": ["policies", "labels"] }`, set on the
+[Settings](integration-settings.md) page. With no file, every add-on is on. A change applies when the server restarts.
+
+**How an add-on plugs in.** The engine never calls an add-on, and imports nothing of one. An add-on registers, as
+the server starts:
+
+- **for the engine's own events** (`start`, `assign`, `wait`, `end`, `process.end`), as any listener does. The
+  Policies add-on decides who works on a task on `start`, through the engine's one step for it (`assign`), and
+  notifies on `assign`;
+- **where the engine has no event**, in the server's registrations: model checks, the query filters that narrow what a
+  user sees, the names expressions read (`actors`), a form field's rules and choices.
+
+An add-on depends on the engine only, never on another add-on. Each has three parts, each where it runs: its engine
+part (`bpmn-server/src/addons/<name>`), its editor part, a bpmn-js module (`bpmn-web/modeler/src/addons/<name>`), and
+its pages.
+
+**A model that uses an add-on that's off** keeps what it says. The engine ignores it, the model's checks warn
+(`add-on-off`), and the model report shows it read-only. Each add-on's manifest (`addon.json`: the attributes and
+elements it reads) is read whether it is on or off, so this works without loading the add-on.
+
+**Isolation is the same.** The add-ons' engine parts run in the engine, with your code. The security policy is asked by
+the host, around the engine, and narrows the host's own reads. See `docs/design/add-ons.md`.
 
 ## Why the API is on the host
 
@@ -405,6 +446,8 @@ Tests are Gherkin `.feature` files beside their models. A scenario's last run is
 | What | Where |
 |---|---|
 | Models, decisions, their tests and version history | Files in the models folder (`DEFINITIONS_PATH`) |
+| Which add-ons are on | The application's `app-config.json` |
+| The policies | Decision tables in the models folder's `policies/assignment`, `policies/security`, `policies/notification` |
 | Connectors | Files in the models folder's `connectors` folder (`connectors/<id>.connector.json`); their keys, encrypted, in the workflow store |
 | Instances, tasks, locks and test runs | The workflow store |
 | Users and sessions | bpmn-web's: the workflow store, beside the instances (MongoDB, SQLite or memory). Your application's, with its user manager: your database |
@@ -414,7 +457,7 @@ Tests are Gherkin `.feature` files beside their models. A scenario's last run is
 
 | Package | Is |
 |---|---|
-| `bpmn-server` | The engine and core |
-| `bpmn-web` | The host |
+| `bpmn-server` | The engine and core, and the add-ons' engine parts (`src/addons/`) |
+| `bpmn-web` | The host, and the add-ons' editor parts and pages |
 | `bpmn-client` | A REST client, for another Node.js application |
 | `bpmn-mcp` | Connects AI clients to a running server over MCP. `npx bpmn-server init` installs it |
