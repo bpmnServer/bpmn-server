@@ -2,26 +2,12 @@
   "from": "appDelegate.ts",
   "partial": false,
   "services": [
-    "DummyService1",
-    "IsApprovalDone",
-    "add",
     "departments",
-    "echo",
     "employees",
-    "flowCondition",
-    "getApprovers",
-    "getCollection",
-    "getTimerDelay",
     "greet",
     "managerOf",
     "notifyUsers",
-    "notifyhead",
-    "raiseBPMNError",
-    "recordLeave",
-    "service1",
-    "service99",
-    "webService",
-    "webService2"
+    "recordLeave"
   ],
   "extra": []
 }

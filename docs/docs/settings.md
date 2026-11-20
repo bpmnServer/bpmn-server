@@ -32,7 +32,7 @@ by `npm run features`: edit the schema, not these tables.
 
 | Setting | Means |
 |---|---|
-| `APP_ENV` | The environment: `development`, `test` or `production`. The pages show it as a band (Development blue, Test amber), and API v3's `/me` says it. `test` also makes the sample applications use their test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Unset: not declared, as before 3.7.2 (no band; the real services). See [Environments](environments.md) |
+| `APP_ENV` | The environment: `development`, `test` or `production`. The pages show it as a band (Development blue, Test amber), and API v3's `/me` says it. `test` also makes the sample applications use their test services (`delegates/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Unset: not declared, as before 3.7.2 (no band; the real services). See [Environments](environments.md) |
 | `APP_ENV_LABEL` | What the environment's band says instead of its name, in any environment: `Staging`, `Public demo`. Shown in production too |
 | `BODY_LIMIT` | The largest request. Default `50mb` |
 | `DOCS_PATH` | The folder of the docs pages the server shows |

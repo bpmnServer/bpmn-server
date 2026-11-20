@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { Item, IExecution, WebAppDelegate } from 'bpmn-web';
-import { AppServices } from '../connectors/appServices.js';
+import { AppServices } from './appServices.js';
 import { AppUtils } from './appUtils.js';
 
 
@@ -47,7 +47,7 @@ class AppDelegate extends WebAppDelegate{
         // the environment's services: the test environment (APP_ENV=test) has its own; production never loads them
         if (this.appServices == null)
         this.appServices = process.env.APP_ENV === 'test'
-            ? new (await import('../connectors/testServices.js')).TestServices(this)
+            ? new (await import('./testServices.js')).TestServices(this)
             : new AppServices(this);
         return this.appServices
         }

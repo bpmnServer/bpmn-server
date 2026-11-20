@@ -5,7 +5,7 @@ import path from 'node:path';
 
 const ROOT = path.join(import.meta.dirname, '..');
 
-/** The element templates the model editor offers (*.json); their services are in connectors/appServices.ts. */
+/** The element templates the model editor offers (*.json); their services are in delegates/appServices.ts. */
 export const connectorsPath = path.join(ROOT, 'connectors');
 
 /** Read when called: DEFINITIONS_PATH (the tests' own folder) wins over processes/. */

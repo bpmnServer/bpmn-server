@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ApprovalManager } from '../delegates/ApprovalManager.js';
+import { ApprovalManager } from './ApprovalManager.js';
 
 async function delay(time, result) {
     console.log("delaying ... " + time)
@@ -17,11 +17,20 @@ class AppServices {
     constructor(delegate) {
         this.appDelegate = delegate;
     }
-    /** The sample's Leave Application: HR's system records the approved leave (here, the log), or refuses it as RecordFailed. */
-    async recordLeave({ requester, days }, context) {
+    /** Hello.bpmn's Greet task: input { name }, the result stored as data.greeting. */
+    async greet({ name }, context) {
+        return `Hello ${name || 'there'}, from ${context.instance?.name ?? context.item?.token?.execution?.name}`;
+    }
+    /**
+     * Leave Application's Record the leave: HR's system keeps the approved leave and answers its id. Here it is the
+     * log; put your HR system's call here. A request it refuses is the BPMN error RecordFailed, which the model catches.
+     */
+    async recordLeave({ requester, LeaveType, StartDate, EndDate, days }, context) {
         if (!requester || !(days > 0))
             return { bpmnError: 'RecordFailed' };
-        return { recordId: `LV-${Date.now()}` };
+        const recordId = `LV-${Date.now()}`;
+        console.log(`leave recorded: ${recordId} ${requester} ${LeaveType} ${StartDate} to ${EndDate} (${days} days)`);
+        return { recordId };
     }
     /**
      * A message to users and groups: input { users, groups } (a user name or group name, or a list of them), subject,
@@ -32,27 +41,6 @@ class AppServices {
         const to = [...[].concat(users ?? []), ...[].concat(groups ?? []).map(g => `group ${g}`)];
         console.log(`notify ${to.join(', ')}: ${subject}${message ? ` (${message})` : ''}`);
         return { sent: to, at: new Date().toISOString() };
-    }
-    /**
-     * A form field's choices (docs/design/form-lookups.md): `<owf:list source="service:departments" key="code"
-     * display="title" />`. Called with the criteria ({ filter }) and who asks; answers the rows.
-     */
-    async departments(criteria, context) {
-        return [{ code: 'HR', title: 'Human Resources' }, { code: 'IT', title: 'Technology' }, { code: 'FIN', title: 'Finance' }];
-    }
-    /**
-     * A form field's search: `<owf:lookup source="service:employees" display="name" filter="${data.department}" />`.
-     * Called with { text, filter } (the text typed, the department chosen) and who asks; answers the employees found.
-     */
-    async employees({ text = '', filter }: { text?: string, filter?: string } = {}, context?) {
-        const all = [
-            { id: 'david.kim', name: 'David Kim', department: 'HR' },
-            { id: 'sarah.chen', name: 'Sarah Chen', department: 'IT' },
-            { id: 'dana.scott', name: 'Dana Scott', department: 'IT' },
-            { id: 'michael.brown', name: 'Michael Brown', department: 'FIN' },
-        ];
-        const search = text.toLowerCase();
-        return all.filter(e => e.name.toLowerCase().includes(search) && (!filter || e.department === filter));
     }
     async echo(input, context) {
         console.log('service echo - input', input);

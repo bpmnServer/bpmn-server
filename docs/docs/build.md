@@ -26,7 +26,7 @@ The generated project contains:
 | Location | Role |
 | --- | --- |
 | `processes/` | BPMN process models and DMN decisions, with their tests |
-| `connectors/appServices.ts` | TypeScript services called by service tasks |
+| `delegates/appServices.ts` | TypeScript services called by service tasks |
 | `delegates/appDelegate.ts` | Application lifecycle hooks and service provider |
 | `settings/config.ts` | How the application behaves |
 | `.env` | What differs per machine, and secrets |

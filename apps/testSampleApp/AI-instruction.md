@@ -10,7 +10,7 @@ TypeScript directly; check every change with the commands below before you repor
 |---|---|
 | `processes/<Name>.bpmn` | The models. The file name is the model's name (`engine.start('Buy Used Car')`). |
 | `processes/<Name>.svg` | A model's diagram preview. It is **not** regenerated from the XML when you edit the XML. |
-| `connectors/appServices.ts` | `AppServices`: the services service tasks call (`echo`, `add`, `webService`, ...). |
+| `delegates/appServices.ts` | `AppServices`: the services service tasks call (`echo`, `add`, `webService`, ...). |
 | `connectors/*.json` | Element templates (Camunda 7 format) the model editor offers for configured tasks. |
 | `delegates/appDelegate.ts` | `AppDelegate` (extends bpmn-web's `WebAppDelegate`): returns `AppServices`, loads data objects (`loadDataObject`), engine events. |
 | `delegates/ApprovalManager.ts`, `ApprovalRules.ts`, `appUtils.ts` | Logic the services and scripts use. |
@@ -87,7 +87,7 @@ bpmn-validate skills).
 
 ## A new service or connector
 
-1. Add the method to `AppServices` in `connectors/appServices.ts`: `async checkBackground(input, context) { ... }`.
+1. Add the method to `AppServices` in `delegates/appServices.ts`: `async checkBackground(input, context) { ... }`.
    Read settings from `process.env` by name; never put a secret's value in code or a model.
 2. Call it from the model (`camunda:delegateExpression="checkBackground"`).
 3. To offer it in the model editor, add `connectors/<name>.json`, modelled on `connectors/echo.json`: a Hidden

@@ -1,4 +1,4 @@
-import { AppServices } from '../connectors/appServices.js';
+import { AppServices } from './appServices.js';
 
 /**
  * The HR application's variables (docs/design/app-contract.md §2.1): what an expression reads as appVars.<name>, made

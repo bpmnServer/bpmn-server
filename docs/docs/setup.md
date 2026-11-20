@@ -10,8 +10,8 @@ npm start                        # http://localhost:3000: the first page asks fo
 
 `init` creates the sample application: `processes/` (Hello, Buy Used Car, Leave Application,
 employee-onboarding, Business Rules, GitHub repository),
-`connectors/` (the services the models call, `appServices.ts`, and element
-templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`), `settings/config.ts` (the settings
+`connectors/` (the editor's element templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`,
+and the services the models call, `appServices.ts`), `settings/config.ts` (the settings
 you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead.
 `npm run setup` asks the settings step by step (below), then prepares the database and stops (with no terminal, as
 in a script, it only prepares the database); `npm run cli` opens the console, `npm run verify` checks the

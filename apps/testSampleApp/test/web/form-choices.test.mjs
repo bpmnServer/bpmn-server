@@ -2,7 +2,7 @@
 // A form field's list or lookup (docs/design/form-lookups.md), as an application and the drawn forms use it: the form
 // says which fields have one, and POST .../choices/{field} answers their choices from the source the model names,
 // as the person filling the form; a filter reads the form's values, then the case's data. The sample app's services
-// are the sources (connectors/appServices.ts: departments, employees).
+// are the sources (delegates/appServices.ts: departments, employees).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { startWebApp, why, WebClient, API_KEY } from '../support/webApp.mjs';

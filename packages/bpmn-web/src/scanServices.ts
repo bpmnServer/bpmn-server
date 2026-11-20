@@ -3,6 +3,7 @@
  * The names of an application's services, read from its source: nothing of it runs. A host keeps them in a file, so the
  * editor can offer and check services with no application code and no engine.
  *   node <bpmn-web>/dist/scanServices.js delegates/appDelegate.ts services.json
+ *   node <bpmn-web>/dist/scanServices.js --check delegates/appDelegate.ts services.json   (fails when the file is stale)
  * What the source can't say is left out, so a name not listed may still exist: a service made as the application runs, a
  * class from a package (`partial` then says so). The file's `extra` names are kept, for those.
  */
@@ -128,10 +129,23 @@ export async function scanServices(delegateFile: string): Promise<Omit<ScannedSe
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(fs.realpathSync(process.argv[1])).href) {
-    const [delegateFile, output = 'services.json'] = process.argv.slice(2);
-    if (!delegateFile) throw new Error('Name the delegate: scanServices.js delegates/appDelegate.ts [services.json]');
+    // --check: the file as it is against the code, without writing it; it fails when they differ (an app's npm test)
+    const check = process.argv.includes('--check');
+    const [delegateFile, output = 'services.json'] = process.argv.slice(2).filter(a => a !== '--check');
+    if (!delegateFile) throw new Error('Name the delegate: scanServices.js [--check] delegates/appDelegate.ts [services.json]');
     const before = fs.existsSync(output) ? JSON.parse(fs.readFileSync(output, 'utf8')) : {};
     const scanned = await scanServices(delegateFile);
-    fs.writeFileSync(output, JSON.stringify({ ...scanned, extra: before.extra ?? [] }, null, 2) + '\n');
-    console.log(`${output}: ${scanned.services.length} services${scanned.partial ? ', and some out of reach' : ''}`);
+    if (check) {
+        const listed: string[] = before.services ?? [];
+        const missing = scanned.services.filter(s => !listed.includes(s)), stale = listed.filter(s => !scanned.services.includes(s));
+        if (missing.length || stale.length) {
+            console.error(`${output} differs from the code: ${[...missing.map(s => `${s} not listed`), ...stale.map(s => `${s} gone`)].join(', ')}. Run npm run services`);
+            process.exit(1);
+        }
+        console.log(`${output}: the code's ${scanned.services.length} services`);
+    }
+    else {
+        fs.writeFileSync(output, JSON.stringify({ ...scanned, extra: before.extra ?? [] }, null, 2) + '\n');
+        console.log(`${output}: ${scanned.services.length} services${scanned.partial ? ', and some out of reach' : ''}`);
+    }
 }

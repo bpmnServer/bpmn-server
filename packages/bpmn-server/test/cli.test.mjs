@@ -71,7 +71,7 @@ function init(...args) {
 test('init: the sample application, on MongoDB with sign-in, by default', () => {
   const app = init('--port', '3050');
   for (const file of ['package.json', '.env', '.gitignore', 'README.md', 'docker-compose.yml', 'tsconfig.json', 'index.ts',
-    'settings/config.ts', 'delegates/appDelegate.ts', 'connectors/appServices.ts', 'connectors/echo.json',
+    'settings/config.ts', 'delegates/appDelegate.ts', 'delegates/appServices.ts', 'connectors/echo.json',
     'processes/Hello.bpmn', 'processes/Buy Used Car.bpmn', 'processes/Leave Application.bpmn'])
     assert.ok(app.exists(file), file);
   // the sample's tests come with it (npm test: every model's .feature); nothing installed
@@ -96,7 +96,7 @@ test('init: the sample application, on MongoDB with sign-in, by default', () => 
   assert.ok(pkg.dependencies.axios && pkg.dependencies.dayjs, 'the sample application\'s own dependencies');
   assert.equal(pkg.dependencies['mongodb-memory-server'], undefined);
   assert.equal(pkg.scripts.start, 'tsx index.ts');
-  assert.equal(pkg.scripts.test, 'tsx test/features.ts');
+  assert.equal(pkg.scripts.test, 'npm run services:check && tsx test/features.ts', 'services.json checked against the code first');
   assert.match(app.read('README.md'), /^# app$/m, 'titled with the application\'s name');
   assert.match(app.r.stdout, /docker compose up -d/);
   assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the sample models pass');

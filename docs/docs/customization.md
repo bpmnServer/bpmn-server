@@ -61,10 +61,11 @@ The source is at [`apps/sampleApp/`](https://github.com/bpmnServer/bpmn-server/t
 my-app/
 ├── processes/                 # BPMN and DMN definitions
 ├── connectors/
-│   ├── appServices.ts         # Code called by service tasks
 │   └── *.json                 # Editor element templates
 ├── delegates/
-│   └── appDelegate.ts         # App-specific hooks and service provider
+│   ├── appDelegate.ts         # App-specific hooks and service provider
+│   ├── appServices.ts         # Code called by service tasks
+│   └── testServices.ts        # The same services, sending nothing (APP_ENV=test)
 ├── settings/
 │   └── config.ts              # Engine/web configuration
 ├── index.ts                   # Hosts bpmn-web
@@ -120,7 +121,7 @@ The application supplies `configuration` (including `appDelegate`, `definitionsP
 
 ## Implement service tasks in application code
 
-In the starter, [`connectors/appServices.ts`](https://github.com/bpmnServer/bpmn-server/blob/main/apps/sampleApp/connectors/appServices.ts) exports `AppServices`. One of its methods is:
+In the starter, [`delegates/appServices.ts`](https://github.com/bpmnServer/bpmn-server/blob/main/apps/sampleApp/delegates/appServices.ts) exports `AppServices`. One of its methods is:
 
 ```ts
 class AppServices {
@@ -136,7 +137,7 @@ The application delegate exposes the service provider to the engine:
 
 ```ts
 import { WebAppDelegate } from 'bpmn-web';
-import { AppServices } from '../connectors/appServices.js';
+import { AppServices } from './appServices.js';
 
 export class AppDelegate extends WebAppDelegate {
   private services?: AppServices;
@@ -148,6 +149,11 @@ export class AppDelegate extends WebAppDelegate {
 ```
 
 These are **abbreviated examples** of the starter's real implementation. In the sample, the delegate also inherits web-specific functionality (notifications/startup), implements lifecycle callbacks, and can load data objects. The `greet` method is wired by a BPMN service task and its input/output mappings, not by copying TypeScript into the BPMN XML. See [Service tasks](examples/serviceTask.md) and [Scripting](scripting.md).
+
+**`services.json`** lists the services' names, read from this source by `npm run services` (bpmn-web's
+`bpmn-web-services`), so the editor and the model checks know them where the application's code doesn't run. It is
+written, not read from the code at run time: after adding or removing a service, run `npm run services`. The sample's
+`npm test` runs `npm run services:check` first, which fails when the file no longer matches the code.
 
 For complex business rules, prefer maintainable, testable application services. Use [DMN](decisions.md) for decision tables, and [connectors](connectors.md) for REST operations that do not need custom application code.
 

@@ -37,7 +37,7 @@ test('running and testing say an engine is needed', async () => {
 
 test('the scan finds what the application\'s services really are', async () => {
   const { scanServices } = await import(new URL('../../../../packages/bpmn-web/dist/scanServices.js', import.meta.url).href);
-  const { AppServices } = await import('../../connectors/appServices.ts');
+  const { AppServices } = await import('../../delegates/appServices.ts');
   const scanned = await scanServices('delegates/appDelegate.ts');
   const real = Object.getOwnPropertyNames(AppServices.prototype).filter(name => name !== 'constructor' && !name.startsWith('_'));
   assert.deepEqual(scanned.services, [...real].sort());
