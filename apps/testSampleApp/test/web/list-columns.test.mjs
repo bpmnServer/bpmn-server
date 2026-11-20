@@ -128,3 +128,26 @@ test('Pending Tasks and My work: their own columns and sort', async () => {
     const mine = ['gamma', 'beta', 'alpha'].map(c => work.indexOf(`<td class="list-column">${c}</td>`));
     assert.ok(mine.every(i => i > 0) && mine[0] < mine[1] && mine[1] < mine[2], `My work by Client, descending: ${mine}`);
 });
+
+test('a list\'s own columns hidden and moved: the layout as the picker sends it, the same names in every list', async () => {
+    const instancesOf = html => html.slice(html.indexOf('id="instances"'));
+    const tasksOf = html => html.slice(html.indexOf('id="tasks"'), html.indexOf('id="instances"'));
+    const headings = html => [...html.slice(html.indexOf('<table>', html.indexOf('</details>'))).matchAll(/<th[^>]*>(?:<a[^>]*>)?([^<]*)/g)].map(m => m[1].trim()).filter(Boolean);
+    const plain = (await admin.get(`/?columns_set=1&model=${MODEL}&task_columns_set=1`)).text;
+    assert.deepEqual(headings(instancesOf(plain)).slice(0, 4), ['Process', 'Case', 'Started', 'Ended']);
+    assert.deepEqual(headings(tasksOf(plain)).slice(0, 4), ['Task', 'Case', 'Process', 'Waiting'], 'Pending Tasks names them as My work does');
+    const work = (await admin.get('/dashboard?columns_set=1')).text;
+    assert.deepEqual(headings(work).slice(0, 5), ['Task', 'Case', 'Process', 'Waiting', 'Due']);
+
+    // Case first, then the amount, then Process; Started and Ended hidden
+    const moved = instancesOf((await admin.get(`/?columns_set=1&columns_layout=1&columns=@case,data.amount,@process&model=${MODEL}`)).text);
+    assert.deepEqual(headings(moved).slice(0, 3), ['Case', 'Amount (USD)', 'Process']);
+    assert.ok(!headings(moved).includes('Started'), 'hidden');
+    assert.match(moved, /<td>Client: alpha<\/td>\s*<td class="list-column">1200<\/td>\s*<td>Columns<\/td>/, 'the cells in the same order');
+    // the picker: the shown ones in their order, each with ← →; the hidden ones offered again
+    const picker = moved.slice(0, moved.indexOf('</details>'));
+    assert.match(picker, /<legend>Shown<\/legend>[\s\S]*value="@case" checked[\s\S]*value="data.amount" checked[\s\S]*value="@process" checked/);
+    assert.match(picker, /data-move="up"/);
+    assert.match(picker, /<legend>More of this list's columns<\/legend>[\s\S]*value="@started"[\s\S]*value="@ended"/);
+    assert.doesNotMatch(picker, /value="data.amount">/, 'a field shown is not offered again');
+});

@@ -5,21 +5,30 @@ have a **Columns** picker above the list, headings that sort it, and the filter 
 
 ## Columns
 
-Open **Add columns**. For each model in the list (the one the filter chooses, or every model whose cases are shown),
-it offers:
+Each list shows its own columns by default, with the same names in every list:
 
-- **What the case's label shows:** each value its [case label](labels.md) names (`${Client = data.clientId}` is
-  *Client*). One column reads each model's own path, so *Client* shows `data.clientId` for one model's cases and
-  `data.customer.name` for another's.
-- **Its form fields, by their labels:** *Leave Type*, *Start Date*. Each is the field of the case's data the form
-  saves (`data.LeaveType`).
+| List | Its columns (default first; the rest offered) |
+|---|---|
+| Instances | Process, Case, Started, Ended; Status |
+| Pending Tasks | Task, Case, Process, Waiting, Assignee, Candidate users, Candidate groups, Due; Follow-up, Priority |
+| My work | Task, Case, Process, Waiting, Due; Assignee, Priority |
 
-**Another field** takes any other field of the cases' data by its name (`amount`, `region.name`). Fields added that
-way are listed under **Other fields**, to uncheck.
+*Task* is the task's name with its own label under it; *Case* is its case's [label](labels.md).
 
-**Show** adds the columns checked; **Reset to the default** goes back to the list as it was. A list has at most 12
-columns. A form field's column is headed by its label. Values are shown as text: a date in ISO form, a list joined
-with commas, an object as JSON. A case without the field shows nothing.
+Open **Columns**:
+
+- **Shown:** the columns the list shows, in their order. Uncheck one to hide it; **←** and **→** move it.
+- **More of this list's columns:** its own columns not shown, to show again.
+- **Each model in the list** (the one the filter chooses, or every model whose cases are shown):
+    - the values its case label names (`${Client = data.clientId}` is *Client*); one column reads each model's own
+      path, so *Client* shows `data.clientId` for one model's cases and `data.customer.name` for another's;
+    - its form fields, by their labels: *Leave Type*, *Start Date*. Each is the field of the case's data the form
+      saves (`data.LeaveType`), and its column is headed by that label.
+- **Another field:** any other field of the cases' data, by its name (`amount`, `region.name`).
+
+**Show** shows the list so; columns added go after those shown. **Reset to the default** goes back to the list's own
+columns. A list has at most 12 columns of data. Values are shown as text: a date in ISO form, a list joined with
+commas, an object as JSON. A case without the field shows nothing.
 
 ## Sorting
 
@@ -27,8 +36,8 @@ Click a heading to sort by it, and again for the other way (▲ ascending, ▼ d
 
 | List | Sorts by |
 |---|---|
-| Instances | Name (the model), Started (the default, newest first), Ended |
-| Pending Tasks, My work | Task, Process, Waiting (the default, oldest first), Due |
+| Instances | Process, Status, Started (the default, newest first), Ended |
+| Pending Tasks, My work | Task, Process, Waiting (the default, oldest first), Due, Priority |
 
 Numbers sort as numbers and text by its letters; cases without the value come last either way.
 
@@ -44,9 +53,10 @@ as a date).
 
 ## Kept
 
-The view is in the URL: `/?columns=Client,data.amount&sort=data.amount&order=desc#instances` (Pending Tasks' with
-`task_`: `task_columns=`, `task_sort=`), so a view can be bookmarked and shared. The person's last view of each list
-is kept for their session: opening the page again, or filtering, keeps it.
+The view is in the URL: `/?columns=@process,@case,Client,data.amount,@started&sort=data.amount&order=desc#instances`
+(a list's own columns start with `@`; Pending Tasks' parameters with `task_`: `task_columns=`, `task_sort=`), so a
+view can be bookmarked and shared. A link that names only columns of data (`?columns=Client`) adds them after Case.
+The person's last view of each list is kept for their session: opening the page again, or filtering, keeps it.
 
 ## What a column shows
 

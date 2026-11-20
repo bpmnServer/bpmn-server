@@ -4,7 +4,7 @@ h3 Instances
 //- this list's filter (routes/labelFilter.ts): the other sections are not filtered
 if labelFilter
 	+labelFilter(labelFilter)
-//- the columns the person added, and what it is sorted by (routes/listView.ts)
+//- the columns the person shows, in their order, and what it is sorted by (routes/listView.ts)
 if instanceView
 	+listColumnsPicker(instanceView)
 if !instances.length
@@ -20,36 +20,32 @@ if user && user.isAdmin()
 				button(type='submit') Delete All Instances Data
 table
 	tr
+		//- the columns shown, in the person's order (routes/listView.ts)
 		if instanceView
-			+sortHeading(instanceView.sorts.model)
-			th Case
-			+columnHeadings(instanceView)
-			+sortHeading(instanceView.sorts.started)
-			+sortHeading(instanceView.sorts.ended)
+			+listHeadings(instanceView)
 		else
-			td Name
-			td Case
-			td Started
-			td Ended
-		td Examine Log
+			th Process
+			th Case
+			th Started
+			th Ended
+		th
 		if user && user.isAdmin()
-			td Delete
+			th
 	each instance in instances
 		- var ref = "/instanceDetails?id="+instance.id;
-		if user && user.isAdmin()
 		tr
-			td #{instance.name}
-				if instance.test
-					span.test-mark(title="A test run's case") test
-			//- its label, from its model (engine/Labels.ts)
-			td #{instance.label || ''}
-			+columnCells(instanceView, instance)
-			td #{instance.fromNow}
-			td #{instance.endFromNow} 
+			if instanceView
+				each h in instanceView.layout
+					+instanceCell(h.key, instance)
+			else
+				+instanceCell('@process', instance)
+				+instanceCell('@case', instance)
+				+instanceCell('@started', instance)
+				+instanceCell('@ended', instance)
 			td
 				a(href=`${ref}`) Examine
 			if user && user.isAdmin()
-				td 
+				td
 					form(action='/deleteInstance', method='post')
 						input(type='hidden', name='_csrf', value=_csrf)
 						input(type='hidden', name='id', value=instance.id)

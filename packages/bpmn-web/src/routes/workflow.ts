@@ -10,7 +10,7 @@ import { ViewHelper } from './ViewHelper.js';
 import { rationaleSteps } from '../testing/rationale.js';
 import { runProcess } from './runErrors.js';
 import { labelFilterOf } from './labelFilter.js';
-import { listViewOf, withChoices, hrefWith, INSTANCE_SORTS, TASK_SORTS } from './listView.js';
+import { listViewOf, withChoices, hrefWith, INSTANCE_COLUMNS, WORKBENCH_TASK_COLUMNS } from './listView.js';
 import { accessDirectory } from './caseAccess.js';
 import { pageApi, ApiError } from './api/pageClient.js';
 import { ProcessRunError } from './runErrors.js';
@@ -492,8 +492,8 @@ async function display(req,res, title, output, logs = [], items = []) {
     let user = getSecureUser(req);
     
     // each list's columns and sort, as the person chose them (routes/listView.ts)
-    const instanceView = await listViewOf(serverOf(req), req, { list: 'workbench-instances', action: '/#instances', sorts: INSTANCE_SORTS, defaultSort: { sort: 'started', order: 'desc' }, sortsInStore: true });
-    const taskView = await listViewOf(serverOf(req), req, { list: 'workbench-tasks', prefix: 'task_', action: '/#tasks', sorts: TASK_SORTS, defaultSort: { sort: 'started', order: 'asc' } });
+    const instanceView = await listViewOf(serverOf(req), req, { list: 'workbench-instances', action: '/#instances', own: INSTANCE_COLUMNS, defaultSort: { sort: 'started', order: 'desc' }, sortsInStore: true });
+    const taskView = await listViewOf(serverOf(req), req, { list: 'workbench-tasks', prefix: 'task_', action: '/#tasks', own: WORKBENCH_TASK_COLUMNS, defaultSort: { sort: 'started', order: 'asc' } });
     // each list's own filter by the labels' named values, as the URL says (routes/labelFilter.ts)
     const labelFilter = await labelFilterOf(serverOf(req), req, '/#instances', { other: 'task_', dataFields: instanceView.view.filterFields });
     const taskFilter = await labelFilterOf(serverOf(req), req, '/#tasks', { prefix: 'task_', other: '', dataFields: taskView.view.filterFields });

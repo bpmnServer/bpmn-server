@@ -26,6 +26,12 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Columns shown, hidden and moved** (docs/docs/list-columns.md): a list's own columns (Process, Case, Started...)
+  can be hidden, shown again and moved (← →) with the columns added; the lists name them alike (Pending Tasks as My
+  work: Task with its own label, Case, Process, Waiting; its Label and CaseId columns are gone, Case id is offered).
+  Test: `apps/testSampleApp/test/ui/list-columns.test.mjs`.
+- HR demo: Workbench in the sidebar opens the Workbench again after an instance was opened from it (the frame's src
+  was unchanged, so nothing happened).
 - **The lists as each person wants them** (docs/docs/list-columns.md): the Workbench's Instances and Pending Tasks
   and My work have an **Add columns** picker: for each model in the list, the values its label names and its form fields by their labels, or any other field of the cases' data
   (`data.amount`); their headings sort the list; the filter bar offers the data columns too, and more than / less

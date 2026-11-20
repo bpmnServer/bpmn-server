@@ -25,3 +25,9 @@ a.sort-heading.sorted { color: #1f62c8; }
 a.sort-heading:not(.sorted)::after { content: ' ↕'; font-size: 11px; opacity: .35; }
 .list-columns label { font-weight: normal; margin: 0; }
 .list-columns .list-columns-add input[type="text"] { min-width: 240px; }
+/* the columns shown, in their order: each with ← and → (as text, not emoji) */
+.list-columns-shown ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.list-columns-shown li { display: inline-flex; align-items: center; gap: 2px; padding: 2px 4px 2px 8px; background: #fff; border: 1px solid #dce4ec; border-radius: 6px; }
+.list-columns-move { font: inherit; font-family: "Segoe UI Symbol", "DejaVu Sans", system-ui, sans-serif; font-size: 12px; line-height: 1; padding: 2px 5px; border: 0; background: none; color: #52575f; cursor: pointer; border-radius: 4px; }
+.list-columns-move:hover, .list-columns-move:focus { background: #e7eefb; color: #1f62c8; }
+.list-columns-shown li:first-child [data-move="up"], .list-columns-shown li:last-child [data-move="down"] { visibility: hidden; }

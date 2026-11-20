@@ -37,8 +37,8 @@ test("the lists: each case's label, and each task's with its case's", async () =
     const home = (await admin.get('/')).text;
     assert.match(home, /<td>Claim<\/td>\s*<td>Client: abc · Order: 1234<\/td>\s*<td>[^<]*<\/td>/, 'Name, Case, Case Id');
     assert.match(home, /<th>Case<\/th>/);
-    assert.match(home, /<th>Label<\/th>/);
-    assert.match(home, /<td>Amount: 240 — Client: abc · Order: 1234<\/td>/, "the task's own label, then its case's");
+    // Pending Tasks as My work: the task with its own label under its name, then its case's
+    assert.match(home, /Approve\s*<div class="task-label">Amount: 240<\/div><\/td>\s*<td>Client: abc · Order: 1234<\/td>\s*<td>Claim<\/td>/, "the task's own label, then its case's");
 });
 
 test("My work: a task's own label under its name, its case's in the Case column", async () => {
@@ -68,7 +68,7 @@ test('the filter by label: the bar offers the named values; Instances and My wor
 
     // Pending Tasks' own filter: only that list
     const tasksFiltered = (await admin.get('/?task_field=Client&task_op=contains&task_value=ZET')).text;
-    assert.match(tasksOf(tasksFiltered), /Amount: 10 — Client: zeta · Order: 77/);
+    assert.match(tasksOf(tasksFiltered), /Amount: 10<\/div><\/td>\s*<td>Client: zeta · Order: 77/);
     assert.doesNotMatch(tasksOf(tasksFiltered), /Client: abc · Order: 1234/, 'the other task left out');
     assert.match(instancesOf(tasksFiltered), /Client: abc · Order: 1234/, 'Instances not filtered');
     assert.match(tasksOf((await admin.get('/?task_search=no-such-value')).text), /No pending tasks match this filter/);

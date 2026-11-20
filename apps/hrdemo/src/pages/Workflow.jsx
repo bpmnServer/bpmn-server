@@ -66,7 +66,11 @@ export default function Workflow() {
     }
     if (wanted !== shown.current) {
       shown.current = wanted;
-      setSrc(wanted);
+      // the frame moved on by itself (a link in it: the Workbench to an instance), so its src is still the page it
+      // started on: setting the same src again does nothing, so the frame is sent there
+      const win = frame.current?.contentWindow;
+      if (win && frame.current.getAttribute('src') === wanted) win.location.assign(wanted);
+      else setSrc(wanted);
     }
   }, [location]);
 
