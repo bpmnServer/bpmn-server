@@ -1,91 +1,177 @@
 # Add-ons
 
-**Status:** in place in 3.7.2: the policies are add-ons.
+**Status:** design, for review (branch `addons`). In place already, on 3.7.2: the policies are add-ons that register
+for the engine's events (`src/addons/`, `engine/AddOns.ts`). Everything else here is to do.
 
-## The rule
+## Why
 
-The engine runs BPMN and nothing else. What is built on it is an **add-on**. An add-on registers for the engine's own
-events and does its work there; the engine doesn't call it.
+BPMN Server has become too much for someone new. The engine, the policies, the notifications, the forms' lookups, the
+labels, the connectors, the model history and the scenarios all come together, and every one of them shows in the
+editor and the pages. The base should be a plain engine that runs BPMN, with the application doing the rest. Each
+further feature is an **add-on** that is turned on when it's needed.
 
-- **The engine imports nothing from an add-on.** It doesn't know which add-ons there are, or what they do.
-- **An add-on depends on the engine only**: no add-on imports another one.
-- **Each add-on works alone**: with the engine and no other add-on.
+## The rules
 
-`packages/bpmn-server/test/add-ons.test.mjs` checks the first two by reading the sources, and the third by running a
-server with no add-ons, and with only an application's own.
+1. **The engine runs the flow, and nothing else.** A feature is standard only if the engine needs it to run the flow
+   as the model says. Everything else is an add-on, even if Camunda defines it (`camunda:candidateGroups`).
+2. **The engine calls no add-on.** It imports nothing from an add-on, and doesn't know which add-ons there are.
+3. **An add-on registers for what it needs.** It subscribes to the engine's own events, and adds what it brings to
+   the engine's registration points: checks, query filters, columns, editor properties and pages.
+4. **An add-on depends on the engine only, never on another add-on.** What two add-ons share belongs to the engine.
+   One add-on reads another's work only as data, such as the fields on a task.
+5. **An add-on that's off isn't loaded.** Nothing is hidden. Its attributes in a model are kept as written and shown
+   read-only in the model report.
+6. **An add-on never fails a process.** A subscriber or check that throws is reported, and the engine goes on.
 
-Only three files put the add-ons together: the package's entry (`src/index.ts`), the default configuration
-(`src/common/DefaultConfiguration.ts`) and the command line (`src/cli.ts`).
+`test/add-ons.test.mjs` checks rules 2 and 4 by reading the sources, and rule 6 by running a broken add-on.
 
-## Where they are
+## Standard or add-on
+
+| Feature | | Why |
+|---|---|---|
+| BPMN elements, gateways, events, timers, sub-processes, call activities | Standard | The flow |
+| Service tasks calling the application's services (`appServices`) | Standard | The delegate is how an application connects to the engine |
+| Script tasks, expressions, DMN business rule tasks | Standard | The flow |
+| Data objects (`loadDataObject`) | Standard | A BPMN element; loading it is a delegate hook |
+| Forms: fields and defaults (`camunda:formField`) | Standard | Camunda's; the task form is drawn from them |
+| Form keys (`camunda:formKey`, `app:<page>`) | Standard | The engine only stores the key |
+| Form rules (types, `required`, min/max, the `validate` event) | Standard | Camunda's constraints, honoured on completion; `formRules: false` turns them off |
+| Actors (who started a case, who completed a task) | Standard | The engine records who did what. Expressions and decisions read it as `actors.*` |
+| Storage: MongoDB, SQLite, memory | Standard | Adapters (`documentStore`), not features |
+| User-chosen list columns (the picker, filters, sort) | Standard (web) | The lists themselves. Add-ons contribute columns to them |
+| **Assignment** | Add-on | `assignee`, candidates, lanes as groups, roles, the assignment policy, start permissions |
+| **Security** | Add-on | The security policy: who may see and do what |
+| **Notification** | Add-on | The notification policy, the notifications kept, the Notifications page |
+| **Labels** | Add-on | `owf:label` and `owf:endLabel`, and the label columns |
+| **Lists and lookups** | Add-on | `owf:list` and `owf:lookup` on form fields |
+| **Connectors** | Add-on | OpenAPI operations as services. Depends on the service catalog, see Order |
+| **Model history** | Add-on | The versions kept on each save, the editor's History tab |
+| **Scenarios** | Add-on | Gherkin tests of a model, the editor's Test tab, `@evaluate` |
+
+### Assignment, in full
+
+Assignment isn't needed to run the flow: a user task waits whether or not anyone is named for it. Who it's for only
+matters to what lists tasks and decides who may act, and in the simple base that is the application.
+
+- **Moves into the add-on:** evaluating `camunda:assignee`, `candidateUsers` and `candidateGroups`; a lane as a
+  candidate group; `roles.json` and the role checks; the assignment policy; what a reassignment records; the task
+  filters `SecureUser` builds from these fields; the process's `candidateStarterUsers` and `candidateStarterGroups`;
+  the editor's *Assignment* group; claim, the candidate parts of My Work, the Roles page.
+- **Stays in the engine:** the item's fields `assignee`, `candidateUsers` and `candidateGroups`, as plain data, since
+  they are part of the storage and API contract; `engine.assign(...)`, which sets them; `dueDate`, `followUpDate`
+  and `priority`, which describe the task rather than who does it.
+- **Off:** a task names no one, the task lists aren't filtered, and anyone may act. The application decides.
+
+### Labels
+
+The labels add-on controls the display columns: it contributes the *Case* and *Task* label columns to the lists and
+the label to the pages' headings. Off, the lists show the engine's own columns (process, case id, status, dates), and
+a case is shown by its id.
+
+## Registration points
+
+An add-on is `{ name, register(app) }`. In `register` it adds what it brings. Each point is the engine's or the web's;
+none names an add-on.
+
+| Point | Whose | What an add-on adds | Used today by |
+|---|---|---|---|
+| Events (`listener.subscribe`) | Engine | Work on `wait`, `assigned`, `assign`, `end`, `process.end`, ... | Assignment, notification (done) |
+| Model checks | Engine | Checks of an element or process, and the decision files it uses | Assignment, notification, security, lookups |
+| Decision folders | Engine | Its decisions by their tests' name (`Leave.policy`) | The three policies |
+| Query filters | Engine (API) | Narrowing what a user sees: tasks, cases, startable processes | Assignment (`SecureUser`), security (`caseAccess`) |
+| Form field rules | Engine | A rule checked on completion | Lookups (a list's choices) |
+| Display columns | Web | Columns for the lists, and how each is shown, filtered and sorted | Labels, assignment |
+| Editor modules | Editor | A bpmn-js module: properties, model types, report section, lint rules | All with model attributes |
+| Pages and menu entries | Web | Routes, views, menu entries | Notification, assignment (Roles), history, scenarios |
+| Integration page sections | Web | Its section: what it has, its settings | All |
+| AI guide sections | Web | What `/llms.txt` and the guide say about it | All with model attributes |
+
+The engine already has the first two in some form (events; `verifyModel` asks each add-on). The rest are to build.
+A registration point is small: a list the add-on adds to, and the engine or the web runs what's in it.
+
+## Turning add-ons on: `app-config.json`
+
+The application's `app-config.json`, beside `app-contract.json`, says which add-ons are on:
+
+```json
+{ "addOns": ["assignment", "security", "notification", "labels"] }
+```
+
+- **No file, or no `addOns`:** every add-on bpmn-server comes with is on. Existing applications don't change.
+- **`npx bpmn-server init`:** writes the file from the install options (below); a new application starts small.
+- **The Integration page** has an *Add-ons* section that writes the file. As with `.env`, a change applies when the
+  server restarts.
+- **The configuration's `addOns(server)`** stays, for an application that builds its own list in code; it wins over
+  the file.
+- **With the engine apart** (`ENGINE_AT`): both sides read the same file. The engine registers the engine parts, the
+  host the web and editor parts.
+
+### Install options (`init`)
+
+| Option | Add-ons |
+|---|---|
+| Sample app, everything | All |
+| Sample app, simple | None: the engine, the workbench and the modeler |
+| Embed into an existing app | None. An AI prompt generates the code for appServices and the API calls; to-do lists and custom forms are the app's |
+
+The questions `init` asks (API, Workbench and Modeler, appServices from existing code, connectors) each map to a part
+of the starter or to an add-on.
+
+## Where an add-on lives: its own folder
+
+Everything an add-on is, in one folder:
 
 ```text
-packages/bpmn-server/src/
-  engine/AddOns.ts         what an add-on is (IAddOn): register, and the model checks
-  addons/
-    index.ts               policyAddOns(): the three, in order
-    assignment/            owf:assignmentPolicy: who works on a user task
-    notification/          owf:notificationPolicy: who is told what
-    security/              owf:securityPolicy: what each user may do with a case
+addons/assignment/
+  engine/     what runs in the engine: its event subscribers, checks, query filters (TypeScript)
+  editor/     its bpmn-js module: properties, model types, report section, lint rules
+  web/        its routes, views, menu entries, Integration section, columns, guide section
+  test/       its tests, run alone with the engine
+  docs/       its page
+  index.ts    { name, register } for each side
 ```
 
-What the add-ons need of each other belongs to the engine instead:
+- **Open:** which package it ships in. The engine part needs only bpmn-server; the editor part needs bpmn-js and
+  Preact; the web part needs bpmn-web. Either one `bpmn-addons` package that depends on both, or the add-ons ship
+  inside bpmn-web, which already depends on bpmn-server. The second is simpler to start with.
+- The policies move from `packages/bpmn-server/src/addons/` to their folders here.
 
-- the roles (`roles.json`): `engine/Roles.ts`;
-- a decision cell that is a model expression (`isExpression`): `engine/Expressions.ts`;
-- a user task's assignment fields (`ASSIGNMENT_FIELDS`): `engine/AddOns.ts`.
+## A model that uses an add-on that's off
 
-## The events
+Its attributes (`owf:assignmentPolicy`, `camunda:candidateGroups`, `owf:list`) are kept as written: moddle keeps
+attributes it doesn't know, and saving writes them back. The editor doesn't show them, since the add-on's properties
+aren't loaded. The model report shows them read-only, marked *add-on off*. The engine ignores them, and verify says
+nothing about them.
 
-An add-on's `register(server)` subscribes to the engine's events (`server.listener.subscribe`), as the server is
-built. They are the events the engine has always had, for scripts, listeners and the delegate's `executionEvent`.
-A subscriber is awaited, in turn, before the engine goes on and saves; one that throws is reported, and the process
-goes on (`server/Listener.ts`).
+## Order
 
-| Event | When | The policies |
+1. **Registration points**, all of them, with the policies moved onto them. No behaviour changes.
+2. **`app-config.json`** and the Integration page's *Add-ons* section.
+3. **Assignment**, in full (the candidate fields, lanes, roles, start permissions, the task filters).
+4. **Security** and **notification**: their editor modules and pages.
+5. **Labels**, with the display columns.
+6. **Model history** and **scenarios**.
+7. **The service catalog** (standalone work): app services and connectors as one kind, all on the isolated side.
+8. **Connectors** and **lists and lookups**, on the catalog.
+
+Each step keeps every add-on on by default, so the test suites pass unchanged at each one. Each also adds the add-on's
+own tests, run with the engine alone.
+
+## Impact
+
+| | Existing applications | This repository |
 |---|---|---|
-| `wait` | A user task waits, its attributes and lane applied, not saved yet | Assignment: its policy decides who works on it, and wins |
-| `assigned` | A user task waits, and who works on it is decided (fired by the engine after `wait`) | Notification: tells whom its policy says |
-| `assign` | A person changed who works on a waiting task; its details: `before`, `assignment`, `userName` | Assignment: the Rationale says what it was |
-| `end` | An item ended; its details: `cancel` | Notification: a user task completed |
-| `process.end` | An instance ended | Notification |
+| Engine | Nothing to change: everything on by default | The engine parts of each add-on move out; the registration points are added |
+| API | The same calls and data. Task and case lists are narrowed only by the add-ons that are on | `SecureUser`'s filters move to the assignment add-on |
+| Editor | The same, with every add-on on. With one off, its properties aren't there | The modeler loads the modules of the add-ons that are on; `PolicyEntries`, `AssignmentGroups`, the lookups' entries move |
+| Pages | The same, with every add-on on | Menus, the Integration page, the lists' columns and the dashboards take what the add-ons register |
+| Scripts and listeners on `wait` | See the assignment before its policy decides; `assigned` after (already so) | |
+| Imports of moved files | A deep import (`dist/engine/AssignmentPolicy.js`) breaks; the package's entry still exports everything | |
+| Tests | | Each add-on's tests move to its folder; a test of the engine alone; the suites run with all on |
+| Docs | | A page per add-on; the tutorials say which add-ons each chapter needs |
 
-`assigned` is there so the order needn't be the add-ons': what tells someone whom a task waits for listens to
-`assigned`, after whatever decided it on `wait`. A script or listener on `wait` sees the task before its policy
-decides; one on `assigned` sees what was decided.
+## Open
 
-What has no event, an add-on says on itself, and the engine asks each in turn:
-
-| | When | What the add-on does |
-|---|---|---|
-| `verifyNode(check, node, def)`, `verifyProcess(check, proc, def)` | A model is checked | Report issues (`check.add`) |
-| `decisionFiles(definition, folder)` | A model is checked | Name the decision files it uses, for the actor and contract checks |
-| `decisionByName(ref, folder)` | A decision is evaluated by name (a test's `@evaluate`) | Find its own: `LeaveApproval.policy` |
-
-The security policy registers for no event. The engine doesn't ask it: the host does. bpmn-web's `routes/caseAccess.ts`
-asks the policy what a user may do, and adds the policy's condition to its own list queries. The engine's store
-doesn't know there is a policy.
-
-## Which add-ons a server has
-
-The configuration's `addOns(server)`. By default it is the policies, so an existing application keeps them. Some
-examples:
-
-```ts
-new Configuration({ ...settings, addOns: () => [] });                        // the engine alone
-new Configuration({ ...settings, addOns: () => [...policyAddOns(), mine] });  // and the application's own
-```
-
-A model checked without a server (`verifyModel(source, undefined, name, options)`) has no add-ons unless
-`options.addOns` gives them. The command line's `verify` gives the policies.
-
-## Compatibility
-
-- Everything the package exported is still exported from its entry: `applyPolicy`, `SecurityPolicy`,
-  `notifyEvent`, `roleNames` and the rest. Only their files moved.
-- A configuration that isn't a `Configuration` (an object of the application's own, with every factory) has no
-  `addOns`, so it has no policies. Add `addOns: () => policyAddOns()` to keep them.
-- A user task's description shows every `owf:` attribute the engine doesn't read itself, not only
-  `assignmentPolicy`.
-- The assignment policy decides on `wait`: a model's script or a listener on `wait` sees the task before it, and one on
-  `assigned` after. Before, it decided in the task's start.
+- Which package the add-ons ship in (see *Where an add-on lives*).
+- Whether actors stay standard, or the `owf:actor` naming belongs to the policies that read it.
+- What the minimal `init` preset includes: whether the workbench's My Work needs assignment to make sense.
