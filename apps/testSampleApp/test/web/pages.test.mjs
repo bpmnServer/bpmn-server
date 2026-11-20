@@ -199,6 +199,6 @@ test('element templates are a preview, off by default (ELEMENT_TEMPLATES): none 
   assert.equal(catalog.status, 200);
   assert.deepEqual(JSON.parse(catalog.text), { templates: [], rejected: [], warnings: [], off: true });
   const editor = (await admin.get(`/model/edit/${encodeURIComponent(MODEL)}`)).text;
-  assert.match(editor, /<script id="modeler-options" type="application\/json">\{"elementTemplates":false\}<\/script>/);
+  assert.equal(JSON.parse(/<script id="modeler-options" type="application\/json">([^<]*)<\/script>/.exec(editor)[1]).elementTemplates, false);
   assert.doesNotMatch((await admin.get('/dashboard/design')).text, /task templates/i);
 });

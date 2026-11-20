@@ -77,12 +77,12 @@ test('the model list links to pages that exist', async () => {
     assert.doesNotMatch((await admin.get('/model/list')).text, /\/wf\//);
 });
 
-test('a designer: Dashboard is a drop-down with My work, Notifications, Design and Integration; an administrator also has Administration', async () => {
+test('a designer: Dashboard is a drop-down with My work, Notifications, Design and Settings; an administrator also has Administration', async () => {
     let links = hrefs((await designer.get('/dashboard')).text);
-    assert.deepEqual(links.slice(0, 5), ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design', '/dashboard/integration']);
+    assert.deepEqual(links.slice(0, 5), ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design', '/dashboard/settings']);
     assert.ok(!links.includes('/dashboard/admin'));
     links = hrefs((await admin.get('/dashboard')).text);
-    assert.deepEqual(links.slice(0, 6), ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design', '/dashboard/admin', '/dashboard/integration']);
+    assert.deepEqual(links.slice(0, 6), ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design', '/dashboard/admin', '/dashboard/settings']);
 });
 
 test('the same menu on the Workbench, a dashboard and an instance page; the editors have its places', async () => {
@@ -97,7 +97,7 @@ test('the same menu on the Workbench, a dashboard and an instance page; the edit
     assert.ok(sections > workbench.indexOf('</nav>'), "the Workbench's own sections are in the page, not in the bar");
     const editor = (await admin.get('/model/edit/leave-request')).text;
     assert.match(editor, /class="editor-menu"/);
-    for (const href of ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design', '/dashboard/admin', '/dashboard/integration'])
+    for (const href of ['/', '/dashboard', '/dashboard/notifications', '/dashboard/design', '/dashboard/admin', '/dashboard/settings'])
         assert.match(editor, new RegExp(`editor-menu[^]*href="${href}"`));
 });
 

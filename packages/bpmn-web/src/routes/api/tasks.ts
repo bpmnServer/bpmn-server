@@ -54,7 +54,7 @@ function asField(field) {
         id: field.id, label: field.label ?? field.id, type: field.type, defaultValue: field.defaultValue,
         ...(values.length ? { values: values.map(v => ({ id: v.id, name: v.name ?? v.id })) } : {}),
         ...(validation.length ? { validation: validation.map(c => ({ name: c.name, config: c.config })) } : {}),
-        // its choices come from a source (elements/FormLookup.ts): list, a drop-down; lookup, a search. Its label is saved as <id>Display
+        // its choices come from a source (addons/forms/FormLookup.ts): list, a drop-down; lookup, a search. Its label is saved as <id>Display
         ...(lookup ? { [lookup.kind]: { source: lookup.sourceText, key: lookup.key, display: lookup.display, ...(lookup.filter ? { filter: lookup.filter } : {}) } } : {}),
     };
 }

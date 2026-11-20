@@ -80,9 +80,9 @@ function folder() {
 const notifications = (srv) => srv.documentStore.find('bpmn_test', 'wf_notifications', {});
 
 test('by default a server has the policies: the task is assigned by its policy, and the notifications are kept', async () => {
-    assert.deepEqual(new Configuration({}).addOns().map(a => a.name), ['policies', 'labels']);
+    assert.deepEqual(new Configuration({}).addOns().map(a => a.name), ['policies', 'labels', 'forms', 'modeling']);
     const { server } = await makeServer({ dir: folder() });
-    assert.deepEqual(server.addOns.map(a => a.name), ['policies', 'labels']);
+    assert.deepEqual(server.addOns.map(a => a.name), ['policies', 'labels', 'forms', 'modeling']);
     const { id } = await server.engine.start('Request', { amount: 1 }, null, 'ann');
     const [instance] = await server.dataStore.findInstances({ id }, 'full');
     assert.equal(instance.items.find(i => i.elementId === 'Approve').assignee, 'boss');
@@ -175,7 +175,7 @@ test('what the package exported before the policies moved is still exported, fro
 test('app-config.json says which add-ons are on: none named, none on; no file, or no addOns, every one', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-app-config-'));
     const file = path.join(dir, 'app-config.json');
-    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['policies', 'labels'], 'no file: every one, as before');
+    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['policies', 'labels', 'forms', 'modeling'], 'no file: every one, as before');
     fs.writeFileSync(file, JSON.stringify({ addOns: [] }));
     assert.deepEqual(enabledAddOns(file), []);
     const warned = [];
@@ -183,10 +183,10 @@ test('app-config.json says which add-ons are on: none named, none on; no file, o
     assert.deepEqual(enabledAddOns(file, m => warned.push(m)).map(a => a.name), ['policies']);
     assert.match(warned[0], /'nonsense', which is not an add-on/);
     fs.writeFileSync(file, JSON.stringify({ other: 1 }));
-    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['policies', 'labels'], 'no addOns: every one');
+    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['policies', 'labels', 'forms', 'modeling'], 'no addOns: every one');
     fs.writeFileSync(file, JSON.stringify({ addOns: 'policies' }));
     assert.throws(() => enabledAddOns(file), /addOns is a list/);
-    assert.deepEqual(new Configuration({ appConfig: path.join(dir, 'none.json') }).addOns().map(a => a.name), ['policies', 'labels']);
+    assert.deepEqual(new Configuration({ appConfig: path.join(dir, 'none.json') }).addOns().map(a => a.name), ['policies', 'labels', 'forms', 'modeling']);
 });
 
 test('a model that uses an add-on that is off: one warning, naming where; its attributes ignored', async () => {
@@ -219,4 +219,24 @@ test('Labels off: a case is shown by its default, a task by its name; its checks
     [instance] = await labelInstances(withLabels.server, await withLabels.server.dataStore.findInstances({ id: started.id }, 'full'));
     assert.equal(instance.label, 'Amount: 7');
     await withLabels.server.shutdown();
+});
+
+test('Forms off: a form field with a list is a plain field; the model is told the add-on is off', async () => {
+    const withList = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+    xmlns:owf="http://omniworkflow.com/schema/owf/1.0" id="Defs" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Pick" isExecutable="true">
+    <bpmn:startEvent id="Start"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:userTask id="Choose"><bpmn:extensionElements><camunda:formData><camunda:formField id="color" type="string">
+      <owf:list source="service:noSuchService" /></camunda:formField></camunda:formData></bpmn:extensionElements>
+      <bpmn:incoming>f1</bpmn:incoming><bpmn:outgoing>f2</bpmn:outgoing></bpmn:userTask>
+    <bpmn:endEvent id="End"><bpmn:incoming>f2</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Choose" /><bpmn:sequenceFlow id="f2" sourceRef="Choose" targetRef="End" />
+  </bpmn:process>
+</bpmn:definitions>`;
+    const { server } = await makeServer({ extra: { addOns: () => policyAddOns() } });
+    const issues = (await verifyModel(withList, server, 'Pick')).issues;
+    assert.ok(issues.some(i => i.code === 'add-on-off' && /Forms and display \(list\)/.test(i.message)), JSON.stringify(issues.map(i => i.code)));
+    assert.ok(!issues.some(i => /^lookup-/.test(i.code)), 'its checks are not asked');
+    await server.shutdown();
 });

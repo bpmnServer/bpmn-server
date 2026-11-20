@@ -12,7 +12,7 @@
  * A field's value is the one sent, else the case's (a value set before, at the start or by an earlier task). The rules
  * of a value that is absent are not checked, but `required`. Values from a drawn form are text: "12" is a long.
  */
-import { formFieldLookup, filterValue, lookupChoices } from './FormLookup.js';
+import { registrationsOf } from '../engine/AddOns.js';
 
 export interface IFormProblem {
     field: string;
@@ -108,17 +108,18 @@ export async function formProblems(server, fields: any[], sent: Record<string, a
         const value = wasSent ? sent[field.id] : current[field.id];
         const own = fieldProblems(field, value, { sent: wasSent, current: current[field.id] });
         problems.push(...own);
-        const lookup = formFieldLookup(field);
-        if (own.length || isEmpty(value) || lookup?.kind !== 'list') continue;
+        if (own.length || isEmpty(value)) continue;
         // only a value sent: one the case has was checked when it was sent
         if (!wasSent || String(value) === String(current[field.id] ?? '')) continue;
-        try {
-            const choices = await lookupChoices(server, lookup, { filter: filterValue(lookup, data) }, context);
-            if (!choices.some(c => String(c.key) === String(value)))
-                problems.push({ field: field.id, rule: 'list', message: `${field.label || field.id}: "${value}" is not one of its choices` });
-        }
-        catch (error) {
-            problems.push({ field: field.id, rule: 'list', message: `${field.label || field.id}: its choices could not be read (${error?.message ?? error})` });
+        // the add-ons' rules (engine/AddOns.ts): the Forms add-on's, a list's value one of its choices
+        for (const rule of registrationsOf(server).fieldRules) {
+            try {
+                const problem = await rule.check(server, field, value, { data, current: current[field.id] }, context);
+                if (problem) problems.push(problem);
+            }
+            catch (error) {
+                problems.push({ field: field.id, rule: rule.name, message: `${field.label || field.id}: ${error?.message ?? error}` });
+            }
         }
     }
     return problems;

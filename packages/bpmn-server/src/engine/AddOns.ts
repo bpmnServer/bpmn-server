@@ -25,6 +25,10 @@ export interface IAddOnModelCheck {
     roles(): string[] | null;
     /** an issue about this element (its process is the one being checked) */
     add(severity: IModelIssue['severity'], code: string, message: string, element?: any): void;
+    /** whether the application has a service (`billing.charge`); undefined when its services can't be known here */
+    hasService(name: string): boolean | undefined;
+    /** a connector's operation (`connector/operationId`), the issues of one that isn't there reported; null then */
+    connectorOperation(ref: string, element: any, fails: string): Promise<any | null>;
 }
 
 /** A decision file a model uses through an add-on (a policy), for the checks of what decisions read and call. */
@@ -49,6 +53,8 @@ export interface IAddOnManifest {
     description?: string;
     /** the model attributes it reads: `camunda:candidateGroups`, `owf:assignmentPolicy` */
     attributes: string[];
+    /** the model elements it reads: `owf:list`, `owf:lookup` */
+    elements?: string[];
 }
 
 /** A model check an add-on registers: of each element, of each process, and the decision files the model uses through it. */
@@ -97,6 +103,24 @@ export interface IExpressionName {
     of(at: IExpressionPlace): any;
 }
 
+/** A form field's value refused by an add-on's rule: which field, the rule, why. */
+export interface IFieldProblem { field: string; rule: string; message: string; }
+
+/**
+ * A rule a form field's value is held to when a user task is completed (elements/FormRules.ts), an add-on's: a list's
+ * value one of its choices. `value`: the value sent; `data`: the case's data with what was sent. Null: nothing to say.
+ */
+export interface IFieldRule {
+    name: string;
+    check(server: any, field: any, value: any, at: { data: Record<string, any>; current: any }, context: Record<string, any>): Promise<IFieldProblem | null> | IFieldProblem | null;
+}
+
+/** A form field's choices, asked as the form is filled (a list, a lookup): an add-on's; null when the field has none it knows. */
+export interface IFieldChoices {
+    name: string;
+    choices(server: any, field: any, criteria: Record<string, any>, context: Record<string, any>): Promise<any[] | null> | any[] | null;
+}
+
 /** A decision found by its tests' name (`LeaveApproval.policy`): its folder and name, or null when it isn't this one's. */
 export type DecisionLookup = (ref: string, folder: string) => { folder: string; name: string } | null;
 
@@ -109,6 +133,10 @@ export class Registrations {
     readonly decisionLookups: DecisionLookup[] = [];
     readonly queryFilters: IQueryFilter[] = [];
     readonly expressionNames: IExpressionName[] = [];
+    readonly fieldRules: IFieldRule[] = [];
+    readonly fieldChoices: IFieldChoices[] = [];
+    addFieldRule(rule: IFieldRule) { this.fieldRules.push(rule); }
+    addFieldChoices(choices: IFieldChoices) { this.fieldChoices.push(choices); }
     addExpressionName(name: IExpressionName) { this.expressionNames.push(name); }
     addModelCheck(check: IModelCheck) { this.modelChecks.push(check); }
     addQueryFilter(filter: IQueryFilter) { this.queryFilters.push(filter); }

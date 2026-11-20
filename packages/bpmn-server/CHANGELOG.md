@@ -26,6 +26,11 @@ and here
 
 ## [Unreleased]
 ### Added
+- **The Forms and display add-on** (`addons/forms/`): a form field's lists and lookups (`<owf:list>`, `<owf:lookup>`,
+  `FormLookup.ts`), their checks, a list's value held to its choices (a field rule: `addFieldRule`), and the choices the
+  form asks for as it is filled (`addFieldChoices`, the engine's `choices` call). A manifest names the model elements an
+  add-on reads too (`elements`). **The Modeling tools add-on** (`addons/modeling/`): the editor's Test and History tabs;
+  off, a save keeps no version. bpmn-server comes with four add-ons: Policies, Labels, Forms and display, Modeling tools.
 - **The Policies add-on, whole** (docs/design/add-ons.md): what a user sees is narrowed by the add-ons' query filters
   (`addQueryFilter`): the Policies add-on's, the tasks offered to them and the processes they may start, moved out of
   `SecureUser`, which applies the filters it is given (`qualifyInstances(query, filters)`, and the API passes the

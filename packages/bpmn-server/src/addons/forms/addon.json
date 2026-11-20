@@ -1,0 +1,7 @@
+{
+  "name": "forms",
+  "title": "Forms and display",
+  "description": "A form field's choices from a source, asked as the form is filled: a drop-down (owf:list) or a search (owf:lookup), from the application's service or a connector's operation; a list's value held to its choices.",
+  "attributes": [],
+  "elements": ["owf:list", "owf:lookup"]
+}

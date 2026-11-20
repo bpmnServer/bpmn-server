@@ -21,6 +21,7 @@ import { moddleExtensions, upgradeToOwf } from './moddle.js';
 import BpmnServerPropertiesModule from './properties/index.js';
 import PoliciesModule from './addons/policies/index.js';
 import LabelsModule from './addons/labels/index.js';
+import FormsModule from './addons/forms/index.js';
 import ProblemsModule from './problems/index.js';
 import ReportModule from './report/index.js';
 import TestModule from './testing/index.js';
@@ -40,8 +41,8 @@ const status = document.getElementById('js-save-status');
 const options = (() => { try { return JSON.parse(document.getElementById('modeler-options')?.textContent || '{}'); } catch { return {}; } })();
 const templateModules = options.elementTemplates ? [ElementTemplatesPropertiesProviderModule, ElementTemplateChooserModule] : [];
 // the add-ons that are on bring their parts of the editor (docs/design/add-ons.md); one that is off brings none
-const addOnOn = name => (options.addOns ?? ['policies', 'labels']).includes(name);
-const addOnModules = [...(addOnOn('policies') ? [PoliciesModule] : []), ...(addOnOn('labels') ? [LabelsModule] : [])];
+const addOnOn = name => (options.addOns ?? ['policies', 'labels', 'forms', 'modeling']).includes(name);
+const addOnModules = [...(addOnOn('policies') ? [PoliciesModule] : []), ...(addOnOn('labels') ? [LabelsModule] : []), ...(addOnOn('forms') ? [FormsModule] : [])];
 
 const modeler = new BpmnModeler({
     container: canvasElement,
@@ -56,7 +57,7 @@ const modeler = new BpmnModeler({
         ...addOnModules,
         ProblemsModule,
         ReportModule,
-        TestModule,
+        ...(addOnOn('modeling') ? [TestModule] : []),
         DecisionsModule,
         ConnectorsModule,
         LintRulesModule,
@@ -213,7 +214,8 @@ function applyDockState() {
     for (const name of DOCK_TABS)
         document.getElementById(`js-tab-${name}`).setAttribute('aria-selected', String(name === tab));
     document.getElementById('js-dock-toggle').setAttribute('aria-expanded', String(!panelState.dockCollapsed));
-    for (const [name, view] of [['report', modeler.get('report')], ['test', modeler.get('testPanel')], ['history', modeler.get('historyPanel')]]) {
+    for (const [name, view] of [['report', modeler.get('report')], ['test', modeler.get('testPanel', false)], ['history', modeler.get('historyPanel', false)]]) {
+        if (!view) continue;
         if (tab === name && !panelState.dockCollapsed)
             view.show();
         else
@@ -229,7 +231,7 @@ function showTab(tab) {
 }
 document.getElementById('js-tab-problems').addEventListener('click', () => showTab('problems'));
 document.getElementById('js-tab-report').addEventListener('click', () => showTab('report'));
-document.getElementById('js-tab-test').addEventListener('click', () => showTab('test'));
+document.getElementById('js-tab-test')?.addEventListener('click', () => showTab('test'));
 document.getElementById('js-tab-history')?.addEventListener('click', () => showTab('history'));
 document.getElementById('js-dock-full').addEventListener('click', () => setDockFull(!dockFull));
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && dockFull) setDockFull(false); });

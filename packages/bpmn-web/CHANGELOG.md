@@ -26,6 +26,9 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The Forms and display, and Modeling tools add-ons in the editor and the pages:** the form fields' list and lookup
+  entries are the Forms add-on's editor module (`modeler/src/addons/forms/`); the Test tab is loaded, and the Test and
+  History tabs shown, only with Modeling tools on (with it off, `modelHistory` is false). Test: `test/web/add-ons.test.mjs`.
 - **The editor takes the add-ons' parts only when they are on** (`modeler/src/addons/`): the Policies add-on's
   (the Assignment group, a start event's who may start, the process's policies) and the Labels add-on's (the Label
   group) are bpmn-js modules the modeler loads for the add-ons the page names; the model report marks an off add-on's

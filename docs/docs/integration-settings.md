@@ -33,7 +33,10 @@ whether it is on, and the models that use it. An administrator turns one on or o
 
 | Add-on | What it is |
 |---|---|
-| **Policies** | Who works on each task (assignee, candidates, lanes, roles, assignment policies), who may see and do what (security policies), and who is told what (notification policies) |
+| **Policies** | Who works on each task (assignee, candidates, lanes, roles, assignment policies), who may see and do what (security policies), and who is told what (notification policies), and the actors expressions read |
+| **Labels** | What each case and task is called (`owf:label`, `owf:endLabel`), and their values as the lists' columns. Off: a case is shown as `<model> #<caseId>`, a task by its name |
+| **Forms and display** | A form field's choices from a source: a drop-down (`owf:list`) or a search (`owf:lookup`); a list's value held to its choices |
+| **Modeling tools** | The editor's Test tab (scenarios) and History tab (each save kept as a version) |
 
 ## Who changes what
 

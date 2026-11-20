@@ -7,7 +7,6 @@ import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames, isFe
 import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
 import { owfAttribute, legacyAttributes } from './owfAttributes.js';
-import { formFieldLookup, lookupElements, filterPath } from './FormLookup.js';
 import { registrationsOf, addOnsOf } from '../engine/AddOns.js';
 import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck, IAddOnManifest } from '../engine/AddOns.js';
 import fs from 'node:fs';
@@ -89,6 +88,8 @@ class ModelVerifier {
         for (const manifest of manifests.filter(m => !on.has(m.name))) {
             const uses = elements.flatMap(def => Object.keys(def?.$attrs ?? {}).filter(k => manifest.attributes.includes(k))
                 .map(k => `${k.replace(/^\w+:/, '')} on ${def.name || def.id}`));
+            for (const element of manifest.elements ?? [])
+                if (this.source?.includes(`<${element}`)) uses.push(element.replace(/^\w+:/, ''));
             if (!uses.length) continue;
             const shown = uses.slice(0, 3).join(', ') + (uses.length > 3 ? `, and ${uses.length - 3} more` : '');
             this.processId = undefined;
@@ -103,7 +104,11 @@ class ModelVerifier {
 
     /** What an add-on's checks are given: the folder, the roles, and a way to report (engine/AddOns.ts). */
     get addOnCheck(): IAddOnModelCheck {
-        return { folder: this.decisionsFolder, roles: () => this.roles(), add: (severity, code, message, element) => this.add(severity, code, message, element) };
+        return {
+            folder: this.decisionsFolder, roles: () => this.roles(), add: (severity, code, message, element) => this.add(severity, code, message, element),
+            hasService: name => this.services ? resolvePath(this.services, name) : undefined,
+            connectorOperation: (ref, element, fails) => this.operationOf(ref, element, fails),
+        };
     }
 
     /** Each add-on's model check, in turn; one that throws is a warning. */
@@ -158,7 +163,11 @@ class ModelVerifier {
         return (this.server && this.server.appDelegate && this.server.appDelegate.moddleOptions) || defaultModdleOptions;
     }
 
+    /** the model's XML, as it was given */
+    source: string;
+
     async verify(source: string, name: string): Promise<IModelVerification> {
+        this.source = source;
         if (!source || !source.trim()) {
             this.add('error', 'empty-model', 'The model source is empty.');
             return this.result();
@@ -443,7 +452,7 @@ class ModelVerifier {
      * connectors: the connector and the operation there and enabled. `fails`: what happens when one is disabled.
      * Undefined, with the error added, when it is not there; and when the server has no connectors.
      */
-    private async operationOf(ref: string, def, fails: string) {
+    async operationOf(ref: string, def, fails: string) {
         const connectors = this.server?.connectors;
         if (!connectors)
             return undefined;
@@ -471,61 +480,6 @@ class ModelVerifier {
         if (!operation.enabled)
             this.add('warning', 'connector-operation-disabled', `The operation '${ref}' is disabled: ${fails} until an administrator enables it.`, def);
         return operation;
-    }
-
-    /**
-     * A form's lists and lookups (elements/FormLookup.ts; docs/design/form-lookups.md): one per field, its source a
-     * service the application has or a connector's operation the server has; a filter is a data path. A connector's
-     * text and filter go to inputs it has, and it needs no other input (only those are sent).
-     */
-    private async checkFormLookups(node, def) {
-        const fields = node.getBehaviour(Behaviour_names.CamundaFormData)?.fields ?? [];
-        for (const field of fields) {
-            const elements = lookupElements(field);
-            if (!elements.length)
-                continue;
-            const where = `The field '${field.id}'`;
-            if (elements.length > 1)
-                this.add('warning', 'lookup-and-list', `${where} has ${elements.length} lists and lookups: only the first is used; remove the others.`, def);
-            const lookup = formFieldLookup(field);
-            if (!lookup) {
-                const written = elements[0].$attrs?.source ?? elements[0].source;
-                this.add('error', 'lookup-source', written
-                    ? `${where}: '${written}' is not a source: service:<name> or connector:<connector>/<operationId>.`
-                    : `${where} has a ${elements[0].$type} with no source: service:<name> or connector:<connector>/<operationId>.`, def);
-                continue;
-            }
-            if (lookup.filter && filterPath(lookup.filter) === undefined)
-                this.add('error', 'lookup-filter', `${where}: the filter '${lookup.filter}' is not a data path, such as $` + `{data.department}.`, def);
-            if (lookup.source.type === 'service') {
-                if (this.services && !resolvePath(this.services, lookup.source.name))
-                    this.add('error', 'lookup-service-unknown', `${where}: the application's services have no '${lookup.source.name}'.`, def);
-                continue;
-            }
-            const ref = lookup.source.operation;
-            const slash = ref.indexOf('/');
-            if (slash <= 0 || slash === ref.length - 1) {
-                this.add('error', 'lookup-source', `${where}: '${ref}' does not name a connector's operation: connector:<connector>/<operationId>.`, def);
-                continue;
-            }
-            if (lookup.kind === 'lookup' && !lookup.text)
-                this.add('info', 'lookup-no-text', `${where} names no text input: '${ref}' is read whole at each search, and searched by the server.`, def);
-            if (lookup.filter && !lookup.filterInput)
-                this.add('error', 'lookup-filter-unsent', `${where} has a filter but no filterInput: '${ref}' is not given it.`, def);
-            const operation = await this.operationOf(ref, def, `the field's ${lookup.kind} is empty`);
-            if (!operation)
-                continue;
-            const names = new Set((operation.parameters ?? []).map(p => p.name));
-            for (const [what, name] of [['text', lookup.text], ['filterInput', lookup.filterInput]])
-                if (name && !names.has(name))
-                    this.add('error', 'lookup-input-unknown', `${where}: '${name}' (its ${what}) is not an input of '${ref}': it is not sent.`, def);
-            const sent = [lookup.text, lookup.filterInput].filter(Boolean);
-            for (const p of operation.parameters ?? [])
-                if (p.required && !sent.includes(p.name))
-                    this.add('error', 'lookup-input-missing', `${where}: '${ref}' needs the input '${p.name}', and a ${lookup.kind} sends ${sent.length ? sent.map(n => `'${n}'`).join(' and ') : 'none'}.`, def);
-            if (operation.body?.required)
-                this.add('error', 'lookup-input-missing', `${where}: '${ref}' needs a request body, and a ${lookup.kind} sends none.`, def);
-        }
     }
 
     async verifyExecutables(definition: Definition) {
@@ -572,7 +526,6 @@ class ModelVerifier {
             const timer = node.getBehaviour(Behaviour_names.TimerEventDefinition);
             if (timer) this.checkTimer(timer, def, checkScripts);
 
-            await this.checkFormLookups(node, def);
 
             const connector = node instanceof ServiceTask ? node.connector : undefined;
             if (connector)

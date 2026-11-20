@@ -274,7 +274,7 @@ features:
     what: "A form field's choices from a source, asked for as the form is filled: a drop-down (owf:list) or a search (owf:lookup), from the application's service or a connector's operation; the key saved, its label beside it."
     xml: ["camunda:formField owf:list", "camunda:formField owf:lookup"]
     docs: [docs/docs/form-lookups.md, docs/design/form-lookups.md]
-    code: [packages/bpmn-server/src/elements/FormLookup.ts, packages/bpmn-web/src/routes/api/tasks.ts, packages/bpmn-web/public/javascripts/formLookup.js]
+    code: [packages/bpmn-server/src/addons/forms/FormLookup.ts, packages/bpmn-web/src/routes/api/tasks.ts, packages/bpmn-web/public/javascripts/formLookup.js]
     tests: [packages/bpmn-server/test/form-lookup.test.mjs, apps/testSampleApp/test/web/form-choices.test.mjs, apps/testSampleApp/test/ui/form-lookups.test.mjs]
     examples: ["apps/hrdemo/workflow/processes/Leave Application.bpmn"]
   - id: form-rules

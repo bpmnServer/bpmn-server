@@ -8,14 +8,20 @@ import path from 'node:path';
 import type { IAddOn, IAddOnManifest } from '../engine/AddOns.js';
 import { policiesAddOn, policiesManifest } from './policies/index.js';
 import { labelsAddOn, labelsManifest } from './labels/index.js';
+import { formsAddOn, formsManifest } from './forms/index.js';
+import { modelingAddOn, modelingManifest } from './modeling/index.js';
 
 export * from './policies/index.js';
 export * from './labels/index.js';
+export * from './forms/index.js';
+export * from './modeling/index.js';
 
 /** Every add-on bpmn-server comes with, by name, and its manifest (read even when it is off). */
 const AVAILABLE: { addOn: IAddOn; manifest: IAddOnManifest }[] = [
     { addOn: policiesAddOn, manifest: policiesManifest },
     { addOn: labelsAddOn, manifest: labelsManifest },
+    { addOn: formsAddOn, manifest: formsManifest },
+    { addOn: modelingAddOn, manifest: modelingManifest },
 ];
 
 export const APP_CONFIG_FILE = 'app-config.json';

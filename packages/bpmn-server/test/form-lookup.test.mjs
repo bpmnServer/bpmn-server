@@ -1,5 +1,5 @@
 // @features: form-lookups
-// A form field's list or lookup (elements/FormLookup.ts; docs/design/form-lookups.md): the model says it all, in an
+// A form field's list or lookup (addons/forms/FormLookup.ts; docs/design/form-lookups.md): the model says it all, in an
 // <owf:list> or <owf:lookup> on the field, and its choices come from the source it names, asked for on demand: a
 // service of the application, or a connector's operation. A local server plays the people API.
 import test from 'node:test';

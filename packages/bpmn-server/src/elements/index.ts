@@ -1,6 +1,5 @@
 export * from './Definition.js';
 export * from './owfAttributes.js';
-export * from './FormLookup.js';
 export * from './FormRules.js';
 export * from './Element.js';
 export * from './Node.js';

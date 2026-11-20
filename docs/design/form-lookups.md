@@ -112,7 +112,7 @@ The drawn forms send both; an application's own form sends `<id>Display` itself 
 
 Each field of the properties panel's Form fields list has **Choices** (none, List, Lookup) and, once set, Source, Key,
 Display and Filter; a `connector:` source also has Text input (a lookup), Filter input and Rows at
-(`modeler/src/properties/FormChoicesEntries.jsx`). The editor's descriptors (`modeler/src/moddle.js`) define
+(`modeler/src/addons/forms/FormChoicesEntries.jsx`). The editor's descriptors (`modeler/src/moddle.js`) define
 `owf:List` and `owf:Lookup`: without them it dropped the elements, as unknown, when it saved the model.
 
 ## 9. Not yet

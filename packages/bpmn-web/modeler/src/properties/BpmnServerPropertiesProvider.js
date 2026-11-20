@@ -10,16 +10,10 @@ import { OtherAttributesGroup } from './OtherAttributesGroup.jsx';
 import { TemplateValuesGroup } from './TemplateValuesGroup.jsx';
 import { DataObjectGroup } from './DataObjectGroup.jsx';
 import { ConditionGroup, MultiInstanceGroup, FormGroup, NewFormFieldsGroup, DecisionGroup, CalledProcessGroup } from './FlowGroups.jsx';
-import { formChoicesEntries } from './FormChoicesEntries.jsx';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 
 const LOW_PRIORITY = 400;
 
-/** The element's form fields, in the order Camunda's Form fields list has them. */
-function formFieldsOf(element) {
-    const values = getBusinessObject(element).get('extensionElements')?.get('values') || [];
-    return values.find(value => is(value, 'camunda:FormData'))?.get('fields') || [];
-}
 
 /**
  * Camunda engine features with no meaning in bpmn-server: not offered, but shown when the element has a value
@@ -81,13 +75,6 @@ export default class BpmnServerPropertiesProvider {
             const newFormFields = NewFormFieldsGroup(element, this._injector);
             if (newFormFields)
                 groups.splice(groups.findIndex(g => g.id === 'BpmnServer__Form') + 1, 0, newFormFields);
-            // each form field's choices from a source (<owf:list>, <owf:lookup>), after Camunda's own entries
-            const formFields = groups.find(g => g.id === 'CamundaPlatform__FormData');
-            if (formFields?.items) {
-                const fields = formFieldsOf(element);
-                formFields.items = formFields.items.map((item, index) => fields[index]
-                    ? { ...item, entries: [...item.entries, ...formChoicesEntries(element, fields[index], item.id)] } : item);
-            }
             replace('CamundaPlatform__CallActivity', CalledProcessGroup(element, translate));
             replace('CamundaPlatform__Script', ScriptGroup(element, translate));
             replace('CamundaPlatform__ExecutionListener', ScriptsGroup(element, this._injector));

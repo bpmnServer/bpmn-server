@@ -64,7 +64,7 @@ export const owf = {
             properties: [{ name: 'exceptionsAsErrors', isAttr: true, type: 'Boolean' }]
         },
         {
-            // a form field's choices from a source (engine/elements/FormLookup.ts): <owf:list> or <owf:lookup> inside
+            // a form field's choices from a source (engine/addons/forms/FormLookup.ts): <owf:list> or <owf:lookup> inside
             // a camunda:formField; without these the editor dropped them as unknown when it saved the model
             name: 'FormFieldChoices',
             isAbstract: true,

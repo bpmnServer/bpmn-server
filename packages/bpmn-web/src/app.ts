@@ -131,8 +131,9 @@ export class WebApp {
 			}
 		};
 		// whether an add-on is on (engine/AddOns.ts), as the server started: a page offers an add-on's parts only then
-		const addOnsOn = new Set(addOnsOf(this.bpmnServer).map(a => a.name));
-		app.locals.addOnOn = (name: string) => addOnsOn.has(name);
+		// (worked out when first asked: the server is launched after the app is set up)
+		let addOnsOn: Set<string>;
+		app.locals.addOnOn = (name: string) => (addOnsOn ??= new Set(addOnsOf(this.bpmnServer).map(a => a.name))).has(name);
 		app.use(compression());
 		// Security headers. CSP is disabled because the modeler/UI loads inline scripts
 		// and a CDN; HSTS only takes effect over HTTPS (harmless over HTTP).

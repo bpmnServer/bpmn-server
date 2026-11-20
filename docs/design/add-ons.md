@@ -1,7 +1,7 @@
 # Add-ons
 
-**Status:** design, for review (branch `addons`). In place already, on 3.7.2: the policies are add-ons that register
-for the engine's events (`src/addons/`, `engine/AddOns.ts`). Everything else here is to do.
+**Status:** in place on 3.7.5, but connectors: four add-ons (Policies, Labels, Forms and display, Modeling tools),
+`app-config.json`, the manifests, the registration points, the editor's modules and the Settings page's Add-ons.
 
 ## Why
 
@@ -36,17 +36,13 @@ further feature is an **add-on** that is turned on when it's needed.
 | Forms: fields and defaults (`camunda:formField`) | Standard | Camunda's; the task form is drawn from them |
 | Form keys (`camunda:formKey`, `app:<page>`) | Standard | The engine only stores the key |
 | Form rules (types, `required`, min/max, the `validate` event) | Standard | Camunda's constraints, honoured on completion; `formRules: false` turns them off |
-| Actors (who started a case, who completed a task) | Standard | The engine records who did what. Expressions and decisions read it as `actors.*` |
 | Storage: MongoDB, SQLite, memory | Standard | Adapters (`documentStore`), not features |
 | User-chosen list columns (the picker, filters, sort) | Standard (web) | The lists themselves. Add-ons contribute columns to them |
-| **Assignment** | Add-on | `assignee`, candidates, lanes as groups, roles, the assignment policy, start permissions |
-| **Security** | Add-on | The security policy: who may see and do what |
-| **Notification** | Add-on | The notification policy, the notifications kept, the Notifications page |
-| **Labels** | Add-on | `owf:label` and `owf:endLabel`, and the label columns |
-| **Lists and lookups** | Add-on | `owf:list` and `owf:lookup` on form fields |
-| **Connectors** | Add-on | OpenAPI operations as services. Depends on the service catalog, see Order |
-| **Model history** | Add-on | The versions kept on each save, the editor's History tab |
-| **Scenarios** | Add-on | Gherkin tests of a model, the editor's Test tab, `@evaluate` |
+| **Policies** | Add-on | Assignment (`assignee`, candidates, lanes as groups, roles, start permissions, the assignment policy), security and notification policies, the Notifications page, and actors (`owf:actor`, `actors.*`) |
+| **Labels** | Add-on | `owf:label` and `owf:endLabel`, and their values as the lists' columns |
+| **Forms and display** | Add-on | `owf:list` and `owf:lookup` on form fields |
+| **Modeling tools** | Add-on | The editor's Test tab (scenarios, `@evaluate`) and History tab (the versions kept on each save) |
+| **Connectors** | Add-on, later | OpenAPI operations as services, on the service catalog (see Order) |
 
 ### Assignment, in full
 
