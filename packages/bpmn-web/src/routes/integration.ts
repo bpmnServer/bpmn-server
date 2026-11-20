@@ -22,8 +22,8 @@ export interface IntegrationPoint {
     title: string;
     /** What it is, in a sentence. */
     about: string;
-    /** Its settings, each changed by `admin` (the default) or by a designer too. */
-    settings: { name: string; label: string; editor?: Editor }[];
+    /** Its settings, each changed by `admin` (the default) or by a designer too; `main`, shown first (the rest under More settings). */
+    settings: { name: string; label: string; editor?: Editor; main?: boolean }[];
 }
 
 /** The integration points, in the page's order. */
@@ -32,10 +32,10 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         id: 'application', title: 'The application',
         about: 'Its code: the delegate, whose functions (appServices) scripts and expressions call, and its hooks (notify, loadDataObject, the events).',
         settings: [
-            { name: 'APP_ENV', label: 'Environment' },
+            { name: 'APP_ENV', label: 'Environment', main: true },
             { name: 'APP_ENV_LABEL', label: 'Environment label' },
-            { name: 'READ_ONLY', label: 'Read-only (a public demo)' },
-            { name: 'SITE_URL', label: 'Site address' },
+            { name: 'READ_ONLY', label: 'Read-only (a public demo)', main: true },
+            { name: 'SITE_URL', label: 'Site address', main: true },
         ],
     },
     {
@@ -43,7 +43,7 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         about: 'REST APIs, each described by an OpenAPI document, that service and send tasks call by name. Their keys stay on this server.',
         settings: [
             { name: 'SERVICE_TASKS', label: 'Service tasks run' },
-            { name: 'CONNECTORS_KEY', label: 'Key that encrypts connector keys' },
+            { name: 'CONNECTORS_KEY', label: 'Key that encrypts connector keys', main: true },
             { name: 'CONNECTORS_ALLOW_HOSTS', label: 'Hosts connectors may call' },
             { name: 'CONNECTOR_CATALOG_URL', label: 'Connector catalog' },
         ],
@@ -52,7 +52,7 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         id: 'policies', title: 'Roles and policies',
         about: 'The roles lanes and tasks are given to, and the decision tables that assign tasks, secure instances and choose notifications.',
         settings: [
-            { name: 'SECURITY_POLICY', label: 'Security policies' },
+            { name: 'SECURITY_POLICY', label: 'Security policies', main: true },
             { name: 'ENFORCE_SECURITY', label: 'Sign-in and security enforced' },
         ],
     },
@@ -60,11 +60,11 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         id: 'notifications', title: 'Notifications',
         about: 'What the notification policies send: kept by BPMN Server, delivered by the application\'s notify, or by email.',
         settings: [
-            { name: 'NOTIFICATIONS', label: 'Delivery' },
-            { name: 'EMAIL_ENABLE', label: 'Email sent' },
-            { name: 'EMAIL_FROM', label: 'Sender' },
-            { name: 'SMTP_USER', label: 'Mail account' },
-            { name: 'SMTP_PASSWORD', label: 'Mail password' },
+            { name: 'NOTIFICATIONS', label: 'Delivery', main: true },
+            { name: 'EMAIL_ENABLE', label: 'Email sent', main: true },
+            { name: 'EMAIL_FROM', label: 'Sender', main: true },
+            { name: 'SMTP_USER', label: 'Mail account', main: true },
+            { name: 'SMTP_PASSWORD', label: 'Mail password', main: true },
             { name: 'EMAIL_LOG', label: 'Email log' },
         ],
     },
@@ -72,9 +72,9 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         id: 'api', title: 'The API the application calls',
         about: 'How the application starts processes and acts on tasks: API v3, the task API for acting for its users, and the keys.',
         settings: [
-            { name: 'API_KEY', label: 'Service key' },
+            { name: 'API_KEY', label: 'Service key', main: true },
             { name: 'ADMIN_API_KEY', label: 'Administration key' },
-            { name: 'API_ACTING_USER_KEY', label: 'Task API key (acting for a user)' },
+            { name: 'API_ACTING_USER_KEY', label: 'Task API key (acting for a user)', main: true },
             { name: 'API_SERVICE_USER_NAME', label: 'Service account' },
             { name: 'API_SERVICE_USER_GROUPS', label: 'Service account\'s groups' },
             { name: 'API_SERVICE_TENANT_ID', label: 'Service account\'s tenant' },
@@ -87,8 +87,8 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         id: 'forms', title: 'Forms, scripts and the model editor',
         about: 'How forms are checked, what the model editor offers and keeps, and how scripts reach the application.',
         settings: [
-            { name: 'FORM_RULES', label: 'Form rules checked', editor: 'designer' },
-            { name: 'ELEMENT_TEMPLATES', label: 'Element templates offered', editor: 'designer' },
+            { name: 'FORM_RULES', label: 'Form rules checked', editor: 'designer', main: true },
+            { name: 'ELEMENT_TEMPLATES', label: 'Element templates offered', editor: 'designer', main: true },
             { name: 'VERIFY_MODELS_ON_IMPORT', label: 'Models checked when saved through the APIs', editor: 'designer' },
             { name: 'MODEL_HISTORY', label: 'Saved versions of models kept', editor: 'designer' },
             { name: 'CATALOG_URL', label: 'Model catalog' },
@@ -101,7 +101,7 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         id: 'ai', title: 'AI agents',
         about: 'The links an AI agent works with (Link for an AI agent), and this site\'s own guide for them in /llms.txt.',
         settings: [
-            { name: 'AI_ACCESS', label: 'AI link levels offered' },
+            { name: 'AI_ACCESS', label: 'AI link levels offered', main: true },
             { name: 'AI_GUIDE', label: 'Guide for AI agents' },
         ],
     },
@@ -167,13 +167,63 @@ export class EnvFile {
 
 export interface Viewer { isAdmin: boolean; isDesigner: boolean; }
 
+const count = (n: number, one: string, many = one + 's') => `${n} ${n === 1 ? one : many}`;
+/** A setting's value as a summary says it: its value, else its default, else not set; a secret only set or not. */
+const valueOf = (settings: any[], name: string) => {
+    const s = settings.find(x => x.name === name);
+    if (!s) return undefined;
+    if (s.secret) return s.set ? 'set' : 'not set';
+    return s.value !== '' ? s.value : s.default !== undefined ? String(s.default) : 'not set';
+};
+
+/**
+ * What an integration point has, in a few words, for the Integration page's overview: { lines, attention } (attention:
+ * something to set up, said so). From what the page knows of it (`info`) and its settings.
+ */
+export function summaryOf(id: string, info: any, settings: any[]): { lines: string[]; attention?: string } {
+    switch (id) {
+        case 'application': {
+            const functions = (info.services ?? []).filter(s => s.kind === 'function').length;
+            return { lines: [
+                info.delegate ? `Delegate ${info.delegate}, ${count(functions, 'function')} for scripts` : 'No delegate of its own',
+                `Environment: ${valueOf(settings, 'APP_ENV') === 'not set' ? 'not declared' : valueOf(settings, 'APP_ENV')}${valueOf(settings, 'READ_ONLY') === 'true' ? ', read-only' : ''}`,
+            ], attention: valueOf(settings, 'SITE_URL') === 'not set' ? "Site address not set: emails can't link to it" : undefined };
+        }
+        case 'connectors': {
+            const list = info.list ?? [];
+            const keyless = list.filter(c => !c.auth?.last4).length;
+            return { lines: [list.length ? `${count(list.length, 'connector')}${keyless ? `, ${keyless} without a key` : ''}` : 'No connectors yet'],
+                attention: list.length && !info.canEncrypt ? 'Connector keys need the encryption key' : undefined };
+        }
+        case 'policies': {
+            const roles = info.roles?.list?.length ?? 0;
+            return { lines: [
+                count(roles, 'role'),
+                `${count(info.assignment?.length ?? 0, 'assignment policy', 'assignment policies')}, ${count(info.security?.length ?? 0, 'security policy', 'security policies')}${info.security?.length ? (info.securityOn ? ' (on)' : ' (off)') : ''}, ${count(info.notification?.length ?? 0, 'notification policy', 'notification policies')}`,
+            ], attention: info.roles?.unlisted?.length ? `${count(info.roles.unlisted.length, 'role')} used but not listed` : undefined };
+        }
+        case 'notifications':
+            return { lines: [`Delivered by ${info.notify ? 'the application' : 'email'}; ${count(info.total ?? 0, 'notification')} kept`] ,
+                attention: !info.notify && valueOf(settings, 'EMAIL_ENABLE') !== 'true' ? 'Email is off: notifications are kept, not sent' : undefined };
+        case 'api':
+            return { lines: [`API v3; service key ${valueOf(settings, 'API_KEY') ?? "the application's"}`, `Task API (acting for a user) ${info.taskApi ? 'on' : 'off'}`] };
+        case 'forms':
+            return { lines: [`Form rules ${valueOf(settings, 'FORM_RULES') === 'false' ? 'not checked' : 'checked'}; scripts ${valueOf(settings, 'SCRIPT_SANDBOX') === 'true' ? 'in a sandbox' : 'run as they are'}`] };
+        case 'ai': {
+            const levels = valueOf(settings, 'AI_ACCESS');
+            return { lines: [levels && levels !== 'not set' ? `AI links: ${levels}` : "AI links: as people's rights allow"] };
+        }
+    }
+    return { lines: [] };
+}
+
 const mayChange = (viewer: Viewer, editor: Editor = 'admin') => viewer.isAdmin || (editor === 'designer' && viewer.isDesigner);
 
 /** Each setting of a point as the page shows it to this viewer. */
 export function settingsOf(point: IntegrationPoint, viewer: Viewer, env: EnvFile, appHostSettings: boolean) {
     const schema = settingsSchema().properties;
     const inFile = env.read();
-    return point.settings.map(({ name, label, editor }) => {
+    return point.settings.map(({ name, label, editor, main }) => {
         const entry = schema[name] ?? {};
         const secret = !!entry['x-secret'];
         const running = process.env[name];
@@ -184,7 +234,7 @@ export function settingsOf(point: IntegrationPoint, viewer: Viewer, env: EnvFile
         const pending = !fromEnvironment && (file ?? '') !== (env.started()[name] ?? '');
         const source = byApplication ? 'the application' : fromEnvironment ? 'the environment' : running !== undefined && running !== '' ? '.env' : 'default';
         return {
-            name, label, secret, editor: editor ?? 'admin',
+            name, label, secret, editor: editor ?? 'admin', main: !!main,
             description: plain(entry.description),
             type: entry.type, choices: entry.enum ?? (entry.type === 'boolean' ? ['true', 'false'] : null),
             default: entry.default, examples: entry.examples ?? [],

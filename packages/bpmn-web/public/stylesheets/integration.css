@@ -1,0 +1,15 @@
+/* The Integration page (views/dashboards/integration.pug): the overview's cards, and a point's page */
+.integration-overview { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.integration-card { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; background: #fff; border: 1px solid #dce4ec; border-radius: 10px; color: #1f2937; text-decoration: none; }
+.integration-card:hover, .integration-card:focus { border-color: #1f62c8; box-shadow: 0 2px 8px rgba(31, 98, 200, .12); text-decoration: none; color: #1f2937; }
+.integration-card h2 { font-size: 17px; margin: 0 0 4px; }
+.integration-card p { margin: 0; color: #52575f; font-size: 14px; }
+.integration-card .dash-badge { align-self: flex-start; }
+/* something to set up: amber, not red (red is for errors) */
+.integration-attention { color: #8a5a00 !important; }
+.integration-open { margin-top: auto; padding-top: 6px; color: #1f62c8; font-size: 14px; }
+.integration-more { margin: 12px 0; }
+.integration-more > summary { cursor: pointer; color: #1f62c8; margin-bottom: 8px; }
+.integration-list > summary { cursor: pointer; color: #1f62c8; }
+.integration-list[open] > summary { margin-bottom: 4px; }
+.integration-points { margin: 8px 0 24px; font-size: 14px; }

@@ -1,20 +1,22 @@
 # The Integration page
 
 **Dashboard ▸ Integration** (`/dashboard/integration`) is where administrators and designers set up how the workflows
-meet the application. It has one section per integration point. Each section shows what is in place and the settings
-that control it.
+meet the application. It opens on an overview: a card for each integration point, saying in a line or two what is in
+place, what needs setting up (*Site address not set*, *Email is off*), and *restart to apply* when a saved change
+waits for a restart. A card opens its point's page (`/dashboard/integration/<point>`): what is in place, its main
+settings, and the rest under **More settings**. Saving comes back to that page.
 
-| Section | Shows | Settings |
+| Point | Shows | Settings (main first) |
 |---|---|---|
-| **The application** | The delegate's class, the methods it defines, its functions (`appServices`), who signs people in | `APP_ENV`, `SITE_URL` |
-| **Connectors** | Each connector: enabled or not, its key (last 4 characters), the models that call it | `SERVICE_TASKS`, `CONNECTORS_KEY`, `CONNECTORS_ALLOW_HOSTS`, `CONNECTOR_CATALOG_URL` |
-| **Roles and policies** | The roles, and the assignment, security and notification policies | `SECURITY_POLICY`, `ENFORCE_SECURITY` |
-| **Notifications** | Who delivers them (the delegate's `notify`, or email), how many are kept, by status | `NOTIFICATIONS`, `EMAIL_ENABLE`, `EMAIL_FROM`, `SMTP_USER`, `SMTP_PASSWORD`, `EMAIL_LOG` |
-| **The API the application calls** | API v3, and whether the task API (`/api2/tasks`) is on | `API_KEY`, `ADMIN_API_KEY`, `API_ACTING_USER_KEY`, the service account, `API_IMPERSONATION`, `API_RATE_LIMIT` |
-| **Forms, scripts and the model editor** | | `FORM_RULES`, `ELEMENT_TEMPLATES`, `VERIFY_MODELS_ON_IMPORT`, `MODEL_HISTORY`, `CATALOG_URL`, `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES`, `TIMERS` |
-| **AI agents** | | `AI_ACCESS`, `AI_GUIDE` |
+| **The application** | The delegate's class, its functions (`appServices`) and methods (folded), who signs people in | `APP_ENV`, `READ_ONLY`, `SITE_URL`; `APP_ENV_LABEL` |
+| **Connectors** | Each connector: enabled or not, its key (last 4 characters), the models that call it | `CONNECTORS_KEY`; `SERVICE_TASKS`, `CONNECTORS_ALLOW_HOSTS`, `CONNECTOR_CATALOG_URL` |
+| **Roles and policies** | The roles, and the assignment, security and notification policies | `SECURITY_POLICY`; `ENFORCE_SECURITY` |
+| **Notifications** | Who delivers them (the delegate's `notify`, or email), how many are kept, by status | `NOTIFICATIONS`, `EMAIL_ENABLE`, `EMAIL_FROM`, `SMTP_USER`, `SMTP_PASSWORD`; `EMAIL_LOG` |
+| **The API the application calls** | API v3, and whether the task API (`/api2/tasks`) is on | `API_KEY`, `API_ACTING_USER_KEY`; `ADMIN_API_KEY`, the service account, `API_IMPERSONATION`, `API_RATE_LIMIT` |
+| **Forms, scripts and the model editor** | | `FORM_RULES`, `ELEMENT_TEMPLATES`; `VERIFY_MODELS_ON_IMPORT`, `MODEL_HISTORY`, `CATALOG_URL`, `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES`, `TIMERS` |
+| **AI agents** | | `AI_ACCESS`; `AI_GUIDE` |
 
-Each section links to where its parts are managed: the connectors, the roles (Administration), the policies (Design),
+Each point's page links to where its parts are managed: the connectors, the roles (Administration), the policies (Design),
 the notifications.
 
 ## Who changes what

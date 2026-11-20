@@ -26,6 +26,17 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The Integration page, simpler** (docs/docs/integration-settings.md): an overview of the integration points, each
+  in a line or two with what needs setting up, opening its own page (`/dashboard/integration/<point>`) with its main
+  settings first and the rest under More settings; the delegate's functions and methods folded.
+- **`services.json` checked against the code:** `bpmn-web-services --check` fails when the file no longer lists the
+  services the delegate's code has; the sample applications' and the HR demo's `npm test` run it first
+  (`npm run services:check`). The HR demo's file is regenerated: it still listed 14 services removed with the
+  application's contract.
+- **The services in `delegates/`:** the sample applications and the HR demo keep `appServices.ts` and
+  `testServices.ts` with the delegate (they were in `connectors/`, the folder of the editor's element templates).
+  The engine doesn't look for them by path; an application that keeps them elsewhere goes on working. The HR demo's
+  element templates for the removed `add` and `echo` services are gone too.
 - **Columns shown, hidden and moved** (docs/docs/list-columns.md): a list's own columns (Process, Case, Started...)
   can be hidden, shown again and moved (← →) with the columns added; the lists name them alike (Pending Tasks as My
   work: Task with its own label, Case, Process, Waiting; its Label and CaseId columns are gone, Case id is offered).

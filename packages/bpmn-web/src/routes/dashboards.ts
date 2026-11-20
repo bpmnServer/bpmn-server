@@ -34,7 +34,7 @@ import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
-import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames } from './integration.js';
+import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf } from './integration.js';
 
 const handler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
@@ -632,7 +632,8 @@ export class Dashboards extends Common {
             return res.status(403).send('Administrator or designer permission required');
         };
         const appHostSettings = () => !!this.webApp.application?.hostSettings;
-        router.get('/integration', mayIntegrate, handler(async (req, res) => {
+        /** What the Integration page knows of each point, and each point with its settings and summary, for this viewer. */
+        const integrationPoints = async (req) => {
             const viewer = integrationViewer(req);
             const dir = folder();
             const delegate = server.appDelegate;
@@ -666,17 +667,29 @@ export class Dashboards extends Common {
                 notifications: { byStatus, total: notifications.length, notify: methods.includes('notify') },
                 api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
             };
-            render(req, res, 'integration', {
-                title: 'Integration',
-                points: INTEGRATION_POINTS.map(p => ({ ...p, settings: settingsOf(p, viewer, this.envFile(), appHostSettings()), info: info[p.id] ?? {} })),
-                envFile: this.envFile().file, supervisor: supervisor(), separateEngine: !!process.env.ENGINE_AT,
-                message: req.query.message,
+            return INTEGRATION_POINTS.map(p => {
+                const settings = settingsOf(p, viewer, this.envFile(), appHostSettings());
+                return { ...p, settings, info: info[p.id] ?? {}, summary: summaryOf(p.id, info[p.id] ?? {}, settings), pending: settings.filter(s => s.pending).length };
             });
+        };
+        const integrationPage = (req, res, points, point?) => render(req, res, 'integration', {
+            title: point ? `Integration: ${point.title}` : 'Integration',
+            points, point,
+            envFile: this.envFile().file, supervisor: supervisor(), separateEngine: !!process.env.ENGINE_AT,
+            message: req.query.message,
+        });
+        // the overview: each point, what it has in a few words; and one point's page, its settings
+        router.get('/integration', mayIntegrate, handler(async (req, res) => integrationPage(req, res, await integrationPoints(req))));
+        router.get('/integration/:point', mayIntegrate, handler(async (req, res) => {
+            const points = await integrationPoints(req);
+            const point = points.find(p => p.id === req.params.point);
+            if (!point) return res.status(404).send('No such integration point');
+            integrationPage(req, res, points, point);
         }));
         router.post('/integration/:point', mayIntegrate, handler(async (req, res) => {
             const point = INTEGRATION_POINTS.find(p => p.id === req.params.point);
             if (!point) return res.status(404).send('No such integration point');
-            const back = (message: string) => res.redirect('/dashboard/integration?message=' + encodeURIComponent(message) + '#' + point.id);
+            const back = (message: string) => res.redirect(`/dashboard/integration/${point.id}?message=` + encodeURIComponent(message));
             const { changes, problems } = changesFrom(point, req.body ?? {}, integrationViewer(req), this.envFile(), appHostSettings());
             if (problems.length) return back('Nothing saved. ' + problems.join('; ') + '.');
             const names = Object.keys(changes);

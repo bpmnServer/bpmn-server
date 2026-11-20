@@ -20,14 +20,20 @@ mixin application(info)
         code= info.delegate
       else
         span.dash-muted none
-    dt Its own methods
-    dd: +names(info.methods)
     dt Functions (appServices)
     dd
       if info.servicesError
         span.dash-muted Made only while a process runs (#{info.servicesError})
       else
-        +names(info.services.filter(s => s.kind === 'function').map(s => s.name))
+        - const functions = info.services.filter(s => s.kind === 'function').map(s => s.name)
+        details.integration-list
+          summary #{functions.length} function#{functions.length === 1 ? '' : 's'} scripts and expressions call
+          +names(functions)
+    dt Its hooks
+    dd
+      details.integration-list
+        summary #{info.methods.length} method#{info.methods.length === 1 ? '' : 's'} of its own
+        +names(info.methods)
     dt Who signs in
     dd= info.hostUsers ? 'the application (its own user manager)' : "BPMN Server's own users"
   p.dash-muted The delegate is code: the application changes it. #[a(href='https://bpmnserver.github.io/bpmn-server/delegates/' target='docs') About the delegate]
@@ -154,46 +160,76 @@ mixin setting(s)
       else
         input.form-control(type='text', name=s.name, value=s.fileValue === undefined ? '' : s.fileValue, placeholder=s.default !== undefined ? `default: ${s.default}` : (s.examples[0] || ''))
 
+mixin settingsTable(list)
+  table.integration-settings
+    tr
+      th Setting
+      th Now
+      th Change
+    each s in list
+      +setting(s)
+
 block intro
-  p.dash-intro How the workflows meet the application, and the settings of each. #{isAdmin ? 'You change every setting' : 'You change the settings marked "designers too"; an administrator the others'}: they are saved to #[code= envFile] and apply when the server restarts.
+  if point
+    p: a(href='/dashboard/integration') ← Integration
+    p.dash-intro= point.about
+  else
+    p.dash-intro How the workflows meet the application. Each area says what is in place; open one to set it up.
+    p.dash-muted #{isAdmin ? 'You change every setting' : 'You change the settings marked "designers too"; an administrator the others'}. They are saved to #[code= envFile] and apply when the server restarts.
   if separateEngine
     p.dash-intro The engine runs separately (ENGINE_AT): copy a change to its .env too.
-  nav.integration-points
-    each p, i in points
-      a(href='#' + p.id)= p.title
-      if i < points.length - 1
-        | &nbsp;·&nbsp;
 
 block dash
-  .dash-grid
-    each p in points
-      section.dash-card.wide(id=p.id)
-        h2= p.title
-        p.dash-muted= p.about
-        case p.id
+  link(rel="stylesheet", href=asset("/stylesheets/integration.css"))
+  if point
+    //- one point: what is in place, its main settings, the rest under More settings
+    .dash-grid
+      section.dash-card.wide(id=point.id)
+        case point.id
           when 'application'
-            +application(p.info)
+            +application(point.info)
           when 'connectors'
-            +connectors(p.info)
+            +connectors(point.info)
           when 'policies'
-            +policies(p.info)
+            +policies(point.info)
           when 'notifications'
-            +notifications(p.info)
+            +notifications(point.info)
           when 'api'
-            +api(p.info)
-        if p.settings.length
-          h3 Settings
-          form(method='post', action='/dashboard/integration/' + p.id)
+            +api(point.info)
+        if point.settings.length
+          - const main = point.settings.filter(s => s.main), more = point.settings.filter(s => !s.main)
+          form(method='post', action='/dashboard/integration/' + point.id)
             input(type='hidden', name='_csrf', value=_csrf)
-            table.integration-settings
-              tr
-                th Setting
-                th Now
-                th Change
-              each s in p.settings
-                +setting(s)
-            if p.settings.some(s => s.editable)
-              button.btn.btn-primary.btn-sm(type='submit') Save
+            if main.length
+              h3 Settings
+              +settingsTable(main)
+            if more.length
+              details.integration-more(open=!main.length || more.some(s => s.pending))
+                summary More settings (#{more.length})
+                +settingsTable(more)
+            if point.settings.some(s => s.editable)
+              p
+                button.btn.btn-primary.btn-sm(type='submit') Save
+                span.dash-muted  Applies when the server restarts.
+    nav.integration-points
+      each p, i in points
+        if p.id !== point.id
+          a(href='/dashboard/integration/' + p.id)= p.title
+          if i < points.length - 1
+            | &nbsp;·&nbsp;
+  else
+    //- the overview: each point in a few words
+    .integration-overview
+      each p in points
+        a.integration-card(href='/dashboard/integration/' + p.id, id=p.id)
+          h2= p.title
+          each line in p.summary.lines
+            p= line
+          if p.summary.attention
+            p.integration-attention= p.summary.attention
+          if p.pending
+            span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply
+          span.integration-open Set up →
     if isAdmin
       section.dash-card.wide#restart
         h2 Restart
