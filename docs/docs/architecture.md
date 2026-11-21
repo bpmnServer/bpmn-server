@@ -23,9 +23,9 @@ isolated, one for each tenant, holding everything of it. Without tenants, A and 
 | 3 | **Add-ons' code** | Each add-on's author (BPMN Server for the four); the admin turns it on (`app-config.json`) | the engine's events and registrations | other add-ons, the data store directly | Engine | B |
 | 4 | **Delegates and services** | The app developer | the engine's execution | the data store directly, add-ons | Engine | B |
 | 5 | **Scripts, conditions, policies and decisions (DMN)** | The modeler: they are part of the models | their context only (item, data, services) | anything else | Engine | B |
-| 6 | **API** | BPMN Server | the engine (local or remote), and through it 7 and 8 | the engine's internals, a tenant's store or models | Host | A |
-| 7 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | the data store (the models folder) | writing anything (saves go through the API, from the editor) | Engine | B |
-| 8 | **Instances, read only** | BPMN Server owns the reader; the engine owns the instances | the data store | writing anything | Engine | B |
+| 6 | **API** | BPMN Server | the engine (local or remote) | the engine's internals, a tenant's store or models | Host | A |
+| 7 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | B's API | the models folder directly, writing anything (saves go through the API) | Host | A |
+| 8 | **Instances, read only** | BPMN Server owns the reader; the engine owns the instances | B's API | the data store directly, writing anything | Host | A |
 | 9 | **Model editor** | BPMN Server; each add-on owns its modules | the API, the add-ons' editor modules and manifests | the engine | Browser | A (served) |
 | 10 | **Pages** | BPMN Server; each add-on owns its pages; the app developer owns custom pages | the API | the engine, the data store | Browser | A (served) |
 
@@ -44,8 +44,9 @@ see.
 (`ENGINE_KEY`). B decides what that user may do. The editor's saves, too, pass through A to B: models, policies and
 decisions are the tenant's.
 
-**A known gap:** today the host reads models (7) and instances (8) from the store itself, not through the engine.
-They are read only, and move to B with the multi-tenant work.
+**Only B reads a tenant's store and models.** The host's readers (7, 8) get them from B's API, narrowed there by the
+security policy. **A known gap:** today they read the store and the models folder themselves; they move onto B's API
+with the multi-tenant work.
 
 ```mermaid
 flowchart LR
