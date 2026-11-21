@@ -10,6 +10,7 @@
 .integration-switch { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .integration-switch form { margin: 0; }
 .integration-docs { font-size: 13px; }
+.integration-card .integration-brief { color: #1f2937; }
 /* something to set up: amber, not red (red is for errors) */
 .integration-attention { color: #8a5a00 !important; }
 .integration-open { margin-top: auto; padding-top: 6px; color: #1f62c8; font-size: 14px; }

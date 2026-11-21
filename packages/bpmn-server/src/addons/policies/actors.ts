@@ -1,7 +1,7 @@
 /**
  * Actors (docs/design/expressions.md): who did what in an instance, as expressions and decisions read it, `actors`:
  * actors.initiator (who started it), actors.<name> (who completed an element the model names, `owf:actor`),
- * actors.assignee and actors.candidate (who a waiting task is for). The Policies add-on's: it registers `actors` as a
+ * actors.assignee and actors.candidate (who a waiting task is for). The policies' add-ons': they register `actors` as a
  * name every expression sees (engine/AddOns.ts, addExpressionName).
  */
 import { dataPathOf, inScope, elementType, elementIdOf } from '../../engine/DecisionContext.js';

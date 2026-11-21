@@ -133,7 +133,11 @@ export class WebApp {
 		// whether an add-on is on (engine/AddOns.ts), as the server started: a page offers an add-on's parts only then
 		// (worked out when first asked: the server is launched after the app is set up)
 		let addOnsOn: Set<string>;
-		app.locals.addOnOn = (name: string) => (addOnsOn ??= new Set(addOnsOf(this.bpmnServer).map(a => a.name))).has(name);
+		// `policies`, one add-on before 3.7.5: any of the three it became (an application's own pages may ask for it)
+		app.locals.addOnOn = (name: string) => {
+			addOnsOn ??= new Set(addOnsOf(this.bpmnServer).map(a => a.name));
+			return name === 'policies' ? ['assignment', 'notification', 'security'].some(n => addOnsOn.has(n)) : addOnsOn.has(name);
+		};
 		app.use(compression());
 		// Security headers. CSP is disabled because the modeler/UI loads inline scripts
 		// and a CDN; HSTS only takes effect over HTTPS (harmless over HTTP).

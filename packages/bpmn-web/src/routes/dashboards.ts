@@ -35,7 +35,7 @@ import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
 import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea } from './integration.js';
-import { addOnsOf, readAppConfig, APP_CONFIG_FILE } from '../index.js';
+import { addOnsOf, readAppConfig, addOnNames, APP_CONFIG_FILE } from '../index.js';
 import type { IAddOnManifest } from '../index.js';
 
 const handler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
@@ -171,8 +171,8 @@ export class Dashboards extends Common {
         // all of them, filtered by whom, process, status (test runs' with them, marked); anyone else's, those to them
         // (their name or one of their groups)
         router.get('/notifications', handler(async (req, res, next) => {
-            // the Policies add-on's (docs/design/add-ons.md): off, not there
-            if (req.app.locals.addOnOn?.('policies') === false) return res.status(404).send('The Policies add-on is off (app-config.json)');
+            // the Notifications add-on's (docs/design/add-ons.md): off, not there
+            if (req.app.locals.addOnOn?.('notification') === false) return res.status(404).send('The Notifications add-on is off (app-config.json)');
             const { isAdmin } = roles(req);
             const one = (v) => (typeof v === 'string' ? v.trim() : '');
             const filter = {
@@ -259,10 +259,12 @@ export class Dashboards extends Common {
             const usedBy = (attribute: string, name: string) => models.filter(m =>
                 new RegExp(`\\s(?:[\\w.-]+:)?${attribute}\\s*=\\s*"${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).test(sources.get(m.name) ?? '')).map(m => m.name);
             const security = new SecurityPolicy(dir);
+            // each kind of policy its add-on's (docs/design/add-ons.md): one that is off has none here
+            const on = (name: string) => req.app.locals.addOnOn?.(name) !== false;
             const policies = {
-                assignment: policyNames(dir).map(name => ({ name, tests: decisionTests.get(`${name}.policy`) ?? 0, models: usedBy('assignmentPolicy', name) })),
-                security: security.names().map(name => ({ name, tests: decisionTests.get(`${name}.security-policy`) ?? 0, models: usedBy('securityPolicy', name), isDefault: name === DEFAULT_SECURITY_POLICY })),
-                notification: notificationPolicyNames(dir).map(name => ({ name, tests: decisionTests.get(`${name}.notification-policy`) ?? 0, models: usedBy('notificationPolicy', name) })),
+                assignment: !on('assignment') ? [] : policyNames(dir).map(name => ({ name, tests: decisionTests.get(`${name}.policy`) ?? 0, models: usedBy('assignmentPolicy', name) })),
+                security: !on('security') ? [] : security.names().map(name => ({ name, tests: decisionTests.get(`${name}.security-policy`) ?? 0, models: usedBy('securityPolicy', name), isDefault: name === DEFAULT_SECURITY_POLICY })),
+                notification: !on('notification') ? [] : notificationPolicyNames(dir).map(name => ({ name, tests: decisionTests.get(`${name}.notification-policy`) ?? 0, models: usedBy('notificationPolicy', name) })),
                 securityOn: security.on,
             };
             // the features some model uses, with how many: the Feature filter's choices, by the catalog's order
@@ -385,9 +387,7 @@ export class Dashboards extends Common {
         // ---- the roles (docs/docs/assignment-policies.md#roles): roles.json of the models folder
         const rolesBack = (res, message: string) => res.redirect('/dashboard/admin?message=' + encodeURIComponent(message) + '#roles');
         const currentRoles = (): string[] => roleNames(folder()) ?? [];
-        // roles are the Policies add-on's (docs/design/add-ons.md): off, they can't be changed here
-        router.use('/admin/roles', (req, res, next) =>
-            req.app.locals.addOnOn?.('policies') === false ? res.status(404).send('The Policies add-on is off (app-config.json)') : next());
+        // the roles are the server's: always here, whichever add-ons are on
         router.post('/admin/roles', this.isAdmin, handler(async (req, res) => {
             const name = String(req.body.name ?? '').trim();
             const problem = roleNameProblem(name);
@@ -671,14 +671,12 @@ export class Dashboards extends Common {
                 },
                 api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
             };
-            // the Policies add-on's, while it is on: its roles and policies, the notifications they send
-            if (addOnsRunning.includes('policies'))
-                info.policies = {
-                    roles: await this.roles(dir, users),
-                    assignment: policyNames(dir), security: security.names(), securityOn: security.on,
-                    notification: notificationPolicyNames(dir),
-                    notifications: { byStatus, total: notifications.length, notify: methods.includes('notify') },
-                };
+            // the roles are the server's; each policy add-on's, while it is on: its policies (and the notifications they send)
+            info.roles = { roles: await this.roles(dir, users) };
+            if (addOnsRunning.includes('assignment')) info.assignment = { assignment: policyNames(dir) };
+            if (addOnsRunning.includes('security')) info.security = { security: security.names(), securityOn: security.on };
+            if (addOnsRunning.includes('notification'))
+                info.notification = { notification: notificationPolicyNames(dir), byStatus, total: notifications.length, notify: methods.includes('notify') };
             const addOns = addOnsOf_();
             const areas = [...INTEGRATION_POINTS, ...addOns.map(a => addOnArea(a))];
             return areas.map(p => {
@@ -698,7 +696,7 @@ export class Dashboards extends Common {
             const dir = folder();
             const models = (() => { try { return FS.readdirSync(dir).filter(f => f.endsWith('.bpmn')); } catch { return []; } })();
             return manifests.map(m => {
-                const saved = config?.addOns ? config.addOns.includes(m.name) : true;
+                const saved = config?.addOns ? addOnNames(config.addOns).includes(m.name) : true;
                 const uses = models.filter(file => {
                     const xml = FS.readFileSync(path.join(dir, file), 'utf8');
                     return m.attributes.some(attr => xml.includes(` ${attr}=`) || xml.includes(` ${attr.replace(/^owf:/, 'camunda:')}=`));
@@ -713,9 +711,10 @@ export class Dashboards extends Common {
             message: req.query.message,
         });
         // what was /dashboard/integration before 3.7.5, and its areas now an add-on's or renamed
-        const MOVED: Record<string, string> = { notifications: 'policies' };
+        const MOVED: Record<string, string> = { notifications: 'notification', policies: 'assignment' };
         router.get(['/integration', '/integration/:point'], (req, res) => res.redirect(301, '/dashboard/settings' + (req.params.point ? '/' + (MOVED[String(req.params.point)] ?? req.params.point) : '')));
-        router.get('/settings/notifications', (req, res) => res.redirect(301, '/dashboard/settings/policies'));
+        // the Policies add-on, before the three it became; and Notifications, its area before
+        router.get(['/settings/notifications', '/settings/policies'], (req, res) => res.redirect(301, '/dashboard/settings/' + MOVED[req.path.split('/').pop()]));
         // the overview: each point, what it has in a few words, and the add-ons; and one point's page, its settings
         router.get('/settings', mayIntegrate, handler(async (req, res) => settingsPage(req, res, await integrationPoints(req))));
         // an administrator turns add-ons on and off: app-config.json, read when the server restarts
@@ -740,7 +739,7 @@ export class Dashboards extends Common {
             const file = appConfigFile();
             let config: any = {};
             try { config = readAppConfig(file) ?? {}; } catch (exc) { return back(`Nothing saved. ${exc.message}`); }
-            const before: string[] = Array.isArray(config.addOns) ? config.addOns : known;     // none said: all on
+            const before: string[] = Array.isArray(config.addOns) ? addOnNames(config.addOns) : known;     // none said: all on; `policies`, the three
             const on = req.body?.on === 'true' ? [...new Set([...before, name])] : before.filter(n => n !== name);
             FS.writeFileSync(file, JSON.stringify({ ...config, addOns: known.filter(n => on.includes(n)) }, null, 2) + '\n');
             back(`Saved to ${APP_CONFIG_FILE}: ${name} ${on.includes(name) ? 'on' : 'off'}. It applies when the server restarts.`);

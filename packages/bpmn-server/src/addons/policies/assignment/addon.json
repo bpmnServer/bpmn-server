@@ -1,0 +1,17 @@
+{
+  "name": "assignment",
+  "title": "Assignment",
+  "brief": "Who works on each task, and who may start a process.",
+  "description": "Who works on each task and who may start a process: the task's assignee and candidates, its lane, assignment policies (decision tables that decide them), and the actors (owf:actor).",
+  "docs": "add-ons/assignment/",
+  "attributes": [
+    "camunda:assignee",
+    "camunda:candidateUsers",
+    "camunda:candidateGroups",
+    "camunda:candidateStarterUsers",
+    "camunda:candidateStarterGroups",
+    "owf:assignmentPolicy",
+    "owf:actor"
+  ],
+  "settings": []
+}

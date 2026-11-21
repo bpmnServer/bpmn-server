@@ -1,12 +1,13 @@
 /**
  * The add-ons bpmn-server comes with (engine/AddOns.ts), and which are on. Each is apart from the others; this is where
- * they are put together. The application's `app-config.json` says which are on (`{ "addOns": ["policies"] }`); with no
- * file, or no `addOns` in it, every one is on, so an application written before keeps what it had.
+ * they are put together. The application's `app-config.json` says which are on (`{ "addOns": ["assignment"] }`); with
+ * no file, or no `addOns` in it, every one is on, so an application written before keeps what it had. `policies`, one
+ * add-on before 3.7.5, names the three it became: Assignment, Notifications, Security.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IAddOn, IAddOnManifest } from '../engine/AddOns.js';
-import { policiesAddOn, policiesManifest } from './policies/index.js';
+import { assignmentAddOn, assignmentManifest, notificationAddOn, notificationManifest, securityAddOn, securityManifest, POLICY_ADD_ONS } from './policies/index.js';
 import { labelsAddOn, labelsManifest } from './labels/index.js';
 import { formsAddOn, formsManifest } from './forms/index.js';
 import { modelingAddOn, modelingManifest } from './modeling/index.js';
@@ -18,7 +19,9 @@ export * from './modeling/index.js';
 
 /** Every add-on bpmn-server comes with, by name, and its manifest (read even when it is off). */
 const AVAILABLE: { addOn: IAddOn; manifest: IAddOnManifest }[] = [
-    { addOn: policiesAddOn, manifest: policiesManifest },
+    { addOn: assignmentAddOn, manifest: assignmentManifest },
+    { addOn: notificationAddOn, manifest: notificationManifest },
+    { addOn: securityAddOn, manifest: securityManifest },
     { addOn: labelsAddOn, manifest: labelsManifest },
     { addOn: formsAddOn, manifest: formsManifest },
     { addOn: modelingAddOn, manifest: modelingManifest },
@@ -31,7 +34,7 @@ export function readAppConfig(file = path.resolve(APP_CONFIG_FILE)): { addOns?: 
     if (!fs.existsSync(file)) return null;
     const config = JSON.parse(fs.readFileSync(file, 'utf8'));
     if (config.addOns !== undefined && (!Array.isArray(config.addOns) || config.addOns.some(a => typeof a !== 'string')))
-        throw new Error(`${file}: addOns is a list of add-on names: ["policies"]`);
+        throw new Error(`${file}: addOns is a list of add-on names: ["assignment", "labels"]`);
     return config;
 }
 
@@ -45,14 +48,20 @@ export function addOnManifests(): IAddOnManifest[] {
  * `addOns`. A name that isn't an add-on is reported (`warn`) and left out.
  */
 export function enabledAddOns(file?: string, warn: (message: string) => void = console.warn): IAddOn[] {
-    const names = readAppConfig(file)?.addOns;
-    if (!names) return AVAILABLE.map(a => a.addOn);
+    const said = readAppConfig(file)?.addOns;
+    if (!said) return AVAILABLE.map(a => a.addOn);
+    const names = addOnNames(said);
     for (const name of names.filter(n => !AVAILABLE.some(a => a.manifest.name === n)))
         warn(`[add-ons] ${APP_CONFIG_FILE} names '${name}', which is not an add-on (${AVAILABLE.map(a => a.manifest.name).join(', ')})`);
     return AVAILABLE.filter(a => names.includes(a.manifest.name)).map(a => a.addOn);
 }
 
-/** The Policies add-on, alone: what a server had before `app-config.json`. */
+/** The names an app-config.json's `addOns` means: `policies` (before 3.7.5) is the three it became. */
+export function addOnNames(names: string[]): string[] {
+    return [...new Set(names.flatMap(n => n === 'policies' ? POLICY_ADD_ONS : [n]))];
+}
+
+/** The policies' add-ons, alone (Assignment, Notifications, Security): what a server had before `app-config.json`. */
 export function policyAddOns(): IAddOn[] {
-    return [policiesAddOn];
+    return [assignmentAddOn, notificationAddOn, securityAddOn];
 }

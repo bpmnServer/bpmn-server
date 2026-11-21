@@ -69,7 +69,7 @@ class APIComponent {
         return this.api.server;
     }
     /**
-     * What the add-ons narrow a user's queries by (the Policies add-on: the tasks offered to them). A server that says
+     * What the add-ons narrow a user's queries by (the Assignment add-on: the tasks offered to them). A server that says
      * nothing of add-ons (no registrations, no configuration's addOns): undefined, so the user's own narrowing applies,
      * as before; nothing is opened by not knowing.
      */
@@ -84,7 +84,7 @@ class APIComponent {
 
     /**
      * A query narrowed to what this user may see (docs/design/context-object.md): their tenant's (SecureUser), then
-     * `pre-query`, its listeners' conditions all holding. No listener (the Policies add-on off, a server from before
+     * `pre-query`, its listeners' conditions all holding. No listener (the policies' add-ons off, a server from before
      * add-ons): the user's own built-in narrowing, the tasks offered to them. Not narrowed for an administrator.
      */
     protected async qualify(kind: 'instances' | 'items' | 'startEvents' | 'deleteInstances', user: ISecureUser, query) {
@@ -92,7 +92,7 @@ class APIComponent {
         const legacy = this.filters;
         // an add-on of before 3.7.5 still filtering (registrations.addQueryFilter): as before
         if (legacy?.length) return user[method](query, legacy);
-        // nothing listens (the Policies add-on off): the built-in narrowing, the tasks offered to them
+        // nothing listens (the policies' add-ons off): the built-in narrowing, the tasks offered to them
         if (!listensTo(this.server, 'pre-query')) return user[method](query);
         // the tenant, administrators and security turned off: the user's own rules, with no narrowing of theirs
         const base = user[method](query, []);

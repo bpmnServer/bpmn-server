@@ -80,7 +80,7 @@ class SecureUser implements ISecureUser {
     }
     /**
      * The query narrowed to what this user may see: their tenant's, and, unless an administrator, what the add-ons'
-     * filters let them (`filters`: the server's, registrationsOf(server).queryFilters; the Policies add-on's, the
+     * filters let them (`filters`: the server's, registrationsOf(server).queryFilters; the Assignment add-on's, the
      * tasks offered to them). Without `filters` (a caller from before add-ons), the tasks offered to them, as before.
      */
     qualifyInstances(query, filters?: IQueryFilter[]) {

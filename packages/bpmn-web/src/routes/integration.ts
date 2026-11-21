@@ -29,6 +29,8 @@ export interface IntegrationPoint {
     addOn?: string;
     /** An add-on's doc page: its full address */
     docs?: string;
+    /** An add-on's description in a few words: its card's */
+    brief?: string;
 }
 
 /** BPMN Server's docs site: an add-on's doc page is a path of it, unless its manifest gives a full address. */
@@ -36,13 +38,18 @@ export const DOCS_SITE = 'https://bpmnserver.github.io/bpmn-server/';
 const docsAddress = (docs?: string) => !docs ? undefined : /^https?:\/\//.test(docs) ? docs : DOCS_SITE + docs.replace(/^\//, '');
 
 /** An add-on's area: its manifest's title, description and settings. */
-export function addOnArea(manifest: { name: string; title: string; description?: string; docs?: string; settings?: IntegrationPoint['settings'] }): IntegrationPoint {
+export function addOnArea(manifest: { name: string; title: string; description?: string; brief?: string; docs?: string; settings?: IntegrationPoint['settings'] }): IntegrationPoint {
     return { id: manifest.name, title: manifest.title, about: manifest.description ?? '', settings: manifest.settings ?? [], addOn: manifest.name,
-        ...(manifest.docs ? { docs: docsAddress(manifest.docs) } : {}) };
+        ...(manifest.brief ? { brief: manifest.brief } : {}), ...(manifest.docs ? { docs: docsAddress(manifest.docs) } : {}) };
 }
 
 /** The server's areas, no add-on's, in the page's order (each add-on's follow, from its manifest). */
 export const INTEGRATION_POINTS: IntegrationPoint[] = [
+    {
+        id: 'roles', title: 'Roles',
+        about: 'The roles lanes and tasks are given to, and that policies name (roles.json): the server\'s, whichever add-ons are on.',
+        settings: [],
+    },
     {
         id: 'application', title: 'The application',
         about: 'Its code: the delegate, whose functions (appServices) scripts and expressions call, and its hooks (notify, loadDataObject, the events).',
@@ -190,18 +197,22 @@ export function summaryOf(id: string, info: any, settings: any[]): { lines: stri
             return { lines: [list.length ? `${count(list.length, 'connector')}${keyless ? `, ${keyless} without a key` : ''}` : 'No connectors yet'],
                 attention: list.length && !info.canEncrypt ? 'Connector keys need the encryption key' : undefined };
         }
-        case 'policies': {
-            // the Policies add-on: its roles and policies, and the notifications they send (known while it is on)
-            if (!info.roles) return { lines: [] };
-            const roles = info.roles.list?.length ?? 0;
-            const sent = info.notifications ?? {};
-            return { lines: [
-                count(roles, 'role'),
-                `${count(info.assignment?.length ?? 0, 'assignment policy', 'assignment policies')}, ${count(info.security?.length ?? 0, 'security policy', 'security policies')}${info.security?.length ? (info.securityOn ? ' (on)' : ' (off)') : ''}, ${count(info.notification?.length ?? 0, 'notification policy', 'notification policies')}`,
-                `Notifications delivered by ${sent.notify ? 'the application' : 'email'}; ${count(sent.total ?? 0, 'notification')} kept`,
-            ], attention: info.roles.unlisted?.length ? `${count(info.roles.unlisted.length, 'role')} used but not listed`
-                : !sent.notify && valueOf(settings, 'EMAIL_ENABLE') !== 'true' ? 'Email is off: notifications are kept, not sent' : undefined };
+        case 'roles': {
+            const roles = info.roles;
+            if (!roles || roles.error) return { lines: [roles?.error ?? ''] };
+            return { lines: [count(roles.list?.length ?? 0, 'role')],
+                attention: roles.unlisted?.length ? `${count(roles.unlisted.length, 'role')} used but not listed` : undefined };
         }
+        // the policies' add-ons: what each has, known while it is on
+        case 'assignment':
+            return { lines: info.assignment ? [count(info.assignment.length, 'assignment policy', 'assignment policies')] : [] };
+        case 'security':
+            return { lines: info.security ? [`${count(info.security.length, 'security policy', 'security policies')}${info.security.length ? (info.securityOn ? ' (on)' : ' (off)') : ''}`] : [] };
+        case 'notification':
+            if (!info.notification) return { lines: [] };
+            return { lines: [count(info.notification.length, 'notification policy', 'notification policies'),
+                `Delivered by ${info.notify ? 'the application' : 'email'}; ${count(info.total ?? 0, 'notification')} kept`],
+                attention: !info.notify && valueOf(settings, 'EMAIL_ENABLE') !== 'true' ? 'Email is off: notifications are kept, not sent' : undefined };
         case 'modeling':
             return { lines: [`Model history ${valueOf(settings, 'MODEL_HISTORY') === 'false' ? 'not kept' : 'kept'}`] };
         case 'api':

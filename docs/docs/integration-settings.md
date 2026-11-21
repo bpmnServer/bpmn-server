@@ -12,6 +12,7 @@ A card opens its area's page (`/dashboard/settings/<area>`): what is in place, i
 
 | Area | Shows | Settings (main first) |
 |---|---|---|
+| **Roles** | The roles (`roles.json`): the server's, whichever add-ons are on | none |
 | **The application** | The delegate's class, its functions (`appServices`) and methods (folded), who signs people in | `APP_ENV`, `READ_ONLY`, `SITE_URL`; `APP_ENV_LABEL`, `ENFORCE_SECURITY` |
 | **Connectors** | Each connector: enabled or not, its key (last 4 characters), the models that call it | `CONNECTORS_KEY`; `SERVICE_TASKS`, `CONNECTORS_ALLOW_HOSTS`, `CONNECTOR_CATALOG_URL` |
 | **The API the application calls** | API v3, and whether the task API (`/api2/tasks`) is on | `API_KEY`, `API_ACTING_USER_KEY`; `ADMIN_API_KEY`, the service account, `API_IMPERSONATION`, `API_RATE_LIMIT` |
@@ -20,21 +21,25 @@ A card opens its area's page (`/dashboard/settings/<area>`): what is in place, i
 
 **Add-ons**: each add-on's area is named by it (`/dashboard/settings/policies`), and its settings are the ones its
 manifest declares (`addon.json`, `settings`: each a `.env` name, its label, `editor: "designer"` when a designer
-changes it too, `main` to show it first). An application's own add-on gets an area the same way. An add-on's area
+changes it too, `main` to show it first); its card says what it is in a few words (`brief`) and links to its doc
+page (`docs`, opened in a new tab). An application's own add-on gets an area the same way. An add-on's area
 says whether it is on and which models use it; what it has (the Policies add-on's roles) shows while it is on, and its
 settings are kept while it is off.
 
 | Area | Shows | Settings (main first) |
 |---|---|---|
-| **Policies** | The roles; the assignment, security and notification policies; who delivers notifications (the delegate's `notify`, or email), how many are kept, by status | `SECURITY_POLICY`, `NOTIFICATIONS`, `EMAIL_ENABLE`, `EMAIL_FROM`, `SMTP_USER`, `SMTP_PASSWORD`; `EMAIL_LOG` |
+| **Assignment** | The assignment policies | none of its own |
+| **Notifications** | The notification policies; who delivers notifications (the delegate's `notify`, or email), how many are kept, by status | `NOTIFICATIONS`, `EMAIL_ENABLE`, `EMAIL_FROM`, `SMTP_USER`, `SMTP_PASSWORD`; `EMAIL_LOG` |
+| **Security** | The security policies, and whether they are on | `SECURITY_POLICY` |
 | **Labels** | | none of its own |
 | **Forms and display** | | none of its own |
 | **Modeling tools** | | `MODEL_HISTORY` |
 
 Each area's page links to where its parts are managed: the connectors, the roles (Administration), the policies
-(Design), the notifications. Before 3.7.5, Roles and policies and Notifications were areas of their own: both are the
-Policies add-on's now (`/dashboard/settings/notifications` leads there), and *Forms, scripts and the model editor* is
-*Models, forms and scripts* (`models`), its `MODEL_HISTORY` the Modeling tools add-on's.
+(Design), the notifications. Before 3.7.5, Roles and policies and Notifications were areas of their own: the roles
+are the server's (**Roles**), the policies the Assignment, Security and Notifications add-ons'
+(`/dashboard/settings/notifications` leads to Notifications); and *Forms, scripts and the model editor* is *Models,
+forms and scripts* (`models`), its `MODEL_HISTORY` the Modeling tools add-on's.
 
 ## Add-ons on and off
 
@@ -42,7 +47,8 @@ Each add-on's card ([Add-ons](../design/add-ons.md)) says whether it is on and w
 switch: an administrator turns it on or off there (**Turn off** / **Turn on**), or in its area; designers see them.
 
 - **Saved to `app-config.json`**, the application's, beside its `.env` (`appConfig` in the configuration names another):
-  `{ "addOns": ["policies"] }`. Its other settings are kept.
+  `{ "addOns": ["assignment", "labels"] }`. Its other settings are kept. `policies`, one add-on before 3.7.5, means
+  the three it became: Assignment, Notifications and Security.
 - **No `app-config.json`, or no `addOns` in it:** every add-on is on, as before 3.7.5.
 - **It applies when the server restarts.** Until then the add-on shows how the server runs, marked *restart to apply*.
 - **A model that uses an add-on that's off** keeps its attributes; the engine ignores them, and the model's checks
@@ -50,7 +56,9 @@ switch: an administrator turns it on or off there (**Turn off** / **Turn on**), 
 
 | Add-on | What it is |
 |---|---|
-| **Policies** | Who works on each task (assignee, candidates, lanes, roles, assignment policies), who may see and do what (security policies), and who is told what (notification policies), and the actors expressions read |
+| **Assignment** | Who works on each task and who may start a process (assignee, candidates, lanes, assignment policies), and the actors expressions read |
+| **Notifications** | Who is told what (notification policies), kept and delivered |
+| **Security** | Who may see and do what (security policies) |
 | **Labels** | What each case and task is called (`owf:label`, `owf:endLabel`), and their values as the lists' columns. Off: a case is shown as `<model> #<caseId>`, a task by its name |
 | **Forms and display** | A form field's choices from a source: a drop-down (`owf:list`) or a search (`owf:lookup`); a list's value held to its choices |
 | **Modeling tools** | The editor's Test tab (scenarios) and History tab (each save kept as a version) |

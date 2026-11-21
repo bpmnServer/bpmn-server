@@ -8,6 +8,9 @@ import { DMNParser } from '../../../dmn/DMNParser.js';
 import { owfAttribute } from '../../../elements/owfAttributes.js';
 import { taskAttribute } from '../../../elements/Tasks.js';
 import { assignmentFilter } from './filters.js';
+import manifest from './addon.json' with { type: 'json' };
+import { registerPolicyBasics } from '../basics.js';
+import type { IAddOnManifest } from '../../../engine/AddOns.js';
 import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
 import { applyPolicy, reassigned, policyFile, POLICY_FIELDS, POLICIES_FOLDER } from './AssignmentPolicy.js';
 
@@ -98,10 +101,14 @@ const modelCheck: IModelCheck = {
     },
 };
 
+/** The Assignment add-on's manifest (addon.json): what it reads of a model, its settings, its doc page. */
+export const assignmentManifest: IAddOnManifest = manifest as IAddOnManifest;
+
 export const assignmentAddOn: IAddOn = {
-    name: 'assignment',
+    name: manifest.name,
 
     register(server) {
+        registerPolicyBasics(server);
         server.listener.subscribe({
             async onEvent({ type, context, details }) {
                 const item = context?.item;

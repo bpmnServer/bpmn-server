@@ -30,7 +30,7 @@ class ScriptHandler implements IScriptHandler{
 
     /**
      * The names every expression sees besides the scope's own (docs/design/expressions.md): `user` (the operation's,
-     * by name), and the add-ons' names for the item's place (engine/AddOns.ts: the Policies add-on's `actors`). An
+     * by name), and the add-ons' names for the item's place (engine/AddOns.ts: the policies' add-ons' `actors`). An
      * application's script context of the same name is used instead. `materialized`: plain values, for the sandbox.
      */
     standardValues(scope, materialized = false): Record<string, any> {

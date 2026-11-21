@@ -41,8 +41,10 @@ const status = document.getElementById('js-save-status');
 const options = (() => { try { return JSON.parse(document.getElementById('modeler-options')?.textContent || '{}'); } catch { return {}; } })();
 const templateModules = options.elementTemplates ? [ElementTemplatesPropertiesProviderModule, ElementTemplateChooserModule] : [];
 // the add-ons that are on bring their parts of the editor (docs/design/add-ons.md); one that is off brings none
-const addOnOn = name => (options.addOns ?? ['policies', 'labels', 'forms', 'modeling']).includes(name);
-const addOnModules = [...(addOnOn('policies') ? [PoliciesModule] : []), ...(addOnOn('labels') ? [LabelsModule] : []), ...(addOnOn('forms') ? [FormsModule] : [])];
+const addOnsOn = options.addOns ?? ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling'];
+const addOnOn = name => addOnsOn.includes(name);
+// the policies' panel groups (User assignment, Who can start, Policies): with any of the three policies' add-ons
+const addOnModules = [...(['assignment', 'notification', 'security', 'policies'].some(addOnOn) ? [PoliciesModule] : []), ...(addOnOn('labels') ? [LabelsModule] : []), ...(addOnOn('forms') ? [FormsModule] : [])];
 
 const modeler = new BpmnModeler({
     container: canvasElement,

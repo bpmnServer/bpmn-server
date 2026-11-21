@@ -70,7 +70,7 @@ mixin connectors(info)
   if isAdmin
     a.btn.btn-default.btn-sm(href='/dashboard/admin/connectors') Manage connectors
 
-mixin policies(info)
+mixin roles(info)
   dl
     dt Roles
     dd
@@ -80,24 +80,22 @@ mixin policies(info)
         +names(info.roles.list.map(r => r.name))
         if info.roles.unlisted.length
           .dash-muted Used but not in roles.json: #{info.roles.unlisted.map(r => r.name).join(', ')}
-    dt Assignment policies
-    dd: +names(info.assignment)
-    dt Security policies
+  if isAdmin
+    a.btn.btn-default.btn-sm(href='/dashboard/admin#roles') Manage the roles
+
+//- a policies' add-on: its policies, and a designer's link to edit them
+mixin policyList(title, list, extra)
+  dl
+    dt= title
     dd
-      +names(info.security)
-      if info.security.length
-        |  (#{info.securityOn ? 'on' : 'off'})
-    dt Notification policies
-    dd: +names(info.notification)
-  p
-    if isDesigner
-      a.btn.btn-default.btn-sm(href='/dashboard/design#policies') Edit the policies
-      | &nbsp;
-    if isAdmin
-      a.btn.btn-default.btn-sm(href='/dashboard/admin#roles') Manage the roles
+      +names(list)
+      if extra
+        |  (#{extra})
+  if isDesigner
+    p: a.btn.btn-default.btn-sm(href='/dashboard/design#policies') Edit the policies
 
 mixin notifications(info)
-  h3 Notifications
+  +policyList('Notification policies', info.notification)
   dl
     dt Delivered by
     dd= info.notify ? "the application's notify" : 'email (the delegate has no notify of its own)'
@@ -138,6 +136,8 @@ mixin card(p)
         p= line
       if p.summary.attention
         p.integration-attention= p.summary.attention
+      if p.brief
+        p.integration-brief= p.brief
       if p.addOnState.models.length
         p.dash-muted Used by #{p.addOnState.models.join(', ')}.
       if p.pending
@@ -243,10 +243,17 @@ block dash
             +application(point.info)
           when 'connectors'
             +connectors(point.info)
-          when 'policies'
-            if point.info.roles
-              +policies(point.info)
-              +notifications(point.info.notifications)
+          when 'roles'
+            +roles(point.info)
+          when 'assignment'
+            if point.info.assignment
+              +policyList('Assignment policies', point.info.assignment)
+          when 'security'
+            if point.info.security
+              +policyList('Security policies', point.info.security, point.info.security.length ? (point.info.securityOn ? 'on' : 'off') : '')
+          when 'notification'
+            if point.info.notification
+              +notifications(point.info)
           when 'api'
             +api(point.info)
         if !point.settings.length && point.addOnState

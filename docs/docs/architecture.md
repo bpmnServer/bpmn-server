@@ -190,7 +190,7 @@ engine, the editor and the pages show none of it.
 | **Forms and display** | A form field's choices from a source: a drop-down (`owf:list`) or a search (`owf:lookup`) |
 | **Modeling tools** | The editor's Test tab (scenarios) and History tab (each save kept as a version) |
 
-**Which are on:** the application's `app-config.json`, `{ "addOns": ["policies", "labels"] }`, set on the
+**Which are on:** the application's `app-config.json`, `{ "addOns": ["assignment", "labels"] }`, set on the
 [Settings](integration-settings.md) page. With no file, every add-on is on. A change applies when the server restarts.
 
 **How an add-on plugs in.** The engine never calls an add-on, and imports nothing of one. An add-on registers, as

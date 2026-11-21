@@ -7,6 +7,9 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import manifest from './addon.json' with { type: 'json' };
+import { registerPolicyBasics } from '../basics.js';
+import type { IAddOnManifest } from '../../../engine/AddOns.js';
 import type { IAddOn, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
 import { SECURITY_FOLDER, DEFAULT_SECURITY_POLICY } from './SecurityPolicy.js';
 import { CaseAccess } from './CaseAccess.js';
@@ -54,10 +57,14 @@ const modelCheck: IModelCheck = {
     },
 };
 
+/** The Security add-on's manifest (addon.json): what it reads of a model, its settings, its doc page. */
+export const securityManifest: IAddOnManifest = manifest as IAddOnManifest;
+
 export const securityAddOn: IAddOn = {
-    name: 'security',
+    name: manifest.name,
 
     register(server) {
+        registerPolicyBasics(server);
         // what the user may see: the policies' condition, on the cases the API reads
         server.listener.on?.('pre-query', async (context) => {
             // the cases a user reads: its conditions are on a case (any of its items), not on each item a task list reads

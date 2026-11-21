@@ -16,7 +16,7 @@ ul.nav.navbar-nav.app-menu
           span.caret
         ul.dropdown-menu
           li(class=here === '/dashboard' ? 'active' : undefined): a(href='/dashboard') My work
-          if addOnOn('policies')
+          if addOnOn('notification')
             li(class=on('/dashboard/notifications')): a(href='/dashboard/notifications') Notifications
           if canDesign
             li(class=on('/dashboard/design')): a(href='/dashboard/design') Design
@@ -25,7 +25,7 @@ ul.nav.navbar-nav.app-menu
           li(class=on('/dashboard/settings')): a(href='/dashboard/settings') Settings
     else
       li(class=here === '/dashboard' ? 'active' : undefined): a(href='/dashboard') My work
-      if addOnOn('policies')
+      if addOnOn('notification')
         li(class=on('/dashboard/notifications')): a(href='/dashboard/notifications') Notifications
 ul.nav.navbar-nav.navbar-right.app-menu
   if account

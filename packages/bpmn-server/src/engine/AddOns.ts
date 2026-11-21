@@ -51,6 +51,8 @@ export interface IAddOnManifest {
     name: string;
     title: string;
     description?: string;
+    /** what it is, in a few words (its card on the Settings page) */
+    brief?: string;
     /** its doc page: a path of the docs site (`add-ons/policies/`), or a full address for an application's own */
     docs?: string;
     /** the model attributes it reads: `camunda:candidateGroups`, `owf:assignmentPolicy` */
@@ -104,7 +106,7 @@ export interface IExpressionPlace {
     materialized?: boolean;
 }
 
-/** A name every expression and decision sees, an add-on's: `actors` (the Policies add-on). */
+/** A name every expression and decision sees, an add-on's: `actors` (the policies' add-ons). */
 export interface IExpressionName {
     name: string;
     of(at: IExpressionPlace): any;

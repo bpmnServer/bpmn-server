@@ -80,9 +80,9 @@ function folder() {
 const notifications = (srv) => srv.documentStore.find('bpmn_test', 'wf_notifications', {});
 
 test('by default a server has the policies: the task is assigned by its policy, and the notifications are kept', async () => {
-    assert.deepEqual(new Configuration({}).addOns().map(a => a.name), ['policies', 'labels', 'forms', 'modeling']);
+    assert.deepEqual(new Configuration({}).addOns().map(a => a.name), ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling']);
     const { server } = await makeServer({ dir: folder() });
-    assert.deepEqual(server.addOns.map(a => a.name), ['policies', 'labels', 'forms', 'modeling']);
+    assert.deepEqual(server.addOns.map(a => a.name), ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling']);
     const { id } = await server.engine.start('Request', { amount: 1 }, null, 'ann');
     const [instance] = await server.dataStore.findInstances({ id }, 'full');
     assert.equal(instance.items.find(i => i.elementId === 'Approve').assignee, 'boss');
@@ -175,27 +175,31 @@ test('what the package exported before the policies moved is still exported, fro
 test('app-config.json says which add-ons are on: none named, none on; no file, or no addOns, every one', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-app-config-'));
     const file = path.join(dir, 'app-config.json');
-    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['policies', 'labels', 'forms', 'modeling'], 'no file: every one, as before');
+    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling'], 'no file: every one, as before');
     fs.writeFileSync(file, JSON.stringify({ addOns: [] }));
     assert.deepEqual(enabledAddOns(file), []);
     const warned = [];
     fs.writeFileSync(file, JSON.stringify({ addOns: ['policies', 'nonsense'] }));
-    assert.deepEqual(enabledAddOns(file, m => warned.push(m)).map(a => a.name), ['policies']);
+    assert.deepEqual(enabledAddOns(file, m => warned.push(m)).map(a => a.name), ['assignment', 'notification', 'security'], 'policies, before 3.7.5: the three it became');
     assert.match(warned[0], /'nonsense', which is not an add-on/);
     fs.writeFileSync(file, JSON.stringify({ other: 1 }));
-    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['policies', 'labels', 'forms', 'modeling'], 'no addOns: every one');
+    assert.deepEqual(enabledAddOns(file).map(a => a.name), ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling'], 'no addOns: every one');
     fs.writeFileSync(file, JSON.stringify({ addOns: 'policies' }));
     assert.throws(() => enabledAddOns(file), /addOns is a list/);
-    assert.deepEqual(new Configuration({ appConfig: path.join(dir, 'none.json') }).addOns().map(a => a.name), ['policies', 'labels', 'forms', 'modeling']);
+    assert.deepEqual(new Configuration({ appConfig: path.join(dir, 'none.json') }).addOns().map(a => a.name), ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling']);
 });
 
-test('a model that uses an add-on that is off: one warning, naming where; its attributes ignored', async () => {
+test('a model that uses an add-on that is off: a warning for each, naming where; its attributes ignored', async () => {
     const manifests = addOnManifests();
-    assert.ok(manifests.find(m => m.name === 'policies').attributes.includes('owf:assignmentPolicy'));
+    assert.ok(manifests.find(m => m.name === 'assignment').attributes.includes('owf:assignmentPolicy'));
+    assert.ok(manifests.find(m => m.name === 'security').attributes.includes('owf:securityPolicy'));
+    assert.ok(manifests.find(m => m.name === 'notification').attributes.includes('owf:notificationPolicy'));
     const off = (await verifyModel(MODEL, undefined, 'Request', { addOns: [], manifests })).issues.filter(i => i.code === 'add-on-off');
-    assert.equal(off.length, 1);
-    assert.match(off[0].message, /uses Policies \(notificationPolicy on Request, assignmentPolicy on Approve\), which is off/);
-    assert.equal(off[0].severity, 'warning');
+    // one warning for each add-on that is off, naming where the model uses it
+    assert.equal(off.length, 2);
+    assert.ok(off.some(i => /uses Assignment \(assignmentPolicy on Approve\), which is off/.test(i.message)), off.map(i => i.message).join('; '));
+    assert.ok(off.some(i => /uses Notifications \(notificationPolicy on Request\), which is off/.test(i.message)));
+    assert.ok(off.every(i => i.severity === 'warning'));
     const on = await verifyModel(MODEL, undefined, 'Request', { addOns: policyAddOns(), manifests });
     assert.ok(!on.issues.some(i => i.code === 'add-on-off'));
 });
@@ -239,4 +243,20 @@ test('Forms off: a form field with a list is a plain field; the model is told th
     assert.ok(issues.some(i => i.code === 'add-on-off' && /Forms and display \(list\)/.test(i.message)), JSON.stringify(issues.map(i => i.code)));
     assert.ok(!issues.some(i => /^lookup-/.test(i.code)), 'its checks are not asked');
     await server.shutdown();
+});
+
+test('the policies are three add-ons: each on alone; the actors there with any of them', async () => {
+    const { assignmentAddOn, securityAddOn, notificationAddOn } = await import('../dist/index.js');
+    for (const alone of [assignmentAddOn, securityAddOn, notificationAddOn]) {
+        const { server } = await makeServer({ dir: folder(), extra: { addOns: () => [alone] } });
+        try {
+            assert.deepEqual(server.addOns.map(a => a.name), [alone.name]);
+            assert.ok(server.registrations.expressionNames.some(n => n.name === 'actors'), `${alone.name}: the actors`);
+        }
+        finally { await server.shutdown(); }
+    }
+    // all three: the actors registered once
+    const { server } = await makeServer({ dir: folder(), extra: { addOns: () => policyAddOns() } });
+    try { assert.equal(server.registrations.expressionNames.filter(n => n.name === 'actors').length, 1); }
+    finally { await server.shutdown(); }
 });

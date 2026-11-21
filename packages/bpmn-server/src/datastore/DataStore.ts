@@ -149,7 +149,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 				saveObject['logs'] = instance.logs;
 			if (instance.flags)
 				saveObject['flags'] = instance.flags;
-			// its actors, as the Policies add-on keeps them (instance.actors)
+			// its actors, as the policies' add-ons keep them (instance.actors)
 			if (instance.actors)
 				saveObject['actors'] = instance.actors;
 

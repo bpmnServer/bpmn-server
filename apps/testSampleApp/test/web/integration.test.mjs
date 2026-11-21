@@ -26,14 +26,14 @@ test('administrators and designers open it, with every area: the server\'s, then
         const res = await who.get('/dashboard/settings');
         assert.equal(res.status, 200, why(res));
         // the overview: a card for each point, saying what it has in a few words, and linking to its page
-        for (const id of ['application', 'connectors', 'api', 'models', 'ai'])
+        for (const id of ['roles', 'application', 'connectors', 'api', 'models', 'ai'])
             assert.ok(res.text.includes(`<a class="integration-card" href="/dashboard/settings/${id}" id="${id}">`), `${who.userName} sees ${id}`);
         // an add-on's card: its title links to its area, and it is turned on or off on the card
-        for (const id of ['policies', 'forms', 'labels', 'modeling'])
+        for (const id of ['assignment', 'notification', 'security', 'forms', 'labels', 'modeling'])
             assert.match(res.text, new RegExp(`<div class="integration-card" id="${id}" data-addon="${id}"><h2><a href="/dashboard/settings/${id}">`), `${who.userName} sees ${id}`);
         const [server, addOns] = res.text.split(/<h2 class="integration-group"[^>]*>Add-ons<\/h2>/);
-        assert.ok(server.includes('id="application"') && !server.includes('id="policies"'), 'the server\'s areas first');
-        assert.ok(addOns.includes('id="policies"') && !addOns.includes('id="application"'), 'then the add-ons\'');
+        assert.ok(server.includes('id="application"') && server.includes('id="roles"') && !server.includes('id="security"'), 'the server\'s areas first');
+        assert.ok(addOns.includes('id="security"') && !addOns.includes('id="application"'), 'then the add-ons\'');
         assert.match(res.text, /Delegate (TestDelegate|AppDelegate), \d+ functions for scripts/, 'the delegate is named, as the engine has it');
         assert.doesNotMatch(res.text, /data-setting=/, 'no settings on the overview');
         assert.ok(!res.text.includes(API_KEY), 'the service key is not shown');
@@ -104,48 +104,57 @@ const cardOf = (page, name) => page.split(`data-addon="${name}">`)[1].split('Set
 
 test('the add-ons: each card on or off, with its switch; an administrator turns one off, saved to app-config.json', async () => {
     let page = (await admin.get('/dashboard/settings')).text;
-    assert.match(cardOf(page, 'policies'), />on<[\s\S]*?action="\/dashboard\/settings\/add-ons\/policies"[\s\S]*?Turn off/, 'on: no app-config.json; its switch on its card');
-    assert.doesNotMatch(cardOf((await designer.get('/dashboard/settings')).text, 'policies'), /Turn off/, 'a designer has no switch');
+    assert.match(cardOf(page, 'security'), />on<[\s\S]*?action="\/dashboard\/settings\/add-ons\/security"[\s\S]*?Turn off/, 'on: no app-config.json; its switch on its card');
+    assert.doesNotMatch(cardOf((await designer.get('/dashboard/settings')).text, 'security'), /Turn off/, 'a designer has no switch');
     // a designer may not change them, even by posting
-    let res = await designer.post('/dashboard/settings/add-ons/policies', { on: 'false' });
+    let res = await designer.post('/dashboard/settings/add-ons/security', { on: 'false' });
     assert.match(messageOf(res), /Only an administrator/);
     assert.ok(!fs.existsSync(web.appConfigFile));
     // off: saved, the others kept on, and the running server unchanged until it restarts
-    res = await admin.post('/dashboard/settings/add-ons/policies', { on: 'false' });
-    assert.match(messageOf(res), /Saved to app-config\.json: policies off\. It applies when the server restarts/);
-    assert.deepEqual(JSON.parse(fs.readFileSync(web.appConfigFile, 'utf8')).addOns.sort(), ['forms', 'labels', 'modeling'].filter(n => page.includes(`data-addon="${n}"`)));
+    res = await admin.post('/dashboard/settings/add-ons/security', { on: 'false' });
+    assert.match(messageOf(res), /Saved to app-config\.json: security off\. It applies when the server restarts/);
+    assert.deepEqual(JSON.parse(fs.readFileSync(web.appConfigFile, 'utf8')).addOns.sort(), ['assignment', 'forms', 'labels', 'modeling', 'notification'].filter(n => page.includes(`data-addon="${n}"`)));
     page = (await admin.get('/dashboard/settings')).text;
-    assert.match(cardOf(page, 'policies'), />on<[\s\S]*?restart to apply[\s\S]*?Turn on/);
+    assert.match(cardOf(page, 'security'), />on<[\s\S]*?restart to apply[\s\S]*?Turn on/);
     // and on again: the file's other settings kept
     fs.writeFileSync(web.appConfigFile, JSON.stringify({ addOns: [], mine: 1 }));
-    res = await admin.post('/dashboard/settings/add-ons/policies', { on: 'true' });
-    assert.deepEqual(JSON.parse(fs.readFileSync(web.appConfigFile, 'utf8')), { mine: 1, addOns: ['policies'] });
-    assert.doesNotMatch(cardOf((await admin.get('/dashboard/settings')).text, 'policies'), /restart to apply/, 'as the server runs: nothing to restart for');
+    res = await admin.post('/dashboard/settings/add-ons/security', { on: 'true' });
+    assert.deepEqual(JSON.parse(fs.readFileSync(web.appConfigFile, 'utf8')), { mine: 1, addOns: ['security'] });
+    assert.doesNotMatch(cardOf((await admin.get('/dashboard/settings')).text, 'security'), /restart to apply/, 'as the server runs: nothing to restart for');
     assert.equal((await admin.post('/dashboard/settings/add-ons/nothing', { on: 'true' })).status, 404);
     // all at once, as before (an application's own page may post it)
-    res = await admin.post('/dashboard/settings/add-ons', { 'addon:policies': 'on' });
-    assert.deepEqual(JSON.parse(fs.readFileSync(web.appConfigFile, 'utf8')), { mine: 1, addOns: ['policies'] });
+    res = await admin.post('/dashboard/settings/add-ons', { 'addon:security': 'on' });
+    assert.deepEqual(JSON.parse(fs.readFileSync(web.appConfigFile, 'utf8')), { mine: 1, addOns: ['security'] });
 });
 
 test('each add-on its own area: its manifest\'s settings, on or off, what it has', async () => {
     await admin.get('/dashboard/settings');
-    const policies = await admin.get('/dashboard/settings/policies');
-    assert.equal(policies.status, 200, why(policies));
-    for (const name of ['SECURITY_POLICY', 'NOTIFICATIONS', 'EMAIL_ENABLE'])
-        assert.ok(policies.text.includes(`data-setting="${name}"`), `the Policies add-on's ${name}`);
-    assert.match(policies.text, />on</);
-    assert.match(policies.text, /<dt>Roles<\/dt>[\s\S]*<h3>Notifications<\/h3>/, 'its roles and policies, and the notifications they send');
+    const notices = await admin.get('/dashboard/settings/notification');
+    assert.equal(notices.status, 200, why(notices));
+    for (const name of ['NOTIFICATIONS', 'EMAIL_ENABLE'])
+        assert.ok(notices.text.includes(`data-setting="${name}"`), `the Notifications add-on's ${name}`);
+    assert.ok(!notices.text.includes('data-setting="SECURITY_POLICY"'), 'the Security add-on\'s, not this one\'s');
+    assert.match(notices.text, />on</);
+    assert.match(notices.text, /<dt>Notification policies<\/dt>[\s\S]*<dt>Delivered by<\/dt>/, 'its policies, and the notifications they send');
+    const security = (await admin.get('/dashboard/settings/security')).text;
+    assert.ok(security.includes('data-setting="SECURITY_POLICY"'));
+    assert.match(security, /<dt>Security policies<\/dt>/);
+    assert.match((await admin.get('/dashboard/settings/assignment')).text, /<dt>Assignment policies<\/dt>/);
     assert.ok(!(await admin.get('/dashboard/settings/application')).text.includes('data-setting="NOTIFICATIONS"'), 'not the server\'s');
-    const res = await admin.post('/dashboard/settings/policies', { NOTIFICATIONS: 'record' });
+    const res = await admin.post('/dashboard/settings/notification', { NOTIFICATIONS: 'record' });
     assert.match(messageOf(res), /Saved to \.env: NOTIFICATIONS\./);
     assert.match(envText(), /^NOTIFICATIONS=record$/m);
     // its doc page, in a new tab: on its area and its card
-    assert.match(policies.text, /<a class="integration-docs" href="https:\/\/bpmnserver\.github\.io\/bpmn-server\/add-ons\/policies\/" target="_blank" rel="noopener">/);
+    assert.match(notices.text, /<a class="integration-docs" href="https:\/\/bpmnserver\.github\.io\/bpmn-server\/add-ons\/notification\/" target="_blank" rel="noopener">/);
     assert.match(cardOf((await admin.get('/dashboard/settings')).text, 'labels'), /href="https:\/\/bpmnserver\.github\.io\/bpmn-server\/add-ons\/labels\/" target="_blank"/);
+    // its card says what it is in a few words, before the models using it
+    assert.match(cardOf((await admin.get('/dashboard/settings')).text, 'security'), /<p class="integration-brief">Who may see a case, and what they may do in it\.<\/p>/);
     // an add-on with no settings of its own still has its area
     assert.match((await admin.get('/dashboard/settings/labels')).text, /No settings of its own/);
-    // Notifications was an area of its own: now the Policies add-on's
-    const old = await admin.get('/dashboard/settings/notifications');
-    assert.equal(old.status, 301);
-    assert.equal(old.location, '/dashboard/settings/policies');
+    // Notifications was an area of its own before, then the Policies add-on's: the Notifications add-on's now
+    for (const [was, now] of [['notifications', 'notification'], ['policies', 'assignment']]) {
+        const old = await admin.get('/dashboard/settings/' + was);
+        assert.equal(old.status, 301);
+        assert.equal(old.location, '/dashboard/settings/' + now);
+    }
 });

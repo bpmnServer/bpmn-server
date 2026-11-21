@@ -2,7 +2,7 @@
  * Security policies, as the API and the pages ask them (docs/design/security-policies.md, SecurityPolicy.ts): who sees
  * a case, which of its data, and whether they may claim, complete, assign, restart or fire its start events. Off (every
  * answer full, and today's rules hold) until the application has `policies/security/` or SECURITY_POLICY=default.
- * The Policies add-on asks it on the API's events (pre-query, pre-action); the pages ask it what to show.
+ * The Security add-on asks it on the API's events (pre-query, pre-action); the pages ask it what to show.
  */
 import fs from 'node:fs';
 import { SecurityPolicy, FULL_ACCESS } from './SecurityPolicy.js';

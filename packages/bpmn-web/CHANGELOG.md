@@ -193,6 +193,11 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **The policies' three add-ons on the pages**: the Settings page has Assignment, Notifications and Security, each its
+  own area and card (`/dashboard/settings/policies` leads to Assignment), and **Roles**, the server's area; the roles are
+  on Administration whichever add-ons are on. Notifications (the menu, the page) are the Notifications add-on's; each
+  kind of policy's pages, and its rows on Design, its add-on's. `addOnOn('policies')`, for an application's own pages,
+  is any of the three.
 - **The Settings page, by add-on** (was Integration): the server's areas (the application, connectors, the API,
   models, forms and scripts, AI agents), then one area for each add-on, with the settings its manifest declares
   (`addon.json` `settings`) and whether it is on, turned on or off on its card (`POST /dashboard/settings/add-ons/<name>`). Roles and policies and Notifications are the Policies add-on's area

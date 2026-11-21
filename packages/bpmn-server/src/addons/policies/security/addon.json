@@ -1,0 +1,17 @@
+{
+  "name": "security",
+  "title": "Security",
+  "brief": "Who may see a case, and what they may do in it.",
+  "description": "Who may see a case and what they may do in it (claim, complete, assign, restart): security policies, decision tables the API asks before each read and each action.",
+  "docs": "add-ons/security/",
+  "attributes": [
+    "owf:securityPolicy"
+  ],
+  "settings": [
+    {
+      "name": "SECURITY_POLICY",
+      "label": "Security policies",
+      "main": true
+    }
+  ]
+}

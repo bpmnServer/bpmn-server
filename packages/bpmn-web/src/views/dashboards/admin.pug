@@ -136,7 +136,7 @@ block dash
 					button.btn.btn-primary.btn-sm(type='submit') Add user
 
 		//- roles: none passed (an older route) shows nothing; the Policies add-on's: off, not shown
-		if typeof roles !== 'undefined' && roles && (typeof addOnOn === 'undefined' || addOnOn('policies'))
+		if typeof roles !== 'undefined' && roles
 			section.dash-card#roles
 				h2 Roles
 					span.count= roles.list.length

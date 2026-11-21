@@ -6,6 +6,9 @@
 import path from 'node:path';
 import { DMNEngine } from '../../../dmn/DMNEngine.js';
 import { DMNParser } from '../../../dmn/DMNParser.js';
+import manifest from './addon.json' with { type: 'json' };
+import { registerPolicyBasics } from '../basics.js';
+import type { IAddOnManifest } from '../../../engine/AddOns.js';
 import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
 import { notifyEvent, notificationPolicyFile, notificationTemplateFile, NOTIFICATION_FOLDER, NOTIFICATION_TEMPLATES, NOTIFICATION_OUTPUTS } from './NotificationPolicy.js';
 
@@ -75,10 +78,14 @@ const modelCheck: IModelCheck = {
     },
 };
 
+/** The Notifications add-on's manifest (addon.json): what it reads of a model, its settings, its doc page. */
+export const notificationManifest: IAddOnManifest = manifest as IAddOnManifest;
+
 export const notificationAddOn: IAddOn = {
-    name: 'notification',
+    name: manifest.name,
 
     register(server) {
+        registerPolicyBasics(server);
         server.listener.subscribe({
             async onEvent({ type, context, details }) {
                 // the engine's own execution: the event's context reads through to it, a template is evaluated against it

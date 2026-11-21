@@ -11,7 +11,7 @@ mixin editorMenu
           span.editor-caret
         .editor-dropdown-menu
           a(href='/dashboard') My work
-          if addOnOn('policies')
+          if addOnOn('notification')
             a(href='/dashboard/notifications') Notifications
           if canDesign
             a(href='/dashboard/design') Design
@@ -20,7 +20,7 @@ mixin editorMenu
           a(href='/dashboard/settings') Settings
     else
       a(href='/dashboard') My work
-      if addOnOn('policies')
+      if addOnOn('notification')
         a(href='/dashboard/notifications') Notifications
 
 mixin editorUser

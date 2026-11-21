@@ -8,7 +8,7 @@
  *   item, this    the item: item.element (its BPMN element), item.status, item.userName
  *   input, output the item's prepared inputs and its outputs
  *   user          who acts or asks, as the application defines it (IUserInfo: userName, userGroups, ...)
- *   (add-ons')    the names an add-on registers (engine/AddOns.ts): the Policies add-on's `actors`, who did what
+ *   (add-ons')    the names an add-on registers (engine/AddOns.ts): the policies' add-ons' `actors`, who did what
  *   task          the element a decision is about
  *   decision      what is deciding: { kind, name }
  *   appServices   the application's functions
@@ -114,7 +114,7 @@ export function instanceView(instance: any) {
 
 /**
  * The context a decision table reads (see above). `data`: the item's data (in its scope); `input`: its prepared
- * inputs; `names`: the names the add-ons give (namesAt: the Policies add-on's `actors`); `appServices`: the
+ * inputs; `names`: the names the add-ons give (namesAt: the policies' add-ons' `actors`); `appServices`: the
  * application's functions.
  */
 export async function decisionContext({ data, input, user, instance, task, kind, name, appDelegate, appServices, item,
@@ -139,7 +139,7 @@ export async function decisionContext({ data, input, user, instance, task, kind,
         instance: instanceView(instance),
         appServices: feelView(appServices) ?? {},
     };
-    // a reserved name no one gave (`actors` without the Policies add-on) is not the data's either
+    // a reserved name no one gave (`actors` without the policies' add-ons) is not the data's either
     for (const key of DECISION_KEYS) if (!(key in (names ?? {})) && context[key] === scoped[key] && key !== 'data') delete context[key];
     // the application's variables (appVars.<name>, docs/design/app-contract.md §2.1): its variables class's, worked
     // out before the table is asked, for this decision (evaluatingSource)

@@ -1,8 +1,7 @@
 {
   "name": "policies",
   "title": "Policies",
-  "description": "Who works on each task (assignee, candidates, lanes, roles, assignment policies), who may see and do what (security policies), and who is told what (notification policies).",
-  "docs": "add-ons/policies/",
+  "description": "Before 3.7.5, one add-on: now Assignment, Security and Notifications, each its own. Named in app-config.json, it is the three.",
   "attributes": [
     "camunda:assignee",
     "camunda:candidateUsers",
@@ -14,40 +13,5 @@
     "owf:notificationPolicy",
     "owf:actor"
   ],
-  "settings": [
-    {
-      "name": "SECURITY_POLICY",
-      "label": "Security policies",
-      "main": true
-    },
-    {
-      "name": "NOTIFICATIONS",
-      "label": "Notifications delivered",
-      "main": true
-    },
-    {
-      "name": "EMAIL_ENABLE",
-      "label": "Email sent",
-      "main": true
-    },
-    {
-      "name": "EMAIL_FROM",
-      "label": "Sender",
-      "main": true
-    },
-    {
-      "name": "SMTP_USER",
-      "label": "Mail account",
-      "main": true
-    },
-    {
-      "name": "SMTP_PASSWORD",
-      "label": "Mail password",
-      "main": true
-    },
-    {
-      "name": "EMAIL_LOG",
-      "label": "Email log"
-    }
-  ]
+  "settings": []
 }

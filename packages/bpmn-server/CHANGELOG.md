@@ -241,6 +241,12 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
+- **The policies are three add-ons** (were one, Policies): **Assignment** (`assignment`: who works on each task and who
+  may start a process, assignment policies), **Notifications** (`notification`: notification policies) and **Security**
+  (`security`: security policies), each with its manifest, its settings and its doc page, on or off on its own. What
+  they share, the actors (`actors`, `instance.actors`), is there while any of them is on (`policies/basics.ts`); the
+  roles are the server's. `"policies"` in an `app-config.json` means the three (`addOnNames`); `policiesAddOn`,
+  `policyAddOns()` and `policiesManifest` are kept. A model using an add-on that is off is warned once for each.
 - **Indexes for task lists and dashboards on MongoDB.** `dataStore.install()` (setup, and each start of bpmn-web) also
   makes `{items.status, items.elementId}`, `{items.status, items.type}`, `{name, status}` and `{status}` on the
   instances (`DataStore.QUERY_INDEXES`). Before, the waiting tasks, a process's instances and the dashboard counts read
