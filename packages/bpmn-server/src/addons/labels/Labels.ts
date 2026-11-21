@@ -85,18 +85,43 @@ async function sourceOf(server, name: string, source?: string): Promise<string |
     catch { return undefined; }
 }
 
+/** Whether the application labels cases in code: its instanceLabel hook, here or in the engine (#295). */
+function hasLabelHook(server): boolean {
+    const delegate = server?.appDelegate;
+    return typeof delegate?.instanceLabel === 'function' || delegate?.labelsInEngine === true;
+}
+
+/**
+ * Cases' labels by the application's instanceLabel hook: the delegate's own, in this process; or, for a host
+ * (a launched server, whose delegate is only what it knows of the application), the engine's, all in one call.
+ */
+async function hookLabels(server, instances: any[]): Promise<(string | null)[]> {
+    const delegate = server?.appDelegate;
+    if (!instances.length) return [];
+    if (typeof delegate?.instanceLabel === 'function')
+        return Promise.all(instances.map(async instance => {
+            try { const text = await delegate.instanceLabel(instance); return text ? String(text) : null; }
+            catch { return null; }
+        }));
+    if (typeof delegate?.caseLabelsByHook === 'function') return delegate.caseLabelsByHook(instances);
+    return instances.map(() => null);
+}
+
+function templateLabel(instance, labels?: IModelLabels): ILabel | undefined {
+    if (!labels?.process) return undefined;
+    const filled = fillTemplate(labels.process, { data: instance.data ?? {}, model: instance.name });
+    return filled.text ? filled : undefined;
+}
+
+function defaultLabel(instance, fromHook?: string | null): ILabel {
+    if (fromHook) return { text: String(fromHook), values: [] };
+    const caseId = (instance.data ?? {}).caseId;
+    return { text: caseId != null && caseId !== '' ? `${instance.name} #${caseId}` : instance.name, values: [] };
+}
+
 /** A case's label: its model's template, else the application's instanceLabel hook, else `<model> #<caseId>`. */
 export async function caseLabel(server, instance, labels?: IModelLabels): Promise<ILabel> {
-    const data = instance.data ?? {};
-    if (labels?.process) {
-        const filled = fillTemplate(labels.process, { data, model: instance.name });
-        if (filled.text) return filled;
-    }
-    const hook = server?.appDelegate?.instanceLabel;
-    const fromHook = typeof hook === 'function' ? await hook.call(server.appDelegate, instance) : undefined;
-    if (fromHook) return { text: String(fromHook), values: [] };
-    const caseId = data.caseId;
-    return { text: caseId != null && caseId !== '' ? `${instance.name} #${caseId}` : instance.name, values: [] };
+    return templateLabel(instance, labels) ?? defaultLabel(instance, (await hookLabels(server, [instance]))[0]);
 }
 
 /**
@@ -146,10 +171,18 @@ export async function labelInstances(server, instances: any[]): Promise<any[]> {
         }
         catch { /* without the sources, the models' current templates */ }
     }
+    // the models' templates first; the cases none labels, by the application's hook, all at once
+    const ofModel = new Map<any, { labels?: IModelLabels; label?: ILabel }>();
     for (const instance of instances) {
         const source = await sourceOf(server, instance.name, instance.source ?? sources.get(instance.id));
         const labels = source && labelsOn(server) ? await modelLabels(source, moddleOptions) : undefined;
-        const label = await caseLabel(server, instance, labels);
+        ofModel.set(instance, { labels, label: templateLabel(instance, labels) });
+    }
+    const unlabelled = instances.filter(i => !ofModel.get(i).label);
+    const byHook = hasLabelHook(server) ? await hookLabels(server, unlabelled) : [];
+    unlabelled.forEach((instance, i) => { ofModel.get(instance).label = defaultLabel(instance, byHook[i]); });
+    for (const instance of instances) {
+        const { labels, label } = ofModel.get(instance);
         instance.label = label.text;
         instance.labelValues = label.values;
         for (const item of instance.items ?? []) {
@@ -227,7 +260,7 @@ export async function labelFields(server, models?: string[]): Promise<ILabelFiel
     const moddleOptions = server?.appDelegate?.moddleOptions ?? defaultModdleOptions;
     const names = models ?? (await server.definitions.getList()).map(m => m?.name ?? m);
     // without a template, the label is the application's hook's when it has one: nothing known to filter on
-    const hook = typeof server?.appDelegate?.instanceLabel === 'function';
+    const hook = hasLabelHook(server);
     const fields: ILabelField[] = [];
     for (const model of [...new Set<string>(names)]) {
         const source = await sourceOf(server, model);

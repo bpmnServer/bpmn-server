@@ -121,6 +121,10 @@ class AppDelegate extends WebAppDelegate {
 }
 ```
 
+The delegate is the engine's, so the pages and the API (the host) ask the engine for these labels, all of a list's
+cases in one call, also with the engine elsewhere (`ENGINE_AT`). It is given each case as data: its fields and `data`,
+without its model's source or its log.
+
 ## In code
 
 The pages fill labels in with `labelInstances(server, instances)` and `labelItems(server, items)` (bpmn-server):

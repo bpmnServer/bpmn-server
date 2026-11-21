@@ -93,7 +93,7 @@ export class WebApp {
 			application.configuration,
 			wflogger,
 			// where the engine is: ENGINE_AT=http://... (with ENGINE_KEY), or none: everything but running and testing models
-			{ ...application.serverOptions, calls: engineTests, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, ...(Number(process.env.ENGINE_TIMEOUT_MS) > 0 ? { engineTimeout: Number(process.env.ENGINE_TIMEOUT_MS) } : {}) } : {}) },
+			{ ...application.serverOptions, calls: (server) => ({ ...engineTests(server), ...(application.serverOptions?.calls as any)?.(server) }), ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, ...(Number(process.env.ENGINE_TIMEOUT_MS) > 0 ? { engineTimeout: Number(process.env.ENGINE_TIMEOUT_MS) } : {}) } : {}) },
 		);
 		// users and sessions: on the engine's store (MongoDB, SQLite, memory). On MongoDB, in the database mongoose kept
 		// them in before 3.7: the one MONGO_DB_URL names (else test), whatever MONGO_DB_NAME says

@@ -76,7 +76,7 @@ function startEngineProcess(port = '0') {
     });
 }
 
-export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true, userManager, hostSettings, envFile } = {}) {
+export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true, userManager, hostSettings, envFile, engineCalls } = {}) {
     // the .env the Integration page writes: a file of this test's own, never the folder's
     const envDir = envFile ? null : fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-env-'));
     envFile ??= path.join(envDir, '.env');
@@ -131,7 +131,8 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
         // which add-ons are on: the test's own app-config.json, beside its .env (none: every one)
         configuration: webConfiguration({ ...config(), appConfig: path.join(path.dirname(envFile), 'app-config.json') }, TestDelegate),
         elementTemplatesPath: connectorsPath,
-        serverOptions: { cron: false },
+        // the application's own engine calls (start({ engineCalls })), added to bpmn-web's
+        serverOptions: { cron: false, ...(engineCalls ? { calls: engineCalls } : {}) },
         // an application's own sign-in (IUserManager): bpmn-web then keeps no users of its own
         userManager,
         // the API's settings of this server (keys, service account), else .env's

@@ -131,6 +131,18 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         testConnector: async (id: string, operationId?: string, input = {}) => server.connectors.test(id, operationId, input),
         releaseClaim: async (key: string) => { await server.dataStore.locker.release(`claim:${key}`); return true; },
         /**
+         * Cases' labels by the application's instanceLabel hook (#295): its code, so here; for many cases at once, one
+         * call. Each answer is the hook's text, or null (no hook, nothing said, or it failed).
+         */
+        instanceLabels: async (instances: any[]) => {
+            const delegate = server.appDelegate as any;
+            if (typeof delegate?.instanceLabel !== 'function') return (instances ?? []).map(() => null);
+            return Promise.all((instances ?? []).map(async instance => {
+                try { const text = await delegate.instanceLabel(instance); return text ? String(text) : null; }
+                catch (error) { server.logger?.warn?.(`instanceLabel failed for ${instance?.id}: ${error?.message ?? error}`); return null; }
+            }));
+        },
+        /**
          * A form field's choices (addons/forms/FormLookup.ts; docs/design/form-lookups.md): the source its list or lookup
          * names in the model, the application's service or a connector's operation, is called here, where the
          * application's code and the connectors' keys are. The host has decided who may ask, and the criteria.
@@ -162,7 +174,9 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
             catch { /* a provider that needs a running execution */ }
             // connectorKeys: whether a connector's key can be stored here (CONNECTORS_KEY is the engine's)
             // delegate: the application's class and the methods it defines (the Integration page)
-            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt(), delegate: delegateFacts(server.appDelegate) };
+            // instanceLabel: whether the application labels cases in code (asked with instanceLabels)
+            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt(), delegate: delegateFacts(server.appDelegate),
+                instanceLabel: typeof (server.appDelegate as any).instanceLabel === 'function' };
         },
         /** The application's own checks of a model (appDelegate.verifyModel): its code, so here. */
         checkModel: async (name: string, source: string) => {

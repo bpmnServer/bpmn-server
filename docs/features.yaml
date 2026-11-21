@@ -450,7 +450,7 @@ features:
     docs: [docs/docs/labels.md, docs/design/labels.md]
     code: [packages/bpmn-server/src/addons/labels/Labels.ts, packages/bpmn-server/src/addons/labels/LabelTemplate.ts, packages/bpmn-web/modeler/src/addons/labels/LabelGroup.jsx, packages/bpmn-web/src/routes/labelFilter.ts, packages/bpmn-web/src/routes/api/labels.ts]
     examples: [apps/testSampleApp/processes/Buy Used Car.bpmn]
-    tests: [packages/bpmn-server/test/labels.test.mjs, apps/testSampleApp/test/web/labels.test.mjs, apps/testSampleApp/test/ui/labels.test.mjs, apps/testSampleApp/test/web/api-v3-labels.test.mjs]
+    tests: [packages/bpmn-server/test/labels.test.mjs, apps/testSampleApp/test/web/labels.test.mjs, apps/testSampleApp/test/ui/labels.test.mjs, apps/testSampleApp/test/web/api-v3-labels.test.mjs, packages/bpmn-server/test/instance-label-hook.test.mjs]
   - id: list-columns
     area: application
     name: "List columns, filters and sorting"
@@ -532,7 +532,7 @@ features:
     what: "api.engine (start, invoke, assign, throwMessage, throwSignal, restart, retry) and api.data / api.model, as a user."
     docs: [docs/docs/api-summary.md, docs/docs/invokation.md]
     code: [packages/bpmn-server/src/API/API.ts]
-    tests: [packages/bpmn-server/test/runtime-api.test.mjs, packages/bpmn-server/test/api-boundary.test.mjs, packages/bpmn-server/test/secure-user.test.mjs, packages/bpmn-server/test/element-kinds.test.mjs, packages/bpmn-server/test/engine-results.test.mjs]
+    tests: [packages/bpmn-server/test/runtime-api.test.mjs, packages/bpmn-server/test/api-boundary.test.mjs, packages/bpmn-server/test/secure-user.test.mjs, packages/bpmn-server/test/element-kinds.test.mjs, packages/bpmn-server/test/engine-results.test.mjs, packages/bpmn-server/test/instance-label-hook.test.mjs, apps/testSampleApp/test/web/engine-calls.test.mjs]
   - id: mcp
     area: api
     name: "MCP for AI clients"

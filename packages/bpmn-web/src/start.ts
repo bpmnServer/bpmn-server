@@ -59,6 +59,12 @@ export interface StartOptions {
 	hostSettings?: WorkflowApplication['hostSettings'];
 	/** The .env the Integration page (/dashboard/integration) changes; default the working folder's. */
 	envFile?: string;
+	/**
+	 * The application's own engine calls, added to bpmn-web's (#294): they run in the engine, under its lock, and a
+	 * host route asks for one by name (`web.bpmnServer.engine.call('app.x', ...)`). With the engine elsewhere
+	 * (ENGINE_AT), give the same calls to its startEngineService.
+	 */
+	engineCalls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>>;
 }
 
 function isTrue(param) {
@@ -226,7 +232,7 @@ export async function start(options: StartOptions = {}) {
 		userManager: options.userManager,
 		hostSettings: options.hostSettings,
 		envFile: options.envFile,
-		serverOptions: options.setupOnly || options.console ? { cron: false } : {},
+		serverOptions: { ...(options.setupOnly || options.console ? { cron: false } : {}), ...(options.engineCalls ? { calls: options.engineCalls } : {}) },
 	};
 	const { WebApp } = await import('./app.js');
 	const webApp = new WebApp(application);

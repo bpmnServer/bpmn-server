@@ -96,6 +96,8 @@ export class LaunchedEngine {
     /** A form field's choices, from the source its list or lookup names: the engine's, where the code and keys are. */
     formChoices(processName: string, elementId: string, fieldId: string, criteria = {}, context = {}) { return this.#ask('formChoices', [processName, elementId, fieldId, criteria, context]); }
     facts() { return this.#ask('facts', []); }
+    /** Cases' labels by the application's instanceLabel hook, in the engine where its code is (#295). */
+    instanceLabels(instances: any[]) { return this.#ask('instanceLabels', [instances]); }
     checkModel(name: string, source: string) { return this.#ask('checkModel', [name, source]); }
     /** A call added to the engine's (`calls` of launch, and of startEngineService where the engine is). */
     call(method: string, ...args: any[]) { return this.#ask(method, args); }
@@ -125,6 +127,8 @@ function providerOf(names: string[]) {
 class ApplicationFacts {
     /** What the engine says of the model extensions, once asked. */
     moddleFromEngine;
+    /** Whether the application labels cases in code (its instanceLabel hook), as the engine says. */
+    labelsInEngine = false;
 
     constructor(private readonly configuration, private readonly engine: LaunchedEngine) { }
 
@@ -137,6 +141,19 @@ class ApplicationFacts {
         // not read: the engine knows, when there is one; else no names, so services are not checked
         if (!this.engine.running) return null;
         return this.engine.facts().then(facts => providerOf(facts.services), () => null);
+    }
+
+    /**
+     * Cases' labels by the application's instanceLabel hook, asked of the engine where its code is, all at once (#295).
+     * Null for each when it has none, or the engine can't be asked.
+     */
+    async caseLabelsByHook(instances: any[]): Promise<(string | null)[]> {
+        const none = instances.map(() => null);
+        if (!this.labelsInEngine || !this.engine.running || !instances.length) return none;
+        // the cases as data: what the hook reads, without their model source and log
+        const cases = instances.map(({ source, logs, ...instance }) => instance);
+        try { return await this.engine.instanceLabels(JSON.parse(JSON.stringify(cases))); }
+        catch { return none; }
     }
 
     /** The application's contract (app-contract.json): a file, read here as the engine reads it (DefaultAppDelegate.describe). */
@@ -204,10 +221,13 @@ export class LaunchedServer {
         const calls = at ? null : { ...engineCalls(server), ...options.calls?.(server) };
         this.engine = new LaunchedEngine(at === 'none' ? null : at ? remoteCall(at, options.engineKey, options.engineTimeout) : (method, args) => calls[method](...args));
         this.appDelegate = new ApplicationFacts(server.configuration, this.engine);
-        if (!at) this.appDelegate.moddleFromEngine = server.appDelegate.moddleOptions;
+        if (!at) {
+            this.appDelegate.moddleFromEngine = server.appDelegate.moddleOptions;
+            this.appDelegate.labelsInEngine = typeof (server.appDelegate as any)?.instanceLabel === 'function';
+        }
         // an engine elsewhere may not have started yet: what is not known of it then falls back on the settings
         this.#ready = at && at !== 'none'
-            ? server.ready.then(() => this.engine.facts().then(facts => { this.appDelegate.moddleFromEngine = facts.moddleOptions; }, () => { }))
+            ? server.ready.then(() => this.engine.facts().then(facts => { this.appDelegate.moddleFromEngine = facts.moddleOptions; this.appDelegate.labelsInEngine = facts.instanceLabel === true; }, () => { }))
             : server.ready;
     }
 

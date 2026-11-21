@@ -355,6 +355,10 @@ and here
   1.5s by each page, is.
 
 ### Fixed
+- **An application's own engine calls** (#294): `start({ engineCalls })` adds them to bpmn-web's own (the Test tab's),
+  where bpmn-web used to replace whatever calls an application gave. A host route asks for one by name
+  (`web.bpmnServer.engine.call('app.x', ...)`), and it runs in the engine, under its lock, so a route can again change
+  an instance (`ENGINE_ONLY` otherwise). Test: `test/web/engine-calls.test.mjs`.
 - **The instance page showed a run's colours on its diagram:** the editor saved the model's picture with the Test tab's
   marks of the run it showed (a task still waiting, orange). The editor now saves the picture without them, and the
   instance page leaves them out of a picture saved before.
