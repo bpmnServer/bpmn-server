@@ -69,6 +69,11 @@ export const policiesAddOn: IAddOn = {
                 instance.actors = actorsOf({ instance, items: context.execution.getItems?.() ?? instance.items ?? [], elements: actorElements(definition) });
             },
         });
+        // a case saved before 3.7.5 has no actors: worked out as it is read, from its items and its model (no migration)
+        server.registrations.addInstanceReader((instance) => {
+            if (instance && !instance.actors && Array.isArray(instance.items))
+                instance.actors = actorsOf({ instance, elements: actorElements(instance.source) });
+        });
         for (const part of [assignmentAddOn, notificationAddOn, securityAddOn]) part.register(server);
     },
 };

@@ -135,6 +135,9 @@ export class Registrations {
     readonly expressionNames: IExpressionName[] = [];
     readonly fieldRules: IFieldRule[] = [];
     readonly fieldChoices: IFieldChoices[] = [];
+    /** What fills in an instance as it is read (the Policies add-on: `actors`, for a case saved before 3.7.5). */
+    readonly instanceReaders: ((instance: any) => void)[] = [];
+    addInstanceReader(reader: (instance: any) => void) { this.instanceReaders.push(reader); }
     addFieldRule(rule: IFieldRule) { this.fieldRules.push(rule); }
     addFieldChoices(choices: IFieldChoices) { this.fieldChoices.push(choices); }
     addExpressionName(name: IExpressionName) { this.expressionNames.push(name); }

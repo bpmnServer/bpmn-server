@@ -2,8 +2,10 @@
 
 **Status:** built in 3.7.5 (`bpmn-server/src/engine/Context.ts`, tests `test/context.test.mjs`), with
 [add-ons](add-ons.md): services, listeners and subscribers, the delegate's hooks, and the API's `pre-query` and
-`pre-action` take it. Not yet: scripts and decisions build their names from it (they see `source`; their names are as
-before), and a form's rules and choices are handed it. The packages' new OWF names stay for 4.0.
+`pre-action` take it; the application's `appVars` are made from it, a script's and a decision's alike (kind `item`,
+`element` or `dmn`, the live case and item); a form's rules and choices are handed it (kind `form`); a case saved
+before it has its `instance.actors` worked out as it is read. The names scripts and decisions see are as before. The
+packages' new OWF names stay for 4.0.
 
 ## Why
 

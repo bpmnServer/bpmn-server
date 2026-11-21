@@ -78,7 +78,8 @@ class Node extends Element {
         if (server?.configuration?.formRules !== false && fields?.length)
             problems.push(...await formProblems(server, fields, form.sent ?? {}, form.current ?? {}, {
                 user: { userName: execution.userName }, processName: execution.name, elementId: this.id,
-                instanceId: execution.instance?.id, taskId: item.id }));
+                instanceId: execution.instance?.id, taskId: item.id, instance: execution.instance, item, element: this,
+                data: item.data ?? execution.instance?.data }));
         if (problems.length)
             throw new FormInvalidError(this.id, problems);
     }

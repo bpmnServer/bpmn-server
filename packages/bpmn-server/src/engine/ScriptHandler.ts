@@ -8,6 +8,7 @@ import { feelView, itemView, instanceView, namesAt } from './DecisionContext.js'
 import { spawn } from 'child_process';
 import vm from 'node:vm';
 import { appVarsFor, appVarsRead } from './AppContract.js';
+import { itemContext, elementContext } from './Context.js';
 
     
 /** What scripts see already: a context can not replace these. */
@@ -75,14 +76,17 @@ class ScriptHandler implements IScriptHandler{
         const execution = ScriptHandler.executionOf(scope);
         const delegate = execution?.appDelegate;
         const item = scope?.token ? scope : undefined;
-        const context = {
+        // the context (docs/design/context-object.md), as a service is handed it: an item's, else its element's; with
+        // the names the script sees (actors), and evaluatingSource, the source's name before 3.7.5 (deprecated)
+        const source = {
+            kind: item ? 'item' : 'element', type: item?.element?.type === 'bpmn:SequenceFlow' ? 'flow' : 'node',
+            id: item?.elementId ?? scope?.currentNode?.id ?? 'process', elementId: item?.elementId ?? scope?.currentNode?.id };
+        const fields = {
             data: scope?.data ?? execution?.instance?.data ?? {}, user: { userName: execution?.userName ?? null },
-            instance: execution?.instance, item, ...this.standardValues(scope, true),
-            // where it was made (docs/design/context-object.md); evaluatingSource, its name before 3.7.5, deprecated
-            ...((source) => ({ source, evaluatingSource: { type: source.type, id: source.id } }))({
-                kind: item ? 'item' : 'element', type: item?.element?.type === 'bpmn:SequenceFlow' ? 'flow' : 'node',
-                id: item?.elementId ?? scope?.currentNode?.id ?? 'process', elementId: item?.elementId ?? scope?.currentNode?.id }),
-        };
+            ...this.standardValues(scope, true), source, evaluatingSource: { type: source.type, id: source.id },
+        } as any;
+        const context = item ? itemContext(item, fields)
+            : elementContext(execution, scope?.currentNode ?? scope?.node, fields);
         return appVarsFor(delegate, context, names);
     }
 

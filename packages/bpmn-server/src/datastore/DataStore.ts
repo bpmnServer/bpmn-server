@@ -14,6 +14,7 @@ import { InstanceLocker } from './InstanceLocker.js';
 import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
 
 import { QueryTranslator } from './QueryTranslator.js';
+import { registrationsOf } from '../engine/AddOns.js';
 import { Aggregate} from './Aggregate.js'
 import { DocumentPager } from './DocumentPager.js';
 
@@ -256,6 +257,11 @@ class DataStore extends ServerComponent  implements IDataStore {
 		const limit = Number.isInteger(option?.['limit']) && option['limit'] > 0 ? option['limit'] : undefined;
 
 		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, query, projection, sort, limit);
+		// what the add-ons fill in as an instance is read (engine/AddOns.ts): a case saved before 3.7.5 has no actors
+		const readers = registrationsOf(this.server).instanceReaders;
+		if (readers.length) for (const record of records) for (const read of readers) {
+			try { read(record); } catch { /* a reader that fails leaves the instance as stored */ }
+		}
 		return limit && records.length > limit ? records.slice(0, limit) : records;
 	}
 	/**

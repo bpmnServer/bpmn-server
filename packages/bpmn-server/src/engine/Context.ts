@@ -154,12 +154,17 @@ export function queryContext(query: string, user, filter: Record<string, any>): 
     return makeContext({ source: { kind: 'query', query }, user, query: filter, conditions: [] });
 }
 
-/** Kind form: a form field, with the form's values. */
+/**
+ * Kind form: a form field, with the form's values (`input`). What else `from` has is kept: the names a form's rules
+ * and choices were handed before 3.7.5 (`processName`, `elementId`, `instanceId`, `taskId`).
+ */
 export function formContext(field: string, input, from: Partial<IContext> = {}): IContext {
+    const { user, instance, item, element, data, source, ...rest } = from;
     return makeContext({
-        source: { kind: 'form', field, elementId: from.item?.elementId ?? from.element?.id },
-        user: from.user, instance: from.instance, item: from.item, element: from.element,
-        data: from.data ?? from.instance?.data, input, field,
+        ...rest,
+        source: { kind: 'form', field, elementId: item?.elementId ?? element?.id ?? rest.elementId },
+        user, instance, item, element,
+        data: data ?? instance?.data, input, field,
     });
 }
 

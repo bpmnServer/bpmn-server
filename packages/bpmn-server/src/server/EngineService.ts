@@ -3,6 +3,7 @@ import http from 'node:http';
 import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { registrationsOf } from '../engine/AddOns.js';
+import { formContext } from '../engine/Context.js';
 import { canEncrypt } from '../connectors/Secrets.js';
 import { Definition } from '../elements/Definition.js';
 import type { IExecutionResult } from '../interfaces/engine.js';
@@ -150,9 +151,13 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         formChoices: async (processName: string, elementId: string, fieldId: string, criteria = {}, context = {}) => {
             const definition = await server.definitions.load(processName);
             const field = (definition.getNodeInfo(elementId)?.fields ?? []).find(f => f.id === fieldId);
+            // the field's context (docs/design/context-object.md): kind form; a task's case and item, read here
+            const instance = (context as any)?.instanceId ? await server.dataStore.findInstance({ id: (context as any).instanceId }, 'full').catch(() => undefined) : undefined;
+            const item = instance?.items?.find(i => i.id === (context as any)?.taskId);
+            const asked = formContext(fieldId, criteria, { ...context, instance, item, element: definition.getNodeById?.(elementId) });
             // the add-ons' (engine/AddOns.ts): the Forms add-on's lists and lookups
             for (const provider of field ? registrationsOf(server).fieldChoices : []) {
-                const choices = await provider.choices(server, field, criteria, context);
+                const choices = await provider.choices(server, field, criteria, asked);
                 if (choices) return choices;
             }
             throw Object.assign(new Error(`The form of '${elementId}' has no field '${fieldId}' with a list or a lookup`), { code: 'NO_CHOICES' });

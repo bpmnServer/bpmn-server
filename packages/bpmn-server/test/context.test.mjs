@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { makeServer, definitionsFolder } from './helpers.mjs';
-import { BPMNAPI, SecureUser, narrowed, itemContext } from '../dist/index.js';
+import { BPMNAPI, SecureUser, narrowed, itemContext, formProblems } from '../dist/index.js';
 
 const model = (id, body) => `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:owf="http://omniworkflow.com/schema/owf" id="D_${id}" targetNamespace="x">
@@ -102,4 +102,45 @@ test('narrowed: conditions all hold, a key said twice kept both ways', () => {
   assert.deepEqual(narrowed({ name: 'A' }, [{ status: 'wait' }]), { name: 'A', status: 'wait' });
   assert.deepEqual(narrowed({ $or: [{ a: 1 }] }, [{ $or: [{ b: 2 }] }]), { $and: [{ $or: [{ a: 1 }] }, { $or: [{ b: 2 }] }] });
   assert.equal(typeof itemContext, 'function');
+});
+
+test("appVars are made from the context: a script's, its item's, with its source", async (t) => {
+  const dir = definitionsFolder();
+  fs.writeFileSync(path.join(dir, 'Vars.bpmn'), model('Vars', `
+    <bpmn:startEvent id="S"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:scriptTask id="Calc"><bpmn:incoming>f1</bpmn:incoming><bpmn:script>data.w = appVars.who;</bpmn:script></bpmn:scriptTask>
+    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Calc" />`));
+  const { server } = await makeServer({ dir });
+  t.after(() => server.shutdown());
+  let seen;
+  server.appDelegate.appVarsClass = class { constructor(context) { seen = context; } who() { return 'w'; } };
+  const started = await server.engine.start('Vars', {});
+  assert.equal(started.instance.data.w, 'w');
+  assert.equal(seen.source.kind, 'item');
+  assert.equal(seen.source.elementId, 'Calc');
+  assert.equal(seen.item.elementId, 'Calc', 'the live item');
+  assert.equal(seen.instance.id, started.instance.id);
+  assert.equal(seen.evaluatingSource.id, 'Calc', 'its name before 3.7.5, kept');
+});
+
+test("a form's rules are handed the field's context, kind form, what they were handed before kept", async (t) => {
+  const server = await serverWith(t);
+  let seen;
+  server.registrations.addFieldRule({ name: 'seen', check(_s, _f, _v, _at, context) { seen = context; return null; } });
+  await formProblems(server, [{ id: 'amount', type: 'long' }], { amount: 5 }, {}, { processName: 'Svc', taskId: 't1', user: { userName: 'ann' } });
+  assert.equal(seen.source.kind, 'form');
+  assert.equal(seen.field, 'amount');
+  assert.deepEqual(seen.input, { amount: 5 }, "the form's values");
+  assert.equal(seen.user.userName, 'ann');
+  assert.equal(seen.processName, 'Svc', 'as before');
+  assert.equal(seen.taskId, 't1');
+});
+
+test('a case saved without actors (before 3.7.5) has them as it is read', async (t) => {
+  const server = await serverWith(t, { look: async () => ({}) });
+  const started = await server.engine.start('Svc', {}, null, 'ann');
+  const store = server.dataStore;
+  await store.db.update(store.dbConfiguration.db, store.dbConfiguration.Instance_collection, { id: started.instance.id }, { $set: { actors: null } });
+  const [read] = await store.findInstances({ id: started.instance.id }, 'full');
+  assert.equal(read.actors?.initiator, 'ann');
 });

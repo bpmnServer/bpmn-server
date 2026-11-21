@@ -42,7 +42,11 @@ and here
   may see, and their refusals (`CaseAccess`, moved here from bpmn-web: `addons/policies/security/CaseAccess.ts`). A user
   that is an administrator, or with security off, is not narrowed. `api.data.qualifyQuery(kind, query, user)`.
 - **`instance.actors`**: the case's actors, kept on it by the Policies add-on as its work starts and ends, and saved with
-  it.
+  it; a case saved before has them worked out as it is read (`registrations.addInstanceReader`), no migration.
+- **The context, also for `appVars` and forms**: the application's `appVarsClass` (or `getAppVars`) is made from the
+  context, a script's (`item`, `element`) and a decision's (`dmn`) alike, with the live case and item and the names it
+  had before; a form's rules (`addFieldRule`) and choices (`addFieldChoices`) are handed a `form` context, the field and
+  the form's values its `input`, what they had before (`processName`, `taskId`, ...) kept.
 - **The Forms and display add-on** (`addons/forms/`): a form field's lists and lookups (`<owf:list>`, `<owf:lookup>`,
   `FormLookup.ts`), their checks, a list's value held to its choices (a field rule: `addFieldRule`), and the choices the
   form asks for as it is filled (`addFieldChoices`, the engine's `choices` call). A manifest names the model elements an

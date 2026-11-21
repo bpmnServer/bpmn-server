@@ -13,6 +13,7 @@
  * of a value that is absent are not checked, but `required`. Values from a drawn form are text: "12" is a long.
  */
 import { registrationsOf } from '../engine/AddOns.js';
+import { formContext } from '../engine/Context.js';
 
 export interface IFormProblem {
     field: string;
@@ -114,7 +115,8 @@ export async function formProblems(server, fields: any[], sent: Record<string, a
         // the add-ons' rules (engine/AddOns.ts): the Forms add-on's, a list's value one of its choices
         for (const rule of registrationsOf(server).fieldRules) {
             try {
-                const problem = await rule.check(server, field, value, { data, current: current[field.id] }, context);
+                // the field's context (docs/design/context-object.md): kind form, the form's values its input
+                const problem = await rule.check(server, field, value, { data, current: current[field.id] }, formContext(field.id, data, context));
                 if (problem) problems.push(problem);
             }
             catch (error) {
