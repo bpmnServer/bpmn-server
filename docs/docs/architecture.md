@@ -24,7 +24,7 @@ isolated, one for each tenant, holding everything of it. Without tenants, A and 
 | 4 | **Delegates and services** | The app developer | the engine's execution | the data store directly, add-ons | Engine | B |
 | 5 | **Scripts, conditions, policies and decisions (DMN)** | The modeler: they are part of the models | their context only (item, data, services) | anything else | Engine | B |
 | 6 | **API** | BPMN Server | the engine (local or remote), and through it 7 and 8 | the engine's internals, a tenant's store or models | Host | A |
-| 7 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | the data store (the models folder) | the engine | Engine | B |
+| 7 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | the data store (the models folder) | writing anything (saves go through the API, from the editor) | Engine | B |
 | 8 | **Instances, read only** | BPMN Server owns the reader; the engine owns the instances | the data store | writing anything | Engine | B |
 | 9 | **Model editor** | BPMN Server; each add-on owns its modules | the API, the add-ons' editor modules and manifests | the engine | Browser | A (served) |
 | 10 | **Pages** | BPMN Server; each add-on owns its pages; the app developer owns custom pages | the API | the engine, the data store | Browser | A (served) |
