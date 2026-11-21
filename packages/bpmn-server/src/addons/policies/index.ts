@@ -17,7 +17,7 @@ export * from './security/index.js';
 export * from './actors.js';
 export { assignmentAddOn, notificationAddOn, securityAddOn };
 
-export const policiesManifest: IAddOnManifest = manifest;
+export const policiesManifest: IAddOnManifest = manifest as IAddOnManifest;
 
 /**
  * The whole model, checked: an `owf:actor` only where it means something (a user task, a start event), each

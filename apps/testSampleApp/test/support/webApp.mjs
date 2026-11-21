@@ -77,7 +77,7 @@ function startEngineProcess(port = '0') {
 }
 
 export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true, userManager, hostSettings, envFile, engineCalls } = {}) {
-    // the .env the Integration page writes: a file of this test's own, never the folder's
+    // the .env the Settings page writes: a file of this test's own, never the folder's
     const envDir = envFile ? null : fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-env-'));
     envFile ??= path.join(envDir, '.env');
     const dbUrl = testDatabaseUrl();

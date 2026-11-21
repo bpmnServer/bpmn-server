@@ -4,7 +4,7 @@
  * of every route, pages and APIs alike, so no page, API or AI link gets around it:
  *
  * - the models, decision tables, policies, tests and modeling rules: saved, added, imported, renamed, deleted;
- * - roles, connectors, the Integration page's settings, the catalog's import;
+ * - roles, connectors, the Settings page's settings and add-ons, the catalog's import;
  * - users and passwords (bpmn-web's own), restarting the server, deleting every case at once.
  *
  * Running the tests, checking a model, previewing a policy, and everything a case does stay allowed.
@@ -21,11 +21,11 @@ const REFUSED: RegExp[] = [
     /^\/model\/decision\/[^/]+(\/tests)?$/,
     /^\/model\/([a-z]+-)?policy\/[^/]+(\/tests)?$/,
     /^\/model\/(history|scenarios)\//,
-    // the dashboards: the catalog's import, administration, the Integration page (routes/dashboards.ts)
+    // the dashboards: the catalog's import, administration, the Settings page (routes/dashboards.ts)
     /^\/dashboard\/catalog\/import$/,
     /^\/dashboard\/admin\/(users|roles|roles\/delete|restart)$/,
     /^\/dashboard\/admin\/connectors(\/[^/]+(\/(settings|testing|enabled|operations|key|refresh|delete))?)?$/,
-    /^\/dashboard\/integration\//,
+    /^\/dashboard\/(integration|settings)\//,
     // every case deleted at once (routes/workflow.ts)
     /^\/resetData$/,
     // bpmn-web's own users and passwords (userAccess/routes/account.ts)

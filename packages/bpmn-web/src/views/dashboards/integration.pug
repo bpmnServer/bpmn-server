@@ -1,7 +1,8 @@
 extends layout
 
-//- The Integration page (routes/integration.ts): one section per integration point, what is in place and its settings.
-//- An administrator changes every setting; a designer the design-side ones. Changes go to .env, applied on restart.
+//- The Settings page (routes/integration.ts): one area for each part of the server, then one for each add-on (its
+//- manifest's settings; on or off), what is in place and its settings. An administrator changes every setting; a
+//- designer the design-side ones. Changes go to .env, add-ons on or off to app-config.json; applied on restart.
 
 mixin names(list)
   if list && list.length
@@ -96,6 +97,7 @@ mixin policies(info)
       a.btn.btn-default.btn-sm(href='/dashboard/admin#roles') Manage the roles
 
 mixin notifications(info)
+  h3 Notifications
   dl
     dt Delivered by
     dd= info.notify ? "the application's notify" : 'email (the delegate has no notify of its own)'
@@ -106,6 +108,53 @@ mixin notifications(info)
         | (#{Object.entries(info.byStatus).map(([s, n]) => `${n} ${s === 'recorded' ? 'kept, not delivered' : s}`).join(', ')})
   a.btn.btn-default.btn-sm(href='/dashboard/notifications') See the notifications
 
+//- an add-on on or off: its badge, and an administrator's switch (app-config.json, applied on restart)
+mixin addOnSwitch(a)
+  .integration-switch
+    span.dash-badge(class=a.on ? 'is-success' : '')= a.on ? 'on' : 'off'
+    if a.pending
+      |  #[span.dash-badge.is-warning(title='app-config.json says otherwise: it applies when the server restarts') restart to apply]
+    if isAdmin
+      form(method='post', action='/dashboard/settings/add-ons/' + a.name)
+        input(type='hidden', name='_csrf', value=_csrf)
+        input(type='hidden', name='on', value=a.saved ? 'false' : 'true')
+        button.btn.btn-default.btn-xs(type='submit')= a.saved ? 'Turn off' : 'Turn on'
+
+//- an add-on's area: on or off, the models using it
+mixin addOnState(a)
+  +addOnSwitch(a)
+  if a.models.length
+    p.dash-muted Used by #{a.models.join(', ')}#{a.on ? '' : ': the engine ignores it while it is off'}.
+  if !a.on
+    p.dash-muted Its settings are kept while it is off; they apply when it is on.
+
+//- a server's area: a link; an add-on's: its title links, and it is turned on or off on the card itself
+mixin card(p)
+  if p.addOnState
+    .integration-card(id=p.id, data-addon=p.id)
+      h2: a(href='/dashboard/settings/' + p.id)= p.title
+      +addOnSwitch(p.addOnState)
+      each line in p.summary.lines
+        p= line
+      if p.summary.attention
+        p.integration-attention= p.summary.attention
+      if p.addOnState.models.length
+        p.dash-muted Used by #{p.addOnState.models.join(', ')}.
+      if p.pending
+        span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply
+      if p.docs
+        a.integration-docs(href=p.docs, target='_blank', rel='noopener') About this add-on ↗
+      a.integration-open(href='/dashboard/settings/' + p.id) Set up →
+  else
+    a.integration-card(href='/dashboard/settings/' + p.id, id=p.id)
+      h2= p.title
+      each line in p.summary.lines
+        p= line
+      if p.summary.attention
+        p.integration-attention= p.summary.attention
+      if p.pending
+        span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply
+      span.integration-open Set up →
 mixin api(info)
   dl
     dt API v3
@@ -173,8 +222,10 @@ block intro
   if point
     p: a(href='/dashboard/settings') ← Settings
     p.dash-intro= point.about
+    if point.docs
+      p: a.integration-docs(href=point.docs, target='_blank', rel='noopener') About this add-on ↗
   else
-    p.dash-intro How the workflows meet the application. Each area says what is in place; open one to set it up.
+    p.dash-intro How the server is set up: its own areas, then each add-on's. Each area says what is in place; open one to set it up.
     p.dash-muted #{isAdmin ? 'You change every setting' : 'You change the settings marked "designers too"; an administrator the others'}. They are saved to #[code= envFile] and apply when the server restarts.
   if separateEngine
     p.dash-intro The engine runs separately (ENGINE_AT): copy a change to its .env too.
@@ -185,17 +236,21 @@ block dash
     //- one point: what is in place, its main settings, the rest under More settings
     .dash-grid
       section.dash-card.wide(id=point.id)
+        if point.addOnState
+          +addOnState(point.addOnState)
         case point.id
           when 'application'
             +application(point.info)
           when 'connectors'
             +connectors(point.info)
           when 'policies'
-            +policies(point.info)
-          when 'notifications'
-            +notifications(point.info)
+            if point.info.roles
+              +policies(point.info)
+              +notifications(point.info.notifications)
           when 'api'
             +api(point.info)
+        if !point.settings.length && point.addOnState
+          p.dash-muted No settings of its own.
         if point.settings.length
           - const main = point.settings.filter(s => s.main), more = point.settings.filter(s => !s.main)
           form(method='post', action='/dashboard/settings/' + point.id)
@@ -218,46 +273,18 @@ block dash
           if i < points.length - 1
             | &nbsp;·&nbsp;
   else
-    //- the overview: each point in a few words
+    //- the overview: the server's areas, then the add-ons' (each its own area), each in a few words
+    h2.integration-group Server
     .integration-overview
-      each p in points
-        a.integration-card(href='/dashboard/settings/' + p.id, id=p.id)
-          h2= p.title
-          each line in p.summary.lines
-            p= line
-          if p.summary.attention
-            p.integration-attention= p.summary.attention
-          if p.pending
-            span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply
-          span.integration-open Set up →
-    //- the add-ons: each on or off (app-config.json), what it is, the models using it
-    section.dash-card.wide#add-ons
-      h2 Add-ons
-      p.dash-muted What is built on the engine, each turned on when it's needed. Saved to #[code= appConfigFile]; a change applies when the server restarts.
-      if addOns.length && addOns[0].problem
-        p.integration-attention= addOns[0].problem
-      form(method='post', action='/dashboard/settings/add-ons')
-        input(type='hidden', name='_csrf', value=_csrf)
-        table.integration-settings
-          each a in addOns
-            tr(data-addon=a.name)
-              td
-                label
-                  input(type='checkbox', name='addon:' + a.name, checked=a.saved, disabled=!isAdmin)
-                  |  #[strong= a.title]
-              td
-                span.dash-badge(class=a.on ? 'is-success' : '')= a.on ? 'on' : 'off'
-                if a.pending
-                  |  #[span.dash-badge.is-warning restart to apply]
-              td
-                if a.description
-                  p= a.description
-                if a.models.length
-                  p.dash-muted Used by #{a.models.join(', ')}#{a.on ? '' : ': the engine ignores it while it is off'}.
-        if isAdmin
-          p
-            button.btn.btn-primary.btn-sm(type='submit') Save
-            span.dash-muted  Applies when the server restarts.
+      each p in points.filter(p => !p.addOn)
+        +card(p)
+    h2.integration-group#add-ons Add-ons
+    p.dash-muted What is built on the engine, each turned on when it's needed#{isAdmin ? '' : ' (an administrator turns them on and off)'}. On or off is saved to #[code= appConfigFile] and applies when the server restarts.
+    if addOns.length && addOns[0].problem
+      p.integration-attention= addOns[0].problem
+    .integration-overview
+      each p in points.filter(p => p.addOn)
+        +card(p)
     if isAdmin
       section.dash-card.wide#restart
         h2 Restart

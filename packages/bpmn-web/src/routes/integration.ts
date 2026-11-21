@@ -1,8 +1,9 @@
 /**
- * The Settings page (/dashboard/settings): where an administrator and a designer set up how the workflows meet
- * the application (docs/docs/integration-settings.md). One section per integration point: the application's code,
- * its APIs (connectors), roles and policies, notifications, the API the application calls, forms and scripts, AI
- * agents. Each shows what is in place and its settings, from the settings schema (settings/settings.schema.json).
+ * The Settings page (/dashboard/settings): where an administrator and a designer set up the server
+ * (docs/docs/integration-settings.md). One area for each part of the server that is no add-on's (the application's
+ * code, its APIs: connectors, the API the application calls, models and scripts, AI agents), and one for each add-on,
+ * with the settings its manifest declares (addon.json `settings`), turned on or off there. Each area shows what is in
+ * place and its settings, from the settings schema (settings/settings.schema.json).
  *
  * Who changes what: an administrator every setting; a designer the design-side ones (`designer` below). A change is
  * written to the server's .env (the one before kept as .env.bak) and applies when the server restarts. A secret's
@@ -24,9 +25,23 @@ export interface IntegrationPoint {
     about: string;
     /** Its settings, each changed by `admin` (the default) or by a designer too; `main`, shown first (the rest under More settings). */
     settings: { name: string; label: string; editor?: Editor; main?: boolean }[];
+    /** An add-on's area: its name (its manifest's); none, one of the server's */
+    addOn?: string;
+    /** An add-on's doc page: its full address */
+    docs?: string;
 }
 
-/** The integration points, in the page's order. */
+/** BPMN Server's docs site: an add-on's doc page is a path of it, unless its manifest gives a full address. */
+export const DOCS_SITE = 'https://bpmnserver.github.io/bpmn-server/';
+const docsAddress = (docs?: string) => !docs ? undefined : /^https?:\/\//.test(docs) ? docs : DOCS_SITE + docs.replace(/^\//, '');
+
+/** An add-on's area: its manifest's title, description and settings. */
+export function addOnArea(manifest: { name: string; title: string; description?: string; docs?: string; settings?: IntegrationPoint['settings'] }): IntegrationPoint {
+    return { id: manifest.name, title: manifest.title, about: manifest.description ?? '', settings: manifest.settings ?? [], addOn: manifest.name,
+        ...(manifest.docs ? { docs: docsAddress(manifest.docs) } : {}) };
+}
+
+/** The server's areas, no add-on's, in the page's order (each add-on's follow, from its manifest). */
 export const INTEGRATION_POINTS: IntegrationPoint[] = [
     {
         id: 'application', title: 'The application',
@@ -36,6 +51,7 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
             { name: 'APP_ENV_LABEL', label: 'Environment label' },
             { name: 'READ_ONLY', label: 'Read-only (a public demo)', main: true },
             { name: 'SITE_URL', label: 'Site address', main: true },
+            { name: 'ENFORCE_SECURITY', label: 'Sign-in and security enforced' },
         ],
     },
     {
@@ -46,26 +62,6 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
             { name: 'CONNECTORS_KEY', label: 'Key that encrypts connector keys', main: true },
             { name: 'CONNECTORS_ALLOW_HOSTS', label: 'Hosts connectors may call' },
             { name: 'CONNECTOR_CATALOG_URL', label: 'Connector catalog' },
-        ],
-    },
-    {
-        id: 'policies', title: 'Roles and policies',
-        about: 'The roles lanes and tasks are given to, and the decision tables that assign tasks, secure instances and choose notifications.',
-        settings: [
-            { name: 'SECURITY_POLICY', label: 'Security policies', main: true },
-            { name: 'ENFORCE_SECURITY', label: 'Sign-in and security enforced' },
-        ],
-    },
-    {
-        id: 'notifications', title: 'Notifications',
-        about: 'What the notification policies send: kept by BPMN Server, delivered by the application\'s notify, or by email.',
-        settings: [
-            { name: 'NOTIFICATIONS', label: 'Delivery', main: true },
-            { name: 'EMAIL_ENABLE', label: 'Email sent', main: true },
-            { name: 'EMAIL_FROM', label: 'Sender', main: true },
-            { name: 'SMTP_USER', label: 'Mail account', main: true },
-            { name: 'SMTP_PASSWORD', label: 'Mail password', main: true },
-            { name: 'EMAIL_LOG', label: 'Email log' },
         ],
     },
     {
@@ -84,13 +80,12 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         ],
     },
     {
-        id: 'forms', title: 'Forms, scripts and the model editor',
-        about: 'How forms are checked, what the model editor offers and keeps, and how scripts reach the application.',
+        id: 'models', title: 'Models, forms and scripts',
+        about: 'How forms are checked, what the model editor offers, and how scripts reach the application.',
         settings: [
             { name: 'FORM_RULES', label: 'Form rules checked', editor: 'designer', main: true },
             { name: 'ELEMENT_TEMPLATES', label: 'Element templates offered', editor: 'designer', main: true },
             { name: 'VERIFY_MODELS_ON_IMPORT', label: 'Models checked when saved through the APIs', editor: 'designer' },
-            { name: 'MODEL_HISTORY', label: 'Saved versions of models kept', editor: 'designer' },
             { name: 'CATALOG_URL', label: 'Model catalog' },
             { name: 'SCRIPT_SANDBOX', label: 'Scripts run in a sandbox' },
             { name: 'SCRIPT_SANDBOX_SERVICES', label: 'Sandboxed scripts may call appServices' },
@@ -161,7 +156,7 @@ export class EnvFile {
         const before = FS.existsSync(this.file) ? FS.readFileSync(this.file, 'utf8') : '';
         if (before) FS.writeFileSync(this.file + '.bak', before);
         FS.mkdirSync(path.dirname(this.file), { recursive: true });
-        FS.writeFileSync(this.file, renderEnv(before, changes, 'the Integration page'));
+        FS.writeFileSync(this.file, renderEnv(before, changes, 'the Settings page'));
     }
 }
 
@@ -177,7 +172,7 @@ const valueOf = (settings: any[], name: string) => {
 };
 
 /**
- * What an integration point has, in a few words, for the Integration page's overview: { lines, attention } (attention:
+ * What an integration point has, in a few words, for the Settings page's overview: { lines, attention } (attention:
  * something to set up, said so). From what the page knows of it (`info`) and its settings.
  */
 export function summaryOf(id: string, info: any, settings: any[]): { lines: string[]; attention?: string } {
@@ -196,18 +191,22 @@ export function summaryOf(id: string, info: any, settings: any[]): { lines: stri
                 attention: list.length && !info.canEncrypt ? 'Connector keys need the encryption key' : undefined };
         }
         case 'policies': {
-            const roles = info.roles?.list?.length ?? 0;
+            // the Policies add-on: its roles and policies, and the notifications they send (known while it is on)
+            if (!info.roles) return { lines: [] };
+            const roles = info.roles.list?.length ?? 0;
+            const sent = info.notifications ?? {};
             return { lines: [
                 count(roles, 'role'),
                 `${count(info.assignment?.length ?? 0, 'assignment policy', 'assignment policies')}, ${count(info.security?.length ?? 0, 'security policy', 'security policies')}${info.security?.length ? (info.securityOn ? ' (on)' : ' (off)') : ''}, ${count(info.notification?.length ?? 0, 'notification policy', 'notification policies')}`,
-            ], attention: info.roles?.unlisted?.length ? `${count(info.roles.unlisted.length, 'role')} used but not listed` : undefined };
+                `Notifications delivered by ${sent.notify ? 'the application' : 'email'}; ${count(sent.total ?? 0, 'notification')} kept`,
+            ], attention: info.roles.unlisted?.length ? `${count(info.roles.unlisted.length, 'role')} used but not listed`
+                : !sent.notify && valueOf(settings, 'EMAIL_ENABLE') !== 'true' ? 'Email is off: notifications are kept, not sent' : undefined };
         }
-        case 'notifications':
-            return { lines: [`Delivered by ${info.notify ? 'the application' : 'email'}; ${count(info.total ?? 0, 'notification')} kept`] ,
-                attention: !info.notify && valueOf(settings, 'EMAIL_ENABLE') !== 'true' ? 'Email is off: notifications are kept, not sent' : undefined };
+        case 'modeling':
+            return { lines: [`Model history ${valueOf(settings, 'MODEL_HISTORY') === 'false' ? 'not kept' : 'kept'}`] };
         case 'api':
             return { lines: [`API v3; service key ${valueOf(settings, 'API_KEY') ?? "the application's"}`, `Task API (acting for a user) ${info.taskApi ? 'on' : 'off'}`] };
-        case 'forms':
+        case 'models':
             return { lines: [`Form rules ${valueOf(settings, 'FORM_RULES') === 'false' ? 'not checked' : 'checked'}; scripts ${valueOf(settings, 'SCRIPT_SANDBOX') === 'true' ? 'in a sandbox' : 'run as they are'}`] };
         case 'ai': {
             const levels = valueOf(settings, 'AI_ACCESS');

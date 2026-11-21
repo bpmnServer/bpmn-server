@@ -34,7 +34,7 @@ import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
-import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf } from './integration.js';
+import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea } from './integration.js';
 import { addOnsOf, readAppConfig, APP_CONFIG_FILE } from '../index.js';
 import type { IAddOnManifest } from '../index.js';
 
@@ -631,7 +631,7 @@ export class Dashboards extends Common {
             res.redirect('/model/edit/' + encodeURIComponent(name));
         }));
 
-        // ---- integration (routes/integration.ts): administrators and designers; each changes the settings that are theirs
+        // ---- settings (routes/integration.ts): administrators and designers; each changes the settings that are theirs
         const integrationViewer = (req) => { const r = roles(req); return { isAdmin: r.isAdmin, isDesigner: r.isDesigner }; };
         const mayIntegrate = (req, res, next) => {
             const viewer = integrationViewer(req);
@@ -639,7 +639,10 @@ export class Dashboards extends Common {
             return res.status(403).send('Administrator or designer permission required');
         };
         const appHostSettings = () => !!this.webApp.application?.hostSettings;
-        /** What the Integration page knows of each point, and each point with its settings and summary, for this viewer. */
+        /**
+         * The Settings page's areas for this viewer: the server's, then each add-on's (its manifest's settings, on or
+         * off), each with what the page knows of it, its settings and its summary.
+         */
         const integrationPoints = async (req) => {
             const viewer = integrationViewer(req);
             const dir = folder();
@@ -657,7 +660,7 @@ export class Dashboards extends Common {
             // the application's delegate is the engine's: it says its class and methods (none, an engine that does not run or is older)
             const facts: any = await server.engine.facts().catch(() => ({}));
             const methods: string[] = facts.delegate?.methods ?? [];
-            const info = {
+            const info: Record<string, any> = {
                 application: {
                     delegate: facts.delegate?.name ?? null, methods, services, servicesError,
                     hostUsers: !own, hostSettings: appHostSettings(),
@@ -666,19 +669,23 @@ export class Dashboards extends Common {
                     list: (await server.connectors.list()).map(c => ({ ...c, models: used.get(c.id) ?? [] })),
                     canEncrypt: await keysSettable(),
                 },
-                policies: {
+                api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
+            };
+            // the Policies add-on's, while it is on: its roles and policies, the notifications they send
+            if (addOnsRunning.includes('policies'))
+                info.policies = {
                     roles: await this.roles(dir, users),
                     assignment: policyNames(dir), security: security.names(), securityOn: security.on,
                     notification: notificationPolicyNames(dir),
-                },
-                notifications: { byStatus, total: notifications.length, notify: methods.includes('notify') },
-                api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
-            };
-            // an add-on's cards only when it is on: Roles and policies, Notifications are the Policies add-on's
-            const policiesOn = addOnsRunning.includes('policies');
-            return INTEGRATION_POINTS.filter(p => policiesOn || !['policies', 'notifications'].includes(p.id)).map(p => {
+                    notifications: { byStatus, total: notifications.length, notify: methods.includes('notify') },
+                };
+            const addOns = addOnsOf_();
+            const areas = [...INTEGRATION_POINTS, ...addOns.map(a => addOnArea(a))];
+            return areas.map(p => {
                 const settings = settingsOf(p, viewer, this.envFile(), appHostSettings());
-                return { ...p, settings, info: info[p.id] ?? {}, summary: summaryOf(p.id, info[p.id] ?? {}, settings), pending: settings.filter(s => s.pending).length };
+                const addOn = p.addOn ? addOns.find(a => a.name === p.addOn) : undefined;
+                return { ...p, settings, info: info[p.id] ?? {}, summary: summaryOf(p.id, info[p.id] ?? {}, settings),
+                    pending: settings.filter(s => s.pending).length, ...(addOn ? { addOnState: addOn } : {}) };
             });
         };
         // ---- the add-ons (engine/AddOns.ts): each with its manifest, on or off as app-config.json says; the models using it
@@ -701,12 +708,14 @@ export class Dashboards extends Common {
         };
         const settingsPage = (req, res, points, point?) => render(req, res, 'integration', {
             title: point ? `Settings: ${point.title}` : 'Settings',
-            points, point, addOns: point ? [] : addOnsOf_(), appConfigFile: appConfigFile(),
+            points, point, addOns: addOnsOf_(), appConfigFile: appConfigFile(),
             envFile: this.envFile().file, supervisor: supervisor(), separateEngine: !!process.env.ENGINE_AT,
             message: req.query.message,
         });
-        // what was /dashboard/integration before 3.7.5
-        router.get(['/integration', '/integration/:point'], (req, res) => res.redirect(301, '/dashboard/settings' + (req.params.point ? '/' + req.params.point : '')));
+        // what was /dashboard/integration before 3.7.5, and its areas now an add-on's or renamed
+        const MOVED: Record<string, string> = { notifications: 'policies' };
+        router.get(['/integration', '/integration/:point'], (req, res) => res.redirect(301, '/dashboard/settings' + (req.params.point ? '/' + (MOVED[String(req.params.point)] ?? req.params.point) : '')));
+        router.get('/settings/notifications', (req, res) => res.redirect(301, '/dashboard/settings/policies'));
         // the overview: each point, what it has in a few words, and the add-ons; and one point's page, its settings
         router.get('/settings', mayIntegrate, handler(async (req, res) => settingsPage(req, res, await integrationPoints(req))));
         // an administrator turns add-ons on and off: app-config.json, read when the server restarts
@@ -721,6 +730,21 @@ export class Dashboards extends Common {
             FS.writeFileSync(file, JSON.stringify({ ...config, addOns: on }, null, 2) + '\n');
             back(`Saved to ${APP_CONFIG_FILE}: ${on.length ? on.join(', ') : 'no add-ons'} on. It applies when the server restarts.`);
         }));
+        // one add-on on or off, from its card or its area: the others as app-config.json has them
+        router.post('/settings/add-ons/:name', mayIntegrate, handler(async (req, res) => {
+            const name = String(req.params.name);
+            const back = (message: string) => res.redirect('/dashboard/settings?message=' + encodeURIComponent(message) + '#' + name);
+            if (!integrationViewer(req).isAdmin) return back('Nothing saved. Only an administrator turns add-ons on and off.');
+            const known = (server.configuration?.addOnManifests?.() ?? []).map(m => m.name);
+            if (!known.includes(name)) return res.status(404).send('No such add-on');
+            const file = appConfigFile();
+            let config: any = {};
+            try { config = readAppConfig(file) ?? {}; } catch (exc) { return back(`Nothing saved. ${exc.message}`); }
+            const before: string[] = Array.isArray(config.addOns) ? config.addOns : known;     // none said: all on
+            const on = req.body?.on === 'true' ? [...new Set([...before, name])] : before.filter(n => n !== name);
+            FS.writeFileSync(file, JSON.stringify({ ...config, addOns: known.filter(n => on.includes(n)) }, null, 2) + '\n');
+            back(`Saved to ${APP_CONFIG_FILE}: ${name} ${on.includes(name) ? 'on' : 'off'}. It applies when the server restarts.`);
+        }));
         router.get('/settings/:point', mayIntegrate, handler(async (req, res) => {
             const points = await integrationPoints(req);
             const point = points.find(p => p.id === req.params.point);
@@ -728,7 +752,8 @@ export class Dashboards extends Common {
             settingsPage(req, res, points, point);
         }));
         router.post(['/integration/:point', '/settings/:point'], mayIntegrate, handler(async (req, res) => {
-            const point = INTEGRATION_POINTS.find(p => p.id === req.params.point);
+            const areas = [...INTEGRATION_POINTS, ...(server.configuration?.addOnManifests?.() ?? []).map(m => addOnArea(m))];
+            const point = areas.find(p => p.id === req.params.point);
             if (!point) return res.status(404).send('No such settings page');
             const back = (message: string) => res.redirect(`/dashboard/settings/${point.id}?message=` + encodeURIComponent(message));
             const { changes, problems } = changesFrom(point, req.body ?? {}, integrationViewer(req), this.envFile(), appHostSettings());
@@ -742,7 +767,7 @@ export class Dashboards extends Common {
         return router;
     }
 
-    /** The .env the Integration page writes: the application's (envFile), else the working folder's. */
+    /** The .env the Settings page writes: the application's (envFile), else the working folder's. */
     private env: EnvFile;
     envFile(): EnvFile {
         return this.env ??= new EnvFile(this.webApp.application?.envFile ?? path.resolve('.env'));

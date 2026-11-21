@@ -2,5 +2,14 @@
   "name": "modeling",
   "title": "Modeling tools",
   "description": "The model editor's Test tab (scenarios: a model's Gherkin tests, run in the engine) and History tab (each save of a model kept as a version).",
-  "attributes": []
+  "docs": "add-ons/modeling/",
+  "attributes": [],
+  "settings": [
+    {
+      "name": "MODEL_HISTORY",
+      "label": "Saved versions of models kept",
+      "editor": "designer",
+      "main": true
+    }
+  ]
 }

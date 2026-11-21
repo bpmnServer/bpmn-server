@@ -57,7 +57,7 @@ export interface StartOptions {
 	userManager?: IUserManager;
 	/** The API's settings (keys, service account, impersonation) of this server; default `.env`'s (runtime/hostSettings.ts). */
 	hostSettings?: WorkflowApplication['hostSettings'];
-	/** The .env the Integration page (/dashboard/integration) changes; default the working folder's. */
+	/** The .env the Settings page (/dashboard/settings) changes; default the working folder's. */
 	envFile?: string;
 	/**
 	 * The application's own engine calls, added to bpmn-web's (#294): they run in the engine, under its lock, and a

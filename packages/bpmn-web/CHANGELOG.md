@@ -193,6 +193,12 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **The Settings page, by add-on** (was Integration): the server's areas (the application, connectors, the API,
+  models, forms and scripts, AI agents), then one area for each add-on, with the settings its manifest declares
+  (`addon.json` `settings`) and whether it is on, turned on or off on its card (`POST /dashboard/settings/add-ons/<name>`). Roles and policies and Notifications are the Policies add-on's area
+  (`/dashboard/settings/notifications` leads there); `MODEL_HISTORY` is the Modeling tools add-on's; Forms, scripts and
+  the model editor is now *Models, forms and scripts* (`/dashboard/settings/models`). READ_ONLY refuses the page's
+  changes at `/dashboard/settings/...` too (it refused only `/dashboard/integration/...`).
 - **Security policies are asked by the API** (bpmn-server's `pre-query`, `pre-action`): claiming, completing, assigning,
   restarting and firing a start event are refused there, not in the routes; `CaseAccess` is the Policies add-on's,
   `routes/caseAccess.ts` re-exports it and keeps the user directory (`accessDirectory`).

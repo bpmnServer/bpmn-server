@@ -51,10 +51,17 @@ export interface IAddOnManifest {
     name: string;
     title: string;
     description?: string;
+    /** its doc page: a path of the docs site (`add-ons/policies/`), or a full address for an application's own */
+    docs?: string;
     /** the model attributes it reads: `camunda:candidateGroups`, `owf:assignmentPolicy` */
     attributes: string[];
     /** the model elements it reads: `owf:list`, `owf:lookup` */
     elements?: string[];
+    /**
+     * Its settings (the server's .env names), shown in its own area of the Settings page: `editor` designer, a designer
+     * changes it too (else an administrator); `main`, shown first.
+     */
+    settings?: { name: string; label: string; editor?: 'admin' | 'designer'; main?: boolean }[];
 }
 
 /** A model check an add-on registers: of each element, of each process, and the decision files the model uses through it. */

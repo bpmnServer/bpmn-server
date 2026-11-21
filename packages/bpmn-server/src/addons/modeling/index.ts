@@ -6,7 +6,7 @@
 import type { IAddOn, IAddOnManifest } from '../../engine/AddOns.js';
 import manifest from './addon.json' with { type: 'json' };
 
-export const modelingManifest: IAddOnManifest = manifest;
+export const modelingManifest: IAddOnManifest = manifest as IAddOnManifest;
 
 export const modelingAddOn: IAddOn = {
     name: manifest.name,

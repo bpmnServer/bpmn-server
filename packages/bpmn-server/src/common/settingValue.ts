@@ -53,7 +53,7 @@ export function settingsProblems(env: Record<string, string | undefined>, schema
     return problems;
 }
 
-// ---- a .env file: read and changed in place (bpmn-server setup, the Integration page)
+// ---- a .env file: read and changed in place (bpmn-server setup, the Settings page)
 
 /** A .env file's values, by name (quotes removed). */
 export function parseEnv(text: string): Record<string, string> {

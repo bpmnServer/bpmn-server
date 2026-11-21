@@ -1,28 +1,45 @@
 # The Settings page
 
 **Dashboard ▸ Settings** (`/dashboard/settings`; `/dashboard/integration` before 3.7.5, which still leads here) is
-where administrators and designers set up how the workflows meet the application, and turn the add-ons on and off. It opens on an overview: a card for each integration point, saying in a line or two what is in
-place, what needs setting up (*Site address not set*, *Email is off*), and *restart to apply* when a saved change
-waits for a restart. A card opens its point's page (`/dashboard/settings/<point>`): what is in place, its main
-settings, and the rest under **More settings**. Saving comes back to that page.
+where administrators and designers set up the server, and turn the add-ons on and off. It opens on an overview in
+two groups: **Server**, an area for each part of the server that is no add-on's, then **Add-ons**, an area for each
+add-on, with its own settings. Each card says in a line or two what is in place, what needs setting up (*Site address
+not set*, *Email is off*), whether the add-on is on, and *restart to apply* when a saved change waits for a restart.
+A card opens its area's page (`/dashboard/settings/<area>`): what is in place, its main settings, and the rest under
+**More settings**. Saving comes back to that page.
 
-| Point | Shows | Settings (main first) |
+**Server**
+
+| Area | Shows | Settings (main first) |
 |---|---|---|
-| **The application** | The delegate's class, its functions (`appServices`) and methods (folded), who signs people in | `APP_ENV`, `READ_ONLY`, `SITE_URL`; `APP_ENV_LABEL` |
+| **The application** | The delegate's class, its functions (`appServices`) and methods (folded), who signs people in | `APP_ENV`, `READ_ONLY`, `SITE_URL`; `APP_ENV_LABEL`, `ENFORCE_SECURITY` |
 | **Connectors** | Each connector: enabled or not, its key (last 4 characters), the models that call it | `CONNECTORS_KEY`; `SERVICE_TASKS`, `CONNECTORS_ALLOW_HOSTS`, `CONNECTOR_CATALOG_URL` |
-| **Roles and policies** | The roles, and the assignment, security and notification policies | `SECURITY_POLICY`; `ENFORCE_SECURITY` |
-| **Notifications** | Who delivers them (the delegate's `notify`, or email), how many are kept, by status | `NOTIFICATIONS`, `EMAIL_ENABLE`, `EMAIL_FROM`, `SMTP_USER`, `SMTP_PASSWORD`; `EMAIL_LOG` |
 | **The API the application calls** | API v3, and whether the task API (`/api2/tasks`) is on | `API_KEY`, `API_ACTING_USER_KEY`; `ADMIN_API_KEY`, the service account, `API_IMPERSONATION`, `API_RATE_LIMIT` |
-| **Forms, scripts and the model editor** | | `FORM_RULES`, `ELEMENT_TEMPLATES`; `VERIFY_MODELS_ON_IMPORT`, `MODEL_HISTORY`, `CATALOG_URL`, `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES`, `TIMERS` |
+| **Models, forms and scripts** (`models`) | | `FORM_RULES`, `ELEMENT_TEMPLATES`; `VERIFY_MODELS_ON_IMPORT`, `CATALOG_URL`, `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES`, `TIMERS` |
 | **AI agents** | | `AI_ACCESS`; `AI_GUIDE` |
 
-Each point's page links to where its parts are managed: the connectors, the roles (Administration), the policies (Design),
-the notifications.
+**Add-ons**: each add-on's area is named by it (`/dashboard/settings/policies`), and its settings are the ones its
+manifest declares (`addon.json`, `settings`: each a `.env` name, its label, `editor: "designer"` when a designer
+changes it too, `main` to show it first). An application's own add-on gets an area the same way. An add-on's area
+says whether it is on and which models use it; what it has (the Policies add-on's roles) shows while it is on, and its
+settings are kept while it is off.
 
-## Add-ons
+| Area | Shows | Settings (main first) |
+|---|---|---|
+| **Policies** | The roles; the assignment, security and notification policies; who delivers notifications (the delegate's `notify`, or email), how many are kept, by status | `SECURITY_POLICY`, `NOTIFICATIONS`, `EMAIL_ENABLE`, `EMAIL_FROM`, `SMTP_USER`, `SMTP_PASSWORD`; `EMAIL_LOG` |
+| **Labels** | | none of its own |
+| **Forms and display** | | none of its own |
+| **Modeling tools** | | `MODEL_HISTORY` |
 
-Below the cards, **Add-ons** lists what is built on the engine ([Add-ons](../design/add-ons.md)): each with what it is,
-whether it is on, and the models that use it. An administrator turns one on or off and saves; designers see them.
+Each area's page links to where its parts are managed: the connectors, the roles (Administration), the policies
+(Design), the notifications. Before 3.7.5, Roles and policies and Notifications were areas of their own: both are the
+Policies add-on's now (`/dashboard/settings/notifications` leads there), and *Forms, scripts and the model editor* is
+*Models, forms and scripts* (`models`), its `MODEL_HISTORY` the Modeling tools add-on's.
+
+## Add-ons on and off
+
+Each add-on's card ([Add-ons](../design/add-ons.md)) says whether it is on and which models use it, and has its
+switch: an administrator turns it on or off there (**Turn off** / **Turn on**), or in its area; designers see them.
 
 - **Saved to `app-config.json`**, the application's, beside its `.env` (`appConfig` in the configuration names another):
   `{ "addOns": ["policies"] }`. Its other settings are kept.

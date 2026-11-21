@@ -43,14 +43,14 @@ Tests run only in development and test. Production runs none, so its database ho
 **People can:**
 
 - start cases and complete tasks, and do everything else a case does;
-- open every page they may open: the models in the editor, decision tables, policies, tests, the Integration page;
+- open every page they may open: the models in the editor, decision tables, policies, tests, the Settings page;
 - run the tests and check models.
 
 **Refused**, with a 403 that says the server is read-only (`READ_ONLY` for the APIs):
 
 - saving, adding, importing, renaming and deleting models, and importing from the catalog;
 - saving decision tables, policies, tests and modeling rules, and deleting a model's history;
-- adding or removing roles, changing connectors or their keys, saving on the Integration page;
+- adding or removing roles, changing connectors or their keys, saving on the Settings page;
 - bpmn-web's own users and passwords (managing them, changing or resetting a password);
 - restarting the server, and deleting every case at once (`/resetData`).
 
@@ -67,4 +67,4 @@ run.
 ## Related
 
 - [Settings: `.env` and configuration](settings.md): every setting.
-- [The Integration page](integration-settings.md), where an administrator changes them.
+- [The Settings page](integration-settings.md), where an administrator changes them.

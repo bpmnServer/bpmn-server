@@ -178,7 +178,7 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
             try { provider = await server.appDelegate.getServicesProvider(null); }
             catch { /* a provider that needs a running execution */ }
             // connectorKeys: whether a connector's key can be stored here (CONNECTORS_KEY is the engine's)
-            // delegate: the application's class and the methods it defines (the Integration page)
+            // delegate: the application's class and the methods it defines (the Settings page)
             // instanceLabel: whether the application labels cases in code (asked with instanceLabels)
             return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt(), delegate: delegateFacts(server.appDelegate),
                 instanceLabel: typeof (server.appDelegate as any).instanceLabel === 'function' };

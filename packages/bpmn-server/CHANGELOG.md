@@ -26,6 +26,9 @@ and here
 
 ## [Unreleased]
 ### Added
+- **An add-on's settings** (`IAddOnManifest.settings`, `addon.json`): the `.env` names it reads, each with its label,
+  who changes it (`editor`) and whether it is shown first (`main`); the Settings page gives each add-on its own area of
+  them. The Policies add-on declares its security and notification settings, Modeling tools `MODEL_HISTORY`.
 - **The context** (`engine/Context.ts`, docs/design/context-object.md): one object made for each call, handed to
   services (`(input, context)`), listeners and lifecycle subscribers (`{ context }`), the delegate's
   `executionEvent(context, event)`, and, added at the end of their arguments, `executionStarted`,

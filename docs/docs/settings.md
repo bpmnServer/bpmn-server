@@ -18,7 +18,7 @@ An application has two places for settings. One rule decides which:
 
 **Which environment a server is** (`APP_ENV`), shown on every page, and **read-only servers** (`READ_ONLY`): [Environments](environments.md).
 
-**Administrators and designers can change many of them in the browser:** [the Integration page](integration-settings.md) (Dashboard ▸ Integration) writes them to `.env`.
+**Administrators and designers can change many of them in the browser:** [the Settings page](integration-settings.md) (Dashboard ▸ Settings) writes them to `.env`.
 
 **With a separate engine,** give the host and the engine the same `.env`. Only the settings marked *engine* below have to be on the engine, but sharing one file keeps them in step. `ENGINE_AT` is only read by the host.
 
