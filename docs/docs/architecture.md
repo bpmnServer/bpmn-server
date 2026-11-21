@@ -12,20 +12,22 @@ The **model editor** is a separate application, for designers.
 
 ## Parts
 
-Every part has one owner, may use only what it lists, and runs in one zone.
+Every part has one owner, may use only what it lists, and runs in one zone and one process. With tenants there are
+two processes: **A**, the web host and router, shared by every tenant and holding nothing of a tenant's; and **B**,
+isolated, one for each tenant, holding everything of it. Without tenants, A and B can be one process.
 
-| # | Part | Owner | Uses | Must not use | Zone |
-|---|---|---|---|---|---|
-| 1 | **Data store** | The operator runs it (MongoDB, SQLite); BPMN Server owns its interface | nothing | anything above it | Store |
-| 2 | **Engine** | BPMN Server | the data store, through its interface; it calls 4 and 5 | add-ons, the API, the pages | Engine |
-| 3 | **Add-ons' code** | Each add-on's author (BPMN Server for the four); the admin turns it on (`app-config.json`) | the engine's events and registrations | other add-ons, the data store directly | Engine |
-| 4 | **Delegates and services** | The app developer | the engine's execution | the data store directly, add-ons | Engine |
-| 5 | **Scripts, conditions, policies and decisions (DMN)** | The modeler: they are part of the models | their context only (item, data, services) | anything else | Engine |
-| 6 | **API** | BPMN Server | the engine (local or remote), 7, 8, the registered query filters | the engine's internals | Host |
-| 7 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | the data store (the models folder) | the engine | Host |
-| 8 | **Instances, read only** | BPMN Server owns the reader; the engine owns the instances | the data store | writing anything | Host |
-| 9 | **Model editor** | BPMN Server; each add-on owns its modules | the API, the add-ons' editor modules and manifests | the engine | Browser |
-| 10 | **Pages** | BPMN Server; each add-on owns its pages; the app developer owns custom pages | the API | the engine, the data store | Browser |
+| # | Part | Owner | Uses | Must not use | Zone | Process |
+|---|---|---|---|---|---|---|
+| 1 | **Data store** | The operator runs it (MongoDB, SQLite); BPMN Server owns its interface | nothing | anything above it | Store | B |
+| 2 | **Engine** | BPMN Server | the data store, through its interface; it calls 4 and 5 | add-ons, the API, the pages | Engine | B |
+| 3 | **Add-ons' code** | Each add-on's author (BPMN Server for the four); the admin turns it on (`app-config.json`) | the engine's events and registrations | other add-ons, the data store directly | Engine | B |
+| 4 | **Delegates and services** | The app developer | the engine's execution | the data store directly, add-ons | Engine | B |
+| 5 | **Scripts, conditions, policies and decisions (DMN)** | The modeler: they are part of the models | their context only (item, data, services) | anything else | Engine | B |
+| 6 | **API** | BPMN Server | the engine (local or remote), and through it 7 and 8 | the engine's internals, a tenant's store or models | Host | A |
+| 7 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | the data store (the models folder) | the engine | Engine | B |
+| 8 | **Instances, read only** | BPMN Server owns the reader; the engine owns the instances | the data store | writing anything | Engine | B |
+| 9 | **Model editor** | BPMN Server; each add-on owns its modules | the API, the add-ons' editor modules and manifests | the engine | Browser | A (served) |
+| 10 | **Pages** | BPMN Server; each add-on owns its pages; the app developer owns custom pages | the API | the engine, the data store | Browser | A (served) |
 
 **One writer for each kind of data.** Instances are written by the engine only. Models, with their policies and
 decisions, by the modeler, through the API. `app-config.json` and the settings by the admin.
@@ -35,10 +37,15 @@ beside the engine. That code isn't BPMN Server's, so it is what isolation has to
 engine is planned work, apart from the add-ons.
 
 **No part reaches into another's.** An add-on doesn't change the engine. A delegate doesn't write the store. A page
-doesn't call the engine. The API reaches a policy only through the registrations, never through the add-on itself.
+doesn't call the engine. A policy narrows a query in B, before anything is returned: A gets only what the user may
+see.
 
-**A known gap:** the host reads instances (8) from the store, not through the engine. It is read only, and is closed
-with the multi-tenant work.
+**A tells B who is calling.** A logs the user in and passes the user (name, roles, tenant) with each call, signed
+(`ENGINE_KEY`). B decides what that user may do. The editor's saves, too, pass through A to B: models, policies and
+decisions are the tenant's.
+
+**A known gap:** today the host reads models (7) and instances (8) from the store itself, not through the engine.
+They are read only, and move to B with the multi-tenant work.
 
 ```mermaid
 flowchart LR
