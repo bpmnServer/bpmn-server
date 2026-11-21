@@ -272,11 +272,6 @@ and here
   `<model> #<caseId>`. The host now asks the engine, where the code is, for all of a list's cases in one call (an engine
   call, `instanceLabels`; the engine's `facts` say whether there is a hook), in this process or at `ENGINE_AT`. Test:
   `test/instance-label-hook.test.mjs`.
-- **The application's `instanceLabel` hook labels cases seen from a host** (#295): a launched server's delegate is
-  only what it knows of the application, so the hook was never there and every case without a model label showed
-  `<model> #<caseId>`. The host now asks the engine, where the code is, for all of a list's cases in one call (an engine
-  call, `instanceLabels`; the engine's `facts` say whether there is a hook), in this process or at `ENGINE_AT`. Test:
-  `test/instance-label-hook.test.mjs`.
 - A scenario's `@evaluate` failed in an engine in the same process (`npm test`): `server.engine.invokeDecision is not
   a function`. It evaluates the decision itself, and finds a policy by its tests' name.
 - **MongoDB paging by a field many instances share** (`dataStore.find` with `sort` and `after`, Aggregate.ts;

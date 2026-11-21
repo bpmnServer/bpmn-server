@@ -510,6 +510,10 @@ export class Model extends Common {
         const policyPath = (name: string) => path.join(policiesFolder(), `${name}.dmn.xml`);
         const policyTests = (name: string) => `${name}.policy`;
 
+        // the policies are the Policies add-on's (docs/design/add-ons.md): off, their pages and calls are not there
+        router.use(['/policies', '/policy', ...Object.keys(OTHER_POLICIES).map(kind => `/${kind}-policy`)], (request, response, next) =>
+            request.app.locals.addOnOn?.('policies') === false ? response.status(404).send('The Policies add-on is off (app-config.json)') : next());
+
         /** A kind's policies, with their XML: ?kind=assignment (the default), security or notification. */
         router.get('/policies', awaitHandlerFactory(async (request, response) => {
             const folder = bpmnServer.configuration.definitionsPath;

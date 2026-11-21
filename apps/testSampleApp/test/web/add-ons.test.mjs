@@ -42,3 +42,15 @@ test('none on: the editor is told so, and has no Test or History tab', async () 
     assert.ok(!page.text.includes('id="js-tab-test"'), 'no Test tab');
     assert.ok(!page.text.includes('id="js-tab-history"'), 'no History tab: no versions kept');
 });
+
+test('none on: Design, Admin and the guide show no policies or roles; their pages are not there', async () => {
+    const design = await admin.get('/dashboard/design');
+    assert.equal(design.status, 200, why(design));
+    assert.ok(!design.text.includes('id="policies"'), 'no Policies section on Design');
+    const adminPage = await admin.get('/dashboard/admin');
+    assert.equal(adminPage.status, 200, why(adminPage));
+    assert.ok(!adminPage.text.includes('id="roles"'), 'no Roles on Admin');
+    for (const url of ['/model/policy/Any', '/model/security-policy/Any', '/model/notification-policy/Any', '/model/policies', '/dashboard/notifications'])
+        assert.equal((await admin.get(url)).status, 404, `${url}: the Policies add-on's`);
+    assert.equal((await admin.post('/dashboard/admin/roles', { name: 'Clerk' })).status, 404, 'roles can not be added');
+});

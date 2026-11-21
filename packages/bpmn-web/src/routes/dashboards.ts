@@ -170,7 +170,9 @@ export class Dashboards extends Common {
         // what the notification policies made (docs/docs/notification-policies.md), newest first: an administrator's
         // all of them, filtered by whom, process, status (test runs' with them, marked); anyone else's, those to them
         // (their name or one of their groups)
-        router.get('/notifications', handler(async (req, res) => {
+        router.get('/notifications', handler(async (req, res, next) => {
+            // the Policies add-on's (docs/design/add-ons.md): off, not there
+            if (req.app.locals.addOnOn?.('policies') === false) return res.status(404).send('The Policies add-on is off (app-config.json)');
             const { isAdmin } = roles(req);
             const one = (v) => (typeof v === 'string' ? v.trim() : '');
             const filter = {
@@ -383,6 +385,9 @@ export class Dashboards extends Common {
         // ---- the roles (docs/docs/assignment-policies.md#roles): roles.json of the models folder
         const rolesBack = (res, message: string) => res.redirect('/dashboard/admin?message=' + encodeURIComponent(message) + '#roles');
         const currentRoles = (): string[] => roleNames(folder()) ?? [];
+        // roles are the Policies add-on's (docs/design/add-ons.md): off, they can't be changed here
+        router.use('/admin/roles', (req, res, next) =>
+            req.app.locals.addOnOn?.('policies') === false ? res.status(404).send('The Policies add-on is off (app-config.json)') : next());
         router.post('/admin/roles', this.isAdmin, handler(async (req, res) => {
             const name = String(req.body.name ?? '').trim();
             const problem = roleNameProblem(name);

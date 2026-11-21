@@ -2,6 +2,10 @@
 
 BPMN Server has three layers: a **host** that people and other systems talk to, an **engine** that runs processes, and a **core** of model and data handling that both of them use. The host and the engine can share a process or run apart, and the application's code always stays with the engine.
 
+The host is the door: it signs people in, serves the pages, and routes each call to the engine. The **API** runs
+with the engine, beside the data it reads and the policies that narrow it. With tenants, the host is one router for
+all of them, and each tenant has an engine of its own ([Parts](#parts)).
+
 The engine runs the flow and nothing else. What is built on it, such as who works on each task, labels and form
 lists, is an **add-on**, turned on when it's needed ([Add-ons](#add-ons)).
 
@@ -23,11 +27,14 @@ isolated, one for each tenant, holding everything of it. Without tenants, A and 
 | 3 | **Add-ons' code** | Each add-on's author (BPMN Server for the four); the admin turns it on (`app-config.json`) | the engine's events and registrations | other add-ons, the data store directly | Engine | B |
 | 4 | **Delegates and services** | The app developer | the engine's execution | the data store directly, add-ons | Engine | B |
 | 5 | **Scripts, conditions, policies and decisions (DMN)** | The modeler: they are part of the models | their context only (item, data, services) | anything else | Engine | B |
-| 6 | **API** | BPMN Server | the engine (local or remote) | the engine's internals, a tenant's store or models | Host | A |
-| 7 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | B's API | the models folder directly, writing anything (saves go through the API) | Host | A |
-| 8 | **Instances, read only** | BPMN Server owns the reader; the engine owns the instances | B's API | the data store directly, writing anything | Host | A |
+| 6 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | the models folder | writing anything (saves go through the API) | Engine | B |
+| 7 | **Instances, read only** | BPMN Server owns the reader; the engine owns the instances | the data store | writing anything | Engine | B |
+| 8 | **API** | BPMN Server | the engine, 6, 7; it fires `pre-query` and `pre-action` | the engine's internals | Engine | B |
 | 9 | **Model editor** | BPMN Server; each add-on owns its modules | the API, the add-ons' editor modules and manifests | the engine | Browser | A (served) |
 | 10 | **Pages** | BPMN Server; each add-on owns its pages; the app developer owns custom pages | the API | the engine, the data store | Browser | A (served) |
+
+**A is a router.** It logs the user in, serves the pages and the editor, and routes each call to the tenant's B. It
+holds nothing of a tenant's: no code, no data, no rules. What spans tenants (the tenants, their logins) is A's.
 
 **One writer for each kind of data.** Instances are written by the engine only. Models, with their policies and
 decisions, by the modeler, through the API. `app-config.json` and the settings by the admin.
@@ -40,13 +47,27 @@ engine is planned work, apart from the add-ons.
 doesn't call the engine. A policy narrows a query in B, before anything is returned: A gets only what the user may
 see.
 
-**A tells B who is calling.** A logs the user in and passes the user (name, roles, tenant) with each call, signed
-(`ENGINE_KEY`). B decides what that user may do. The editor's saves, too, pass through A to B: models, policies and
-decisions are the tenant's.
+**Security is two events, in B.** Before every query the API fires **`pre-query`** (`{ kind, user, query }`, kind:
+`instances`, `items` or `models`); a listener adds conditions, all of them ANDed: it can narrow, never widen. Before
+every action the API asks the user's one check for it (`canStart`, `canInvoke`, `canAssign`, `canModifyModel`,
+`canDeleteModel`), which fires **`pre-action`** (`{ action, user, item }`); a listener may refuse. A listener that
+fails refuses. With no listener (Policies off) the built-in rules apply: an admin, the task's assignee or candidates.
 
-**Only B reads a tenant's store and models.** The host's readers (7, 8) get them from B's API, narrowed there by the
-security policy. **A known gap:** today they read the store and the models folder themselves; they move onto B's API
-with the multi-tenant work.
+**A tells B who is calling.** A passes the user (name, roles, tenant) with each call, signed (`ENGINE_KEY`). B accepts
+no call that doesn't come through A, and decides what that user may do.
+
+**With tenants:**
+
+- **Routing:** A finds the tenant from the call's path, and signs the call to that tenant's B with its key.
+- **Users:** A owns the login (one login can reach several tenants); each B owns its roles.
+- **Processes:** one B for each tenant; a pool of B's, each tenant isolated inside, later.
+- **Per tenant:** each tenant's custom pages and its `app-config.json` are its own, in its B. A asks B which add-ons
+  are on, for the menus and the editor.
+- **Calls with no user:** A routes webhooks and incoming messages to the tenant's B like any call. A B with nothing to
+  do may stop; a wake-up starts it again when a timer is due.
+
+**A known gap:** today the API (8) runs in the host, and the readers (6, 7) read the store and the models folder from
+there. They move to B with the multi-tenant work.
 
 ```mermaid
 flowchart LR
@@ -62,17 +83,19 @@ flowchart LR
   end
 
   subgraph Core["BPMN Server: secure"]
-    subgraph HostZone["API host"]
+    subgraph HostZone["Host (A): the door and router"]
       REST["REST APIs"]
       Admin["Administration"]
-      API["BPMNAPI<br/>each call as a user"]
-      REST --> API
-      Admin --> API
+      Router["Router<br/>the tenant by its path;<br/>each call signed, with its user"]
+      REST --> Router
+      Admin --> Router
     end
-    subgraph EngineZone["Engine: Secure and Isolated for tenants <br/>(ENGINE_AT, ENGINE_KEY)"]
+    subgraph EngineZone["Engine (B): Secure and Isolated, one per tenant <br/>(ENGINE_AT, ENGINE_KEY)"]
+      API["BPMNAPI<br/>each call as a user;<br/>pre-query, pre-action"]
       Engine["Engine<br/>executions, timers, decisions"]
       Code["Your code<br/>delegate, services, model scripts"]
       AddOns["Add-ons (app-config.json)<br/>Policies, Labels, Forms and display, Modeling tools"]
+      API --> Engine
       Engine --> Code
       AddOns -. "register for its events" .-> Engine
     end
@@ -89,8 +112,8 @@ flowchart LR
 
   People --> Sec
   Others -- "API keys" --> REST
-  Pages == "as the signed-in user" ==> API
-  API == "writes" ==> Engine
+  Pages == "as the signed-in user" ==> Router
+  Router == "signed (ENGINE_KEY)" ==> API
   API -. "reads" .-> Store
   Engine --> Store
   Engine --> Models
@@ -118,8 +141,8 @@ them. What changes when your application replaces the box: [From the skeleton to
 
 | Part | Does | Doesn't |
 |---|---|---|
-| **Host** (`bpmn-web`) | Serves the pages, the model editor and the REST APIs. Signs users in. Reads and saves models, instances and tasks. | Run a process, a timer, a decision or a test. It asks the engine. |
-| **Engine** | Runs processes, timers, decisions and tests. Holds your delegate and services. | Face users. Nothing but its host should reach it. |
+| **Host** (`bpmn-web`), A | Serves the pages, the model editor and the REST doors. Signs users in. Routes each call, with its user, to the tenant's engine. | Hold a tenant's code, data or rules; run a process, a timer, a decision or a test. It asks the engine. |
+| **Engine**, B | Runs processes, timers, decisions and tests, and the API: every read and write, narrowed by the policies (`pre-query`, `pre-action`). Holds your delegate and services. | Face users. Nothing but its host should reach it. |
 | **Core** (`bpmn-server`) | Reads models, checks them, and stores data, for both of the above. | Depend on the web application. |
 | **Add-ons** | What is built on the engine: who works on each task, labels, form lists, the editor's Test and History tabs. Each brings its engine part, its editor part and its pages. | Be called by the engine. An add-on registers for what it needs, and depends on no other add-on. |
 
@@ -132,7 +155,7 @@ Each zone of the diagram trusts the one inside it, and only that one:
 | Boundary | What crosses it | What guards it |
 |---|---|---|
 | Internet → host | Pages, the model editor, REST calls | Sign-in and sessions (bpmn-web's, or your application's through its user manager), CSRF, API keys and tokens, rate limits; every call then acts as a user, with that user's rights |
-| Host → engine | Every write of the engine's data: starting, completing, assigning, tests, locks, the models' index, connector keys and tests | A private address (`ENGINE_AT`) and a key (`ENGINE_KEY`); nothing else reaches the engine |
+| Host → engine | Every call, with the user it is for: the reads and the writes of the engine's data (starting, completing, assigning, tests, locks, the models' index, connector keys and tests) | A private address (`ENGINE_AT`) and a key (`ENGINE_KEY`); nothing else reaches the engine. The engine decides what that user may see and do |
 | Engine → your systems | What your services and connectors call | Your code, and the connectors' keys, which only the engine holds |
 
 The engine runs your code: delegates, services, and the scripts in models. Kept in a process of its own, a script that loops or a
@@ -140,11 +163,17 @@ service that crashes stops the engine, not the pages. When it restarts, the wait
 store as they were; a step it was in the middle of is recovered from **Administration** (see
 [Hung tasks](advanced.md#hung-tasks)).
 
-The host reads instances, tasks and locks through a read-only view of the store, and the models through model access,
+**Today** the API still runs in the host (the [known gap](#parts)): the host reads instances, tasks and locks through
+a read-only view of the store, and the models through model access,
 which works on the models folder's files alone: it writes a model's files and a connector's file, and then tells the
 engine, which keeps its own index of the models. Everything else of the engine's (instances, locks, that index, the
 connectors' keys and tests) the host changes only by asking the engine; a write past it throws `ENGINE_ONLY`. The
 host keeps its own users, sessions and API tokens. See `docs/design/engine-isolation.md`.
+
+An application with its own operations on an instance (its bookkeeping, not a BPMN action) gives them to the engine
+as **engine calls**, `start({ engineCalls: (server) => ({ 'app.x': async (...args) => ... }) })`, added to bpmn-web's
+own. They run in the engine, under its lock; a host route asks for one by name, `web.bpmnServer.engine.call('app.x',
+...)`. With the engine elsewhere, the same calls go to its `startEngineService(server, { calls })`.
 
 The engine can also run as a user of its own, or in a container of its own, with only its private address open: what the
 separation makes possible, not what a default install does.
@@ -167,11 +196,12 @@ engine, the editor and the pages show none of it.
 **How an add-on plugs in.** The engine never calls an add-on, and imports nothing of one. An add-on registers, as
 the server starts:
 
-- **for the engine's own events** (`start`, `assign`, `wait`, `end`, `process.end`), as any listener does. The
-  Policies add-on decides who works on a task on `start`, through the engine's one step for it (`assign`), and
-  notifies on `assign`;
-- **where the engine has no event**, in the server's registrations: model checks, the query filters that narrow what a
-  user sees, the names expressions read (`actors`), a form field's rules and choices.
+- **for the engine's own events** (`start`, `assign`, `wait`, `end`, `process.end`, and the API's `pre-query`,
+  `pre-action`), as any listener does. The Policies add-on decides who works on a task on `start`, through the engine's
+  one step for it (`assign`), notifies on `assign`, and decides what a user may see and do on `pre-query` and
+  `pre-action`;
+- **where the engine has no event**, in the server's registrations: model checks, the names expressions read
+  (`actors`), a form field's rules and choices.
 
 An add-on depends on the engine only, never on another add-on. Each has three parts, each where it runs: its engine
 part (`bpmn-server/src/addons/<name>`), its editor part, a bpmn-js module (`bpmn-web/modeler/src/addons/<name>`), and
@@ -181,17 +211,20 @@ its pages.
 (`add-on-off`), and the model report shows it read-only. Each add-on's manifest (`addon.json`: the attributes and
 elements it reads) is read whether it is on or off, so this works without loading the add-on.
 
-**Isolation is the same.** The add-ons' engine parts run in the engine, with your code. The security policy is asked by
-the host, around the engine, and narrows the host's own reads. See `docs/design/add-ons.md`.
+**Isolation is the same.** The add-ons' engine parts run in the engine, with your code, and so does the security
+policy: it listens in B, where the API is ([Parts](#parts)). See `docs/design/add-ons.md`.
 
-## Why the API is on the host
+## Why the door is on the host, and the API with the engine
 
-The REST APIs are a public door, so they are where the other doors are guarded: sign-in, keys, rate limits, in one place.
-An API call that starts or completes something is passed to the engine, and the host returns the result.
+The REST APIs are a public door, so they are where the other doors are guarded: sign-in, keys, rate limits, in one
+place: the host. Behind it, every call is passed on, signed and with its user, to the engine, and the host returns the
+answer.
 
-The engine stays private because it runs code a model brings with it. Put the API in the engine, and that process would face
-the internet. And the public address would be the engine's: restarting it, or moving it to another machine, would change
-it for every client. With the API on the host, the engine can be restarted, moved or replaced behind it.
+The API itself, what a call may read and do, runs with the engine: beside a tenant's data and its policies, so the
+host holds none of them, and one host serves every tenant.
+
+The engine stays private because it runs code a model brings with it: only the host reaches it, never the internet.
+And the public address is the host's: the engine can be restarted, moved or replaced behind it.
 
 An application that embeds the engine (`BPMNServer.create`) has no HTTP API at all: it calls `BPMNAPI` in its own process.
 

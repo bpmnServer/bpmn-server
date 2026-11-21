@@ -196,6 +196,10 @@ and here
 - **Security policies are asked by the API** (bpmn-server's `pre-query`, `pre-action`): claiming, completing, assigning,
   restarting and firing a start event are refused there, not in the routes; `CaseAccess` is the Policies add-on's,
   `routes/caseAccess.ts` re-exports it and keeps the user directory (`accessDirectory`).
+- **With the Policies add-on off**, the Design page has no Policies, Administration no Roles, the guide no policies;
+  their pages and calls (`/model/policy/...`, `/model/security-policy/...`, `/model/notification-policy/...`,
+  `/model/policies`, `/dashboard/notifications`, `/dashboard/admin/roles`) answer 404. Tests:
+  `test/web/add-ons.test.mjs`, the editor's `test/ui/modeler-add-ons.test.mjs`.
 - **Security policies decide a list's cases several at once** (16; `CaseAccess.decideAll`), so an application's
   `decisionContext` hook that waits waits for several cases together; the task list stops deciding once its page is
   full. Measured in docs/docs/performance.md#security-policies.
@@ -358,10 +362,6 @@ and here
   1.5s by each page, is.
 
 ### Fixed
-- **An application's own engine calls** (#294): `start({ engineCalls })` adds them to bpmn-web's own (the Test tab's),
-  where bpmn-web used to replace whatever calls an application gave. A host route asks for one by name
-  (`web.bpmnServer.engine.call('app.x', ...)`), and it runs in the engine, under its lock, so a route can again change
-  an instance (`ENGINE_ONLY` otherwise). Test: `test/web/engine-calls.test.mjs`.
 - **An application's own engine calls** (#294): `start({ engineCalls })` adds them to bpmn-web's own (the Test tab's),
   where bpmn-web used to replace whatever calls an application gave. A host route asks for one by name
   (`web.bpmnServer.engine.call('app.x', ...)`), and it runs in the engine, under its lock, so a route can again change

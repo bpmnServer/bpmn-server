@@ -57,7 +57,7 @@ block dash
                 else
                   | Then: #{step.next.map(n => n.to).join(', ')}
 
-    if guide.policies.assignment.length || guide.policies.notification.length || guide.policies.security.length
+    if (typeof addOnOn === 'undefined' || addOnOn('policies')) && (guide.policies.assignment.length || guide.policies.notification.length || guide.policies.security.length)
       section.dash-card#policies
         h2 Rules
         ul

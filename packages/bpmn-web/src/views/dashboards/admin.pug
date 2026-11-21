@@ -135,8 +135,8 @@ block dash
 					input#new-groups(name='userGroups', placeholder='e.g. Employee, Manager, DESIGNER, ADMIN')
 					button.btn.btn-primary.btn-sm(type='submit') Add user
 
-		//- roles: none passed (an older route) shows nothing
-		if typeof roles !== 'undefined' && roles
+		//- roles: none passed (an older route) shows nothing; the Policies add-on's: off, not shown
+		if typeof roles !== 'undefined' && roles && (typeof addOnOn === 'undefined' || addOnOn('policies'))
 			section.dash-card#roles
 				h2 Roles
 					span.count= roles.list.length
