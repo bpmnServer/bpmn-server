@@ -241,15 +241,15 @@ export class InstanceOperations {
 
     /** A start event of a running instance (an event sub-process, a second start), with this data. */
     async startEvent(user: SecureUser, id: string, elementId: string, data = {}) {
-        const { access } = await this.findWithAccess(user, id);
-        CaseAccess.require(access, 'events');
+        // seen by them (findWithAccess); the case's policy may refuse it: the API's pre-action
+        await this.findWithAccess(user, id);
         return executed(await this.api.engine.startEvent(id, elementId, data, user));
     }
 
     /** Runs an item of the instance again, from it on, with this data. */
     async restart(user: SecureUser, id: string, itemId: string, data = {}) {
-        const { access } = await this.findWithAccess(user, id);
-        CaseAccess.require(access, 'restart');
+        // seen by them (findWithAccess); the case's policy may refuse it: the API's pre-action
+        await this.findWithAccess(user, id);
         if (typeof itemId !== 'string' || !itemId)
             throw new InstanceError(400, 'itemId is required', 'BAD_ITEM');
         return executed(await this.api.engine.restart({ id, 'items.id': itemId }, data, user));

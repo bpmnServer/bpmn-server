@@ -144,7 +144,9 @@ export async function decisionContext({ data, input, user, instance, task, kind,
     // out before the table is asked, for this decision (evaluatingSource)
     if (appDelegate && (appDelegate.appVarsClass || typeof appDelegate.getAppVars === 'function')) {
         try {
-            context.appVars = await appVarsFor(appDelegate, { ...context, evaluatingSource: { type: 'decision', id: name ?? '', ...(kind !== 'decision' ? { policy: kind } : {}) } });
+            const evaluatingSource = { type: 'decision', id: name ?? '', ...(kind !== 'decision' ? { policy: kind } : {}) };
+            // source: where it was made (docs/design/context-object.md); evaluatingSource, before 3.7.5, deprecated
+            context.appVars = await appVarsFor(appDelegate, { ...context, source: { kind: 'dmn', decision: name ?? '', ...(kind !== 'decision' ? { policy: kind } : {}) }, evaluatingSource });
         }
         catch (error) {
             log?.(`appVars failed (${kind} ${name ?? ''}): ${error?.message ?? error}`);

@@ -78,7 +78,10 @@ class ScriptHandler implements IScriptHandler{
         const context = {
             data: scope?.data ?? execution?.instance?.data ?? {}, user: { userName: execution?.userName ?? null },
             instance: execution?.instance, item, ...this.standardValues(scope, true),
-            evaluatingSource: { type: item?.element?.type === 'bpmn:SequenceFlow' ? 'flow' : 'node', id: item?.elementId ?? scope?.currentNode?.id ?? 'process' },
+            // where it was made (docs/design/context-object.md); evaluatingSource, its name before 3.7.5, deprecated
+            ...((source) => ({ source, evaluatingSource: { type: source.type, id: source.id } }))({
+                kind: item ? 'item' : 'element', type: item?.element?.type === 'bpmn:SequenceFlow' ? 'flow' : 'node',
+                id: item?.elementId ?? scope?.currentNode?.id ?? 'process', elementId: item?.elementId ?? scope?.currentNode?.id }),
         };
         return appVarsFor(delegate, context, names);
     }

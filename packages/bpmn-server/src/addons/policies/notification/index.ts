@@ -81,13 +81,15 @@ export const notificationAddOn: IAddOn = {
     register(server) {
         server.listener.subscribe({
             async onEvent({ type, context, details }) {
+                // the engine's own execution: the event's context reads through to it, a template is evaluated against it
+                const execution = context?.execution ?? context;
                 const item = context?.item;
                 const userTask = item?.node?.type === 'bpmn:UserTask';
                 // who works on it is decided: as it starts, or a person changed it (a claim, a reassignment)
-                if (type === 'assign' && userTask && (!(details as any)?.by || (details as any)?.changed)) await notifyEvent(context, 'assigned', item);
+                if (type === 'assign' && userTask && (!(details as any)?.by || (details as any)?.changed)) await notifyEvent(execution, 'assigned', item);
                 // completed, not cancelled: who completed it is its actor
-                else if (type === 'end' && userTask && !(details as any)?.cancel) await notifyEvent(context, 'completed', item);
-                else if (type === 'process.end') await notifyEvent(context, 'ended');
+                else if (type === 'end' && userTask && !(details as any)?.cancel) await notifyEvent(execution, 'completed', item);
+                else if (type === 'process.end') await notifyEvent(execution, 'ended');
             },
         });
         server.registrations.addModelCheck(modelCheck);

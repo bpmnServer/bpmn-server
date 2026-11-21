@@ -1,4 +1,5 @@
 export * from './Execution.js';
+export * from './Context.js';
 export * from './Token.js';
 export * from './Item.js';
 export * from './Loop.js';

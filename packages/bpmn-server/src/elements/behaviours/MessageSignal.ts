@@ -3,6 +3,7 @@ import type { Node } from '../Node.js';
 import { Behaviour } from './Behaviour.js';
 import { Item } from "../../engine/Item.js";
 import { NODE_SUBTYPE } from '../../interfaces/Enums.js';
+import { itemContext } from '../../engine/Context.js';
 /**
  * 
  * 
@@ -28,7 +29,7 @@ class MessageEventBehaviour extends Behaviour {
             const output = await this.node.getOutput(item);
             const matchingKey = item.context.messageMatchingKey;
             item.token.log(`.Throwing Message <${this.messageId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
-            await item.context.appDelegate.messageThrown(this.messageId,output, matchingKey, item);
+            await item.context.appDelegate.messageThrown(this.messageId,output, matchingKey, item, itemContext(item, { what: 'message', input: output }));
         }
 
     }
@@ -61,7 +62,7 @@ class SignalEventBehaviour extends Behaviour {
             const matchingKey = item.context.messageMatchingKey;
             item.token.log(`.Throwing Signal <${this.signalId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
             // Awaited, as a message's is: the delegate's decision is part of the step, and its failure the step's.
-            await item.context.appDelegate.signalThrown(this.signalId, output, matchingKey, item);
+            await item.context.appDelegate.signalThrown(this.signalId, output, matchingKey, item, itemContext(item, { what: 'signal', input: output }));
         }
 
 

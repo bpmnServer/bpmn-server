@@ -26,6 +26,23 @@ and here
 
 ## [Unreleased]
 ### Added
+- **The context** (`engine/Context.ts`, docs/design/context-object.md): one object made for each call, handed to
+  services (`(input, context)`), listeners and lifecycle subscribers (`{ context }`), the delegate's
+  `executionEvent(context, event)`, and, added at the end of their arguments, `executionStarted`,
+  `getServicesProvider`, `serviceCalled`, `messageThrown`, `signalThrown`, `loadDataObject`. Its `source` says where it
+  was made (`item`, `element`, `dmn`, `query`, `form`); it holds the user, the instance, the element, the item (fixed for
+  the call), the data and the input, the engine's own objects. What it doesn't have it reads from the execution, as
+  code was handed the execution before: deprecated, removed in 4.0. Scripts and decisions see `source` beside
+  `evaluatingSource` (deprecated). Test: `test/context.test.mjs`.
+- **The API's events, `pre-query` and `pre-action`**: before a read, the listeners add conditions to
+  `context.conditions` (all holding: they narrow, never widen); before an action (start, complete, claim, assign,
+  restart, a start event, a model's change) a listener may refuse, by throwing. With none, the built-in rules: the
+  tasks offered to the user, as before. The Policies add-on listens: the assignment's narrowing (was
+  `registrations.addQueryFilter`, still read for an add-on that uses it), the security policies' condition of what a user
+  may see, and their refusals (`CaseAccess`, moved here from bpmn-web: `addons/policies/security/CaseAccess.ts`). A user
+  that is an administrator, or with security off, is not narrowed. `api.data.qualifyQuery(kind, query, user)`.
+- **`instance.actors`**: the case's actors, kept on it by the Policies add-on as its work starts and ends, and saved with
+  it.
 - **The Forms and display add-on** (`addons/forms/`): a form field's lists and lookups (`<owf:list>`, `<owf:lookup>`,
   `FormLookup.ts`), their checks, a list's value held to its choices (a field rule: `addFieldRule`), and the choices the
   form asks for as it is filled (`addFieldChoices`, the engine's `choices` call). A manifest names the model elements an
@@ -250,6 +267,11 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **The application's `instanceLabel` hook labels cases seen from a host** (#295): a launched server's delegate is
+  only what it knows of the application, so the hook was never there and every case without a model label showed
+  `<model> #<caseId>`. The host now asks the engine, where the code is, for all of a list's cases in one call (an engine
+  call, `instanceLabels`; the engine's `facts` say whether there is a hook), in this process or at `ENGINE_AT`. Test:
+  `test/instance-label-hook.test.mjs`.
 - **The application's `instanceLabel` hook labels cases seen from a host** (#295): a launched server's delegate is
   only what it knows of the application, so the hook was never there and every case without a model label showed
   `<model> #<caseId>`. The host now asks the engine, where the code is, for all of a list's cases in one call (an engine

@@ -257,8 +257,7 @@ export class TaskOperations {
     async claim(user: SecureUser, id: string) {
         const item = await this.find(id, user);
         assertWaiting(item);
-        const decided = await this.taskAccess(user, item);
-        if (decided) CaseAccess.require(decided.access, 'claim', true);
+        // the case's policy may refuse it: the API's pre-action, as it assigns
         if (item.assignee === user.userName)
             return { task: asTask(item) };
         if (item.assignee)
@@ -285,8 +284,7 @@ export class TaskOperations {
         assertData(data);
         const item = await this.find(id, user);
         assertWaiting(item);
-        const decided = await this.taskAccess(user, item);
-        if (decided) CaseAccess.require(decided.access, 'complete', true);
+        // the case's policy may refuse it: the API's pre-action, as it completes
         if (item.assignee && item.assignee !== user.userName && !user.isAdmin())
             throw new TaskError(403, 'The task is assigned to someone else', 'TASK_ASSIGNED');
         const { instance } = await this.api.engine.invoke({ id: item.instanceId, 'items.id': id }, data, user);

@@ -66,9 +66,8 @@ export class Operations {
     start(user: SecureUser, name: string, { data, options = {} }: EngineInput = {}) {
         return this.api.engine.start(name, data, user, options);
     }
-    /** The case's security policy may refuse giving the task to someone else (CaseAccess.requireAssignment). */
+    /** The case's security policy may refuse giving the task to someone else (the API's pre-action). */
     async assign(user: SecureUser, query, data, assignment, options = {}) {
-        await new CaseAccess(this.server).requireAssignment(user, query, assignment);
         return this.api.engine.assign(query, data, assignment, user, options);
     }
     invoke(user: SecureUser, query, { data, options }: EngineInput = {}) {
@@ -82,7 +81,7 @@ export class Operations {
     }
     /** An instance, through the engine (its live copy if this server runs it). */
     get(user: SecureUser, query) {
-        return this.server.engine.get(user.qualifyInstances(query ?? {}, registrationsOf(this.server).queryFilters));
+        return this.api.data.qualifyQuery('instances', query, user).then(q => this.server.engine.get(q));
     }
     throwMessage(user: SecureUser, messageId: string, data, messageMatchingKey = {}, options = {}) {
         return this.api.engine.throwMessage(messageId, data, messageMatchingKey, user, options);

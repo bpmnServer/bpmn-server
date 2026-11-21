@@ -141,6 +141,37 @@ export class Registrations {
     addModelCheck(check: IModelCheck) { this.modelChecks.push(check); }
     addQueryFilter(filter: IQueryFilter) { this.queryFilters.push(filter); }
     addDecisionLookup(lookup: DecisionLookup) { this.decisionLookups.push(lookup); }
+    /** The API's events' listeners of add-ons registered apart (a launched server): `pre-query`, `pre-action`. */
+    readonly apiListeners = new Map<string, ((context: any) => any)[]>();
+    addApiListener(event: string, listener: (context: any) => any) {
+        this.apiListeners.set(event, [...(this.apiListeners.get(event) ?? []), listener]);
+    }
+}
+
+/**
+ * The API's own events (docs/design/context-object.md): fired before a read (`pre-query`, a context of kind query: a
+ * listener adds conditions to `context.conditions`, never widens) and before an action (`pre-action`: a listener may
+ * refuse, by throwing). An add-on listens as to any event, `server.listener.on('pre-query', (context) => ...)`.
+ */
+export const API_EVENTS = ['pre-query', 'pre-action'] as const;
+export type ApiEvent = typeof API_EVENTS[number];
+
+/** The listeners of an API event: the server's own (its listener's), or its add-ons' registered apart. */
+function apiListenersOf(server: any, event: ApiEvent): ((context: any) => any)[] {
+    if (server?.registrations instanceof Registrations && typeof server?.listener?.listeners === 'function')
+        return server.listener.listeners(event);
+    if (!server || (typeof server?.configuration?.addOns !== 'function' && !Array.isArray(server?.addOns))) return [];
+    return registrationsOf(server).apiListeners.get(event) ?? [];
+}
+
+/** Whether anything listens to an API event: with none, the API's built-in rules apply. */
+export function listensTo(server: any, event: ApiEvent): boolean {
+    return apiListenersOf(server, event).length > 0;
+}
+
+/** An API event, to each listener in turn, awaited. A listener that throws refuses: the error goes to the caller. */
+export async function fireApiEvent(server: any, event: ApiEvent, context: any): Promise<void> {
+    for (const listener of apiListenersOf(server, event)) await listener(context);
 }
 
 export interface IAddOn {
@@ -151,7 +182,7 @@ export interface IAddOn {
      * Registers what it brings, as the server is built: for the engine's events (`server.listener.subscribe`), and in
      * `server.registrations` (model checks, decision lookups). Its subscriptions end with the server.
      */
-    register(server: { listener: { subscribe(listener: any): () => void }; registrations: Registrations; [more: string]: any }): void;
+    register(server: { listener: { subscribe(listener: any): () => void; on?(event: string, listener: (...args: any[]) => any): any }; registrations: Registrations; [more: string]: any }): void;
 }
 
 /** A server's add-ons registered: the server's own registrations, else (a launched server, none) these add-ons' made apart, once. */
@@ -167,7 +198,8 @@ export function registrationsOf(server: any, addOns?: IAddOn[]): Registrations {
     const key = addOns ?? server;
     if (key && typeof key === 'object' && apart.has(key)) return apart.get(key);
     const registrations = new Registrations();
-    const host = { listener: { subscribe: () => () => undefined }, registrations, configuration: server?.configuration };
+    // the engine's events go nowhere; the API's (pre-query, pre-action) are kept, the API here fires them
+    const host = { listener: { subscribe: () => () => undefined, on: (event: string, fn: any) => registrations.addApiListener(event, fn) }, registrations, configuration: server?.configuration };
     for (const addOn of addOns ?? addOnsOf(server)) addOn.register?.(host);
     if (key && typeof key === 'object') apart.set(key, registrations);
     return registrations;

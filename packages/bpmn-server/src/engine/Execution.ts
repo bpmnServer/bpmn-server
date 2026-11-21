@@ -20,6 +20,7 @@ import type { IExecution } from '../interfaces/engine.js';
 import { DataHandler } from './DataHandler.js';
 import { ServerComponent } from '../server/ServerComponent.js';
 import { InstanceObject } from './Model.js';
+import { itemContext, elementContext } from './Context.js';
 
 /**
  *  is accessed two ways:
@@ -148,7 +149,7 @@ class Execution extends ServerComponent implements IExecution {
         this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
         this.instance.status = EXECUTION_STATUS.running;
-        this.appDelegate.executionStarted(this);
+        this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
 
         
         if (inputData)
@@ -274,7 +275,7 @@ class Execution extends ServerComponent implements IExecution {
         let firstToken=this.tokens.get(0);
         this.process=firstToken.path[0].node.process;
         //
-        this.appDelegate.executionStarted(this);
+        this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
         this.tokens.forEach(t => {
@@ -385,7 +386,7 @@ public async retry(itemId, userName?: string) :Promise<IExecution>  {
         throw new Error(`Item ${itemId} has not failed: only an item whose status is error can be retried`);
     this.servicesProvider = await this.appDelegate.getServicesProvider();
     this.process = this.tokens.get(0).path[0].node.process;
-    this.appDelegate.executionStarted(this);
+    this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
     this.item = item;
     this.operationBegins({ type: 'execution', label: 'Retry Item', action: 'retry', id: item.elementId, itemId, userName });
     await token.retry(item);
@@ -436,7 +437,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
         this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
-        this.appDelegate.executionStarted(this);
+        this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
 
@@ -521,7 +522,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
         this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
-        this.appDelegate.executionStarted(this);
+        this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
 
@@ -797,16 +798,21 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
     async doExecutionEvent(process,event,eventDetails={}) {
         //this.item = null;
-        await this.dispatch(event, eventDetails);
+        await this.dispatch(event, eventDetails, null);
     }
 
     async doItemEvent(item, event,eventDetails={}) {
         this.item = item;
-        await this.dispatch(event, eventDetails);
+        await this.dispatch(event, eventDetails, item);
     }
-    /** The server's listeners, then its lifecycle subscribers (server/Listener.ts); a plain emitter only emits. */
-    private async dispatch(event, eventDetails) {
-        const payload = { event, context: this, eventDetails };
+    /**
+     * The server's listeners, then its lifecycle subscribers (server/Listener.ts); a plain emitter only emits. They are
+     * handed the event's context (docs/design/context-object.md): its item's, fixed for it, or the process's.
+     */
+    private async dispatch(event, eventDetails, item) {
+        const context = item ? itemContext(item, { what: event, event, details: eventDetails })
+            : elementContext(this, undefined, { what: event, event, details: eventDetails, ...(this.item ? { item: this.item } : {}) });
+        const payload = { event, context, eventDetails };
         if (typeof this.listener.dispatch === 'function') return this.listener.dispatch(event, payload);
         this.listener.emit(event, payload);
         this.listener.emit('all', payload);

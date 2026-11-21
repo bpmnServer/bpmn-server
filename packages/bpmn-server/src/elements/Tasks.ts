@@ -18,6 +18,7 @@ import { DMNEngine } from '../dmn/DMNEngine.js';
 import { ConnectorError } from '../connectors/Connectors.js';
 import { ConnectorBehaviour } from './behaviours/Connector.js';
 import { Behaviour_names } from './behaviours/BehaviourLoader.js';
+import { itemContext } from '../engine/Context.js';
 
 // ---------------------------------------------
 class ScriptTask extends Node {
@@ -136,7 +137,9 @@ class ServiceTask extends Node {
 
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
-        const servicesProvider= stub ? null : await appDelegate.getServicesProvider(item.token.execution);
+        // the context of this call (docs/design/context-object.md): what the service and the delegate are handed
+        const context = itemContext(item, { what: this.serviceName, input: item.input });
+        const servicesProvider= stub ? null : await appDelegate.getServicesProvider(item.token.execution, context);
 
         let obj = servicesProvider;
 
@@ -159,9 +162,9 @@ class ServiceTask extends Node {
         if (stub) {
             ret = await stub(item.input, item.data);
         } else if (typeof method === 'function') {
-            ret = await (method as Function).call(owner, item.input, item.context);
+            ret = await (method as Function).call(owner, item.input, context);
         } else {
-            ret = await appDelegate['serviceCalled'](item.input, item.context, item);
+            ret = await appDelegate['serviceCalled'](item.input, item.context, item, context);
         }
         
         item.log("service returned " + ret);

@@ -148,6 +148,9 @@ class DataStore extends ServerComponent  implements IDataStore {
 				saveObject['logs'] = instance.logs;
 			if (instance.flags)
 				saveObject['flags'] = instance.flags;
+			// its actors, as the Policies add-on keeps them (instance.actors)
+			if (instance.actors)
+				saveObject['actors'] = instance.actors;
 
 			if ((instance.flags?.savePoints ?? this.enableSavePoints)===true && instance.items.length>0) {
 				let lastItem=instance.items[instance.items.length-1].id;

@@ -10,6 +10,7 @@ import { Item } from '../engine/Item.js';
 import { BPMN_TYPE } from '../interfaces/Enums.js';
 import { Behaviour_names, BehaviourLoader } from './behaviours/BehaviourLoader.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
+import { itemContext } from '../engine/Context.js';
 
 
 // ---------------------------------------------
@@ -208,7 +209,7 @@ class Node extends Element {
             return;
         }
         for (const name of names) {
-            const value = await delegate.loadDataObject(name, item);
+            const value = await delegate.loadDataObject(name, item, itemContext(item, { what: `data object ${name}` }));
             item.token.data[name] = value;
             item.token.log(`..data object ${name} loaded`);
         }

@@ -1,7 +1,9 @@
 # One context object
 
-**Status:** survey and proposal, for review (branch `addons`). Part of 4.0, with [add-ons](add-ons.md) and the
-packages' new OWF names.
+**Status:** built in 3.7.5 (`bpmn-server/src/engine/Context.ts`, tests `test/context.test.mjs`), with
+[add-ons](add-ons.md): services, listeners and subscribers, the delegate's hooks, and the API's `pre-query` and
+`pre-action` take it. Not yet: scripts and decisions build their names from it (they see `source`; their names are as
+before), and a form's rules and choices are handed it. The packages' new OWF names stay for 4.0.
 
 ## Why
 
@@ -43,64 +45,109 @@ apps' services read `context.item` (its id, element, key), `context.instance` (`
 
 ## The proposal
 
-One object, made for each call, the same wherever it's handed out:
+One object, the **context**, made for each call and the same wherever it's handed out: services, scripts and
+expressions, decisions, add-ons, the delegate's hooks and listeners. It lives in the engine's process only (B in
+[the architecture's parts](../docs/architecture.md#parts)); what leaves it is data, through the API.
+
+### Five kinds
+
+Every context says where it was made, its **`source`** (today's `evaluatingSource`, renamed). There are five kinds:
+
+| # | `source.kind` | Made for | The context holds |
+|---|---|---|---|
+| 1 | `item` | an item that exists: its scripts, a service it calls, an event about it, an action on it | `user`, `instance`, `element`, `item`, `data`, `input` |
+| 2 | `element` | an element with no item yet: a flow's condition, a start event's permission (`canStart`), a timer's expression | `user`, `element`, `input`; `instance` when there is one (a flow's condition has one, `canStart` doesn't) |
+| 3 | `dmn` | a decision: a policy (assignment, security, notification) or a business-rule task | the decision, `input`; the `item` or the `instance` it was called from |
+| 4 | `query` | a read: the API's `pre-query` | `user`, the kind (`instances`, `items`, `models`), the `query` |
+| 5 | `form` | a form field's rules and choices | `user`, the field, `input` (the form's values); the `item`, or the `element` and the `instance` |
+
+`source` also says which one: the element and which expression or script, the flow, the decision and which policy,
+the field.
+
+### What it is
+
+- **Made per call.** `item` is the item of this call, and stays so: no shared field that changes (`execution.item`).
+- **The live objects.** `instance`, `item` and `data` are the engine's own, as scripts use them today (`data.x = 1`).
+  Nothing is copied, nothing copied back.
+- **Acting.** Code that acts on the process reaches the execution through `instance`, as it does today. The context
+  has no methods of its own, and code in the engine doesn't go through the API.
+- **The user** is the user object (`user`): who acts. Who *calls* is `source`.
+- **Actors** are the instance's: `instance.actors`, stored on the instance. An expression with no item reads them the
+  same way.
+- **Terms and functions** are the application's methods: `appVars.<name>` (one method of `appVarsClass` per term,
+  called only for the names an expression reads, once each) and `appServices.<name>(...)`. Both are called with the
+  context. Nothing is worked out in advance, so the context has no list of names: scripts, expressions and decisions
+  read its fields, `appVars` and `appServices`.
 
 ```ts
 interface IContext {
-    instance: { id; name; status; data; startedAt; endedAt; initiator; ... };  // the case, as data
-    item?: { id; elementId; name; type; status; data; input; output; assignee; ... };  // the item this call is about
-    user: { userName: string | null; userGroups: string[] };     // who acts
-    event?: string;                                              // for an event: its name and details
-    details?: unknown;
-    input?: any;                                                 // a service's input, a script's
-    appServices; appVars;                                        // the application's
-    names(): Record<string, any>;                                // what scripts and decisions see: data, item, instance, user, and what add-ons register (actors)
-    log(message: string): void;                                  // into the instance's log
-    decision(entry): void;                                       // into its Rationale
-    engine: { start; throwMessage; throwSignal; ... };           // what may be asked of the engine from here
-    /** @deprecated inside the engine only: the live execution, for code not yet moved */
-    execution?: IExecution;
+    source: { kind: 'item' | 'element' | 'dmn' | 'query' | 'form'; ... };  // where it was made
+    user: ISecureUser;                 // who acts
+    instance?: IInstance;              // the case; instance.actors its actors
+    element?: IElement;                // the model's element
+    item?: IItem;                      // the item of this call (kind 1; 3 and 5 when called from one)
+    data?: any;                        // the instance's data, or the item's scope of it
+    input?: any;                       // a service's input, a message's, a form's values
+    decision?: string;                 // kind 3
+    query?: object; kind?: string;     // kind 4
+    field?: string;                    // kind 5
+    appVars; appServices;              // the application's terms and functions
 }
 ```
 
-- **Made per call.** `item` is the item of this call, and stays so: no shared field that changes.
-- **Data, with a few calls.** What it reads is data; what it does goes through its methods (`log`, `decision`,
-  `engine.*`). The data parts can cross to a separate process as they are.
-- **One set of names.** Scripts, expressions, decisions and the services all get their names from `names()`, so
-  `actors` (registered by the Policies add-on) and `appVars` are the same everywhere.
-- **Add-ons get it** in their events and checks, and the delegate's hooks get it in place of the execution or item.
+## Changing the context contract
 
-## Compatibility
+The context is a contract between the engine and the application's code: what a service, a script, a decision, a
+listener and the delegate's hooks are handed. Changing it is changing that contract, for every install. The last
+release is 3.6.1; what follows is against it.
 
-- **Services** keep `(input, context)`. The new context has `item`, `instance` and `user`, so what the apps read
-  today (`context.item.id`, `context.instance.tenantId`) keeps working. `context.item.token.execution` and other
-  engine internals are reachable through the deprecated `execution`, inside the engine only, until 5.0.
-- **Delegate hooks** take the context. `executionStarted(execution)` and `serviceCalled(input, execution, item)` get
-  the context in the first place; its `execution` is the old argument, for one major version.
-- **Listeners and `executionEvent(context, event)`**: `context` is the new object; `context.item` is the event's item.
-- **Scripts and expressions**: unchanged, their names come from `names()`.
+### The contract, before and after
+
+| Who | 3.6 hands it | 3.7.5 hands it |
+|---|---|---|
+| A service `(input, context)` | `context` = the execution | `context` = the context |
+| Listeners, `executionEvent(context, event)` | `context` = the execution, `execution.item` set just before | the context; `context.item` the event's item |
+| `executionStarted(execution)`, `getServicesProvider(execution)` | the execution | the execution, then the context |
+| `serviceCalled(input, execution, item)` | the execution and the item | the same, then the context |
+| `messageThrown`, `signalThrown`, `loadDataObject` | an item | the item, then the context |
+| Scripts, expressions, decisions | names built in two places | the context's fields, the same in both |
+| What is evaluating | `evaluatingSource` | `source` |
+| Actors | worked out by the policies | `instance.actors` |
+
+### What an install sees
+
+| A 3.6 install's code | 3.7.5 |
+|---|---|
+| Reads `context.item`, `context.instance` in a service | works: they are the live objects |
+| Reads `context.item.token.execution` | works |
+| Uses `context` as the execution (`context.tokens`, `context.save()`, `context.getNodeById(...)`) | works, deprecated: the context forwards the execution's members, and logs once that it's used so |
+| Overrides a delegate hook | works: its arguments are as before, the context added at the end |
+| Reads `execution.item` in a listener | works, deprecated: `context.item` is the event's own item |
+| Reads `evaluatingSource` | works, deprecated: `source` |
+| Stored instances, with no `actors` | work: `instance.actors` is worked out when missing; no migration |
+| Overrides `SecureUser`'s `qualify*` or `can*` | works: an override is still called, beside `pre-query` / `pre-action`, and the start warns it's deprecated |
+
+So 3.7.5 is a minor release: nothing a 3.6 install does stops working. What is deprecated is removed in 4.0.
+
+### The rule for the contract from here
+
+- The context is the **only** thing handed to the application's code. New hooks, events and add-on calls take the
+  context, nothing else.
+- Fields are added, never removed or changed in meaning, within a major version.
+- What the context forwards of the execution is for 3.x only.
 
 ## Impact
 
 | | |
 |---|---|
-| Engine | The context made per call (`Token`, `Item`, `Execution`); every place that hands out the execution or an item hands it out instead; `ScriptHandler` and `DecisionContext` build from `names()` |
+| Engine | The context made per call (`Token`, `Item`, `Execution`); every place that hands out the execution or an item hands it out instead; `ScriptHandler` and `DecisionContext` build it the same way; `evaluatingSource` → `source`; `instance.actors` stored |
 | bpmn-web | Its delegate (`WebAppDelegate`), its listeners, the pages that read `execution.item` |
-| Add-ons | Built on it from the start (do this first) |
+| Add-ons | Their events, checks and `pre-query` / `pre-action` take it |
 | Apps | Their services mostly unchanged; their delegates' hooks take the context |
 | Docs | Scripting, services, the delegate, events |
-| Tests | The engine's tests of services, listeners and the delegate; new tests that the context is the same shape inside and across |
-
-## Order, with the other 4.0 changes
-
-1. **Settle the context's shape** (this doc).
-2. **Add-ons**, their events and checks taking it.
-3. **Move the engine's other hand-outs to it**, in steps, with `execution` there meanwhile.
-4. **Rename the packages to OWF.**
-5. **Release 4.0.**
+| Tests | The engine's tests of services, listeners and the delegate; a test for each of the five kinds |
 
 ## Open
 
-- How much of the engine `context.engine` offers: start, messages, signals, and the application's own calls (#294).
-- Whether `execution` stays reachable outside the engine at all, or only inside it.
-- Whether listeners keep the old `on(event, ({ context }))` form, with the new context in it, or move to `subscribe` only.
+- Whether listeners keep the old `on(event, ({ context }))` form, with the new context in it, or move to `subscribe`
+  only.

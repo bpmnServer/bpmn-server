@@ -107,15 +107,19 @@ export const assignmentAddOn: IAddOn = {
                 const item = context?.item;
                 if (item?.node?.type !== 'bpmn:UserTask') return;
                 // it starts: who works on it, decided once and set through the engine (Execution.assignItem)
-                if (type === 'start') await assignAtStart(context, item);
+                if (type === 'start') await assignAtStart(context?.execution ?? context, item);
                 // a person changed who works on it: the Rationale says what it was
                 else if (type === 'assign' && (details as any)?.by && (details as any).changed)
-                    reassigned(context, item, (details as any).before, (details as any).assignment ?? {}, (details as any).by, (details as any).previous);
+                    reassigned(context?.execution ?? context, item, (details as any).before, (details as any).assignment ?? {}, (details as any).by, (details as any).previous);
             },
         });
         server.registrations.addModelCheck(modelCheck);
-        // what each user sees: the tasks offered to them, the processes they may start
-        server.registrations.addQueryFilter(assignmentFilter);
+        // what each user sees (the API's pre-query): the tasks offered to them, the processes they may start
+        server.listener.on?.('pre-query', (context) => {
+            const kind = context?.source?.query;
+            if (kind === 'instances' || kind === 'items' || kind === 'startEvents')
+                context.conditions.push(assignmentFilter.filter(kind, context.user, {}));
+        });
         server.registrations.addDecisionLookup((ref, folder) => {
             const name = /^(.+)\.policy$/.exec(ref)?.[1];
             return name ? { folder: path.join(folder, POLICIES_FOLDER), name } : null;

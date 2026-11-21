@@ -9,7 +9,7 @@ import manifest from './addon.json' with { type: 'json' };
 import { assignmentAddOn } from './assignment/index.js';
 import { notificationAddOn } from './notification/index.js';
 import { securityAddOn } from './security/index.js';
-import { actorsName, actorElements, ACTOR_ELEMENTS, BUILT_IN_ACTORS } from './actors.js';
+import { actorsName, actorElements, actorsOf, ACTOR_ELEMENTS, BUILT_IN_ACTORS } from './actors.js';
 
 export * from './assignment/index.js';
 export * from './notification/index.js';
@@ -58,6 +58,17 @@ export const policiesAddOn: IAddOn = {
     register(server) {
         server.registrations.addExpressionName(actorsName);
         server.registrations.addModelCheck(actorsCheck);
+        // the case's actors, kept on it (instance.actors, docs/design/context-object.md): worked out again as its work
+        // starts and ends, when its data and who did what change; saved with it
+        server.listener.subscribe({
+            async onEvent({ type, context }) {
+                if (!['start', 'end', 'assign', 'process.end'].includes(type)) return;
+                const instance = context?.instance;
+                const definition = context?.execution?.definition;
+                if (!instance || !definition) return;
+                instance.actors = actorsOf({ instance, items: context.execution.getItems?.() ?? instance.items ?? [], elements: actorElements(definition) });
+            },
+        });
         for (const part of [assignmentAddOn, notificationAddOn, securityAddOn]) part.register(server);
     },
 };

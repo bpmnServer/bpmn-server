@@ -166,12 +166,14 @@ interface IAppDelegate {
     /**
      * Get the service task handlers, default to `this`, so you can add handlers on this class directly.
      */
-    getServicesProvider(execution: IExecution): IServiceProvider | Promise<IServiceProvider>;
+    /** `context`: the call's (docs/design/context-object.md), added in 3.7.5; the execution, as before, first. */
+    getServicesProvider(execution: IExecution, context?: any): IServiceProvider | Promise<IServiceProvider>;
     sendEmail(to, msg, body);
-    executionStarted(execution: IExecution);
+    /** `context`: the process's (docs/design/context-object.md), added in 3.7.5. */
+    executionStarted(execution: IExecution, context?: any);
     startUp(options); // start of server
-    messageThrown(signalId: string, data, messageMatchingKey: any, item: IItem);
-    signalThrown(signalId: string, data, messageMatchingKey: any, item: IItem);
+    messageThrown(signalId: string, data, messageMatchingKey: any, item: IItem, context?: any);
+    signalThrown(signalId: string, data, messageMatchingKey: any, item: IItem, context?: any);
     /**
      * 
      * is called when an event throws a message that can not be answered by another process
@@ -186,7 +188,7 @@ interface IAppDelegate {
      * 
      * @param item
      */
-    serviceCalled(input: Record<string, unknown>, execution: IExecution, item: IItem): unknown;
+    serviceCalled(input: Record<string, unknown>, execution: IExecution, item: IItem, context?: any): unknown;
     /**
      * Optional. Loads a data object of the model (a BPMN data object or data store, by its name) when an element
      * connected to it runs (a data association, either way, e.g. a start event or a service task). The value is
@@ -195,7 +197,7 @@ interface IAppDelegate {
      * @param name  the data object's name
      * @param item  the running item: its element, token and the instance data (item.data)
      */
-    loadDataObject?(name: string, item: IItem): unknown | Promise<unknown>;
+    loadDataObject?(name: string, item: IItem, context?: any): unknown | Promise<unknown>;
 
     /**
      * Optional. The application's facts for a decision table (a business rule task's decision, an assignment policy,

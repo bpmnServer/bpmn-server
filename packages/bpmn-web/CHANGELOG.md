@@ -193,6 +193,9 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **Security policies are asked by the API** (bpmn-server's `pre-query`, `pre-action`): claiming, completing, assigning,
+  restarting and firing a start event are refused there, not in the routes; `CaseAccess` is the Policies add-on's,
+  `routes/caseAccess.ts` re-exports it and keeps the user directory (`accessDirectory`).
 - **Security policies decide a list's cases several at once** (16; `CaseAccess.decideAll`), so an application's
   `decisionContext` hook that waits waits for several cases together; the task list stops deciding once its page is
   full. Measured in docs/docs/performance.md#security-policies.
@@ -355,6 +358,10 @@ and here
   1.5s by each page, is.
 
 ### Fixed
+- **An application's own engine calls** (#294): `start({ engineCalls })` adds them to bpmn-web's own (the Test tab's),
+  where bpmn-web used to replace whatever calls an application gave. A host route asks for one by name
+  (`web.bpmnServer.engine.call('app.x', ...)`), and it runs in the engine, under its lock, so a route can again change
+  an instance (`ENGINE_ONLY` otherwise). Test: `test/web/engine-calls.test.mjs`.
 - **An application's own engine calls** (#294): `start({ engineCalls })` adds them to bpmn-web's own (the Test tab's),
   where bpmn-web used to replace whatever calls an application gave. A host route asks for one by name
   (`web.bpmnServer.engine.call('app.x', ...)`), and it runs in the engine, under its lock, so a route can again change
