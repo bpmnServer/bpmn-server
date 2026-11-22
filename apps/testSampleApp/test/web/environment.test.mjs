@@ -21,21 +21,21 @@ test.before(async () => {
     token = (await new Tokens(web.bpmnServer).issue({ userName: 'dee', groups: ['DESIGNER'] }, 'dee', { own: true })).token;
 });
 test.after(async () => {
-    setEnv({ APP_ENV: undefined, APP_ENV_LABEL: undefined, READ_ONLY: undefined });
+    setEnv({ APP_ENV: undefined, APP_ENV_LABEL: undefined, READ_ONLY: undefined, TIMERS: undefined, SERVICE_TASKS: undefined, SCRIPT_SANDBOX: undefined, DEMO_MODE: undefined });
     await web?.stop(); setImmediate(() => process.exit(0));
 });
 
 test('the environment: a band on the pages, a badge in the editors, said by /me; none when not declared or production', async () => {
     setEnv({ APP_ENV: undefined, APP_ENV_LABEL: undefined, READ_ONLY: undefined });
     assert.doesNotMatch((await staff.get('/dashboard')).text, /class="env-band/);
-    assert.deepEqual((await v3('GET', '/me')).body.environment, { name: null, label: null, readOnly: false, shown: false });
+    assert.deepEqual((await v3('GET', '/me')).body.environment, { name: null, label: null, readOnly: false, restrictions: [], shown: false });
 
     setEnv({ APP_ENV: 'test' });
     let page = (await staff.get('/dashboard')).text;
     assert.match(page, /<div class="env-band env-test" role="note" data-environment="test"><b class="env-name">Test<\/b><\/div>/);
     assert.ok(page.indexOf('env-band') < page.indexOf('navbar-default'), 'above the menu bar');
     assert.match((await designer.get(`/model/edit/${MODEL}`)).text, /<span class="env-badge env-test"[^>]*>Test<\/span>/);
-    assert.deepEqual((await v3('GET', '/me')).body.environment, { name: 'test', label: 'Test', readOnly: false, shown: true });
+    assert.deepEqual((await v3('GET', '/me')).body.environment, { name: 'test', label: 'Test', readOnly: false, restrictions: [], shown: true });
 
     setEnv({ APP_ENV: 'development' });
     assert.match((await staff.get('/dashboard')).text, /env-band env-development[^>]*><b class="env-name">Development</);
@@ -45,6 +45,22 @@ test('the environment: a band on the pages, a badge in the editors, said by /me;
     setEnv({ APP_ENV_LABEL: 'Staging' });
     assert.match((await staff.get('/dashboard')).text, /env-band env-production[^>]*><b class="env-name">Staging</);
     setEnv({ APP_ENV: undefined, APP_ENV_LABEL: undefined });
+});
+
+test('the band says what runs differently here: timers off, service tasks off, scripts in a sandbox', async () => {
+    const saved = { TIMERS: process.env.TIMERS, SERVICE_TASKS: process.env.SERVICE_TASKS, SCRIPT_SANDBOX: process.env.SCRIPT_SANDBOX, DEMO_MODE: process.env.DEMO_MODE };
+    setEnv({ APP_ENV: 'test', TIMERS: 'false', SERVICE_TASKS: 'false', SCRIPT_SANDBOX: 'true' });
+    const page = (await staff.get('/dashboard')).text;
+    assert.match(page, /<b class="env-name">Test<\/b><span class="env-restriction">Timers off<\/span><span class="env-restriction">Service tasks off<\/span><span class="env-restriction">Scripts in a sandbox<\/span>/);
+    assert.match((await designer.get(`/model/edit/${MODEL}`)).text, /<span class="env-badge env-test"[^>]*>Test · Timers off · Service tasks off · Scripts in a sandbox<\/span>/);
+    assert.deepEqual((await v3('GET', '/me')).body.environment.restrictions, ['Timers off', 'Service tasks off', 'Scripts in a sandbox']);
+
+    // DEMO_MODE says them when they are not set; a restriction alone shows the band, with no environment declared
+    setEnv({ APP_ENV: undefined, TIMERS: undefined, SERVICE_TASKS: undefined, SCRIPT_SANDBOX: undefined, DEMO_MODE: 'true' });
+    assert.match((await staff.get('/dashboard')).text, /env-band env-other[^>]*><span class="env-restriction">Timers off</);
+    setEnv({ TIMERS: 'true', SERVICE_TASKS: 'true', SCRIPT_SANDBOX: 'false', DEMO_MODE: undefined });
+    assert.doesNotMatch((await staff.get('/dashboard')).text, /class="env-band/, 'all as usual: no band');
+    setEnv(saved);
 });
 
 test('read-only: the band says so; the editors\' Save is off; every change to the processes or the setup is refused', async () => {

@@ -9,7 +9,7 @@
   Production shows nothing.
 - **`APP_ENV_LABEL`** replaces the name in the band, in any environment, production included: `Staging`,
   `Public demo`.
-- **API v3's `/me`** says it (`environment`: `name`, `label`, `readOnly`, `shown`), so an application's own layout
+- **API v3's `/me`** says it (`environment`: `name`, `label`, `readOnly`, `restrictions`, `shown`), so an application's own layout
   can show it too. The HR demo shows it in its sidebar.
 - **`APP_ENV=test`** also makes the sample applications use their test services: the same names, nothing sent or
   recorded. That is the application's code (its delegate reads `APP_ENV`); yours decides what each environment uses.

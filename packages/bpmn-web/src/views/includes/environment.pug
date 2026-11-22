@@ -1,5 +1,5 @@
 //- The environment this server is (runtime/environment.ts): APP_ENV (development, test, production), APP_ENV_LABEL,
-//- READ_ONLY. A band above the pages' menu, a badge in the editors' header, coloured by the environment, so nobody
+//- READ_ONLY, and what runs differently here (timers off, service tasks off, scripts in a sandbox). A band above the pages' menu, a badge in the editors' header, coloured by the environment, so nobody
 //- mistakes a test server for production. res.locals.environment (userAccess/pages.ts). None in production, unless
 //- labelled or read-only; none in a page framed by the application, whose own layout shows it.
 - const env = typeof environment !== 'undefined' && environment && environment.shown ? environment : null
@@ -11,10 +11,12 @@ mixin environmentBand
     .env-band(class='env-' + envKind, role='note', data-environment=env.name || '')
       if env.label
         b.env-name= env.label
+      each r in env.restrictions || []
+        span.env-restriction= r
       if env.readOnly
         span.env-read-only= readOnlyText
 
 mixin environmentBadge
   if env
     span.env-badge(class='env-' + envKind, data-environment=env.name || '', title=env.readOnly ? readOnlyText : undefined)
-      = [env.label, env.readOnly ? 'read-only' : null].filter(Boolean).join(' · ')
+      = [env.label, ...(env.restrictions || []), env.readOnly ? 'read-only' : null].filter(Boolean).join(' · ')

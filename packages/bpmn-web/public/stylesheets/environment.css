@@ -1,6 +1,7 @@
 /* The environment's band and badge (views/includes/environment.pug): the name always written, the colour a second cue. */
 .env-band { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; padding: 3px 16px; font-size: 12px; line-height: 18px; border-bottom: 1px solid rgba(0,0,0,.08); }
 .env-band .env-name { text-transform: uppercase; letter-spacing: .06em; }
+.env-band .env-restriction { padding: 0 6px; border-radius: 3px; background: rgba(0,0,0,.08); }
 .env-badge { display: inline-block; margin: 0 8px; padding: 1px 8px; border-radius: 9px; font-size: 11px; font-weight: 600; white-space: nowrap; letter-spacing: .03em; }
 .env-development { background: #dbeafe; color: #1e3a8a; }
 .env-test { background: #fef3c7; color: #78350f; }

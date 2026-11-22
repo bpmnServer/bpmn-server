@@ -26,6 +26,10 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The environment's band says what runs differently here** (docs/docs/environments.md): beside Test (or the
+  label) and read-only, **Timers off** (`TIMERS`), **Service tasks off** (`SERVICE_TASKS`) and **Scripts in a sandbox**
+  (`SCRIPT_SANDBOX`), as set or as `DEMO_MODE` says; the editors' badge too. A restriction alone shows the band. API
+  v3's `/me` says them (`environment.restrictions`). Test: `test/web/environment.test.mjs`.
 - **The Forms and display, and Modeling tools add-ons in the editor and the pages:** the form fields' list and lookup
   entries are the Forms add-on's editor module (`modeler/src/addons/forms/`); the Test tab is loaded, and the Test and
   History tabs shown, only with Modeling tools on (with it off, `modelHistory` is false). Test: `test/web/add-ons.test.mjs`.
