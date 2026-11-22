@@ -168,6 +168,45 @@ The caller should not learn how we route its event, so the URL carries only an o
 - How long a delivery ID is kept for dedup.
 - Whether a hook may do more than one action. The current answer is no: one hook, one action.
 
+### 5.0.2 Provider webhooks: registering with PayPal and others (parked for later design)
+
+**Not built.** An example of the gap: a process creates a PayPal order and waits for the payment.
+
+**Today**
+
+- The model waits at a message catch, such as `PaymentReceived`, usually with a timer boundary for "not paid in time".
+- The order carries the case's key in PayPal's `custom_id` or `invoice_id`, and PayPal sends it back with each event.
+- The application's own handler receives PayPal's webhook (`PAYMENT.CAPTURE.COMPLETED`). It verifies the webhook with PayPal, skips event IDs it has already seen, and calls `POST /api/v3/messages/PaymentReceived` with `messageMatchingKey: { "data.orderNo": resource.custom_id }`.
+- Without a handler, the model can poll instead: a timer loop calls the connector's "get order" operation.
+
+**What is missing**
+
+1. **Registering with the provider.** Someone has to register our URL with PayPal, in its dashboard or with its API (`POST /v1/notifications/webhooks`, with the URL and the event types). PayPal answers with its own **webhook ID**. Its signature check needs that ID, so we must store it. Sandbox and live each need their own registration.
+2. **The connector.** The PayPal profile in `catalog/connectors/profiles/paypal.json` has only the Payments API: 8 operations for authorizations, captures and refunds. It lacks:
+   - the **Webhooks** API: register, list, delete and verify a signature;
+   - the **Orders** API, which creates the order that carries our `custom_id`.
+3. **A public URL.** The server must know the base URL the provider can reach (a setting). It can't be localhost or behind a proxy. For testing, use a tunnel or the provider's webhook simulator.
+
+**The direction: three parts**
+
+| Part | What it does |
+| --- | --- |
+| Events in | The opaque hook of 5.0.1: it receives the event, verifies it, dedups it and throws the message. |
+| Registration out | The connector's webhook operations: register, list, delete. |
+| The provider's details | A new `events` section of the connector profile, next to `operations`. It lists the event types, how to verify an event (PayPal's verify call, or Stripe's and GitHub's signing), the dedup field (PayPal's event `id`) and the usual correlation field (`resource.custom_id`). |
+
+**How it would work**
+
+- **Creating a hook in Settings:** pick the connector, the events and, for each event, the message (or signal or start) it becomes, plus the matching key. Settings registers our URL through the connector and keeps the provider's webhook ID and signing secret with the hook's secrets.
+- **Rotating** our hook ID updates the provider's registration. **Deleting** the hook removes that registration. A **check** lists the provider's registrations and shows any mismatch.
+- **Event types nobody mapped** are accepted with the same 202 and ignored.
+- **Providers with no registration API** register only in their dashboard. For those, Settings shows the URL to paste in and asks for the secret the provider gives back.
+
+**Still open**
+
+- Whether the connector import, from OpenAPI, can fill in the `events` section. OpenAPI 3.1 has `webhooks`, and the GitHub profile already lists them.
+- Where the provider's credentials for registering come from: the connector's own credentials, the same as for its operations.
+
 ## 5.1 Phase 1 contract: the task API
 
 **Built.** The tests are in `apps/testSampleApp/test/web/task-api.test.mjs`. The routes are in `bpmn-web` (`routes/taskApi.ts`); the engine is unchanged.
