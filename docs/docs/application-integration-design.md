@@ -127,7 +127,46 @@ Content-Type: application/json
 
 A route configuration maps the payload to a `start`, `message` or `signal` operation and establishes correlation (application id, business key, instance id or message matching key). Validate signature/token, replay protection, payload schema, authorization and deduplication. Keep internal engine IDs out of external contracts when a stable business key suffices.
 
-The routes live in `bpmn-web`. They do not call `throwMessage`, which can start a process when it meant to resume one (section 2.1). A route says which it does: to resume, it finds the waiting item with `engine.waitingFor` and invokes it, and answers 404 when nothing waits; to start, it records the delivery's ID first, so that a retry starts nothing. The engine has no business key field today, so correlation uses a data path, as a message matching key does.
+The routes live in `bpmn-web`. They do not call `throwMessage`, which can start a process when it meant to resume one (section 2.1). A route says which it does: to resume, it finds the waiting item with `engine.waitingFor` and invokes it; to start, it records the delivery's ID first, so that a retry starts nothing. The engine has no business key field today, so correlation uses a data path, as a message matching key does.
+
+### 5.0.1 Opaque hook IDs (parked for later design)
+
+**Not built.** This is a direction to design further, and it replaces the named route in the example above.
+
+The caller should not learn how we route its event, so the URL carries only an opaque ID and our side holds everything else.
+
+**What the caller sees**
+
+- One URL with a long random ID: `POST /hooks/h_7Kq2…`. No application, message, process or key names.
+- It posts its own payload, as the sending system produces it.
+- The answer is always `202 Accepted`. It has no instance ID, no message name, and doesn't say whether anything matched or waited. Different answers would reveal the internals and let a caller probe which keys exist. This replaces the 404-when-nothing-waits answer above.
+
+**What we keep, per hook**
+
+| Field | Meaning |
+| --- | --- |
+| Name | For us only, such as `contract-signed`. The Rationale and the logs show it, never the caller. |
+| Action | One per hook: start a process, throw a message or throw a signal, and which one. |
+| Matching key | Built from the payload, such as `{ 'data.contractId': body.contract.id }`. |
+| Data mapping | Which payload fields become process data, so that the whole body doesn't land in the instance. |
+| Dedup field | The sender's delivery ID, from a header or the body. A retry with the same ID does nothing, so a retried delivery never starts a second instance. |
+| Signature | Optional: an HMAC secret or a shared header, for senders that sign, such as GitHub and Stripe. |
+
+**Where it lives**
+
+- The mapping is configuration with no secrets: a `webhooks` section of the application's configuration file, keyed by the name.
+- The hook's ID and its signing secret are secrets, so they go in the store or `.env`, not in checked-in JSON. An administrator can rotate the ID without touching the models or the mapping.
+- The Settings page creates a hook, shows its URL once, rotates it, and turns it off without deleting it.
+
+**Security.** The ID works as a password, but URLs end up in the sender's settings and in logs, so the signature is the real protection wherever the sender supports one. Each hook also has a rate limit and a body-size cap.
+
+**The Rationale.** The receiver's row names the hook: `receives message 'ContractSigned' from webhook 'contract-signed'`, where an API call today says `from outside (an API call)`. The engine's `throwMessage`/`throwSignal` already take who threw it, so the engine needs no change.
+
+**Still open**
+
+- Whether the matching key and the data mapping are expressions (`$(body.contract.id)`, as in the models) or plain field paths. Paths are simpler and run no code.
+- How long a delivery ID is kept for dedup.
+- Whether a hook may do more than one action. The current answer is no: one hook, one action.
 
 ## 5.1 Phase 1 contract: the task API
 
