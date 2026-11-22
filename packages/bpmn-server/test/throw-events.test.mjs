@@ -148,3 +148,91 @@ test('a throw with no message or signal named does nothing', async () => {
   assert.equal(await srv.engine.throwMessage(null, {}), null);
   await srv.shutdown();
 });
+
+// ---- the matching key: a throw event's script sets this.context.messageMatchingKey (docs/docs/examples/msg-throw-catch.md),
+// and only the waiting instances it matches are reached
+
+const keyed = (id, body) => `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="D_${id}" targetNamespace="x">
+  <bpmn:message id="M1" name="Order" /><bpmn:signal id="G1" name="Go" />
+  <bpmn:process id="${id}" isExecutable="true">${body}</bpmn:process>
+</bpmn:definitions>`;
+
+const keyScript = `<bpmn:extensionElements><camunda:executionListener event="start">
+        <camunda:script scriptFormat="JavaScript">this.context.messageMatchingKey = { 'data.caseId': this.token.data.caseId };</camunda:script>
+      </camunda:executionListener></bpmn:extensionElements>`;
+
+/** Waits for the message Order (or the signal Go), then at Got. */
+const keyWaiter = (id, definition) => keyed(id, `
+    <bpmn:startEvent id="S"><bpmn:outgoing>k1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:intermediateCatchEvent id="Catch"><bpmn:incoming>k1</bpmn:incoming><bpmn:outgoing>k2</bpmn:outgoing>${definition}</bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="Got"><bpmn:incoming>k2</bpmn:incoming></bpmn:userTask>
+    <bpmn:sequenceFlow id="k1" sourceRef="S" targetRef="Catch" />
+    <bpmn:sequenceFlow id="k2" sourceRef="Catch" targetRef="Got" />`);
+
+/** The key as the throw's output field `matchingKey`: not part of what is thrown. */
+const keyOutput = `<bpmn:extensionElements><camunda:inputOutput>
+        <camunda:outputParameter name="matchingKey">$({ 'data.caseId': data.caseId })</camunda:outputParameter>
+        <camunda:outputParameter name="note">$('cancelled')</camunda:outputParameter>
+      </camunda:inputOutput></bpmn:extensionElements>`;
+
+/** Throws each of `throws` in turn ([definition, keyed]: true a script's key, 'output' the output field's), then ends. */
+const keyThrower = (id, throws) => keyed(id, `
+    <bpmn:startEvent id="S"><bpmn:outgoing>t0</bpmn:outgoing></bpmn:startEvent>
+    ${throws.map(([d, k], i) => `<bpmn:intermediateThrowEvent id="T${i}">${k === 'output' ? keyOutput : k ? keyScript : ''}<bpmn:incoming>t${i}</bpmn:incoming><bpmn:outgoing>t${i + 1}</bpmn:outgoing>${d}</bpmn:intermediateThrowEvent>`).join('\n    ')}
+    <bpmn:endEvent id="E"><bpmn:incoming>t${throws.length}</bpmn:incoming></bpmn:endEvent>
+    ${throws.map((_, i) => `<bpmn:sequenceFlow id="t${i}" sourceRef="${i ? 'T' + (i - 1) : 'S'}" targetRef="T${i}" />`).join('\n    ')}
+    <bpmn:sequenceFlow id="t${throws.length}" sourceRef="T${throws.length - 1}" targetRef="E" />`);
+
+const MESSAGE = '<bpmn:messageEventDefinition messageRef="M1" />', SIGNAL = '<bpmn:signalEventDefinition signalRef="G1" />';
+
+async function keyServer(models) {
+  const dir = definitionsFolder();
+  for (const [name, xml] of Object.entries(models)) fs.writeFileSync(path.join(dir, name + '.bpmn'), xml);
+  return (await makeServer({ dir, services: { issueMessage: async () => { }, issueSignal: async () => { } } })).server;
+}
+const gotCases = async (srv, name) => (await waitingAt(srv, name, 'Got')).map(i => i.data.caseId).sort();
+
+test('a thrown message\'s matching key: only the waiting instance it matches gets it', async () => {
+  const srv = await keyServer({ OrderWaiter: keyWaiter('OrderWaiter', MESSAGE), SendsKeyed: keyThrower('SendsKeyed', [[MESSAGE, true]]) });
+  for (const caseId of [1, 2, 3]) await srv.engine.start('OrderWaiter', { caseId });
+  await srv.engine.start('SendsKeyed', { caseId: 2 });
+  assert.deepEqual(await gotCases(srv, 'OrderWaiter'), [2], 'case 2 only, not the first waiting (case 1)');
+  assert.equal((await waitingAt(srv, 'OrderWaiter', 'Catch')).length, 2, 'cases 1 and 3 still wait');
+  await srv.shutdown();
+});
+
+test('a thrown signal\'s matching key: only the waiting instances it matches get it', async () => {
+  const srv = await keyServer({ GoWaiter: keyWaiter('GoWaiter', SIGNAL), SaysKeyed: keyThrower('SaysKeyed', [[SIGNAL, true]]) });
+  for (const caseId of [1, 2, 2]) await srv.engine.start('GoWaiter', { caseId });
+  await srv.engine.start('SaysKeyed', { caseId: 2 });
+  assert.deepEqual(await gotCases(srv, 'GoWaiter'), [2, 2], 'both of case 2, not case 1');
+  await srv.shutdown();
+});
+
+test('a matching key from the API: the call\'s key narrows the waiting instances', async () => {
+  const srv = await keyServer({ OrderWaiter: keyWaiter('OrderWaiter', MESSAGE) });
+  for (const caseId of [1, 2]) await srv.engine.start('OrderWaiter', { caseId });
+  await srv.engine.throwMessage('Order', {}, { 'data.caseId': 2 });
+  assert.deepEqual(await gotCases(srv, 'OrderWaiter'), [2]);
+  await srv.shutdown();
+});
+
+test('a matching key is its throw\'s: a later throw in the same run without one is not narrowed', async () => {
+  const srv = await keyServer({ GoWaiter: keyWaiter('GoWaiter', SIGNAL), SaysTwice: keyThrower('SaysTwice', [[MESSAGE, true], [SIGNAL, false]]) });
+  for (const caseId of [1, 2]) await srv.engine.start('GoWaiter', { caseId });
+  await srv.engine.start('SaysTwice', { caseId: 2 });
+  assert.deepEqual(await gotCases(srv, 'GoWaiter'), [1, 2], 'the signal, thrown with no key, reaches both');
+  await srv.shutdown();
+});
+
+test('a matching key as the throw\'s output field matchingKey: it narrows, and is not thrown', async () => {
+  const srv = await keyServer({ OrderWaiter: keyWaiter('OrderWaiter', MESSAGE), SendsOutput: keyThrower('SendsOutput', [[MESSAGE, 'output']]) });
+  for (const caseId of [1, 2, 3]) await srv.engine.start('OrderWaiter', { caseId });
+  await srv.engine.start('SendsOutput', { caseId: 3 });
+  assert.deepEqual(await gotCases(srv, 'OrderWaiter'), [3]);
+  const [got] = await waitingAt(srv, 'OrderWaiter', 'Got');
+  assert.equal(got.data.note, 'cancelled', 'the other output fields are thrown');
+  assert.equal(got.data.matchingKey, undefined, 'the key is not');
+  await srv.shutdown();
+});

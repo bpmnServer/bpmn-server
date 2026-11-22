@@ -4,6 +4,20 @@ import { Behaviour } from './Behaviour.js';
 import { Item } from "../../engine/Item.js";
 import { NODE_SUBTYPE } from '../../interfaces/Enums.js';
 import { itemContext } from '../../engine/Context.js';
+
+/**
+ * A throw's output and its matching key (docs/docs/examples/msg-throw-catch.md): an output field `matchingKey` is the
+ * key, not part of what is thrown; else what a script set, `this.context.messageMatchingKey`. Either is this throw's
+ * only: the execution's is cleared, so a later throw in the same run is not narrowed by it.
+ */
+function takeMatchingKey(item: Item, output: any): { output: any; matchingKey: any } {
+    let matchingKey = item.context.messageMatchingKey;
+    item.context.messageMatchingKey = undefined;
+    if (output && typeof output === 'object' && !Array.isArray(output) && 'matchingKey' in output) {
+        ({ matchingKey, ...output } = output);
+    }
+    return { output, matchingKey };
+}
 /**
  * 
  * 
@@ -26,8 +40,7 @@ class MessageEventBehaviour extends Behaviour {
             item.messageId = this.messageId;
         }
         else {  // throw a message
-            const output = await this.node.getOutput(item);
-            const matchingKey = item.context.messageMatchingKey;
+            const { output, matchingKey } = takeMatchingKey(item, await this.node.getOutput(item));
             item.token.log(`.Throwing Message <${this.messageId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
             await item.context.appDelegate.messageThrown(this.messageId,output, matchingKey, item, itemContext(item, { what: 'message', input: output }));
         }
@@ -58,8 +71,7 @@ class SignalEventBehaviour extends Behaviour {
             item.signalId = this.signalId;
         }
         else {  // throw a message
-            const output = await this.node.getOutput(item);
-            const matchingKey = item.context.messageMatchingKey;
+            const { output, matchingKey } = takeMatchingKey(item, await this.node.getOutput(item));
             item.token.log(`.Throwing Signal <${this.signalId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
             // Awaited, as a message's is: the delegate's decision is part of the step, and its failure the step's.
             await item.context.appDelegate.signalThrown(this.signalId, output, matchingKey, item, itemContext(item, { what: 'signal', input: output }));

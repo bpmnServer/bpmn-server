@@ -26,6 +26,11 @@ and here
 
 ## [Unreleased]
 ### Added
+- **A throw's matching key as an output field** (docs/docs/examples/msg-throw-catch.md): a message or signal throw
+  event's output field `matchingKey` (`$({ 'data.caseId': data.caseId })`) is the key that picks the waiting instances
+  it reaches; it is not thrown with the data. `this.context.messageMatchingKey`, set by a script, still works.
+  **Compatibility:** a model that threw a field named `matchingKey` as data now has it taken as the key.
+  Test: `test/throw-events.test.mjs`.
 - **An add-on's settings** (`IAddOnManifest.settings`, `addon.json`): the `.env` names it reads, each with its label,
   who changes it (`editor`) and whether it is shown first (`main`); the Settings page gives each add-on its own area of
   them. The Policies add-on declares its security and notification settings, Modeling tools `MODEL_HISTORY`.
@@ -280,6 +285,9 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **A matching key is its throw's only**: the key a throw event's script set (`this.context.messageMatchingKey`) stayed
+  on the execution and narrowed every later throw in the same run, one meant to reach every instance too. It is read
+  once for its throw, and cleared. Test: `test/throw-events.test.mjs`.
 - **The application's `instanceLabel` hook labels cases seen from a host** (#295): a launched server's delegate is
   only what it knows of the application, so the hook was never there and every case without a model label showed
   `<model> #<caseId>`. The host now asks the engine, where the code is, for all of a list's cases in one call (an engine
