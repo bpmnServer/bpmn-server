@@ -172,6 +172,8 @@ class Execution extends ServerComponent implements IExecution {
         }
 
         this.process = startNode.process;
+        // started by a message or a signal another instance threw (Engine.throwMessage, throwSignal): the Rationale says so
+        this.receivedRow(options, startNode.id, startNode.name, null, 'is started by');
         //await this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
 
         await this.doExecutionEvent(this, EXECUTION_EVENT.process_start);
@@ -296,6 +298,8 @@ class Execution extends ServerComponent implements IExecution {
             options,
             inputData});
 
+        // a message or a signal another instance threw (Engine.throwMessage, throwSignal): the Rationale says so
+        if (token) this.receivedRow(options, token.currentItem.elementId, token.currentItem.node?.name, token.currentItem.seq, 'receives');
         if (token) {
             this.log('Execution('+this.name+').signal: .. launching a token signal');
 
@@ -839,6 +843,15 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
             changed: items.filter(item => this.statusBefore.get(item.id) !== item.status).map(fact),
             waiting: items.filter(item => item.status === ITEM_STATUS.wait).map(fact) }));
         this.statusBefore = new Map(items.map(item => [item.id, item.status]));
+    }
+    /** The receiver's row of a thrown message or signal (options.thrown: { kind, name, key, from }): from whom it came. */
+    private receivedRow(options, elementId: string, elementName: string, seq: number | null, verb: string) {
+        const thrown = options?.['thrown'];
+        if (!thrown) return;
+        const where = elementName ? `'${elementName}' (${elementId})` : elementId;
+        const from = thrown.from ? `${thrown.from.name} at ${thrown.from.elementName ? `'${thrown.from.elementName}' (${thrown.from.elementId})` : thrown.from.elementId}` : 'outside (an API call)';
+        const key = thrown.key && Object.keys(thrown.key).length ? `its matching key: ${JSON.stringify(thrown.key)}` : 'no matching key';
+        this.decision({ seq, element: where, action: `${verb} ${thrown.kind} '${thrown.name}' from ${from}`, why: [key] });
     }
     private record(entry) {
         if (this.keepLogs) this.instance.logs.push(entry);

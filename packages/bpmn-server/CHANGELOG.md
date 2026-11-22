@@ -26,6 +26,11 @@ and here
 
 ## [Unreleased]
 ### Added
+- **Where a message or signal went, in the Rationale** (docs/docs/examples/msg-throw-catch.md): the throwing
+  item's row says whom it reached (`throws message 'X': reaches <model> #<case> at <element>`, `starts ...`, `reaches
+  none`; a signal lists each), with its matching key; each receiver's row says from whom (`receives message 'X' from
+  ...`, `is started by ...`, `from outside (an API call)`). `engine.throwMessage` takes the throwing item (`from`),
+  as `throwSignal` does; the default delegate passes it. Test: `test/throw-events.test.mjs`.
 - **A throw's matching key as an output field** (docs/docs/examples/msg-throw-catch.md): a message or signal throw
   event's output field `matchingKey` (`$({ 'data.caseId': data.caseId })`) is the key that picks the waiting instances
   it reaches; it is not thrown with the data. `this.context.messageMatchingKey`, set by a script, still works.

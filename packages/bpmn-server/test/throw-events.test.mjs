@@ -236,3 +236,48 @@ test('a matching key as the throw\'s output field matchingKey: it narrows, and i
   assert.equal(got.data.matchingKey, undefined, 'the key is not');
   await srv.shutdown();
 });
+
+// ---- the Rationale: the thrower's row says whom its message or signal reached, each receiver's from whom
+
+const decisionsOf = async (srv, name, caseId) => {
+  const [instance] = (await srv.dataStore.findInstances({ name }, 'full')).filter(i => caseId === undefined || i.data.caseId === caseId);
+  return (instance?.logs ?? []).filter(l => l.type === 'decision').map(l => l.action);
+};
+
+test('the Rationale of a message: the thrower says whom it reached, the receiver from whom, with the key', async () => {
+  const srv = await keyServer({ OrderWaiter: keyWaiter('OrderWaiter', MESSAGE), SendsKeyed: keyThrower('SendsKeyed', [[MESSAGE, true]]) });
+  for (const caseId of [1, 2]) await srv.engine.start('OrderWaiter', { caseId });
+  await srv.engine.start('SendsKeyed', { caseId: 2 });
+  assert.ok((await decisionsOf(srv, 'SendsKeyed')).includes("throws message 'Order': reaches OrderWaiter #2 at Catch"));
+  assert.ok((await decisionsOf(srv, 'OrderWaiter', 2)).includes("receives message 'Order' from SendsKeyed #2 at T0"));
+  assert.ok(!(await decisionsOf(srv, 'OrderWaiter', 1)).some(a => /receives/.test(a)), 'case 1 received nothing');
+  const [thrower] = await srv.dataStore.findInstances({ name: 'SendsKeyed' }, 'full');
+  const row = thrower.logs.find(l => l.type === 'decision' && /^throws/.test(l.action));
+  assert.match(String(row.message), /its matching key: \{"data\.caseId":2\}/, 'why: the key');
+  await srv.shutdown();
+});
+
+test('the Rationale of a message that starts a process, and of one nobody gets', async () => {
+  const srv = await server([]);
+  await srv.engine.start('SendsOrder', { order: 7 });
+  assert.ok((await decisionsOf(srv, 'SendsOrder')).includes("throws message 'Order': starts Receiver at OnOrder"));
+  assert.ok((await decisionsOf(srv, 'Receiver')).includes("is started by message 'Order' from SendsOrder at T0"));
+  await srv.engine.start('SendsNobody', {});
+  assert.ok((await decisionsOf(srv, 'SendsNobody')).includes("throws message 'Nobody': reaches none: no instance waits for it, no process starts on it"));
+  await srv.shutdown();
+});
+
+test('the Rationale of a signal: the thrower lists whom it reached, each receiver says from whom; from the API, outside', async () => {
+  const srv = await keyServer({ GoWaiter: keyWaiter('GoWaiter', SIGNAL), SaysKeyed: keyThrower('SaysKeyed', [[SIGNAL, false]]) });
+  for (const caseId of [1, 2]) await srv.engine.start('GoWaiter', { caseId });
+  await srv.engine.start('SaysKeyed', { caseId: 9 });
+  const [row] = (await decisionsOf(srv, 'SaysKeyed')).filter(a => /^throws signal/.test(a));
+  assert.match(row, /^throws signal 'Go': reaches GoWaiter #[12] at Catch; reaches GoWaiter #[12] at Catch$/);
+  for (const caseId of [1, 2])
+    assert.ok((await decisionsOf(srv, 'GoWaiter', caseId)).includes("receives signal 'Go' from SaysKeyed #9 at T0"));
+
+  await srv.engine.start('GoWaiter', { caseId: 3 });
+  await srv.engine.throwSignal('Go', {}, { 'data.caseId': 3 });
+  assert.ok((await decisionsOf(srv, 'GoWaiter', 3)).includes("receives signal 'Go' from outside (an API call)"));
+  await srv.shutdown();
+});

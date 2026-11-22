@@ -131,7 +131,8 @@ interface IEngine {
      * @param data			message data
      */
     //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
-    throwMessage(messageId, data: {}, matchingQuery: {}): Promise<IExecution>;
+    /** `from`: the item throwing it, in an instance; the Rationale says whom it reached, and each receiver from whom. */
+    throwMessage(messageId, data: {}, matchingQuery: {}, from?: IItem): Promise<IExecution>;
     throwSignal(signalId, data: {}, matchingQuery: {}, from?: IItem);
     /** Runs a failed item's work again (an item whose status is `error`), and the instance on from it. */
     retry(itemQuery, userName?: string): Promise<IExecution>;

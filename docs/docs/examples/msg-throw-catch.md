@@ -84,3 +84,16 @@ From outside, the API takes the key with the message:
 `POST /api/engine/throwMessage` with `{ "messageId": "Confirm1", "data": { ... }, "messageMatchingKey": { "data.caseId": 7 } }`.
 
 ![Image description](../examples/msg-throw-catch.png)
+
+### 4 Who got it: the Rationale
+
+The instance page's Rationale, and the editor's Test tab, say where each message and signal went:
+
+- **The thrower:** `throws message 'Confirm1': reaches msgThrow #7 at 'confirm1' (catch_confirm1)`, or
+  `starts MsgCatch #7 at 'msg1' (StartEvent_1w66wpl)`, or `reaches none: no instance waits for it, no process starts
+  on it`. A signal lists every instance it reached. The row's why says the matching key.
+- **The receiver:** `receives message 'Confirm1' from MsgCatch #7 at 'confirm1' (throw_confirm1)`, or, on the start
+  event of an instance a message started, `is started by message 'Msg1' from ...`. A message from the API says
+  `from outside (an API call)`.
+
+The receiver is saved first and the thrower after, so both rows are there once the throw's step is done.
