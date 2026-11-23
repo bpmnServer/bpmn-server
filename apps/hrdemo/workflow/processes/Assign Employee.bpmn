@@ -2,7 +2,7 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="assign-employee-definitions" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:error id="NotFoundError" name="Not found" errorCode="HTTP_404" />
   <bpmn:process id="AssignEmployee" name="Assign Employee" isExecutable="true">
-    <bpmn:startEvent id="Asked">
+    <bpmn:startEvent id="Asked" camunda:formKey="${appVars.hrForms}/assignment">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="employeeId" label="Employee ID" type="string" defaultValue="EMP-009" />

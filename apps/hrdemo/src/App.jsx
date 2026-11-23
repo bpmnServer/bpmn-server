@@ -8,6 +8,7 @@ import Clients from './pages/Clients';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
 import Assignments from './pages/Assignments';
+import AssignmentForm from './pages/AssignmentForm';
 import Reviews from './pages/Reviews';
 import ReviewDetail from './pages/ReviewDetail';
 import Workflow from './pages/Workflow';
@@ -51,6 +52,8 @@ export default function App() {
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />
                 <Route path="/assignments" element={<Assignments />} />
+                {/* HR's own forms, which a model may name with camunda:formKey (docs/design/form-keys.md) */}
+                <Route path="/forms/assignment" element={<AssignmentForm />} />
                 <Route path="/reviews" element={<Reviews />} />
                 <Route path="/reviews/:id" element={<ReviewDetail />} />
                 <Route path="/account" element={<Account />} />

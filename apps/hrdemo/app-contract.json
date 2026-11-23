@@ -4,6 +4,7 @@
   "expressions": [
     { "kind": "var", "name": "employeeManager", "type": "string", "description": "The acting user's manager, as a user name; null for someone without one" },
     { "kind": "var", "name": "endFiscalYear", "type": "date", "description": "The last day of the fiscal year (31 March)" },
+    { "kind": "var", "name": "hrForms", "type": "string", "description": "Where HR's own forms are served (HR_FORMS_URL in .env), for a model's camunda:formKey" },
     { "kind": "function", "name": "managerOf", "params": [{ "name": "userName", "type": "string" }], "returns": "string", "effect": "read", "description": "An employee's own manager, as a user name; null for someone without one" },
     { "kind": "function", "name": "departments", "params": [{ "name": "criteria", "type": "object" }], "returns": "Department[]", "async": true, "effect": "read", "description": "The departments, for a form's drop-down" },
     { "kind": "function", "name": "employees", "params": [{ "name": "criteria", "type": "object" }], "returns": "Employee[]", "async": true, "effect": "read", "description": "The employees matching a search, for a form's lookup" },

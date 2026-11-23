@@ -26,6 +26,11 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **A task list answers its form key**: `GET /api/v3/tasks` gives each task `form.formKey` where its model names the
+  application's own page, with any `${appVars.<name>}` already worked out, so an application's own list opens that
+  page itself instead of owf's task page (docs/design/form-keys.md, flow A). The HR demo's To do panel does, and its
+  **Assign Employee** start event uses HR's own assignment form (`apps/hrdemo/src/pages/AssignmentForm.jsx`,
+  `HR_FORMS_URL` in its `.env`).
 - **Form keys** (docs/design/form-keys.md): a user task or a start event may name the application's own page with
   `camunda:formKey`, and owf sends the person there instead of drawing the task's fields. The key is the page's
   address and may hold an expression (`${appVars.hrForms}/assignment`) worked out from the application's contract,

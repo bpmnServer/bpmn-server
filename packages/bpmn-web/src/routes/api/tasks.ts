@@ -1,6 +1,7 @@
 import { BPMNAPI, SecureUser, formFieldLookup, filterValue, columnRaw, columnValues, sortOrder, sortRecords, ListColumnError, isLabelPath } from '../../index.js';
 import type { IListColumn, ILabelField } from '../../index.js';
 import { CaseAccess } from '../caseAccess.js';
+import { hasFormKey, formKeyAddress } from '../formKey.js';
 
 /*
  * The task operations, once (docs/design/api-v3.md): what an application does for one of its users. /api2/tasks (v2)
@@ -153,7 +154,7 @@ export class TaskOperations {
         if (skip) waiting = waiting.slice(skip);
         const page = waiting.slice(0, limit);
         const next = waiting.length > limit ? (sorting ? `o:${skip + limit}` : position(page.at(-1))) : null;
-        return { tasks: await this.withColumns(user, page, columns, cases), next };
+        return { tasks: await this.withFormKeys(await this.withColumns(user, page, columns, cases)), next };
     }
 
     /**
@@ -172,6 +173,24 @@ export class TaskOperations {
         if (this.access.on && !(column.paths ? [...column.paths.values()] : [column.path]).every(path => isLabelPath(fields, path)))
             throw new ListColumnError(`with security policies, a list is sorted by the values its labels name, not by ${key}`, 'SORT_REFUSED');
         return { field: undefined, direction, column };
+    }
+
+    /**
+     * Each task's `form.formKey`, where its model names the application's own page (docs/design/form-keys.md): a list
+     * needs it to open that page itself instead of owf's task page (flow A). Its fields are not read here — a list
+     * does not draw the form — and each model is loaded once for the page.
+     */
+    private async withFormKeys(tasks: any[]) {
+        const definitions = new Map<string, any>();
+        for (const name of new Set(tasks.map(t => t.processName).filter(Boolean)))
+            definitions.set(name, await this.server.definitions.load(name).catch(() => null));
+        // the address as the client needs it: any ${appVars.<name>} worked out here, so a list opens it as it stands
+        return Promise.all(tasks.map(async task => {
+            const formKey = definitions.get(task.processName)?.getNodeInfo(task.elementId)?.formKey;
+            if (!hasFormKey(formKey)) return task;
+            const address = await formKeyAddress(formKey, this.server, { user: task.userName });
+            return address ? { ...task, form: { formKey: address } } : task;
+        }));
     }
 
     /** The page's tasks as a list shows them; each with its values of the person's columns, from what they may read of its case. */

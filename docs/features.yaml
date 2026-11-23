@@ -712,8 +712,8 @@ features:
     what: "app-contract.json in the application's folder: the variables (appVars.<name>) and functions (appServices.<name>) an expression may use, with types and effects; types, roles, APIs, pages. Read and checked; the delegate's describe(). appVars: the delegate's appVarsClass (or getAppVars), worked out before an expression runs, in scripts, conditions, FEEL and decision tables, with evaluatingSource. verifyModel warns about unknown functions and variables, wrong argument counts, unknown pages and roles, and refuses a write function in a decision the model uses; the start compares the contract with the code; the editor completes its names; API v3 GET /application."
     docs: [docs/docs/app-contract.md, docs/design/app-contract.md]
     code: [packages/bpmn-server/src/engine/AppContract.ts, packages/bpmn-server/src/engine/DefaultAppDelegate.ts, packages/bpmn-server/src/engine/ScriptHandler.ts, packages/bpmn-server/src/elements/verifyModel.ts, packages/bpmn-web/src/routes/api/v3.ts, packages/bpmn-web/src/routes/formKey.ts, apps/hrdemo/app-contract.json]
-    examples: [apps/hrdemo/app-contract.json, apps/hrdemo/workflow/delegates/appVars.ts]
-    tests: [packages/bpmn-server/test/app-contract.test.mjs, packages/bpmn-server/test/form-keys.test.mjs, apps/testSampleApp/test/web/form-keys.test.mjs]
+    examples: [apps/hrdemo/app-contract.json, apps/hrdemo/workflow/delegates/appVars.ts, apps/hrdemo/src/pages/AssignmentForm.jsx]
+    tests: [packages/bpmn-server/test/app-contract.test.mjs, packages/bpmn-server/test/form-keys.test.mjs, apps/testSampleApp/test/web/form-keys.test.mjs, apps/testSampleApp/test/web/form-keys-flow.test.mjs]
   - id: connector-testing
     area: connectors
     name: "Connectors outside production"

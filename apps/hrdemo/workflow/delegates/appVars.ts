@@ -12,6 +12,15 @@ export class HrVars {
         return new AppServices(null).managerOf(this.context?.user?.userName);
     }
 
+    /**
+     * Where this deployment serves HR's own forms, which a model names with
+     * `camunda:formKey="${appVars.hrForms}/assignment"` (docs/design/form-keys.md §3). HR_FORMS_URL in `.env` moves
+     * them without touching a model.
+     */
+    hrForms(): string {
+        return process.env.HR_FORMS_URL ?? '/forms';
+    }
+
     /** The last day of the fiscal year: 31 March. */
     endFiscalYear(): string {
         const now = new Date();

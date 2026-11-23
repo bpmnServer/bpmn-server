@@ -86,7 +86,17 @@ export default function TaskPanel({ onToggle, onCount }) {
   useEffect(() => { onCount?.(tasks === false ? null : waiting); }, [tasks, waiting, onCount]);
   const go = to => { if (isPhone()) setOpen(false); navigate(to); };
 
-  const open_ = t => go(`/workflow/invokeItem?id=${encodeURIComponent(t.id)}&processName=${encodeURIComponent(t.processName)}&elementId=${encodeURIComponent(t.elementId)}`);
+  /**
+   * Where a task opens. A model may name one of HR's own forms (`camunda:formKey`, docs/design/form-keys.md flow A):
+   * then the task's `form.formKey` is that page's address, and we open it ourselves with the identifiers it needs —
+   * never through owf, and with no case data in the address. Anything else opens in the workflow pages, as before.
+   */
+  const open_ = t => {
+    const key = t.form?.formKey;
+    if (typeof key === 'string' && key.startsWith('/'))
+      return go(`${key}?instance=${encodeURIComponent(t.instanceId)}&item=${encodeURIComponent(t.id)}&returnTo=${encodeURIComponent(window.location.pathname)}`);
+    return go(`/workflow/invokeItem?id=${encodeURIComponent(t.id)}&processName=${encodeURIComponent(t.processName)}&elementId=${encodeURIComponent(t.elementId)}`);
+  };
   const row = t => (
     <li key={t.id}>
       <button className="task-item" onClick={() => open_(t)} title={`Open ${t.name || t.elementId}`}>
