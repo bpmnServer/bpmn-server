@@ -1,4 +1,4 @@
-# Development Environemnt
+# Contributing: the development environment
 
 bpmn-server, bpmn-client, bpmn-web, the docs and the sample application are one repository, [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server); npm
 workspaces link the packages to each other, so a change to bpmn-server is what bpmn-web runs on.

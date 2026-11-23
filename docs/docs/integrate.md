@@ -16,7 +16,7 @@ Your application signs its users in, not BPMN Server. It acts for them with **to
 
 The older APIs are deprecated since 3.7 and frozen: `/api` and `/api2` act as the service account (a user a caller names is ignored, unless `API_IMPERSONATION=true`, until 4.0), and the task API, `/api2/tasks`, acts for the user named in `x-acting-user` with `API_ACTING_USER_KEY`. [The client API](client-api.md) describes them.
 
-[Integrate an existing application](tutorial/tutorial-integrate.md) shows it with the leave request. See [Application integration](customization.md) and its [design](application-integration-design.md), and [Security](security.md) for how assignment works.
+[Integrate an existing application](tutorial/tutorial-integrate.md) shows it with the leave request. See [Application integration](customization.md) and its [design](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/application-integration-design.md), and [Security](security.md) for how assignment works.
 
 ## 3. Show tasks in your UI
 
@@ -25,7 +25,7 @@ With a user's token: list their waiting tasks (`GET /api/v3/tasks`), show one wi
 ## 4. Services and events
 
 - **Calls out:** service tasks call your application's services, or REST APIs through [connectors](connectors.md) with no code: [Connect external services](tutorial/tutorial-connectors.md).
-- **Events in:** your application tells a waiting process something happened by delivering a message or a signal through the API (`POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}`, with the key: the service account must be in `SYSTEM`). A message nothing waits for starts a process that has it as a start event. [Connect external services](tutorial/tutorial-connectors.md#hearing-back-from-outside) has the details. BPMN Server has no inbound webhook routes (they are [proposed](application-integration-design.md#5-inbound-webhooks-and-api)): your webhook handler calls the API.
+- **Events in:** your application tells a waiting process something happened by delivering a message or a signal through the API (`POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}`, with the key: the service account must be in `SYSTEM`). A message nothing waits for starts a process that has it as a start event. [Connect external services](tutorial/tutorial-connectors.md#hearing-back-from-outside) has the details. BPMN Server has no inbound webhook routes (they are [proposed](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/application-integration-design.md#5-inbound-webhooks-and-api)): your webhook handler calls the API.
 - **Events out:** an application that embeds the engine can listen to it (the app delegate's `executionEvent` and lifecycle hooks). Over the API, poll the tasks or instances you care about.
 
 ## 5. Test and deploy

@@ -7,7 +7,7 @@ import { CaseAccess } from '../caseAccess.js';
  * and /api/v3 map them, each with its own shapes. A user has a part in a task when they are its assignee, a candidate,
  * in a candidate group, or the task has no assignment; without one, or with no such task, the answer is the same 404,
  * so an id can not be probed. The engine holds the rule for who may see an item and the check that an item still
- * waits, under the instance's lock; the assignee's rule is here. See docs/docs/application-integration-design.md, 5.1.
+ * waits, under the instance's lock; the assignee's rule is here. See docs/design/application-integration-design.md, 5.1.
  */
 
 export const DEFAULT_LIMIT = 50, MAX_LIMIT = 200;

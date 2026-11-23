@@ -43,7 +43,7 @@ forms and scripts* (`models`), its `MODEL_HISTORY` the Model History add-on's.
 
 ## Add-ons on and off
 
-Each add-on's card ([Add-ons](../design/add-ons.md)) says whether it is on and which models use it, and has its
+Each add-on's card ([Add-ons](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/add-ons.md)) says whether it is on and which models use it, and has its
 switch: an administrator turns it on or off there (**Turn off** / **Turn on**), or in its area; designers see them.
 
 - **Saved to `app-config.json`**, the application's, beside its `.env` (`appConfig` in the configuration names another):

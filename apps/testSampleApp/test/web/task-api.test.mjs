@@ -1,5 +1,5 @@
 // @features: task-api, test-cases
-// Application integration, phase 1 (docs/docs/application-integration-design.md): the task API an application builds
+// Application integration, phase 1 (docs/design/application-integration-design.md): the task API an application builds
 // its inbox on. Two parts:
 //   - "today": what the server does now, which the design has to work with. These pass.
 //   - "contract": the routes, all in bpmn-web, as section 5.1 of the design has them.

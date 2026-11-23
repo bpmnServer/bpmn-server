@@ -1,4 +1,4 @@
-# Tutorial 9: Release
+# Tutorial 12: Release
 
 **Developer outcome:** deploy the workflow for real users, with the application and server configured safely, and keep
 the same checks running for every later change.

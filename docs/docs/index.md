@@ -1,17 +1,28 @@
-# BPMN Server
+# Omni Workflow (BPMN Server)
 
-**An embeddable BPMN 2.0 workflow engine for Node.js and TypeScript.**
+**A BPMN 2.0 and DMN workflow engine for Node.js, with a web application to design, test and run the workflows.**
 
-Build and run long-lived business processes **inside your application**. BPMN Server executes workflow models, coordinates human and service tasks, handles events and timers, and persists execution state. Your application remains responsible for its UI, authentication, domain services, and business records.
+Workflows run long-lived business processes for your application: tasks for people, calls to services, decisions,
+timers and messages, each case kept until it ends, and why it went its way. Your application keeps its own UI,
+users and business records.
 
-!!! info "BPMN Server 3.5"
-    Version 3.5 adds [OpenAPI-based REST connectors](connectors.md), [DMN decisions](decisions.md), [SQLite storage](persistence.md), [data objects](data-objects.md), an improved [model editor](modeler.md), and a one-command application starter. See [What's new in 3.5](whats-new-3.5.md) and the [3.x upgrade guide](whats-new-3.md).
+The packages are `bpmn-server` (the engine), `bpmn-web` (the web application: the Workbench, the model editor,
+the Settings page and the APIs) and `bpmn-client` (calling a server from another application).
 
-## Get started
+## Where to start
 
-**Recommended first step:** [Choose your journey](journeys.md). Start in the [online demo](https://bpmn.omniworkflow.com/) or install a local application; both paths lead through **Model → Configure → Check → Test → Run → Complete tasks → Inspect results**.
+| You want to | Start here |
+|---|---|
+| **See what it does**, with nothing to install | [The online demo](first-workflow.md) |
+| **Run your own workflow application**: your models, users and services | [Build an application](build.md), then the [tutorials](tutorial/start.md) |
+| **Add workflows to an application you have**, from its own UI and users | [Integrate an existing application](integrate.md) |
+| **Run processes from your own Node.js code**, with no web application | [Embedding the engine](embedding.md) |
+| **Have an AI agent build and test the workflows** | [Building workflows with an AI agent](ai/building-workflows.md) |
 
-Try a small application without running a database server:
+Not sure? Try the demo, then build an application: the [tutorials](tutorial/start.md) take one example, a leave
+request, from the first model to its release.
+
+## Try it in a minute
 
 ```sh
 npx bpmn-server init my-app --memory
@@ -19,75 +30,51 @@ cd my-app
 npm start
 ```
 
-Open **http://localhost:3000** and sign in with the starter application's development credentials (`admin` / `admin`). **Change these credentials before making the application accessible to others.** The in-memory store is for evaluation and tests; it is not durable across restarts.
+Open **http://localhost:3000**. The first page asks for the administrator: enter the setup token the server printed
+at start, then a name and a password ([The first start](setup.md#the-first-start)). `--memory` keeps nothing when
+the server stops; without it, choose MongoDB or SQLite ([Installation](setup.md)).
 
-For a persistent installation, run `npx bpmn-server init my-app` without `--memory` and choose a supported database. See [Installation and configuration](setup.md) for the monorepo source build, SQLite, MongoDB, and deployment options.
-
-| I want to… | Start here |
-| --- | --- |
-| Run the example application | [Quick Start and setup](setup.md) |
-| Design and test workflows visually | [Model editor](modeler.md) |
-| Add workflows to an existing application | [Application integration](customization.md) |
-| Call external REST APIs from tasks | [Connectors](connectors.md) |
-| Build decision tables and business rules | [Decisions (DMN)](decisions.md) |
-| Validate or debug a model | [Model verification](verify.md) and [Testing](testing.md) |
-| Use the engine directly | [Invoking workflows](invokation.md) and [API summary](api-summary.md) |
-
-## How it fits into your application
+## How it fits
 
 ```mermaid
-flowchart TB
-    Browser["Your UI or bpmn-web"] --> Host["Hosting application"]
-    Remote["Remote application (bpmn-client)"] --> API["REST API provided by the host"]
-    API --> Host
-    subgraph HostApp["Application process"]
-      Host --> Engine["bpmn-server execution engine"]
-      Engine --> Delegate["Application delegate and services"]
-      Engine --> DMN["DMN decisions"]
-      Engine --> Connectors["OpenAPI REST connectors"]
-    end
-    Delegate --> Business["Your domain services and business database"]
-    Connectors --> External["External REST APIs"]
-    Engine --> Store[("Workflow storage: MongoDB, SQLite, or memory")]
+flowchart LR
+    People["People: the Workbench, or your UI"] --> Web["bpmn-web"]
+    App["Your application"] -->|API v3| Web
+    Web --> Engine["bpmn-server: the engine"]
+    Engine --> Services["Your services (the delegate)"]
+    Engine --> Connectors["REST APIs (connectors)"]
+    Engine --> Store[("MongoDB, SQLite or memory")]
 ```
 
-The engine can also run in a process of its own, away from the host: see [Architecture](architecture.md).
+The engine runs the models; bpmn-web gives people and applications a way in; your application owns its business
+records and is called for what only it knows. The engine can run in the web application's process or in its own:
+[Architecture](architecture.md).
 
-**BPMN Server is a library, not a stand-alone web server.** A host application creates the engine and supplies its configuration and application delegate. The optional `bpmn-web` package provides a ready-to-use web application, modeler, administration tools, and REST endpoints. The `bpmn-client` package calls a running host over HTTP.
+## What it does
 
-The [monorepo](https://github.com/bpmnServer/bpmn-server) contains the engine (`packages/bpmn-server`), web application (`packages/bpmn-web`), remote client (`packages/bpmn-client`), starter (`sampleApp`), and test host (`testSampleApp`). Read [Application integration](customization.md) to understand responsibilities and extension points.
+| | |
+|---|---|
+| **Runs BPMN** | User, service, script, business-rule and receive tasks; gateways; events; timers; messages and signals; subprocesses and multi-instance; errors and compensation |
+| **Decides with DMN** | Decision tables with FEEL, tested like the models ([Decisions](decisions.md)) |
+| **Assigns and secures the work** | Lanes, candidates and assignment policies; who may see a case and do what in it ([Add-ons](add-ons/assignment.md), [Security](security.md)) |
+| **Calls REST APIs** | Connectors from OpenAPI documents, with their keys kept encrypted ([Connectors](connectors.md)) |
+| **Designs and tests** | A model editor with model checks, a Test tab and Gherkin tests run in the engine ([Model editor](modeler.md), [Testing](testing.md)) |
+| **Explains each case** | Its Rationale: every step, what decided it and why |
+| **Runs where you need it** | Development, test and production environments, read-only servers ([Environments](environments.md)) |
 
-## What the engine provides
+Every feature, with its documentation, its code and its tests: [Features](features.md).
 
-| Capability | Details |
-| --- | --- |
-| BPMN execution | Service, script, user and business-rule tasks; gateways; events; timers; subprocesses; multi-instance activities |
-| Long-running processes | Workflow instance state, variables, waiting tasks, locking, and recovery facilities |
-| User work | Assignments, candidate users/groups, task completion, and security integration with your host |
-| Business decisions | DMN decision tables, FEEL expressions, and decision tests |
-| External integration | OpenAPI 3.0/3.1 REST connectors with input/output mappings and configured credentials |
-| Pluggable persistence | MongoDB, SQLite (Node.js 22.5+), in-memory, or a custom document-store adapter |
-| Model development | BPMN/DMN editors, model verification, linting, scenarios, and debugging |
-| Application integration | TypeScript/JavaScript services, delegates, listeners, and runtime/admin APIs |
+## Workflow state and business data
 
-See the [feature examples](examples.md), [execution model](execution.md), [data model](data.md), and [security](security.md).
+The engine keeps the models, the cases, their tasks and their workflow data. **Your application keeps its business
+records**: claims, orders, employees. A workflow carries their keys (a `claimId`), calls your services to change them,
+and reads them through [data objects](data-objects.md).
 
-## Workflow state versus business data
+## Before production
 
-The engine owns the BPMN definition, process instances, execution items, workflow variables, and task state. **Your application should normally own business entities** such as claims, orders, employees, and customers.
+Use a database that keeps its data, sign people in (bpmn-web's or your application's own), keep the keys secret, and
+test the models before release: [Installation](setup.md#production), [Security](security.md),
+[Tutorial 12: Release](tutorial/release.md).
 
-For example, a workflow can carry a `claimId`, call your service to update that claim, and load claim information via a [data object](data-objects.md). Avoid treating the workflow instance as the authoritative database for your business records.
-
-## Model a process
-
-`bpmn-web` includes a BPMN editor built on bpmn.io with a properties panel, model checks, and test scenarios.
-
-![BPMN model editor](images/Modeler.png)
-
-Models are BPMN XML; they can be imported from other BPMN tools or edited visually. The [model editor guide](modeler.md) explains supported properties and validation. **BPMN 2.0 notation coverage is not the same as full support for every extension from other engines**; check the [examples](examples.md) and [model checker](verify.md) before importing advanced models.
-
-## Use in production
-
-Use a persistent data store; configure authentication and access controls in your host; secure connector credentials; review timer and lock settings; and test shutdown/recovery before deploying. See [Setup](setup.md), [Security](security.md), and [Advanced topics](advanced.md).
-
-The full demonstration is available at [bpmn.omniworkflow.com](https://bpmn.omniworkflow.com). The project is [MIT-licensed on GitHub](https://github.com/bpmnServer/bpmn-server).
+The public demo is at [bpmn.omniworkflow.com](https://bpmn.omniworkflow.com); the code is
+[MIT-licensed on GitHub](https://github.com/bpmnServer/bpmn-server).

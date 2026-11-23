@@ -1,4 +1,4 @@
-# Connect external services
+# Tutorial 11: Connect external services
 
 A process often needs another system: check a balance, create a ticket, wait for a payment. In this tutorial a service task calls GitHub's REST API with no code, a missing repository takes another path, and then the process hears back from outside.
 
@@ -58,6 +58,6 @@ What delivery does:
 - **Errors come back in the body**, with HTTP status 200: `{ "errors": "..." }`. bpmn-client throws them as errors; a plain HTTP call must check for them.
 - **Who may deliver.** Through `/api` (`BPMNClient`, `API_KEY`), any caller with the key. Through `/api2` (`BPMNClient2`), only a system account: the service account's `API_SERVICE_USER_GROUPS` must include `SYSTEM`.
 
-BPMN Server has no inbound webhook routes: the other system's webhook calls this API, directly or through a small handler in your application. Named webhook routes, with retries that never start a second process, are a proposal: see [the integration design](../application-integration-design.md#5-inbound-webhooks-and-api).
+BPMN Server has no inbound webhook routes: the other system's webhook calls this API, directly or through a small handler in your application. Named webhook routes, with retries that never start a second process, are a proposal: see [the integration design](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/application-integration-design.md#5-inbound-webhooks-and-api).
 
 Previous: [Tutorial 10, integrate an existing application](tutorial-integrate.md). Next: [Tutorial 12, release](release.md).

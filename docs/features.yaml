@@ -173,7 +173,7 @@ features:
     name: "End events, terminate"
     what: "A path ends; a terminate end event ends the whole instance."
     xml: ["bpmn:endEvent"]
-    docs: [docs/docs/executionStructure.md]
+    docs: [docs/docs/execution.md]
     code: [packages/bpmn-server/src/elements/Events.ts, packages/bpmn-server/src/elements/behaviours/Terminate.ts]
     tests: [apps/testSampleApp/processes/Event Based Gateway.engine.feature]
     examples: [apps/testSampleApp/examples/invoice.test.ts]
@@ -545,7 +545,7 @@ features:
     area: api
     name: "The task API"
     what: "/api2/tasks: an application lists, claims and completes tasks for its users, with a key of its own, off by default."
-    docs: [docs/docs/client-api.md, docs/docs/application-integration-design.md]
+    docs: [docs/docs/client-api.md, docs/design/application-integration-design.md]
     code: [packages/bpmn-web/src/routes/taskApi.ts]
     tests: [apps/testSampleApp/test/web/task-api.test.mjs]
   - id: rest-api

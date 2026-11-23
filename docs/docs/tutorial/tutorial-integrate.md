@@ -1,4 +1,4 @@
-# Integrate an existing application
+# Tutorial 10: Integrate an existing application
 
 Your company already has an HR application, with its own users and pages. Here it runs the leave request (the sample application's **Leave Application**) on BPMN Server over its API, [API v3](../api-v3.md): it starts requests, shows each user their tasks, and completes them. The server must be running.
 

@@ -2,20 +2,20 @@
 
 Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `npm run map`.
 
-## Getting Started
+## Get Started
 
-- [Overview](index.md): Build and run long-lived business processes inside your application.
-- [Choose Your Journey](journeys.md): BPMN Server can be tried in a browser, run as your own workflow application, connected to an application you already have, or built into your own code.
-- [Building Workflows with AI](ai/building-workflows.md): On a server, start with its /llms.txt (for example https://bpmn.omniworkflow.com/llms.txt): what that site has (its API, services, connectors, user groups), its own rules, then…
-- [Chatting with Your Server](ai/chat-assistants.md): Your users can build and test workflows by chatting with an AI assistant (ChatGPT, Claude, ...) that works on your BPMN Server for them: it reads the site's guide, writes the…
-- [Online Demo](first-workflow.md): Journey A: the quickest way to understand BPMN Server is to build, test, and run a small process.
-- [Build an Application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
-- [Integrate an Existing Application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.
-- [Installation](setup.md): init creates the sample application: processes/ (Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository), connectors/ (the editor's…
-- [Settings: .env and configuration](settings.md): An application has two places for settings.
-- [What's new in 3.6](whats-new-3.6.md): bpmn-server 3.6 separates the host from the engine, removes guest access and moves every test to Gherkin.
-- [What's new in 3.5](whats-new-3.5.md): bpmn-server 3.5 adds REST API connectors, SQLite storage, decisions (DMN) as the standard describes them, a new model editor with tests for models and decisions, and npx…
-- [Upgrade to 3.x](whats-new-3.md): bpmn-server 3 is a modernized engine: an ES module on current Node.js and MongoDB drivers, embeddable in a larger application, with a runtime API kept apart from model…
+- [Overview](index.md): Workflows run long-lived business processes for your application: tasks for people, calls to services, decisions, timers and messages, each case kept until it ends, and why it…
+- [The online demo](first-workflow.md): Journey A: the quickest way to understand BPMN Server is to build, test, and run a small process.
+- [Build an application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
+- [Integrate an existing application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.
+- [Embed the engine](embedding.md): Journey D: run processes from your own Node.js code, with no web application.
+- **With an AI agent**
+  - [Building workflows with an AI agent](ai/building-workflows.md): On a server, start with its /llms.txt (for example https://bpmn.omniworkflow.com/llms.txt): what that site has (its API, services, connectors, user groups), its own rules, then…
+  - [Chatting with your server](ai/chat-assistants.md): Your users can build and test workflows by chatting with an AI assistant (ChatGPT, Claude, ...) that works on your BPMN Server for them: it reads the site's guide, writes the…
+- **What's new**
+  - [What's new in 3.6](whats-new-3.6.md): bpmn-server 3.6 separates the host from the engine, removes guest access and moves every test to Gherkin.
+  - [What's new in 3.5](whats-new-3.5.md): bpmn-server 3.5 adds REST API connectors, SQLite storage, decisions (DMN) as the standard describes them, a new model editor with tests for models and decisions, and npx…
+  - [Upgrade to 3.x](whats-new-3.md): bpmn-server 3 is a modernized engine: an ES module on current Node.js and MongoDB drivers, embeddable in a larger application, with a runtime API kept apart from model…
 
 ## Tutorials
 
@@ -35,86 +35,93 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
   - [11. Connect External Services](tutorial/tutorial-connectors.md): A process often needs another system: check a balance, create a ticket, wait for a payment.
   - [12. Release](tutorial/release.md): the same checks running for every later change.
 
-## Modeling and Integration
+## Concepts
 
-- [Model editor](modeler.md): bpmn-web's model editor is bpmn-js with a properties panel that offers what bpmn-server runs, checks the model as it is edited, and runs it, step by step, before it is saved…
-- [Checking models](verify.md): verifyModel checks a BPMN model the way bpmn-server loads and runs it, without running it.
-- [Testing and debugging models](testing.md): A model is ready when it passes three kinds of checks:
-- [Connectors (REST APIs)](connectors.md): A service task can call a connector instead of a service.
-- [Decisions (DMN)](decisions.md): A business rule task evaluates a DMN decision: a decision table (or a literal expression) kept in its own file, next to the models.
+- [Architecture](architecture.md): BPMN Server has three layers: a host that people and other systems talk to, an engine that runs processes, and a core of model and data handling that both of them use.
+- [How a workflow runs](execution.md): Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
+- [Workflow data](data.md): bpmn-server relies on a Database to store workflow information.
+- [Finding instances](data_find.md): This method allows you to retrieve workflow instances from wf_instances collection.
 - [Data objects](data-objects.md): A data object in the diagram stands for data the process works on: a client, an order, a policy.
+- [Who may do what](security.md): In general Application Security deals with the following topics:
+- [Environments and read-only servers](environments.md): APP_ENV in .env says which environment a server is: development, test or production.
+
+## Modeling
+
+- [The model editor](modeler.md): bpmn-web's model editor is bpmn-js with a properties panel that offers what bpmn-server runs, checks the model as it is edited, and runs it, step by step, before it is saved…
+- [Checking models](verify.md): verifyModel checks a BPMN model the way bpmn-server loads and runs it, without running it.
+- [Testing and debugging](testing.md): A model is ready when it passes three kinds of checks:
+- [Scripts and expressions](scripting.md): BPMN-Server provides scripting throughout the workflow.
+- [Decisions (DMN)](decisions.md): A business rule task evaluates a DMN decision: a decision table (or a literal expression) kept in its own file, next to the models.
+- [Labels](labels.md): A case is known by what identifies it: Car: Porsche 911 · Buyer: staff, not only by its case id.
+- [Form rules](form-rules.md): The engine checks a task's form rules when the task is completed.
+- [Lists and lookups in forms](form-lookups.md): A form field can offer choices from your application: a drop-down of departments, or a search for an employee.
+- [A process explained](process-guide.md): Every process has a guide for the people who work in it: How this process goes, at /guide/<process>.
+- [Timers](timers.md): All Timers are persisted, therefore, if the Node.js session is restared timers will pickup where they left ## Timer Types
+- **BPMN by example**
+  - [Overview](examples.md): Each page here takes one BPMN element or pattern: what it does in BPMN Server, the model's XML for it, and what the engine does when it runs.
+  - [Service task](examples/serviceTask.md): A service task calls a service, a method of the application's services, or a connector, a REST API the administrator added (see Connectors).
+  - [Script task](examples/scriptTask.md)
+  - [Business rule task](examples/Business Rules.md): P.S.
+  - [Conditional flow](examples/conditionalFlow.md)
+  - [Script listeners](examples/scriptEvents.md): Scripts can be added to listen to two events: - Start before the Task is executed - End after the task is executed
+  - [Gateways](examples/gateways.md): gateways - camunda7 manual
+  - [Event-based gateway](examples/ebg.md): Event Based Gateway launches all valid outbound flows, but once on event is completed, it must cancel the rest.
+  - [Multiple start events](examples/multiStartEvent.md): When a definition/process has multiple start node, you need to specify the start node when starting the process:
+  - [Input fields](examples/inputFields.md)
+  - [Boundary events](examples/boundary-events.md): boundary events have started in a wait state
+  - [Messages](examples/msg-throw-catch.md): Two separate processes can talk to each other with messages.
+  - [Signals](examples/signal-throw-catch.md): Messages are directed toward a specific recipient node, Signals however are broadcast to all potential listeners.
+  - [Errors and escalations](examples/error_events.md): Also Scripts and Services Tasks can Raise BPMN Errors/Escalation/Exception
+  - [Call activity](examples/callProcess.md): In the above example 'loop' is the name of process to be called.
+  - [Multi-instance (loops)](examples/loop.md): Any Task can have multi-instance either Sequential or Parrallel
+  - [Subprocess](examples/subProcess.md)
+  - [Transactions](examples/transactions.md): In this example:
+  - [Ad-hoc subprocess](examples/adHoc.md): Ad-Hoc subprocess allow you to choose the activity you like to invoke: - On start of subprocess; all activities start in a wait state - User can Invoke 'Execute' any task -…
+
+## Integration
+
+- [Integrating your application](customization.md): BPMN Server is an embeddable execution engine, not a stand-alone process server.
+- [Connectors (REST APIs)](connectors.md): A service task can call a connector instead of a service.
+- [The application's contract](app-contract.md): An application tells BPMN Server what its workflows may use of it in one file, app-contract.json, in its folder (the folder it runs in; the configuration's appContract names…
+- [Custom delegates](delegates.md): The app delegate is your application's code that the engine calls: the services service tasks call, and hooks on what the engine does.
+- [Custom persistence](persistence.md): Where instances, models and everything else are kept, and how to change it.
+- [Invoking workflows](invokation.md): Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least: - Selection of Workflows to Start - Show outstanding Tasks…
+- [The engine's API](api-summary.md): The TypeDoc listing is generated from the current source (npm run _docs:generate:api in docs/): every class and interface, with its signatures.
+- **bpmn-client**
+  - [Installing it](bpmn-client.md)
+  - [The client API](client-api.md): bpmn-client is a lightweight Node package to remotely access bpmn-server.
+- **The Buy Used Car example**
+  - [On the server](examples/BuyCar-Server.md): For the model above we will walk-through how to execute it programaticaly.
+  - [From another application](examples/BuyCar-Remote.md): For the model above we will walk-through how to execute it programaticaly.
+  - [In the web application](examples/BuyCar-Web.md): From the WebApp home page: - Select the Process - Click [Execute] link
 
 ## Add-ons
 
 - [Assignment](add-ons/assignment.md): The Assignment add-on decides who works on each task, and who may start a process.
+- [Assignment policies](assignment-policies.md): A user task can say who works on it by naming an assignment policy: a decision table, kept with the models, whose first matching rule assigns the task when it starts.
 - [Notifications](add-ons/notification.md): The Notifications add-on tells people what happens to their work.
+- [Notification policies](notification-policies.md): A process can say who is told what, and when, by naming a notification policy: a decision table, kept with the models, whose every matching rule sends a notification.
 - [Access Control](add-ons/security.md): The Access Control add-on decides who may see a case and what they may do in it.
 - [Labels](add-ons/labels.md): The Labels add-on names each case and task from its data: a case Client: acme · Order: 1234, a task Approve 90.
 - [Model Options](add-ons/modeling.md): The Model History add-on gives the model editor its Test and History tabs.
 - [Extended Forms](add-ons/forms.md): The Extended Forms add-on gives a form field its choices from a source, as the form is filled.
 - [AI Agents](add-ons/ai.md): The AI Agents add-on lets a person give their AI agent a link to this site: the agent then works as them.
 
+## Operate
+
+- [Installation](setup.md): init creates the sample application: processes/ (Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository), connectors/ (the editor's…
+- [Docker](docker.md): Install the BPMN Server distribution with Docker.
+- [The web application](bpmn-web.md): bpmn-web is the web host for bpmn-server: it provides the Workbench, task lists, model and decision editors, administration pages, and REST APIs.
+- [The Settings page](integration-settings.md): where administrators and designers set up the server, and turn the add-ons on and off.
+- [Lists, columns and filters](list-columns.md): Each person chooses what the lists show.
+- [Performance and test coverage](performance.md): This page gives the speed, load and memory figures from BPMN Server's own test suites, the effect of the database indexes, and how much of the code the tests run.
+- [Advanced topics](advanced.md): A command after --, with the answers to its questions, runs just that and quits: for scripts, and for a server (on one made by the installer, owf cli ...
+- [Frequently asked questions](faq/index.md)
+
 ## Reference
 
-- [Invoking Workflows](invokation.md): Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least: - Selection of Workflows to Start - Show outstanding Tasks…
-- [Workflow Execution](execution.md): Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
-- [Data and Persistence](data.md): bpmn-server relies on a Database to store workflow information.
-- [Scripting](scripting.md): BPMN-Server provides scripting throughout the workflow.
-- [Security](security.md): In general Application Security deals with the following topics:
 - [Features](features.md): What bpmn-server, bpmn-web and bpmn-client do, area by area, each with where it is documented, its code and its tests.
-- [Performance and test coverage](performance.md): This page gives the speed, load and memory figures from BPMN Server's own test suites, the effect of the database indexes, and how much of the code the tests run.
-- [Labels](labels.md): A case is known by what identifies it: Car: Porsche 911 · Buyer: staff, not only by its case id.
-- [Lists and lookups in forms](form-lookups.md): A form field can offer choices from your application: a drop-down of departments, or a search for an employee.
-- [Form rules](form-rules.md): The engine checks a task's form rules when the task is completed.
-- [Assignment policies](assignment-policies.md): A user task can say who works on it by naming an assignment policy: a decision table, kept with the models, whose first matching rule assigns the task when it starts.
-- [Notification policies](notification-policies.md): A process can say who is told what, and when, by naming a notification policy: a decision table, kept with the models, whose every matching rule sends a notification.
-- [Advanced Topics](advanced.md): A command after --, with the answers to its questions, runs just that and quits: for scripts, and for a server (on one made by the installer, owf cli ...
-- [Frequently Asked Questions](faq/index.md)
-
-## Features
-
-- [Service Task](examples/serviceTask.md): A service task calls a service, a method of the application's services, or a connector, a REST API the administrator added (see Connectors).
-- [Script Task](examples/scriptTask.md)
-- [Conditional Flow](examples/conditionalFlow.md)
-- [Scripts Listeners](examples/scriptEvents.md): Scripts can be added to listen to two events: - Start before the Task is executed - End after the task is executed
-- [Gateways](examples/gateways.md): gateways - camunda7 manual
-- [Event Based Gateway](examples/ebg.md): Event Based Gateway launches all valid outbound flows, but once on event is completed, it must cancel the rest.
-- [Multiple Start Events](examples/multiStartEvent.md): When a definition/process has multiple start node, you need to specify the start node when starting the process:
-- [Input Fields](examples/inputFields.md)
-- [Boundary Events](examples/boundary-events.md): boundary events have started in a wait state
-- [Throwing/Catching Messages](examples/msg-throw-catch.md): Two separate processes can talk to each other with messages.
-- [Throwing/Catching Signals](examples/signal-throw-catch.md): Messages are directed toward a specific recipient node, Signals however are broadcast to all potential listeners.
-- [Error/Escalate Events](examples/error_events.md): Also Scripts and Services Tasks can Raise BPMN Errors/Escalation/Exception
-- [Call Process](examples/callProcess.md): In the above example 'loop' is the name of process to be called.
-- [Multi-instances (loop)](examples/loop.md): Any Task can have multi-instance either Sequential or Parrallel
-- [UserTask Assignment](security.md): In general Application Security deals with the following topics:
-- [Timers](timers.md): All Timers are persisted, therefore, if the Node.js session is restared timers will pickup where they left ## Timer Types
-- [SubProcess](examples/subProcess.md)
-- [Transactions](examples/transactions.md): In this example:
-- [Ad Hoc SubProcess](examples/adHoc.md): Ad-Hoc subprocess allow you to choose the activity you like to invoke: - On start of subprocess; all activities start in a wait state - User can Invoke 'Execute' any task -…
-
-## API
-
-- [API Example](examples/BuyCar-Server.md): For the model above we will walk-through how to execute it programaticaly.
-- [API](api/readme.md): bpmn-server
-
-## Advanced Development
-
-- [Embedding the Engine](embedding.md): Journey D: run processes from your own Node.js code, with no web application.
-- [Engine API](api-summary.md): The TypeDoc listing is generated from the current source (npm run _docs:generate:api in docs/): every class and interface, with its signatures.
-- [Application Integration](customization.md): BPMN Server is an embeddable execution engine, not a stand-alone process server.
-- [Custom Persistence](persistence.md): Where instances, models and everything else are kept, and how to change it.
-- [Custom Delegates](delegates.md): The app delegate is your application's code that the engine calls: the services service tasks call, and hooks on what the engine does.
-- [Runtime Architecture](architecture.md): BPMN Server has three layers: a host that people and other systems talk to, an engine that runs processes, and a core of model and data handling that both of them use.
-
-## bpmn-web
-
-- [install](bpmn-web.md): bpmn-web is the web host for bpmn-server: it provides the Workbench, task lists, model and decision editors, administration pages, and REST APIs.
-- [Executing Example](examples/BuyCar-Web.md): From the WebApp home page: - Select the Process - Click [Execute] link
-
-## bpmn-client
-
-- [install](bpmn-client.md)
-- [Executing Example](examples/BuyCar-Remote.md): For the model above we will walk-through how to execute it programaticaly.
-- [Client API](client-api.md): bpmn-client is a lightweight Node package to remotely access bpmn-server.
-- [API v3 reference](api-v3.md): Every call acts as one user: a user's token (Authorization: Bearer), or the service key (x-api-key) for the service account.
+- [Settings (.env)](settings.md): An application has two places for settings.
+- [API v3](api-v3.md): Every call acts as one user: a user's token (Authorization: Bearer), or the service key (x-api-key) for the service account.
+- [Engine and client classes](api/readme.md): bpmn-server
+- [Contributing](Development.md): bpmn-server, bpmn-client, bpmn-web, the docs and the sample application are one repository, bpmnServer/bpmn-server; npm workspaces link the packages to each other, so a change…
