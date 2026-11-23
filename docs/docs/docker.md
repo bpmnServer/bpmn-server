@@ -145,7 +145,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-See the [separated Docker deployment README](../../apps/docker-isolated-engine/README.md) for
+See the [separated Docker deployment README](https://github.com/bpmnServer/bpmn-server/blob/main/apps/docker-isolated-engine/README.md) for
 the topology, configuration, health checks, and local-package build. It uses
 `apps/hrdemo` as the application base; the engine service is private to the
 Compose network and the host connects to it with `ENGINE_AT=http://engine:3001`.
