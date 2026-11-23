@@ -14,3 +14,10 @@ work/
 
 # API_TRACE: every API call and its answer, written while the app runs (bpmn-server setup turns it on)
 api-trace.jsonl
+
+# machine settings and secrets: only the .example files belong in git. .env.bak is the Settings page's backup of one
+# (routes/integration.ts), so it holds the same keys
+.env
+.env.*
+!.env.example
+*.env.bak
