@@ -3,7 +3,8 @@
 `bpmn-web` is the web host for `bpmn-server`: it provides the Workbench, task lists, model and decision editors,
 administration pages, and REST APIs. Your application supplies the models, settings, users, and app delegate.
 
-Please [see bpmn-server for full documentation](https://github.com/bpmnserver/bpmn-server)
+Set it up with [Installation](setup.md); what the Workbench and the editors offer is on
+[the model editor](modeler.md) and [the Settings page](integration-settings.md).
 
 ## The menu
 
