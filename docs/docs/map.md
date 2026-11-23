@@ -81,6 +81,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 ## Integration
 
 - [Integrating your application](customization.md): OmniWorkflow is an embeddable execution engine, not a stand-alone process server.
+- [Calling it from your application (C#, Python, curl)](integration-examples.md): Any application that can make HTTP calls can run workflows: C#, Java, Python, Go, PHP, Ruby, or Node.js.
 - [Connectors (REST APIs)](connectors.md): A service task can call a connector instead of a service.
 - [The application's contract](app-contract.md): An application tells OmniWorkflow what its workflows may use of it in one file, app-contract.json, in its folder (the folder it runs in; the configuration's appContract names…
 - [Custom delegates](delegates.md): The app delegate is your application's code that the engine calls: the services service tasks call, and hooks on what the engine does.

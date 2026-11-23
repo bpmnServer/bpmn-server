@@ -1,0 +1,68 @@
+{
+  "runDate": "2026-11-23",
+  "platform": "AWS Ubuntu 24.04",
+  "node": "22.23.5",
+  "mongodb": "8.0.38 native",
+  "docker": "29.1.3",
+  "compose": "2.40.3",
+  "warmupRequests": 20,
+  "timedRequests": 100,
+  "measurements": [
+    {
+      "name": "Host-to-engine",
+      "nativeEngine": { "meanMs": 0.80, "medianMs": 0.77, "p95Ms": 0.91, "minMs": 0.71, "maxMs": 2.03 },
+      "dockerEngine": { "meanMs": 0.88, "medianMs": 0.84, "p95Ms": 0.97, "minMs": 0.76, "maxMs": 2.44 }
+    },
+    {
+      "name": "Full host API",
+      "nativeEngine": { "meanMs": 11.58, "medianMs": 11.39, "p95Ms": 12.76, "minMs": 10.95, "maxMs": 18.90 },
+      "dockerEngine": { "meanMs": 11.56, "medianMs": 11.37, "p95Ms": 12.19, "minMs": 10.87, "maxMs": 20.90 }
+    }
+  ],
+  "allDocker": {
+    "fullHostApi": { "meanMs": 12.64, "medianMs": 12.09, "p95Ms": 15.02, "minMs": 11.51, "maxMs": 25.08 },
+    "hostToEngineDiagnostic": { "meanMs": 1.42, "medianMs": 1.36, "p95Ms": 2.63, "minMs": 0.90, "maxMs": 4.52, "client": "Node fetch inside host container" }
+  },
+  "fourParallelTenants": {
+    "independentAllDockerStacks": {
+      "containers": 12,
+      "tenants": [
+        { "tenant": 1, "meanMs": 26.53, "medianMs": 21.88, "p95Ms": 37.61, "minMs": 14.04, "maxMs": 270.97 },
+        { "tenant": 2, "meanMs": 27.84, "medianMs": 22.29, "p95Ms": 55.04, "minMs": 14.96, "maxMs": 174.81 },
+        { "tenant": 3, "meanMs": 30.34, "medianMs": 21.69, "p95Ms": 81.46, "minMs": 12.76, "maxMs": 250.23 },
+        { "tenant": 4, "meanMs": 27.61, "medianMs": 23.65, "p95Ms": 44.14, "minMs": 14.88, "maxMs": 131.84 }
+      ],
+      "averageMeanMs": 28.08,
+      "averageMedianMs": 22.38,
+      "highestP95Ms": 81.46
+    },
+    "sharedNativeMongo": {
+      "containers": 8,
+      "tenants": [
+        { "tenant": 1, "meanMs": 20.27, "medianMs": 20.02, "p95Ms": 25.82, "minMs": 13.17, "maxMs": 43.38 },
+        { "tenant": 2, "meanMs": 19.84, "medianMs": 19.37, "p95Ms": 26.43, "minMs": 12.84, "maxMs": 34.11 },
+        { "tenant": 3, "meanMs": 20.09, "medianMs": 19.37, "p95Ms": 28.28, "minMs": 13.00, "maxMs": 33.20 },
+        { "tenant": 4, "meanMs": 20.04, "medianMs": 19.61, "p95Ms": 25.50, "minMs": 11.63, "maxMs": 47.50 }
+      ],
+      "averageMeanMs": 20.06,
+      "averageMedianMs": 19.59,
+      "highestP95Ms": 28.28,
+      "database": "native MongoDB, one database name per tenant"
+    }
+  },
+  "oneVsFourSharedNativeMongo": {
+    "oneTenant": { "meanMs": 11.89, "medianMs": 11.58, "p95Ms": 12.91, "minMs": 9.37, "maxMs": 24.68, "containers": 2 },
+    "fourTenantAverage": { "meanMs": 20.06, "medianMs": 19.59, "p95Ms": 26.51, "containers": 8 },
+    "medianIncreasePercent": 69.2,
+    "p95IncreasePercent": 105.3
+  },
+  "notes": [
+    "Host API returned HTTP 200.",
+    "Direct engine probe returned HTTP 404 after routing; it measures transport overhead, not workflow execution.",
+    "Hybrid Docker engine used Linux host networking so it could reach native MongoDB bound to loopback.",
+    "All-Docker Compose used the bridge network with host-to-engine traffic on engine:3001 and MongoDB traffic on mongo:27017.",
+    "All-Docker host-to-engine diagnostic used a different client method and is directional, not strictly comparable.",
+    "Four independent all-Docker tenant stacks used 12 containers total.",
+    "Four shared-Mongo tenants used 8 containers total and native MongoDB."
+  ]
+}

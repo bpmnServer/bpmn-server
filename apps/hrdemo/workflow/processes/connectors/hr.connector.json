@@ -2,7 +2,7 @@
   "id": "hr",
   "name": "HR application",
   "description": "The HR demo application, running in this server's process.",
-  "baseUrl": "http://localhost:3100/api/hr",
+  "baseUrl": "http://127.0.0.1:3300/api/hr",
   "operations": {
     "listEmployees": true,
     "getEmployee": true,
@@ -14,7 +14,7 @@
   "timeout": null,
   "retries": null,
   "createdAt": "2026-11-11T11:36:35.310Z",
-  "updatedAt": "2026-11-11T23:26:04.128Z",
+  "updatedAt": "2026-11-23T10:45:07.904Z",
   "auth": {
     "type": "apiKey",
     "in": "header",

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-labelledby="title desc">
+  <title id="title">One versus four tenants with shared native MongoDB</title>
+  <desc id="desc">Average median and p95 host API latency for one tenant versus four concurrent tenant host and engine pairs.</desc>
+  <rect width="900" height="600" fill="#fff"/><text x="50" y="48" font-family="Arial" font-size="28" font-weight="700" fill="#172033">One versus four tenants</text><text x="50" y="78" font-family="Arial" font-size="16" fill="#526071">Docker host/engine pairs sharing native MongoDB; lower is faster.</text>
+  <line x1="115" y1="455" x2="820" y2="455" stroke="#687386" stroke-width="2"/><line x1="115" y1="110" x2="115" y2="455" stroke="#687386" stroke-width="2"/>
+  <g font-family="Arial" font-size="13" fill="#526071"><text x="85" y="460" text-anchor="end">0</text><text x="85" y="402" text-anchor="end">5</text><text x="85" y="344" text-anchor="end">10</text><text x="85" y="286" text-anchor="end">15</text><text x="85" y="228" text-anchor="end">20</text><text x="85" y="170" text-anchor="end">25</text><text x="85" y="115" text-anchor="end">30 ms</text></g>
+  <g stroke="#dce2ea"><line x1="115" y1="397" x2="820" y2="397"/><line x1="115" y1="339" x2="820" y2="339"/><line x1="115" y1="281" x2="820" y2="281"/><line x1="115" y1="223" x2="820" y2="223"/><line x1="115" y1="165" x2="820" y2="165"/><line x1="115" y1="110" x2="820" y2="110"/></g>
+  <g fill="#4979c6"><rect x="250" y="321.0" width="75" height="134.0"/><rect x="580" y="228.8" width="75" height="226.2"/></g>
+  <g fill="#e28a3b"><rect x="330" y="305.3" width="75" height="149.7"/><rect x="660" y="148.7" width="75" height="306.3"/></g>
+  <g font-family="Arial" font-size="16" fill="#172033" text-anchor="middle"><text x="327" y="495">1 tenant</text><text x="657" y="495">4 tenants</text><text x="287" y="311">11.58</text><text x="367" y="295">12.91</text><text x="617" y="219">19.59</text><text x="697" y="139">26.51</text></g>
+  <g font-family="Arial" font-size="14" fill="#172033"><rect x="330" y="545" width="16" height="16" fill="#4979c6"/><text x="354" y="559">Median</text><rect x="475" y="545" width="16" height="16" fill="#e28a3b"/><text x="499" y="559">p95</text></g>
+</svg>

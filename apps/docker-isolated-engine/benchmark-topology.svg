@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" role="img" aria-labelledby="title desc">
+  <title id="title">Recommended Linux hybrid topology</title>
+  <desc id="desc">A native client reaches a native HR host. The HR host calls a workflow engine in a Docker container over loopback. Both host and container reach native MongoDB through host networking.</desc>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#4979c6"/></marker></defs>
+  <rect width="1100" height="520" fill="#ffffff"/>
+  <text x="50" y="52" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#172033">Recommended Linux hybrid topology</text>
+  <text x="50" y="82" font-family="Arial, sans-serif" font-size="16" fill="#526071">Native host and MongoDB; only the workflow engine runs in Docker.</text>
+  <rect x="40" y="130" width="1020" height="330" rx="18" fill="#f6f8fb" stroke="#cbd4e0" stroke-width="2"/>
+  <text x="70" y="165" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#526071">AWS Ubuntu host</text>
+  <rect x="90" y="230" width="210" height="100" rx="12" fill="#dce9fb" stroke="#4979c6" stroke-width="2"/>
+  <text x="195" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#172033">HR host</text>
+  <text x="195" y="297" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#526071">127.0.0.1:3300</text>
+  <rect x="445" y="205" width="250" height="150" rx="14" fill="#fff0dc" stroke="#e28a3b" stroke-width="2"/>
+  <text x="570" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#172033">Docker container</text>
+  <text x="570" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#526071">Workflow engine</text>
+  <text x="570" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#526071">host network :3301</text>
+  <rect x="830" y="230" width="180" height="100" rx="12" fill="#e1f2e5" stroke="#4c9a62" stroke-width="2"/>
+  <text x="920" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#172033">MongoDB</text>
+  <text x="920" y="297" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#526071">native :27017</text>
+  <line x1="300" y1="280" x2="445" y2="280" stroke="#4979c6" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="695" y1="280" x2="830" y2="280" stroke="#4979c6" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="300" y1="315" x2="830" y2="380" stroke="#4c9a62" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrow)"/>
+  <text x="370" y="260" font-family="Arial, sans-serif" font-size="14" fill="#4979c6">HTTP engine call</text>
+  <text x="720" y="260" font-family="Arial, sans-serif" font-size="14" fill="#4979c6">Mongo connection</text>
+  <text x="450" y="410" font-family="Arial, sans-serif" font-size="14" fill="#4c9a62">host and container use 127.0.0.1 via host networking</text>
+</svg>
