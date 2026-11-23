@@ -61,7 +61,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
   - [Overview](examples.md): Each page here takes one BPMN element or pattern: what it does in OmniWorkflow, the model's XML for it, and what the engine does when it runs.
   - [Service task](examples/serviceTask.md): A service task is a step the process does by itself, with no person involved.
   - [Script task](examples/scriptTask.md): A script task runs a small piece of JavaScript on the case's data, with no person and no outside call.
-  - [Business rule task](examples/Business Rules.md): P.S.
+  - [Business rule task](examples/Business Rules.md): A business rule task runs a DMN decision table: the model asks a question, and the table answers it from the case's data.
   - [Conditional flow](examples/conditionalFlow.md): A sequence flow can carry a condition, so the path is taken only when the condition is true.
   - [Script listeners](examples/scriptEvents.md): Any element can carry listeners: small scripts the engine runs just before the element starts and just after it ends.
   - [Gateways](examples/gateways.md): A gateway splits a process into branches, or brings branches back together.
@@ -71,11 +71,11 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
   - [Boundary events](examples/boundary-events.md): boundary events have started in a wait state
   - [Messages](examples/msg-throw-catch.md): Two separate processes can talk to each other with messages.
   - [Signals](examples/signal-throw-catch.md): Messages are directed toward a specific recipient node, Signals however are broadcast to all potential listeners.
-  - [Errors and escalations](examples/error_events.md): Also Scripts and Services Tasks can Raise BPMN Errors/Escalation/Exception
+  - [Errors and escalations](examples/error_events.md): When a step cannot do its work, the model should say what happens next.
   - [Call activity](examples/callProcess.md): A call activity runs another process as a step.
   - [Multi-instance (loops)](examples/loop.md): Any Task can have multi-instance either Sequential or Parrallel
   - [Subprocess](examples/subProcess.md): A subprocess groups steps inside a process.
-  - [Transactions](examples/transactions.md): In this example:
+  - [Transactions](examples/transactions.md): A transaction is a subprocess whose steps belong together: either they all stand, or the ones that already finished are undone.
   - [Ad-hoc subprocess](examples/adHoc.md): Ad-Hoc subprocess allow you to choose the activity you like to invoke: - On start of subprocess; all activities start in a wait state - User can Invoke 'Execute' any task -…
 
 ## Integration
@@ -114,7 +114,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Lists, columns and filters](list-columns.md): Each person chooses what the lists show.
 - [Performance and test coverage](performance.md): This page gives the speed, load and memory figures from OmniWorkflow's own test suites, the effect of the database indexes, and how much of the code the tests run.
 - [Advanced topics](advanced.md): A command after --, with the answers to its questions, runs just that and quits: for scripts, and for a server (on one made by the installer, owf cli ...
-- [Frequently asked questions](faq/index.md)
+- [Frequently asked questions](faq/index.md): Have the task write what it produces into the case's data under a name of your choosing, and let later tasks read that name.
 
 ## Reference
 

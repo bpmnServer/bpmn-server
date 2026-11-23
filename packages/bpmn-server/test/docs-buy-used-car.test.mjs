@@ -32,3 +32,11 @@ test('the docs\' Buy Used Car, from code: Buy, then Drive, and the case ends', a
         await server.shutdown();
     }
 });
+
+// docs/docs/examples/Business Rules.md: calling a decision table from code, as the page shows it
+test('the docs\' business rule example: a decision table evaluated from code', async () => {
+    const { DMNEngine } = await import('../dist/index.js');
+    const file = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../apps/testSampleApp/processes/loan_approval.dmn.xml');
+    const decision = await new DMNEngine({ log: () => { } }).load(file);
+    assert.deepEqual(decision.evaluate({ credit_score: 800, income: 120000 }), { approvalStatus: 'Approved', maxAmount: 5000 });
+});
