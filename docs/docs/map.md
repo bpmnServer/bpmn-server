@@ -6,12 +6,12 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 - [Overview](index.md): OmniWorkflow runs business processes.
 - [Try it online](first-workflow.md): Two sites run OmniWorkflow with nothing to install.
-- [Build an application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
-- [Integrate an existing application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.
+- [Build an application](build.md): Journey B: your own application on OmniWorkflow, with your models, users and services.
+- [Integrate an existing application](integrate.md): Journey C: your application keeps its own UI, users and data, and OmniWorkflow runs its processes, on a private network behind it: Your application in control.
 - [Embed the engine](embedding.md): Journey D: run processes from your own Node.js code, with no web application.
 - **With an AI agent**
   - [Building workflows with an AI agent](ai/building-workflows.md): On a server, start with its /llms.txt (for example https://try.omniworkflow.com/llms.txt): what that site has (its API, services, connectors, user groups), its own rules, then…
-  - [Chatting with your server](ai/chat-assistants.md): Your users can build and test workflows by chatting with an AI assistant (ChatGPT, Claude, ...) that works on your BPMN Server for them: it reads the site's guide, writes the…
+  - [Chatting with your server](ai/chat-assistants.md): Your users can build and test workflows by chatting with an AI assistant (ChatGPT, Claude, ...) that works on your OmniWorkflow for them: it reads the site's guide, writes the…
 - **What's new**
   - [What's new in 3.6](whats-new-3.6.md): bpmn-server 3.6 separates the host from the engine, removes guest access and moves every test to Gherkin.
   - [What's new in 3.5](whats-new-3.5.md): bpmn-server 3.5 adds REST API connectors, SQLite storage, decisions (DMN) as the standard describes them, a new model editor with tests for models and decisions, and npx…
@@ -37,7 +37,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 ## Concepts
 
-- [Architecture](architecture.md): BPMN Server has three layers: a host that people and other systems talk to, an engine that runs processes, and a core of model and data handling that both of them use.
+- [Architecture](architecture.md): OmniWorkflow has three layers: a host that people and other systems talk to, an engine that runs processes, and a core of model and data handling that both of them use.
 - [How a workflow runs](execution.md): Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
 - [Workflow data](data.md): bpmn-server relies on a Database to store workflow information.
 - [Finding instances](data_find.md): server.dataStore.find reads a page of instances from the store: a filter chooses them, a sort orders them, and a cursor walks through them a page at a time.
@@ -58,31 +58,31 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [A process explained](process-guide.md): Every process has a guide for the people who work in it: How this process goes, at /guide/<process>.
 - [Timers](timers.md): All Timers are persisted, therefore, if the Node.js session is restared timers will pickup where they left ## Timer Types
 - **BPMN by example**
-  - [Overview](examples.md): Each page here takes one BPMN element or pattern: what it does in BPMN Server, the model's XML for it, and what the engine does when it runs.
-  - [Service task](examples/serviceTask.md): A service task calls a service, a method of the application's services, or a connector, a REST API the administrator added (see Connectors).
-  - [Script task](examples/scriptTask.md)
+  - [Overview](examples.md): Each page here takes one BPMN element or pattern: what it does in OmniWorkflow, the model's XML for it, and what the engine does when it runs.
+  - [Service task](examples/serviceTask.md): A service task is a step the process does by itself, with no person involved.
+  - [Script task](examples/scriptTask.md): A script task runs a small piece of JavaScript on the case's data, with no person and no outside call.
   - [Business rule task](examples/Business Rules.md): P.S.
-  - [Conditional flow](examples/conditionalFlow.md)
-  - [Script listeners](examples/scriptEvents.md): Scripts can be added to listen to two events: - Start before the Task is executed - End after the task is executed
-  - [Gateways](examples/gateways.md): gateways - camunda7 manual
+  - [Conditional flow](examples/conditionalFlow.md): A sequence flow can carry a condition, so the path is taken only when the condition is true.
+  - [Script listeners](examples/scriptEvents.md): Any element can carry listeners: small scripts the engine runs just before the element starts and just after it ends.
+  - [Gateways](examples/gateways.md): A gateway splits a process into branches, or brings branches back together.
   - [Event-based gateway](examples/ebg.md): Event Based Gateway launches all valid outbound flows, but once on event is completed, it must cancel the rest.
-  - [Multiple start events](examples/multiStartEvent.md): When a definition/process has multiple start node, you need to specify the start node when starting the process:
-  - [Input fields](examples/inputFields.md)
+  - [Multiple start events](examples/multiStartEvent.md): A process can have more than one start event, so the same model can be entered in different ways: a person starting it, a message arriving, a timer firing.
+  - [Input fields](examples/inputFields.md): A user task can carry a form: the fields the person fills in to complete it.
   - [Boundary events](examples/boundary-events.md): boundary events have started in a wait state
   - [Messages](examples/msg-throw-catch.md): Two separate processes can talk to each other with messages.
   - [Signals](examples/signal-throw-catch.md): Messages are directed toward a specific recipient node, Signals however are broadcast to all potential listeners.
   - [Errors and escalations](examples/error_events.md): Also Scripts and Services Tasks can Raise BPMN Errors/Escalation/Exception
-  - [Call activity](examples/callProcess.md): In the above example 'loop' is the name of process to be called.
+  - [Call activity](examples/callProcess.md): A call activity runs another process as a step.
   - [Multi-instance (loops)](examples/loop.md): Any Task can have multi-instance either Sequential or Parrallel
-  - [Subprocess](examples/subProcess.md)
+  - [Subprocess](examples/subProcess.md): A subprocess groups steps inside a process.
   - [Transactions](examples/transactions.md): In this example:
   - [Ad-hoc subprocess](examples/adHoc.md): Ad-Hoc subprocess allow you to choose the activity you like to invoke: - On start of subprocess; all activities start in a wait state - User can Invoke 'Execute' any task -…
 
 ## Integration
 
-- [Integrating your application](customization.md): BPMN Server is an embeddable execution engine, not a stand-alone process server.
+- [Integrating your application](customization.md): OmniWorkflow is an embeddable execution engine, not a stand-alone process server.
 - [Connectors (REST APIs)](connectors.md): A service task can call a connector instead of a service.
-- [The application's contract](app-contract.md): An application tells BPMN Server what its workflows may use of it in one file, app-contract.json, in its folder (the folder it runs in; the configuration's appContract names…
+- [The application's contract](app-contract.md): An application tells OmniWorkflow what its workflows may use of it in one file, app-contract.json, in its folder (the folder it runs in; the configuration's appContract names…
 - [Custom delegates](delegates.md): The app delegate is your application's code that the engine calls: the services service tasks call, and hooks on what the engine does.
 - [Custom persistence](persistence.md): Where instances, models and everything else are kept, and how to change it.
 - [Invoking workflows](invokation.md): Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least: - Selection of Workflows to Start - Show outstanding Tasks…
@@ -107,11 +107,12 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 ## Operate
 
 - [Installation](setup.md): init creates the sample application: processes/ (Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository), connectors/ (the editor's…
-- [Docker](docker.md): Install the BPMN Server distribution with Docker.
+- [Configuring the engine](configuration.md): An application that creates the engine itself gives it a Configuration: where the models are, where the cases are stored, how timers behave, and which components to use.
+- [Docker](docker.md): Install the OmniWorkflow distribution with Docker.
 - [The web application](bpmn-web.md): bpmn-web is the web host for bpmn-server: it provides the Workbench, task lists, model and decision editors, administration pages, and REST APIs.
 - [The Settings page](integration-settings.md): where administrators and designers set up the server, and turn the add-ons on and off.
 - [Lists, columns and filters](list-columns.md): Each person chooses what the lists show.
-- [Performance and test coverage](performance.md): This page gives the speed, load and memory figures from BPMN Server's own test suites, the effect of the database indexes, and how much of the code the tests run.
+- [Performance and test coverage](performance.md): This page gives the speed, load and memory figures from OmniWorkflow's own test suites, the effect of the database indexes, and how much of the code the tests run.
 - [Advanced topics](advanced.md): A command after --, with the answers to its questions, runs just that and quits: for scripts, and for a server (on one made by the installer, owf cli ...
 - [Frequently asked questions](faq/index.md)
 

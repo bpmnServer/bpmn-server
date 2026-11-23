@@ -105,7 +105,7 @@ Every call acts as one user, and says who in one of two ways:
 
 A header naming a user is never trusted. How an application uses it:
 
-1. A user signs in to the application, the application's way: BPMN Server never sees their password.
+1. A user signs in to the application, the application's way: OmniWorkflow never sees their password.
 2. The application's back end asks for a token for them, with the service key.
 3. The application (its back end, or its pages) calls the API with that token, as that user.
 4. When the user signs out, or is disabled, the back end revokes their tokens.

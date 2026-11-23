@@ -20,6 +20,8 @@ on or off on its area of the [Settings page](../integration-settings.md) (**Dash
 
 This site's guide for agents, `/llms.txt`, is the server's: it is there whether the add-on is on or off.
 
+![The AI Agent page: the level, the link, and examples of what to ask](../images/ai-key.png)
+
 ## Its settings
 
 | Setting | |

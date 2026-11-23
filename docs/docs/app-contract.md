@@ -1,6 +1,6 @@
 # The application's contract: app-contract.json
 
-An application tells BPMN Server what its workflows may use of it in one file, `app-contract.json`, in its folder
+An application tells OmniWorkflow what its workflows may use of it in one file, `app-contract.json`, in its folder
 (the folder it runs in; the configuration's `appContract` names another). The design is in
 [app-contract.md](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/app-contract.md).
 

@@ -1,6 +1,6 @@
 # Performance and test coverage
 
-This page gives the speed, load and memory figures from BPMN Server's own test suites, the effect of the database indexes, and how much of the code the tests run. Each section says when the figures were taken and how to take them again on your own machine.
+This page gives the speed, load and memory figures from OmniWorkflow's own test suites, the effect of the database indexes, and how much of the code the tests run. Each section says when the figures were taken and how to take them again on your own machine.
 
 The figures come from one developer machine, so use them as an order of magnitude, not a guarantee. On a shared machine, elapsed times vary by up to about 2× from one run to the next. That is why the suites check CPU time where they can.
 

@@ -36,6 +36,8 @@ editing users is refused. That is a setting, `READ_ONLY`, not a special build: s
 How an application is put together this way: [Integrate an existing application](integrate.md), and the HR demo's
 own code in the repository under `apps/hrdemo`.
 
+![The Workbench: the processes to start, and the cases running](images/workbench.png)
+
 ## try.omniworkflow.com: your own workflows
 
 OmniWorkflow's workbench, where you can build processes. **There are no accounts: everyone shares the site**, so
@@ -50,6 +52,8 @@ To build a process:
 4. Open **Test**, write a scenario, and run it. It runs in the engine, exactly as a real case would.
 5. Save the model, then start a case from the **Workbench**.
 6. Do the task in **My Work**, then open the case to see its steps and its Rationale.
+
+![A case: its data, its actors and its diagram, with each step numbered as it ran](images/instance-page.png)
 
 **A first process to try.** Start → Submit request (a user task) → Approve request (a user task) → End. Once that
 runs, add a gateway after Submit: more than five days goes to a manager, the rest is approved automatically. That

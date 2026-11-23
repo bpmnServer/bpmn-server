@@ -1,6 +1,6 @@
-# Integrating BPMN Server into your application
+# Integrating OmniWorkflow into your application
 
-BPMN Server is an **embeddable execution engine**, not a stand-alone process server. Your application hosts the engine, owns authentication and business data, and provides the business behavior invoked by workflows. Use [bpmn-web](bpmn-web.md) if you also want a packaged UI, modeler and HTTP API.
+OmniWorkflow is an **embeddable execution engine**, not a stand-alone process server. Your application hosts the engine, owns authentication and business data, and provides the business behavior invoked by workflows. Use [bpmn-web](bpmn-web.md) if you also want a packaged UI, modeler and HTTP API.
 
 This guide follows the **3.5 monorepo** and its [sample application](https://github.com/bpmnServer/bpmn-server/tree/main/apps/sampleApp), rather than the retired `WorkflowApp` layout.
 
@@ -11,7 +11,7 @@ This guide follows the **3.5 monorepo** and its [sample application](https://git
 | Use the starter | You want a complete web application with tasks, modeling, and admin | `npx bpmn-server init my-app` |
 | Embed the engine | You already have a Node.js server/UI and want to control its lifecycle | `BPMNServer.create(...)`, `BPMNAPI` |
 | Run the engine apart | Production: the host serves pages and APIs, and the engine holds your code | [Ways to run it](setup.md#ways-to-run-it) |
-| Call a remote host | Another application already runs BPMN Server and exposes its API | `bpmn-client` |
+| Call a remote host | Another application already runs OmniWorkflow and exposes its API | `bpmn-client` |
 | Integrate an external HTTP service | A BPMN task must call a REST service described by OpenAPI | [Connectors](connectors.md) |
 
 Start with [Installation](setup.md). For a local evaluation without MongoDB, `npx bpmn-server init my-app --memory` creates a starter that uses in-memory storage.
@@ -45,7 +45,7 @@ sequenceDiagram
 | --- | --- |
 | User interface, sessions, authentication | Hosting application (or `bpmn-web`) |
 | Application authorization and business rules | Hosting application, with engine-level task access checks |
-| Process definitions, instances, tokens and task state | BPMN Server and its configured workflow store |
+| Process definitions, instances, tokens and task state | OmniWorkflow and its configured workflow store |
 | Business records such as orders, claims, and employees | Hosting application's business services/database |
 | User/task interactions | Application calls `BPMNAPI.engine` with a trusted principal |
 | Service tasks and domain operations | Application services exposed by the delegate |
@@ -166,7 +166,7 @@ To load external data into workflow variables, implement `loadDataObject(name, i
 
 ## Persistence and deployment
 
-BPMN Server supports MongoDB by default, `SqliteDocumentStore` for small persistent installs on Node.js 22.5+, and `MemoryDocumentStore` for tests and demos. Custom adapters use the `documentStore` configuration port. Locking, timer scheduling, and shutdown are described in [Setup](persistence.md).
+OmniWorkflow supports MongoDB by default, `SqliteDocumentStore` for small persistent installs on Node.js 22.5+, and `MemoryDocumentStore` for tests and demos. Custom adapters use the `documentStore` configuration port. Locking, timer scheduling, and shutdown are described in [Setup](persistence.md).
 
 Before exposing an instance to real users, configure the host's authentication, task authorization, connector keys, persistence, backups, and process recovery. See [Security](security.md) and [Advanced topics](advanced.md).
 

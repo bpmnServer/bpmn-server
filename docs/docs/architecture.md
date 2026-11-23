@@ -1,6 +1,6 @@
 # Architecture
 
-BPMN Server has three layers: a **host** that people and other systems talk to, an **engine** that runs processes, and a **core** of model and data handling that both of them use. The host and the engine can share a process or run apart, and the application's code always stays with the engine.
+OmniWorkflow has three layers: a **host** that people and other systems talk to, an **engine** that runs processes, and a **core** of model and data handling that both of them use. The host and the engine can share a process or run apart, and the application's code always stays with the engine.
 
 The host is the door: it signs people in, serves the pages, and routes each call to the engine. The **API** runs
 with the engine, beside the data it reads and the policies that narrow it. With tenants, the host is one router for
@@ -22,16 +22,16 @@ isolated, one for each tenant, holding everything of it. Without tenants, A and 
 
 | # | Part | Owner | Uses | Must not use | Zone | Process |
 |---|---|---|---|---|---|---|
-| 1 | **Data store** | The operator runs it (MongoDB, SQLite); BPMN Server owns its interface | nothing | anything above it | Store | B |
-| 2 | **Engine** | BPMN Server | the data store, through its interface; it calls 4 and 5 | add-ons, the API, the pages | Engine | B |
-| 3 | **Add-ons' code** | Each add-on's author (BPMN Server for the four); the admin turns it on (`app-config.json`) | the engine's events and registrations | other add-ons, the data store directly | Engine | B |
+| 1 | **Data store** | The operator runs it (MongoDB, SQLite); OmniWorkflow owns its interface | nothing | anything above it | Store | B |
+| 2 | **Engine** | OmniWorkflow | the data store, through its interface; it calls 4 and 5 | add-ons, the API, the pages | Engine | B |
+| 3 | **Add-ons' code** | Each add-on's author (OmniWorkflow for the four); the admin turns it on (`app-config.json`) | the engine's events and registrations | other add-ons, the data store directly | Engine | B |
 | 4 | **Delegates and services** | The app developer | the engine's execution | the data store directly, add-ons | Engine | B |
 | 5 | **Scripts, conditions, policies and decisions (DMN)** | The modeler: they are part of the models | their context only (item, data, services) | anything else | Engine | B |
-| 6 | **Models, read only** | BPMN Server owns the reader; the modeler owns the models | the models folder | writing anything (saves go through the API) | Engine | B |
-| 7 | **Instances, read only** | BPMN Server owns the reader; the engine owns the instances | the data store | writing anything | Engine | B |
-| 8 | **API** | BPMN Server | the engine, 6, 7; it fires `pre-query` and `pre-action` | the engine's internals | Engine | B |
-| 9 | **Model editor** | BPMN Server; each add-on owns its modules | the API, the add-ons' editor modules and manifests | the engine | Browser | A (served) |
-| 10 | **Pages** | BPMN Server; each add-on owns its pages; the app developer owns custom pages | the API | the engine, the data store | Browser | A (served) |
+| 6 | **Models, read only** | OmniWorkflow owns the reader; the modeler owns the models | the models folder | writing anything (saves go through the API) | Engine | B |
+| 7 | **Instances, read only** | OmniWorkflow owns the reader; the engine owns the instances | the data store | writing anything | Engine | B |
+| 8 | **API** | OmniWorkflow | the engine, 6, 7; it fires `pre-query` and `pre-action` | the engine's internals | Engine | B |
+| 9 | **Model editor** | OmniWorkflow; each add-on owns its modules | the API, the add-ons' editor modules and manifests | the engine | Browser | A (served) |
+| 10 | **Pages** | OmniWorkflow; each add-on owns its pages; the app developer owns custom pages | the API | the engine, the data store | Browser | A (served) |
 
 **A is a router.** It logs the user in, serves the pages and the editor, and routes each call to the tenant's B. It
 holds nothing of a tenant's: no code, no data, no rules. What spans tenants (the tenants, their logins) is A's.
@@ -40,7 +40,7 @@ holds nothing of a tenant's: no code, no data, no rules. What spans tenants (the
 decisions, by the modeler, through the API. `app-config.json` and the settings by the admin.
 
 **An owner's code runs in its zone only.** The app developer's code (4) and the modeler's (5) run in the engine zone,
-beside the engine. That code isn't BPMN Server's, so it is what isolation has to separate. Separating it from the
+beside the engine. That code isn't OmniWorkflow's, so it is what isolation has to separate. Separating it from the
 engine is planned work, apart from the add-ons.
 
 **No part reaches into another's.** An add-on doesn't change the engine. A delegate doesn't write the store. A page
@@ -82,7 +82,7 @@ flowchart LR
     Sec --> Pages
   end
 
-  subgraph Core["BPMN Server: secure"]
+  subgraph Core["OmniWorkflow: secure"]
     subgraph HostZone["Host (A): the door and router"]
       REST["REST APIs"]
       Admin["Administration"]
@@ -326,7 +326,7 @@ flowchart LR
   class DesignZone design
 ```
 
-- BPMN Server signs nobody in here: it trusts the user your application names, because your application holds its
+- OmniWorkflow signs nobody in here: it trusts the user your application names, because your application holds its
   keys. Keep the keys on your application's server, and bpmn-web where only your application and your staff reach it.
 - Your application starts a process **for** one of its users, and lists, claims and completes their tasks, through
   [API v3](api-v3.md): a token for each user (`POST /api/v3/tokens` with the service key), so every call acts as that

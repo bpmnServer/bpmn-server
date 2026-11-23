@@ -1,5 +1,7 @@
 # The Settings page
 
+![The Settings page: the server's own areas, then each add-on, on or off](images/settings-page.png)
+
 **Dashboard ▸ Settings** (`/dashboard/settings`; `/dashboard/integration` before 3.7.5, which still leads here) is
 where administrators and designers set up the server, and turn the add-ons on and off. It opens on an overview in
 two groups: **Server**, an area for each part of the server that is no add-on's, then **Add-ons**, an area for each

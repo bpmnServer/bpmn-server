@@ -7,6 +7,8 @@ Models are edited by users in the `DESIGNER` group and by administrators (`ADMIN
 create, import, edit, check, save, rename and delete models; administration (users, resetting data) stays with
 administrators.
 
+![The model editor: the diagram, the properties panel, and the Problems and Test tabs](images/model-editor.png)
+
 ## The properties panel
 
 Each field is one bpmn-server reads, with what it means when the process runs:

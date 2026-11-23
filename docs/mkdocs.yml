@@ -193,6 +193,7 @@ nav:
 
 - Operate:
   - Installation: setup.md
+  - Configuring the engine: configuration.md
   - Docker: docker.md
   - The web application: bpmn-web.md
   - The Settings page: integration-settings.md

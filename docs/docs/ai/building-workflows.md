@@ -3,8 +3,8 @@
 On a server, start with its **`/llms.txt`** (for example `https://try.omniworkflow.com/llms.txt`): what that site
 has (its API, services, connectors, user groups), its own rules, then this guide.
 
-This page is for **AI agents that build workflows on BPMN Server**: a model, its forms and rules, and its tests, from a
-request such as *"a workflow for employee leave requests, with manager approval"*. (Agents changing BPMN Server itself
+This page is for **AI agents that build workflows on OmniWorkflow**: a model, its forms and rules, and its tests, from a
+request such as *"a workflow for employee leave requests, with manager approval"*. (Agents changing OmniWorkflow itself
 read [AGENTS.md](https://github.com/bpmnServer/bpmn-server/blob/main/AGENTS.md) instead.)
 
 ## The loop

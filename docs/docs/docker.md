@@ -1,6 +1,6 @@
 # Docker installation
 
-Install the BPMN Server distribution with Docker. The image name is `bpmnserver/bpmn-server` (the earlier `ralphhanna/bpmn-server` and `ralphhanna/bpmn-web` images are no longer updated).
+Install the OmniWorkflow distribution with Docker. The image name is `bpmnserver/bpmn-server` (the earlier `ralphhanna/bpmn-server` and `ralphhanna/bpmn-web` images are no longer updated).
 
 ## Guided installation (Linux/macOS/WSL)
 
@@ -20,8 +20,8 @@ The **local build** option downloads editable image files into `./image/` and bu
 `sh setup.sh` and `sh up.sh` now wait for an HTTP response after Docker reports the container started. They display either:
 
 ```text
-Checking BPMN Server readiness at http://127.0.0.1:3000/login ...
-READY: BPMN Server is responding (HTTP 200).
+Checking OmniWorkflow readiness at http://127.0.0.1:3000/login ...
+READY: OmniWorkflow is responding (HTTP 200).
 Open http://localhost:3000
 ```
 

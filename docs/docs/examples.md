@@ -1,6 +1,6 @@
 # BPMN by example
 
-Each page here takes one BPMN element or pattern: what it does in BPMN Server, the model's XML for it, and what the
+Each page here takes one BPMN element or pattern: what it does in OmniWorkflow, the model's XML for it, and what the
 engine does when it runs. The models are in the sample application's `apps/testSampleApp/processes/`, each with its
 `.feature`, run by the test suite: open one in the model editor and run its Test tab to watch it.
 
@@ -26,4 +26,4 @@ engine does when it runs. The models are in the sample application's `apps/testS
 | [Ad-hoc subprocess](examples/adHoc.md) | Tasks done in any order |
 | [Timers](timers.md) | Deadlines, delays and repeating timers |
 
-Every element and attribute BPMN Server supports, with its tests: [Features](features.md).
+Every element and attribute OmniWorkflow supports, with its tests: [Features](features.md).

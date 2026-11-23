@@ -1,4 +1,4 @@
-# OmniWorkflow (BPMN Server)
+# OmniWorkflow (OmniWorkflow)
 
 OmniWorkflow runs business processes. A process is drawn as a BPMN diagram: the steps, who does each one, the
 decisions along the way and the deadlines. OmniWorkflow follows the diagram for every case: it gives tasks to the right
@@ -74,6 +74,8 @@ it. An agent given nothing but the address can read that and begin.
 
 Steps 3 to 5 are the point: the agent is not asked to be right the first time. The server tells it what is wrong, and
 the tests say whether the process does what was asked. A person reviews a model that already checks and tests clean.
+
+![A link for an AI agent](images/ai-key.png)
 
 **Giving an agent access.** A person signs in and asks for a link for their agent. The link acts as that person, at a
 level they choose: to work on their own tasks, to design models, or to read the settings and advise on them. It lasts
