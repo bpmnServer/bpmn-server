@@ -4,7 +4,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 ## Get Started
 
-- [Overview](index.md): Workflows run long-lived business processes for your application: tasks for people, calls to services, decisions, timers and messages, each case kept until it ends, and why it…
+- [Overview](index.md): Omni Workflow runs business processes.
 - [The online demo](first-workflow.md): Journey A: the quickest way to understand BPMN Server is to build, test, and run a small process.
 - [Build an application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
 - [Integrate an existing application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.

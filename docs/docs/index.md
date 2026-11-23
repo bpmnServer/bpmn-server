@@ -1,28 +1,61 @@
 # Omni Workflow (BPMN Server)
 
-**A BPMN 2.0 and DMN workflow engine for Node.js, with a web application to design, test and run the workflows.**
+Omni Workflow runs business processes. A process is drawn as a BPMN diagram: the steps, who does each one, the
+decisions along the way and the deadlines. Omni Workflow follows the diagram for every case: it gives tasks to the right
+people, calls the services that do the automatic steps, waits for answers and timers, and keeps each case until it ends.
+For every case it records what happened and why.
 
-Workflows run long-lived business processes for your application: tasks for people, calls to services, decisions,
-timers and messages, each case kept until it ends, and why it went its way. Your application keeps its own UI,
-users and business records.
+It is open source, written in TypeScript for Node.js, and comes as three packages:
 
-The packages are `bpmn-server` (the engine), `bpmn-web` (the web application: the Workbench, the model editor,
-the Settings page and the APIs) and `bpmn-client` (calling a server from another application).
+- **bpmn-server**, the engine. It runs the processes and stores the cases.
+- **bpmn-web**, the web application on top of it: the Workbench where people see and do their tasks, the model editor
+  where the processes are drawn and tested, the Settings page, and the API other applications call.
+- **bpmn-client**, for another application that calls a running server.
 
-## Where to start
+## What it does
 
-| You want to | Start here |
-|---|---|
-| **See what it does**, with nothing to install | [The online demo](first-workflow.md) |
-| **Run your own workflow application**: your models, users and services | [Build an application](build.md), then the [tutorials](tutorial/start.md) |
-| **Add workflows to an application you have**, from its own UI and users | [Integrate an existing application](integrate.md) |
-| **Run processes from your own Node.js code**, with no web application | [Embedding the engine](embedding.md) |
-| **Have an AI agent build and test the workflows** | [Building workflows with an AI agent](ai/building-workflows.md) |
+**Runs BPMN processes.** User tasks, service and script tasks, gateways, timers, messages and signals, subprocesses,
+loops, error handling and compensation: the parts of BPMN 2.0 that business processes use.
 
-Not sure? Try the demo, then build an application: the [tutorials](tutorial/start.md) take one example, a leave
-request, from the first model to its release.
+**Makes decisions with DMN.** Business rules are written as decision tables and called from the processes.
 
-## Try it in a minute
+**Gives the work to the right people.** A task goes to a person or a group, by the diagram's lanes or by an assignment
+policy. Access policies say who may see a case and what they may do in it.
+
+**Connects to other systems.** A service task calls the application's own code, or a REST API described by its OpenAPI
+document. Other applications start processes and complete tasks through the API.
+
+**Tests the processes before they run for real.** The model editor checks a model as it is drawn, and runs its test
+scenarios in the engine. The same tests run in a build.
+
+**Explains each case.** Every step is recorded with what decided it, so anyone can see why a case went the way it did.
+
+**Works with AI agents.** A person can give an AI agent a link to work on the site as them: to build and test
+processes, or to work on their tasks.
+
+The full list of features, each with its documentation and its tests, is on the [Features](features.md) page.
+
+## How it is used
+
+Omni Workflow can be used in four ways:
+
+- **On its own, as a workflow application.** bpmn-web is the application: people sign in, start processes and do their
+  tasks in the Workbench. [Build an application](build.md) sets one up; the [tutorials](tutorial/start.md) build one
+  example, a leave request, from the first diagram to its release.
+- **Behind an existing application.** The application keeps its own screens and users, and calls Omni Workflow's API to
+  start processes and to list and complete its users' tasks. See
+  [Integrate an existing application](integrate.md).
+- **Inside a Node.js program.** The engine runs in the program's own process, with no web application. See
+  [Embedding the engine](embedding.md).
+- **With an AI agent doing the work.** An agent builds the processes and their tests over the API. See
+  [Building workflows with an AI agent](ai/building-workflows.md).
+
+A public demo runs at [bpmn.omniworkflow.com](https://bpmn.omniworkflow.com), with nothing to install:
+[The online demo](first-workflow.md) shows what to try there.
+
+## Trying it locally
+
+With Node.js 20 or later:
 
 ```sh
 npx bpmn-server init my-app --memory
@@ -30,51 +63,34 @@ cd my-app
 npm start
 ```
 
-Open **http://localhost:3000**. The first page asks for the administrator: enter the setup token the server printed
-at start, then a name and a password ([The first start](setup.md#the-first-start)). `--memory` keeps nothing when
-the server stops; without it, choose MongoDB or SQLite ([Installation](setup.md)).
+Then open **http://localhost:3000**. The first page asks for the administrator's name and password, with the setup
+token the server printed when it started ([The first start](setup.md#the-first-start)). With `--memory` nothing is
+kept when the server stops; without it, the application keeps its data in MongoDB or SQLite
+([Installation](setup.md)).
 
-## How it fits
+## How the parts fit
 
 ```mermaid
 flowchart LR
-    People["People: the Workbench, or your UI"] --> Web["bpmn-web"]
-    App["Your application"] -->|API v3| Web
-    Web --> Engine["bpmn-server: the engine"]
-    Engine --> Services["Your services (the delegate)"]
-    Engine --> Connectors["REST APIs (connectors)"]
+    People["People, in the Workbench or the application's own screens"] --> Web["bpmn-web"]
+    App["Other applications"] -->|API| Web
+    Web --> Engine["bpmn-server, the engine"]
+    Engine --> Services["The application's code"]
+    Engine --> Connectors["REST APIs"]
     Engine --> Store[("MongoDB, SQLite or memory")]
 ```
 
-The engine runs the models; bpmn-web gives people and applications a way in; your application owns its business
-records and is called for what only it knows. The engine can run in the web application's process or in its own:
-[Architecture](architecture.md).
+The engine runs the processes; bpmn-web is how people and other applications reach it. The engine can run inside the
+web application or as a separate service: see [Architecture](architecture.md).
 
-## What it does
+The engine keeps the processes, the cases, their tasks and the data the process needs. The business records, such as
+orders, claims or employees, stay in the application's own database. A case carries their keys, calls the application
+to change them and reads them when it needs them ([Data objects](data-objects.md)).
 
-| | |
-|---|---|
-| **Runs BPMN** | User, service, script, business-rule and receive tasks; gateways; events; timers; messages and signals; subprocesses and multi-instance; errors and compensation |
-| **Decides with DMN** | Decision tables with FEEL, tested like the models ([Decisions](decisions.md)) |
-| **Assigns and secures the work** | Lanes, candidates and assignment policies; who may see a case and do what in it ([Add-ons](add-ons/assignment.md), [Security](security.md)) |
-| **Calls REST APIs** | Connectors from OpenAPI documents, with their keys kept encrypted ([Connectors](connectors.md)) |
-| **Designs and tests** | A model editor with model checks, a Test tab and Gherkin tests run in the engine ([Model editor](modeler.md), [Testing](testing.md)) |
-| **Explains each case** | Its Rationale: every step, what decided it and why |
-| **Runs where you need it** | Development, test and production environments, read-only servers ([Environments](environments.md)) |
+## Running it in production
 
-Every feature, with its documentation, its code and its tests: [Features](features.md).
+A production server keeps its data in a database, signs people in (with bpmn-web's own accounts or the application's),
+keeps its keys secret, and runs only processes whose tests pass. [Installation](setup.md#production),
+[Security](security.md) and [Tutorial 12: Release](tutorial/release.md) cover each of these.
 
-## Workflow state and business data
-
-The engine keeps the models, the cases, their tasks and their workflow data. **Your application keeps its business
-records**: claims, orders, employees. A workflow carries their keys (a `claimId`), calls your services to change them,
-and reads them through [data objects](data-objects.md).
-
-## Before production
-
-Use a database that keeps its data, sign people in (bpmn-web's or your application's own), keep the keys secret, and
-test the models before release: [Installation](setup.md#production), [Security](security.md),
-[Tutorial 12: Release](tutorial/release.md).
-
-The public demo is at [bpmn.omniworkflow.com](https://bpmn.omniworkflow.com); the code is
-[MIT-licensed on GitHub](https://github.com/bpmnServer/bpmn-server).
+Omni Workflow is [MIT-licensed on GitHub](https://github.com/bpmnServer/bpmn-server).
