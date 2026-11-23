@@ -30,8 +30,8 @@ scenarios in the engine. The same tests run in a build.
 
 **Explains each case.** Every step is recorded with what decided it, so anyone can see why a case went the way it did.
 
-**Works with AI agents.** A person can give an AI agent a link to work on the site as them: to build and test
-processes, or to work on their tasks.
+**Works with AI agents.** An agent can read what a site offers, build a process with its forms and rules, write
+and run its tests, and fix what fails, all through the API. See [Working with an AI agent](#working-with-an-ai-agent).
 
 The full list of features, each with its documentation and its tests, is on the [Features](features.md) page.
 
@@ -47,12 +47,54 @@ OmniWorkflow can be used in four ways:
   [Integrate an existing application](integrate.md).
 - **Inside a Node.js program.** The engine runs in the program's own process, with no web application. See
   [Embedding the engine](embedding.md).
-- **With an AI agent doing the work.** An agent builds the processes and their tests over the API. See
-  [Building workflows with an AI agent](ai/building-workflows.md).
+- **With an AI agent doing the work.** An agent builds the processes and their tests over the API, in any of the
+  three ways above: see below.
 
 Two public sites need nothing installed: [demo.omniworkflow.com](https://demo.omniworkflow.com) is a finished HR
 application with OmniWorkflow inside it, to look through, and [try.omniworkflow.com](https://try.omniworkflow.com) is
 the workbench, to build your own workflows in. [Try it online](first-workflow.md) says what to do on each.
+
+## Working with an AI agent
+
+A workflow is a diagram, some rules and a set of tests, all of them files and API calls. An AI agent can do that work,
+and OmniWorkflow is built so that it can check its own output instead of guessing.
+
+**What an agent needs to start** is a server's address. Every server answers **`/llms.txt`** with what that site has:
+its API, the services and connectors it offers, its user groups, its own rules, and a guide to building workflows on
+it. An agent given nothing but the address can read that and begin.
+
+**How an agent works, and why its output can be trusted:**
+
+1. It reads the site's `/llms.txt`, and the guide behind it.
+2. It writes a model: the steps, who does each, the forms, the decisions.
+3. It asks the server to **check** the model. The answer names what is wrong or missing, and what to do about it.
+4. It writes the model's **tests** as scenarios, and runs them in the engine: the same engine that will run the real
+   cases.
+5. It fixes what fails, and repeats until the tests pass.
+
+Steps 3 to 5 are the point: the agent is not asked to be right the first time. The server tells it what is wrong, and
+the tests say whether the process does what was asked. A person reviews a model that already checks and tests clean.
+
+**Giving an agent access.** A person signs in and asks for a link for their agent. The link acts as that person, at a
+level they choose: to work on their own tasks, to design models, or to read the settings and advise on them. It lasts
+minutes, not forever, and it can be revoked. An agent never gets more than the person has. See the
+[AI Agents add-on](add-ons/ai.md).
+
+**Four things to ask an agent for**, each with a page that tells it how:
+
+| | |
+|---|---|
+| **Explore** | Look through the HR demo and explain how an application and its workflows fit together, changing nothing |
+| **Try** | Build a process on [try.omniworkflow.com](https://try.omniworkflow.com), check it, test it, and give you the model's link and the real test results |
+| **Install** | Install OmniWorkflow on your machine, start it, and prove it works by running a process |
+| **Integrate** | Read your application, recommend how to connect it, and build a small working example |
+
+Any agent that can run commands or call an API can do this: Claude Code, Codex, Cursor, Copilot and others. There is
+no separate OmniWorkflow for agents; they use the same CLI, API and models that people do.
+
+**Where to read more:** [Building workflows with an AI agent](ai/building-workflows.md) is the guide an agent follows,
+and the one to read to understand what agents can do here. [Chatting with your server](ai/chat-assistants.md) connects
+a chat assistant to a running server over MCP.
 
 ## Trying it locally
 

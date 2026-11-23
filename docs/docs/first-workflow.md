@@ -7,7 +7,7 @@ own workflows.
 |---|---|---|
 | What it is | An HR application with OmniWorkflow inside it | OmniWorkflow's own workbench and model editor |
 | You can | Sign in as its people, start a leave request, see the tasks, the cases and why each went its way | Draw a process, check it, test it and run it |
-| You cannot | Change anything: the site is read-only | |
+| You cannot | Change anything: the site is read-only | Keep anything private: there are no accounts yet |
 | Good for | Seeing what an integrated application looks like | Trying the modeling and testing yourself |
 
 ## demo.omniworkflow.com: a finished application
@@ -38,7 +38,10 @@ own code in the repository under `apps/hrdemo`.
 
 ## try.omniworkflow.com: your own workflows
 
-OmniWorkflow's workbench, where you can build processes:
+OmniWorkflow's workbench, where you can build processes. **There are no accounts: everyone shares the site**, so
+everything you make is visible to other visitors, and they can change it. Accounts are planned.
+
+To build a process:
 
 1. Open **Design**, then **New model**, or open one that is already there.
 2. In the model editor, draw a start event, a user task and an end event. Give the task a name, and the people or
@@ -52,8 +55,10 @@ OmniWorkflow's workbench, where you can build processes:
 runs, add a gateway after Submit: more than five days goes to a manager, the rest is approved automatically. That
 small change exercises forms, assignment, a decision and two paths, which is most of what a real process needs.
 
-Anything you make on a public site is visible to others, so don't enter anything confidential. Scripts, service tasks,
-timers and connectors may be limited there for safety.
+Because anyone can run anything there, the site limits what a case may do: how long it may run, what a script may
+reach, and how many models and cases it keeps, and it clears them from time to time. Don't put anything confidential
+in a model or a case, and don't use it to hold work you want to keep: install your own
+([Trying it locally](index.md#trying-it-locally)) for that.
 
 ## Then
 
