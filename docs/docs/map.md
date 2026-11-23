@@ -88,8 +88,8 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Invoking workflows](invokation.md): Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least: - Selection of Workflows to Start - Show outstanding Tasks…
 - [The engine's API](api-summary.md): The TypeDoc listing is generated from the current source (npm run _docs:generate:api in docs/): every class and interface, with its signatures.
 - **bpmn-client**
-  - [Installing it](bpmn-client.md)
-  - [The client API](client-api.md): bpmn-client is a lightweight Node package to remotely access bpmn-server.
+  - [Installing it](bpmn-client.md): A small Node.js package for calling a running OmniWorkflow server from another application: it starts processes, lists and completes tasks, and reads cases, each call acting as…
+  - [The client API](client-api.md): bpmn-client is a small Node.js package for calling a running server from another application.
 - [Example: Buy Used Car, three ways](examples/buy-used-car.md): One small process, run three ways: in the web application, from code in the engine's own process, and from another application over the API.
 
 ## Add-ons
@@ -100,7 +100,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Notification policies](notification-policies.md): A process can say who is told what, and when, by naming a notification policy: a decision table, kept with the models, whose every matching rule sends a notification.
 - [Access Control](add-ons/security.md): The Access Control add-on decides who may see a case and what they may do in it.
 - [Labels](add-ons/labels.md): The Labels add-on names each case and task from its data: a case Client: acme · Order: 1234, a task Approve 90.
-- [Model Options](add-ons/modeling.md): The Model History add-on gives the model editor its Test and History tabs.
+- [Model Options](add-ons/modeling.md): The Model Options add-on decides what the model editor offers, each part switched on or off on its own.
 - [Extended Forms](add-ons/forms.md): The Extended Forms add-on gives a form field its choices from a source, as the form is filled.
 - [AI Agents](add-ons/ai.md): The AI Agents add-on lets a person give their AI agent a link to this site: the agent then works as them.
 

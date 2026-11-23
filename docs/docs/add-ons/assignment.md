@@ -1,7 +1,6 @@
 # Assignment (add-on)
 
-The **Assignment** add-on decides who works on each task, and who may start a process. Turn it on or off on its card
-on the [Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Assignment**).
+The **Assignment** add-on decides who works on each task, and who may start a process. Turn it on or off on its page of the [Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Assignment**).
 
 ## What it does
 

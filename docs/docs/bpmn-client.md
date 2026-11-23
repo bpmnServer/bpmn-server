@@ -1,11 +1,10 @@
-bpmn-client
-===========
+# Installing bpmn-client
 
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+A small Node.js package for calling a running OmniWorkflow server from another application: it starts processes,
+lists and completes tasks, and reads cases, each call acting as one of your users.
+What it offers: [the client API](client-api.md).
 
-This is a light-weight package to allow remote access to [bpmn-server](https://github.com/bpmnServer/bpmn-server)
-
-# Installation
+## Installation
 
 In the application that calls bpmn-server (a new folder, or an existing Node.js project):
 
@@ -24,13 +23,13 @@ npx bpmn-client-cli                         # a console on the server: start pro
 
 A complete example application: [bpmn-client-sample](https://github.com/bpmnServer/bpmn-client-sample).
 
-### to update to latest release
+### Updating to the latest release
 
 ```
 $ npm update bpmn-client
 ```
 
-# Usage: API v3 (bpmn-web 3.7 and later)
+## Using it: API v3 (bpmn-web 3.7 and later)
 
 `BPMNClient3` is the client of [API v3](https://bpmnserver.github.io/bpmn-server/api-v3/): every call acts as one
 user. The application's back end holds the service key; the client asks the server for each user's token with it,

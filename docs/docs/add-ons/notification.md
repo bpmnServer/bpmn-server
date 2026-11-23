@@ -1,6 +1,6 @@
 # Notifications (add-on)
 
-The **Notifications** add-on tells people what happens to their work. Turn it on or off on its card on the
+The **Notifications** add-on tells people what happens to their work. Turn it on or off on its page of the
 [Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Notifications**).
 
 ## What it does

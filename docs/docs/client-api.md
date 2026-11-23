@@ -1,7 +1,7 @@
 
-## BPMNClient/WebAPI
+# The client API
 
-bpmn-client is a lightweight Node package to remotely access bpmn-server. Its `BPMNClient3` is the client of
+bpmn-client is a small Node.js package for calling a running server from another application. Its `BPMNClient3` is the client of
 [API v3](#api-v3): it issues and renews each user's token with the service key ([how](bpmn-client.md#usage-api-v3-bpmn-web-37-and-later)).
 
 [An example: Buy Used Car from another application](examples/buy-used-car.md#from-another-application-over-the-api)
@@ -16,7 +16,7 @@ bpmn-server provides api calls to the following objects:
 - [dataStore](#datastore)
 - [definitions](#definitions) 
 
-## WebServices Architecture
+## How it talks to the server
 
 Web Applications can use **bpmn-server**  WebServices to manage workflow in a similar manner described here:
 
@@ -25,7 +25,7 @@ Web Applications can use **bpmn-server**  WebServices to manage workflow in a si
 - App UI display to the User list of outstanding User Tasks to execute and prompt user for input parameters (if required)
 - Workflow App can notify involved users of new User Tasks
 
-## engine:
+## The engine: starting and running processes
 
 Perform WebAPI calls to the execution Engine 
 
@@ -40,7 +40,7 @@ Perform WebAPI calls to the execution Engine
 | **status**| |		 | Return as list of running instances or recently completed |
 
 
-## definitions
+## Definitions: the models
 
 Perform calls to BPMN defintions
 
@@ -50,7 +50,7 @@ Perform calls to BPMN defintions
 |		list	|- |	string[] |
 |		load	| name|	definition |
 
-## datastore
+## The data store: cases and tasks
 
 Perform calls to DataStore , accessing processes data
 

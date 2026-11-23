@@ -1,7 +1,7 @@
 # Labels (add-on)
 
 The **Labels** add-on names each case and task from its data: a case `Client: acme · Order: 1234`, a task
-`Approve 90`. Turn it on or off in its card on the [Settings page](../integration-settings.md)
+`Approve 90`. Turn it on or off on its page of the [Settings page](../integration-settings.md)
 (**Dashboard ▸ Settings ▸ Labels**).
 
 ## What it does

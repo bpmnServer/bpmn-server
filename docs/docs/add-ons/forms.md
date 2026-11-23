@@ -1,7 +1,8 @@
 # Extended Forms (add-on)
 
-The **Extended Forms** add-on gives a form field its choices from a source, as the form is filled. Turn it on or
-off in its card on the [Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Extended Forms**).
+The **Extended Forms** add-on gives a form field its choices from a source, as the form is filled. It is one of
+[Model Options](modeling.md)' switches, so it is turned on and off there
+(**Dashboard ▸ Settings ▸ Model Options**), and it has no card of its own.
 
 ## What it does
 
@@ -15,7 +16,9 @@ The form's own rules (required, lengths, ranges) are not the add-on's: they are 
 
 ## Its settings
 
-None of its own.
+| Setting | |
+|---|---|
+| `EXTENDED_FORMS` | Whether a field's choices are read from its source (a Model Options switch) |
 
 ## When it is off
 
