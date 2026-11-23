@@ -80,17 +80,45 @@ level they choose: to work on their own tasks, to design models, or to read the 
 minutes, not forever, and it can be revoked. An agent never gets more than the person has. See the
 [AI Agents add-on](add-ons/ai.md).
 
-**Four things to ask an agent for**, each with a page that tells it how:
+**Four things to ask an agent for.** Each of these is a prompt to paste into your agent as it is.
 
-| | |
-|---|---|
-| **Explore** | Look through the HR demo and explain how an application and its workflows fit together, changing nothing |
-| **Try** | Build a process on [try.omniworkflow.com](https://try.omniworkflow.com), check it, test it, and give you the model's link and the real test results |
-| **Install** | Install OmniWorkflow on your machine, start it, and prove it works by running a process |
-| **Integrate** | Read your application, recommend how to connect it, and build a small working example |
+**Explore** an application that already uses OmniWorkflow, changing nothing:
+
+```text
+Show me how OmniWorkflow is integrated into the HR demo at https://demo.omniworkflow.com.
+Explain the application and the workflow integration. Change nothing: the site is read-only.
+```
+
+**Try** building a process on the public workbench, and see the real results:
+
+```text
+Using https://try.omniworkflow.com and its API, create an employee leave approval workflow:
+an employee submits the dates and a reason, a manager approves or rejects it, and an employee
+cannot approve their own. Check the model, save it, write and run its tests, fix what fails,
+and give me the model's link and the test results as the server reported them.
+```
+
+**Install** it on your own machine and prove it runs:
+
+```text
+Read the OmniWorkflow installation page at
+https://bpmnserver.github.io/bpmn-server/setup/ and install the current release locally.
+Start it, check that it is running, run one process end to end, and tell me the URL to open.
+```
+
+**Integrate** it with an application you already have:
+
+```text
+Read my application and OmniWorkflow's integration documentation at
+https://bpmnserver.github.io/bpmn-server/integrate/. Recommend how to connect the two and why.
+With my approval, build one small working example and show the process running.
+```
 
 Any agent that can run commands or call an API can do this: Claude Code, Codex, Cursor, Copilot and others. There is
 no separate OmniWorkflow for agents; they use the same CLI, API and models that people do.
+
+Ask an agent to report what the server actually said. A model is checked and tested by the server, so "it verified"
+means the check and the tests ran and passed, not that the diagram looks right.
 
 **Where to read more:** [Building workflows with an AI agent](ai/building-workflows.md) is the guide an agent follows,
 and the one to read to understand what agents can do here. [Chatting with your server](ai/chat-assistants.md) connects
