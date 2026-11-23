@@ -97,6 +97,18 @@ test('paged search on a store that is not MongoDB: pages by a cursor, items unwo
   const waiting = await server.dataStore.find({ filter: { 'items.status': 'wait' }, limit: 10 });
   assert.equal(waiting.data.length, 5);
   assert.ok(waiting.data.every(d => d.items.elementId === 'AssessClaim'), 'one entry per matching item, `items` being it');
+  // docs/docs/data_find.md: walking every page with nextCursor, each instance once, and the projection's fields
+  const seen = [];
+  let after;
+  do {
+    const page = await server.dataStore.find({ filter: { name: 'property-claim' }, sort: { startedAt: -1 },
+      projection: { id: 1, name: 1, startedAt: 1 }, limit: 2, after });
+    assert.equal(page.error, undefined);
+    for (const instance of page.data ?? []) seen.push(instance.id);
+    after = page.nextCursor ?? undefined;
+  } while (after);
+  assert.deepEqual(seen, [...ids].reverse(), 'every instance once, newest first');
+
   const last = await server.dataStore.find({ filter: {}, lastItem: { status: 'end' }, limit: 10 });
   assert.equal(last.data.length, 5);
   for (const d of last.data) {

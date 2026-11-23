@@ -132,7 +132,7 @@ see test scenario `/src/test/feature/restart1.js`
 
 For measured figures (speed, load, memory, the effect of the indexes) and the commands that reproduce them, see [Performance and test coverage](performance.md).
 
-To time the queries of [api.data.find](data_find.md) in your own application, set this in `.env`:
+To time the queries of [dataStore.find](data_find.md) in your own application, set this in `.env`:
 ```.env
 ENABLE_PROFILER=true
 ```

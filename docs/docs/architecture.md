@@ -276,7 +276,7 @@ flowchart LR
 
   subgraph Private["Private network: only your application and your staff reach it"]
     subgraph HostZone["bpmn-web in production: REST APIs and Administration (DISABLE_DESIGN=true)"]
-      REST["REST APIs<br/>/api (API_KEY): start for a user<br/>/api2/tasks (API_ACTING_USER_KEY): tasks"]
+      REST["API v3 (/api/v3)<br/>a token per user, or your credential<br/>API_KEY: the service account"]
       Admin["Administration<br/>for your administrators"]
       API["BPMNAPI<br/>each call as a user"]
       REST --> API
@@ -328,9 +328,11 @@ flowchart LR
 
 - BPMN Server signs nobody in here: it trusts the user your application names, because your application holds its
   keys. Keep the keys on your application's server, and bpmn-web where only your application and your staff reach it.
-- Your application starts a process **for** one of its users, lists, claims and completes their tasks with
-  `/api2/tasks` and `API_ACTING_USER_KEY`: the user is the initiator, and each task comes with its form. `/api2` would
-  start it as its service account. [Integrate an existing application](integrate.md) has the steps.
+- Your application starts a process **for** one of its users, and lists, claims and completes their tasks, through
+  [API v3](api-v3.md): a token for each user (`POST /api/v3/tokens` with the service key), so every call acts as that
+  person under the models' rules. The user is the case's initiator, and each task comes with its form. The service key
+  alone acts as the service account, for system work. [Integrate an existing application](integrate.md) has the steps.
+  `/api` and `/api2/tasks` still work and are frozen.
 - Designers work on a design server of their own. A model reaches production as a file, tested, through Git: see
   [Release](tutorial/release.md).
 
@@ -406,10 +408,11 @@ flowchart LR
 - **Your roles become groups.** The groups `req.user` carries are what the models name: a lane, a task's candidate
   groups, `ADMIN` and `DESIGNER` for administering and designing. The HR demo's roles give `Employee`, `Manager`,
   `HR` and `ADMIN`.
-- **Your application issues the credentials.** API v3 takes the person your `apiUser` names; bpmn-web issues no tokens
-  and no links for AI agents (`POST /api/v3/tokens` and `/ai/key` refuse). The service key (`API_KEY`) stays, for
-  server-to-server calls. Signing out of your application signs out of the workflow pages too: they have no session
-  of their own.
+- **Your application issues the credentials.** API v3 takes the person your `apiUser` names, and bpmn-web issues no
+  tokens of its own (`POST /api/v3/tokens` refuses). The exception is a person's link for their AI agent (`/ai/key`):
+  your sign-in says who they are, bpmn-web issues the link, and API v3 takes it. The service key (`API_KEY`) stays,
+  for server-to-server calls. Signing out of your application signs out of the workflow pages too: they have no
+  session of their own.
 - **bpmn-web manages no users.** No setup page at the first start, no sign-up; Administration and `/api/v3/users` say
   your application manages them. bpmn-web's own sign-in is its default user manager, unchanged.
 - **The engine is unchanged.** It needs only each call's `IUserInfo`: task assignment is by name and group, checked

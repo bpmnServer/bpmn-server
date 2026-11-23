@@ -4,7 +4,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 ## Get Started
 
-- [Overview](index.md): Omni Workflow runs business processes.
+- [Overview](index.md): OmniWorkflow runs business processes.
 - [The online demo](first-workflow.md): Journey A: the quickest way to understand BPMN Server is to build, test, and run a small process.
 - [Build an application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
 - [Integrate an existing application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.
@@ -40,7 +40,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Architecture](architecture.md): BPMN Server has three layers: a host that people and other systems talk to, an engine that runs processes, and a core of model and data handling that both of them use.
 - [How a workflow runs](execution.md): Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
 - [Workflow data](data.md): bpmn-server relies on a Database to store workflow information.
-- [Finding instances](data_find.md): This method allows you to retrieve workflow instances from wf_instances collection.
+- [Finding instances](data_find.md): server.dataStore.find reads a page of instances from the store: a filter chooses them, a sort orders them, and a cursor walks through them a page at a time.
 - [Data objects](data-objects.md): A data object in the diagram stands for data the process works on: a client, an order, a policy.
 - [Who may do what](security.md): In general Application Security deals with the following topics:
 - [Environments and read-only servers](environments.md): APP_ENV in .env says which environment a server is: development, test or production.

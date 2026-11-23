@@ -1,7 +1,7 @@
-# Omni Workflow (BPMN Server)
+# OmniWorkflow (BPMN Server)
 
-Omni Workflow runs business processes. A process is drawn as a BPMN diagram: the steps, who does each one, the
-decisions along the way and the deadlines. Omni Workflow follows the diagram for every case: it gives tasks to the right
+OmniWorkflow runs business processes. A process is drawn as a BPMN diagram: the steps, who does each one, the
+decisions along the way and the deadlines. OmniWorkflow follows the diagram for every case: it gives tasks to the right
 people, calls the services that do the automatic steps, waits for answers and timers, and keeps each case until it ends.
 For every case it records what happened and why.
 
@@ -37,12 +37,12 @@ The full list of features, each with its documentation and its tests, is on the 
 
 ## How it is used
 
-Omni Workflow can be used in four ways:
+OmniWorkflow can be used in four ways:
 
 - **On its own, as a workflow application.** bpmn-web is the application: people sign in, start processes and do their
   tasks in the Workbench. [Build an application](build.md) sets one up; the [tutorials](tutorial/start.md) build one
   example, a leave request, from the first diagram to its release.
-- **Behind an existing application.** The application keeps its own screens and users, and calls Omni Workflow's API to
+- **Behind an existing application.** The application keeps its own screens and users, and calls OmniWorkflow's API to
   start processes and to list and complete its users' tasks. See
   [Integrate an existing application](integrate.md).
 - **Inside a Node.js program.** The engine runs in the program's own process, with no web application. See
@@ -93,4 +93,4 @@ A production server keeps its data in a database, signs people in (with bpmn-web
 keeps its keys secret, and runs only processes whose tests pass. [Installation](setup.md#production),
 [Security](security.md) and [Tutorial 12: Release](tutorial/release.md) cover each of these.
 
-Omni Workflow is [MIT-licensed on GitHub](https://github.com/bpmnServer/bpmn-server).
+OmniWorkflow is [MIT-licensed on GitHub](https://github.com/bpmnServer/bpmn-server).
