@@ -27,6 +27,7 @@ import { userNameProblem } from '../userAccess/UserService.js';
 import { ownUsers } from '../userAccess/UserManager.js';
 import validator from 'validator';
 import { labelFilterOf } from './labelFilter.js';
+import { hasFormKey, formKeyAddress, withIdentifiers } from './formKey.js';
 import { listViewOf, withChoices, MY_WORK_COLUMNS } from './listView.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
@@ -131,7 +132,22 @@ export class Dashboards extends Common {
             isDesigner: canDesign(req.user),
         });
         // v3's startable processes as the start forms' views have them: their fields, from the form
-        const startsOf = (items) => items.map(s => ({ processName: s.processName, startNodeId: s.startNodeId, name: s.name, fields: s.form?.fields ?? [] }));
+        // formKey: the application's own page for this start event, when the model names one (docs/design/form-keys.md)
+        const startsOf = (items) => items.map(s => ({ processName: s.processName, startNodeId: s.startNodeId, name: s.name, fields: s.form?.fields ?? [], formKey: s.form?.formKey }));
+        /**
+         * Each start event's `formAddress`: where its own page is, with `${appVars.<name>}` worked out and the process
+         * and element added (form-keys.md §4). Absent when it has no form key, or its expression came to nothing —
+         * then the start page draws its fields, as before.
+         */
+        const withFormAddresses = async (starts, server, req) => Promise.all(starts.map(async s => {
+            if (!hasFormKey(s.formKey)) return s;
+            const address = await formKeyAddress(s.formKey, server, { user: req.user });
+            if (!address) return s;
+            return { ...s, formAddress: withIdentifiers(address, {
+                processName: s.processName, startNodeId: s.startNodeId,
+                returnTo: typeof req.query.returnTo === 'string' ? req.query.returnTo : undefined,
+            }) };
+        }));
         const render = (req, res, view, data) => res.render('dashboards/' + view, { ...data, ...roles(req), me: req.user?.userName, user: req.user, request: req });
 
         // ---- my work ----------------------------------------------------------------------------------------
@@ -163,7 +179,11 @@ export class Dashboards extends Common {
         router.get('/start/:processName', handler(async (req, res) => {
             const processName = req.params.processName;
             const startable = await (await pageApi(req, server)).startable();
-            render(req, res, 'start', { title: 'Start a process', processName, starts: startsOf(startable.filter(s => s.processName === processName)) });
+            // every start event this user may start (not a timer, error, message or signal: getStartNodes's
+            // userInvokable), for them to pick from. One whose form is the application's own page carries its
+            // address, worked out here, for the link to go straight there (form-keys.md §6, flow E).
+            const starts = await withFormAddresses(startsOf(startable.filter(s => s.processName === processName)), server, req);
+            render(req, res, 'start', { title: 'Start a process', processName, starts });
         }));
 
         // ---- notifications ----------------------------------------------------------------------------------

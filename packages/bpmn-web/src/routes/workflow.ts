@@ -10,6 +10,7 @@ import { ViewHelper } from './ViewHelper.js';
 import { rationaleSteps } from '../testing/rationale.js';
 import { runProcess } from './runErrors.js';
 import { labelFilterOf } from './labelFilter.js';
+import { hasFormKey, formKeyAddress, withIdentifiers } from './formKey.js';
 import { listViewOf, withChoices, hrefWith, INSTANCE_COLUMNS, WORKBENCH_TASK_COLUMNS } from './listView.js';
 import { accessDirectory } from './caseAccess.js';
 import { pageApi, ApiError } from './api/pageClient.js';
@@ -244,10 +245,22 @@ export class Workflow extends Common {
             // case's security policy); this page only shows them
             const page = await asPage(request, response, api => api.taskPage(id));
             if (!page) return;
-            const { node, fields, instance } = page;
+            const { node, fields, instance, formKey } = page;
             elementId = page.task.elementId;
             processName = page.task.processName ?? instance.name;
             let vars = ViewHelper.formatData(instance.data || {});
+
+            // the application's own page, when the model names one (docs/design/form-keys.md §3, flow B): its address,
+            // with any ${appVars.<name>} worked out, and the identifiers only — the page reads the task itself
+            if (hasFormKey(formKey)) {
+                const address = await formKeyAddress(formKey, serverOf(request), { user: request.user, instance, item: page.task });
+                if (address)
+                    return response.redirect(withIdentifiers(address, {
+                        instanceId: instance.id, itemId: id as string,
+                        returnTo: typeof returnTo === 'string' ? returnTo : undefined,
+                    }));
+                // an expression that worked out to nothing: its fields instead, as if it had no form key
+            }
 
             if (fields && fields.length > 0) {
                 // the fields whose choices come from a connector operation (owf:list, owf:lookup)

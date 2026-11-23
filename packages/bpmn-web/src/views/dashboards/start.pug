@@ -15,8 +15,15 @@ block dash
 				details.dash-start(open=starts.length === 1)
 					summary
 						b= start.name
-						if start.fields.length
+						if start.formAddress
+							|  · the application's own form
+						else if start.fields.length
 							|  · #{start.fields.length} field#{start.fields.length === 1 ? '' : 's'}
-					+startForm(start)
+					//- the application's own page, when the model names one (docs/design/form-keys.md flow E)
+					if start.formAddress
+						p.dash-start-form
+							a.btn(href=start.formAddress) Start #{start.name}
+					else
+						+startForm(start)
 		else
 			p.dash-empty #{processName} has no start event a user can start (its starts are messages, signals or timers).

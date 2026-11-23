@@ -309,11 +309,11 @@ export class TaskOperations {
         if (!instance) throw notFound();
         const data = decided ? this.access.data(instance, decided.access, item.elementId) : instance.data;
         const definition = await this.server.definitions.loadFromInstance(instance);
-        const { node, fields } = definition.getNodeInfo(item.elementId);
+        const { node, fields, formKey } = definition.getNodeInfo(item.elementId);
         return {
             task: item,
             instance: { id: instance.id, name: instance.name, status: instance.status, startedAt: instance.startedAt, endedAt: instance.endedAt, data: data ?? {}, items: instance.items ?? [] },
-            node, fields: fields ?? [],
+            node, fields: fields ?? [], formKey,
         };
     }
 
