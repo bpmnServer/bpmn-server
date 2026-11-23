@@ -5,12 +5,12 @@ first matching rule assigns the task when it starts. A rule written once, *over 
 to the IT manager, else the requester's manager*, serves every task that names it.
 
 This page explains the supported assignment-policy behavior. The HR demo includes a working example in
-`apps/hrdemo/workflow/processes/policies/assignment/LeaveApproval.dmn.xml`.
+`apps/hrdemo/workflow/processes/assignment/LeaveApproval.dmn.xml`.
 
 ## Quick start
 
 1. Add `owf:assignmentPolicy="Approval"` to a user task.
-2. Create `policies/assignment/Approval.dmn.xml` with conditions and assignment outputs.
+2. Create `assignment/Approval.dmn.xml` with conditions and assignment outputs.
 3. Choose the policy in the model editor's **User assignment** section.
 4. Test both matching and no-match cases in the decision editor.
 
@@ -28,10 +28,11 @@ shown as written: it is worked out when the task starts.
 
 ## The policy
 
-A DMN decision table in the models folder, `policies/assignment/<name>.dmn.xml`:
-`processes/policies/assignment/Approval.dmn.xml`. A policy kept directly in `policies/` (as at first) is moved into
-`assignment/` when it is read. Edit it
-as any other decision.
+A DMN decision table in the models folder, `assignment/<name>.dmn.xml`:
+`processes/assignment/Approval.dmn.xml`. Each policy add-on has its own folder of the models folder: `assignment/`,
+`notification/`, `security/`. Before 3.7.5 they were `policies/assignment/` and so on, and a policy kept directly in
+`policies/` (as at first) went to assignment: those are moved to the add-on's folder when first read, and the log says
+so once. Edit it as any other decision.
 
 | amount | department | assignee | candidateGroups |
 |---|---|---|---|
@@ -114,7 +115,7 @@ isn't one of them.
 
 | Code | Severity | When |
 |---|---|---|
-| `assignment-policy-not-found` | error | a task's policy isn't in `policies/assignment/` |
+| `assignment-policy-not-found` | error | a task's policy isn't in `assignment/` |
 | `assignment-policy-invalid` | error | the policy's file can't be read as a decision |
 | `assignment-policy-output` | warning | an output that isn't `assignee`, `candidateUsers` or `candidateGroups` |
 | `role-unknown` | warning | a lane, or a group a policy assigns, not in `roles.json` |

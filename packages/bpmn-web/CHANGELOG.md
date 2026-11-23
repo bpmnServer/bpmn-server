@@ -204,6 +204,9 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **The policies' folders are the add-ons' own** (bpmn-server): the editor's policy lists, the decision editor and
+  the Design page read and save `assignment/`, `notification/` and `security/` of the models folder; one from before
+  3.7.5 (`policies/<kind>/`) is moved there first. The HR demo's are moved.
 - **The policies' three add-ons on the pages**: the Settings page has Assignment, Notifications and Access Control, each its
   own area and card (`/dashboard/settings/policies` leads to Assignment), and **Roles**, the server's area; the roles are
   on Administration whichever add-ons are on. Notifications (the menu, the page) are the Notifications add-on's; each

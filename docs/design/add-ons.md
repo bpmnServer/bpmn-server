@@ -173,7 +173,7 @@ of the starter or to an add-on.
 Everything an add-on is, in one folder:
 
 ```text
-addons/policies/
+addons/assignment/
   engine/     what runs in the engine: its event subscribers, checks, query filters (TypeScript)
   editor/     its bpmn-js module: properties, model types, report section, lint rules
   web/        its routes, views, menu entries, Integration section, columns, guide section
@@ -186,7 +186,7 @@ addons/policies/
 - **Open:** which package it ships in. The engine part needs only bpmn-server; the editor part needs bpmn-js and
   Preact; the web part needs bpmn-web. Either one `bpmn-addons` package that depends on both, or the add-ons ship
   inside bpmn-web, which already depends on bpmn-server. The second is simpler to start with.
-- The policies move from `packages/bpmn-server/src/addons/` to their folders here.
+- The policies, now `packages/bpmn-server/src/addons/assignment`, `notification` and `security`, move to their folders here.
 
 ## A model that uses an add-on that's off
 

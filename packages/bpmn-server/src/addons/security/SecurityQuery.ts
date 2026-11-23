@@ -9,8 +9,8 @@
  * its test on an actor (`actors.initiator` is the user, ...), as a condition on the case's items. A test it can't
  * read leaves the rule wider, never narrower. A rule that may grant any case: no narrowing for that policy.
  */
-import { DMNParser } from '../../../dmn/DMNParser.js';
-import { DMNEngine } from '../../../dmn/DMNEngine.js';
+import { DMNParser } from '../../dmn/DMNParser.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
 
 export interface ISeeUser { userName: string; userGroups: string[]; unrestricted?: boolean }
 

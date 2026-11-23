@@ -1,5 +1,5 @@
 // @features: assignment-policies
-// A user task's assignment policy in the model editor (addons/policies/PolicyEntries.jsx): chosen from the policies of
+// A user task's assignment policy in the model editor (the editor's addons/policies/PolicyEntries.jsx): chosen from the policies of
 // the models folder, saved as owf:assignmentPolicy, and previewed with the Test tab's scenario.
 //   npm run test:ui
 import test from 'node:test';
@@ -54,8 +54,8 @@ test.before(async () => {
     browser = await chromium.launch();
     fs.writeFileSync(path.join(web.definitionsPath, 'Leave.bpmn'), MODEL);
     fs.writeFileSync(path.join(web.definitionsPath, 'Leave.feature'), FEATURE);
-    fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'assignment'), { recursive: true });
-    fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'assignment', 'LeaveApproval.dmn.xml'), POLICY);
+    fs.mkdirSync(path.join(web.definitionsPath, 'assignment'), { recursive: true });
+    fs.writeFileSync(path.join(web.definitionsPath, 'assignment', 'LeaveApproval.dmn.xml'), POLICY);
     await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => {

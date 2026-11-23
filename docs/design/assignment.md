@@ -15,8 +15,8 @@ it, as code a report or the editor can't read.
 1. **The application holds its roles and its policies,** in its models folder, next to its models:
    - `processes/roles.json`: the roles' names, `["Manager", "Director", "ITManager", "HR"]`. A role is the user
      group of the same name.
-   - `processes/policies/assignment/<name>.dmn.xml`: a policy, as a DMN decision table. Each kind of policy has
-     its folder in `policies/`: `assignment/`, and `security/` ([security-policies.md](security-policies.md)).
+   - `processes/assignment/<name>.dmn.xml`: a policy, as a DMN decision table. Each kind of policy has
+     its own folder: `assignment/`, `notification/` and `security/` ([security-policies.md](security-policies.md)).
 2. **A task picks a policy,** by its name: `owf:assignmentPolicy="Approval"`.
 3. **A policy is a decision table** (DMN, hit policy FIRST): conditions on the case's data in FEEL, the first rule
    that matches assigns. The DMN support already there evaluates it (`dmn/DMNEngine.ts`).
@@ -29,7 +29,7 @@ it, as code a report or the editor can't read.
 
 ## A policy
 
-`processes/policies/assignment/Approval.dmn.xml`:
+`processes/assignment/Approval.dmn.xml`:
 
 | amount | department | assignee | candidateGroups |
 |---|---|---|---|
@@ -68,7 +68,7 @@ preview with the Test tab's data, as labels have: *offered to Director (rule 1)*
 ## Afterwards: a claim, a reassignment
 
 `Execution.assign` (claim, and a reassignment through any API) changes the fields, and says so in the Rationale
-(`reassigned` in `addons/policies/assignment/AssignmentPolicy.ts`):
+(`reassigned` in `addons/assignment/AssignmentPolicy.ts`):
 
 - **A claim**, a person taking an unassigned task as its assignee and changing nothing else, keeps `item.assignment`:
   the policy still explains why it was offered to them. Entry: `is claimed by dora`, why: what it was, and what decided.
@@ -82,7 +82,7 @@ model's assignee and candidates.)
 ## Checks
 
 `verifyModel`:
-- a task's policy that isn't in `processes/policies/assignment/` is an error;
+- a task's policy that isn't in `processes/assignment/` is an error;
 - a group a policy assigns that isn't in `roles.json` is a warning (when the file exists);
 - a lane whose name isn't in `roles.json` is a warning (when the file exists).
 
@@ -90,7 +90,7 @@ model's assignee and candidates.)
 
 - Nothing changes for a task with no `owf:assignmentPolicy`, or an application with no `policies` folder.
 - `item.assignment` is a new, optional field.
-- The models list, imports and exports take `roles.json` and `policies/` along with the models; a server with
+- The models list, imports and exports take `roles.json` and the policy folders (`assignment/`, `notification/`, `security/`) along with the models; a server with
   several applications has them per application, as their models are.
 
 ## Left out of the first try
@@ -101,8 +101,8 @@ model's assignee and candidates.)
 
 ## Settled in discussion
 
-1. **The file name** is `policies/assignment/<name>.dmn.xml` (2026-11-12: a folder per kind of policy; at first
-   `policies/<name>.dmn.xml`, moved into `assignment/` when read).
+1. **The file name** is `assignment/<name>.dmn.xml`, the Assignment add-on's folder (3.7.5; 2026-11-12 it was
+   `policies/assignment/`, and at first `policies/<name>.dmn.xml`: both moved into `assignment/` when read).
 2. **A policy and explicit attributes on the same task:** the policy wins, for each field its rule sets.
 3. **No match:** the task stays unassigned; no fallback. The tests explore it.
 
@@ -111,5 +111,5 @@ model's assignee and candidates.)
 1. This note.
 2. The engine: `owf:assignmentPolicy`, the evaluation, `item.assignment`, the Rationale entries; `verifyModel`'s
    checks. Engine scenarios: each rule, no match, a failing policy, an explicit attribute, a `$(...)` output.
-3. The editor: the Assignment policy list, the preview; the DMN editor opens `policies/assignment/`.
+3. The editor: the Assignment policy list, the preview; the DMN editor opens `assignment/`.
 4. The HR demo's Leave Application with a policy, to try.

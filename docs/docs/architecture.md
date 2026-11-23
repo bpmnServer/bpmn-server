@@ -518,7 +518,7 @@ Tests are Gherkin `.feature` files beside their models. A scenario's last run is
 |---|---|
 | Models, decisions, their tests and version history | Files in the models folder (`DEFINITIONS_PATH`) |
 | Which add-ons are on | The application's `app-config.json` |
-| The policies | Decision tables in the models folder's `policies/assignment`, `policies/security`, `policies/notification` |
+| The policies | Decision tables in the models folder's `assignment`, `security`, `notification` |
 | Connectors | Files in the models folder's `connectors` folder (`connectors/<id>.connector.json`); their keys, encrypted, in the workflow store |
 | Instances, tasks, locks and test runs | The workflow store |
 | Users and sessions | bpmn-web's: the workflow store, beside the instances (MongoDB, SQLite or memory). Your application's, with its user manager: your database |

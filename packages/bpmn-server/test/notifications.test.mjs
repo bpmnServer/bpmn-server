@@ -44,9 +44,9 @@ const MODEL = (processAttrs = 'owf:notificationPolicy="Notices"') => `<?xml vers
 async function server({ model = MODEL(), policy = NOTICES, notify } = {}) {
     const dir = definitionsFolder();
     fs.writeFileSync(path.join(dir, 'Leave.bpmn'), model);
-    fs.mkdirSync(path.join(dir, 'policies', 'notification', 'templates'), { recursive: true });
-    if (policy) fs.writeFileSync(path.join(dir, 'policies', 'notification', 'Notices.dmn.xml'), policy);
-    fs.writeFileSync(path.join(dir, 'policies', 'notification', 'templates', 'approval-request.md'),
+    fs.mkdirSync(path.join(dir, 'notification', 'templates'), { recursive: true });
+    if (policy) fs.writeFileSync(path.join(dir, 'notification', 'Notices.dmn.xml'), policy);
+    fs.writeFileSync(path.join(dir, 'notification', 'templates', 'approval-request.md'),
         '# Please approve ${data.days} days\n\nHello ${item.assignee}: ${actors.initiator} asks for leave.\n');
     const delivered = [];
     const services = { managerOf: id => `manager-of-${id}`, notify: notify ?? (n => { delivered.push(n); }) };
@@ -108,7 +108,7 @@ test('no policy file: notifies no one, said; the process goes on', async () => {
     const [instance] = await srv.dataStore.findInstances({ id }, 'full');
     assert.equal(delivered.length, 0);
     assert.equal(instance.items.find(i => i.elementId === 'Approve').status, 'wait');
-    assert.ok(instance.logs.some(l => l.action === 'notifies no one' && /there is no policies\/notification\/Notices\.dmn\.xml/.test(l.message)));
+    assert.ok(instance.logs.some(l => l.action === 'notifies no one' && /there is no notification\/Notices\.dmn\.xml/.test(l.message)));
     await srv.shutdown();
 });
 

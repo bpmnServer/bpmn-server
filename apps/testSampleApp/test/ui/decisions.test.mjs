@@ -194,8 +194,8 @@ test('the Report shows a business rule task\'s decision table and where its resu
 });
 
 test('an input column named for a table\'s own variable shows its calculation under its name', async () => {
-    fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'assignment'), { recursive: true });
-    fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'assignment', 'OwnManager.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+    fs.mkdirSync(path.join(web.definitionsPath, 'assignment'), { recursive: true });
+    fs.writeFileSync(path.join(web.definitionsPath, 'assignment', 'OwnManager.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="OwnManager" namespace="t">
   <decision id="OwnManager" name="OwnManager"><decisionTable id="t" hitPolicy="FIRST">
     <input id="days" label="Days"><inputExpression id="e1" typeRef="number"><text>days</text></inputExpression></input>

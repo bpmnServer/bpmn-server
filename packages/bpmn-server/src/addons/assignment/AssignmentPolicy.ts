@@ -10,35 +10,17 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { DMNEngine } from '../../../dmn/DMNEngine.js';
-import { expressionScript, isExpression } from '../../../engine/Expressions.js';
-import { label } from '../../../elements/Flow.js';
-import { runningDecisionContext } from '../../../engine/DecisionContext.js';
-import { ASSIGNMENT_FIELDS } from '../../../engine/AddOns.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { expressionScript, isExpression } from '../../engine/Expressions.js';
+import { label } from '../../elements/Flow.js';
+import { runningDecisionContext } from '../../engine/DecisionContext.js';
+import { ASSIGNMENT_FIELDS } from '../../engine/AddOns.js';
+import { movePolicyFolder } from '../basics/folders.js';
 
 /** What a policy's rule sets: the engine's assignment fields. */
 export const POLICY_FIELDS = ASSIGNMENT_FIELDS;
-/** The models folder's policies, one folder per kind: assignment here, security in policies/security (to come). */
-export const POLICIES_FOLDER = 'policies/assignment';
-/** Where assignment policies were at first (3.7.1's first try): moved into POLICIES_FOLDER when read. */
-const EARLIER_FOLDER = 'policies';
-
-/**
- * Policies written directly in policies/ (before the kinds had folders of their own) moved into policies/assignment.
- * Their tests (`<name>.policy.dmn.feature`, beside the models) stay as they are. One already there is kept, and the
- * other left where it is.
- */
-function moveEarlierPolicies(definitionsPath: string) {
-    const earlier = path.join(definitionsPath, EARLIER_FOLDER);
-    let files: string[];
-    try { files = fs.readdirSync(earlier, { withFileTypes: true }).filter(e => e.isFile() && /\.dmn\.xml$/i.test(e.name)).map(e => e.name); }
-    catch { return; }
-    if (!files.length) return;
-    const folder = path.join(definitionsPath, POLICIES_FOLDER);
-    fs.mkdirSync(folder, { recursive: true });
-    for (const name of files)
-        if (!fs.existsSync(path.join(folder, name))) fs.renameSync(path.join(earlier, name), path.join(folder, name));
-}
+/** The models folder's assignment policies: the Assignment add-on's own folder (before 3.7.5, policies/assignment). */
+export const POLICIES_FOLDER = 'assignment';
 
 /** What decided a task's assignment, kept on the item: its policy and rule, or the person who reassigned it. */
 export interface IItemAssignment {
@@ -51,16 +33,14 @@ export interface IItemAssignment {
 /** A policy's file in a models folder, or null when it isn't there. */
 export function policyFile(definitionsPath: string, name: string): string | null {
     if (!definitionsPath || !name || /[\\/]|\.\./.test(name)) return null;
-    moveEarlierPolicies(definitionsPath);
-    const file = path.join(definitionsPath, POLICIES_FOLDER, `${name}.dmn.xml`);
+    const file = path.join(movePolicyFolder(definitionsPath, 'assignment'), `${name}.dmn.xml`);
     return fs.existsSync(file) ? file : null;
 }
 
 /** The policies of a models folder, by name. */
 export function policyNames(definitionsPath: string): string[] {
     if (!definitionsPath) return [];
-    moveEarlierPolicies(definitionsPath);
-    const folder = path.join(definitionsPath, POLICIES_FOLDER);
+    const folder = movePolicyFolder(definitionsPath, 'assignment');
     if (!fs.existsSync(folder)) return [];
     return fs.readdirSync(folder).filter(f => /\.dmn\.xml$/i.test(f)).map(f => f.replace(/\.dmn\.xml$/i, '')).sort();
 }
@@ -166,7 +146,7 @@ export async function roleUses(definitionsPath: string): Promise<Map<string, str
         for (const m of source.matchAll(/<(?:\w+:)?lane\b[^>]*?\bname="([^"]*)"/g))
             add(m[1].trim(), `${file.replace(/\.bpmn$/i, '')}: lane`);
     }
-    const { DMNParser } = await import('../../../dmn/DMNParser.js');
+    const { DMNParser } = await import('../../dmn/DMNParser.js');
     for (const policy of policyNames(definitionsPath)) {
         try {
             const definitions = await DMNParser.loadFile(path.join(definitionsPath, POLICIES_FOLDER, `${policy}.dmn.xml`));

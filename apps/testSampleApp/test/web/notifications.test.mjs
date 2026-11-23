@@ -43,8 +43,8 @@ let instanceId;
 
 test.before(async () => {
     web = await startWebApp();
-    fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'notification'), { recursive: true });
-    fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'notification', 'V3Notices.dmn.xml'), POLICY);
+    fs.mkdirSync(path.join(web.definitionsPath, 'notification'), { recursive: true });
+    fs.writeFileSync(path.join(web.definitionsPath, 'notification', 'V3Notices.dmn.xml'), POLICY);
     await web.bpmnServer.models.save(MODEL, SOURCE);
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });

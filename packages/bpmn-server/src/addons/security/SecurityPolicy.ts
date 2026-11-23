@@ -13,15 +13,16 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { DMNEngine } from '../../../dmn/DMNEngine.js';
-import { decisionContext, dataPathOf } from '../../../engine/DecisionContext.js';
-import { actorsOf, actorElements, actorNamesOf } from '../actors.js';
-import type { Actor } from '../actors.js';
-import { DataHandler } from '../../../engine/DataHandler.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { decisionContext, dataPathOf } from '../../engine/DecisionContext.js';
+import { actorsOf, actorElements, actorNamesOf } from '../basics/actors.js';
+import type { Actor } from '../basics/actors.js';
+import { DataHandler } from '../../engine/DataHandler.js';
 import { seeConditionsOfTable, builtInSeeConditions, combineSeeConditions } from './SecurityQuery.js';
 import type { SeeConditions } from './SecurityQuery.js';
+import { movePolicyFolder } from '../basics/folders.js';
 
-export const SECURITY_FOLDER = 'policies/security';
+export const SECURITY_FOLDER = 'security';
 /** The application's default policy, for a process that names none. */
 export const DEFAULT_SECURITY_POLICY = 'default';
 export const SECURITY_ACTIONS = ['see', 'data', 'claim', 'complete', 'assign', 'restart', 'events'] as const;
@@ -96,13 +97,13 @@ export class SecurityPolicy {
     get on(): boolean {
         if (process.env.SECURITY_POLICY === 'default') return true;
         if (process.env.SECURITY_POLICY === 'off') return false;
-        return !!this.definitionsPath && fs.existsSync(path.join(this.definitionsPath, SECURITY_FOLDER));
+        return !!this.definitionsPath && fs.existsSync(movePolicyFolder(this.definitionsPath, 'security'));
     }
 
     /** A policy's file, or null when it isn't there. */
     file(name: string): string | null {
         if (!this.definitionsPath || !name || /[\\/]|\.\./.test(name)) return null;
-        const file = path.join(this.definitionsPath, SECURITY_FOLDER, `${name}.dmn.xml`);
+        const file = path.join(movePolicyFolder(this.definitionsPath, 'security'), `${name}.dmn.xml`);
         return fs.existsSync(file) ? file : null;
     }
 
@@ -131,7 +132,7 @@ export class SecurityPolicy {
 
     /** The folder's policies, by name. */
     names(): string[] {
-        const folder = this.definitionsPath && path.join(this.definitionsPath, SECURITY_FOLDER);
+        const folder = this.definitionsPath && movePolicyFolder(this.definitionsPath, 'security');
         if (!folder || !fs.existsSync(folder)) return [];
         return fs.readdirSync(folder).filter(f => /\.dmn\.xml$/i.test(f)).map(f => f.replace(/\.dmn\.xml$/i, '')).sort();
     }

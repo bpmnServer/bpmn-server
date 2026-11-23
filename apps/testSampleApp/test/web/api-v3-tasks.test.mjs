@@ -127,8 +127,8 @@ const REVIEW_POLICY = `<?xml version="1.0" encoding="UTF-8"?>
 </definitions>`;
 
 test('a task says what decided who works on it: its policy and rule; a claim keeps it', async () => {
-  fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'assignment'), { recursive: true });
-  fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'assignment', 'V3Review.dmn.xml'), REVIEW_POLICY);
+  fs.mkdirSync(path.join(web.definitionsPath, 'assignment'), { recursive: true });
+  fs.writeFileSync(path.join(web.definitionsPath, 'assignment', 'V3Review.dmn.xml'), REVIEW_POLICY);
   await web.bpmnServer.models.save(ASSIGNED, ASSIGNED_XML);
   const started = await v3('POST', `/processes/${ASSIGNED}/start`, sam, { data: { amount: 50 } });
   assert.equal(started.status, 201, why(started));

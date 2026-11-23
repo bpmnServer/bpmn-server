@@ -1,5 +1,5 @@
 // @features: security-narrowing
-// A security policy as a condition of the store's query (addons/policies/security/SecurityQuery.ts): a superset of the cases a user may
+// A security policy as a condition of the store's query (addons/security/SecurityQuery.ts): a superset of the cases a user may
 // see, so a list reads fewer before the policy decides each. Every case the policy shows meets it; it never needs to
 // be exact. A rule it can't read leaves it wider.
 import test from 'node:test';
@@ -30,8 +30,8 @@ const MODEL = attr => `<?xml version="1.0" encoding="UTF-8"?>
 function folder(policies, models = { Request: 'owf:securityPolicy="Cases"', Other: '' }) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-security-query-'));
   for (const [name, attr] of Object.entries(models)) fs.writeFileSync(path.join(dir, `${name}.bpmn`), MODEL(attr));
-  fs.mkdirSync(path.join(dir, 'policies', 'security'), { recursive: true });
-  for (const [name, xml] of Object.entries(policies)) fs.writeFileSync(path.join(dir, 'policies', 'security', `${name}.dmn.xml`), xml);
+  fs.mkdirSync(path.join(dir, 'security'), { recursive: true });
+  for (const [name, xml] of Object.entries(policies)) fs.writeFileSync(path.join(dir, 'security', `${name}.dmn.xml`), xml);
   return dir;
 }
 /** a case of `model` started by `by`, its Approve waiting for `group` (or assigned to `assignee`) */

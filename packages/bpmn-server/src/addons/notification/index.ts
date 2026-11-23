@@ -4,13 +4,14 @@
  * hooks (engine/AddOns.ts) and depends on nothing else of ours.
  */
 import path from 'node:path';
-import { DMNEngine } from '../../../dmn/DMNEngine.js';
-import { DMNParser } from '../../../dmn/DMNParser.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { DMNParser } from '../../dmn/DMNParser.js';
 import manifest from './addon.json' with { type: 'json' };
-import { registerPolicyBasics } from '../basics.js';
-import type { IAddOnManifest } from '../../../engine/AddOns.js';
-import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
+import { registerPolicyBasics } from '../basics/index.js';
+import type { IAddOnManifest } from '../../engine/AddOns.js';
+import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck } from '../../engine/AddOns.js';
 import { notifyEvent, notificationPolicyFile, notificationTemplateFile, NOTIFICATION_FOLDER, NOTIFICATION_TEMPLATES, NOTIFICATION_OUTPUTS } from './NotificationPolicy.js';
+import { movePolicyFolder } from '../basics/folders.js';
 
 export * from './NotificationPolicy.js';
 
@@ -66,6 +67,7 @@ const modelCheck: IModelCheck = {
         if (policy) await checkPolicy(check, policy, def);
     },
     decisionFiles(definition, folder) {
+        movePolicyFolder(folder, 'notification');
         const files: IAddOnDecisionFile[] = [];
         const add = (def) => {
             const policy = policyOf(def);

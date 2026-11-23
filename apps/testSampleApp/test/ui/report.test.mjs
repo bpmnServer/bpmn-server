@@ -271,11 +271,11 @@ ${rules.map((r, n) => `    <rule id="${name}_r${n}"><description>${r.why}</descr
 
 test('the report says bpmn-server\'s own settings: labels, a task\'s assignment policy and the process\'s security policy, each policy\'s table', async () => {
     const folder = web.definitionsPath;
-    fs.mkdirSync(path.join(folder, 'policies', 'assignment'), { recursive: true });
-    fs.mkdirSync(path.join(folder, 'policies', 'security'), { recursive: true });
-    fs.writeFileSync(path.join(folder, 'policies', 'assignment', 'ReportApproval.dmn.xml'), POLICY_XML('ReportApproval', 'FIRST', ['amount'], ['candidateGroups'],
+    fs.mkdirSync(path.join(folder, 'assignment'), { recursive: true });
+    fs.mkdirSync(path.join(folder, 'security'), { recursive: true });
+    fs.writeFileSync(path.join(folder, 'assignment', 'ReportApproval.dmn.xml'), POLICY_XML('ReportApproval', 'FIRST', ['amount'], ['candidateGroups'],
         [{ why: 'a large one: the directors', in: ['&gt; 1000'], out: ['"Director"'] }, { why: 'any other', in: ['-'], out: ['"Manager"'] }]));
-    fs.writeFileSync(path.join(folder, 'policies', 'security', 'ReportCases.dmn.xml'), POLICY_XML('ReportCases', 'COLLECT', ['actors.initiator'], ['see'],
+    fs.writeFileSync(path.join(folder, 'security', 'ReportCases.dmn.xml'), POLICY_XML('ReportCases', 'COLLECT', ['actors.initiator'], ['see'],
         [{ why: 'whoever asked sees it', in: ['user.userName'], out: ['"full"'] }]));
     try {
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -294,14 +294,14 @@ test('the report says bpmn-server\'s own settings: labels, a task\'s assignment 
         const processSettings = await process.locator('> .report-settings').innerText();
         assert.match(processSettings, /^label: Request \$\{Amount = data\.amount\}$/m);
         assert.match(processSettings, /^securityPolicy: ReportCases$/m);
-        assert.match(await process.locator('> .report-decision .report-decision-title').innerText(), /^Security policy ReportCases · policies\/security\/ReportCases\.dmn\.xml$/);
+        assert.match(await process.locator('> .report-decision .report-decision-title').innerText(), /^Security policy ReportCases · security\/ReportCases\.dmn\.xml$/);
         assert.match(await process.locator('> .report-decision table').innerText(), /COLLECT[^]*actors\.initiator[^]*see[^]*user\.userName[^]*"full"[^]*whoever asked sees it/);
 
         const approve = section(page, 'Approve');
         const settings = await approve.locator('.report-settings').first().innerText();
         assert.match(settings, /^assignmentPolicy: ReportApproval$/m);
         assert.match(settings, /^endLabel: Approved by \$\{completedBy\}$/m);
-        assert.match(await approve.locator('.report-decision-title').innerText(), /^Assignment policy ReportApproval · policies\/assignment\/ReportApproval\.dmn\.xml$/);
+        assert.match(await approve.locator('.report-decision-title').innerText(), /^Assignment policy ReportApproval · assignment\/ReportApproval\.dmn\.xml$/);
         assert.match(await approve.locator('.report-decision table').innerText(), /FIRST[^]*amount[^]*candidateGroups[^]*> 1000[^]*"Director"[^]*a large one: the directors[^]*"Manager"/);
         assert.deepEqual(errors, []);
         await close();
@@ -314,8 +314,8 @@ test('the report says bpmn-server\'s own settings: labels, a task\'s assignment 
         await plain.close();
     }
     finally {
-        fs.rmSync(path.join(folder, 'policies', 'security'), { recursive: true, force: true });
-        fs.rmSync(path.join(folder, 'policies', 'assignment', 'ReportApproval.dmn.xml'), { force: true });
+        fs.rmSync(path.join(folder, 'security'), { recursive: true, force: true });
+        fs.rmSync(path.join(folder, 'assignment', 'ReportApproval.dmn.xml'), { force: true });
         for (const model of ['report-policies', 'report-no-policy']) fs.rmSync(path.join(folder, `${model}.bpmn`), { force: true });
     }
 });

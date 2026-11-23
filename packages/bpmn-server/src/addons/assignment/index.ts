@@ -3,16 +3,17 @@
  * (AssignmentPolicy.ts). It plugs into the engine's hooks (engine/AddOns.ts) and depends on nothing else of ours.
  */
 import path from 'node:path';
-import { DMNEngine } from '../../../dmn/DMNEngine.js';
-import { DMNParser } from '../../../dmn/DMNParser.js';
-import { owfAttribute } from '../../../elements/owfAttributes.js';
-import { taskAttribute } from '../../../elements/Tasks.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { DMNParser } from '../../dmn/DMNParser.js';
+import { owfAttribute } from '../../elements/owfAttributes.js';
+import { taskAttribute } from '../../elements/Tasks.js';
 import { assignmentFilter } from './filters.js';
 import manifest from './addon.json' with { type: 'json' };
-import { registerPolicyBasics } from '../basics.js';
-import type { IAddOnManifest } from '../../../engine/AddOns.js';
-import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
+import { registerPolicyBasics } from '../basics/index.js';
+import type { IAddOnManifest } from '../../engine/AddOns.js';
+import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck } from '../../engine/AddOns.js';
 import { applyPolicy, reassigned, policyFile, POLICY_FIELDS, POLICIES_FOLDER } from './AssignmentPolicy.js';
+import { movePolicyFolder } from '../basics/folders.js';
 
 export * from './AssignmentPolicy.js';
 
@@ -91,6 +92,7 @@ const modelCheck: IModelCheck = {
         if (policy) await checkPolicy(check, policy, def);
     },
     decisionFiles(definition, folder) {
+        movePolicyFolder(folder, 'assignment');
         const files: IAddOnDecisionFile[] = [];
         for (const node of definition.nodes.values()) {
             const policy = policyOf(node.def);

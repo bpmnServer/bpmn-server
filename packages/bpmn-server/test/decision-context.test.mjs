@@ -141,8 +141,8 @@ test('every expression reads the same names: a business rule, an assignment poli
     const dir = definitionsFolder();
     fs.writeFileSync(path.join(dir, 'Ctx.bpmn'), WITH_APPROVER);
     fs.writeFileSync(path.join(dir, 'Route.dmn.xml'), TABLE('Route', ['who']));
-    fs.mkdirSync(path.join(dir, 'policies', 'assignment'), { recursive: true });
-    fs.writeFileSync(path.join(dir, 'policies', 'assignment', 'Approval.dmn.xml'), TABLE('Approval', ['assignee', 'candidateGroups']));
+    fs.mkdirSync(path.join(dir, 'assignment'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'assignment', 'Approval.dmn.xml'), TABLE('Approval', ['assignee', 'candidateGroups']));
     const { server } = await makeServer({ dir, services: {
         managerOf: id => `manager-of-${id}`,
         regionOf: async id => id === 'ann' ? 'EU' : 'US',
@@ -182,10 +182,10 @@ test('the reverse of a security policy: who may see the case and do what with it
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:owf="http://omniworkflow.com/schema/owf/1.0" id="d" targetNamespace="t">
   <bpmn:process id="P" isExecutable="true" owf:securityPolicy="Cases"><bpmn:startEvent id="S" /><bpmn:userTask id="Notes" owf:actor="noter" /><bpmn:userTask id="Approve" /></bpmn:process>
 </bpmn:definitions>`);
-    fs.mkdirSync(path.join(dir, 'policies', 'security'), { recursive: true });
+    fs.mkdirSync(path.join(dir, 'security'), { recursive: true });
     const row = (id, cells) => `<rule id="${id}">${cells.map((c, i) => i < 3
         ? `<inputEntry id="${id}i${i}"><text>${c}</text></inputEntry>` : `<outputEntry id="${id}o${i}"><text>${c}</text></outputEntry>`).join('')}</rule>`;
-    fs.writeFileSync(path.join(dir, 'policies', 'security', 'Cases.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+    fs.writeFileSync(path.join(dir, 'security', 'Cases.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="Cases" namespace="t">
   <decision id="Cases" name="Cases"><decisionTable id="t" hitPolicy="COLLECT">
     <input id="i1" label="initiator"><inputExpression id="e1" typeRef="string"><text>actors.initiator</text></inputExpression></input>
@@ -227,8 +227,8 @@ test('a security policy deciding about a task reads its item\'s data, in its bra
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:owf="http://omniworkflow.com/schema/owf/1.0" id="d" targetNamespace="t">
   <bpmn:process id="P" isExecutable="true" owf:securityPolicy="Lines"><bpmn:startEvent id="S" /><bpmn:userTask id="Approve" /></bpmn:process>
 </bpmn:definitions>`);
-    fs.mkdirSync(path.join(dir, 'policies', 'security'), { recursive: true });
-    fs.writeFileSync(path.join(dir, 'policies', 'security', 'Lines.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+    fs.mkdirSync(path.join(dir, 'security'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'security', 'Lines.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="Lines" namespace="t">
   <decision id="Lines" name="Lines"><decisionTable id="t" hitPolicy="COLLECT">
     <input id="i1" label="amount"><inputExpression id="e1" typeRef="number"><text>data.amount</text></inputExpression></input>

@@ -1,6 +1,6 @@
 # Notification policies
 
-**Status:** built on `3.7.1` (`addons/policies/notification/NotificationPolicy.ts`), a first slice. How to use them, with the HR demo's
+**Status:** built on `3.7.1` (`addons/notification/NotificationPolicy.ts`), a first slice. How to use them, with the HR demo's
 `LeaveNotices`: [docs/docs/notification-policies.md](../docs/notification-policies.md).
 
 The third policy, beside [assignment](assignment.md) and [security](security-policies.md): who is told what, and when.
@@ -38,7 +38,7 @@ The table's `event` input says which:
 
 ## The policy
 
-`policies/notification/<name>.dmn.xml`, hit policy COLLECT:
+`notification/<name>.dmn.xml`, hit policy COLLECT:
 
 | event | task | notify | template | channel |
 |---|---|---|---|---|
@@ -50,7 +50,7 @@ The table's `event` input says which:
   `$(...)` evaluated as the model's others are (`$(appServices.managerOf(data.requester))`). Text with commas is a list.
   A rule whose `notify` comes to nobody notifies no one, and the Rationale says so.
 - **`template`:** a template's name, or the message itself. A name is a file of the models folder,
-  `policies/notification/templates/<name>.md` (or `.txt`): its first line is the subject, the rest the message.
+  `notification/templates/<name>.md` (or `.txt`): its first line is the subject, the rest the message.
   Otherwise the text is the message, and its first line the subject. Either way `${...}` parts are filled in, as a
   model's text is (`${data.days}`, `${item.name}`, `${actors.initiator}`).
 - **`channel`:** optional, passed as it is (`email`, `inbox`, `sms`): what it means is the application's.
@@ -91,7 +91,7 @@ application's `notify` that throws: the Rationale says it, the notification is k
 
 | Code | Severity | When |
 |---|---|---|
-| `notification-policy-not-found` | error | a process's or task's policy isn't in `policies/notification/` |
+| `notification-policy-not-found` | error | a process's or task's policy isn't in `notification/` |
 | `notification-policy-invalid` | error | it can't be read as a decision |
 | `notification-policy-output` | warning | an output that isn't `notify`, `template` or `channel` |
 | `notification-template-not-found` | warning | a template cell that is a name (`"approval-request"`) with no file of that name |

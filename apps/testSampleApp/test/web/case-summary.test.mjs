@@ -35,8 +35,8 @@ async function tokenFor(userName, groups) {
 
 test.before(async () => {
   web = await startWebApp();
-  fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'security'), { recursive: true });
-  fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'security', 'default.dmn.xml'), POLICY);
+  fs.mkdirSync(path.join(web.definitionsPath, 'security'), { recursive: true });
+  fs.writeFileSync(path.join(web.definitionsPath, 'security', 'default.dmn.xml'), POLICY);
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 

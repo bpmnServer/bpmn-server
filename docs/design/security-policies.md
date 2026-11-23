@@ -1,7 +1,7 @@
 # Design: security policies
 
 Status: **a first slice built** (2026-11-12, branch `3.7.1`), to try before it is settled: the evaluation
-(`addons/policies/security/SecurityPolicy.ts`), API v3 and the pages (`routes/caseAccess.ts`), the HR demo's `LeaveCases`. Not yet: the
+(`addons/security/SecurityPolicy.ts`), API v3 and the pages (`routes/caseAccess.ts`), the HR demo's `LeaveCases`. Not yet: the
 editor, `verifyModel`'s checks, the "as whom" preview, the `owf` moddle descriptor (the attribute is read from the XML),
 and a policy giving claim or complete to someone the assignment doesn't offer the task to. A task the person may not
 complete is not theirs to claim either, unless a rule allows claiming it.
@@ -32,10 +32,10 @@ give it to others.
 ## Decisions proposed
 
 1. **A security policy is a decision table** in the models folder, as an assignment policy is, each kind in its own
-   folder: `processes/policies/security/<name>.dmn.xml` (assignment policies: `policies/assignment/`).
+   folder: `processes/security/<name>.dmn.xml` (assignment policies: `assignment/`).
 2. **A process names one, and a task may name its own:** `owf:securityPolicy="LeaveCases"` on the process, for its
    cases and every task of them; on a user task, for that task's actions, asked together with the process's.
-3. **Without one, the default policy:** `processes/policies/security/default.dmn.xml` when the application has it, else
+3. **Without one, the default policy:** `processes/security/default.dmn.xml` when the application has it, else
    bpmn-web's own, built in (H2's rule, below). An application changes the default by writing one file.
 4. **Every matching rule counts, and a denial wins.** Hit policy COLLECT: the server reads all the rules that match;
    for each action, any `deny` refuses it; else any `allow` allows it; else the action's default (below). The rules'
@@ -87,7 +87,7 @@ with an instance ([decision-context.md](decision-context.md)), is shown under th
 
 ## A policy
 
-`processes/policies/security/LeaveCases.dmn.xml`, hit policy COLLECT:
+`processes/security/LeaveCases.dmn.xml`, hit policy COLLECT:
 
 | actors.initiator | actors.approver | actors.assignee | actors.candidate | user.userGroups | task | see | data | claim | complete | assign | restart |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -115,7 +115,7 @@ in it. For a task, the actors of its item's branch (a multi-instance's line).
 
 ## The default policy (bpmn-web's, built in)
 
-H2's rule (in code; as a table an application can copy into `policies/security/default.dmn.xml` and change):
+H2's rule (in code; as a table an application can copy into `security/default.dmn.xml` and change):
 
 | actors.initiator | actors.assignee | actors.candidate | user.userGroups | see | data |
 |---|---|---|---|---|---|
@@ -154,7 +154,7 @@ ask the policy; `routes/workflow.ts` holds no security rules of its own (3.7.2).
 A policy is asked per case, and API v3's lists page in the store (Fable Review H5). So that a page isn't emptied by
 cases the policy hides afterwards:
 
-- **the store's query is narrowed** (`SecurityPolicy.seeQuery`, `addons/policies/security/SecurityQuery.ts`, 3.7.2) to a superset of the
+- **the store's query is narrowed** (`SecurityPolicy.seeQuery`, `addons/security/SecurityQuery.ts`, 3.7.2) to a superset of the
   cases the user may see: from each rule that may grant `see`, its tests on the user worked out now (one that fails:
   the rule doesn't apply), a rule testing a task left out (a list asks of the case), and its test on an actor as a
   condition on the items (`initiator`: `items.userName` or the instance's `userName`; `assignee`: `items.assignee`;
@@ -177,7 +177,7 @@ doc's §6 asks: a `security-policies` feature with `[owf:securityPolicy]` once b
 
 | Code | Severity | When |
 |---|---|---|
-| `security-policy-not-found` | error | a process's or task's policy isn't in `policies/security/` |
+| `security-policy-not-found` | error | a process's or task's policy isn't in `security/` |
 | `security-policy-invalid` | error | it can't be read as a decision, isn't COLLECT, or has `$(...)` in a cell |
 | `security-policy-output` | warning | an output that isn't one of the actions, or a value its action doesn't take |
 | `security-policy-input` | warning | an input that isn't `actors...`, `user...`, `task` or the instance's `data...` |

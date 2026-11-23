@@ -1,5 +1,5 @@
 // @features: notification-policies
-// Security policies (docs/design/security-policies.md): a DMN table in policies/security/ decides who sees a case, which
+// Security policies (docs/design/security-policies.md): a DMN table in security/ decides who sees a case, which
 // of its data, and what they may do with it and its tasks; every matching rule counts and a denial wins.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -42,8 +42,8 @@ const MODEL = (policyAttr = 'owf:securityPolicy="Cases"', taskAttr = '') => `<?x
 function folder({ model = MODEL(), policies = {} } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-security-'));
   fs.writeFileSync(path.join(dir, 'Request.bpmn'), model);
-  fs.mkdirSync(path.join(dir, 'policies', 'security'), { recursive: true });
-  for (const [name, xml] of Object.entries(policies)) fs.writeFileSync(path.join(dir, 'policies', 'security', `${name}.dmn.xml`), xml);
+  fs.mkdirSync(path.join(dir, 'security'), { recursive: true });
+  for (const [name, xml] of Object.entries(policies)) fs.writeFileSync(path.join(dir, 'security', `${name}.dmn.xml`), xml);
   return dir;
 }
 
@@ -117,7 +117,7 @@ test('without the process naming one: the application\'s default, else bpmn-web\
   const errors = [];
   const missing = await decideAccess(folder({ model: MODEL('owf:securityPolicy="Gone"') }), ann, CASE, undefined, errors);
   assert.equal(missing.see, 'none', 'what it would have allowed stays refused');
-  assert.match(errors.join(), /there is no policies\/security\/Gone\.dmn\.xml/);
+  assert.match(errors.join(), /there is no security\/Gone\.dmn\.xml/);
 });
 
 test('a task names its own policy too: asked with the process\'s, a denial in either wins', async () => {
@@ -144,7 +144,7 @@ test('the data a person reads: all, what forms entered, these paths (a whole bra
   assert.equal(anyFolder.visibleData(CASE.data, access('all')), CASE.data);
 });
 
-test('off until an application has policies/security, or SECURITY_POLICY=default', () => {
+test('off until an application has security, or SECURITY_POLICY=default', () => {
   const none = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-security-'));
   assert.equal(policies(none).on, false);
   assert.equal(policies(folder()).on, true);

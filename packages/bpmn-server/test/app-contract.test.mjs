@@ -90,8 +90,8 @@ test('verifyModel against the contract: unknown names, the wrong number of argum
   const { server } = await makeServer();
   server.appDelegate.describe = () => CONTRACT;
   const dir = server.configuration.definitionsPath;
-  fs.mkdirSync(path.join(dir, 'policies', 'assignment'), { recursive: true });
-  fs.writeFileSync(path.join(dir, 'policies', 'assignment', 'Who.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+  fs.mkdirSync(path.join(dir, 'assignment'), { recursive: true });
+  fs.writeFileSync(path.join(dir, 'assignment', 'Who.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="Who" namespace="t">
   <decision id="Who" name="Who"><decisionTable id="t" hitPolicy="FIRST">
     <input id="i"><inputExpression id="e" typeRef="string"><text>appServices.record(data)</text></inputExpression></input>

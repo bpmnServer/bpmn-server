@@ -1,5 +1,6 @@
 import path from 'node:path';
-import { engineCalls } from 'bpmn-server';
+import { engineCalls, movePolicyFolder } from 'bpmn-server';
+import type { PolicyKind } from 'bpmn-server';
 import { runDecisionTests } from './decisionTests.js';
 import { runFeature } from './gherkin.js';
 import { runScenario, setTestData } from './scenarios.js';
@@ -19,9 +20,11 @@ export function engineTests(server) {
         runFeature: async (source: string, uri?: string) => runFeature(inside, source, uri),
         setTestData: async (instanceId: string, data) => { await setTestData(inside, instanceId, data); },
         // a file's name, in this engine's own folder of models: where the host keeps its copy is not for here
-        // (a policy's: policies/<kind>/<name>.dmn.xml, its kind assignment or security)
-        runDecisionTests: async (file: string, tests) => runDecisionTests(path.join(server.configuration.definitionsPath,
-            /^policies[\\/](assignment|security)[\\/][^\\/]+$/.test(file) ? path.join('policies', file.split(/[\\/]/)[1], path.basename(file))
-                : path.basename(file)), tests, inside),
+        // (a policy's: <kind>/<name>.dmn.xml, its kind assignment, notification or security; policies/<kind>/ before 3.7.5)
+        runDecisionTests: async (file: string, tests) => {
+            const kind = /^(?:policies[\\/])?(assignment|notification|security)[\\/][^\\/]+$/.exec(file)?.[1];
+            const folder = server.configuration.definitionsPath;
+            return runDecisionTests(kind ? path.join(movePolicyFolder(folder, kind as PolicyKind), path.basename(file)) : path.join(folder, path.basename(file)), tests, inside);
+        },
     };
 }

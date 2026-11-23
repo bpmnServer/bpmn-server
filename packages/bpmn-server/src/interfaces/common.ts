@@ -213,7 +213,7 @@ interface IAppDelegate {
     decisionContext?(context: Record<string, any>, about: { kind: 'decision' | 'assignment' | 'security'; name?: string; user: { userName?: string | null; userGroups?: string[] }; instance?: any; task?: string }): Record<string, any> | void | Promise<Record<string, any> | void>;
 
     /**
-     * Optional. Delivers a notification a notification policy decided on (addons/policies/notification/NotificationPolicy.ts,
+     * Optional. Delivers a notification a notification policy decided on (addons/notification/NotificationPolicy.ts,
      * docs/design/notification-policies.md): whom (`to`: user names and groups), `subject`, `message`, `channel`.
      * It is kept in wf_notifications either way; not called for a test run's instance, nor with NOTIFICATIONS=record.
      * A failure is kept with the notification and said in the Rationale; the process goes on.

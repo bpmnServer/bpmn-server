@@ -110,7 +110,8 @@ test('the Label group: the case label on the process, a label and a label once d
     const admin = await web.login('admin');
     const home = (await admin.get('/')).text;
     assert.match(home, /<td>Client: abc · Order: 7<\/td>/);
-    assert.match(home, /<td>Approve 90 — Client: abc · Order: 7<\/td>/);
+    // the task's own label in its Task cell, the case's in its Case cell (the lists' columns)
+    assert.match(home, /<td>Approve<div class="task-label">Approve 90<\/div><\/td><td>Client: abc · Order: 7<\/td>/);
     assert.ok(run.id);
 });
 
@@ -206,8 +207,8 @@ test('a process drawn in a pool: its Policies group, on the pool, writes its pro
       </decisionTable></decision>
     </definitions>`;
     for (const [folder, name, outputs] of [['security', 'LeaveCases', ['see']], ['notification', 'LeaveNotices', ['notify', 'template']]]) {
-        fs.mkdirSync(path.join(web.definitionsPath, 'policies', folder), { recursive: true });
-        fs.writeFileSync(path.join(web.definitionsPath, 'policies', folder, `${name}.dmn.xml`), POLICY_FILE(name, outputs));
+        fs.mkdirSync(path.join(web.definitionsPath, folder), { recursive: true });
+        fs.writeFileSync(path.join(web.definitionsPath, folder, `${name}.dmn.xml`), POLICY_FILE(name, outputs));
     }
     const { page, errors, close } = await openEditor('Pooled');
     await select(page, 'Pool');

@@ -1,7 +1,7 @@
 import { roleNames } from '../index.js';
 import { ownUsers } from '../userAccess/UserManager.js';
 import { isAdminGroups } from '../userAccess/roles.js';
-// the security policies' access: the Policies add-on's (bpmn-server, addons/policies/security/CaseAccess.ts)
+// the security policies' access: the Policies add-on's (bpmn-server, addons/security/CaseAccess.ts)
 export { CaseAccess, PolicyDenied, securityUser, DECIDE_AT_ONCE } from '../index.js';
 
 /**

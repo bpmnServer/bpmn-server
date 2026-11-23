@@ -133,5 +133,5 @@ the same domain: project matching, propose and approve, and the project assignme
 
 ## On hold
 
-- **One pool of decisions:** policies referenced by role instead of the `policies/assignment|security|notification`
+- **One pool of decisions:** policies referenced by role instead of the `assignment|security|notification`
   folders. Not decided.

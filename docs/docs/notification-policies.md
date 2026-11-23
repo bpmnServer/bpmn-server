@@ -5,17 +5,17 @@ models, whose every matching rule sends a notification. One table covers a whole
 those it is offered to; when it is approved, tell the employee; when the leave is recorded, tell HR*.
 
 This page covers the first supported slice: `assigned`, `completed`, and `ended` events. The HR demo includes a
-working example in `apps/hrdemo/workflow/processes/policies/notification/LeaveNotices.dmn.xml`.
+working example in `apps/hrdemo/workflow/processes/notification/LeaveNotices.dmn.xml`.
 
 ## Quick start
 
 1. Add `owf:notificationPolicy="LeaveNotices"` to a process.
-2. Create `policies/notification/LeaveNotices.dmn.xml` with `event`, `notify`, `template`, and optional `channel` outputs.
+2. Create `notification/LeaveNotices.dmn.xml` with `event`, `notify`, `template`, and optional `channel` outputs.
 3. Implement `appDelegate.notify(notification)` to deliver each notification.
 4. Run the process and inspect notifications through API v3 or a Gherkin test.
 
 This page covers the first supported slice: `assigned`, `completed`, and `ended` events. The HR demo includes a
-working example in `apps/hrdemo/workflow/processes/policies/notification/LeaveNotices.dmn.xml`.
+working example in `apps/hrdemo/workflow/processes/notification/LeaveNotices.dmn.xml`.
 
 ## The process
 
@@ -29,7 +29,7 @@ the process's.
 
 ## The policy
 
-A DMN decision table in the models folder, `policies/notification/<name>.dmn.xml`, hit policy **COLLECT**: every rule
+A DMN decision table in the models folder, `notification/<name>.dmn.xml`, hit policy **COLLECT**: every rule
 that matches notifies. The HR demo's `LeaveNotices`:
 
 | event | task | data.approval | data.recordId | notify | template | channel |
@@ -71,7 +71,7 @@ The shared expression context includes the data by name (`days`) and as `data`,
   application's services. Text with commas is a list. A rule whose `notify` comes to nobody notifies no one, and the
   Rationale says so.
 - **`template`:** a template's name, or the message itself.
-  - **A name** is a file of the models folder, `policies/notification/templates/<name>.md` (or `.txt`). Its first line
+  - **A name** is a file of the models folder, `notification/templates/<name>.md` (or `.txt`). Its first line
     is the subject (a leading `#` is dropped), the rest the message. `approval-request.md`:
     ```markdown
     # Leave to approve: ${data.LeaveType}, ${data.days} days
@@ -145,7 +145,7 @@ What an instance notified: API v3's `GET /api/v3/instances/{id}/notifications`, 
 
 | Code | Severity | When |
 |---|---|---|
-| `notification-policy-not-found` | error | a process's or task's policy isn't in `policies/notification/` |
+| `notification-policy-not-found` | error | a process's or task's policy isn't in `notification/` |
 | `notification-policy-invalid` | error | the policy's file can't be read as a decision |
 | `notification-policy-output` | warning | an output that isn't `notify`, `template` or `channel` |
 | `notification-template-not-found` | warning | a template cell that is a name (`"approval-request"`) with no file of that name |

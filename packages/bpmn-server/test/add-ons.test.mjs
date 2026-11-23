@@ -32,15 +32,24 @@ test('the engine imports nothing from an add-on; only the package\'s entry, the 
     assert.deepEqual(offending, []);
 });
 
-test('an add-on imports no other add-on, only the engine', () => {
+test('an add-on imports no other add-on, only the engine and what the policies share (basics/, no add-on of its own)', () => {
     const offending = [];
-    for (const addOn of fs.readdirSync(ADDONS, { withFileTypes: true }).filter(e => e.isDirectory()).map(e => e.name)) {
-        const own = path.join(ADDONS, addOn);
+    // an add-on is a folder with its manifest; basics/ (the actors, the policy folders) has none: the policies share it
+    const folders = fs.readdirSync(ADDONS, { withFileTypes: true }).filter(e => e.isDirectory()).map(e => path.join(ADDONS, e.name));
+    const addOns = folders.filter(dir => fs.existsSync(path.join(dir, 'addon.json')));
+    assert.ok(addOns.length >= 7 && folders.includes(path.join(ADDONS, 'basics')) && !addOns.includes(path.join(ADDONS, 'basics')));
+    for (const own of addOns)
         for (const file of sources(own))
-            for (const target of importsOf(file))
-                if (target.startsWith(ADDONS) && !target.startsWith(own + path.sep))
+            for (const target of importsOf(file)) {
+                const other = addOns.find(dir => target.startsWith(dir + path.sep));
+                if (other && other !== own)
                     offending.push(`${path.relative(SRC, file)} imports ${path.relative(SRC, target)}`);
-    }
+            }
+    // and what they share imports no add-on
+    for (const file of sources(path.join(ADDONS, 'basics')))
+        for (const target of importsOf(file))
+            if (addOns.some(dir => target.startsWith(dir + path.sep)))
+                offending.push(`${path.relative(SRC, file)} imports ${path.relative(SRC, target)}`);
     assert.deepEqual(offending, []);
 });
 
@@ -70,10 +79,10 @@ ${outputs.map((o, i) => `      <output id="o${i}" name="${o}" typeRef="string" /
 function folder() {
     const dir = definitionsFolder();
     fs.writeFileSync(path.join(dir, 'Request.bpmn'), MODEL);
-    fs.mkdirSync(path.join(dir, 'policies', 'assignment'), { recursive: true });
-    fs.writeFileSync(path.join(dir, 'policies', 'assignment', 'Approval.dmn.xml'), TABLE('Approval', 'FIRST', ['assignee'], ['"boss"']));
-    fs.mkdirSync(path.join(dir, 'policies', 'notification'), { recursive: true });
-    fs.writeFileSync(path.join(dir, 'policies', 'notification', 'Notices.dmn.xml'), TABLE('Notices', 'COLLECT', ['notify', 'template'], ['"everyone"', '"Hello"']));
+    fs.mkdirSync(path.join(dir, 'assignment'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'assignment', 'Approval.dmn.xml'), TABLE('Approval', 'FIRST', ['assignee'], ['"boss"']));
+    fs.mkdirSync(path.join(dir, 'notification'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'notification', 'Notices.dmn.xml'), TABLE('Notices', 'COLLECT', ['notify', 'template'], ['"everyone"', '"Hello"']));
     return dir;
 }
 
@@ -113,7 +122,7 @@ test('the engine alone (addOns: () => []): the policies the model names are not 
     [instance] = await server.dataStore.findInstances({ id }, 'full');
     assert.equal(instance.status, 'end', 'the process runs as BPMN says');
     assert.deepEqual(await notifications(server), [], 'no one told');
-    fs.rmSync(path.join(dir, 'policies'), { recursive: true });
+    for (const kind of ['assignment', 'notification']) fs.rmSync(path.join(dir, kind), { recursive: true });
     const codes = (await verifyModel(MODEL, server, 'Request')).issues.map(i => i.code);
     assert.ok(!codes.some(c => /policy/.test(c)), codes.join());
     await server.shutdown();
@@ -155,7 +164,7 @@ test('an application\'s own add-on registers for the engine\'s events: it assign
 
 test('a model checked without a server: the add-ons it is given', async () => {
     const dir = folder();
-    fs.rmSync(path.join(dir, 'policies', 'assignment'), { recursive: true });
+    fs.rmSync(path.join(dir, 'assignment'), { recursive: true });
     const codes = async (options) => (await verifyModel(MODEL, undefined, 'Request', { decisionsFolder: dir, ...options })).issues.map(i => i.code);
     assert.ok(!(await codes({})).includes('assignment-policy-not-found'), 'none: the model alone');
     assert.ok((await codes({ addOns: policyAddOns() })).includes('assignment-policy-not-found'));

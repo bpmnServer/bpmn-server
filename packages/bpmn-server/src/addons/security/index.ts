@@ -8,11 +8,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import manifest from './addon.json' with { type: 'json' };
-import { registerPolicyBasics } from '../basics.js';
-import type { IAddOnManifest } from '../../../engine/AddOns.js';
-import type { IAddOn, IAddOnDecisionFile, IModelCheck } from '../../../engine/AddOns.js';
+import { registerPolicyBasics } from '../basics/index.js';
+import type { IAddOnManifest } from '../../engine/AddOns.js';
+import type { IAddOn, IAddOnDecisionFile, IModelCheck } from '../../engine/AddOns.js';
 import { SECURITY_FOLDER, DEFAULT_SECURITY_POLICY } from './SecurityPolicy.js';
 import { CaseAccess } from './CaseAccess.js';
+import { movePolicyFolder } from '../basics/folders.js';
 
 export * from './SecurityPolicy.js';
 export * from './SecurityQuery.js';
@@ -36,6 +37,7 @@ const named = (def): string | null => {
 const modelCheck: IModelCheck = {
     name: 'security',
     decisionFiles(definition, folder) {
+        movePolicyFolder(folder, 'security');
         const files: IAddOnDecisionFile[] = [];
         const add = (name: string, explicit: boolean) => {
             const file = path.join(folder, SECURITY_FOLDER, `${name}.dmn.xml`);

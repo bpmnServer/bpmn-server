@@ -529,7 +529,7 @@ test('who acts: a user and role at the start and on a step; a waiting task shows
     <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2"><di:waypoint x="300" y="118" /><di:waypoint x="360" y="118" /></bpmndi:BPMNEdge>
   </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
 </bpmn:definitions>`);
-    const policies = path.join(web.definitionsPath, 'policies', 'notification');
+    const policies = path.join(web.definitionsPath, 'notification');
     fs.mkdirSync(policies, { recursive: true });
     fs.writeFileSync(path.join(policies, 'WhoNotices.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="WhoNotices_definitions" name="Who notices" namespace="http://bpmn-server/dmn">

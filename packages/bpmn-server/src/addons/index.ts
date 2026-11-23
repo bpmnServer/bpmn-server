@@ -7,17 +7,44 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IAddOn, IAddOnManifest } from '../engine/AddOns.js';
-import { assignmentAddOn, assignmentManifest, notificationAddOn, notificationManifest, securityAddOn, securityManifest, POLICY_ADD_ONS } from './policies/index.js';
+import { assignmentAddOn, assignmentManifest } from './assignment/index.js';
+import { notificationAddOn, notificationManifest } from './notification/index.js';
+import { securityAddOn, securityManifest } from './security/index.js';
 import { labelsAddOn, labelsManifest } from './labels/index.js';
 import { formsAddOn, formsManifest } from './forms/index.js';
 import { modelingAddOn, modelingManifest } from './modeling/index.js';
 import { aiAddOn, aiManifest } from './ai/index.js';
 
-export * from './policies/index.js';
+export * from './assignment/index.js';
+export * from './notification/index.js';
+export * from './security/index.js';
+export * from './basics/actors.js';
+export { registerPolicyBasics } from './basics/index.js';
+export { movePolicyFolder, OLD_POLICIES_FOLDER } from './basics/folders.js';
+export type { PolicyKind } from './basics/folders.js';
 export * from './labels/index.js';
 export * from './forms/index.js';
 export * from './modeling/index.js';
 export * from './ai/index.js';
+
+/** The policies' three add-ons, in the order they are registered: who works on a task is decided before anyone is told. */
+export const POLICY_ADD_ONS = ['assignment', 'notification', 'security'];
+
+/** @deprecated the three add-ons' manifests together: what `policies` was before 3.7.5 */
+export const policiesManifest: IAddOnManifest = {
+    name: 'policies', title: 'Policies',
+    description: 'Before 3.7.5, one add-on: now Assignment, Notifications and Access Control, each its own. Named in app-config.json, it is the three.',
+    attributes: [...new Set([assignmentManifest, notificationManifest, securityManifest].flatMap(m => m.attributes ?? []))],
+    settings: [],
+} as IAddOnManifest;
+
+/** @deprecated the three add-ons, registered together: what `policies` was before 3.7.5 */
+export const policiesAddOn: IAddOn = {
+    name: 'policies',
+    register(server) {
+        for (const part of [assignmentAddOn, notificationAddOn, securityAddOn]) part.register(server);
+    },
+};
 
 /** Every add-on bpmn-server comes with, by name, and its manifest (read even when it is off). */
 const AVAILABLE: { addOn: IAddOn; manifest: IAddOnManifest }[] = [

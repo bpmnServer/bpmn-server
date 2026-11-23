@@ -673,7 +673,7 @@ Report.prototype.securitySection = function (process) {
     if (!policies?.securityOn) return null;
     if (this._decisions.findPolicy('security', 'default'))
         return this.policySection('security', 'default', 'No policy named: the application\'s default decides who sees its cases.');
-    return el('div', { class: 'report-decision' }, el('p', {}, 'Security policy: none named, and no ', el('code', {}, 'policies/security/default.dmn.xml'),
+    return el('div', { class: 'report-decision' }, el('p', {}, 'Security policy: none named, and no ', el('code', {}, 'security/default.dmn.xml'),
         ': the built-in default (designers see every case; those offered a task, or who worked on it, see it as a line).'));
 };
 

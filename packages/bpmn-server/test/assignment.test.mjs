@@ -49,8 +49,8 @@ async function server({ model = MODEL(), policy = APPROVAL, roles } = {}) {
     const dir = definitionsFolder();
     fs.writeFileSync(path.join(dir, 'Request.bpmn'), model);
     if (policy) {
-        fs.mkdirSync(path.join(dir, 'policies', 'assignment'), { recursive: true });
-        fs.writeFileSync(path.join(dir, 'policies', 'assignment', 'Approval.dmn.xml'), policy);
+        fs.mkdirSync(path.join(dir, 'assignment'), { recursive: true });
+        fs.writeFileSync(path.join(dir, 'assignment', 'Approval.dmn.xml'), policy);
     }
     if (roles) fs.writeFileSync(path.join(dir, 'roles.json'), JSON.stringify(roles));
     const made = await makeServer({ dir, services: { managerOf: id => `manager-of-${id}` } });
@@ -82,15 +82,42 @@ test('the first matching rule assigns; the policy wins over the lane; what decid
     await srv.shutdown();
 });
 
-test('a policy in policies/ itself (where 3.7.1 kept them at first) is moved into policies/assignment, and assigns', async () => {
+test('a policy in policies/ itself (where 3.7.1 kept them at first) is moved into assignment/, and assigns', async () => {
     const { server: srv, dir } = await server({ policy: null });
     fs.mkdirSync(path.join(dir, 'policies'), { recursive: true });
     fs.writeFileSync(path.join(dir, 'policies', 'Approval.dmn.xml'), APPROVAL);
     const { task } = await approve(srv, { amount: 20000, department: 'IT' });
     assert.deepEqual(task.assignment, { policy: 'Approval', rule: 1 });
-    assert.ok(fs.existsSync(path.join(dir, 'policies', 'assignment', 'Approval.dmn.xml')), 'moved');
-    assert.equal(fs.existsSync(path.join(dir, 'policies', 'Approval.dmn.xml')), false);
+    assert.ok(fs.existsSync(path.join(dir, 'assignment', 'Approval.dmn.xml')), 'moved');
+    assert.equal(fs.existsSync(path.join(dir, 'policies')), false, 'the old folder, empty, is gone');
     await srv.shutdown();
+});
+
+test('before 3.7.5 the policies were in policies/<kind>/: each moved into its add-on\'s folder, said once; one already there is kept', async () => {
+    const { movePolicyFolder } = await import('../dist/index.js');
+    const dir = definitionsFolder();
+    const old = kind => path.join(dir, 'policies', kind);
+    for (const kind of ['assignment', 'notification', 'security']) fs.mkdirSync(old(kind), { recursive: true });
+    fs.mkdirSync(path.join(old('notification'), 'templates'), { recursive: true });
+    fs.writeFileSync(path.join(old('assignment'), 'Approval.dmn.xml'), APPROVAL);
+    fs.writeFileSync(path.join(old('notification'), 'Notices.dmn.xml'), 'old notices');
+    fs.writeFileSync(path.join(old('notification'), 'templates', 'hello.md'), 'Hello');
+    fs.writeFileSync(path.join(old('security'), 'default.dmn.xml'), 'old');
+    // already in the new folder: kept, and the old one left where it is
+    fs.mkdirSync(path.join(dir, 'security'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'security', 'default.dmn.xml'), 'new');
+    const said = [];
+    for (const kind of ['assignment', 'notification', 'security'])
+        assert.equal(movePolicyFolder(dir, kind, m => said.push(m)), path.join(dir, kind));
+    assert.ok(fs.existsSync(path.join(dir, 'assignment', 'Approval.dmn.xml')));
+    assert.equal(fs.readFileSync(path.join(dir, 'notification', 'templates', 'hello.md'), 'utf8'), 'Hello', 'its templates too');
+    assert.equal(fs.readFileSync(path.join(dir, 'security', 'default.dmn.xml'), 'utf8'), 'new', 'the one there kept');
+    assert.ok(fs.existsSync(path.join(old('security'), 'default.dmn.xml')), 'the old one left where it is');
+    assert.equal(fs.existsSync(old('assignment')), false, 'an emptied old folder is gone');
+    assert.equal(said.length, 2, said.join(' | '));
+    assert.match(said[0], /policies\/assignment\/ is now assignment\//);
+    for (const kind of ['assignment', 'notification', 'security']) movePolicyFolder(dir, kind, m => said.push(m));
+    assert.equal(said.length, 2, 'said once');
 });
 
 test("a rule's output is an expression: a model expression through the application's code, or FEEL on the data", async () => {
@@ -128,7 +155,7 @@ test('no rule matches, no policy, a failing policy: nothing assigned by it, the 
     ({ server: srv } = await server({ policy: null }));
     ({ task, why } = await approve(srv, { amount: 50 }));
     assert.equal(task.status, 'wait');
-    assert.match(why, /there is no policies\/assignment\/Approval\.dmn\.xml/);
+    assert.match(why, /there is no assignment\/Approval\.dmn\.xml/);
     await srv.shutdown();
 
     ({ server: srv } = await server({ policy: POLICY([['-', '-', '$(appServices.noSuchService(1))', '']]) }));
@@ -213,7 +240,7 @@ test('an empty list, [], clears the candidates the lane gave: this assignee, and
 test('a models folder\'s policies and roles: names that leave the folder, a roles.json that is not a list, role names, where roles are used', async () => {
   const { policyFile, policyNames, roleNames, roleNameProblem, saveRoleNames, roleUses } = await import('../dist/index.js');
   const dir = definitionsFolder();
-  const policies = path.join(dir, 'policies', 'assignment');
+  const policies = path.join(dir, 'assignment');
   fs.mkdirSync(policies, { recursive: true });
   const table = (outputs, cells) => `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="N" namespace="t"><decision id="N" name="N"><decisionTable id="t" hitPolicy="FIRST">

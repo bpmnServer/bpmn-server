@@ -1,6 +1,6 @@
 // @features: list-columns, pages-through-api, security-narrowing
 // Security policies through API v3 and the pages (docs/design/security-policies.md, routes/caseAccess.ts): the models
-// folder's policies/security/default.dmn.xml decides who sees a case, which of its data, and who may complete its tasks.
+// folder's security/default.dmn.xml decides who sees a case, which of its data, and who may complete its tasks.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -46,8 +46,8 @@ async function askLeave(token) {
 
 test.before(async () => {
   web = await startWebApp();
-  fs.mkdirSync(path.join(web.definitionsPath, 'policies', 'security'), { recursive: true });
-  fs.writeFileSync(path.join(web.definitionsPath, 'policies', 'security', 'default.dmn.xml'), POLICY);
+  fs.mkdirSync(path.join(web.definitionsPath, 'security'), { recursive: true });
+  fs.writeFileSync(path.join(web.definitionsPath, 'security', 'default.dmn.xml'), POLICY);
   [sam, olga, mona] = await Promise.all([tokenFor('sam', ['staff']), tokenFor('olga', ['staff']), tokenFor('mona', ['manager', 'staff'])]);
   samsCase = await askLeave(sam);
   monasCase = await askLeave(mona);

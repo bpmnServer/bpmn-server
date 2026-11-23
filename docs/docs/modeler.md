@@ -77,7 +77,7 @@ On an instance's page, a click on an element of the diagram shows its section of
 with it. bpmn-server's own settings have lines of their own: `label` and `endLabel`, a user task's
 `assignmentPolicy`, a process's or a task's `securityPolicy`. A business rule task shows its decision's table, a
 user task its [assignment policy](assignment-policies.md)'s, and a process its security policy's: the one it names,
-else the application's default (`policies/security/default.dmn.xml`), else a line saying the built-in default
+else the application's default (`security/default.dmn.xml`), else a line saying the built-in default
 decides (only while security policies are on). Clicking an id selects the element on the diagram. **Print** saves
 the report as a PDF.
 

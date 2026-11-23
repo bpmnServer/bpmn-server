@@ -3,7 +3,7 @@
  * them (their own, to them as a candidate, to one of their groups, or to no one), and the processes they may start
  * (`candidateStarterUsers`, `candidateStarterGroups`, a start event's lane). Not applied to an administrator.
  */
-import type { IQueryFilter } from '../../../engine/AddOns.js';
+import type { IQueryFilter } from '../../engine/AddOns.js';
 
 export const assignmentFilter: IQueryFilter = {
     name: 'policies',

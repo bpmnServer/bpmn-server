@@ -251,6 +251,15 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
+- **Each policy add-on has a folder of its own**, in the code and in the models folder.
+  - The code: `src/addons/assignment`, `notification` and `security`, beside the other add-ons; what the three share
+    (the actors, the policy folders) in `src/addons/basics`, which is no add-on. `policies` in `app-config.json` is
+    still the three (`policiesAddOn`, deprecated).
+  - The models folder: `assignment/`, `notification/` (its `templates/` too) and `security/`, where they were
+    `policies/assignment/` and so on. A folder from before is moved to the new one the first time it is read, and the
+    log says so once (`movePolicyFolder`); a file already in the new folder is kept, and the old one left where it is.
+  - Tests: `test/assignment.test.mjs` (the move), `test/add-ons.test.mjs` (no add-on imports another; `basics/` is
+    shared).
 - **Add-ons' titles**: Modeling tools is **Model History**, Forms and display **Extended Forms**, Security **Access
   Control**; their names (`modeling`, `forms`, `security`), what an `app-config.json` says, are as they were.
 - **The policies are three add-ons** (were one, Policies): **Assignment** (`assignment`: who works on each task and who

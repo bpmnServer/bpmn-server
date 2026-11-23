@@ -33,8 +33,8 @@ const POLICY = `<?xml version="1.0" encoding="UTF-8"?>
 function folder(policy) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-security-load-'));
   fs.writeFileSync(path.join(dir, 'Request.bpmn'), MODEL(policy ? 'owf:securityPolicy="Cases"' : ''));
-  fs.mkdirSync(path.join(dir, 'policies', 'security'), { recursive: true });
-  if (policy) fs.writeFileSync(path.join(dir, 'policies', 'security', 'Cases.dmn.xml'), POLICY);
+  fs.mkdirSync(path.join(dir, 'security'), { recursive: true });
+  if (policy) fs.writeFileSync(path.join(dir, 'security', 'Cases.dmn.xml'), POLICY);
   return dir;
 }
 

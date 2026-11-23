@@ -39,8 +39,8 @@ const MODEL = p => `<?xml version="1.0" encoding="UTF-8"?>
 async function server(model) {
     const dir = definitionsFolder();
     fs.writeFileSync(path.join(dir, 'Request.bpmn'), model);
-    fs.mkdirSync(path.join(dir, 'policies', 'assignment'), { recursive: true });
-    fs.writeFileSync(path.join(dir, 'policies', 'assignment', 'Approval.dmn.xml'), POLICY);
+    fs.mkdirSync(path.join(dir, 'assignment'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'assignment', 'Approval.dmn.xml'), POLICY);
     return (await makeServer({ dir })).server;
 }
 
@@ -89,7 +89,7 @@ test('verifyModel: an actor the model, its policies or its decisions read that n
     const model = MODEL('owf').replace('<bpmn:userTask id="Approve" name="Approve"', '<bpmn:userTask id="Approve" name="Approve" owf:actor="approver"')
         .replace('throw new RangeError("too much");', 'data.who = actors.approver + actors.aprover;');
     const srv = await server(model);
-    fs.writeFileSync(path.join(srv.configuration.definitionsPath, 'policies', 'assignment', 'Approval.dmn.xml'),
+    fs.writeFileSync(path.join(srv.configuration.definitionsPath, 'assignment', 'Approval.dmn.xml'),
         POLICY.replace('<text>amount</text>', '<text>actors.reviewer</text>'));
     const { issues } = await verifyModel(model, srv, 'Request');
     const unknown = issues.filter(i => i.code === 'actor-unknown').map(i => i.message);

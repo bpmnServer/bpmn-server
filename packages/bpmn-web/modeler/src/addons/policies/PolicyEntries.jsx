@@ -13,9 +13,9 @@ const ATTRIBUTE = 'owf:assignmentPolicy';
 
 /** The kinds of policy: where their files are, where the decision editor opens one. */
 export const POLICY_KINDS = {
-    assignment: { folder: 'policies/assignment', page: 'policy', none: '<none>' },
-    security: { folder: 'policies/security', page: 'security-policy', none: '<none: the default>' },
-    notification: { folder: 'policies/notification', page: 'notification-policy', none: '<none>' },
+    assignment: { folder: 'assignment', page: 'policy', none: '<none>' },
+    security: { folder: 'security', page: 'security-policy', none: '<none: the default>' },
+    notification: { folder: 'notification', page: 'notification-policy', none: '<none>' },
 };
 
 // ---- each kind's policies in the models folder, read once a page and again when it gets the focus back
@@ -120,7 +120,7 @@ function PolicyField({ element, id }) {
         element={element}
         id={id}
         label={translate('Assignment policy')}
-        description={translate('A policy of the models folder (policies/assignment/<name>.dmn.xml): its first matching rule assigns the task when it starts, over the fields above')}
+        description={translate('A policy of the models folder (assignment/<name>.dmn.xml): its first matching rule assigns the task when it starts, over the fields above')}
         getValue={getValue}
         setValue={value => modeling.updateProperties(element, { [ATTRIBUTE]: value || undefined })}
         getOptions={() => {
@@ -170,7 +170,7 @@ function PolicySummary({ element, id }) {
     const policy = bo.get(ATTRIBUTE) || '';
     const { preview, answer } = usePolicyPreview(list?.includes(policy) ? policy : '');
     const create = () => {
-        const name = (window.prompt('Name of the new policy (policies/assignment/<name>.dmn.xml):', policy || 'Approval') || '').trim();
+        const name = (window.prompt('Name of the new policy (assignment/<name>.dmn.xml):', policy || 'Approval') || '').trim();
         if (!name) return;
         if (name !== policy) modeling.updateProperties(element, { [ATTRIBUTE]: name });
         openPolicy(name);

@@ -10,14 +10,15 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { DMNEngine } from '../../../dmn/DMNEngine.js';
-import { runningDecisionContext, decisionContext } from '../../../engine/DecisionContext.js';
-import { actorsOf, actorElements } from '../actors.js';
-import { expressionScript, evaluateTemplate, templateParts, isExpression } from '../../../engine/Expressions.js';
-import { owfAttribute } from '../../../elements/owfAttributes.js';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { runningDecisionContext, decisionContext } from '../../engine/DecisionContext.js';
+import { actorsOf, actorElements } from '../basics/actors.js';
+import { expressionScript, evaluateTemplate, templateParts, isExpression } from '../../engine/Expressions.js';
+import { owfAttribute } from '../../elements/owfAttributes.js';
+import { movePolicyFolder } from '../basics/folders.js';
 
-export const NOTIFICATION_FOLDER = 'policies/notification';
-export const NOTIFICATION_TEMPLATES = 'policies/notification/templates';
+export const NOTIFICATION_FOLDER = 'notification';
+export const NOTIFICATION_TEMPLATES = 'notification/templates';
 export const NOTIFICATION_COLLECTION = 'wf_notifications';
 export const NOTIFICATION_EVENTS = ['assigned', 'completed', 'ended'] as const;
 export const NOTIFICATION_OUTPUTS = ['notify', 'template', 'channel'] as const;
@@ -54,13 +55,13 @@ const safeName = (name: string) => !!name && !/[\\/]|\.\./.test(name);
 /** A notification policy's file, or null. */
 export function notificationPolicyFile(definitionsPath: string, name: string): string | null {
     if (!definitionsPath || !safeName(name)) return null;
-    const file = path.join(definitionsPath, NOTIFICATION_FOLDER, `${name}.dmn.xml`);
+    const file = path.join(movePolicyFolder(definitionsPath, 'notification'), `${name}.dmn.xml`);
     return fs.existsSync(file) ? file : null;
 }
 
 /** The models folder's notification policies, by name. */
 export function notificationPolicyNames(definitionsPath: string): string[] {
-    const folder = definitionsPath && path.join(definitionsPath, NOTIFICATION_FOLDER);
+    const folder = definitionsPath && movePolicyFolder(definitionsPath, 'notification');
     if (!folder || !fs.existsSync(folder)) return [];
     return fs.readdirSync(folder).filter(f => /\.dmn\.xml$/i.test(f)).map(f => f.replace(/\.dmn\.xml$/i, '')).sort();
 }
@@ -68,6 +69,7 @@ export function notificationPolicyNames(definitionsPath: string): string[] {
 /** A template's file (`templates/<name>.md` or `.txt`), or null: a value that isn't one is the message itself. */
 export function notificationTemplateFile(definitionsPath: string, name: string): string | null {
     if (!definitionsPath || !safeName(name) || !/^[\w.-]+$/.test(name)) return null;
+    movePolicyFolder(definitionsPath, 'notification');
     for (const ext of ['.md', '.txt']) {
         const file = path.join(definitionsPath, NOTIFICATION_TEMPLATES, name + ext);
         if (fs.existsSync(file)) return file;

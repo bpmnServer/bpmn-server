@@ -14,7 +14,7 @@ The **Access Control** add-on decides who may see a case and what they may do in
 
 | Setting | |
 |---|---|
-| `SECURITY_POLICY` | Security policies: on with `policies/security/`, or `default` |
+| `SECURITY_POLICY` | Security policies: on with `security/`, or `default` |
 
 ## When it is off
 

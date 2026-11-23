@@ -254,12 +254,12 @@ test('Design shows the policies: assignment (to its editor, its tests) security 
     <rule id="${name}_r"><inputEntry id="${name}_ri"><text>-</text></inputEntry><outputEntry id="${name}_ro"><text>"manager"</text></outputEntry></rule>
   </decisionTable></decision>
 </definitions>`;
-  fs.mkdirSync(path.join(folder, 'policies', 'assignment'), { recursive: true });
-  fs.mkdirSync(path.join(folder, 'policies', 'security'), { recursive: true });
-  fs.mkdirSync(path.join(folder, 'policies', 'notification'), { recursive: true });
-  fs.writeFileSync(path.join(folder, 'policies', 'assignment', 'DashApproval.dmn.xml'), table('DashApproval'));
-  fs.writeFileSync(path.join(folder, 'policies', 'security', 'default.dmn.xml'), table('default'));
-  fs.writeFileSync(path.join(folder, 'policies', 'notification', 'DashNotices.dmn.xml'), table('DashNotices'));
+  fs.mkdirSync(path.join(folder, 'assignment'), { recursive: true });
+  fs.mkdirSync(path.join(folder, 'security'), { recursive: true });
+  fs.mkdirSync(path.join(folder, 'notification'), { recursive: true });
+  fs.writeFileSync(path.join(folder, 'assignment', 'DashApproval.dmn.xml'), table('DashApproval'));
+  fs.writeFileSync(path.join(folder, 'security', 'default.dmn.xml'), table('default'));
+  fs.writeFileSync(path.join(folder, 'notification', 'DashNotices.dmn.xml'), table('DashNotices'));
   const model = 'dash-policies';
   await web.bpmnServer.models.save(model, `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="t">
@@ -280,9 +280,9 @@ test('Design shows the policies: assignment (to its editor, its tests) security 
     assert.match(row('notification/DashNotices'), /not used/);
     assert.match(page, /<h2 id="policies"[^>]*>Policies/);
   } finally {
-    fs.rmSync(path.join(folder, 'policies', 'security'), { recursive: true, force: true });
-    fs.rmSync(path.join(folder, 'policies', 'notification', 'DashNotices.dmn.xml'), { force: true });
-    fs.rmSync(path.join(folder, 'policies', 'assignment', 'DashApproval.dmn.xml'), { force: true });
+    fs.rmSync(path.join(folder, 'security'), { recursive: true, force: true });
+    fs.rmSync(path.join(folder, 'notification', 'DashNotices.dmn.xml'), { force: true });
+    fs.rmSync(path.join(folder, 'assignment', 'DashApproval.dmn.xml'), { force: true });
     await web.bpmnServer.models.remove?.(model).catch?.(() => {});
   }
 });

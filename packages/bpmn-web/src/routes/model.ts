@@ -11,6 +11,8 @@ import path from 'node:path';
 import { layoutModel } from './layout.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
+import { movePolicyFolder } from '../index.js';
+import type { PolicyKind } from '../index.js';
 import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS, SecurityPolicy, SECURITY_FOLDER, decisionContext, actorsOf, NOTIFICATION_FOLDER, notificationPolicyNames } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
@@ -504,9 +506,10 @@ export class Model extends Common {
             response.json({ saved: decisionFile(name) });
         }));
 
-        // ---- assignment policies (docs/docs/assignment-policies.md): decision tables `policies/assignment/<name>.dmn.xml` of the
+        // ---- assignment policies (docs/docs/assignment-policies.md): decision tables `assignment/<name>.dmn.xml` of the
         // models folder, edited in the decision editor; their tests kept as a decision's, under `<name>.policy`
-        const policiesFolder = () => path.join(bpmnServer.configuration.definitionsPath, POLICIES_FOLDER);
+        // the Assignment add-on's folder; one from before 3.7.5 (policies/assignment) moved there first
+        const policiesFolder = () => movePolicyFolder(bpmnServer.configuration.definitionsPath, 'assignment');
         const policyPath = (name: string) => path.join(policiesFolder(), `${name}.dmn.xml`);
         const policyTests = (name: string) => `${name}.policy`;
 
@@ -535,7 +538,7 @@ export class Model extends Common {
         // assignment policy is (/model/security-policy/<name>, /model/notification-policy/<name>); their tests as a
         // decision's, under `<name>.<kind>-policy`
         for (const [kind, other] of Object.entries(OTHER_POLICIES)) {
-            const fileOf = (name: string) => path.join(bpmnServer.configuration.definitionsPath, other.folder, `${name}.dmn.xml`);
+            const fileOf = (name: string) => path.join(movePolicyFolder(bpmnServer.configuration.definitionsPath, kind as PolicyKind), `${name}.dmn.xml`);
             const testsOf = (name: string) => `${name}.${kind}-policy`;
             const base = `/${kind}-policy/:policy`;
             router.get(base, awaitHandlerFactory(async (request, response) => {

@@ -36,7 +36,7 @@ const issues = async (source, dir) => (await verifyModel(source, undefined, 'm',
 const find = (list, code) => list.filter(i => i.code === code);
 
 test('a policy file that cannot be read is an error, for an assignment and a notification policy', async () => {
-  const dir = folder({ 'policies/assignment/Broken.dmn.xml': '<not xml', 'policies/notification/Broken.dmn.xml': '<not xml' });
+  const dir = folder({ 'assignment/Broken.dmn.xml': '<not xml', 'notification/Broken.dmn.xml': '<not xml' });
   const list = await issues(model('owf:notificationPolicy="Broken"', linear.replace('ATTRS', 'owf:assignmentPolicy="Broken"')), dir);
   assert.equal(find(list, 'assignment-policy-invalid').length, 1, JSON.stringify(list));
   assert.match(find(list, 'assignment-policy-invalid')[0].message, /^Assignment policy 'Broken': /);
@@ -45,12 +45,12 @@ test('a policy file that cannot be read is an error, for an assignment and a not
 
 test('a notification policy: an output that is not used, a template that is not there; a text message is not a template', async () => {
   const dir = folder({
-    'policies/notification/Notices.dmn.xml': table(['notify', 'template', 'colour'], [
+    'notification/Notices.dmn.xml': table(['notify', 'template', 'colour'], [
       ['"managers"', '"approval-request"', '"red"'],     // a template name, with no file
       ['"staff"', '"approved"', '""'],                    // a template name, with its file
       ['"staff"', '"Your request ${data.id} is in"', '""'],  // the message itself
     ]),
-    'policies/notification/templates/approved.md': 'Approved.',
+    'notification/templates/approved.md': 'Approved.',
   });
   const list = await issues(model('owf:notificationPolicy="Notices"', linear.replace('ATTRS', '')), dir);
   assert.deepEqual(find(list, 'notification-policy-output').map(i => i.message), [
@@ -61,7 +61,7 @@ test('a notification policy: an output that is not used, a template that is not 
 });
 
 test('a notification policy with no template output is not asked for templates', async () => {
-  const dir = folder({ 'policies/notification/Plain.dmn.xml': table(['notify', 'channel'], [['"staff"', '"email"']]) });
+  const dir = folder({ 'notification/Plain.dmn.xml': table(['notify', 'channel'], [['"staff"', '"email"']]) });
   const list = await issues(model('owf:notificationPolicy="Plain"', linear.replace('ATTRS', '')), dir);
   assert.deepEqual(list.filter(i => i.code.startsWith('notification-')), []);
 });
