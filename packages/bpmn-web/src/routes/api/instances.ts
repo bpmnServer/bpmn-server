@@ -192,8 +192,9 @@ export class InstanceOperations {
 
 /**
      * An instance's page (the instance page): the whole instance, its items, logs and model, for whoever sees it fully;
-     * its data as the policy lets them read it. A test run's too (the Test tab examines them). Not seen in full: the
-     * same 404 as no such instance.
+     * its data as the policy lets them read it. A test run's too (the Test tab examines them). Seen as a summary only
+     * (a security policy's `summary`): `summaryOnly`, the case as a line and the tasks this user completed in it, none
+     * of its data. Not seen at all: the same 404 as no such instance.
      */
     async page(user: SecureUser, id: string) {
         if (typeof id !== 'string') throw notFound();
@@ -201,6 +202,12 @@ export class InstanceOperations {
         if (!instance) throw notFound();
         if (!this.access.on) return { instance, access: null };
         const access = await this.access.decide(user, instance);
+        if (access.see === 'summary') {
+            const [labeled] = await labeledInstances(this.server, [instance]);
+            const mine = (instance.items ?? []).filter(item => item.type === 'bpmn:UserTask' && item.status === 'end' && item.userName && item.userName === user.userName)
+                .map(item => ({ name: item.name || item.elementId, endedAt: item.endedAt ?? null }));
+            return { instance: null, access, summaryOnly: { ...summary(labeled), tasks: mine } };
+        }
         if (access.see !== 'full') throw notFound();
         if (!access.data.all) instance.data = this.access.data(instance, access);
         return { instance, access };

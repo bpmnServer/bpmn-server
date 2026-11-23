@@ -1,5 +1,5 @@
 /**
- * The Forms and display add-on (docs/design/form-lookups.md): a form field's choices from a source, asked as the form
+ * The Extended Forms add-on (docs/design/form-lookups.md): a form field's choices from a source, asked as the form
  * is filled (a drop-down, `<owf:list>`; a search, `<owf:lookup>`), from the application's service or a connector's
  * operation; a list's value is one of its choices when the task is completed. Off, a field is the plain field Camunda
  * defines. It depends on the engine only.

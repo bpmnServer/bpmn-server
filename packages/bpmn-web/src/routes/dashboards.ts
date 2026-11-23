@@ -678,7 +678,8 @@ export class Dashboards extends Common {
             if (addOnsRunning.includes('notification'))
                 info.notification = { notification: notificationPolicyNames(dir), byStatus, total: notifications.length, notify: methods.includes('notify') };
             const addOns = addOnsOf_();
-            const areas = [...INTEGRATION_POINTS, ...addOns.map(a => addOnArea(a))];
+            // an add-on that is another's option (Extended Forms, Model Options') has no area of its own
+            const areas = [...INTEGRATION_POINTS, ...addOns.filter(a => !a.partOf).map(a => addOnArea(a))];
             return areas.map(p => {
                 const settings = settingsOf(p, viewer, this.envFile(), appHostSettings());
                 const addOn = p.addOn ? addOns.find(a => a.name === p.addOn) : undefined;
@@ -711,10 +712,10 @@ export class Dashboards extends Common {
             message: req.query.message,
         });
         // what was /dashboard/integration before 3.7.5, and its areas now an add-on's or renamed
-        const MOVED: Record<string, string> = { notifications: 'notification', policies: 'assignment' };
+        const MOVED: Record<string, string> = { notifications: 'notification', policies: 'assignment', forms: 'modeling' };
         router.get(['/integration', '/integration/:point'], (req, res) => res.redirect(301, '/dashboard/settings' + (req.params.point ? '/' + (MOVED[String(req.params.point)] ?? req.params.point) : '')));
         // the Policies add-on, before the three it became; and Notifications, its area before
-        router.get(['/settings/notifications', '/settings/policies'], (req, res) => res.redirect(301, '/dashboard/settings/' + MOVED[req.path.split('/').pop()]));
+        router.get(['/settings/notifications', '/settings/policies', '/settings/forms'], (req, res) => res.redirect(301, '/dashboard/settings/' + MOVED[req.path.split('/').pop()]));
         // the overview: each point, what it has in a few words, and the add-ons; and one point's page, its settings
         router.get('/settings', mayIntegrate, handler(async (req, res) => settingsPage(req, res, await integrationPoints(req))));
         // an administrator turns add-ons on and off: app-config.json, read when the server restarts

@@ -119,7 +119,7 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 		...engineEnv,
 		...settings,
 	} as any);
-	// the Modeling tools add-on off (app-config.json): a save keeps no version
+	// the Model History add-on off (app-config.json): a save keeps no version
 	try { if (!configuration.addOns(null).some(a => a.name === 'modeling')) configuration.modelHistory = false; }
 	catch { /* app-config.json can't be read: the server's start says so */ }
 	return configuration;

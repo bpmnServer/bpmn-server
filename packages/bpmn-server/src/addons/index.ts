@@ -2,7 +2,7 @@
  * The add-ons bpmn-server comes with (engine/AddOns.ts), and which are on. Each is apart from the others; this is where
  * they are put together. The application's `app-config.json` says which are on (`{ "addOns": ["assignment"] }`); with
  * no file, or no `addOns` in it, every one is on, so an application written before keeps what it had. `policies`, one
- * add-on before 3.7.5, names the three it became: Assignment, Notifications, Security.
+ * add-on before 3.7.5, names the three it became: Assignment, Notifications, Access Control (security).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,11 +11,13 @@ import { assignmentAddOn, assignmentManifest, notificationAddOn, notificationMan
 import { labelsAddOn, labelsManifest } from './labels/index.js';
 import { formsAddOn, formsManifest } from './forms/index.js';
 import { modelingAddOn, modelingManifest } from './modeling/index.js';
+import { aiAddOn, aiManifest } from './ai/index.js';
 
 export * from './policies/index.js';
 export * from './labels/index.js';
 export * from './forms/index.js';
 export * from './modeling/index.js';
+export * from './ai/index.js';
 
 /** Every add-on bpmn-server comes with, by name, and its manifest (read even when it is off). */
 const AVAILABLE: { addOn: IAddOn; manifest: IAddOnManifest }[] = [
@@ -25,6 +27,7 @@ const AVAILABLE: { addOn: IAddOn; manifest: IAddOnManifest }[] = [
     { addOn: labelsAddOn, manifest: labelsManifest },
     { addOn: formsAddOn, manifest: formsManifest },
     { addOn: modelingAddOn, manifest: modelingManifest },
+    { addOn: aiAddOn, manifest: aiManifest },
 ];
 
 export const APP_CONFIG_FILE = 'app-config.json';
@@ -49,11 +52,16 @@ export function addOnManifests(): IAddOnManifest[] {
  */
 export function enabledAddOns(file?: string, warn: (message: string) => void = console.warn): IAddOn[] {
     const said = readAppConfig(file)?.addOns;
-    if (!said) return AVAILABLE.map(a => a.addOn);
+    if (!said) return AVAILABLE.filter(a => optionOn(a.manifest)).map(a => a.addOn);
     const names = addOnNames(said);
     for (const name of names.filter(n => !AVAILABLE.some(a => a.manifest.name === n)))
         warn(`[add-ons] ${APP_CONFIG_FILE} names '${name}', which is not an add-on (${AVAILABLE.map(a => a.manifest.name).join(', ')})`);
-    return AVAILABLE.filter(a => names.includes(a.manifest.name)).map(a => a.addOn);
+    return AVAILABLE.filter(a => names.includes(a.manifest.name)).filter(a => optionOn(a.manifest)).map(a => a.addOn);
+}
+
+/** An add-on that is one of Model Options' options (Extended Forms): off when its option says false. */
+function optionOn(manifest: IAddOnManifest): boolean {
+    return !(manifest.partOf && manifest.name === 'forms' && /^(false|off|0|no)$/i.test(String(process.env.EXTENDED_FORMS ?? '').trim()));
 }
 
 /** The names an app-config.json's `addOns` means: `policies` (before 3.7.5) is the three it became. */
@@ -61,7 +69,7 @@ export function addOnNames(names: string[]): string[] {
     return [...new Set(names.flatMap(n => n === 'policies' ? POLICY_ADD_ONS : [n]))];
 }
 
-/** The policies' add-ons, alone (Assignment, Notifications, Security): what a server had before `app-config.json`. */
+/** The policies' add-ons, alone (Assignment, Notifications, Access Control): what a server had before `app-config.json`. */
 export function policyAddOns(): IAddOn[] {
     return [assignmentAddOn, notificationAddOn, securityAddOn];
 }

@@ -1,5 +1,5 @@
 //- The menu in the editors' header (they have no navbar): the pages' menu (menu.pug), drawn without Bootstrap.
-//- +editorMenu: Workbench, Dashboard (My work, Notifications, Design, Administration, Settings); +editorUser: the user's menu and About.
+//- +editorMenu: Workbench, Dashboard (My work, Notifications, Design, Administration, Settings), AI Agent; +editorUser: the user's menu and About.
 //- A drop-down opens on hover or focus (CSS: modeler.css).
 mixin editorMenu
   nav.editor-menu(aria-label="Menu")
@@ -22,6 +22,8 @@ mixin editorMenu
       a(href='/dashboard') My work
       if addOnOn('notification')
         a(href='/dashboard/notifications') Notifications
+    if account && addOnOn('ai')
+      a(href='/ai/key') AI Agent
 
 mixin editorUser
   nav.editor-menu.editor-menu-right(aria-label="Account")
@@ -32,6 +34,5 @@ mixin editorUser
           span.editor-caret
         .editor-dropdown-menu.editor-dropdown-right
           a(href='/account') My account
-          a(href='/ai/key') Link for an AI agent
           a(href='/logout') Sign out
     a(href='https://bpmnserver.github.io/bpmn-server/' target='docs') About

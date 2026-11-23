@@ -89,27 +89,21 @@ nav:
   - "Upgrade to 3.x": whats-new-3.md
 
 - Tutorials:
-  - '1. A Workflow Ready for Production': tutorial/start.md
-  - '2. Roles and Assignment': tutorial/roles.md
-  - '3. Forms and Data': tutorial/forms.md
-  - '4. Decisions and Paths': tutorial/paths.md
-  - '5. Deadlines': tutorial/deadlines.md
-  - '6. Calling Services, and Failing Well': tutorial/services.md
-  - '7. Testing Every Path': tutorial/tutorial-testing.md
-  - '8. Review Before Release': tutorial/review.md
-  - '9. Release': tutorial/release.md
-
-- Walkthroughs:
-  - Execute from Node.js: tutorial/tutorial-script.md
-  - Integrate an Existing Application: tutorial/tutorial-integrate.md
-  - Connect External Services: tutorial/tutorial-connectors.md
-
-- Core Concepts:
-  - Invoking Workflows: invokation.md
-  - Workflow Execution: execution.md
-  - Data and Persistence: data.md
-  - Scripting: scripting.md
-  - Security: security.md
+  - 'Part 1: Modeling — straight BPMN':
+    - '1. Build a Workflow Brief': tutorial/start.md
+    - '2. Roles and Assignment': tutorial/roles.md
+    - '3. Forms and Data': tutorial/forms.md
+    - '4. Decisions and Paths': tutorial/paths.md
+    - '5. Deadlines': tutorial/deadlines.md
+  - 'Part 2: Adding Logic — JavaScript and FEEL':
+    - '6. Calling Services, and Failing Well': tutorial/services.md
+    - '7. Testing Every Path': tutorial/tutorial-testing.md
+    - '8. Review Before Release': tutorial/review.md
+  - 'Part 3: Integration — Application and Deployment':
+    - '9. Execute from Node.js': tutorial/tutorial-script.md
+    - '10. Integrate an Existing Application': tutorial/tutorial-integrate.md
+    - '11. Connect External Services': tutorial/tutorial-connectors.md
+    - '12. Release': tutorial/release.md
 
 - Modeling and Integration:
   - Model editor: modeler.md
@@ -120,6 +114,11 @@ nav:
   - Data objects: data-objects.md
 
 - Reference:
+  - Invoking Workflows: invokation.md
+  - Workflow Execution: execution.md
+  - Data and Persistence: data.md
+  - Scripting: scripting.md
+  - Security: security.md
   - Features: features.md
   - Performance and test coverage: performance.md
   - Labels: labels.md
@@ -131,7 +130,7 @@ nav:
   - Frequently Asked Questions: faq/index.md
   - Site Map: map.md
 
-- Examples/Features:
+- Features:
   - 'Service Task': examples/serviceTask.md
   - 'Script Task': examples/scriptTask.md
   - 'Conditional Flow': examples/conditionalFlow.md

@@ -1,5 +1,43 @@
 # Add-ons
+## My Notes
+Add-ons
+Users-Access
+    Roles
+    Actors
+    Assignments
+    Access Control
+    Notification
+Processing
+    appServices
+    connectors
+Modeling options
+    history
+    scenarios
+Data-store options
 
+Display-UI
+    labels
+    Forms
+        simple fields
+        form-keys
+        extended fields
+Pages
+    columns to display
+
+---------- Install options
+1.  sample app
+        API: Y/N
+        Workbench,Modeler Y/N
+        appServices ... existing ,import
+        connectors: Y/N
+2.  embed into existing app
+        AI prompt to generate code
+          appServices
+          API
+          to do Y/N
+          custom form
+
+## Continue
 **Status:** in place on 3.7.5, but connectors: four add-ons (Policies, Labels, Forms and display, Modeling tools),
 `app-config.json`, the manifests, the registration points, the editor's modules and the Settings page's Add-ons.
 

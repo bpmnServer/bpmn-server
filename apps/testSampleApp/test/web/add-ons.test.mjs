@@ -28,7 +28,7 @@ test('none on: the menu has no Notifications; on the Settings page each add-on\'
     const settings = (await admin.get('/dashboard/settings')).text;
     // an add-on's area is there, marked off, with nothing of what it has (its policies) while it is off
     const card = settings.split('data-addon="assignment">')[1].split('Set up')[0];
-    assert.match(card, />off</, 'its card says it is off');
+    assert.match(card, /aria-label="Off"/, 'its card says it is off');
     assert.doesNotMatch(card, /polic/);
     const area = (await admin.get('/dashboard/settings/assignment')).text;
     assert.match(area, /Its settings are kept while it is off/);
@@ -40,8 +40,10 @@ test('none on: the menu has no Notifications; on the Settings page each add-on\'
     const old = await admin.get('/dashboard/settings/policies');
     assert.equal(old.status, 301);
     assert.equal(old.location, '/dashboard/settings/assignment');
-    for (const name of ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling'])
-        assert.match(settings.split(`data-addon="${name}">`)[1].split('Set up')[0], />off</, `${name} off`);
+    // Extended Forms is part of Model Options: no card of its own
+    for (const name of ['assignment', 'notification', 'security', 'labels', 'modeling', 'ai'])
+        assert.match(settings.split(`data-addon="${name}">`)[1].split('Set up')[0], /aria-label="Off"/, `${name} off`);
+    assert.ok(!settings.includes('data-addon="forms"'), 'Extended Forms: on the Model Options card');
 });
 
 test('none on: the editor is told so, and has no Test or History tab', async () => {
@@ -50,7 +52,7 @@ test('none on: the editor is told so, and has no Test or History tab', async () 
     assert.equal(page.status, 200, why(page));
     const options = optionsOf(page.text);
     assert.deepEqual(options.addOns, []);
-    assert.deepEqual(options.manifests.map(m => m.name), ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling'], 'every one\'s manifest, for the report');
+    assert.deepEqual(options.manifests.map(m => m.name), ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling', 'ai'], 'every one\'s manifest, for the report');
     assert.ok(!page.text.includes('id="js-tab-test"'), 'no Test tab');
     assert.ok(!page.text.includes('id="js-tab-history"'), 'no History tab: no versions kept');
 });

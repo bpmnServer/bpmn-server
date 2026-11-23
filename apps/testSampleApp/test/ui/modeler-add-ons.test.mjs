@@ -1,6 +1,6 @@
 // @features: add-ons, modeler
 // The model editor with add-ons off (docs/design/add-ons.md): only the add-ons that are on bring their parts. With
-// Policies, Labels and Forms off and Modeling tools on, a task, a start event and the process have no User assignment,
+// Policies, Labels and Forms off and Model History on, a task, a start event and the process have no User assignment,
 // Who can start, Policies or Label group; the Test tab is there; and the editor runs without an error.
 //   npm run test:ui
 import test from 'node:test';
@@ -68,7 +68,7 @@ async function groupsOf(page, id) {
     return page.locator('.bio-properties-panel-group-header-title').allInnerTexts();
 }
 
-test('with Policies, Labels and Forms off: no group of theirs; Modeling tools on: the Test tab', async () => {
+test('with Policies, Labels and Forms off: no group of theirs; Model History on: the Test tab', async () => {
     const { page, errors, close } = await openEditor(MODEL);
     try {
         const task = await groupsOf(page, 't');
@@ -80,7 +80,7 @@ test('with Policies, Labels and Forms off: no group of theirs; Modeling tools on
         const process = await groupsOf(page, 'p');
         for (const off of ['Policies', 'Label'])
             assert.ok(!process.includes(off), `no ${off} on the process: ${process.join(', ')}`);
-        assert.equal(await page.locator('#js-tab-test').count(), 1, 'the Test tab: Modeling tools is on');
+        assert.equal(await page.locator('#js-tab-test').count(), 1, 'the Test tab: Model History is on');
         assert.deepEqual(errors, [], 'no page errors');
     }
     finally { await close(); }

@@ -89,4 +89,4 @@ From Node.js, [bpmn-client](../bpmn-client.md) also wraps the older APIs (`/api`
 
 More: [Integrate an existing application](../integrate.md), [Application integration](../customization.md).
 
-One of the walkthroughs after the [tutorials](start.md): previous, [Execute from Node.js](tutorial-script.md); next, [Connect external services](tutorial-connectors.md).
+Previous: [Tutorial 9, execute from Node.js](tutorial-script.md). Next: [Tutorial 11, connect external services](tutorial-connectors.md).

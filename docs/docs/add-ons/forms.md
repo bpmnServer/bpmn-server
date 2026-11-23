@@ -1,7 +1,7 @@
-# Forms and display (add-on)
+# Extended Forms (add-on)
 
-The **Forms and display** add-on gives a form field its choices from a source, as the form is filled. Turn it on or
-off in its card on the [Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Forms and display**).
+The **Extended Forms** add-on gives a form field its choices from a source, as the form is filled. Turn it on or
+off in its card on the [Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Extended Forms**).
 
 ## What it does
 

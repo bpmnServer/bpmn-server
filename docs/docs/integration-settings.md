@@ -30,16 +30,16 @@ settings are kept while it is off.
 |---|---|---|
 | **Assignment** | The assignment policies | none of its own |
 | **Notifications** | The notification policies; who delivers notifications (the delegate's `notify`, or email), how many are kept, by status | `NOTIFICATIONS`, `EMAIL_ENABLE`, `EMAIL_FROM`, `SMTP_USER`, `SMTP_PASSWORD`; `EMAIL_LOG` |
-| **Security** | The security policies, and whether they are on | `SECURITY_POLICY` |
+| **Access Control** (`security`) | The security policies, and whether they are on | `SECURITY_POLICY` |
 | **Labels** | | none of its own |
-| **Forms and display** | | none of its own |
-| **Modeling tools** | | `MODEL_HISTORY` |
+| **Extended Forms** | | none of its own |
+| **Model History** | | `MODEL_HISTORY` |
 
 Each area's page links to where its parts are managed: the connectors, the roles (Administration), the policies
 (Design), the notifications. Before 3.7.5, Roles and policies and Notifications were areas of their own: the roles
-are the server's (**Roles**), the policies the Assignment, Security and Notifications add-ons'
+are the server's (**Roles**), the policies the Assignment, Access Control and Notifications add-ons'
 (`/dashboard/settings/notifications` leads to Notifications); and *Forms, scripts and the model editor* is *Models,
-forms and scripts* (`models`), its `MODEL_HISTORY` the Modeling tools add-on's.
+forms and scripts* (`models`), its `MODEL_HISTORY` the Model History add-on's.
 
 ## Add-ons on and off
 
@@ -48,7 +48,7 @@ switch: an administrator turns it on or off there (**Turn off** / **Turn on**), 
 
 - **Saved to `app-config.json`**, the application's, beside its `.env` (`appConfig` in the configuration names another):
   `{ "addOns": ["assignment", "labels"] }`. Its other settings are kept. `policies`, one add-on before 3.7.5, means
-  the three it became: Assignment, Notifications and Security.
+  the three it became: Assignment, Notifications and Access Control.
 - **No `app-config.json`, or no `addOns` in it:** every add-on is on, as before 3.7.5.
 - **It applies when the server restarts.** Until then the add-on shows how the server runs, marked *restart to apply*.
 - **A model that uses an add-on that's off** keeps its attributes; the engine ignores them, and the model's checks
@@ -58,10 +58,10 @@ switch: an administrator turns it on or off there (**Turn off** / **Turn on**), 
 |---|---|
 | **Assignment** | Who works on each task and who may start a process (assignee, candidates, lanes, assignment policies), and the actors expressions read |
 | **Notifications** | Who is told what (notification policies), kept and delivered |
-| **Security** | Who may see and do what (security policies) |
+| **Access Control** (`security`) | Who may see and do what (security policies) |
 | **Labels** | What each case and task is called (`owf:label`, `owf:endLabel`), and their values as the lists' columns. Off: a case is shown as `<model> #<caseId>`, a task by its name |
-| **Forms and display** | A form field's choices from a source: a drop-down (`owf:list`) or a search (`owf:lookup`); a list's value held to its choices |
-| **Modeling tools** | The editor's Test tab (scenarios) and History tab (each save kept as a version) |
+| **Extended Forms** | A form field's choices from a source: a drop-down (`owf:list`) or a search (`owf:lookup`); a list's value held to its choices |
+| **Model History** | The editor's Test tab (scenarios) and History tab (each save kept as a version) |
 
 ## Who changes what
 

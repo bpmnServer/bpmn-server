@@ -1,23 +1,47 @@
-# Tutorial 1: A workflow ready for production
+# Tutorial 1: Build a workflow ready for production
 
-These tutorials design one workflow, a **leave request**, so that it is ready for real users: every path thought
-through, nothing left waiting forever, failures handled, every path tested, and released with the checks that keep it
-that way. The sample application has the finished model; each tutorial explains one part of its design, why it is
-there, and how to change it.
+These tutorials are for developers building a production workflow. You will design, implement, test, integrate, and
+release one example: a **leave request**. The business scenario uses employees, managers, and HR so the requirements
+are concrete; your job is to turn them into BPMN, forms, services, security, and tests.
 
-| | Designs |
+The sample application has the finished model. Each tutorial explains what to change, why it belongs in the model or
+application, and how to verify it before release.
+
+## Part 1: Modeling — straight BPMN
+
+Start with BPMN structure and business behavior. Keep this part free of JavaScript and external services.
+
+| Tutorial | Build this |
 |---|---|
-| 1. A workflow ready for production (this page) | What the process must do, and the application it runs in |
-| [2. Roles and assignment](roles.md) | Who does each task, and who may not |
-| [3. Forms and data](forms.md) | What each person fills in, and how bad input is caught |
-| [4. Decisions and paths](paths.md) | Every outcome leads somewhere, and the paths join cleanly |
-| [5. Deadlines](deadlines.md) | Nothing waits unnoticed |
-| [6. Calling services, and failing well](services.md) | The process works with other systems, and survives their failures |
-| [7. Testing every path](tutorial-testing.md) | Each path proved, without sending a message or touching HR's system |
-| [8. Review before release](review.md) | The model checked, read, and run once as its users |
-| [9. Release](release.md) | The checks on every change, and the application on a server |
+| [1. The workflow brief](#developer-brief-what-the-process-must-do) | Define the process and its acceptance criteria |
+| [2. Roles and assignment](roles.md) | Model lanes, task ownership, and authorization boundaries |
+| [3. Forms and data](forms.md) | Define user-task forms and the data contract |
+| [4. Decisions and paths](paths.md) | Model gateways, outcomes, and joins |
+| [5. Deadlines](deadlines.md) | Model timers and the behavior of waiting work |
 
-## What the process must do
+## Part 2: Adding logic — JavaScript and FEEL
+
+Add the smallest amount of executable logic needed to validate data, calculate values, call services, and handle
+failures. Prove each path with automated tests.
+
+| Tutorial | Add this |
+|---|---|
+| [6. Calling services, and failing well](services.md) | JavaScript, service tasks, errors, and retries |
+| [7. Testing every path](tutorial-testing.md) | Gherkin scenarios, stubs, and assertions |
+| [8. Review before release](review.md) | Model verification and acceptance checks |
+
+## Part 3: Integration — application and deployment
+
+Connect the workflow to your application, users, APIs, and production environment.
+
+| Tutorial | Integrate this |
+|---|---|
+| [Run a workflow from Node.js](tutorial-script.md) | Start and complete work from application code |
+| [Integrate an existing application](tutorial-integrate.md) | Use API v3 with your users and UI |
+| [Connect external services](tutorial-connectors.md) | Configure REST connectors |
+| [Release](release.md) | Deploy safely and keep the checks running |
+
+## Developer brief: what the process must do
 
 An employee asks for leave. Before it is used for real:
 
@@ -28,7 +52,7 @@ An employee asks for leave. Before it is used for real:
 5. The employee is **told the outcome**, with the manager's comment.
 6. Every path is **tested** before each release.
 
-## The application
+## Set up the developer environment
 
 You need Node.js 20 or later.
 

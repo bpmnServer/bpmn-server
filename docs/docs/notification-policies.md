@@ -4,8 +4,18 @@ A process can say who is told what, and when, by naming a **notification policy*
 models, whose every matching rule sends a notification. One table covers a whole process: *when Approve waits, tell
 those it is offered to; when it is approved, tell the employee; when the leave is recorded, tell HR*.
 
-The design: `docs/design/notification-policies.md`. *A first slice:* it may change as it is tried. The HR demo's
-Leave Application uses one: `apps/hrdemo/workflow/processes/policies/notification/LeaveNotices.dmn.xml`.
+This page covers the first supported slice: `assigned`, `completed`, and `ended` events. The HR demo includes a
+working example in `apps/hrdemo/workflow/processes/policies/notification/LeaveNotices.dmn.xml`.
+
+## Quick start
+
+1. Add `owf:notificationPolicy="LeaveNotices"` to a process.
+2. Create `policies/notification/LeaveNotices.dmn.xml` with `event`, `notify`, `template`, and optional `channel` outputs.
+3. Implement `appDelegate.notify(notification)` to deliver each notification.
+4. Run the process and inspect notifications through API v3 or a Gherkin test.
+
+This page covers the first supported slice: `assigned`, `completed`, and `ended` events. The HR demo includes a
+working example in `apps/hrdemo/workflow/processes/policies/notification/LeaveNotices.dmn.xml`.
 
 ## The process
 
@@ -45,7 +55,7 @@ that matches notifies. The HR demo's `LeaveNotices`:
 
 ### What a rule reads
 
-What every expression reads ([expressions.md](../design/expressions.md)): the data by name (`days`) and as `data`,
+The shared expression context includes the data by name (`days`) and as `data`,
 `event`, `task`, `item` (`item.userName`: who completed it), `instance`, `user`, and the instance's **actors**:
 
 | | who |

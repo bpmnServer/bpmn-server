@@ -3,7 +3,12 @@ extends layout
 //- /ai/key: a link for your AI agent. It acts as you on this site's API, at the level you choose, for a short time.
 block content
   - const about = { work: 'Start processes, work on your tasks, read your instances and why they went their way.', design: 'As Work, and build models: read, check, save and test them.', administer: 'As Work, and read this server\'s settings (secrets hidden) and run their checks, to advise you. It changes nothing.' }
-  - const prompts = { work: 'Start a leave request for 3 days from Monday, then show me my waiting tasks.', design: 'Build a workflow named "leave-request" for employee leave requests: an employee submits employeeId, startDate, endDate and reason; a manager approves or rejects it, and an employee must not be able to approve. Write its tests for approved, rejected, and an employee cannot approve. Check the model, save it, save its tests, run them, and fix what fails until they all pass. Give me the model\'s link.', administer: 'Check this server\'s settings and tell me what to fix for production: what is wrong or missing, and why. Do not change anything; ask me for any secret.' }
+  //- examples of what to ask, by level: the first fills the box; a click on another puts it there instead
+  - const prompts = {}
+  - prompts.work = ['Show me my waiting tasks, oldest first, and what each one needs from me.', 'Which processes can I start? For each, say in one line what it is for and what it asks for.', 'Start a leave request for 3 days from Monday, then show me my waiting tasks.', 'List my cases that are still running: where each one waits, for whom, and why it went that way (its Rationale).', 'Complete my oldest waiting task with what it needs, asking me for any value you do not know, and tell me what happens next.']
+  - prompts.design = ['Build a workflow named "leave-request" for employee leave requests: an employee submits employeeId, startDate, endDate and reason; a manager approves or rejects it, and an employee must not be able to approve. Write its tests for approved, rejected, and an employee cannot approve. Check the model, save it, save its tests, run them, and fix what fails until they all pass. Give me the model\'s link.', 'Explain the model "leave-request": its steps in order, who does each, the data each needs, and where it can end.', 'Check every model and list the problems found, worst first, with how to fix each. Do not change anything.', 'Run the tests of every model and tell me which pass and which fail, and why each failure fails.', 'In the model "leave-request", add a step after approval that tells HR. Update its tests, run them, and fix what fails until they all pass.', 'Write the missing tests of the model "leave-request": one per path through it. Save them, run them, and report.']
+  - prompts.administer = ['Check this server\'s settings and tell me what to fix for production: what is wrong or missing, and why. Do not change anything; ask me for any secret.', 'Run the settings\' checks and tell me which fail, and what each needs. Do not change anything.', 'Which settings still have their defaults, and which of those matter for production?', 'Is email set up? Tell me what is missing for the notifications to be sent. Do not change anything.', 'Which add-ons are on, and what does each one do on this site?']
+  - const examples = prompts[level] || []
   .container.ai-key-page(style="max-width: 860px")
     h2 A link for your AI agent
     p.lead
@@ -42,13 +47,19 @@ block content
         li
           | Open your AI agent, and give it the link with what you want done. For example:
           .input-group(style="margin: 8px 0")
-            textarea#ai-prompt.form-control(rows="5", readonly, style="font-family: monospace; font-size: 13px")
+            textarea#ai-prompt.form-control(rows="6", style="font-family: monospace; font-size: 13px", data-head=`Using ${url}\nUse curl only, not a browser, and only its API.\n\n`)
               | Using #{url}
               | Use curl only, not a browser, and only its API.
               |
-              | #{prompts[level]}
+              | #{examples[0]}
             span.input-group-btn(style="vertical-align: top")
               button.btn.btn-default(type="button", data-copy="#ai-prompt") Copy
+          if examples.length > 1
+            p.text-muted(style="margin: 6px 0 4px") More examples at this level: pick one, change it as you need, then copy.
+            ul.ai-examples(style="padding-left: 18px")
+              each example, i in examples
+                li
+                  a.ai-example(href="#", data-prompt=example, class=i === 0 ? 'active' : undefined)= example
         li
           | The agent reads the link first: it says what it may do and how to use this site's API.
 
@@ -75,6 +86,16 @@ block content
         var label = button.textContent;
         button.textContent = 'Copied';
         setTimeout(function () { button.textContent = label; }, 1500);
+      });
+    });
+    document.querySelectorAll('.ai-example').forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        var box = document.getElementById('ai-prompt');
+        box.value = box.dataset.head + link.dataset.prompt;
+        document.querySelectorAll('.ai-example.active').forEach(function (a) { a.classList.remove('active'); });
+        link.classList.add('active');
+        box.focus();
       });
     });
     var at = document.getElementById('ai-expires');

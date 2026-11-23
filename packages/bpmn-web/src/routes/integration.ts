@@ -31,6 +31,8 @@ export interface IntegrationPoint {
     docs?: string;
     /** An add-on's description in a few words: its card's */
     brief?: string;
+    /** Its settings are its options, switched on or off on its card (Model Options) */
+    options?: boolean;
 }
 
 /** BPMN Server's docs site: an add-on's doc page is a path of it, unless its manifest gives a full address. */
@@ -38,9 +40,9 @@ export const DOCS_SITE = 'https://bpmnserver.github.io/bpmn-server/';
 const docsAddress = (docs?: string) => !docs ? undefined : /^https?:\/\//.test(docs) ? docs : DOCS_SITE + docs.replace(/^\//, '');
 
 /** An add-on's area: its manifest's title, description and settings. */
-export function addOnArea(manifest: { name: string; title: string; description?: string; brief?: string; docs?: string; settings?: IntegrationPoint['settings'] }): IntegrationPoint {
+export function addOnArea(manifest: { name: string; title: string; description?: string; brief?: string; docs?: string; options?: boolean; settings?: IntegrationPoint['settings'] }): IntegrationPoint {
     return { id: manifest.name, title: manifest.title, about: manifest.description ?? '', settings: manifest.settings ?? [], addOn: manifest.name,
-        ...(manifest.brief ? { brief: manifest.brief } : {}), ...(manifest.docs ? { docs: docsAddress(manifest.docs) } : {}) };
+        ...(manifest.brief ? { brief: manifest.brief } : {}), ...(manifest.options ? { options: true } : {}), ...(manifest.docs ? { docs: docsAddress(manifest.docs) } : {}) };
 }
 
 /** The server's areas, no add-on's, in the page's order (each add-on's follow, from its manifest). */
@@ -87,24 +89,15 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         ],
     },
     {
-        id: 'models', title: 'Models, forms and scripts',
-        about: 'How forms are checked, what the model editor offers, and how scripts reach the application.',
+        id: 'models', title: 'Models and scripts',
+        about: 'How forms are checked, how models are checked and found, and how scripts reach the application. What the model editor offers is Model Options\'.',
         settings: [
             { name: 'FORM_RULES', label: 'Form rules checked', editor: 'designer', main: true },
-            { name: 'ELEMENT_TEMPLATES', label: 'Element templates offered', editor: 'designer', main: true },
             { name: 'VERIFY_MODELS_ON_IMPORT', label: 'Models checked when saved through the APIs', editor: 'designer' },
             { name: 'CATALOG_URL', label: 'Model catalog' },
             { name: 'SCRIPT_SANDBOX', label: 'Scripts run in a sandbox' },
             { name: 'SCRIPT_SANDBOX_SERVICES', label: 'Sandboxed scripts may call appServices' },
             { name: 'TIMERS', label: 'Timers run' },
-        ],
-    },
-    {
-        id: 'ai', title: 'AI agents',
-        about: 'The links an AI agent works with (Link for an AI agent), and this site\'s own guide for them in /llms.txt.',
-        settings: [
-            { name: 'AI_ACCESS', label: 'AI link levels offered', main: true },
-            { name: 'AI_GUIDE', label: 'Guide for AI agents' },
         ],
     },
 ];
@@ -214,7 +207,7 @@ export function summaryOf(id: string, info: any, settings: any[]): { lines: stri
                 `Delivered by ${info.notify ? 'the application' : 'email'}; ${count(info.total ?? 0, 'notification')} kept`],
                 attention: !info.notify && valueOf(settings, 'EMAIL_ENABLE') !== 'true' ? 'Email is off: notifications are kept, not sent' : undefined };
         case 'modeling':
-            return { lines: [`Model history ${valueOf(settings, 'MODEL_HISTORY') === 'false' ? 'not kept' : 'kept'}`] };
+            return { lines: [] };     // its options are its card's switches
         case 'api':
             return { lines: [`API v3; service key ${valueOf(settings, 'API_KEY') ?? "the application's"}`, `Task API (acting for a user) ${info.taskApi ? 'on' : 'off'}`] };
         case 'models':

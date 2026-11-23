@@ -144,3 +144,21 @@ Feature: Leave Application
         | EndDate   | 2026-12-05 |
     Then @wait :leave passed element:Remind
       And @check :leave last element:Approve status is "wait"
+
+  Scenario: Scenario 9
+    When @start process:"Leave Application" as :instance
+    And @invoke element:Request in :instance
+      | LeaveType | "Vacation" |
+      | StartDate | "2026-11-06" |
+      | EndDate | "2026-11-27" |
+      | RequestReason | "" |
+
+  Scenario: Scenario 10
+    When @start process:"Leave Application" as :instance
+    And @invoke element:Request in :instance is refused
+      | LeaveType | "Vacation" |
+      | StartDate | "" |
+      | EndDate | "" |
+      | RequestReason | "" |
+      | Department | "" |
+      | CoveredBy | "" |

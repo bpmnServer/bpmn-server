@@ -1,7 +1,7 @@
-# Security (add-on)
+# Access Control (add-on)
 
-The **Security** add-on decides who may see a case and what they may do in it. Turn it on or off on its card on the
-[Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Security**).
+The **Access Control** add-on decides who may see a case and what they may do in it. Turn it on or off on its card on the
+[Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Access Control**).
 
 ## What it does
 

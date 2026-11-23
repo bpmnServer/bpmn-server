@@ -15,6 +15,8 @@ function render(response, processName: string, xml: string, bpmnServer?) {
         modelJson: JSON.stringify(xml).replace(/</g, '\\u003c'),
         cspHost: process.env.ITSM_HOST,
         modelHistory: bpmnServer?.configuration.modelHistory !== false,
+        // Model Options' Test (MODEL_TESTS=false: no Test tab)
+        modelTests: !/^(false|off|0|no)$/i.test(String(process.env.MODEL_TESTS ?? '').trim()),
         elementTemplates: templatesOn(),
         // the add-ons that are on: their parts of the editor are loaded (modeler/src/addons)
         addOns: bpmnServer ? addOnsOf(bpmnServer).map(a => a.name) : undefined,

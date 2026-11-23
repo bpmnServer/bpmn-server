@@ -53,6 +53,10 @@ export interface IAddOnManifest {
     description?: string;
     /** what it is, in a few words (its card on the Settings page) */
     brief?: string;
+    /** its settings are its options, each switched on or off on its card (Model Options): it has no on/off of its own */
+    options?: boolean;
+    /** one of another add-on's options (Extended Forms, Model Options'): no card of its own; on as that option says */
+    partOf?: string;
     /** its doc page: a path of the docs site (`add-ons/policies/`), or a full address for an application's own */
     docs?: string;
     /** the model attributes it reads: `camunda:candidateGroups`, `owf:assignmentPolicy` */

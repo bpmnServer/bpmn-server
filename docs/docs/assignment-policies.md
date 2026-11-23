@@ -4,8 +4,15 @@ A user task can say who works on it by naming an **assignment policy**: a decisi
 first matching rule assigns the task when it starts. A rule written once, *over 10,000 goes to a director, IT requests
 to the IT manager, else the requester's manager*, serves every task that names it.
 
-The design: `docs/design/assignment.md`. *A first try:* it may change as it is tried. The HR demo's Leave
-Application uses one: `apps/hrdemo/workflow/processes/policies/assignment/LeaveApproval.dmn.xml`.
+This page explains the supported assignment-policy behavior. The HR demo includes a working example in
+`apps/hrdemo/workflow/processes/policies/assignment/LeaveApproval.dmn.xml`.
+
+## Quick start
+
+1. Add `owf:assignmentPolicy="Approval"` to a user task.
+2. Create `policies/assignment/Approval.dmn.xml` with conditions and assignment outputs.
+3. Choose the policy in the model editor's **User assignment** section.
+4. Test both matching and no-match cases in the decision editor.
 
 ## The task
 
@@ -71,7 +78,7 @@ because of its policy.
 
 The policy runs once, when the task starts: not when it is claimed, and not when the data changes later.
 
-**What a policy reads** is what every expression reads ([expressions.md](../design/expressions.md)): the data by
+**What a policy reads** is the shared expression context: the data by
 name (`amount`) and as `data` (the task's, in its branch), the task's prepared inputs (its input parameters, which may
 call the application's services: `$(appServices.managerOf(this.data.requester))`), `user`, `actors`
 (`actors.initiator`, who started the instance; `actors.approver`, who completed the elements the model names so with

@@ -11,6 +11,19 @@
 .integration-switch form { margin: 0; }
 .integration-docs { font-size: 13px; }
 .integration-card .integration-brief { color: #1f2937; }
+.integration-card h2 { display: flex; align-items: center; gap: 8px; }
+.integration-state { font-size: 13px; line-height: 1; }
+.integration-state.is-on { color: #1a7f37; }
+.integration-state.is-off { color: #9aa1aa; }
+.integration-used { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 2px; }
+.integration-used-label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #6b7280; margin-right: 2px; }
+.integration-model { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #eef2f7; color: #1f2937; text-decoration: none; }
+.integration-model:hover { background: #dde6f2; text-decoration: none; }
+.integration-card-links { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 6px; }
+.integration-options { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.integration-options li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.integration-options form { margin: 0 0 0 auto; }
+.integration-option-name { min-width: 120px; font-size: 14px; }
 /* something to set up: amber, not red (red is for errors) */
 .integration-attention { color: #8a5a00 !important; }
 .integration-open { margin-top: auto; padding-top: 6px; color: #1f62c8; font-size: 14px; }
@@ -19,3 +32,4 @@
 .integration-list > summary { cursor: pointer; color: #1f62c8; }
 .integration-list[open] > summary { margin-bottom: 4px; }
 .integration-points { margin: 8px 0 24px; font-size: 14px; }
+.integration-card-links .integration-open { margin: 0; padding: 0; }

@@ -1,7 +1,11 @@
 # Tutorial 3: Forms and data
 
-**The requirement:** the employee says what kind of leave, from when to when, and why. Dates that make no sense go back
-to them, before any manager sees the request.
+**Developer outcome:** define the form contract and validate it in the process before the request reaches a manager.
+The example form captures leave type, dates, and reason; invalid dates are refused, and the request waits for the
+requester.
+
+The form definition belongs to Part 1. The JavaScript validation shown below is the tutorial's first preview of Part 2;
+the BPMN structure stays understandable even when the executable logic is added later.
 
 ## The form
 

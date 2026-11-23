@@ -120,7 +120,7 @@ A security policy is asked once for each case a list shows, and once for each ta
 
 Lines, functions and branches that ran during the tests. Covered code ran during a test, but that doesn't prove a test checked its result. `npm run test:coverage` writes the full summary to `reports/coverage/summary.md`, and a browsable report to `coverage/`. CI runs it on every pull request and keeps the report as an artifact. The run fails when bpmn-server falls below 90% of its lines, functions or branches.
 
-Measured by CI, on Linux, on 2026-11-17 at commit `c460297` (`main`):
+Measured by CI, on Linux, on 2026-11-17, on pull request #293 (`main` with the coverage job's browser installed, so the UI tests ran too):
 
 | Package | Files | Lines | Functions | Branches |
 | --- | ---: | ---: | ---: | ---: |

@@ -1,7 +1,7 @@
-# Modeling tools (add-on)
+# Model History (add-on)
 
-The **Modeling tools** add-on gives the model editor its Test and History tabs. Turn it on or off in its card on the
-[Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Modeling tools**).
+The **Model History** add-on gives the model editor its Test and History tabs. Turn it on or off in its card on the
+[Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸ Model History**).
 
 ## What it does
 

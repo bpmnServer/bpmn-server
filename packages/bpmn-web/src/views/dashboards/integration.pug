@@ -118,43 +118,69 @@ mixin addOnSwitch(a)
         input(type='hidden', name='on', value=a.saved ? 'false' : 'true')
         button.btn.btn-default.btn-xs(type='submit')= a.saved ? 'Turn off' : 'Turn on'
 
-//- an add-on's area: on or off, the models using it
-mixin addOnState(a)
-  +addOnSwitch(a)
-  if a.models.length
-    p.dash-muted Used by #{a.models.join(', ')}#{a.on ? '' : ': the engine ignores it while it is off'}.
+//- the models using an add-on: each a chip, linking to it in the editor
+mixin usedBy(models)
+  if models && models.length
+    .integration-used
+      span.integration-used-label Used by
+      each m in models
+        a.integration-model(href='/model/edit/' + encodeURIComponent(m))= m
+
+//- whether an add-on is on: an icon, read only (it is turned on or off on its area's page)
+mixin onIcon(a)
+  span.integration-state(class=a.on ? 'is-on' : 'is-off', title=a.on ? 'On' : 'Off', aria-label=a.on ? 'On' : 'Off')= a.on ? '●' : '○'
+
+//- an add-on's area: on or off and its switch, the models using it
+mixin addOnState(a, p)
+  if !p.options || !a.saved || !a.on
+    +addOnSwitch(a)
+  +usedBy(a.models)
+  if a.models.length && !a.on
+    p.dash-muted The engine ignores what these models say of it while it is off.
   if !a.on
     p.dash-muted Its settings are kept while it is off; they apply when it is on.
+  if p.options
+    h3 Options
+    +optionSwitches(p)
 
-//- a server's area: a link; an add-on's: its title links, and it is turned on or off on the card itself
+//- an add-on's options (Model Options): each switched on or off on its area's page; saved to .env, applied on restart
+mixin optionSwitches(p)
+  ul.integration-options
+    each s in p.settings
+      - const now = s.fileValue !== undefined && s.fileValue !== '' ? String(s.fileValue) : s.value !== '' ? String(s.value) : String(s.default ?? '')
+      - const on = /^(true|on|1|yes)$/i.test(now)
+      - const turn = s.choices && s.choices.includes('on') ? (on ? 'off' : 'on') : (on ? 'false' : 'true')
+      li(data-option=s.name)
+        span.integration-option-name= s.label
+        span.dash-badge(class=on ? 'is-success' : '')= on ? 'on' : 'off'
+        if s.pending
+          |  #[span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply]
+        if s.editable
+          form(method='post', action='/dashboard/settings/' + p.id)
+            input(type='hidden', name='_csrf', value=_csrf)
+            input(type='hidden', name=s.name, value=turn)
+            button.btn.btn-default.btn-xs(type='submit')= on ? 'Turn off' : 'Turn on'
+
+//- a card: what the area is, in a few words; an add-on's, whether it is on (read only) and the models using it.
+//- Setting it up, and turning an add-on on or off, is on its page.
 mixin card(p)
   if p.addOnState
     .integration-card(id=p.id, data-addon=p.id)
-      h2: a(href='/dashboard/settings/' + p.id)= p.title
-      +addOnSwitch(p.addOnState)
-      each line in p.summary.lines
-        p= line
-      if p.summary.attention
-        p.integration-attention= p.summary.attention
-      if p.brief
-        p.integration-brief= p.brief
-      if p.addOnState.models.length
-        p.dash-muted Used by #{p.addOnState.models.join(', ')}.
-      if p.pending
-        span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply
-      if p.docs
-        a.integration-docs(href=p.docs, target='_blank', rel='noopener') About this add-on ↗
-      a.integration-open(href='/dashboard/settings/' + p.id) Set up →
+      h2
+        +onIcon(p.addOnState)
+        a(href='/dashboard/settings/' + p.id)= p.title
+      p.integration-brief= p.brief || p.about
+      +usedBy(p.addOnState.models)
+      .integration-card-links
+        if p.docs
+          a.integration-docs(href=p.docs, target='_blank', rel='noopener') About ↗
+        a.integration-open(href='/dashboard/settings/' + p.id) Set up →
   else
     a.integration-card(href='/dashboard/settings/' + p.id, id=p.id)
       h2= p.title
-      each line in p.summary.lines
-        p= line
-      if p.summary.attention
-        p.integration-attention= p.summary.attention
-      if p.pending
-        span.dash-badge.is-warning(title='.env holds a change the server will read when it restarts') restart to apply
-      span.integration-open Set up →
+      p.integration-brief= p.about
+      .integration-card-links
+        span.integration-open Set up →
 mixin api(info)
   dl
     dt API v3
@@ -237,7 +263,7 @@ block dash
     .dash-grid
       section.dash-card.wide(id=point.id)
         if point.addOnState
-          +addOnState(point.addOnState)
+          +addOnState(point.addOnState, point)
         case point.id
           when 'application'
             +application(point.info)
@@ -258,7 +284,7 @@ block dash
             +api(point.info)
         if !point.settings.length && point.addOnState
           p.dash-muted No settings of its own.
-        if point.settings.length
+        if point.settings.length && !point.options
           - const main = point.settings.filter(s => s.main), more = point.settings.filter(s => !s.main)
           form(method='post', action='/dashboard/settings/' + point.id)
             input(type='hidden', name='_csrf', value=_csrf)

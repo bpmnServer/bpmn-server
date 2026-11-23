@@ -605,6 +605,9 @@ async function instanceDetails(request,response,instanceId,version) {
     // the whole case for whoever sees it fully, its data as the policy lets them read it: API v3's operations decide
     const page = await asPage(request, response, api => api.instancePage(instanceId));
     if (!page) return;
+    // a case its policy shows this user as a summary only: the case as a line, and their own tasks in it
+    if (page.summaryOnly)
+        return response.render('instanceSummary', { title: page.summaryOnly.label || page.summaryOnly.name, item: page.summaryOnly });
     return renderInstance(request, response, page.instance, version);
 }
 

@@ -41,7 +41,7 @@ html(lang="en")
                 | Problems
                 span#js-problems-counts.problems-counts
               button#js-tab-report.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-report") Report
-              if !addOns || addOns.includes('modeling')
+              if (!addOns || addOns.includes('modeling')) && modelTests !== false
                 button#js-tab-test.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-test") Test
               if modelHistory
                 button#js-tab-history.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-history") History
@@ -54,7 +54,7 @@ html(lang="en")
             .dock-body
               ul#js-problems.problems-list(role="tabpanel" aria-label="Problems")
               #js-report.dock-report(role="tabpanel" aria-label="Report")
-              if !addOns || addOns.includes('modeling')
+              if (!addOns || addOns.includes('modeling')) && modelTests !== false
                 #js-test.dock-test(role="tabpanel" aria-label="Test")
               if modelHistory
                 #js-history.dock-history(role="tabpanel" aria-label="History")

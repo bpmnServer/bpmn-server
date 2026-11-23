@@ -16,7 +16,7 @@
       <output id="LeaveApproval_candidateGroups" label="Candidate groups" name="candidateGroups" typeRef="string" />
       <rule id="LeaveApproval_long">
         <description>A long leave: HR approves it</description>
-        <inputEntry id="LeaveApproval_long_days"><text>&gt; 10</text></inputEntry>
+        <inputEntry id="LeaveApproval_long_days"><text>&gt; 15</text></inputEntry>
         <inputEntry id="LeaveApproval_long_manager"><text>-</text></inputEntry>
         <outputEntry id="LeaveApproval_long_assignee"><text></text></outputEntry>
         <outputEntry id="LeaveApproval_long_groups"><text>"HR"</text></outputEntry>

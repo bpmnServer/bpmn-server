@@ -26,6 +26,13 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **AI Agent is a menu item of its own**, for everyone signed in, while the AI Agents add-on is on; it was in the
+  account menu. An application that signs people in itself (a host user manager) gets the links too: `/ai/key` works
+  under its sign-in, and API v3 takes the link (`Bearer bpt_…`) before the application's credentials. API v3's
+  `/me` says `may.aiLink`. The HR demo has the item, and its Settings item is for administrators and designers only.
+  Tests: `test/web/ai-key.test.mjs`, `test/web/host-user-manager.test.mjs`, the HR demo's `src/workflowAccess.test.mjs`.
+- **More examples of what to ask an AI agent** (`/ai/key`): five or six for each level, one click to put one in the
+  box, which can now be edited before copying. Test: `test/web/ai-key.test.mjs`.
 - **The environment's band says what runs differently here** (docs/docs/environments.md): beside Test (or the
   label) and read-only, **Timers off** (`TIMERS`), **Service tasks off** (`SERVICE_TASKS`) and **Scripts in a sandbox**
   (`SCRIPT_SANDBOX`), as set or as `DEMO_MODE` says; the editors' badge too. A restriction alone shows the band. API
@@ -197,7 +204,7 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
-- **The policies' three add-ons on the pages**: the Settings page has Assignment, Notifications and Security, each its
+- **The policies' three add-ons on the pages**: the Settings page has Assignment, Notifications and Access Control, each its
   own area and card (`/dashboard/settings/policies` leads to Assignment), and **Roles**, the server's area; the roles are
   on Administration whichever add-ons are on. Notifications (the menu, the page) are the Notifications add-on's; each
   kind of policy's pages, and its rows on Design, its add-on's. `addOnOn('policies')`, for an application's own pages,
@@ -377,6 +384,10 @@ and here
   1.5s by each page, is.
 
 ### Fixed
+- **A case seen as a summary opens as a summary**, not "This task or case is not there, or not yours to open": its
+  name, status, and the tasks you completed in it, none of its data (a security policy's `see: summary`). For example
+  a manager who approved a leave, which is no longer offered to them, from Recently completed. Test:
+  `test/web/case-summary.test.mjs`.
 - **An application's own engine calls** (#294): `start({ engineCalls })` adds them to bpmn-web's own (the Test tab's),
   where bpmn-web used to replace whatever calls an application gave. A host route asks for one by name
   (`web.bpmnServer.engine.call('app.x', ...)`), and it runs in the engine, under its lock, so a route can again change

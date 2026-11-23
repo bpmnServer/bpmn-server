@@ -1,6 +1,6 @@
 {
   "name": "security",
-  "title": "Security",
+  "title": "Access Control",
   "brief": "Who may see a case, and what they may do in it.",
   "description": "Who may see a case and what they may do in it (claim, complete, assign, restart): security policies, decision tables the API asks before each read and each action.",
   "docs": "add-ons/security/",

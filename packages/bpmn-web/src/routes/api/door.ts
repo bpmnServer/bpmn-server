@@ -110,8 +110,27 @@ export function crossSiteWrite(req): string | null {
  */
 function v3Door(tokens: Tokens) {
     return async (req, res, next) => {
-        // the application's user manager: the application's credentials, and no tokens of bpmn-web's
+        // the application's user manager: the application's credentials, and no tokens of bpmn-web's but a person's AI
+        // link (aiAccess.ts), which the application's own sign-in gave them at /ai/key
         const host = hostUserManager(req);
+        const aiLink = host ? /^Bearer\s+(bpt_\S+)$/i.exec(req.header('authorization') ?? '')?.[1] : undefined;
+        if (aiLink) {
+            try {
+                const holder = await tokens.holder(aiLink);
+                if (holder?.scope) {
+                    if (req.app?.locals?.addOnOn?.('ai') === false)
+                        return res.status(403).json({ error: { code: 'AI_OFF', message: 'Links for AI agents are off on this site (the AI Agents add-on)' } });
+                    req.apiUser = tokenUser(holder, hostSettings(req));
+                    req.apiCredential = 'token';
+                    req.apiScope = holder.scope;
+                    return next();
+                }
+                // not an AI link of ours: the application's credential, as below
+            }
+            catch (error) {
+                return next(error);
+            }
+        }
         if (host && req.header('x-api-key') === undefined) {
             // the application's credential may be its session cookie, which a browser sends with a form another site
             // posts: a call that changes something comes from this site, or from no browser at all (CSRF)
@@ -136,6 +155,9 @@ function v3Door(tokens: Tokens) {
                 const holder = await tokens.holder(bearer);
                 if (!holder)
                     return res.status(401).json({ error: { code: 'TOKEN_INVALID', message: 'The token is unknown, expired or revoked' } });
+                // a person's AI link (a token with its level) while the AI Agents add-on is off: refused
+                if (holder.scope && req.app?.locals?.addOnOn?.('ai') === false)
+                    return res.status(403).json({ error: { code: 'AI_OFF', message: 'Links for AI agents are off on this site (the AI Agents add-on)' } });
                 req.apiUser = tokenUser(holder, hostSettings(req));
                 req.apiCredential = 'token';
                 // a person's AI link: its level (aiAccess.ts); v3's routes check it

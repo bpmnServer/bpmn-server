@@ -20,8 +20,9 @@ export function AuthProvider({ children }) {
     if (!user) return;
     let current = true;
     fetch('/api/v3/me').then(r => (r.ok ? r.json() : null)).then(
-      // environment: the server's (APP_ENV, APP_ENV_LABEL, READ_ONLY), for the layout's badge
-      me => current && setMay({ known: true, design: !!me?.may?.design, administer: !!me?.may?.administer, environment: me?.environment ?? null }),
+      // environment: the server's (APP_ENV, APP_ENV_LABEL, READ_ONLY, restrictions), for the layout's badge;
+      // aiLink: a link for their AI agent (the AI Agents add-on on)
+      me => current && setMay({ known: true, design: !!me?.may?.design, administer: !!me?.may?.administer, aiLink: !!me?.may?.aiLink, environment: me?.environment ?? null }),
       () => current && setMay({ ...NOTHING, known: true }));
     return () => { current = false; };
   }, [user?.userName, user?.role]);
@@ -46,21 +47,10 @@ export function AuthProvider({ children }) {
 }
 
 /** known: the workflow server has answered (or could not) */
-const NOTHING = { known: false, design: false, administer: false, environment: null };
+const NOTHING = { known: false, design: false, administer: false, aiLink: false, environment: null };
 
-/**
- * May this user open a workflow page (an address under /workflow)? The Workbench (/workflow) is for administrators
- * and designers; Design, the catalog and the model editors for designers; Administration for administrators. Their
- * tasks, My Work and the rest are everyone's: BPMN Server decides what each shows them.
- */
-export function mayOpenWorkflow(path, may) {
-  const at = path.replace(/^\/workflow/, '') || '/';
-  if (at === '/' || at === '/?owf') return may.design || may.administer;
-  if (/^\/dashboard\/admin\b/.test(at)) return may.administer;
-  if (/^\/dashboard\/integration\b/.test(at)) return may.design || may.administer;
-  if (/^\/dashboard\/(design|catalog)\b/.test(at) || /^\/model\//.test(at)) return may.design;
-  return true;
-}
+// May this user open a workflow page: src/workflowAccess.js, where a test checks it
+export { mayOpenWorkflow } from './workflowAccess.js';
 
 export const useAuth = () => useContext(Auth);
 

@@ -1,4 +1,4 @@
-// The Forms and display add-on's part of the editor (docs/design/form-lookups.md): each form field's choices from a
+// The Extended Forms add-on's part of the editor (docs/design/form-lookups.md): each form field's choices from a
 // source (<owf:list>, <owf:lookup>), after Camunda's own entries. Loaded only when the add-on is on; without it a form
 // field is Camunda's, and the model keeps its lists and lookups.
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';

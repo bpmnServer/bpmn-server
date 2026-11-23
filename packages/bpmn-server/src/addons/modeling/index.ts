@@ -1,5 +1,5 @@
 /**
- * The Modeling tools add-on: the model editor's Test tab (scenarios, docs/design/gherkin-testing.md) and History tab
+ * The Model History add-on: the model editor's Test tab (scenarios, docs/design/gherkin-testing.md) and History tab
  * (each save kept as a version, `.history/<name>/`). Its parts are the editor's and the web's; here, its manifest. Off,
  * the editor has neither tab, and a save keeps no version (the configuration's modelHistory is false).
  */

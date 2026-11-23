@@ -251,8 +251,10 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
+- **Add-ons' titles**: Modeling tools is **Model History**, Forms and display **Extended Forms**, Security **Access
+  Control**; their names (`modeling`, `forms`, `security`), what an `app-config.json` says, are as they were.
 - **The policies are three add-ons** (were one, Policies): **Assignment** (`assignment`: who works on each task and who
-  may start a process, assignment policies), **Notifications** (`notification`: notification policies) and **Security**
+  may start a process, assignment policies), **Notifications** (`notification`: notification policies) and **Access Control**
   (`security`: security policies), each with its manifest, its settings and its doc page, on or off on its own. What
   they share, the actors (`actors`, `instance.actors`), is there while any of them is on (`policies/basics.ts`); the
   roles are the server's. `"policies"` in an `app-config.json` means the three (`addOnNames`); `policiesAddOn`,

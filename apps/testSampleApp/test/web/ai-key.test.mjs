@@ -16,7 +16,7 @@ const XML = `<?xml version="1.0" encoding="UTF-8"?>
 </bpmn:definitions>`;
 
 let web;
-test.before(async () => { web = await startWebApp({ env: { APP_ENV: 'production', API_TRACE: '', SESSION_SECRET: 'a-test-secret' } }); });
+test.before(async () => { web = await startWebApp({ env: { APP_ENV: 'production', API_TRACE: '', SESSION_SECRET: 'a-test-secret', AI_ACCESS: 'work,design,administer' } }); });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
 /** A link for this user at this level (or their default): its key, the level given, and the signed-in client. */
@@ -29,6 +29,14 @@ async function linkFor(userName, level) {
   return { client, key, body: res.body };
 }
 const api = (key, method, url, body) => new WebClient(web.base).request(method, '/api/v3' + url, { json: body, headers: { authorization: `Bearer ${key}` } });
+
+test('AI Agent is a menu item of its own, for everyone signed in', async () => {
+  const staff = await web.login('staff');
+  const page = (await staff.get('/dashboard')).text;
+  assert.match(page, /<li><a href="\/ai\/key">AI Agent<\/a><\/li>/);
+  assert.doesNotMatch(page, /Link for an AI agent<\/a>/, 'no longer in the account menu');
+  assert.doesNotMatch((await new WebClient(web.base).get('/login')).text, /AI Agent<\/a>/, 'not for someone signed out');
+});
 
 test('signed out, /ai/key goes to sign-in', async () => {
   const res = await new WebClient(web.base).get('/ai/key');
@@ -46,6 +54,12 @@ test('each person is offered the levels their rights allow; a designer\'s defaul
   assert.match(page.text, /A link for your AI agent/);
   assert.match(page.text, /href="\/ai\/key\?level=design"/);
   assert.match(page.text, /curl only, not a browser/);
+  // examples of what to ask, by level: several, each one click to put in the box
+  const examples = level => [...level.matchAll(/class="ai-example[^"]*" href="#" data-prompt="([^"]+)"/g)].map(m => m[1]);
+  assert.ok(examples(page.text).length >= 4, 'work: several examples');
+  assert.ok(examples(page.text).some(e => /waiting tasks/.test(e)));
+  const design = examples((await designer.client.get('/ai/key?level=design')).text);
+  assert.ok(design.length >= 4 && design.some(e => /Check every model/.test(e)), design.join(' | '));
 });
 
 test('a link reaches its level and no more', async () => {

@@ -6,6 +6,8 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 - [Overview](index.md): Build and run long-lived business processes inside your application.
 - [Choose Your Journey](journeys.md): BPMN Server can be tried in a browser, run as your own workflow application, connected to an application you already have, or built into your own code.
+- [Building Workflows with AI](ai/building-workflows.md): On a server, start with its /llms.txt (for example https://bpmn.omniworkflow.com/llms.txt): what that site has (its API, services, connectors, user groups), its own rules, then…
+- [Chatting with Your Server](ai/chat-assistants.md): Your users can build and test workflows by chatting with an AI assistant (ChatGPT, Claude, ...) that works on your BPMN Server for them: it reads the site's guide, writes the…
 - [Online Demo](first-workflow.md): Journey A: the quickest way to understand BPMN Server is to build, test, and run a small process.
 - [Build an Application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
 - [Integrate an Existing Application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.
@@ -17,29 +19,21 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 ## Tutorials
 
-- [1. A Workflow Ready for Production](tutorial/start.md): These tutorials design one workflow, a leave request, so that it is ready for real users: every path thought through, nothing left waiting forever, failures handled, every path…
-- [2. Roles and Assignment](tutorial/roles.md): Nobody else sees those tasks, or can complete them.
-- [3. Forms and Data](tutorial/forms.md): to them, before any manager sees the request.
-- [4. Decisions and Paths](tutorial/paths.md): not, and a request that needs more information goes back to the employee.
-- [5. Deadlines](tutorial/deadlines.md): once, after that long; a Date at that time.
-- [6. Calling Services, and Failing Well](tutorial/services.md): tried again.
-- [7. Testing Every Path](tutorial/tutorial-testing.md): information required, HR's system refusing the record, and the reminders.
-- [8. Review Before Release](tutorial/review.md): once as its users would run it.
-- [9. Release](tutorial/release.md): before it does.
-
-## Walkthroughs
-
-- [Execute from Node.js](tutorial/tutorial-script.md): The same leave request, from a script: start it as user1, fill in the request, and approve it as manager1.
-- [Integrate an Existing Application](tutorial/tutorial-integrate.md): Your company already has an HR application, with its own users and pages.
-- [Connect External Services](tutorial/tutorial-connectors.md): A process often needs another system: check a balance, create a ticket, wait for a payment.
-
-## Core Concepts
-
-- [Invoking Workflows](invokation.md): Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least: - Selection of Workflows to Start - Show outstanding Tasks…
-- [Workflow Execution](execution.md): Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
-- [Data and Persistence](data.md): bpmn-server relies on a Database to store workflow information.
-- [Scripting](scripting.md): BPMN-Server provides scripting throughout the workflow.
-- [Security](security.md): In general Application Security deals with the following topics:
+- **Part 1: Modeling — straight BPMN**
+  - [1. Build a Workflow Brief](tutorial/start.md): These tutorials are for developers building a production workflow.
+  - [2. Roles and Assignment](tutorial/roles.md): decide, HR can repair rejected records, and unrelated users cannot see or complete those tasks.
+  - [3. Forms and Data](tutorial/forms.md): The example form captures leave type, dates, and reason; invalid dates route back to the requester.
+  - [4. Decisions and Paths](tutorial/paths.md): not, and a request that needs more information goes back to the employee.
+  - [5. Deadlines](tutorial/deadlines.md): once, after that long; a Date at that time.
+- **Part 2: Adding Logic — JavaScript and FEEL**
+  - [6. Calling Services, and Failing Well](tutorial/services.md): tried again.
+  - [7. Testing Every Path](tutorial/tutorial-testing.md): system refusing the record, and reminders.
+  - [8. Review Before Release](tutorial/review.md): an end-to-end acceptance check using representative user identities.
+- **Part 3: Integration — Application and Deployment**
+  - [9. Execute from Node.js](tutorial/tutorial-script.md): The same leave request, from a script: start it as user1, fill in the request, and approve it as manager1.
+  - [10. Integrate an Existing Application](tutorial/tutorial-integrate.md): Your company already has an HR application, with its own users and pages.
+  - [11. Connect External Services](tutorial/tutorial-connectors.md): A process often needs another system: check a balance, create a ticket, wait for a payment.
+  - [12. Release](tutorial/release.md): the same checks running for every later change.
 
 ## Modeling and Integration
 
@@ -52,12 +46,20 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 ## Reference
 
+- [Invoking Workflows](invokation.md): Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least: - Selection of Workflows to Start - Show outstanding Tasks…
+- [Workflow Execution](execution.md): Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
+- [Data and Persistence](data.md): bpmn-server relies on a Database to store workflow information.
+- [Scripting](scripting.md): BPMN-Server provides scripting throughout the workflow.
+- [Security](security.md): In general Application Security deals with the following topics:
 - [Features](features.md): What bpmn-server, bpmn-web and bpmn-client do, area by area, each with where it is documented, its code and its tests.
 - [Performance and test coverage](performance.md): This page gives the speed, load and memory figures from BPMN Server's own test suites, the effect of the database indexes, and how much of the code the tests run.
-- [Advanced Topics](advanced.md): A command after --, with the answers to its questions, runs just that and quits: for scripts, and for a server (on one made by the installer, bpmn cli ...
+- [Labels](labels.md): A case is known by what identifies it: Car: Porsche 911 · Buyer: staff, not only by its case id.
+- [Assignment policies](assignment-policies.md): A user task can say who works on it by naming an assignment policy: a decision table, kept with the models, whose first matching rule assigns the task when it starts.
+- [Notification policies](notification-policies.md): A process can say who is told what, and when, by naming a notification policy: a decision table, kept with the models, whose every matching rule sends a notification.
+- [Advanced Topics](advanced.md): A command after --, with the answers to its questions, runs just that and quits: for scripts, and for a server (on one made by the installer, owf cli ...
 - [Frequently Asked Questions](faq/index.md)
 
-## Examples/Features
+## Features
 
 - [Service Task](examples/serviceTask.md): A service task calls a service, a method of the application's services, or a connector, a REST API the administrator added (see Connectors).
 - [Script Task](examples/scriptTask.md)
@@ -95,11 +97,12 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 ## bpmn-web
 
-- [install](bpmn-web.md)
+- [install](bpmn-web.md): bpmn-web is the web host for bpmn-server: it provides the Workbench, task lists, model and decision editors, administration pages, and REST APIs.
 - [Executing Example](examples/BuyCar-Web.md): From the WebApp home page: - Select the Process - Click [Execute] link
 
 ## bpmn-client
 
 - [install](bpmn-client.md)
 - [Executing Example](examples/BuyCar-Remote.md): For the model above we will walk-through how to execute it programaticaly.
-- [Client API](client-api.md): BPMNClient is a lightweight Node package to remotely access bpmn-server using bpmn-server WebApi
+- [Client API](client-api.md): bpmn-client is a lightweight Node package to remotely access bpmn-server.
+- [API v3 reference](api-v3.md): Every call acts as one user: a user's token (Authorization: Bearer), or the service key (x-api-key) for the service account.

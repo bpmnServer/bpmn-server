@@ -840,9 +840,9 @@ The application's contract (app-contract.json): the variables (appVars) and func
 |---|---|---|---|
 | `userName` | string |  |  |
 | `groups` | list of string |  |  |
-| `credential` | `"token"` or `"service"` |  |  |
-| `may` | { start, design, administer } |  |  |
-| `environment` | { name, label, readOnly, shown } |  | The environment of the server: APP_ENV (null when not set), its label, READ_ONLY, and whether pages show it |
+| `credential` | `"token"` or `"service"` or `"host"` |  |  |
+| `may` | { start, design, administer, aiLink } |  |  |
+| `environment` | { name, label, readOnly, restrictions, shown } |  | The environment of the server: APP_ENV (null when not set), its label, READ_ONLY, what runs differently here (Timers off, Service tasks off, Scripts in a sandbox), and whether pages show it |
 
 ### Form
 

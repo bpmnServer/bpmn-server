@@ -1,16 +1,35 @@
 {
   "name": "modeling",
-  "title": "Modeling tools",
-  "brief": "The editor's Test and History tabs.",
-  "description": "The model editor's Test tab (scenarios: a model's Gherkin tests, run in the engine) and History tab (each save of a model kept as a version).",
+  "title": "Model Options",
+  "brief": "The model editor's options: tests, history, element templates, extended forms.",
+  "description": "What the model editor offers, each switched on or off: the Test tab (a model's scenarios, run in the engine), the History tab (each save kept as a version), element templates (configured tasks), and extended forms (a form field's choices from a source).",
   "docs": "add-ons/modeling/",
   "attributes": [],
   "settings": [
     {
+      "name": "MODEL_TESTS",
+      "label": "Test tab in model editor",
+      "editor": "designer",
+      "main": true
+    },
+    {
       "name": "MODEL_HISTORY",
-      "label": "Saved versions of models kept",
+      "label": "Track model history",
+      "editor": "designer",
+      "main": true
+    },
+    {
+      "name": "ELEMENT_TEMPLATES",
+      "label": "Offer element templates (configured tasks) in model editor",
+      "editor": "designer",
+      "main": true
+    },
+    {
+      "name": "EXTENDED_FORMS",
+      "label": "Extended forms: field choices from a list or a lookup",
       "editor": "designer",
       "main": true
     }
-  ]
+  ],
+  "options": true
 }

@@ -60,7 +60,7 @@ give it to others.
 
 | Output | Decides | Values | Without a rule that allows it |
 |---|---|---|---|
-| `see` | the case in the lists (`summary`), and its instance page with items and Rationale (`full`) | `"summary"`, `"full"`, `"deny"` | not seen |
+| `see` | the case in the lists, and its instance page as a summary: its name, status and the tasks you completed in it, none of its data (`summary`); its instance page with items and Rationale (`full`) | `"summary"`, `"full"`, `"deny"` | not seen |
 | `data` | which of its data the person reads, on the instance page and in a task's form | `"all"`, `"forms"`, a list of data paths, `"deny"` | none, but a task's own form fields |
 | `claim` | taking a task offered to them | `"allow"`, `"deny"` | allowed to its candidates (assignment) |
 | `complete` | completing a task | `"allow"`, `"deny"` | allowed to its assignee and candidates (assignment) |

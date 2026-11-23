@@ -1,5 +1,5 @@
 /**
- * What the Assignment, Security and Notifications add-ons share (docs/design/add-ons.md): the case's actors, who did
+ * What the Assignment, Access Control and Notifications add-ons share (docs/design/add-ons.md): the case's actors, who did
  * what (`actors`, a name every expression sees; `instance.actors`, kept on the case), and the model's checks of them
  * and of its lanes' roles. Registered once, by whichever of them is on first; not an add-on of its own.
  */

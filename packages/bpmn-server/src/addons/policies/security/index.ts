@@ -57,7 +57,7 @@ const modelCheck: IModelCheck = {
     },
 };
 
-/** The Security add-on's manifest (addon.json): what it reads of a model, its settings, its doc page. */
+/** The Access Control add-on's manifest (addon.json): what it reads of a model, its settings, its doc page. */
 export const securityManifest: IAddOnManifest = manifest as IAddOnManifest;
 
 export const securityAddOn: IAddOn = {

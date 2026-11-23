@@ -1,11 +1,7 @@
-bpmn-server
-===========
+# bpmn-web: the web application
 
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-
-# Sample Web App
-
-This is a sample web application (running Node.js and Express.js) to allow you to visualize your workflow, it is inteded as a front-end for `bpmn-server`. 
+`bpmn-web` is the web host for `bpmn-server`: it provides the Workbench, task lists, model and decision editors,
+administration pages, and REST APIs. Your application supplies the models, settings, users, and app delegate.
 
 Please [see bpmn-server for full documentation](https://github.com/bpmnserver/bpmn-server)
 
@@ -18,20 +14,32 @@ everyone else has **My work** alone. On the right: the user (My account, Sign ou
 decision editors show the same places in their header. A page's own links (the Workbench's sections, the docs' pages)
 are in the page, not in the menu, and pages that only say something (not found, not allowed, an error) have the menu too.
 
-# Installation
+# Create an application
 
-This package requires Node.js 20 or later and MongoDB (or `--memory`, to try it without one).
-if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
+You need Node.js 20 or later. MongoDB is the default production database, but SQLite and in-memory development setups
+are also supported.
 
-bpmn-web is a package an application starts with its own settings, delegate and models. Create one:
+Create an application with the setup wizard:
 
 ```sh
-npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+npx bpmn-server init my-app      # creates the application and asks for its settings
 cd my-app
 npm start
 ```
 
-The application's `.env` names the database and the keys:
+For a quick local run without MongoDB:
+
+```sh
+npx bpmn-server init my-app --memory
+cd my-app
+npm start
+```
+
+For an existing application, run `npx bpmn-server setup` to review or change its settings. Use `--profile production`
+or `--profile development`, and `--yes` to accept the profile's values without prompts. See [Installation](setup.md)
+for the full setup flow and production checklist.
+
+The application's `.env` holds machine-specific values and secrets. A typical production configuration includes:
 
 ```env
 PORT=3000
@@ -39,14 +47,26 @@ MONGO_DB_URL=mongodb://localhost:27017/my-app
 API_KEY=...                      # generated; callers of the REST APIs send it
 ```
 
-Open http://localhost:3000. The first page asks for the administrator, with the setup token the server printed when it started.
+Open http://localhost:3000. On first start, the server prints a setup token and the browser asks you to create the
+administrator. The setup page can also add the sample `user1` and `manager1` accounts.
+
+## The current interface
+
+The Workbench is the starting point for models, pending tasks, and instances:
+
+![bpmn-web Workbench and model editor](tutorial/design/editor.png)
+
+The model editor's **Test** tab runs model scenarios without sending real notifications or calling real external
+systems:
+
+![bpmn-web Test tab](tutorial/design/tests.png)
 
 `init` creates the sample application: a few models, the services they call, the app delegate and settings
 (`--minimal`: a one-model Hello application). The repository,
 [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server), has it as `sampleApp`, and the working
 application with more models and the tests as `testSampleApp`: see [Installation](setup.md).
 
-### Docker installation
+## Docker installation
 bpmn-web and MongoDB in two containers. Docker is all you need, and two files. On Linux or macOS:
 
 ```sh
@@ -68,7 +88,7 @@ curl.exe -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker
 Open http://localhost:3000 and sign in as `admin`. The first start creates `.env` next to `docker-compose.yml`
 with random keys and the password, and prints the password; see [Docker](docker.md).
 
-### Command Line Interface
+## Command-line interface
 
 bpmnServer provide some basic functionalities using CLI. In the application's folder run `npm run cli`; in a
 Docker installation it runs in the container: `sh owf cli`, `.\owf.cmd cli` on Windows, or
@@ -101,8 +121,8 @@ Enter Command, q to quit, or ? to list commands
 >
 ```
 
-## to update to latest release
+## Update an existing application
 
 ```sh
-npm update bpmn-server bpmn-web
+npm update bpmn-server bpmn-web bpmn-mcp
 ```

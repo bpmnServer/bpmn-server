@@ -90,7 +90,10 @@
       "x-where": "env",
       "x-group": "models",
       "type": "string",
-      "enum": ["on", "off"],
+      "enum": [
+        "on",
+        "off"
+      ],
       "x-restart": false
     },
     "NOTIFICATIONS": {
@@ -98,7 +101,9 @@
       "x-where": "env",
       "x-group": "access",
       "type": "string",
-      "enum": ["record"],
+      "enum": [
+        "record"
+      ],
       "x-restart": false
     },
     "SECURITY_POLICY": {
@@ -106,7 +111,10 @@
       "x-where": "env",
       "x-group": "access",
       "type": "string",
-      "enum": ["default", "off"],
+      "enum": [
+        "default",
+        "off"
+      ],
       "x-restart": false
     },
     "REQUIRE_AUTHENTICATION": {
@@ -518,6 +526,22 @@
       "x-restart": true,
       "default": true
     },
+    "MODEL_TESTS": {
+      "description": "`false`: the model editor has no Test tab (a model's scenarios, run in the engine)",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "EXTENDED_FORMS": {
+      "description": "`false`: a form field's choices from a source (`owf:list`, `owf:lookup`) are not offered; the fields are plain ones",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
     "FORM_RULES": {
       "description": "`false`: a form's rules (a field's type, its constraints, a list's choices) are not checked when a task is completed",
       "x-where": "env",
@@ -538,7 +562,11 @@
       "x-where": "env",
       "x-group": "server",
       "type": "string",
-      "enum": ["development", "test", "production"],
+      "enum": [
+        "development",
+        "test",
+        "production"
+      ],
       "x-restart": true,
       "examples": [
         "development",

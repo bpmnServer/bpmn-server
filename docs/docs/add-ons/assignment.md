@@ -10,7 +10,7 @@ on the [Settings page](../integration-settings.md) (**Dashboard ▸ Settings ▸
 - [Assignment policies](../assignment-policies.md) (`owf:assignmentPolicy`): decision tables that decide them.
 - Who may start a process (`camunda:candidateStarterUsers`, `camunda:candidateStarterGroups`).
 - The actors (`owf:actor`): who did what in a case, kept on it as `instance.actors` and read by expressions as
-  `actors`. They are shared with the Security and Notifications add-ons, and are there while any of the three is on.
+  `actors`. They are shared with the Access Control and Notifications add-ons, and are there while any of the three is on.
 
 The roles (`roles.json`) are the server's, not this add-on's: they are always there (**Dashboard ▸ Settings ▸ Roles**,
 **Administration ▸ Roles**).

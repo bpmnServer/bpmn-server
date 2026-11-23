@@ -17,6 +17,7 @@ import { invokeDecision } from '../decisions.js';
 import { labelFilterQuery, labeledTasks, labeledInstances, LabelFilterError, listViewOf } from './labels.js';
 import { ListColumnError } from '../../index.js';
 import { serverEnvironment } from '../../runtime/environment.js';
+import { levelsFor } from '../aiAccess.js';
 import { GuideOperations, GuideError } from './guide.js';
 import { contractProblems } from '../../index.js';
 
@@ -113,7 +114,9 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         userName: user.userName,
         groups: user.userGroups,
         credential: req.apiCredential,
-        may: { start: true, design: canDesign(user), administer: isAdminGroups(user.userGroups) },
+        // aiLink: a link for their AI agent (/ai/key), with the AI Agents add-on on and a level for them
+        may: { start: true, design: canDesign(user), administer: isAdminGroups(user.userGroups),
+            aiLink: req.app?.locals?.addOnOn?.('ai') !== false && levelsFor(user).length > 0 },
         // the server's environment, for an application's own layout to show (runtime/environment.ts)
         environment: serverEnvironment(),
     })));

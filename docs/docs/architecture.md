@@ -94,7 +94,7 @@ flowchart LR
       API["BPMNAPI<br/>each call as a user;<br/>pre-query, pre-action"]
       Engine["Engine<br/>executions, timers, decisions"]
       Code["Your code<br/>delegate, services, model scripts"]
-      AddOns["Add-ons (app-config.json)<br/>Policies, Labels, Forms and display, Modeling tools"]
+      AddOns["Add-ons (app-config.json)<br/>Policies, Labels, Extended Forms, Model History"]
       API --> Engine
       Engine --> Code
       AddOns -. "register for its events" .-> Engine
@@ -187,8 +187,8 @@ engine, the editor and the pages show none of it.
 |---|---|
 | **Policies** | Who works on each task (assignee, candidates, lanes as groups, roles, start permissions, assignment policies), who may see and do what (security policies), who is told what (notification policies), and the actors expressions read |
 | **Labels** | What each case and task is called (`owf:label`, `owf:endLabel`), and their values as the lists' columns |
-| **Forms and display** | A form field's choices from a source: a drop-down (`owf:list`) or a search (`owf:lookup`) |
-| **Modeling tools** | The editor's Test tab (scenarios) and History tab (each save kept as a version) |
+| **Extended Forms** | A form field's choices from a source: a drop-down (`owf:list`) or a search (`owf:lookup`) |
+| **Model History** | The editor's Test tab (scenarios) and History tab (each save kept as a version) |
 
 **Which are on:** the application's `app-config.json`, `{ "addOns": ["assignment", "labels"] }`, set on the
 [Settings](integration-settings.md) page. With no file, every add-on is on. A change applies when the server restarts.

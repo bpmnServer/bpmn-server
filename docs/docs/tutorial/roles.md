@@ -1,7 +1,9 @@
 # Tutorial 2: Roles and assignment
 
-**The requirement:** the employee who asked does Request; any manager may decide; HR fixes what HR's system refuses.
-Nobody else sees those tasks, or can complete them.
+**Developer outcome:** encode assignment and authorization so the requester receives their own request, managers may
+decide, HR can repair rejected records, and unrelated users cannot see or complete those tasks.
+
+The employee, manager, and HR roles below are requirements for the model—not instructions for the people using it.
 
 ## Lanes give tasks to groups
 
