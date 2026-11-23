@@ -20,7 +20,7 @@ read at start; "Settings ▸ <area>" is changed on the Settings page (written to
 | access | `NOTIFICATIONS` | `.env` (or the environment) | Settings ▸ Notifications (add-on) | Notification policies (docs/design/notification-policies.md): `record` keeps every notification in wf_notifications without delivering it (t |
 | access | `READ_ONLY` | `.env` (or the environment) | Settings ▸ The application, on restart | `true`: people use the server but can't change it. They start cases and complete tasks; the models, decision tables, policies, tests, roles, |
 | access | `REQUIRE_AUTHENTICATION` | `.env` (or the environment) | init: `.env` only | On unless set to `false` (`init` writes `true`). `false` turns off sign-in and the security rules: for development only |
-| access | `SECURITY_POLICY` | `.env` (or the environment) | Settings ▸ Access Control (add-on) | Security policies (docs/design/security-policies.md): unset, they are on when the models folder has `policies/security/`; `default` turns th |
+| access | `SECURITY_POLICY` | `.env` (or the environment) | Settings ▸ Access Control (add-on) | Security policies (docs/design/security-policies.md): unset, they are on when the models folder has `security/`; `default` turns th |
 | access | `SESSION_SECRET` | `.env` (or the environment) | init: `.env` only | **A secret, required in production.** Secures sessions and CSRF tokens |
 | access | `SIGNUP_GROUPS` | `.env` (or the environment) | init: `.env` only | Sign-up sends a verification email, and gives these groups once verified |
 | access | `SIGNUP_VERIFY_EMAIL` | `.env` (or the environment) | init: `.env` only | Sign-up sends a verification email, and gives these groups once verified |
@@ -168,25 +168,26 @@ stays read for a release or two, with a warning at start naming the new one (`se
 
 | # | Today | Instead | Fewer | Decision |
 |---|---|---|---|---|
-| 1 | `DATABASE`, `MONGO_DB_URL`, `MONGO_DB_NAME` | `DATABASE` = `mongodb://…/name` \| `sqlite:<file>` \| `memory` | 2 | |
-| 2 | `SITE_NAME`, `SITE_URL` (the same description) | `SITE_URL` | 1 | |
-| 3 | `HTTPS`, `SSL_CERT_PATH`, `SSL_KEY_PATH` | the two paths: set, HTTPS | 1 | |
-| 4 | `SECURE_COOKIES` | from `SITE_URL` being `https:` | 1 | |
-| 5 | `NODE_ENV`, `APP_ENV`, `APP_ENV_LABEL` | `APP_ENV` (`NODE_ENV` is Node's, still read) | 2 | |
-| 6 | `DEMO_MODE` (deprecated) | `TIMERS`, `SERVICE_TASKS` | 1 | |
-| 7 | `ENGINE_AT`, `ENGINE_LISTEN`, `ENGINE_PORT`, `ENGINE_KEY`, `ENGINE_TIMEOUT_MS`, `ENGINE_SHUTDOWN_TIMEOUT_MS` | `ENGINE_AT` (with its port), `ENGINE_KEY`; the timeouts defaults | 4 | |
-| 8 | `LOCK_MAX_TRIES`, `LOCK_RETRY_DELAY_MS`, `LOCK_STALE_AFTER_MS`, `SERVER_ID` | defaults; `locks` in code to tune | 4 | |
-| 9 | `EMAIL_ENABLE`, `EMAIL_LOG` | `EMAIL` = `off` \| `log` \| `send` | 1 | |
-| 10 | `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES` | `SCRIPT_SANDBOX` = `off` \| `on` \| `with-services` | 1 | |
-| 11 | `DISABLE_SIGNUP`, `SIGNUP_GROUPS`, `SIGNUP_VERIFY_EMAIL` | `SIGNUP` = `off` \| `open` \| `verify`; its groups in `owf-config.json` | 2 | |
-| 12 | `REQUIRE_AUTHENTICATION`, `ALLOW_INSECURE_NO_AUTH` | `AUTH` = `on` \| `off-insecure` | 1 | |
-| 13 | `API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`, `API_SERVICE_TENANT_ID`, `API_SERVICE_MODELS_OWNER` | `serviceAccount` in `owf-config.json` | 3 | |
-| 14 | `ENFORCE_SECURITY`, `SECURITY_POLICY`, `NOTIFICATIONS` | the add-ons' on/off, and their own settings | 2–3 | |
-| 15 | `API_TRACE_MAX`, `ENABLE_PROFILER`, `MODELER`, `AI_KEY_TTL_GROUPS`, `RESTART_ON_EXIT` (detected) | defaults, not settings | 5 | |
-| 16 | `HOST`, `BPMN_ENV_FILE` (`bpmn-mcp`'s) | the clients' own docs, not the server's | 2 | |
-| 17 | `DEFINITIONS_PATH` | `paths` in `owf-config.json` (the variable stays, the tests' override) | 1 | |
-| 18 | engine fields `servicesFile`, `serviceNames`, `demo`, `apiKey` | gone (dead, runtime state, deprecated, `API_KEY`'s twin) | 4 | |
-| 19 | `OPENSHIFT_NODEJS_IP`, `OPENSHIFT_NODEJS_PORT` | gone; `LISTEN_HOST` if wanted | 2 | |
+| 1 | `DATABASE`, `MONGO_DB_URL`, `MONGO_DB_NAME` | `DATABASE` = `mongodb://…/name` \| `sqlite:<file>` \| `memory` | 2 | agreed (2026-11-22) |
+| 2 | `SITE_NAME`, `SITE_URL` (the same description) | `SITE_URL` | 1 | agreed (2026-11-22) |
+| 3 | `HTTPS`, `SSL_CERT_PATH`, `SSL_KEY_PATH` | the two paths: set, HTTPS | 1 | agreed (2026-11-22) |
+| 4 | `SECURE_COOKIES` | from `SITE_URL` being `https:` | 1 | agreed (2026-11-22) |
+| 5 | `NODE_ENV`, `APP_ENV`, `APP_ENV_LABEL` | `APP_ENV` (`NODE_ENV` is Node's, still read) | 2 | agreed (2026-11-22) |
+| 6 | `DEMO_MODE` (deprecated) | `TIMERS`, `SERVICE_TASKS` | 1 | agreed (2026-11-22) |
+| 7 | `ENGINE_AT`, `ENGINE_LISTEN`, `ENGINE_PORT`, `ENGINE_KEY`, `ENGINE_TIMEOUT_MS`, `ENGINE_SHUTDOWN_TIMEOUT_MS` | `ENGINE_AT` (with its port), `ENGINE_KEY`; the timeouts defaults | 4 | agreed (2026-11-22) |
+| 8 | `LOCK_MAX_TRIES`, `LOCK_RETRY_DELAY_MS`, `LOCK_STALE_AFTER_MS`, `SERVER_ID` | defaults; `locks` in code to tune | 4 | agreed (2026-11-22) |
+| 9 | `EMAIL_ENABLE`, `EMAIL_LOG` | `EMAIL` = `off` \| `log` \| `send` | 1 | agreed (2026-11-22) |
+| 10 | `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES` | `SCRIPT_SANDBOX` = `off` \| `on` \| `with-services` | 1 | agreed (2026-11-22) |
+| 11 | `DISABLE_SIGNUP`, `SIGNUP_GROUPS`, `SIGNUP_VERIFY_EMAIL` | `SIGNUP` = `off` \| `open` \| `verify`; its groups in `owf-config.json` | 2 | agreed (2026-11-22) |
+| 12 | `REQUIRE_AUTHENTICATION`, `ALLOW_INSECURE_NO_AUTH` | `AUTH` = `on` \| `off-insecure` | 1 | agreed (2026-11-22) |
+| 13 | `API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`, `API_SERVICE_TENANT_ID`, `API_SERVICE_MODELS_OWNER` | `serviceAccount` in `owf-config.json` | 3 | agreed (2026-11-22) |
+| 14 | `ENFORCE_SECURITY`, `SECURITY_POLICY`, `NOTIFICATIONS` | the add-ons' on/off, and their own settings | 2–3 | agreed (2026-11-22) |
+| 15 | `API_TRACE_MAX`, `ENABLE_PROFILER`, `MODELER`, `AI_KEY_TTL_GROUPS`, `RESTART_ON_EXIT` (detected) | defaults, not settings | 5 | agreed (2026-11-22); `AI_KEY_TTL_GROUPS`: row 20 |
+| 16 | `HOST`, `BPMN_ENV_FILE` (`bpmn-mcp`'s) | the clients' own docs, not the server's | 2 | agreed (2026-11-22) |
+| 17 | `DEFINITIONS_PATH` | `paths` in `owf-config.json` (the variable stays, the tests' override) | 1 | agreed (2026-11-22) |
+| 18 | engine fields `servicesFile`, `serviceNames`, `demo`, `apiKey` | gone (dead, runtime state, deprecated, `API_KEY`'s twin) | 4 | agreed (2026-11-22) |
+| 19 | `OPENSHIFT_NODEJS_IP`, `OPENSHIFT_NODEJS_PORT` | gone; `LISTEN_HOST` if wanted | 2 | agreed (2026-11-22) |
+| 20 | `AI_ACCESS`, `AI_GUIDE`, `AI_KEY_TTL_GROUPS` | the AI Agents add-on's own settings in `owf-config.json` (`addOns.ai`: `levels`, `guide`, `linkMinutes`) | 3 (out of `.env`) | proposed |
 
 About 40 fewer: some 55 settings left.
 
@@ -202,3 +203,158 @@ About 40 fewer: some 55 settings left.
 
 `INVOCATION_ID` (systemd), `pm_id` (pm2), `/.dockerenv` (Docker): the Administration page reads them to know whether
 something restarts the server.
+
+## 8. After section 7: the two files
+
+Proposed (2026-11-22), not built. Section 7's rows applied, and the three files agreed: `.env`, `owf-config.json`,
+and `configuration.ts` for code only.
+
+### Which file a setting goes in
+
+- **`.env`: the environment.** A secret, or what differs between development, test and production, or where the
+  server runs: its address, its database, its engine, its ports, HTTPS. Not checked in; `.env.example` is.
+- **`owf-config.json`: the application.** How it behaves, the same in every environment: its add-ons and their
+  options, its paths, its roles, its contract, its service account, sign-up, how models and forms are checked, the
+  catalogs. Checked in with the models. No secrets: they stay in `.env`.
+- **`configuration.ts`: code.** Only what can't be JSON: the delegate's object, a custom `IDocumentStore`, a host user
+  manager, tuning (`locks`, `timers`) when the defaults won't do. Optional: without it, the two files are the whole
+  configuration.
+- **Each setting in one place.** A setting moved to `owf-config.json` is no longer read from `.env`, but its old name
+  is read for a release or two, with a warning at start naming its new place (as section 7's renames).
+- **The Settings page writes the file the setting is in**: an add-on's options and the models' checks to
+  `owf-config.json`, the environment's to `.env`. Applied on restart, as today.
+
+### A sample `.env`
+
+```ini
+# --- the environment: development, test or production (the band on every page)
+APP_ENV=production
+#APP_ENV_LABEL=Staging
+SITE_URL=https://workflow.example.com
+PORT=3000
+
+# --- the database: MongoDB, SQLite or memory
+DATABASE=mongodb://localhost:27017/bpmn
+#DATABASE=sqlite:./data/bpmn.sqlite
+
+# --- secrets
+SESSION_SECRET=change-me
+API_KEY=change-me
+#ADMIN_API_KEY=
+#API_ACTING_USER_KEY=
+#ADMIN_PASSWORD=
+CONNECTORS_KEY=change-me
+
+# --- email: off, log or send
+EMAIL=send
+EMAIL_FROM=workflow@example.com
+SMTP_USER=workflow@example.com
+SMTP_PASSWORD=change-me
+
+# --- what runs here (a test server may stop timers and service tasks; a public one sandboxes scripts)
+#TIMERS=true
+#SERVICE_TASKS=true
+#SCRIPT_SANDBOX=off            # off | on | with-services
+#READ_ONLY=false
+#DISABLE_DESIGN=false
+#DISABLE_ADMIN=false
+#AUTH=on                        # on | off-insecure
+
+# --- where it runs
+#SERVE=both                     # both | api | ui
+#ENGINE_AT=http://engine:3001   # unset: in this process
+#ENGINE_KEY=
+#SSL_CERT_PATH=                 # both set: HTTPS directly
+#SSL_KEY_PATH=
+
+# --- tuning (the defaults are documented; seldom set)
+#BODY_LIMIT=50mb
+#API_RATE_LIMIT=
+#AUTH_RATE_LIMIT=50
+#PYTHON_CMD=python
+#DEFINITIONS_PATH=              # the tests' override of owf-config.json's paths.models
+```
+
+About 20 lines set, most of them secrets. Today's has some 55 settings in it.
+
+### A sample `owf-config.json`
+
+```json
+{
+  "name": "HR",
+  "paths": {
+    "models": "workflow/processes",
+    "delegate": "workflow/delegates/appDelegate.ts",
+    "connectors": "workflow/connectors",
+    "elementTemplates": "workflow/element-templates",
+    "aiGuide": "settings/ai-guide.md"
+  },
+  "addOns": {
+    "assignment": true,
+    "notification": { "deliver": true },
+    "security": { "policy": "default" },
+    "labels": true,
+    "modeling": { "tests": true, "history": true, "elementTemplates": true, "extendedForms": true },
+    "ai": { "levels": ["work", "design"], "linkMinutes": { "ADMIN": 10, "*": 30 } }
+  },
+  "roles": [
+    { "name": "Employee", "description": "Starts a leave request" },
+    { "name": "Manager", "description": "Approves the leave of their team" },
+    { "name": "HR", "description": "Records approved leave" }
+  ],
+  "serviceAccount": { "userName": "integration", "groups": ["SYSTEM"] },
+  "signup": { "mode": "off", "groups": ["Employee"] },
+  "models": {
+    "formRules": true,
+    "verifyOnImport": "warn",
+    "catalog": "https://catalog.omniworkflow.com",
+    "connectorCatalog": "https://catalog.omniworkflow.com/connectors",
+    "connectorsAllowHosts": ["api.github.com", "hr.example.com"]
+  },
+  "contract": {
+    "expressions": [
+      { "kind": "function", "name": "managerOf", "params": [{ "name": "employeeId", "type": "string" }], "returns": "string" }
+    ],
+    "types": [],
+    "apis": [],
+    "pages": []
+  }
+}
+```
+
+- **`addOns`**: an add-on named is on, with its options (`true`: on, its defaults); `false` or not named: off. Today's
+  `app-config.json` list (`["assignment", "labels"]`) is read too. An add-on's options are its manifest's settings
+  (`addon.json`), so the Settings page shows them as it does now.
+- **`roles`**: today's `roles.json` and the contract's roles, one list. The Administration page edits it here.
+- **`contract`**: today's `app-contract.json`, as it is.
+- **`paths`**: today's `settings/config.ts` paths, relative to the file. `DEFINITIONS_PATH` still overrides `models`.
+- **Later sections**, when they are built: `webhooks` (application-integration-design.md §5.0.1; the hooks' IDs and
+  secrets stay out of it).
+
+### Moving an application over
+
+At start, with no `owf-config.json`: today's files are read as they are (`app-config.json`, `app-contract.json`,
+`roles.json`, `settings/config.ts`, the `.env` names), and the log says once what `owf-config.json` would hold.
+`npm run setup` (or `owf config migrate`) writes it, and keeps the old files as `.bak`. With both, `owf-config.json`
+wins and the old files are named in a warning. As the policy folders were moved (`policies/<kind>/` to `<kind>/`), but
+written on request, not on read: a checked-in file is the developer's to change.
+
+### The settings at runtime
+
+One object, the configuration as it runs, for the Settings page, `/api/v3/settings`, an add-on and an agent (an
+administer link): **`owf-config.json`'s shape**, with what was not set filled from the defaults, plus an
+`environment` section with the `.env` settings **by their `.env` names**. A secret is never in it: in its place,
+whether it is set (`"API_KEY": { "set": true }`).
+
+```json
+{
+  "addOns": { "notification": { "deliver": true }, "ai": { "levels": ["work", "design"], "linkMinutes": { "ADMIN": 10, "*": 30 } } },
+  "models": { "formRules": true, "verifyOnImport": "warn" },
+  "environment": { "APP_ENV": "production", "SITE_URL": "https://workflow.example.com", "DATABASE": "mongodb://…/bpmn",
+                   "TIMERS": true, "API_KEY": { "set": true }, "SMTP_PASSWORD": { "set": true } }
+}
+```
+
+This answers the open question of its keys: the application's settings by `owf-config.json`'s names, the
+environment's by their `.env` names, so each is found by the name it is set by. A database URL's password is cut out
+(`mongodb://user:***@…`).
