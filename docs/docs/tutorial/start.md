@@ -26,7 +26,7 @@ failures. Prove each path with automated tests.
 
 | Tutorial | Add this |
 |---|---|
-| [6. Calling services, and failing well](services.md) | JavaScript, service tasks, errors, and retries |
+| [6. Calling services, and failing well](services.md) | Service tasks, script tasks, expressions, errors, and retries |
 | [7. Testing every path](tutorial-testing.md) | Gherkin scenarios, stubs, and assertions |
 | [8. Review before release](review.md) | Model verification and acceptance checks |
 

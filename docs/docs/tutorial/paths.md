@@ -5,10 +5,27 @@ not, and a request that needs more information goes back to the employee. Whatev
 
 ## The gateway and its conditions
 
-The **Outcome?** gateway after Approve has three flows out. Each has a **Condition**, a JavaScript expression on the
-instance's data:
+The **Outcome?** gateway after Approve has three flows out, each with a **Condition**: a JavaScript expression on the
+instance's data. Where each choice goes:
 
-![A flow's condition](design/flow-condition.png)
+```mermaid
+flowchart LR
+    A[Approve] --> G{"Outcome?"}
+    G -->|"Approved (default)"| MR{" "}
+    G -->|Rejected| MT{" "}
+    G -->|"Information required"| MQ{" "}
+    MQ --> Q[Request]
+    MR --> L[Record the leave]
+    L --> MT
+    MT --> T[Tell the employee]
+```
+
+The small diamonds are the joining gateways of the next section: Record the leave and Tell the employee are each
+reached more than one way.
+
+Setting one flow's condition in the editor's properties panel:
+
+![The Condition field of the Rejected flow, in the editor's properties panel](design/flow-condition.png)
 
 | Flow | Condition |
 |---|---|
