@@ -1,6 +1,6 @@
 # Building workflows with an AI agent
 
-On a server, start with its **`/llms.txt`** (for example `https://bpmn.omniworkflow.com/llms.txt`): what that site
+On a server, start with its **`/llms.txt`** (for example `https://try.omniworkflow.com/llms.txt`): what that site
 has (its API, services, connectors, user groups), its own rules, then this guide.
 
 This page is for **AI agents that build workflows on BPMN Server**: a model, its forms and rules, and its tests, from a

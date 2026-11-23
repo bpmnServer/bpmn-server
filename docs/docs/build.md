@@ -42,7 +42,7 @@ Model in the [model editor](modeler.md): its **Problems** tab checks the model a
 
 Tests are Gherkin files beside the models, run in the engine: [Testing and debugging models](testing.md), and [Tutorial 7](tutorial/tutorial-testing.md).
 
-A first model to try: the request approval of [the online demo](first-workflow.md#in-the-online-workbench).
+A first model to try: the request approval of [try.omniworkflow.com](first-workflow.md#tryomniworkflowcom-your-own-workflows).
 
 ## 4. Integrate services
 

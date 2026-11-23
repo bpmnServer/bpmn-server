@@ -160,7 +160,7 @@ Features include:
 
 ## Live Demo
 
-A live demo is available at: [https://bpmn.omniworkflow.com](https://bpmn.omniworkflow.com)
+Two live demos: [demo.omniworkflow.com](https://demo.omniworkflow.com), an HR application with the engine inside it (read-only), and [try.omniworkflow.com](https://try.omniworkflow.com), the workbench to build your own workflows in.
 
 ## Installation
 

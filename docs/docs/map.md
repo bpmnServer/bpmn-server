@@ -5,12 +5,12 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 ## Get Started
 
 - [Overview](index.md): OmniWorkflow runs business processes.
-- [The online demo](first-workflow.md): Journey A: the quickest way to understand BPMN Server is to build, test, and run a small process.
+- [Try it online](first-workflow.md): Two sites run OmniWorkflow with nothing to install.
 - [Build an application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
 - [Integrate an existing application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.
 - [Embed the engine](embedding.md): Journey D: run processes from your own Node.js code, with no web application.
 - **With an AI agent**
-  - [Building workflows with an AI agent](ai/building-workflows.md): On a server, start with its /llms.txt (for example https://bpmn.omniworkflow.com/llms.txt): what that site has (its API, services, connectors, user groups), its own rules, then…
+  - [Building workflows with an AI agent](ai/building-workflows.md): On a server, start with its /llms.txt (for example https://try.omniworkflow.com/llms.txt): what that site has (its API, services, connectors, user groups), its own rules, then…
   - [Chatting with your server](ai/chat-assistants.md): Your users can build and test workflows by chatting with an AI assistant (ChatGPT, Claude, ...) that works on your BPMN Server for them: it reads the site's guide, writes the…
 - **What's new**
   - [What's new in 3.6](whats-new-3.6.md): bpmn-server 3.6 separates the host from the engine, removes guest access and moves every test to Gherkin.

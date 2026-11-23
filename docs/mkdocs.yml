@@ -97,7 +97,7 @@ draft_docs: |
 nav:
 - Get Started:
   - Overview: index.md
-  - The online demo: first-workflow.md
+  - Try it online: first-workflow.md
   - Build an application: build.md
   - Integrate an existing application: integrate.md
   - Embed the engine: embedding.md

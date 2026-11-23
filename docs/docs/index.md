@@ -50,8 +50,9 @@ OmniWorkflow can be used in four ways:
 - **With an AI agent doing the work.** An agent builds the processes and their tests over the API. See
   [Building workflows with an AI agent](ai/building-workflows.md).
 
-A public demo runs at [bpmn.omniworkflow.com](https://bpmn.omniworkflow.com), with nothing to install:
-[The online demo](first-workflow.md) shows what to try there.
+Two public sites need nothing installed: [demo.omniworkflow.com](https://demo.omniworkflow.com) is a finished HR
+application with OmniWorkflow inside it, to look through, and [try.omniworkflow.com](https://try.omniworkflow.com) is
+the workbench, to build your own workflows in. [Try it online](first-workflow.md) says what to do on each.
 
 ## Trying it locally
 
