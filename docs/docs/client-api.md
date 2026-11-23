@@ -63,6 +63,10 @@ Perform calls to DataStore , accessing processes data
 
 ## The task API: an application acting for its users
 
+!!! note "Frozen since 3.7"
+    New applications use [API v3](#api-v3) below, where a token for each user does the same thing and more. This API
+    still works, and still receives fixes.
+
 `/api2/tasks` is for an application with its own inbox and forms, which authenticates its own users. It is off unless
 `API_ACTING_USER_KEY` is set, and that key opens these routes and no other; `API_KEY` does not open them.
 
