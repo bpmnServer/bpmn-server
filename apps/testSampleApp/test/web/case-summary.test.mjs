@@ -1,4 +1,4 @@
-// @features: security-narrowing
+// @features: notification-policies
 // A case a security policy shows someone as a summary only (see: "summary"): its page is a summary, not a refusal.
 // A manager approves a leave, so the task is no longer offered to them, and the policy shows them the case as a line:
 // the case page shows its name, status and the tasks they completed in it, none of its data.

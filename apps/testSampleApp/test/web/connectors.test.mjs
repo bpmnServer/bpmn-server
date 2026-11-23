@@ -13,7 +13,7 @@ const MODEL = 'GitHub repository';
 
 let web, reachable = true;
 test.before(async () => {
-    process.env.CONNECTORS_KEY ??= 'a test encryption key';
+    process.env.SECRETS_KEY ??= 'a test encryption key';
     web = await startWebApp();
     fs.copyFileSync(path.join(APP, 'processes', MODEL + '.bpmn'), path.join(web.definitionsPath, MODEL + '.bpmn'));
     await web.bpmnServer.engine.install({ rebuild: true });

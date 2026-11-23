@@ -204,6 +204,9 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **`SECRETS_KEY`** in place of `CONNECTORS_KEY` (bpmn-server): the Settings page's Connectors area, its messages,
+  the schema (`CONNECTORS_KEY` kept as its old name, a secret) and the `.env` examples. Rename it in `.env`, keeping its
+  value.
 - **The policies' folders are the add-ons' own** (bpmn-server): the editor's policy lists, the decision editor and
   the Design page read and save `assignment/`, `notification/` and `security/` of the models folder; one from before
   3.7.5 (`policies/<kind>/`) is moved there first. The HR demo's are moved.

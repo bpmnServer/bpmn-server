@@ -11,7 +11,7 @@ import type { AddressInfo } from 'node:net';
 import { ConnectorError } from 'bpmn-server';
 import { testApp, type TestApp } from '../test/support/testApp.js';
 
-process.env.CONNECTORS_KEY ??= 'the key that encrypts connector keys';      // in .env for a real server
+process.env.SECRETS_KEY ??= 'the key that encrypts connector keys';      // in .env for a real server
 const TOKEN = 'crm-token-1234';
 
 /** The API's description: two operations, by operationId. */

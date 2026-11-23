@@ -24,7 +24,7 @@ const STATUS_DOC = JSON.stringify({
 
 let web, admin, designer, api, base;
 test.before(async () => {
-    process.env.CONNECTORS_KEY ??= 'a test encryption key';
+    process.env.SECRETS_KEY ??= 'a test encryption key';
     api = http.createServer((req, res) => {
         if (req.url === '/openapi.json') { res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ ...JSON.parse(STATUS_DOC), servers: [{ url: base }] })); }
         const ok = req.headers.authorization === `Bearer ${KEY}`;

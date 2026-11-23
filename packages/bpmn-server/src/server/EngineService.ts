@@ -124,7 +124,7 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         modelSaved: async (name: string) => { await (server.definitions as any).indexModel(name); return true; },
         modelRemoved: async (name: string) => { await (server.definitions as any).unindexModel(name); return true; },
         modelRenamed: async (name: string, newName: string) => { await (server.definitions as any).renameIndex(name, newName); return true; },
-        // a connector's key and its test are this server's, the engine's: encrypted and kept here (CONNECTORS_KEY)
+        // a connector's key and its test are this server's, the engine's: encrypted and kept here (SECRETS_KEY)
         setConnectorKey: async (id: string, key: string, userName?: string) => server.connectors.storeKey(id, key, userName),
         clearConnectorKey: async (id: string) => server.connectors.forgetKey(id),
         /** A connector removed (its file, by model access): its key and test here go too. */
@@ -177,7 +177,7 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
             let provider = null;
             try { provider = await server.appDelegate.getServicesProvider(null); }
             catch { /* a provider that needs a running execution */ }
-            // connectorKeys: whether a connector's key can be stored here (CONNECTORS_KEY is the engine's)
+            // connectorKeys: whether a connector's key can be stored here (SECRETS_KEY is the engine's)
             // delegate: the application's class and the methods it defines (the Settings page)
             // instanceLabel: whether the application labels cases in code (asked with instanceLabels)
             return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt(), delegate: delegateFacts(server.appDelegate),

@@ -1,4 +1,4 @@
-// @features: ai-remote-development
+// @features: ai-links
 // A person's link for their AI agent (/ai/key): an API token that acts as them, at the level they choose among those
 // they have (work, design, administer); it reaches no more than its level, nor than its person; it goes when they
 // revoke it or sign out; the page it opens tells the agent its level and rules; the request log never shows it.

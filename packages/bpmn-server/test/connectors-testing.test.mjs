@@ -8,7 +8,7 @@ import http from 'node:http';
 import { makeServer } from './helpers.mjs';
 import { exampleOf } from '../dist/index.js';
 
-process.env.CONNECTORS_KEY = 'a test encryption key';
+process.env.SECRETS_KEY = 'a test encryption key';
 const DOC = base => ({
   openapi: '3.0.3', info: { title: 'Staff', version: '1' }, servers: [{ url: base }],
   paths: {

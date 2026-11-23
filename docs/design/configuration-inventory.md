@@ -188,7 +188,7 @@ stays read for a release or two, with a warning at start naming the new one (`se
 | 18 | engine fields `servicesFile`, `serviceNames`, `demo`, `apiKey` | gone (dead, runtime state, deprecated, `API_KEY`'s twin) | 4 | agreed (2026-11-22) |
 | 19 | `OPENSHIFT_NODEJS_IP`, `OPENSHIFT_NODEJS_PORT` | gone; `LISTEN_HOST` if wanted | 2 | agreed (2026-11-22) |
 | 20 | `AI_ACCESS`, `AI_GUIDE`, `AI_KEY_TTL_GROUPS` | the AI Agents add-on's own settings in `owf-config.json` (`addOns.ai`: `levels`, `guide`, `linkMinutes`) | 3 (out of `.env`) | proposed |
-| 21 | `CONNECTORS_KEY` (it encrypts each connector's own key at rest; it is no connector's credential) | `SECRETS_KEY`: the server's key for every secret it stores encrypted, the connectors' keys now, the webhooks' secrets later | 0 (a clearer name) | proposed |
+| 21 | `CONNECTORS_KEY` (it encrypts each connector's own key at rest; it is no connector's credential) | `SECRETS_KEY`: the server's key for every secret it stores encrypted, the connectors' keys now, the webhooks' secrets later | 0 (a clearer name) | done (3.7.5): `CONNECTORS_KEY` still read, with a warning |
 
 About 40 fewer: some 55 settings left.
 
@@ -246,7 +246,7 @@ API_KEY=change-me
 #ADMIN_PASSWORD=
 # encrypts the secrets the server stores: each connector's own key (entered on the Settings page);
 # not a connector's credential. Keep it with the backups: without the same one, the stored keys don't decrypt
-SECRETS_KEY=change-me           # before: CONNECTORS_KEY, still read
+SECRETS_KEY=change-me           # before 3.7.5: CONNECTORS_KEY, still read
 
 # --- email: off, log or send
 EMAIL=send

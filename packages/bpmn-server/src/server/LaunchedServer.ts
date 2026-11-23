@@ -83,7 +83,7 @@ export class LaunchedEngine {
     modelSaved(name: string) { return this.#ask('modelSaved', [name]); }
     modelRemoved(name: string) { return this.#ask('modelRemoved', [name]); }
     modelRenamed(name: string, newName: string) { return this.#ask('modelRenamed', [name, newName]); }
-    /** A connector's key for this server, stored encrypted by the engine (CONNECTORS_KEY is the engine's). */
+    /** A connector's key for this server, stored encrypted by the engine (SECRETS_KEY is the engine's). */
     setConnectorKey(id: string, key: string, userName?: string) { return this.#ask('setConnectorKey', [id, key, userName]); }
     clearConnectorKey(id: string) { return this.#ask('clearConnectorKey', [id]); }
     /** A connector's file removed by the host: its key and test go, where the engine keeps them. */

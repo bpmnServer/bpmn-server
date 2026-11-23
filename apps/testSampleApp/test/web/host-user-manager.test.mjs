@@ -1,4 +1,4 @@
-// @features: host-user-manager
+// @features: ai-links, host-user-manager
 // An application that signs people in itself (docs/design/host-users.md): its user manager given to bpmn-web
 // (start({ userManager }), IUserManager). bpmn-web keeps no users, sessions or credentials of its own: the pages take
 // the application's person; API v3 takes the application's credential (apiUser), refuses a change posted from another

@@ -10,7 +10,7 @@ import path from 'node:path';
 import { makeServer, definitionsFolder } from './helpers.mjs';
 import { formFieldLookup, choicesOf, lookupChoices, filterValue, parseLookupSource, verifyModel, LOOKUP_LIMIT } from '../dist/index.js';
 
-process.env.CONNECTORS_KEY = 'a test encryption key';
+process.env.SECRETS_KEY = 'a test encryption key';
 const TOKEN = 'people-token';
 const PEOPLE = [
   { id: 'E1', name: 'David Kim', dept: { code: 'HR' } },

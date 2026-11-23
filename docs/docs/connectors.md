@@ -95,9 +95,11 @@ A connector's page sets:
 | **OpenAPI document** | Refresh it from its URL, or give a new one; the operations added and removed are listed. |
 | **Delete** | Lists the models that use the connector first. |
 
-**Keys are encrypted** (AES-256-GCM) with `CONNECTORS_KEY` from `.env`, which is never stored in the database.
-Without `CONNECTORS_KEY` a connector cannot be given a key, and the page says so. A backup holds the encrypted
-key only: restoring it needs the same `CONNECTORS_KEY`.
+**Keys are encrypted** (AES-256-GCM) with `SECRETS_KEY` from `.env`, which is never stored in the database. It is the
+server's key for what it stores encrypted, not a connector's credential. Before 3.7.5 it was `CONNECTORS_KEY`: that
+name is still read, and the log says once to rename it.
+Without `SECRETS_KEY` a connector cannot be given a key, and the page says so. A backup holds the encrypted
+key only: restoring it needs the same `SECRETS_KEY`.
 
 ### From the console
 
@@ -220,7 +222,7 @@ command line. A model imported from elsewhere that names a connector this server
 
 | Setting | |
 |---|---|
-| `CONNECTORS_KEY` (`.env`) | The key that encrypts the connectors' keys. Required to give a connector a key. |
+| `SECRETS_KEY` (`.env`) | The key that encrypts the connectors' keys. Required to give a connector a key. |
 | `CONNECTORS_ALLOW_HOSTS` (`.env`) | A comma list of the hosts a connector may call (`api.github.com,*.example.com`). Unset: any. |
 | `CONNECTOR_CATALOG_URL` (`.env`) | The catalog the Connectors page offers (a web address or a file). |
 | `connectors.timeout` (configuration) | A call's timeout in ms, unless the connector sets its own. Default 30000. |
@@ -236,7 +238,7 @@ Git and released with the models, and a model's tests find it (`npm test`, the e
 folder, and its connectors come with it.
 
 **What is one server's stays with that server**, in its storage (the `wf_connectors` collection, MongoDB, SQLite or
-memory): the key, encrypted with that server's `CONNECTORS_KEY`, and the last connection test. A file never holds a
+memory): the key, encrypted with that server's `SECRETS_KEY`, and the last connection test. A file never holds a
 key; a connector copied to another server has none until it is set there.
 
 Adding, changing, refreshing or deleting a connector in Administration writes its file. A connector kept whole in the

@@ -33,7 +33,7 @@ const errors = [];
 const MODEL = 'shop-order';      // a model calling the shop, written in the before hook
 
 test.before(async () => {
-    process.env.CONNECTORS_KEY ??= 'a test encryption key';
+    process.env.SECRETS_KEY ??= 'a test encryption key';
     api = http.createServer((req, res) => {
         const send = (status, body) => { res.writeHead(status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
         const customer = /^\/customers\/([^/?]+)/.exec(req.url);

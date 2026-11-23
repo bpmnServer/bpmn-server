@@ -21,7 +21,7 @@ What differs per server is the key, and the last connection test.
   beside the models: a file left there is moved in when read), the same document the collection held
   (id, name, description, base URL, operations, groups, enabled, timeout, retries, the key's scheme, created and
   changed), with its OpenAPI document as JSON (no longer gzipped: readable in a diff).
-- **Not in the file**: the key (encrypted with one server's `CONNECTORS_KEY`; another server could not read it, and a
+- **Not in the file**: the key (encrypted with one server's `SECRETS_KEY`; another server could not read it, and a
   key has no place in a repository) and the last connection test. Each server keeps both in `wf_connectors`.
 - **The same interface**: `server.connectors` keeps its methods (`list`, `get`, `add`, `update`, `refresh`, `remove`,
   `setKey`, `clearKey`, `test`, `call`, `operations`, `document`); the engine, verify, Administration, the editor's

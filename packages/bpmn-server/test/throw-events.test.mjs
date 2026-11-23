@@ -1,4 +1,4 @@
-// @features: messages-signals, app-delegate
+// @features: messages-signals
 // A model's throw events, through the default application delegate: a message thrown starts the process whose start
 // event catches it, or reaches the instance waiting for it; one nobody catches goes to the delegate's issueMessage. A
 // signal reaches every instance waiting for it, and one nobody waits for goes to issueSignal.

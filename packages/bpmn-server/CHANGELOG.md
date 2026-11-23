@@ -251,6 +251,10 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
+- **`SECRETS_KEY` is `CONNECTORS_KEY`'s new name**: the server's key for the secrets it stores encrypted (each
+  connector's own key), not a connector's credential. `CONNECTORS_KEY` is still read when `SECRETS_KEY` is not set, and
+  the log says once to rename it; with the same value, the stored keys decrypt as before (`secretsKey`). Test:
+  `test/connectors.test.mjs`.
 - **Each policy add-on has a folder of its own**, in the code and in the models folder.
   - The code: `src/addons/assignment`, `notification` and `security`, beside the other add-ons; what the three share
     (the actors, the policy folders) in `src/addons/basics`, which is no add-on. `policies` in `app-config.json` is

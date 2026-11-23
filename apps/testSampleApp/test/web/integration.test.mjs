@@ -84,9 +84,9 @@ test('an administrator: values checked against the schema; a secret generated, n
     let res = await admin.post('/dashboard/settings/api', { API_RATE_LIMIT: 'lots' });
     assert.match(messageOf(res), /Nothing saved\. .*API_RATE_LIMIT.*a number/);
 
-    res = await admin.post('/dashboard/settings/connectors', { 'generate:CONNECTORS_KEY': 'on', CONNECTORS_ALLOW_HOSTS: 'api.example.com' });
-    assert.match(messageOf(res), /Saved to \.env: CONNECTORS_KEY, CONNECTORS_ALLOW_HOSTS/);
-    const key = envText().match(/^CONNECTORS_KEY=([0-9a-f]+)$/m)?.[1];
+    res = await admin.post('/dashboard/settings/connectors', { 'generate:SECRETS_KEY': 'on', CONNECTORS_ALLOW_HOSTS: 'api.example.com' });
+    assert.match(messageOf(res), /Saved to \.env: SECRETS_KEY, CONNECTORS_ALLOW_HOSTS/);
+    const key = envText().match(/^SECRETS_KEY=([0-9a-f]+)$/m)?.[1];
     assert.equal(key?.length, 48, envText());
     assert.ok(!(await admin.get('/dashboard/settings/connectors')).text.includes(key), 'the new key is not shown');
 

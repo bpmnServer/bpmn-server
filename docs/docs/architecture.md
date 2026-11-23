@@ -428,7 +428,7 @@ before its own, so your pages, your API and the workflow pages share one address
 
 **Your models call your application.** A connector, made from your API's OpenAPI document, is how a model reaches your
 records: the HR demo's `hr` connector (Assign Employee reads an employee and creates an assignment). It calls with a
-key of its own (`HR_SERVICE_KEY`, kept encrypted with `CONNECTORS_KEY`); your API takes that key or a signed-in
+key of its own (`HR_SERVICE_KEY`, kept encrypted with `SECRETS_KEY`); your API takes that key or a signed-in
 person, and nothing else.
 
 The design: `docs/design/host-users.md`.

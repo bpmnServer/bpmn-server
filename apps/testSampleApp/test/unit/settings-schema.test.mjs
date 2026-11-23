@@ -59,7 +59,7 @@ test('each entry says what it is, where it goes, and its group', () => {
 });
 
 test('the keys and passwords are secrets the wizard can make', () => {
-  for (const name of ['API_KEY', 'ADMIN_API_KEY', 'API_ACTING_USER_KEY', 'SESSION_SECRET', 'ENGINE_KEY', 'CONNECTORS_KEY', 'ADMIN_PASSWORD'])
+  for (const name of ['API_KEY', 'ADMIN_API_KEY', 'API_ACTING_USER_KEY', 'SESSION_SECRET', 'ENGINE_KEY', 'SECRETS_KEY', 'CONNECTORS_KEY', 'ADMIN_PASSWORD'])
     assert.ok(settings[name]['x-secret'] && settings[name]['x-generate'], name);
   assert.ok(settings.SMTP_PASSWORD['x-secret']);
 });

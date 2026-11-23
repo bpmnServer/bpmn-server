@@ -440,7 +440,7 @@ export class Connectors {
         return auth;
     }
 
-    /** This server's key for the connector, stored encrypted (CONNECTORS_KEY): the engine's, where the calls are made. */
+    /** This server's key for the connector, stored encrypted (SECRETS_KEY): the engine's, where the calls are made. */
     async storeKey(id: string, key: string, userName?: string): Promise<Connector> {
         await this.required(id);
         if (typeof key !== 'string' || !key)

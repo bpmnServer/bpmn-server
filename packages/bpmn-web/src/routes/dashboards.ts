@@ -434,7 +434,7 @@ export class Dashboards extends Common {
         }));
 
         // ---- connectors: REST APIs (OpenAPI) that service tasks call, added with their keys (docs/docs/connectors.md)
-        /** Whether a key can be set: the engine says (CONNECTORS_KEY is its); no engine, none. */
+        /** Whether a key can be set: the engine says (SECRETS_KEY is its); no engine, none. */
         const keysSettable = () => server.engine.facts().then(facts => facts.connectorKeys === true, () => false);
         const connectors = () => server.connectors;
         const backToConnectors = (res, message: string, id?: string) =>

@@ -502,8 +502,17 @@
       "type": "string",
       "x-restart": true
     },
+    "SECRETS_KEY": {
+      "description": "**A secret.** Encrypts the secrets the server stores: each connector's own key (entered on the Settings page). Not a connector's credential. Required to give a connector a key, and keep it: backups need the same one. Before 3.7.5: `CONNECTORS_KEY`, still read",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "key",
+      "x-restart": true
+    },
     "CONNECTORS_KEY": {
-      "description": "**A secret.** Encrypts connectors' keys. Required to give a connector a key, and keep it: backups need the same one",
+      "description": "**A secret.** `SECRETS_KEY`'s name before 3.7.5: still read when `SECRETS_KEY` is not set, with a warning to rename it",
       "x-where": "env",
       "x-group": "models",
       "type": "string",

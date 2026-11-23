@@ -268,7 +268,7 @@ export function hrRoutes(app) {
 
 /**
  * The connector models call this application through: added once, pointed at this server whatever its port, with the
- * key HR_SERVICE_KEY (kept encrypted by the workflow server: CONNECTORS_KEY).
+ * key HR_SERVICE_KEY (kept encrypted by the workflow server: SECRETS_KEY).
  */
 export async function hrConnector(server) {
   const baseUrl = `http://localhost:${process.env.PORT || 3000}/api/hr`;
@@ -277,8 +277,8 @@ export async function hrConnector(server) {
   const kept = await server.connectors.get('hr');
   if (!kept) await server.connectors.add({ id: 'hr', document: openapi, baseUrl });
   else if (kept.baseUrl !== baseUrl) await server.connectors.update('hr', { baseUrl });
-  if (!process.env.HR_SERVICE_KEY || !process.env.CONNECTORS_KEY)
-    return console.warn('HR: HR_SERVICE_KEY and CONNECTORS_KEY are needed in .env for the workflows to call the HR API');
+  if (!process.env.HR_SERVICE_KEY || !(process.env.SECRETS_KEY || process.env.CONNECTORS_KEY))
+    return console.warn('HR: HR_SERVICE_KEY and SECRETS_KEY are needed in .env for the workflows to call the HR API');
   // how the key is sent, in the connector's file; the key itself kept by the engine, encrypted (engine-isolation.md)
   await server.connectors.setScheme('hr', { type: 'apiKey', in: 'header', name: 'x-hr-key' });
   await server.engine.setConnectorKey('hr', process.env.HR_SERVICE_KEY);

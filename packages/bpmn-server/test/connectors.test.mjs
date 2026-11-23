@@ -17,7 +17,7 @@ const FIXTURES = fileURLToPath(new URL('./fixtures/connectors/', import.meta.url
 const SHOP = fs.readFileSync(path.join(FIXTURES, 'shop.openapi.yaml'), 'utf8');
 const GITHUB = fs.readFileSync(path.join(FIXTURES, 'github.openapi.json'), 'utf8');
 const TOKEN = 'shop-token-1234';
-process.env.CONNECTORS_KEY = 'a test encryption key';
+process.env.SECRETS_KEY = 'a test encryption key';
 
 // ---- the shop API
 const counts = { flaky: 0, orders: 0 };
@@ -295,19 +295,40 @@ test('verify: a connector task is checked against the server\'s connectors, and 
   await server.shutdown();
 });
 
-test('without CONNECTORS_KEY no key can be set; in demo mode connectors do not run; CONNECTORS_ALLOW_HOSTS limits hosts', async () => {
+test('without SECRETS_KEY no key can be set; in demo mode connectors do not run; CONNECTORS_ALLOW_HOSTS limits hosts', async () => {
   const { server } = await shopServer({ demo: true });
   const demo = await server.engine.start('customer-lookup', { customerId: 'C-1' });
   assert.equal(demo.instance.status, 'end');
   assert.equal(demo.instance.data.tier, undefined, 'not called');
   assert.match(JSON.stringify(demo.instance.decisions ?? demo.instance.logs), /connectors do not run on this server/);
 
-  const key = process.env.CONNECTORS_KEY;
-  delete process.env.CONNECTORS_KEY;
+  const key = process.env.SECRETS_KEY;
+  delete process.env.SECRETS_KEY;
   try {
-    await assert.rejects(server.connectors.setKey('shop', TOKEN), /need CONNECTORS_KEY/);
+    await assert.rejects(server.connectors.setKey('shop', TOKEN), /need SECRETS_KEY/);
   } finally {
-    process.env.CONNECTORS_KEY = key;
+    process.env.SECRETS_KEY = key;
+  }
+
+  // CONNECTORS_KEY, its name before 3.7.5: still read, said once; SECRETS_KEY wins when both are set
+  const { secretsKey } = await import('../dist/index.js');
+  const said = [];
+  assert.equal(secretsKey({ CONNECTORS_KEY: 'old' }, m => said.push(m)), 'old');
+  assert.equal(secretsKey({ CONNECTORS_KEY: 'old' }, m => said.push(m)), 'old');
+  assert.equal(said.length, 1, 'said once');
+  assert.match(said[0], /CONNECTORS_KEY is now SECRETS_KEY/);
+  assert.equal(secretsKey({ SECRETS_KEY: 'new', CONNECTORS_KEY: 'old' }), 'new');
+  assert.equal(secretsKey({}), undefined);
+  delete process.env.SECRETS_KEY;
+  process.env.CONNECTORS_KEY = key;
+  try {
+    await server.connectors.setKey('shop', TOKEN);    // stored with the old name's key
+    // stored: the old name gives the key (renamed in .env with the same value, it decrypts: the same key)
+    delete process.env.CONNECTORS_KEY;
+    assert.equal((await server.connectors.get('shop')).auth.last4, TOKEN.slice(-4), 'a key could be set with CONNECTORS_KEY');
+  } finally {
+    process.env.SECRETS_KEY = key;
+    delete process.env.CONNECTORS_KEY;
   }
   process.env.CONNECTORS_ALLOW_HOSTS = 'api.example.com, *.trusted.dev';
   try {
@@ -552,7 +573,7 @@ test('OpenAPI documents: what is refused, references with siblings, in a loop an
 test('a launched server (the host): the scheme into the file, the key and the test by engine calls (engine-isolation.md)', async () => {
   const { server, store, dir } = await makeServer({ launched: true, extra: { connectors: { retryDelay: 1 } } });
   await server.connectors.add({ id: 'shop', source: `${base}/openapi.yaml` });
-  assert.equal((await server.engine.facts()).connectorKeys, true, 'the engine says a key can be set (its CONNECTORS_KEY)');
+  assert.equal((await server.engine.facts()).connectorKeys, true, 'the engine says a key can be set (its SECRETS_KEY)');
   await server.connectors.setScheme('shop');
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir, 'connectors', 'shop.connector.json'), 'utf8')).auth, { type: 'bearer', scheme: 'bearerAuth' });
   assert.equal((await store.find('bpmn_test', 'wf_connectors', { id: 'shop' })).length, 0, 'the scheme is the file\'s: nothing kept yet');

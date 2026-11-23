@@ -16,7 +16,7 @@ const APP = path.join(import.meta.dirname, '..', '..');
 let web, browser, page;
 const errors = [];
 test.before(async () => {
-    process.env.CONNECTORS_KEY ??= 'a test encryption key';
+    process.env.SECRETS_KEY ??= 'a test encryption key';
     web = await startWebApp();
     fs.copyFileSync(path.join(APP, 'processes', 'GitHub repository.bpmn'), path.join(web.definitionsPath, 'GitHub repository.bpmn'));
     await web.bpmnServer.engine.install({ rebuild: true });

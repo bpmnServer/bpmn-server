@@ -66,7 +66,7 @@ mixin connectors(info)
   else
     p.dash-empty No connectors yet.
   if !info.canEncrypt
-    p.dash-muted Connector keys need CONNECTORS_KEY (below): they are stored encrypted with it.
+    p.dash-muted Connector keys need SECRETS_KEY (below): they are stored encrypted with it.
   if isAdmin
     a.btn.btn-default.btn-sm(href='/dashboard/admin/connectors') Manage connectors
 

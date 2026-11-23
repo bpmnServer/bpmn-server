@@ -737,7 +737,7 @@ ___
 
 ▸ **canEncrypt**(): `boolean`
 
-Whether keys can be stored: CONNECTORS_KEY is set.
+Whether keys can be stored: SECRETS_KEY is set.
 
 #### Returns
 

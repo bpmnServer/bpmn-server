@@ -114,7 +114,7 @@ block dash
 				button.btn.btn-primary.btn-sm(type='submit') Add the connector
 			if !canEncrypt
 				p.dash-muted(style='margin-top:10px')
-					| Keys are stored encrypted with CONNECTORS_KEY, which is not set: add it to .env (a long random value) and restart before giving a connector its key.
+					| Keys are stored encrypted with SECRETS_KEY, which is not set: add it to .env (a long random value) and restart before giving a connector its key.
 
 	script.
 		// the catalog filtered as one types

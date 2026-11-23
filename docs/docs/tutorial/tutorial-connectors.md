@@ -10,7 +10,7 @@ A connector is a REST API, described by an OpenAPI document, that an administrat
 
 **You should see** the connector's page, saying *Connector 'github' added*, with GitHub's operations (more than a thousand), each one enabled for designers or not. Its id is `github`: models call its operations as `github/<operation>`.
 
-GitHub's public repositories need no key: calls without one are allowed 60 an hour. A key (a token) would be kept encrypted with `CONNECTORS_KEY` from `.env`, and never in a model. If `.env` sets `CONNECTORS_ALLOW_HOSTS`, it must include `api.github.com`. See [Connectors](../connectors.md#adding-a-connector-administrators).
+GitHub's public repositories need no key: calls without one are allowed 60 an hour. A key (a token) would be kept encrypted with `SECRETS_KEY` from `.env`, and never in a model. If `.env` sets `CONNECTORS_ALLOW_HOSTS`, it must include `api.github.com`. See [Connectors](../connectors.md#adding-a-connector-administrators).
 
 ## The service task
 

@@ -68,7 +68,7 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         about: 'REST APIs, each described by an OpenAPI document, that service and send tasks call by name. Their keys stay on this server.',
         settings: [
             { name: 'SERVICE_TASKS', label: 'Service tasks run' },
-            { name: 'CONNECTORS_KEY', label: 'Key that encrypts connector keys', main: true },
+            { name: 'SECRETS_KEY', label: 'Key that encrypts the stored secrets (the connectors\' keys)', main: true },
             { name: 'CONNECTORS_ALLOW_HOSTS', label: 'Hosts connectors may call' },
             { name: 'CONNECTOR_CATALOG_URL', label: 'Connector catalog' },
         ],

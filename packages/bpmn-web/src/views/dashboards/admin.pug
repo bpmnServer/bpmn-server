@@ -210,7 +210,7 @@ block dash
 			else
 				p.dash-empty No connectors yet.
 			if !canEncrypt
-				p.dash-muted Set CONNECTORS_KEY in .env (a long random value) to give connectors their keys: they are stored encrypted with it.
+				p.dash-muted Set SECRETS_KEY in .env (a long random value) to give connectors their keys: they are stored encrypted with it.
 			a.btn.btn-default.btn-sm#manage-connectors(href='/dashboard/admin/connectors') Manage connectors
 
 		section.dash-card#console

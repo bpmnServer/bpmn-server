@@ -109,7 +109,8 @@ by `npm run features`: edit the schema, not these tables.
 | `ELEMENT_TEMPLATES` | `on` offers the application's element templates (configured tasks) in the model editor and lists them on the Design page. Off by default in 3.7.1: a preview, to be finished (docs/design/roadmap.md) |
 | `CATALOG_URL` | The model catalog to browse |
 | `CONNECTORS_ALLOW_HOSTS` | A comma list of the hosts connectors may call |
-| `CONNECTORS_KEY` | **A secret.** Encrypts connectors' keys. Required to give a connector a key, and keep it: backups need the same one |
+| `SECRETS_KEY` | **A secret.** Encrypts the secrets the server stores: each connector's own key (entered on the Settings page). Not a connector's credential. Required to give a connector a key, and keep it: backups need the same one. Before 3.7.5: `CONNECTORS_KEY`, still read |
+| `CONNECTORS_KEY` | **A secret.** `SECRETS_KEY`'s name before 3.7.5: still read when `SECRETS_KEY` is not set, with a warning to rename it |
 | `CONNECTOR_CATALOG_URL` | The connector catalog to offer |
 | `MODEL_HISTORY` | `false` keeps no saved versions of models |
 | `MODEL_TESTS` | `false`: the model editor has no Test tab (a model's scenarios, run in the engine) |
