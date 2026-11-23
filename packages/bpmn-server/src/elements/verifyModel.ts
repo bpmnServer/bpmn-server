@@ -604,16 +604,18 @@ class ModelVerifier {
     }
 
     /**
-     * The roles: the models folder's roles.json and the application's contract (app-contract.json), together; null with
-     * neither. A bad roles.json is an error.
+     * The roles: the application's contract (app-contract.json), which is where they belong. `roles.json` beside the
+     * models is what they were before 3.7.5: still read when a contract declares none, so an application that has not
+     * moved them keeps working. A bad roles.json is an error.
      */
     roles(): string[] | null {
         if (this.#roles !== undefined) return this.#roles;
+        const declared = this.contract()?.roles?.map(r => r.name) ?? null;
+        if (declared?.length) return this.#roles = [...new Set(declared)];
         let fromFile: string[] | null = null;
         try { fromFile = this.decisionsFolder ? roleNames(this.decisionsFolder) : null; }
         catch (exc) { this.add('error', 'roles-invalid', exc.message); }
-        const declared = this.contract()?.roles?.map(r => r.name) ?? null;
-        this.#roles = fromFile || declared ? [...new Set([...(fromFile ?? []), ...(declared ?? [])])] : null;
+        this.#roles = fromFile?.length ? [...new Set(fromFile)] : declared ?? fromFile;
         return this.#roles;
     }
 

@@ -20,7 +20,10 @@
     { "name": "Employee", "title": "Employee", "description": "Everyone: asks for leave, sees their own" },
     { "name": "Manager", "title": "Manager", "description": "Approves their reports' leave and assignments" },
     { "name": "HR", "title": "HR", "description": "Approves long leave, records it" },
-    { "name": "ADMIN", "title": "Administrator", "description": "Administers the workflows" }
+    { "name": "ADMIN", "title": "Administrator", "description": "Administers the workflows" },
+    { "name": "Driver", "title": "Driver", "description": "Drives the car (the sample models that came with the demo)" },
+    { "name": "Mechanic", "title": "Mechanic", "description": "Services the car (the sample models that came with the demo)" },
+    { "name": "Cleaner", "title": "Cleaner", "description": "Cleans the car (the sample models that came with the demo)" }
   ],
   "apis": [{ "id": "hr", "openapi": "/api/hr/openapi.json" }],
   "pages": []

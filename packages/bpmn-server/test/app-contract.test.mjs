@@ -7,8 +7,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { makeServer } from './helpers.mjs';
-import { contractProblems, compareWithCode, appVarsFor, readAppContract, verifyModel, methodNames } from '../dist/index.js';
+import { makeServer, definitionsFolder } from './helpers.mjs';
+import { contractProblems, compareWithCode, appVarsFor, readAppContract, saveContractRoles, verifyModel, methodNames } from '../dist/index.js';
 
 const CONTRACT = {
   name: 'test',
@@ -113,4 +113,37 @@ test('verifyModel against the contract: unknown names, the wrong number of argum
   assert.ok(!issues.some(i => /appVars\.boss|managerOf: /.test(i.message)), 'what it declares is fine');
   assert.equal(issues.find(i => i.code === 'function-write-in-decision').severity, 'error');
   await server.shutdown?.();
+});
+
+test("the roles are the contract's, and roles.json is what they were before 3.7.5", async () => {
+  const dir = definitionsFolder();
+  // the legacy file beside the models, and a contract that declares its own roles
+  fs.writeFileSync(path.join(dir, 'roles.json'), JSON.stringify(['Legacy']));
+  const { server } = await makeServer({ dir });
+  server.appDelegate.describe = () => ({ ...CONTRACT, roles: [{ name: 'Manager' }, { name: 'Director' }] });
+  const source = MODEL(`
+    <bpmn:startEvent id="S"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:userTask id="T"><bpmn:incoming>f1</bpmn:incoming></bpmn:userTask>
+    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="T" />`);
+  const { issues } = await verifyModel(source, server, 'Roles');
+  const named = issues.filter(i => i.code === 'role-unknown').map(i => i.message).join(' ');
+  // the contract wins: its names are the ones a warning lists, and the legacy file's are not
+  assert.ok(!named.includes('Legacy') || named === '', `roles.json should not be read when the contract declares roles: ${named}`);
+  await server.shutdown?.();
+});
+
+test('saveContractRoles writes the roles back, keeping the rest of the contract', () => {
+  const dir = definitionsFolder();
+  const file = path.join(dir, 'app-contract.json');
+  fs.writeFileSync(file, JSON.stringify({ name: 'x', roles: [{ name: 'Manager', title: 'Manager' }], pages: [{ id: 'p', url: '/p' }] }, null, 2));
+  // added: the new one keeps its place, and what a role had is kept
+  const names = saveContractRoles(file, [{ name: 'Manager', title: 'Manager' }, { name: 'Director' }]);
+  assert.deepEqual(names, ['Manager', 'Director']);
+  const after = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(after.roles[0].title, 'Manager', 'what it had is kept');
+  assert.deepEqual(after.pages, [{ id: 'p', url: '/p' }], 'the rest of the contract is untouched');
+  assert.equal(after.name, 'x');
+  // removed, and a name twice is one role
+  assert.deepEqual(saveContractRoles(file, [{ name: 'Director' }, { name: 'Director' }]), ['Director']);
+  assert.equal(JSON.parse(fs.readFileSync(file, 'utf8')).roles.length, 1);
 });

@@ -26,6 +26,10 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The Roles editor writes the application's contract** (`app-contract.json`), where roles belong since 3.7.5,
+  instead of the models folder's `roles.json`; it still edits a `roles.json` for an application whose roles are
+  there. An application whose contract comes from its delegate's `describe()` has no file to write, so the
+  Administration page lists its roles and says where to change them instead of offering Add and Remove.
 - **A task list answers its form key**: `GET /api/v3/tasks` gives each task `form.formKey` where its model names the
   application's own page, with any `${appVars.<name>}` already worked out, so an application's own list opens that
   page itself instead of owf's task page (docs/design/form-keys.md, flow A). The HR demo's To do panel does, and its

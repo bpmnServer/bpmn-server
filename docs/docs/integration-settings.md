@@ -14,7 +14,7 @@ A card opens its area's page (`/dashboard/settings/<area>`): what is in place, i
 
 | Area | Shows | Settings (main first) |
 |---|---|---|
-| **Roles** | The roles (`roles.json`): the server's, whichever add-ons are on | none |
+| **Roles** | The roles (the application's `app-contract.json`): the server's, whichever add-ons are on | none |
 | **The application** | The delegate's class, its functions (`appServices`) and methods (folded), who signs people in | `APP_ENV`, `READ_ONLY`, `SITE_URL`; `APP_ENV_LABEL`, `ENFORCE_SECURITY` |
 | **Connectors** | Each connector: enabled or not, its key (last 4 characters), the models that call it | `SECRETS_KEY`; `SERVICE_TASKS`, `CONNECTORS_ALLOW_HOSTS`, `CONNECTOR_CATALOG_URL` |
 | **The API the application calls** | API v3, and whether the task API (`/api2/tasks`) is on | `API_KEY`, `API_ACTING_USER_KEY`; `ADMIN_API_KEY`, the service account, `API_IMPERSONATION`, `API_RATE_LIMIT` |

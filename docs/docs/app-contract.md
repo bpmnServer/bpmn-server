@@ -27,7 +27,7 @@ contract lets the editor offer names, and the checks find a wrong one before it 
 |---|---|
 | `expressions` | The **variables** an expression reads as `appVars.<name>`, and the **functions** it calls as `appServices.<name>(...)`, each with its type and description. A function's `effect` is `none`, `read` or `write`: a decision may not call a `write` one. |
 | `types` | JSON Schemas the types name. |
-| `roles` | The roles lanes and tasks are given to, with `roles.json`'s. |
+| `roles` | The roles lanes and tasks are given to. Where roles belong since 3.7.5; a `roles.json` beside the models is read only when this declares none. |
 | `apis` | The application's APIs: each a connector, from its OpenAPI document. |
 | `pages` | The application's forms, by id: a task's form key `app:<id>`. |
 

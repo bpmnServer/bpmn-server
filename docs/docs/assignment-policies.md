@@ -100,7 +100,9 @@ Approval, rule 1)*.
 
 ## Roles
 
-`processes/roles.json` lists the application's roles: `["Manager", "Director", "ITManager"]`. A role is the user
+The application's contract (`app-contract.json`) lists its roles: `"roles": [{ "name": "Manager" }, { "name": "Director" }]`.
+Before 3.7.5 they were `processes/roles.json`, a list of names, which is still read when a contract declares none.
+A role is the user
 group of the same name.
 
 Administrators edit them on the **Administration** page's **Roles** card: each role with where it is used (the
@@ -118,5 +120,5 @@ isn't one of them.
 | `assignment-policy-not-found` | error | a task's policy isn't in `assignment/` |
 | `assignment-policy-invalid` | error | the policy's file can't be read as a decision |
 | `assignment-policy-output` | warning | an output that isn't `assignee`, `candidateUsers` or `candidateGroups` |
-| `role-unknown` | warning | a lane, or a group a policy assigns, not in `roles.json` |
-| `roles-invalid` | error | `roles.json` isn't a list of names |
+| `role-unknown` | warning | a lane, or a group a policy assigns, that is not one of the roles |
+| `roles-invalid` | error | a legacy `roles.json` isn't a list of names |

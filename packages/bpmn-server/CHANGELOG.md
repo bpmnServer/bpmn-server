@@ -26,6 +26,11 @@ and here
 
 ## [Unreleased]
 ### Added
+- **The roles are the application's** (`app-contract.json`), not the models folder's `roles.json`. `verifyModel`
+  reads the contract's `roles` and falls back to `roles.json` only when the contract declares none, so an
+  application that has not moved them keeps working. `saveContractRoles(file, roles)` writes them back, keeping the
+  rest of the contract. The sample applications now declare their roles, so their lanes are checked; the HR demo's
+  `roles.json` is gone, its roles being in its contract.
 - **Where a message or signal went, in the Rationale** (docs/docs/examples/msg-throw-catch.md): the throwing
   item's row says whom it reached (`throws message 'X': reaches <model> #<case> at <element>`, `starts ...`, `reaches
   none`; a signal lists each), with its matching key; each receiver's row says from whom (`receives message 'X' from

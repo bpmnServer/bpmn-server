@@ -90,6 +90,26 @@ export function readAppContract(file = path.resolve(APP_CONTRACT_FILE)): { contr
     return { contract, problems, file };
 }
 
+/**
+ * The roles the application declares, written back to its `app-contract.json` (3.7.5: where roles belong, replacing
+ * the models folder's `roles.json`). Each role keeps what it had; a new one is added with its name only, and the
+ * order given is kept. Returns the names written.
+ *
+ * An application whose contract comes from its delegate's `describe()` has no file to write: the caller checks
+ * `readAppContract(file).contract` is from the file before offering to edit.
+ */
+export function saveContractRoles(file: string, roles: { name: string; title?: string; description?: string }[]): string[] {
+    const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '{}';
+    const contract = JSON.parse(text);
+    const seen = new Set<string>();
+    contract.roles = roles
+        .map(r => ({ ...r, name: String(r.name).trim() }))
+        .filter(r => r.name && !seen.has(r.name) && seen.add(r.name));
+    fs.writeFileSync(file, JSON.stringify(contract, null, 2) + '\n');
+    cache.delete(file);
+    return contract.roles.map(r => r.name);
+}
+
 /** A contract's names, by kind: its variables and functions (by name), its roles, its pages. */
 export function contractNames(contract: IAppContract | null | undefined) {
     const expressions = contract?.expressions ?? [];

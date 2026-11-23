@@ -140,9 +140,9 @@ block dash
 			section.dash-card#roles
 				h2 Roles
 					span.count= roles.list.length
-				p.dash-muted A role is the user group of the same name. The models' lanes and the assignment policies name them; the models' checks warn about one that isn't here (roles.json in the models folder).
+				p.dash-muted A role is the user group of the same name. The models' lanes and the assignment policies name them; the models' checks warn about one that isn't here (#{roles.where || 'app-contract.json'}).
 				if roles.error
-					p.text-danger roles.json can not be read: #{roles.error}
+					p.text-danger The roles can not be read (#{roles.where || 'app-contract.json'}): #{roles.error}
 				else
 					if roles.list.length
 						table
@@ -161,12 +161,13 @@ block dash
 											span.dash-muted not used yet
 									td= role.members === null ? '' : role.members
 									td
-										form.inline(method='post', action='/dashboard/admin/roles/delete', onsubmit=`return confirm(${JSON.stringify(role.uses.length ? `Remove the role '${role.name}'? It is used by: ${role.uses.join('; ')}` : `Remove the role '${role.name}'?`)})`)
+										if roles.writable !== false
+											form.inline(method='post', action='/dashboard/admin/roles/delete', onsubmit=`return confirm(${JSON.stringify(role.uses.length ? `Remove the role '${role.name}'? It is used by: ${role.uses.join('; ')}` : `Remove the role '${role.name}'?`)})`)
 											input(type='hidden', name='_csrf', value=_csrf)
 											input(type='hidden', name='name', value=role.name)
 											button.btn.btn-default.btn-xs(type='submit') Remove
 					else
-						p.dash-muted= roles.file ? 'roles.json lists no roles.' : 'No roles.json yet: add the first role, and it is made.'
+						p.dash-muted= roles.writable === false ? (roles.where || 'The application') + ' declares no roles.' : 'No roles yet: add the first one, and ' + (roles.where || 'app-contract.json') + ' is written.'
 					if roles.unlisted.length
 						h2(style='margin-top:18px') Used, not listed
 						table
@@ -175,16 +176,20 @@ block dash
 									td= role.name
 									td.dash-muted= role.uses.join('; ')
 									td
-										form.inline(method='post', action='/dashboard/admin/roles')
+										if roles.writable !== false
+											form.inline(method='post', action='/dashboard/admin/roles')
 											input(type='hidden', name='_csrf', value=_csrf)
 											input(type='hidden', name='name', value=role.name)
 											button.btn.btn-default.btn-xs(type='submit') Add
-					h2(style='margin-top:18px') Add a role
-					form.dash-form#add-role(method='post', action='/dashboard/admin/roles')
-						input(type='hidden', name='_csrf', value=_csrf)
-						label(for='new-role') Name
-						input#new-role(name='name', required, maxlength='64', placeholder='e.g. Manager')
-						button.btn.btn-primary.btn-sm(type='submit') Add role
+					if roles.writable === false
+						p.dash-muted(style='margin-top:18px') The roles come from #{roles.where}, which this page can not change: add and remove them there.
+					else
+						h2(style='margin-top:18px') Add a role
+						form.dash-form#add-role(method='post', action='/dashboard/admin/roles')
+							input(type='hidden', name='_csrf', value=_csrf)
+							label(for='new-role') Name
+							input#new-role(name='name', required, maxlength='64', placeholder='e.g. Manager')
+							button.btn.btn-primary.btn-sm(type='submit') Add role
 
 		//- connectors: none passed (an older route) shows as none
 		- const connectorList = typeof connectors === 'undefined' || !connectors ? [] : connectors

@@ -11,7 +11,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications, connectorsTesting } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, readAppContract, saveContractRoles, APP_CONTRACT_FILE, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications, connectorsTesting } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
@@ -97,19 +97,22 @@ function databaseName(): string {
 
 export class Dashboards extends Common {
     /**
-     * The roles for the Administration page: roles.json's names, each with where it is used and how many users are in
-     * its group; the names used (lanes, policies) that it doesn't list; or its error.
+     * The roles for the Administration page: the names, each with where it is used and how many users are in its
+     * group; the names used (lanes, policies) that they don't list; or its error. `declared` is where the roles come
+     * from when the caller has worked it out (the application's contract, since 3.7.5); without it, the models
+     * folder's legacy roles.json.
      */
-    async roles(definitionsPath: string, users: any[] | null) {
+    async roles(definitionsPath: string, users: any[] | null, declared?: { names: string[]; where: string; writable: boolean } | null) {
         let names: string[] | null;
-        try { names = roleNames(definitionsPath); }
+        try { names = declared ? declared.names : roleNames(definitionsPath); }
         catch (exc) { return { error: exc.message, list: [], unlisted: [] }; }
         const uses = await roleUses(definitionsPath);
         const members = (role: string) => users ? users.filter(u => (u.userGroups || []).includes(role)).length : null;
         const list = (names ?? []).map(name => ({ name, uses: uses.get(name) ?? [], members: members(name) }));
         const unlisted = [...uses.keys()].filter(name => !(names ?? []).includes(name) && !roleNameProblem(name)).sort()
             .map(name => ({ name, uses: uses.get(name) }));
-        return { file: names !== null, list, unlisted };
+        // where they are, and whether this page may change them (a contract from describe() is read-only)
+        return { file: names !== null, list, unlisted, where: declared?.where, writable: declared ? declared.writable : true };
     }
 
     /** verifyModel's counts per model, kept while the file is unchanged */
@@ -121,6 +124,30 @@ export class Dashboards extends Common {
         const server = this.webApp.bpmnServer;
         const api = new BPMNAPI(server);
         const folder = () => server.configuration.definitionsPath;
+        /**
+         * Where this server's roles are, and whether the page may change them: the contract's file when it declares
+         * any (or has none anywhere, so a first role starts there), the legacy roles.json when that is what has them,
+         * and nothing writable when the contract comes from the delegate's describe() instead of a file.
+         */
+        const rolesStore = () => {
+            const contractFile = server.configuration?.appContract ?? path.resolve(APP_CONTRACT_FILE);
+            const declared = (server.appDelegate as any)?.describe?.()?.roles ?? null;
+            const fromFile = readAppContract(contractFile).contract?.roles ?? null;
+            // a contract from code: nothing to write back to
+            if (declared?.length && !fromFile?.length)
+                return { kind: 'code' as const, names: declared.map(r => r.name), roles: declared, writable: false, where: "the delegate's describe()" };
+            if (fromFile?.length)
+                return { kind: 'contract' as const, names: fromFile.map(r => r.name), roles: fromFile, writable: true, where: APP_CONTRACT_FILE, file: contractFile };
+            const legacy = roleNames(folder());
+            if (legacy?.length)
+                return { kind: 'legacy' as const, names: legacy, roles: legacy.map(name => ({ name })), writable: true, where: 'roles.json' };
+            // none anywhere: a first role goes where roles belong now
+            return { kind: 'contract' as const, names: [], roles: [], writable: true, where: APP_CONTRACT_FILE, file: contractFile };
+        };
+        const writeRoles = (store: ReturnType<typeof rolesStore>, roles: { name: string; title?: string; description?: string }[]) => {
+            if (store.kind === 'legacy') saveRoleNames(folder(), roles.map(r => r.name));
+            else saveContractRoles(store.file!, roles);
+        };
 
         router.use(this.isAuthenticated);
 
@@ -367,7 +394,7 @@ export class Dashboards extends Common {
             const connectorList = await server.connectors.list();
             render(req, res, 'admin', {
                 title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: await keysSettable(),
-                roles: await this.roles(folder(), users),
+                roles: await this.roles(folder(), users, rolesStore()),
                 serverInfo: {
                     bpmnWeb: this.webApp.packageJson?.version ?? packageVersion('bpmn-web'),
                     bpmnServer: packageVersion('bpmn-server'),
@@ -404,33 +431,38 @@ export class Dashboards extends Common {
             back(res, `User '${userName}' added.`);
         }));
 
-        // ---- the roles (docs/docs/assignment-policies.md#roles): roles.json of the models folder
+        // ---- the roles (docs/docs/assignment-policies.md#roles): the application's contract (app-contract.json),
+        // where they belong since 3.7.5; the models folder's roles.json is read for an application that has not moved
+        // them, and the editor writes whichever of the two the roles came from.
         const rolesBack = (res, message: string) => res.redirect('/dashboard/admin?message=' + encodeURIComponent(message) + '#roles');
-        const currentRoles = (): string[] => roleNames(folder()) ?? [];
         // the roles are the server's: always here, whichever add-ons are on
         router.post('/admin/roles', this.isAdmin, handler(async (req, res) => {
             const name = String(req.body.name ?? '').trim();
             const problem = roleNameProblem(name);
             if (problem)
                 return rolesBack(res, problem + '.');
-            let roles: string[];
-            try { roles = currentRoles(); }
-            catch (exc) { return rolesBack(res, `roles.json can not be read: ${exc.message}`); }
-            if (roles.includes(name))
+            let store: ReturnType<typeof rolesStore>;
+            try { store = rolesStore(); }
+            catch (exc) { return rolesBack(res, `The roles can not be read: ${exc.message}`); }
+            if (!store.writable)
+                return rolesBack(res, `The roles come from ${store.where}, which this page can not change: add '${name}' there.`);
+            if (store.names.includes(name))
                 return rolesBack(res, `'${name}' is a role already.`);
-            saveRoleNames(folder(), [...roles, name]);
-            rolesBack(res, `Role '${name}' added.`);
+            writeRoles(store, [...store.roles, { name }]);
+            rolesBack(res, `Role '${name}' added to ${store.where}.`);
         }));
         router.post('/admin/roles/delete', this.isAdmin, handler(async (req, res) => {
             const name = String(req.body.name ?? '').trim();
-            let roles: string[];
-            try { roles = currentRoles(); }
-            catch (exc) { return rolesBack(res, `roles.json can not be read: ${exc.message}`); }
-            if (!roles.includes(name))
+            let store: ReturnType<typeof rolesStore>;
+            try { store = rolesStore(); }
+            catch (exc) { return rolesBack(res, `The roles can not be read: ${exc.message}`); }
+            if (!store.writable)
+                return rolesBack(res, `The roles come from ${store.where}, which this page can not change: remove '${name}' there.`);
+            if (!store.names.includes(name))
                 return rolesBack(res, `'${name}' is not a role.`);
-            saveRoleNames(folder(), roles.filter(r => r !== name));
+            writeRoles(store, store.roles.filter(r => r.name !== name));
             const used = (await roleUses(folder())).get(name);
-            rolesBack(res, `Role '${name}' removed.` + (used?.length ? ` It is still used (${used.join('; ')}): the models' checks warn about it.` : ''));
+            rolesBack(res, `Role '${name}' removed from ${store.where}.` + (used?.length ? ` It is still used (${used.join('; ')}): the models' checks warn about it.` : ''));
         }));
 
         router.post('/admin/locks/release', this.isAdmin, handler(async (req, res) => {
@@ -692,7 +724,7 @@ export class Dashboards extends Common {
                 api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
             };
             // the roles are the server's; each policy add-on's, while it is on: its policies (and the notifications they send)
-            info.roles = { roles: await this.roles(dir, users) };
+            info.roles = { roles: await this.roles(dir, users, rolesStore()) };
             if (addOnsRunning.includes('assignment')) info.assignment = { assignment: policyNames(dir) };
             if (addOnsRunning.includes('security')) info.security = { security: security.names(), securityOn: security.on };
             if (addOnsRunning.includes('notification'))

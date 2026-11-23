@@ -11,7 +11,7 @@ The **Assignment** add-on decides who works on each task, and who may start a pr
 - The actors (`owf:actor`): who did what in a case, kept on it as `instance.actors` and read by expressions as
   `actors`. They are shared with the Access Control and Notifications add-ons, and are there while any of the three is on.
 
-The roles (`roles.json`) are the server's, not this add-on's: they are always there (**Dashboard ▸ Settings ▸ Roles**,
+The roles (the application's `app-contract.json`) are the server's, not this add-on's: they are always there (**Dashboard ▸ Settings ▸ Roles**,
 **Administration ▸ Roles**).
 
 ## Its settings

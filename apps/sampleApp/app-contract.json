@@ -1,0 +1,12 @@
+{
+  "name": "sampleApp",
+  "description": "The sample application: what its workflows may use of it (docs/design/app-contract.md). Its roles are the lanes of its models and the groups their tasks are offered to, so a lane that is not one of them is a model check's warning.",
+  "roles": [
+    { "name": "Driver", "title": "Driver", "description": "Drives the car: buys it, fuels it, takes it to be serviced" },
+    { "name": "Mechanic", "title": "Mechanic", "description": "Services and repairs the car" },
+    { "name": "Cleaner", "title": "Cleaner", "description": "Cleans the car" },
+    { "name": "Employee", "title": "Employee", "description": "Asks for leave and sees their own requests" },
+    { "name": "Manager", "title": "Manager", "description": "Approves their reports' requests" },
+    { "name": "HR", "title": "HR", "description": "Records what was approved" }
+  ]
+}
