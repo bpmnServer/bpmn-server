@@ -67,7 +67,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L17)
+[packages/bpmn-server/src/common/Logger.ts:17](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L17)
 
 ## Properties
 
@@ -77,7 +77,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:9](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L9)
+[packages/bpmn-server/src/common/Logger.ts:9](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L9)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L10)
+[packages/bpmn-server/src/common/Logger.ts:10](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L10)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L11)
+[packages/bpmn-server/src/common/Logger.ts:11](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L11)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:12](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L12)
+[packages/bpmn-server/src/common/Logger.ts:12](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L12)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L13)
+[packages/bpmn-server/src/common/Logger.ts:13](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L13)
 
 ___
 
@@ -129,7 +129,7 @@ Keep the messages in memory for `get()` and `save()`; without it nothing accumul
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L15)
+[packages/bpmn-server/src/common/Logger.ts:15](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L15)
 
 ## Methods
 
@@ -156,7 +156,7 @@ Keep the messages in memory for `get()` and `save()`; without it nothing accumul
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L22)
+[packages/bpmn-server/src/common/Logger.ts:22](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L22)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L28)
+[packages/bpmn-server/src/common/Logger.ts:28](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L28)
 
 ___
 
@@ -202,7 +202,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L45)
+[packages/bpmn-server/src/common/Logger.ts:45](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L45)
 
 ___
 
@@ -220,7 +220,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L49)
+[packages/bpmn-server/src/common/Logger.ts:49](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L49)
 
 ___
 
@@ -247,7 +247,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L53)
+[packages/bpmn-server/src/common/Logger.ts:53](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L53)
 
 ___
 
@@ -280,7 +280,7 @@ Why the engine took a path, in words: a condition and its values, a default flow
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L57)
+[packages/bpmn-server/src/common/Logger.ts:57](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L57)
 
 ___
 
@@ -311,7 +311,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L60)
+[packages/bpmn-server/src/common/Logger.ts:60](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L60)
 
 ___
 
@@ -342,7 +342,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:64](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L64)
+[packages/bpmn-server/src/common/Logger.ts:64](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L64)
 
 ___
 
@@ -373,7 +373,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L67)
+[packages/bpmn-server/src/common/Logger.ts:67](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L67)
 
 ___
 
@@ -400,7 +400,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:70](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L70)
+[packages/bpmn-server/src/common/Logger.ts:70](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L70)
 
 ___
 
@@ -427,7 +427,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:76](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L76)
+[packages/bpmn-server/src/common/Logger.ts:76](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L76)
 
 ___
 
@@ -447,7 +447,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:81](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L81)
+[packages/bpmn-server/src/common/Logger.ts:81](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L81)
 
 ___
 
@@ -471,7 +471,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:113](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L113)
+[packages/bpmn-server/src/common/Logger.ts:113](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L113)
 
 ___
 
@@ -495,7 +495,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:132](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L132)
+[packages/bpmn-server/src/common/Logger.ts:132](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L132)
 
 ___
 
@@ -520,7 +520,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:135](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L135)
+[packages/bpmn-server/src/common/Logger.ts:135](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L135)
 
 ___
 
@@ -544,4 +544,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/Logger.ts:167](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/Logger.ts#L167)
+[packages/bpmn-server/src/common/Logger.ts:167](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/Logger.ts#L167)

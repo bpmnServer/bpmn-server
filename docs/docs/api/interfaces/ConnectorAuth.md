@@ -25,19 +25,19 @@ how the key is sent
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L32)
+[packages/bpmn-server/src/connectors/Connectors.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L38)
 
 ___
 
 ### in
 
-• `Optional` **in**: ``"header"`` \| ``"query"`` \| ``"cookie"``
+• `Optional` **in**: ``"query"`` \| ``"header"`` \| ``"cookie"``
 
 apiKey: in a header, the query or a cookie, under this name
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L34)
+[packages/bpmn-server/src/connectors/Connectors.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L40)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L35)
+[packages/bpmn-server/src/connectors/Connectors.ts:41](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L41)
 
 ___
 
@@ -59,7 +59,7 @@ the securitySchemes entry it came from, when it did
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L37)
+[packages/bpmn-server/src/connectors/Connectors.ts:43](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L43)
 
 ___
 
@@ -71,7 +71,7 @@ the key, encrypted (never returned)
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L39)
+[packages/bpmn-server/src/connectors/Connectors.ts:45](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L45)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L40)
+[packages/bpmn-server/src/connectors/Connectors.ts:46](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L46)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L41)
+[packages/bpmn-server/src/connectors/Connectors.ts:47](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L47)
 
 ___
 
@@ -101,4 +101,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L42)
+[packages/bpmn-server/src/connectors/Connectors.ts:48](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L48)

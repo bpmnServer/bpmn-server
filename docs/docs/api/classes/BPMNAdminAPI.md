@@ -46,7 +46,7 @@ Runtime integrations should receive BPMNAPI so they cannot mutate models.
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L55)
+[packages/bpmn-server/src/API/API.ts:57](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L57)
 
 ## Properties
 
@@ -60,7 +60,7 @@ Runtime integrations should receive BPMNAPI so they cannot mutate models.
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L34)
+[packages/bpmn-server/src/API/API.ts:36](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L36)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L35)
+[packages/bpmn-server/src/API/API.ts:37](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L37)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L36)
+[packages/bpmn-server/src/API/API.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L38)
 
 ___
 
@@ -104,4 +104,4 @@ Read-only: changing models needs BPMNAdminAPI.
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L53)
+[packages/bpmn-server/src/API/API.ts:55](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L55)

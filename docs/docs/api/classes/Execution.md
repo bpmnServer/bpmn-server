@@ -41,6 +41,7 @@ is accessed two ways:
 - [svg](Execution.md#svg)
 - [action](Execution.md#action)
 - [uids](Execution.md#uids)
+- [statusBefore](Execution.md#statusbefore)
 - [server](Execution.md#server)
 
 ### Accessors
@@ -73,6 +74,7 @@ is accessed two ways:
 - [stop](Execution.md#stop)
 - [execute](Execution.md#execute)
 - [assign](Execution.md#assign)
+- [assignItem](Execution.md#assignitem)
 - [signalItem](Execution.md#signalitem)
 - [signalItem2](Execution.md#signalitem2)
 - [retry](Execution.md#retry)
@@ -95,6 +97,9 @@ is accessed two ways:
 - [doExecutionEvent](Execution.md#doexecutionevent)
 - [doItemEvent](Execution.md#doitemevent)
 - [dispatch](Execution.md#dispatch)
+- [operationBegins](Execution.md#operationbegins)
+- [logOutcome](Execution.md#logoutcome)
+- [receivedRow](Execution.md#receivedrow)
 - [record](Execution.md#record)
 - [log](Execution.md#log)
 - [logS](Execution.md#logs)
@@ -131,7 +136,7 @@ is accessed two ways:
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L62)
+[packages/bpmn-server/src/engine/Execution.ts:72](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L72)
 
 ## Properties
 
@@ -145,7 +150,7 @@ is accessed two ways:
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L23)
+[packages/bpmn-server/src/engine/Execution.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L33)
 
 ___
 
@@ -159,7 +164,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L24)
+[packages/bpmn-server/src/engine/Execution.ts:34](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L34)
 
 ___
 
@@ -173,7 +178,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L25)
+[packages/bpmn-server/src/engine/Execution.ts:35](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L35)
 
 ___
 
@@ -187,7 +192,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L26)
+[packages/bpmn-server/src/engine/Execution.ts:36](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L36)
 
 ___
 
@@ -201,7 +206,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L27)
+[packages/bpmn-server/src/engine/Execution.ts:37](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L37)
 
 ___
 
@@ -215,7 +220,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L28)
+[packages/bpmn-server/src/engine/Execution.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L38)
 
 ___
 
@@ -229,7 +234,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L29)
+[packages/bpmn-server/src/engine/Execution.ts:39](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L39)
 
 ___
 
@@ -243,7 +248,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L30)
+[packages/bpmn-server/src/engine/Execution.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L40)
 
 ___
 
@@ -257,7 +262,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L31)
+[packages/bpmn-server/src/engine/Execution.ts:41](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L41)
 
 ___
 
@@ -271,7 +276,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L32)
+[packages/bpmn-server/src/engine/Execution.ts:42](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L42)
 
 ___
 
@@ -281,7 +286,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L33)
+[packages/bpmn-server/src/engine/Execution.ts:43](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L43)
 
 ___
 
@@ -295,7 +300,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L34)
+[packages/bpmn-server/src/engine/Execution.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L44)
 
 ___
 
@@ -309,7 +314,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L35)
+[packages/bpmn-server/src/engine/Execution.ts:45](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L45)
 
 ___
 
@@ -325,7 +330,7 @@ What the call running it does: `start`, `signal`, `assign`, `cancel`, …
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L36)
+[packages/bpmn-server/src/engine/Execution.ts:46](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L46)
 
 ___
 
@@ -335,7 +340,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L37)
+[packages/bpmn-server/src/engine/Execution.ts:47](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L47)
 
 ___
 
@@ -349,7 +354,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L44)
+[packages/bpmn-server/src/engine/Execution.ts:54](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L54)
 
 ___
 
@@ -363,7 +368,19 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:748](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L748)
+[packages/bpmn-server/src/engine/Execution.ts:788](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L788)
+
+___
+
+### statusBefore
+
+• `Private` **statusBefore**: `Map`\<`string`, `string`\>
+
+The items' status when an operation began: what it changed is its outcome (logOutcome).
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Execution.ts:829](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L829)
 
 ___
 
@@ -381,7 +398,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L10)
+[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L10)
 
 ## Accessors
 
@@ -399,7 +416,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L39)
+[packages/bpmn-server/src/engine/Execution.ts:49](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L49)
 
 ___
 
@@ -417,7 +434,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L40)
+[packages/bpmn-server/src/engine/Execution.ts:50](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L50)
 
 ___
 
@@ -435,7 +452,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L41)
+[packages/bpmn-server/src/engine/Execution.ts:51](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L51)
 
 ___
 
@@ -449,7 +466,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L42)
+[packages/bpmn-server/src/engine/Execution.ts:52](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L52)
 
 ___
 
@@ -471,7 +488,7 @@ ServerComponent.listener
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:52](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L52)
+[packages/bpmn-server/src/engine/Execution.ts:62](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L62)
 
 ___
 
@@ -487,7 +504,7 @@ The instance keeps its log lines only when they are saved (its flags.saveLogs, e
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:780](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L780)
+[packages/bpmn-server/src/engine/Execution.ts:825](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L825)
 
 ___
 
@@ -509,7 +526,7 @@ ServerComponent.configuration
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L15)
+[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -531,7 +548,7 @@ ServerComponent.logger
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L16)
+[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -553,7 +570,7 @@ ServerComponent.cron
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L17)
+[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L17)
 
 ___
 
@@ -575,7 +592,7 @@ ServerComponent.cache
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L18)
+[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -597,7 +614,7 @@ ServerComponent.appDelegate
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L19)
+[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -619,7 +636,7 @@ ServerComponent.engine
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L20)
+[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -641,7 +658,7 @@ ServerComponent.dataStore
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L21)
+[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L21)
 
 ___
 
@@ -661,7 +678,7 @@ ServerComponent.lockManager
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L23)
+[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L23)
 
 ___
 
@@ -683,7 +700,7 @@ ServerComponent.definitions
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L24)
+[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L24)
 
 ___
 
@@ -705,7 +722,7 @@ ServerComponent.scriptHandler
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L26)
+[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L26)
 
 ## Methods
 
@@ -719,7 +736,7 @@ ServerComponent.scriptHandler
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L46)
+[packages/bpmn-server/src/engine/Execution.ts:56](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L56)
 
 ___
 
@@ -743,7 +760,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:76](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L76)
+[packages/bpmn-server/src/engine/Execution.ts:86](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L86)
 
 ___
 
@@ -767,7 +784,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:79](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L79)
+[packages/bpmn-server/src/engine/Execution.ts:89](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L89)
 
 ___
 
@@ -781,7 +798,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:82](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L82)
+[packages/bpmn-server/src/engine/Execution.ts:92](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L92)
 
 ___
 
@@ -799,7 +816,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:95](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L95)
+[packages/bpmn-server/src/engine/Execution.ts:105](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L105)
 
 ___
 
@@ -819,7 +836,7 @@ causes the execution to stop from running any further
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:109](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L109)
+[packages/bpmn-server/src/engine/Execution.ts:119](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L119)
 
 ___
 
@@ -839,7 +856,7 @@ causes the execution to stop from running any further
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:119](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L119)
+[packages/bpmn-server/src/engine/Execution.ts:129](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L129)
 
 ___
 
@@ -866,7 +883,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:126](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L126)
+[packages/bpmn-server/src/engine/Execution.ts:136](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L136)
 
 ___
 
@@ -890,7 +907,36 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:198](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L198)
+[packages/bpmn-server/src/engine/Execution.ts:210](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L210)
+
+___
+
+### assignItem
+
+▸ **assignItem**(`item`, `changes`, `why?`, `by?`): `Promise`\<`void`\>
+
+Who works on a task, changed: the one step for every change, a person's (assign, a claim) or an add-on's as the
+task starts (an assignment policy). Sets the fields given, records what decided it (`item.assignment`, when `why`
+is given), and fires `assign`, its details: `before` (who worked on it), `assignment` (the fields given), `why`,
+`previous` (what had decided it), `changed` (whether who works on it changed), `by` (the person; none for an
+add-on's as the task starts).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `changes` | `Record`\<`string`, `any`\> |
+| `why?` | `Record`\<`string`, `any`\> |
+| `by?` | `string` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Execution.ts:248](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L248)
 
 ___
 
@@ -922,7 +968,7 @@ invoke scenarios:
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:235](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L235)
+[packages/bpmn-server/src/engine/Execution.ts:267](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L267)
 
 ___
 
@@ -942,7 +988,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:299](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L299)
+[packages/bpmn-server/src/engine/Execution.ts:333](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L333)
 
 ___
 
@@ -965,7 +1011,7 @@ Runs a failed item's work again (an item whose status is `error`), and on from i
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:348](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L348)
+[packages/bpmn-server/src/engine/Execution.ts:382](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L382)
 
 ___
 
@@ -988,7 +1034,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:370](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L370)
+[packages/bpmn-server/src/engine/Execution.ts:404](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L404)
 
 ___
 
@@ -1015,7 +1061,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:395](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L395)
+[packages/bpmn-server/src/engine/Execution.ts:429](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L429)
 
 ___
 
@@ -1042,7 +1088,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:487](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L487)
+[packages/bpmn-server/src/engine/Execution.ts:521](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L521)
 
 ___
 
@@ -1060,7 +1106,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:520](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L520)
+[packages/bpmn-server/src/engine/Execution.ts:554](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L554)
 
 ___
 
@@ -1078,7 +1124,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:536](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L536)
+[packages/bpmn-server/src/engine/Execution.ts:571](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L571)
 
 ___
 
@@ -1096,7 +1142,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:547](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L547)
+[packages/bpmn-server/src/engine/Execution.ts:587](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L587)
 
 ___
 
@@ -1114,7 +1160,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:557](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L557)
+[packages/bpmn-server/src/engine/Execution.ts:597](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L597)
 
 ___
 
@@ -1135,7 +1181,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:581](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L581)
+[packages/bpmn-server/src/engine/Execution.ts:621](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L621)
 
 ___
 
@@ -1159,7 +1205,7 @@ re-enstate the execution from db
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:601](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L601)
+[packages/bpmn-server/src/engine/Execution.ts:641](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L641)
 
 ___
 
@@ -1177,7 +1223,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:686](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L686)
+[packages/bpmn-server/src/engine/Execution.ts:726](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L726)
 
 ___
 
@@ -1195,7 +1241,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:693](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L693)
+[packages/bpmn-server/src/engine/Execution.ts:733](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L733)
 
 ___
 
@@ -1216,7 +1262,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:698](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L698)
+[packages/bpmn-server/src/engine/Execution.ts:738](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L738)
 
 ___
 
@@ -1234,7 +1280,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:716](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L716)
+[packages/bpmn-server/src/engine/Execution.ts:756](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L756)
 
 ___
 
@@ -1254,7 +1300,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:740](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L740)
+[packages/bpmn-server/src/engine/Execution.ts:780](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L780)
 
 ___
 
@@ -1280,7 +1326,7 @@ The next id of a scope; items are numbered from 1 (their seq), tokens and loops 
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:751](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L751)
+[packages/bpmn-server/src/engine/Execution.ts:791](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L791)
 
 ___
 
@@ -1298,7 +1344,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:758](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L758)
+[packages/bpmn-server/src/engine/Execution.ts:798](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L798)
 
 ___
 
@@ -1324,7 +1370,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:763](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L763)
+[packages/bpmn-server/src/engine/Execution.ts:803](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L803)
 
 ___
 
@@ -1350,15 +1396,16 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:768](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L768)
+[packages/bpmn-server/src/engine/Execution.ts:808](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L808)
 
 ___
 
 ### dispatch
 
-▸ **dispatch**(`event`, `eventDetails`): `Promise`\<`any`\>
+▸ **dispatch**(`event`, `eventDetails`, `item`): `Promise`\<`any`\>
 
-The server's listeners, then its lifecycle subscribers (server/Listener.ts); a plain emitter only emits.
+The server's listeners, then its lifecycle subscribers (server/Listener.ts); a plain emitter only emits. They are
+handed the event's context (docs/design/context-object.md): its item's, fixed for it, or the process's.
 
 #### Parameters
 
@@ -1366,6 +1413,7 @@ The server's listeners, then its lifecycle subscribers (server/Listener.ts); a p
 | :------ | :------ |
 | `event` | `any` |
 | `eventDetails` | `any` |
+| `item` | `any` |
 
 #### Returns
 
@@ -1373,7 +1421,72 @@ The server's listeners, then its lifecycle subscribers (server/Listener.ts); a p
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:773](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L773)
+[packages/bpmn-server/src/engine/Execution.ts:816](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L816)
+
+___
+
+### operationBegins
+
+▸ **operationBegins**(`entry`): `void`
+
+Logs the entry that opens an operation ({"type":"execution",...}), and notes the items' status as it begins.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `entry` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Execution.ts:831](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L831)
+
+___
+
+### logOutcome
+
+▸ **logOutcome**(): `void`
+
+The outcome of what ran since the operation began, or since the last save: the instance's status, the items whose
+status changed, and the items that wait. {"type":"outcome",...}: the Rationale and the Test tab read it as it is.
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Execution.ts:839](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L839)
+
+___
+
+### receivedRow
+
+▸ **receivedRow**(`options`, `elementId`, `elementName`, `seq`, `verb`): `void`
+
+The receiver's row of a thrown message or signal (options.thrown: { kind, name, key, from }): from whom it came.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `any` |
+| `elementId` | `string` |
+| `elementName` | `string` |
+| `seq` | `number` |
+| `verb` | `string` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Execution.ts:848](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L848)
 
 ___
 
@@ -1393,7 +1506,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:783](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L783)
+[packages/bpmn-server/src/engine/Execution.ts:856](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L856)
 
 ___
 
@@ -1417,7 +1530,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:786](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L786)
+[packages/bpmn-server/src/engine/Execution.ts:859](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L859)
 
 ___
 
@@ -1441,7 +1554,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:789](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L789)
+[packages/bpmn-server/src/engine/Execution.ts:862](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L862)
 
 ___
 
@@ -1465,7 +1578,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:792](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L792)
+[packages/bpmn-server/src/engine/Execution.ts:865](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L865)
 
 ___
 
@@ -1489,7 +1602,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:795](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L795)
+[packages/bpmn-server/src/engine/Execution.ts:868](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L868)
 
 ___
 
@@ -1516,7 +1629,7 @@ Why the engine took a path: kept in the instance's log, as a 'decision' entry. A
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:802](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L802)
+[packages/bpmn-server/src/engine/Execution.ts:875](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L875)
 
 ___
 
@@ -1540,7 +1653,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:810](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L810)
+[packages/bpmn-server/src/engine/Execution.ts:883](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L883)
 
 ___
 
@@ -1567,7 +1680,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:815](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L815)
+[packages/bpmn-server/src/engine/Execution.ts:888](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L888)
 
 ___
 
@@ -1591,7 +1704,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:820](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L820)
+[packages/bpmn-server/src/engine/Execution.ts:893](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L893)
 
 ___
 
@@ -1609,4 +1722,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Execution.ts:825](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Execution.ts#L825)
+[packages/bpmn-server/src/engine/Execution.ts:898](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Execution.ts#L898)

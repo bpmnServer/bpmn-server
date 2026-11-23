@@ -49,7 +49,7 @@ file first, as it was (with its time). Purging removes the model's history folde
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L32)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L32)
 
 ## Properties
 
@@ -61,7 +61,7 @@ Saves of a model's history take turns in this process, by its folder: two saves 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L30)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:30](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L30)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L32)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L32)
 
 ## Methods
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L34)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:34](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L34)
 
 ___
 
@@ -113,7 +113,7 @@ The version files: [{ version, savedBy, file }], newest first.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L43)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:43](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L43)
 
 ___
 
@@ -135,7 +135,7 @@ The model's versions, newest first.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L58)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:58](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L58)
 
 ___
 
@@ -158,7 +158,7 @@ A version's model, or null when there is no such version.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L72)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:72](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L72)
 
 ___
 
@@ -187,7 +187,7 @@ or null.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:90](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L90)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:90](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L90)
 
 ___
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:104](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L104)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:104](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L104)
 
 ___
 
@@ -240,7 +240,7 @@ Writes a version's file; null when the number is taken (by a save in another pro
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:124](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L124)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:124](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L124)
 
 ___
 
@@ -264,7 +264,7 @@ delete at once do not cross. The other versions keep their numbers.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:147](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L147)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:147](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L147)
 
 ___
 
@@ -286,7 +286,7 @@ Removes the model's history; returns how many versions it had.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:167](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L167)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:167](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L167)
 
 ___
 
@@ -309,4 +309,4 @@ The history follows the model to its new name.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:174](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L174)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:174](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L174)

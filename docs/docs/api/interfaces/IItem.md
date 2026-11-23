@@ -41,6 +41,7 @@
 - [assignee](IItem.md#assignee)
 - [candidateGroups](IItem.md#candidategroups)
 - [candidateUsers](IItem.md#candidateusers)
+- [assignment](IItem.md#assignment)
 - [dueDate](IItem.md#duedate)
 - [followUpDate](IItem.md#followupdate)
 - [priority](IItem.md#priority)
@@ -63,7 +64,7 @@ a repeating timer: which firing this is, from 0, and how many there are to be
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:5](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L5)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:5](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L5)
 
 ___
 
@@ -77,7 +78,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:6](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L6)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:6](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L6)
 
 ___
 
@@ -91,7 +92,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:7](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L7)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:7](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L7)
 
 ___
 
@@ -105,7 +106,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:8](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L8)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:8](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L8)
 
 ___
 
@@ -119,7 +120,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:9](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L9)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:9](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L9)
 
 ___
 
@@ -133,7 +134,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L10)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:10](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L10)
 
 ___
 
@@ -147,7 +148,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L11)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:11](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L11)
 
 ___
 
@@ -161,7 +162,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:12](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L12)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:12](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L12)
 
 ___
 
@@ -175,7 +176,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L13)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:13](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L13)
 
 ___
 
@@ -189,7 +190,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L14)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:14](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L14)
 
 ___
 
@@ -203,7 +204,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L15)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:15](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L15)
 
 ___
 
@@ -217,7 +218,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L16)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:16](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L16)
 
 ___
 
@@ -231,7 +232,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L17)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:17](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L17)
 
 ___
 
@@ -245,7 +246,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L18)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:18](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L18)
 
 ___
 
@@ -259,7 +260,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L19)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L19)
 
 ___
 
@@ -273,7 +274,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L20)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L20)
 
 ___
 
@@ -287,7 +288,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L21)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:21](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L21)
 
 ___
 
@@ -301,7 +302,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L22)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:22](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L22)
 
 ___
 
@@ -315,7 +316,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L23)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:23](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L23)
 
 ___
 
@@ -329,7 +330,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L24)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:24](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L24)
 
 ___
 
@@ -343,7 +344,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L25)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:25](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L25)
 
 ___
 
@@ -357,7 +358,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L26)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:26](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L26)
 
 ___
 
@@ -371,7 +372,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L27)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:27](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L27)
 
 ___
 
@@ -385,7 +386,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L28)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:28](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L28)
 
 ___
 
@@ -399,7 +400,31 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L29)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:29](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L29)
+
+___
+
+### assignment
+
+• `Optional` **assignment**: `Object`
+
+what decided the assignment: the task's policy and its rule, or who reassigned it (addons/assignment/AssignmentPolicy.ts)
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `policy?` | `string` |
+| `rule?` | `number` |
+| `userName?` | `string` |
+
+#### Inherited from
+
+[IItemData](IItemData.md).[assignment](IItemData.md#assignment)
+
+#### Defined in
+
+[packages/bpmn-server/src/interfaces/DataObjects.ts:31](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L31)
 
 ___
 
@@ -413,7 +438,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L30)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L32)
 
 ___
 
@@ -427,7 +452,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L31)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L33)
 
 ___
 
@@ -441,7 +466,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L32)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:34](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L34)
 
 ___
 
@@ -451,7 +476,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/engine.ts:176](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/engine.ts#L176)
+[packages/bpmn-server/src/interfaces/engine.ts:176](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/engine.ts#L176)
 
 ___
 
@@ -461,7 +486,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/engine.ts:177](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/engine.ts#L177)
+[packages/bpmn-server/src/interfaces/engine.ts:177](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/engine.ts#L177)
 
 ___
 
@@ -471,7 +496,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/engine.ts:178](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/engine.ts#L178)
+[packages/bpmn-server/src/interfaces/engine.ts:178](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/engine.ts#L178)
 
 ___
 
@@ -481,4 +506,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/engine.ts:179](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/engine.ts#L179)
+[packages/bpmn-server/src/interfaces/engine.ts:179](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/engine.ts#L179)

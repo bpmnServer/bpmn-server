@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L26)
+[packages/bpmn-server/src/elements/verifyModel.ts:34](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L34)
 
 ___
 
@@ -33,7 +33,7 @@ stable identifier of the check, e.g. 'no-start-event'
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L28)
+[packages/bpmn-server/src/elements/verifyModel.ts:36](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L36)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L29)
+[packages/bpmn-server/src/elements/verifyModel.ts:37](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L37)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L30)
+[packages/bpmn-server/src/elements/verifyModel.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L38)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L31)
+[packages/bpmn-server/src/elements/verifyModel.ts:39](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L39)
 
 ___
 
@@ -73,4 +73,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L32)
+[packages/bpmn-server/src/elements/verifyModel.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L40)

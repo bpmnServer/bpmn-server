@@ -30,6 +30,8 @@ Process-wide error handling belongs to the host.
 - [documentStore](BPMNServer.md#documentstore)
 - [locker](BPMNServer.md#locker)
 - [connectors](BPMNServer.md#connectors)
+- [addOns](BPMNServer.md#addons)
+- [registrations](BPMNServer.md#registrations)
 - [testStubs](BPMNServer.md#teststubs)
 - [error](BPMNServer.md#error)
 - [ready](BPMNServer.md#ready)
@@ -44,6 +46,7 @@ Process-wide error handling belongs to the host.
 - [launch](BPMNServer.md#launch)
 - [create](BPMNServer.md#create)
 - [start](BPMNServer.md#start)
+- [checkAppContract](BPMNServer.md#checkappcontract)
 - [onLifecycle](BPMNServer.md#onlifecycle)
 - [shutdown](BPMNServer.md#shutdown)
 - [stop](BPMNServer.md#stop)
@@ -74,7 +77,7 @@ Server Constructor: builds the server's components and starts it; `ready` says w
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:107](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L107)
+[packages/bpmn-server/src/server/BPMNServer.ts:114](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L114)
 
 ## Properties
 
@@ -86,7 +89,7 @@ Legacy static access retained for existing consumers; new integrations use insta
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L49)
+[packages/bpmn-server/src/server/BPMNServer.ts:52](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L52)
 
 ___
 
@@ -100,7 +103,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:52](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L52)
+[packages/bpmn-server/src/server/BPMNServer.ts:55](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L55)
 
 ___
 
@@ -114,7 +117,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L53)
+[packages/bpmn-server/src/server/BPMNServer.ts:56](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L56)
 
 ___
 
@@ -128,7 +131,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L54)
+[packages/bpmn-server/src/server/BPMNServer.ts:57](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L57)
 
 ___
 
@@ -142,7 +145,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L55)
+[packages/bpmn-server/src/server/BPMNServer.ts:58](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L58)
 
 ___
 
@@ -156,7 +159,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L56)
+[packages/bpmn-server/src/server/BPMNServer.ts:59](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L59)
 
 ___
 
@@ -170,7 +173,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L57)
+[packages/bpmn-server/src/server/BPMNServer.ts:60](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L60)
 
 ___
 
@@ -184,7 +187,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L58)
+[packages/bpmn-server/src/server/BPMNServer.ts:61](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L61)
 
 ___
 
@@ -198,7 +201,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L59)
+[packages/bpmn-server/src/server/BPMNServer.ts:62](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L62)
 
 ___
 
@@ -212,7 +215,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L60)
+[packages/bpmn-server/src/server/BPMNServer.ts:63](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L63)
 
 ___
 
@@ -226,7 +229,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L61)
+[packages/bpmn-server/src/server/BPMNServer.ts:64](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L64)
 
 ___
 
@@ -242,7 +245,7 @@ The configuration's storage adapter, shared by the data stores (absent: each ope
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L63)
+[packages/bpmn-server/src/server/BPMNServer.ts:66](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L66)
 
 ___
 
@@ -258,7 +261,7 @@ The lock port the engine uses.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L65)
+[packages/bpmn-server/src/server/BPMNServer.ts:68](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L68)
 
 ___
 
@@ -274,7 +277,35 @@ The connectors an administrator added: REST APIs service tasks call (docs/docs/c
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L67)
+[packages/bpmn-server/src/server/BPMNServer.ts:70](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L70)
+
+___
+
+### addOns
+
+• **addOns**: [`IAddOn`](../interfaces/IAddOn.md)[] = `[]`
+
+What is built on the engine and plugs into its hooks (engine/AddOns.ts): the configuration's.
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[addOns](../interfaces/IBPMNServer.md#addons)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:72](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L72)
+
+___
+
+### registrations
+
+• **registrations**: [`Registrations`](Registrations.md)
+
+What the add-ons registered where the engine has no event: model checks, decision lookups (engine/AddOns.ts).
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:74](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L74)
 
 ___
 
@@ -290,7 +321,7 @@ What the tests running in here replace: no call of the engine reaches them.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L69)
+[packages/bpmn-server/src/server/BPMNServer.ts:76](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L76)
 
 ___
 
@@ -300,7 +331,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:70](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L70)
+[packages/bpmn-server/src/server/BPMNServer.ts:77](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L77)
 
 ___
 
@@ -312,7 +343,7 @@ Settles when the server has started: the application delegate's start-up, then (
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L72)
+[packages/bpmn-server/src/server/BPMNServer.ts:79](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L79)
 
 ___
 
@@ -322,7 +353,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:73](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L73)
+[packages/bpmn-server/src/server/BPMNServer.ts:80](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L80)
 
 ## Accessors
 
@@ -340,7 +371,7 @@ Prefer server.engine.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:189](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L189)
+[packages/bpmn-server/src/server/BPMNServer.ts:221](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L221)
 
 ## Methods
 
@@ -373,7 +404,7 @@ data, not running executions. The delegate and services are inside the engine, a
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:85](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L85)
+[packages/bpmn-server/src/server/BPMNServer.ts:92](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L92)
 
 ___
 
@@ -395,7 +426,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:94](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L94)
+[packages/bpmn-server/src/server/BPMNServer.ts:101](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L101)
 
 ___
 
@@ -415,7 +446,25 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:136](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L136)
+[packages/bpmn-server/src/server/BPMNServer.ts:147](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L147)
+
+___
+
+### checkAppContract
+
+▸ **checkAppContract**(): `Promise`\<`void`\>
+
+The application's contract (app-contract.json, docs/design/app-contract.md §5) against its delegate's code, at
+start: its problems, a declared function or variable the code lacks (an error), one the code has that it doesn't
+declare (a warning). Said in the log; nothing stops.
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:158](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L158)
 
 ___
 
@@ -443,7 +492,7 @@ Subscribe without coupling the engine to application implementations.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:142](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L142)
+[packages/bpmn-server/src/server/BPMNServer.ts:174](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L174)
 
 ___
 
@@ -461,7 +510,7 @@ stale age), its cache, listeners and subscriptions cleared, and its connections 
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:150](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L150)
+[packages/bpmn-server/src/server/BPMNServer.ts:182](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L182)
 
 ___
 
@@ -475,7 +524,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:154](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L154)
+[packages/bpmn-server/src/server/BPMNServer.ts:186](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L186)
 
 ___
 
@@ -495,7 +544,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:169](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L169)
+[packages/bpmn-server/src/server/BPMNServer.ts:201](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L201)
 
 ___
 
@@ -523,7 +572,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:173](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L173)
+[packages/bpmn-server/src/server/BPMNServer.ts:205](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L205)
 
 ___
 
@@ -541,7 +590,7 @@ Prefer the instance returned by the constructor or `create`.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:184](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L184)
+[packages/bpmn-server/src/server/BPMNServer.ts:216](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L216)
 
 ___
 
@@ -555,4 +604,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/BPMNServer.ts:190](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L190)
+[packages/bpmn-server/src/server/BPMNServer.ts:222](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/BPMNServer.ts#L222)

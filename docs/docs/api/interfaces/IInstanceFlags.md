@@ -23,7 +23,7 @@ Services a test stubbed for this instance: they stay uncalled if it outlives the
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L58)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:60](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L60)
 
 ___
 
@@ -35,7 +35,7 @@ a save point at each save, so engine.restart can go back to any of its items (da
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L60)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:62](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L62)
 
 ___
 
@@ -47,7 +47,7 @@ its log lines kept and saved (dataStore.saveLogs)
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L62)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:64](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L64)
 
 ___
 
@@ -59,4 +59,4 @@ the one element it runs: started at it (engine.start's startNodeId), it ends whe
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/DataObjects.ts:64](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/DataObjects.ts#L64)
+[packages/bpmn-server/src/interfaces/DataObjects.ts:66](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/DataObjects.ts#L66)

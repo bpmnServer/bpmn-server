@@ -39,7 +39,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 - [Architecture](architecture.md): OmniWorkflow has three layers: a host that people and other systems talk to, an engine that runs processes, and a core of model and data handling that both of them use.
 - [How a workflow runs](execution.md): Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
-- [Workflow data](data.md): bpmn-server relies on a Database to store workflow information.
+- [Workflow data](data.md): A case's state lives in the store, which is why a process can run for days or months and across several servers.
 - [Finding instances](data_find.md): server.dataStore.find reads a page of instances from the store: a filter chooses them, a sort orders them, and a cursor walks through them a page at a time.
 - [Data objects](data-objects.md): A data object in the diagram stands for data the process works on: a client, an order, a policy.
 - [Who may do what](security.md): In general Application Security deals with the following topics:
@@ -86,7 +86,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Custom delegates](delegates.md): The app delegate is your application's code that the engine calls: the services service tasks call, and hooks on what the engine does.
 - [Custom persistence](persistence.md): Where instances, models and everything else are kept, and how to change it.
 - [Invoking workflows](invokation.md): Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least: - Selection of Workflows to Start - Show outstanding Tasks…
-- [The engine's API](api-summary.md): The TypeDoc listing is generated from the current source (npm run _docs:generate:api in docs/): every class and interface, with its signatures.
+- [The engine's API](api-summary.md): What an application calls when it holds the engine itself.
 - **bpmn-client**
   - [Installing it](bpmn-client.md): A small Node.js package for calling a running OmniWorkflow server from another application: it starts processes, lists and completes tasks, and reads cases, each call acting as…
   - [The client API](client-api.md): bpmn-client is a small Node.js package for calling a running server from another application.

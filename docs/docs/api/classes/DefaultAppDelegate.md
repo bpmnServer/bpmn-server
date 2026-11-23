@@ -22,6 +22,8 @@ Application Delegate Object to respond to various events and services:
 ### Properties
 
 - [server](DefaultAppDelegate.md#server)
+- [appVarsClass](DefaultAppDelegate.md#appvarsclass)
+- [appServicesClass](DefaultAppDelegate.md#appservicesclass)
 
 ### Accessors
 
@@ -29,6 +31,8 @@ Application Delegate Object to respond to various events and services:
 
 ### Methods
 
+- [getAppVars](DefaultAppDelegate.md#getappvars)
+- [describe](DefaultAppDelegate.md#describe)
 - [getServicesProvider](DefaultAppDelegate.md#getservicesprovider)
 - [startUp](DefaultAppDelegate.md#startup)
 - [sendEmail](DefaultAppDelegate.md#sendemail)
@@ -58,7 +62,7 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L10)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L20)
 
 ## Properties
 
@@ -68,7 +72,60 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:7](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L7)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:10](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L10)
+
+___
+
+### appVarsClass
+
+• `Optional` **appVarsClass**: (`context`: `any`) => `any`
+
+The application's variables (docs/design/app-contract.md §2.1): a class whose methods are the names an expression
+reads as appVars.<name>, made for each evaluation from its context. None: appVars is empty.
+
+#### Type declaration
+
+• **new appVarsClass**(`context`): `any`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `context` | `any` |
+
+##### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:15](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L15)
+
+___
+
+### appServicesClass
+
+• `Optional` **appServicesClass**: (`context`: `any`) => `any`
+
+The application's functions, as a class (appServices.<method>): its method names, for checks without a context.
+
+#### Type declaration
+
+• **new appServicesClass**(`context`): `any`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `context` | `any` |
+
+##### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:17](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L17)
 
 ## Accessors
 
@@ -86,15 +143,55 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L30)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:55](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L55)
 
 ## Methods
+
+### getAppVars
+
+▸ **getAppVars**(`context`): `any`
+
+The variables for one evaluation (appVars.<name>): the variables class, made from its context.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `context` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:29](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L29)
+
+___
+
+### describe
+
+▸ **describe**(): [`IAppContract`](../interfaces/IAppContract.md)
+
+The application's contract, its declarative part (docs/design/app-contract.md): its app-contract.json (the
+configuration's appContract, else the working folder's), or null when it has none. An application may build it
+in code instead.
+
+#### Returns
+
+[`IAppContract`](../interfaces/IAppContract.md)
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L38)
+
+___
 
 ### getServicesProvider
 
 ▸ **getServicesProvider**(`context`): `Promise`\<[`IServiceProvider`](../interfaces/IServiceProvider.md)\>
 
-Get the service task handlers, default to `this`, so you can add handlers on this class directly.
+`context`: the call's (docs/design/context-object.md), added in 3.7.5; the execution, as before, first.
 
 #### Parameters
 
@@ -112,7 +209,7 @@ Get the service task handlers, default to `this`, so you can add handlers on thi
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L18)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:43](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L43)
 
 ___
 
@@ -136,7 +233,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L22)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:47](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L47)
 
 ___
 
@@ -162,13 +259,15 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L26)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:51](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L51)
 
 ___
 
 ### executionStarted
 
 ▸ **executionStarted**(`execution`): `Promise`\<`void`\>
+
+`context`: the process's (docs/design/context-object.md), added in 3.7.5.
 
 #### Parameters
 
@@ -186,7 +285,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L34)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:59](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L59)
 
 ___
 
@@ -207,7 +306,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L38)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:63](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L63)
 
 ___
 
@@ -236,7 +335,7 @@ is called when a event throws a message
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L50)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:75](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L75)
 
 ___
 
@@ -263,7 +362,7 @@ is called when an event throws a message that can not be answered by another pro
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:68](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L68)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:93](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L93)
 
 ___
 
@@ -288,7 +387,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:71](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L71)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:96](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L96)
 
 ___
 
@@ -315,7 +414,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:74](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L74)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:99](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L99)
 
 ___
 
@@ -343,4 +442,4 @@ is called only if the serviceTask has no implementation; otherwise the specified
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:86](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L86)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:113](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L113)

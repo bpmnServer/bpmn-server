@@ -46,7 +46,7 @@ MongoDB's settings, for code written against the MongoDB data store; engine code
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L26)
+[packages/bpmn-server/src/interfaces/datastore.ts:26](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L26)
 
 ___
 
@@ -60,7 +60,7 @@ The data store's storage adapter; engine code uses the operations below.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L28)
+[packages/bpmn-server/src/interfaces/datastore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L28)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L29)
+[packages/bpmn-server/src/interfaces/datastore.ts:29](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L29)
 
 ___
 
@@ -82,7 +82,7 @@ The data store's own lock adapter; the engine uses the server's (`server.locker`
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L31)
+[packages/bpmn-server/src/interfaces/datastore.ts:31](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L31)
 
 ## Methods
 
@@ -103,7 +103,7 @@ The data store's own lock adapter; the engine uses the server's (`server.locker`
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L32)
+[packages/bpmn-server/src/interfaces/datastore.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L32)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L33)
+[packages/bpmn-server/src/interfaces/datastore.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L33)
 
 ___
 
@@ -147,7 +147,7 @@ Replaces a saved instance's definition source (upgrading it to a newer model); t
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L35)
+[packages/bpmn-server/src/interfaces/datastore.ts:35](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L35)
 
 ___
 
@@ -170,7 +170,7 @@ Marks a saved instance with a tag of the caller's, which the engine's saves leav
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L37)
+[packages/bpmn-server/src/interfaces/datastore.ts:37](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L37)
 
 ___
 
@@ -186,7 +186,7 @@ Releases the store's connections.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L39)
+[packages/bpmn-server/src/interfaces/datastore.ts:39](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L39)
 
 ___
 
@@ -207,7 +207,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L40)
+[packages/bpmn-server/src/interfaces/datastore.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L40)
 
 ___
 
@@ -227,7 +227,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L44)
+[packages/bpmn-server/src/interfaces/datastore.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L44)
 
 ___
 
@@ -248,7 +248,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L45)
+[packages/bpmn-server/src/interfaces/datastore.ts:45](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L45)
 
 ___
 
@@ -269,19 +269,23 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L46)
+[packages/bpmn-server/src/interfaces/datastore.ts:46](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L46)
 
 ___
 
 ### findItems
 
-▸ **findItems**(`query`): `Promise`\<[`IItemData`](IItemData.md)[]\>
+▸ **findItems**(`query`, `options?`): `Promise`\<[`IItemData`](IItemData.md)[]\>
+
+`lean`: each item's instance read without its data, tokens and logs (`data` and `instanceData` absent): for lists.
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `options?` | `Object` |
+| `options.lean?` | `boolean` |
 
 #### Returns
 
@@ -289,7 +293,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:47](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L47)
+[packages/bpmn-server/src/interfaces/datastore.ts:48](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L48)
 
 ___
 
@@ -311,7 +315,7 @@ How many instances match `query`.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L49)
+[packages/bpmn-server/src/interfaces/datastore.ts:50](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L50)
 
 ___
 
@@ -327,7 +331,7 @@ Every document the data store keeps, by collection name: for a backup.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:51](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L51)
+[packages/bpmn-server/src/interfaces/datastore.ts:52](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L52)
 
 ___
 
@@ -347,7 +351,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:52](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L52)
+[packages/bpmn-server/src/interfaces/datastore.ts:53](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L53)
 
 ___
 
@@ -361,7 +365,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L53)
+[packages/bpmn-server/src/interfaces/datastore.ts:54](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L54)
 
 ___
 
@@ -381,7 +385,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L54)
+[packages/bpmn-server/src/interfaces/datastore.ts:55](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L55)
 
 ___
 
@@ -401,4 +405,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L55)
+[packages/bpmn-server/src/interfaces/datastore.ts:56](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L56)

@@ -1,40 +1,33 @@
-# Managing Data
+# Managing data
 
-## Introduction
+A case's state lives in the store, which is why a process can run for days or months and across several servers. This
+page is about the data a case carries, where it is kept, and how to find it again.
 
-`bpmn-server` relies on a Database to store workflow information.
-This makes it suitable for long-running workflows and multi-servers.
+## What is stored
 
-Developers can query on data using [Data Query](#data-query)
+| | Holds |
+|---|---|
+| `wf_instances` | The cases: their data, items, tokens and logs |
+| `wf_models` | The models, so cases can be found by what their models contain |
+| `wf_locks` | The locks running cases take, so two servers never run the same case at once |
 
-'bpmn-server' manages three collections in MongoDB:
+The same three exist whichever store is used, MongoDB, SQLite or memory: see
+[Custom persistence](persistence.md).
 
-<table> 
-<tr><td>wf_instances</td><td> stores workflow instances, including items, tokens, logs ,etc. </td></tr>
+## The data a case carries
 
-<tr><td>wf_models</td><td> stores workflow models, this is important for querying on events</td></tr>
+| | Lives | Is |
+|---|---|---|
+| `instance.data` | In the store, with the case | The case's own data: what forms wrote, what services returned, what scripts set |
+| `item.vars` | In the store, with the item | Values belonging to one step |
+| `item.input` | In memory, while the step runs | What was given to the step |
+| `item.output` | In memory, while the step runs | What the step produced, before it is written into the case |
 
-<tr><td>wf_locks</td><td> to achieve concurrency, running instances place a lock in this collection</td></tr>
-</table>
+All four are reachable from a process's scripts, expressions and listeners: see [Scripting](scripting.md).
 
+In code, `api.data` reads and writes cases and items, and `api.model` reads the models.
 
-
-[api.data object](api/interfaces/IAPIData.md) provides several methods to handle  workflow instances and items
-
-While [api.model object](api/interfaces/IAPIModel.md) provides methods to access workflow models
-
-In addition to saving bpmn specific properties, `bpmn-server` supports the following data elements:
-
-- Presistent Data
-  - instance.data 
-  - item.vars
-- In-Memory Data
-  - item.input
-  - item.output
-
-All of the above all available during process execution and event listeners.
-
-## Instance Object
+## What a case looks like
 
 
 The instance object is similar to: 
@@ -92,7 +85,7 @@ The instance object is similar to:
 }
 ```
 
-### instance.data Scope
+### Where instance.data is visible
 
 The entire execution will have one data scope object, shared among all nodes, except the following will have own item part of the data object
 
@@ -106,7 +99,7 @@ However, for SubProcess and Loop elements a seperate scope
 ![Image description](images/Data_scripts_services_model.PNG)
 ![Image description](images/Data_scripts_services.PNG)
 
-## Data Query
+## Finding cases and tasks
 
 The syntax follows MongoDB standards.
 
@@ -120,7 +113,7 @@ the query syntax must be
 The most flexible query: a filter on instances and their items, a sort, and pages walked by a cursor, reading only
 the fields asked for. A list of cases is built on it. See [Finding instances](data_find.md).
 
-### Item Query
+### Finding items
 
 | example                                                        | will retrieve                              |
 | -------------------------------------------------------------- | ------------------------------------------ |
@@ -171,7 +164,7 @@ A query on your own fields (`data.caseId`, a label) still reads every instance. 
 
 The in-memory and SQLite stores make only the unique indexes. They check each instance on every query, and are meant for tests and small installs.
 
-### Instance Query
+### Finding instances
 
 Instance Queries are similar to Items Query but return entire Instances with all the items
 
@@ -193,7 +186,7 @@ instances = await api.data.findInstances({ 'data.caseId': 3030 });
 For many instances, or a page at a time, use [`dataStore.find`](data_find.md) instead: it filters, sorts and pages.
 
 
-## Input-Output Data
+## Input and output
 
 Input and output is used in the following scenarios:
 
@@ -204,7 +197,7 @@ Input and output is used in the following scenarios:
 - Catch Message/Signal (output)
 - User Task (input)
 
-### Input/Output using Scripts
+### With scripts
 
 | variable        | description                                                         |
 | --------------- | ------------------------------------------------------------------- |
@@ -234,7 +227,7 @@ Input and output is used in the following scenarios:
 
 ```
 
-### Input/Output using Camunda Extension of Input/Output Parameter
+### With input and output parameters
 
 ```xml
     <bpmn2:serviceTask id="Task_0xh2iwa" name="service1" implementation="service1">

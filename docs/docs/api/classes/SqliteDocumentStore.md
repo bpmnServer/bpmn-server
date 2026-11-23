@@ -66,7 +66,7 @@ in WAL mode, so one writer at a time and readers never blocked.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:47](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L47)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:47](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L47)
 
 ## Properties
 
@@ -76,7 +76,7 @@ in WAL mode, so one writer at a time and readers never blocked.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L43)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:43](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L43)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L44)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L44)
 
 ___
 
@@ -98,7 +98,7 @@ the database file (made when missing), or `:memory:`
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:47](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L47)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:47](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L47)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:47](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L47)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:47](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L47)
 
 ## Methods
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L49)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:49](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L49)
 
 ___
 
@@ -144,7 +144,7 @@ The collection's table, made on first use.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L69)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:69](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L69)
 
 ___
 
@@ -172,7 +172,7 @@ Runs `fn` in a write transaction: all of it, or none.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:79](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L79)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:79](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L79)
 
 ___
 
@@ -201,7 +201,7 @@ numbers at a path of one or two parts; a value that is an array or an object (a 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:98](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L98)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:98](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L98)
 
 ___
 
@@ -224,7 +224,7 @@ The rows matching `query`, in insertion order, as documents.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:120](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L120)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:120](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L120)
 
 ___
 
@@ -245,15 +245,17 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:131](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L131)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:131](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L131)
 
 ___
 
 ### find
 
-▸ **find**(`database`, `collection`, `query`, `projection?`, `sort?`): `Promise`\<`any`[]\>
+▸ **find**(`database`, `collection`, `query`, `projection?`, `sort?`, `limit?`): `Promise`\<`any`[]\>
 
-Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's db name; ignored by single-database adapters).
+Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's
+db name; ignored by single-database adapters). `limit`: at most that many, the first after sorting; optional, so
+an adapter written before it may return more, and callers cut the answer to it themselves.
 
 #### Parameters
 
@@ -264,6 +266,7 @@ Documents of `collection` matching `query`, projected and sorted. `database` nam
 | `query` | [`StorageQuery`](../readme.md#storagequery) | `undefined` |
 | `projection` | `Record`\<`string`, `any`\> | `null` |
 | `sort` | `Record`\<`string`, ``-1`` \| ``1``\> | `null` |
+| `limit?` | `number` | `undefined` |
 
 #### Returns
 
@@ -275,7 +278,7 @@ Documents of `collection` matching `query`, projected and sorted. `database` nam
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:142](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L142)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:142](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L142)
 
 ___
 
@@ -303,7 +306,7 @@ How many documents of `collection` match `query`. Optional: without it, callers 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:147](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L147)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:147](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L147)
 
 ___
 
@@ -331,7 +334,7 @@ Inserts all of `documents`, or none: a unique-index conflict throws a [Duplicate
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:153](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L153)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:153](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L153)
 
 ___
 
@@ -362,7 +365,7 @@ Updates the first document matching `query` (`$set` fields, or replaces it); `{ 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:164](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L164)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:164](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L164)
 
 ___
 
@@ -390,7 +393,7 @@ Removes every document matching `query`; returns `{ deletedCount }`.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:181](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L181)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:181](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L181)
 
 ___
 
@@ -420,7 +423,7 @@ Declares an index; `{ unique: true }` makes [insert](../interfaces/IDocumentStor
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:193](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L193)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:193](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L193)
 
 ___
 
@@ -440,4 +443,4 @@ Releases connections. Idempotent.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:205](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L205)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:205](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L205)

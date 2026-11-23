@@ -94,7 +94,7 @@ lock port's stale age, so a timer whose firing failed is tried again then.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L11)
+[packages/bpmn-server/src/server/ServerComponent.ts:11](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L11)
 
 ## Properties
 
@@ -104,7 +104,7 @@ lock port's stale age, so a timer whose firing failed is tried again then.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L27)
+[packages/bpmn-server/src/server/Cron.ts:27](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L27)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L28)
+[packages/bpmn-server/src/server/Cron.ts:28](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L28)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L29)
+[packages/bpmn-server/src/server/Cron.ts:29](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L29)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L30)
+[packages/bpmn-server/src/server/Cron.ts:30](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L30)
 
 ___
 
@@ -155,7 +155,7 @@ Timers this server scheduled and fired: its own counters.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L32)
+[packages/bpmn-server/src/server/Cron.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L32)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L10)
+[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L10)
 
 ## Accessors
 
@@ -185,7 +185,7 @@ How many timers are scheduled now.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L59)
+[packages/bpmn-server/src/server/Cron.ts:59](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L59)
 
 ___
 
@@ -203,7 +203,7 @@ ServerComponent.configuration
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L15)
+[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -221,7 +221,7 @@ ServerComponent.logger
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L16)
+[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -239,7 +239,7 @@ ServerComponent.cron
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L17)
+[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L17)
 
 ___
 
@@ -257,7 +257,7 @@ ServerComponent.cache
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L18)
+[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -275,7 +275,7 @@ ServerComponent.appDelegate
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L19)
+[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -293,7 +293,7 @@ ServerComponent.engine
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L20)
+[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -311,7 +311,7 @@ ServerComponent.dataStore
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L21)
+[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L21)
 
 ___
 
@@ -331,7 +331,7 @@ ServerComponent.lockManager
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L23)
+[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L23)
 
 ___
 
@@ -349,7 +349,7 @@ ServerComponent.definitions
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L24)
+[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L24)
 
 ___
 
@@ -367,7 +367,7 @@ ServerComponent.listener
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L25)
+[packages/bpmn-server/src/server/ServerComponent.ts:25](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L25)
 
 ___
 
@@ -385,7 +385,7 @@ ServerComponent.scriptHandler
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L26)
+[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L26)
 
 ## Methods
 
@@ -409,7 +409,7 @@ The counters are the server's (`cron.counters`); kept for callers of the earlier
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L35)
+[packages/bpmn-server/src/server/Cron.ts:35](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L35)
 
 ___
 
@@ -433,7 +433,7 @@ See [timerScheduled](Cron.md#timerscheduled).
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L37)
+[packages/bpmn-server/src/server/Cron.ts:37](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L37)
 
 ___
 
@@ -451,7 +451,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L39)
+[packages/bpmn-server/src/server/Cron.ts:39](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L39)
 
 ___
 
@@ -471,7 +471,7 @@ Cancels every timer this server owns, and its re-reads.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L50)
+[packages/bpmn-server/src/server/Cron.ts:50](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L50)
 
 ___
 
@@ -489,7 +489,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L61)
+[packages/bpmn-server/src/server/Cron.ts:61](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L61)
 
 ___
 
@@ -515,7 +515,7 @@ Schedules every waiting timer item in the store that this server has not schedul
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:81](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L81)
+[packages/bpmn-server/src/server/Cron.ts:81](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L81)
 
 ___
 
@@ -541,7 +541,7 @@ Schedules a timer item's `onDue` (the Timer behaviour's own firing), claimed fir
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:96](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L96)
+[packages/bpmn-server/src/server/Cron.ts:96](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L96)
 
 ___
 
@@ -563,7 +563,7 @@ Cancels the timers of one instance (its cancellation).
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:101](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L101)
+[packages/bpmn-server/src/server/Cron.ts:101](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L101)
 
 ___
 
@@ -583,7 +583,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:107](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L107)
+[packages/bpmn-server/src/server/Cron.ts:107](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L107)
 
 ___
 
@@ -603,7 +603,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:112](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L112)
+[packages/bpmn-server/src/server/Cron.ts:112](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L112)
 
 ___
 
@@ -623,7 +623,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:129](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L129)
+[packages/bpmn-server/src/server/Cron.ts:130](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L130)
 
 ___
 
@@ -643,15 +643,16 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:135](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L135)
+[packages/bpmn-server/src/server/Cron.ts:136](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L136)
 
 ___
 
 ### schedule
 
-▸ **schedule**(`key`, `delayMs`, `instanceId`, `fire`): `void`
+▸ **schedule**(`key`, `delayMs`, `instanceId`, `fire`): `boolean`
 
 One timer, owned by this server, once per key; a delay longer than `setTimeout` takes is waited out in steps.
+Whether it was scheduled now (false: stopped, or already scheduled).
 
 #### Parameters
 
@@ -664,11 +665,11 @@ One timer, owned by this server, once per key; a delay longer than `setTimeout` 
 
 #### Returns
 
-`void`
+`boolean`
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:147](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L147)
+[packages/bpmn-server/src/server/Cron.ts:152](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L152)
 
 ___
 
@@ -691,7 +692,7 @@ Fires `fire` when this server wins the claim on `claim`; otherwise another serve
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:161](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L161)
+[packages/bpmn-server/src/server/Cron.ts:167](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L167)
 
 ___
 
@@ -711,7 +712,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:171](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L171)
+[packages/bpmn-server/src/server/Cron.ts:177](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L177)
 
 ___
 
@@ -733,7 +734,7 @@ A due time as milliseconds: stored as a number, a Date, or (by a JSON store) an 
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:176](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L176)
+[packages/bpmn-server/src/server/Cron.ts:182](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L182)
 
 ___
 
@@ -754,7 +755,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:181](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L181)
+[packages/bpmn-server/src/server/Cron.ts:187](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L187)
 
 ___
 
@@ -775,4 +776,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/Cron.ts:200](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/Cron.ts#L200)
+[packages/bpmn-server/src/server/Cron.ts:206](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/Cron.ts#L206)

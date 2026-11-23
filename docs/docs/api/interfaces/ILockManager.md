@@ -32,7 +32,7 @@ This process's identity as a lock owner.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:51](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L51)
+[packages/bpmn-server/src/interfaces/storage.ts:55](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L55)
 
 ## Methods
 
@@ -54,7 +54,7 @@ Waits until `id` is locked by this owner, or throws once the configured tries ar
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L53)
+[packages/bpmn-server/src/interfaces/storage.ts:57](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L57)
 
 ___
 
@@ -76,7 +76,7 @@ Releases `id` only when this owner holds it.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L55)
+[packages/bpmn-server/src/interfaces/storage.ts:59](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L59)
 
 ___
 
@@ -98,7 +98,7 @@ Takes `key` once, without waiting: true for the one claimant, false when another
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L57)
+[packages/bpmn-server/src/interfaces/storage.ts:61](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L61)
 
 ___
 
@@ -114,4 +114,4 @@ Every current lock, for diagnostics.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L59)
+[packages/bpmn-server/src/interfaces/storage.ts:63](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L63)

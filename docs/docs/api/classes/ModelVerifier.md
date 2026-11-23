@@ -15,14 +15,23 @@
 - [services](ModelVerifier.md#services)
 - [server](ModelVerifier.md#server)
 - [options](ModelVerifier.md#options)
+- [source](ModelVerifier.md#source)
+- [#contract](ModelVerifier.md##contract)
+- [#roles](ModelVerifier.md##roles)
 
 ### Accessors
 
+- [modelChecks](ModelVerifier.md#modelchecks)
+- [addOnCheck](ModelVerifier.md#addoncheck)
 - [decisionsFolder](ModelVerifier.md#decisionsfolder)
 - [moddleOptions](ModelVerifier.md#moddleoptions)
 
 ### Methods
 
+- [verifyAddOnsOff](ModelVerifier.md#verifyaddonsoff)
+- [addOnChecks](ModelVerifier.md#addonchecks)
+- [addOnDecisionFiles](ModelVerifier.md#addondecisionfiles)
+- [checkLabel](ModelVerifier.md#checklabel)
 - [add](ModelVerifier.md#add)
 - [result](ModelVerifier.md#result)
 - [verify](ModelVerifier.md#verify)
@@ -34,7 +43,13 @@
 - [verifyDiagram](ModelVerifier.md#verifydiagram)
 - [loadDefinition](ModelVerifier.md#loaddefinition)
 - [checkConnector](ModelVerifier.md#checkconnector)
+- [operationOf](ModelVerifier.md#operationof)
 - [verifyExecutables](ModelVerifier.md#verifyexecutables)
+- [verifyWholeModel](ModelVerifier.md#verifywholemodel)
+- [roles](ModelVerifier.md#roles)
+- [contract](ModelVerifier.md#contract)
+- [verifyContract](ModelVerifier.md#verifycontract)
+- [decisionFilesUsed](ModelVerifier.md#decisionfilesused)
 - [checkDecision](ModelVerifier.md#checkdecision)
 - [checkScript](ModelVerifier.md#checkscript)
 - [checkServiceReferences](ModelVerifier.md#checkservicereferences)
@@ -64,7 +79,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L65)
+[packages/bpmn-server/src/elements/verifyModel.ts:77](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L77)
 
 ## Properties
 
@@ -74,7 +89,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L60)
+[packages/bpmn-server/src/elements/verifyModel.ts:72](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L72)
 
 ___
 
@@ -84,7 +99,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L61)
+[packages/bpmn-server/src/elements/verifyModel.ts:73](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L73)
 
 ___
 
@@ -96,7 +111,7 @@ the application's services provider, when it can be had without a running execut
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L63)
+[packages/bpmn-server/src/elements/verifyModel.ts:75](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L75)
 
 ___
 
@@ -106,7 +121,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L65)
+[packages/bpmn-server/src/elements/verifyModel.ts:77](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L77)
 
 ___
 
@@ -116,9 +131,73 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L65)
+[packages/bpmn-server/src/elements/verifyModel.ts:77](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L77)
+
+___
+
+### source
+
+• **source**: `string`
+
+the model's XML, as it was given
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:167](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L167)
+
+___
+
+### #contract
+
+• `Private` **#contract**: [`IAppContract`](../interfaces/IAppContract.md) = `undefined`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:629](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L629)
+
+___
+
+### #roles
+
+• `Private` **#roles**: `string`[] = `undefined`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:681](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L681)
 
 ## Accessors
+
+### modelChecks
+
+• `get` **modelChecks**(): [`IModelCheck`](../interfaces/IModelCheck.md)[]
+
+The model checks the add-ons registered: the server's, else those of the add-ons given.
+
+#### Returns
+
+[`IModelCheck`](../interfaces/IModelCheck.md)[]
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:101](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L101)
+
+___
+
+### addOnCheck
+
+• `get` **addOnCheck**(): [`IAddOnModelCheck`](../interfaces/IAddOnModelCheck.md)
+
+What an add-on's checks are given: the folder, the roles, and a way to report (engine/AddOns.ts).
+
+#### Returns
+
+[`IAddOnModelCheck`](../interfaces/IAddOnModelCheck.md)
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:106](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L106)
+
+___
 
 ### decisionsFolder
 
@@ -130,7 +209,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L67)
+[packages/bpmn-server/src/elements/verifyModel.ts:133](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L133)
 
 ___
 
@@ -144,9 +223,100 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:87](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L87)
+[packages/bpmn-server/src/elements/verifyModel.ts:162](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L162)
 
 ## Methods
+
+### verifyAddOnsOff
+
+▸ **verifyAddOnsOff**(`definition`): `void`
+
+A model that uses an add-on that is off: its attributes (the add-on's manifest says which) are kept, and the
+engine doesn't read them. One warning for each such add-on, naming where.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `definition` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:83](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L83)
+
+___
+
+### addOnChecks
+
+▸ **addOnChecks**(`hook`, `...args`): `Promise`\<`void`\>
+
+Each add-on's model check, in turn; one that throws is a warning.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `hook` | ``"verifyNode"`` \| ``"verifyProcess"`` |
+| `...args` | `any`[] |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:115](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L115)
+
+___
+
+### addOnDecisionFiles
+
+▸ **addOnDecisionFiles**(`definition`): `Promise`\<[`IAddOnDecisionFile`](../interfaces/IAddOnDecisionFile.md)[]\>
+
+The decision files the model uses through its add-ons (its policies).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `definition` | `any` |
+
+#### Returns
+
+`Promise`\<[`IAddOnDecisionFile`](../interfaces/IAddOnDecisionFile.md)[]\>
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:124](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L124)
+
+___
+
+### checkLabel
+
+▸ **checkLabel**(`def`): `void`
+
+Label templates (owf:label, owf:endLabel): data paths, names once (addons/labels/Labels.ts). And OWF's attributes
+still under their old camunda: names (elements/owfAttributes.ts).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `def` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:142](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L142)
+
+___
 
 ### add
 
@@ -167,7 +337,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L72)
+[packages/bpmn-server/src/elements/verifyModel.ts:147](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L147)
 
 ___
 
@@ -181,7 +351,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:80](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L80)
+[packages/bpmn-server/src/elements/verifyModel.ts:155](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L155)
 
 ___
 
@@ -202,7 +372,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:91](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L91)
+[packages/bpmn-server/src/elements/verifyModel.ts:169](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L169)
 
 ___
 
@@ -227,7 +397,7 @@ reported as a warning: it never stops the model being verified.
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:147](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L147)
+[packages/bpmn-server/src/elements/verifyModel.ts:229](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L229)
 
 ___
 
@@ -250,7 +420,7 @@ runs: one connected to nothing is never loaded, and an application without loadD
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:167](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L167)
+[packages/bpmn-server/src/elements/verifyModel.ts:249](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L249)
 
 ___
 
@@ -270,7 +440,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:192](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L192)
+[packages/bpmn-server/src/elements/verifyModel.ts:274](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L274)
 
 ___
 
@@ -292,7 +462,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:256](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L256)
+[packages/bpmn-server/src/elements/verifyModel.ts:338](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L338)
 
 ___
 
@@ -312,7 +482,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:284](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L284)
+[packages/bpmn-server/src/elements/verifyModel.ts:366](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L366)
 
 ___
 
@@ -333,7 +503,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:291](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L291)
+[packages/bpmn-server/src/elements/verifyModel.ts:373](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L373)
 
 ___
 
@@ -354,7 +524,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:310](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L310)
+[packages/bpmn-server/src/elements/verifyModel.ts:392](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L392)
 
 ___
 
@@ -380,7 +550,33 @@ every input is one of the operation's.
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:333](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L333)
+[packages/bpmn-server/src/elements/verifyModel.ts:415](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L415)
+
+___
+
+### operationOf
+
+▸ **operationOf**(`ref`, `def`, `fails`): `Promise`\<`any`\>
+
+A connector's operation a model names, `<connector>/<operationId>` (already checked to be one), with the server's
+connectors: the connector and the operation there and enabled. `fails`: what happens when one is disabled.
+Undefined, with the error added, when it is not there; and when the server has no connectors.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `ref` | `string` |
+| `def` | `any` |
+| `fails` | `string` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:455](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L455)
 
 ___
 
@@ -400,7 +596,114 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:390](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L390)
+[packages/bpmn-server/src/elements/verifyModel.ts:485](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L485)
+
+___
+
+### verifyWholeModel
+
+▸ **verifyWholeModel**(`source`, `definition`): `Promise`\<`void`\>
+
+The whole model, once, by the add-ons' checks (engine/AddOns.ts, verifyModel): with its source, its definition,
+and the decision files it uses (its business rule tasks' and the add-ons' whose actors are read), each its text.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `source` | `string` |
+| `definition` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:581](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L581)
+
+___
+
+### roles
+
+▸ **roles**(): `string`[]
+
+The roles: the models folder's roles.json and the application's contract (app-contract.json), together; null with
+neither. A bad roles.json is an error.
+
+#### Returns
+
+`string`[]
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:610](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L610)
+
+___
+
+### contract
+
+▸ **contract**(): [`IAppContract`](../interfaces/IAppContract.md)
+
+The application's contract (its delegate's describe(): app-contract.json), or null.
+
+#### Returns
+
+[`IAppContract`](../interfaces/IAppContract.md)
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:621](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L621)
+
+___
+
+### verifyContract
+
+▸ **verifyContract**(`source`, `definition?`): `Promise`\<`void`\>
+
+The model against the application's contract (docs/design/app-contract.md §5), when it has one: each
+appServices.<name> a function it declares, with as many arguments as it takes; each appVars.<name> a variable it
+declares; each app:<page> form key one of its pages; and no decision the model uses (its business rule tasks',
+its policies) calling a function that changes things (effect write). Warnings, but the last: the contract is
+guidance; the model runs as it is.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `source` | `string` |
+| `definition?` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:638](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L638)
+
+___
+
+### decisionFilesUsed
+
+▸ **decisionFilesUsed**(`text`, `definition?`): `Promise`\<\{ `what`: `string` ; `file`: `string`  }[]\>
+
+The decision files a model uses: its business rule tasks' decisions and its add-ons' (the policies it names).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `text` | `string` |
+| `definition?` | `any` |
+
+#### Returns
+
+`Promise`\<\{ `what`: `string` ; `file`: `string`  }[]\>
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/verifyModel.ts:671](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L671)
 
 ___
 
@@ -424,7 +727,7 @@ saved (a result variable or output parameters).
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:477](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L477)
+[packages/bpmn-server/src/elements/verifyModel.ts:687](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L687)
 
 ___
 
@@ -446,7 +749,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:511](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L511)
+[packages/bpmn-server/src/elements/verifyModel.ts:721](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L721)
 
 ___
 
@@ -472,7 +775,7 @@ as soon as it is used (Object.keys(appServices.rules)).
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:527](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L527)
+[packages/bpmn-server/src/elements/verifyModel.ts:737](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L737)
 
 ___
 
@@ -494,7 +797,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:540](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L540)
+[packages/bpmn-server/src/elements/verifyModel.ts:750](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L750)
 
 ___
 
@@ -518,7 +821,7 @@ A text with ${...} parts: each part is an expression.
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:567](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L567)
+[packages/bpmn-server/src/elements/verifyModel.ts:777](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L777)
 
 ___
 
@@ -542,7 +845,7 @@ A value evaluated only when it is an expression ($js, ${js}) or has ${...} parts
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:574](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L574)
+[packages/bpmn-server/src/elements/verifyModel.ts:784](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L784)
 
 ___
 
@@ -564,7 +867,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:583](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L583)
+[packages/bpmn-server/src/elements/verifyModel.ts:793](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L793)
 
 ___
 
@@ -578,7 +881,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:596](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L596)
+[packages/bpmn-server/src/elements/verifyModel.ts:806](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L806)
 
 ___
 
@@ -592,4 +895,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/verifyModel.ts:607](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/verifyModel.ts#L607)
+[packages/bpmn-server/src/elements/verifyModel.ts:817](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/verifyModel.ts#L817)

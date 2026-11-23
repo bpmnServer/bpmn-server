@@ -11,17 +11,28 @@
 ### Properties
 
 - [compiled](Connectors.md#compiled)
+- [files](Connectors.md#files)
 - [server](Connectors.md#server)
+- [looseChecked](Connectors.md#loosechecked)
 
 ### Accessors
 
 - [settings](Connectors.md#settings)
 - [store](Connectors.md#store)
 - [database](Connectors.md#database)
+- [modelsFolder](Connectors.md#modelsfolder)
+- [folder](Connectors.md#folder)
 
 ### Methods
 
 - [compile](Connectors.md#compile)
+- [fileOf](Connectors.md#fileof)
+- [moveLoose](Connectors.md#moveloose)
+- [readDefinition](Connectors.md#readdefinition)
+- [writeDefinition](Connectors.md#writedefinition)
+- [fileIds](Connectors.md#fileids)
+- [stateOf](Connectors.md#stateof)
+- [setState](Connectors.md#setstate)
 - [install](Connectors.md#install)
 - [list](Connectors.md#list)
 - [get](Connectors.md#get)
@@ -29,7 +40,7 @@
 - [document](Connectors.md#document)
 - [backup](Connectors.md#backup)
 - [load](Connectors.md#load)
-- [upgrade](Connectors.md#upgrade)
+- [writeOut](Connectors.md#writeout)
 - [required](Connectors.md#required)
 - [withoutSecret](Connectors.md#withoutsecret)
 - [add](Connectors.md#add)
@@ -37,12 +48,20 @@
 - [refresh](Connectors.md#refresh)
 - [openapiOf](Connectors.md#openapiof)
 - [remove](Connectors.md#remove)
+- [removeFile](Connectors.md#removefile)
+- [forget](Connectors.md#forget)
 - [setKey](Connectors.md#setkey)
+- [setScheme](Connectors.md#setscheme)
+- [storeKey](Connectors.md#storekey)
 - [clearKey](Connectors.md#clearkey)
+- [clearScheme](Connectors.md#clearscheme)
+- [forgetKey](Connectors.md#forgetkey)
 - [authScheme](Connectors.md#authscheme)
 - [fromScheme](Connectors.md#fromscheme)
 - [test](Connectors.md#test)
 - [call](Connectors.md#call)
+- [exampleAnswer](Connectors.md#exampleanswer)
+- [checkTesting](Connectors.md#checktesting)
 - [backoff](Connectors.md#backoff)
 - [buildRequest](Connectors.md#buildrequest)
 - [readBody](Connectors.md#readbody)
@@ -68,7 +87,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:108](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L108)
+[packages/bpmn-server/src/connectors/Connectors.ts:143](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L143)
 
 ## Properties
 
@@ -80,7 +99,19 @@ each connector's document and operations, read once and kept until the document 
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:106](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L106)
+[packages/bpmn-server/src/connectors/Connectors.ts:139](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L139)
+
+___
+
+### files
+
+• `Private` `Readonly` **files**: `Map`\<`string`, \{ `stamp`: `string` ; `definition`: `any`  }\>
+
+each file as last read, kept while it is the same (its time and size)
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:141](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L141)
 
 ___
 
@@ -90,7 +121,17 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:108](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L108)
+[packages/bpmn-server/src/connectors/Connectors.ts:143](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L143)
+
+___
+
+### looseChecked
+
+• `Private` **looseChecked**: `boolean` = `false`
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:171](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L171)
 
 ## Accessors
 
@@ -104,7 +145,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:121](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L121)
+[packages/bpmn-server/src/connectors/Connectors.ts:156](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L156)
 
 ___
 
@@ -118,7 +159,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:122](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L122)
+[packages/bpmn-server/src/connectors/Connectors.ts:157](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L157)
 
 ___
 
@@ -135,7 +176,37 @@ without a `db` leaves it undefined: MongoDB then uses the database its URL names
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:127](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L127)
+[packages/bpmn-server/src/connectors/Connectors.ts:162](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L162)
+
+___
+
+### modelsFolder
+
+• `get` **modelsFolder**(): `string`
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:166](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L166)
+
+___
+
+### folder
+
+• `get` **folder**(): `string`
+
+The connectors' folder, in the models folder.
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:168](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L168)
 
 ## Methods
 
@@ -163,7 +234,146 @@ The connector's document and operations, from the cache while the document is th
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:111](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L111)
+[packages/bpmn-server/src/connectors/Connectors.ts:146](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L146)
+
+___
+
+### fileOf
+
+▸ **fileOf**(`id`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:169](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L169)
+
+___
+
+### moveLoose
+
+▸ **moveLoose**(): `void`
+
+Connector files beside the models (where 3.7 wrote them at first) moved into the connectors folder: at a list,
+and before the first read. One already in the folder is kept; the other is left where it is, and said so.
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:176](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L176)
+
+___
+
+### readDefinition
+
+▸ **readDefinition**(`id`): `any`
+
+A connector's definition from its file, or undefined; read again only when the file changed.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:194](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L194)
+
+___
+
+### writeDefinition
+
+▸ **writeDefinition**(`definition`): `void`
+
+Writes a connector's definition to its file (as the models are written: by the server, into its folder).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `definition` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:212](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L212)
+
+___
+
+### fileIds
+
+▸ **fileIds**(): `string`[]
+
+The ids of the connectors' files.
+
+#### Returns
+
+`string`[]
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:220](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L220)
+
+___
+
+### stateOf
+
+▸ **stateOf**(`id`): `Promise`\<`any`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:228](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L228)
+
+___
+
+### setState
+
+▸ **setState**(`id`, `set`, `unset?`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+| `set` | `Record`\<`string`, `any`\> |
+| `unset?` | `Record`\<`string`, `string`\> |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:233](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L233)
 
 ___
 
@@ -177,7 +387,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:129](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L129)
+[packages/bpmn-server/src/connectors/Connectors.ts:237](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L237)
 
 ___
 
@@ -193,7 +403,7 @@ Every connector, without its key.
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:136](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L136)
+[packages/bpmn-server/src/connectors/Connectors.ts:246](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L246)
 
 ___
 
@@ -215,7 +425,7 @@ One connector, without its key; undefined when there is none.
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:142](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L142)
+[packages/bpmn-server/src/connectors/Connectors.ts:258](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L258)
 
 ___
 
@@ -237,7 +447,7 @@ A connector's operations: every one the document has, and whether designers may 
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:148](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L148)
+[packages/bpmn-server/src/connectors/Connectors.ts:264](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L264)
 
 ___
 
@@ -259,7 +469,7 @@ A connector's OpenAPI document, as it was read.
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:155](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L155)
+[packages/bpmn-server/src/connectors/Connectors.ts:271](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L271)
 
 ___
 
@@ -267,7 +477,7 @@ ___
 
 ▸ **backup**(): `Promise`\<`Record`\<`string`, `any`[]\>\>
 
-Every connector as stored (keys encrypted): for a backup.
+What this server keeps of its connectors (keys encrypted, tests): for a backup. The files are the models'.
 
 #### Returns
 
@@ -275,13 +485,15 @@ Every connector as stored (keys encrypted): for a backup.
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:160](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L160)
+[packages/bpmn-server/src/connectors/Connectors.ts:276](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L276)
 
 ___
 
 ### load
 
 ▸ **load**(`id`): `Promise`\<[`Connector`](../interfaces/Connector.md)\>
+
+A connector: its file, with this server's key and test. One kept whole in the collection is written out first.
 
 #### Parameters
 
@@ -295,29 +507,29 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:164](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L164)
+[packages/bpmn-server/src/connectors/Connectors.ts:281](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L281)
 
 ___
 
-### upgrade
+### writeOut
 
-▸ **upgrade**(`connector`): `Promise`\<[`Connector`](../interfaces/Connector.md)\>
+▸ **writeOut**(`kept`): `Promise`\<\{ `definition`: `any` ; `state`: `ServerState`  }\>
 
-A connector stored before documents were packed (openapi.document): packed now, and saved so.
+A connector kept whole in the collection (3.6): its definition to its file; its key and test stay, alone.
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `connector` | `any` |
+| `kept` | `any` |
 
 #### Returns
 
-`Promise`\<[`Connector`](../interfaces/Connector.md)\>
+`Promise`\<\{ `definition`: `any` ; `state`: `ServerState`  }\>
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:170](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L170)
+[packages/bpmn-server/src/connectors/Connectors.ts:293](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L293)
 
 ___
 
@@ -337,7 +549,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:180](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L180)
+[packages/bpmn-server/src/connectors/Connectors.ts:310](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L310)
 
 ___
 
@@ -359,7 +571,7 @@ What callers see: no key, and the document only described (`document(id)` reads 
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:187](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L187)
+[packages/bpmn-server/src/connectors/Connectors.ts:317](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L317)
 
 ___
 
@@ -367,7 +579,7 @@ ___
 
 ▸ **add**(`input`, `userName?`): `Promise`\<[`Connector`](../interfaces/Connector.md)\>
 
-Adds a connector from its OpenAPI document (given, or fetched from `source`).
+Adds a connector from its OpenAPI document (given, or fetched from `source`): its file in the models folder.
 
 #### Parameters
 
@@ -382,7 +594,7 @@ Adds a connector from its OpenAPI document (given, or fetched from `source`).
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:201](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L201)
+[packages/bpmn-server/src/connectors/Connectors.ts:331](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L331)
 
 ___
 
@@ -397,7 +609,7 @@ Changes a connector's name, description, base URL, operations, groups, enabled, 
 | Name | Type |
 | :------ | :------ |
 | `id` | `string` |
-| `patch` | `Partial`\<`Pick`\<[`Connector`](../interfaces/Connector.md), ``"name"`` \| ``"timeout"`` \| ``"description"`` \| ``"baseUrl"`` \| ``"operations"`` \| ``"groups"`` \| ``"enabled"`` \| ``"retries"``\>\> |
+| `patch` | `Partial`\<`Pick`\<[`Connector`](../interfaces/Connector.md), ``"name"`` \| ``"timeout"`` \| ``"description"`` \| ``"baseUrl"`` \| ``"operations"`` \| ``"groups"`` \| ``"enabled"`` \| ``"retries"`` \| ``"testing"``\>\> |
 
 #### Returns
 
@@ -405,7 +617,7 @@ Changes a connector's name, description, base URL, operations, groups, enabled, 
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:230](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L230)
+[packages/bpmn-server/src/connectors/Connectors.ts:360](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L360)
 
 ___
 
@@ -429,7 +641,7 @@ new ones are enabled. Returns what changed.
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:246](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L246)
+[packages/bpmn-server/src/connectors/Connectors.ts:378](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L378)
 
 ___
 
@@ -437,7 +649,7 @@ ___
 
 ▸ **openapiOf**(`document`, `source?`): `Object`
 
-What is stored of a document: where it came from, its version and title, and itself packed.
+What is kept of a document: where it came from, its version and title, and itself, as JSON.
 
 #### Parameters
 
@@ -456,18 +668,20 @@ What is stored of a document: where it came from, its version and title, and its
 | `version` | `string` |
 | `title?` | `string` |
 | `fetchedAt` | `string` |
-| `packed` | `string` |
 | `bytes` | `number` |
+| `document?` | `any` |
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:261](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L261)
+[packages/bpmn-server/src/connectors/Connectors.ts:389](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L389)
 
 ___
 
 ### remove
 
 ▸ **remove**(`id`): `Promise`\<`boolean`\>
+
+Removes a connector: its file, and this server's key and test. Its halves: `removeFile`, `forget`.
 
 #### Parameters
 
@@ -481,7 +695,51 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:266](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L266)
+[packages/bpmn-server/src/connectors/Connectors.ts:394](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L394)
+
+___
+
+### removeFile
+
+▸ **removeFile**(`id`): `boolean`
+
+The connector's file gone (model access's).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:401](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L401)
+
+___
+
+### forget
+
+▸ **forget**(`id`): `Promise`\<`boolean`\>
+
+This server's key and test for the connector gone (the engine's).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:413](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L413)
 
 ___
 
@@ -489,8 +747,10 @@ ___
 
 ▸ **setKey**(`id`, `key`, `how?`, `userName?`): `Promise`\<[`Connector`](../interfaces/Connector.md)\>
 
-Sets (or replaces) the connector's authorization key, stored encrypted. `how` is a securitySchemes name of the
-document, or a scheme given here; none: the document's only scheme. For basic, the key is `user:password`.
+Sets (or replaces) the connector's authorization key, stored encrypted with this server. `how` is a securitySchemes
+name of the document, or a scheme given here; none: the document's only scheme. For basic, the key is
+`user:password`. Its two halves, for when the engine is elsewhere: `setScheme` (the file: model access) and
+`storeKey` (this server's key: the engine).
 
 #### Parameters
 
@@ -507,7 +767,55 @@ document, or a scheme given here; none: the document's only scheme. For basic, t
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:276](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L276)
+[packages/bpmn-server/src/connectors/Connectors.ts:424](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L424)
+
+___
+
+### setScheme
+
+▸ **setScheme**(`id`, `how?`, `key?`): `Promise`\<[`ConnectorAuth`](../interfaces/ConnectorAuth.md)\>
+
+How the connector's key is sent, into its file (written only when it changes); the key, when given, checked against it.
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `id` | `string` | `undefined` |
+| `how` | `string` \| `Omit`\<[`ConnectorAuth`](../interfaces/ConnectorAuth.md), ``"secret"`` \| ``"last4"`` \| ``"setAt"`` \| ``"setBy"``\> | `undefined` |
+| `key?` | `string` | `undefined` |
+
+#### Returns
+
+`Promise`\<[`ConnectorAuth`](../interfaces/ConnectorAuth.md)\>
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:430](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L430)
+
+___
+
+### storeKey
+
+▸ **storeKey**(`id`, `key`, `userName?`): `Promise`\<[`Connector`](../interfaces/Connector.md)\>
+
+This server's key for the connector, stored encrypted (SECRETS_KEY): the engine's, where the calls are made.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+| `key` | `string` |
+| `userName?` | `string` |
+
+#### Returns
+
+`Promise`\<[`Connector`](../interfaces/Connector.md)\>
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:444](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L444)
 
 ___
 
@@ -515,7 +823,7 @@ ___
 
 ▸ **clearKey**(`id`): `Promise`\<[`Connector`](../interfaces/Connector.md)\>
 
-Removes the connector's key: its calls go without authorization.
+Removes the connector's key: its calls go without authorization. Its halves: `clearScheme`, `forgetKey`.
 
 #### Parameters
 
@@ -529,7 +837,51 @@ Removes the connector's key: its calls go without authorization.
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:289](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L289)
+[packages/bpmn-server/src/connectors/Connectors.ts:453](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L453)
+
+___
+
+### clearScheme
+
+▸ **clearScheme**(`id`): `Promise`\<`void`\>
+
+No scheme in the connector's file.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:459](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L459)
+
+___
+
+### forgetKey
+
+▸ **forgetKey**(`id`): `Promise`\<[`Connector`](../interfaces/Connector.md)\>
+
+This server's key for the connector, gone.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+`Promise`\<[`Connector`](../interfaces/Connector.md)\>
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:466](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L466)
 
 ___
 
@@ -552,7 +904,7 @@ How a key is sent: from the document's securitySchemes (by name, or its only one
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:296](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L296)
+[packages/bpmn-server/src/connectors/Connectors.ts:473](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L473)
 
 ___
 
@@ -572,7 +924,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:318](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L318)
+[packages/bpmn-server/src/connectors/Connectors.ts:495](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L495)
 
 ___
 
@@ -596,7 +948,7 @@ Tests the connection: calls an operation (none named: a GET that needs no input)
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:326](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L326)
+[packages/bpmn-server/src/connectors/Connectors.ts:503](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L503)
 
 ___
 
@@ -624,7 +976,56 @@ or its fields as `body.<field>`. Answers { status, output }; a status other than
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:349](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L349)
+[packages/bpmn-server/src/connectors/Connectors.ts:526](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L526)
+
+___
+
+### exampleAnswer
+
+▸ **exampleAnswer**(`connector`, `op`, `ref`, `input`, `log?`): [`CallResult`](../interfaces/CallResult.md)
+
+An operation's answer outside production, with no call: the connector's own answer for it (testing.answers),
+else its document's example of its first success response, else one made from that response's schema.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `connector` | [`Connector`](../interfaces/Connector.md) |
+| `op` | [`Operation`](../interfaces/Operation.md) |
+| `ref` | `string` |
+| `input` | `Record`\<`string`, `any`\> |
+| `log?` | (`line`: `string`) => `void` |
+
+#### Returns
+
+[`CallResult`](../interfaces/CallResult.md)
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:579](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L579)
+
+___
+
+### checkTesting
+
+▸ **checkTesting**(`testing`): [`ConnectorTesting`](../interfaces/ConnectorTesting.md)
+
+A connector's testing, checked: its answer one of real, examples, sandbox; a sandbox's address an http(s) URL.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `testing` | `any` |
+
+#### Returns
+
+[`ConnectorTesting`](../interfaces/ConnectorTesting.md)
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:602](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L602)
 
 ___
 
@@ -644,7 +1045,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:393](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L393)
+[packages/bpmn-server/src/connectors/Connectors.ts:617](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L617)
 
 ___
 
@@ -675,7 +1076,7 @@ The request: the base URL joined with the operation's path, its parameters in pl
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:399](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L399)
+[packages/bpmn-server/src/connectors/Connectors.ts:623](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L623)
 
 ___
 
@@ -698,7 +1099,7 @@ The body: JSON when it is, else text; refused past the size limit.
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:462](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L462)
+[packages/bpmn-server/src/connectors/Connectors.ts:686](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L686)
 
 ___
 
@@ -721,7 +1122,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:481](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L481)
+[packages/bpmn-server/src/connectors/Connectors.ts:705](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L705)
 
 ___
 
@@ -744,7 +1145,7 @@ An http(s) URL on an allowed host; a relative server URL is read against the doc
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:496](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L496)
+[packages/bpmn-server/src/connectors/Connectors.ts:720](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L720)
 
 ___
 
@@ -766,4 +1167,4 @@ CONNECTORS_ALLOW_HOSTS (a comma list; *.example.com for its subdomains), when se
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:511](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L511)
+[packages/bpmn-server/src/connectors/Connectors.ts:735](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L735)

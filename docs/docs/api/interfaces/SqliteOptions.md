@@ -18,4 +18,4 @@ How long a write waits for another connection's (another server's) write to end,
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:9](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L9)
+[packages/bpmn-server/src/datastore/SqliteDocumentStore.ts:9](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/SqliteDocumentStore.ts#L9)

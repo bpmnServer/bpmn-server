@@ -21,7 +21,7 @@ ms a call waits for its answer; default 30000
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/common.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L63)
+[packages/bpmn-server/src/interfaces/common.ts:85](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/common.ts#L85)
 
 ___
 
@@ -33,7 +33,7 @@ further tries of an idempotent call (GET, HEAD, PUT, DELETE) after a network err
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/common.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L65)
+[packages/bpmn-server/src/interfaces/common.ts:87](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/common.ts#L87)
 
 ___
 
@@ -45,7 +45,7 @@ ms before the first retry, doubled for each next one; default 200
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/common.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L67)
+[packages/bpmn-server/src/interfaces/common.ts:89](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/common.ts#L89)
 
 ___
 
@@ -57,4 +57,4 @@ the largest answer read, in bytes; default 5 MB
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/common.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/common.ts#L69)
+[packages/bpmn-server/src/interfaces/common.ts:91](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/common.ts#L91)

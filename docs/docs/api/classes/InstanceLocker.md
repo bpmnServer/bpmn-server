@@ -73,7 +73,7 @@ may be given as a function, read on each use (the data store gives its current `
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L46)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:46](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L46)
 
 ## Properties
 
@@ -89,7 +89,7 @@ This process's identity as a lock owner.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L33)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L33)
 
 ___
 
@@ -109,7 +109,7 @@ The store, read when used: a data store's `db` replaced after it was made (an in
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L35)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:35](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L35)
 
 ___
 
@@ -119,7 +119,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L37)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:37](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L37)
 
 ___
 
@@ -129,7 +129,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L38)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L38)
 
 ___
 
@@ -139,7 +139,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L39)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:39](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L39)
 
 ___
 
@@ -149,7 +149,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L40)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L40)
 
 ___
 
@@ -159,7 +159,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L41)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:41](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L41)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L42)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:42](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L42)
 
 ___
 
@@ -181,7 +181,7 @@ The locks held here, each renewed until released: only a dead holder's goes stal
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L44)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L44)
 
 ___
 
@@ -191,7 +191,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L69)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:69](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L69)
 
 ## Accessors
 
@@ -205,7 +205,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L36)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:36](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L36)
 
 ## Methods
 
@@ -219,7 +219,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L59)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:59](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L59)
 
 ___
 
@@ -235,7 +235,7 @@ The unique index acquisition relies on; part of the data store's `install()`.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L65)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:65](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L65)
 
 ___
 
@@ -254,7 +254,7 @@ excludes anyone, and locking refuses rather than pretends.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:76](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L76)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:76](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L76)
 
 ___
 
@@ -280,7 +280,7 @@ Waits until `id` is locked by this owner, or throws once the configured tries ar
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:100](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L100)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:100](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L100)
 
 ___
 
@@ -303,7 +303,7 @@ One attempt: true when acquired, false on contention; any other failure throws.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:114](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L114)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:114](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L114)
 
 ___
 
@@ -326,7 +326,7 @@ another server would take over and both would change the instance. A holder that
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:130](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L130)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:130](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L130)
 
 ___
 
@@ -342,7 +342,7 @@ No more renewals: what a holder's death is, for a test; and at shutdown.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:141](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L141)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:141](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L141)
 
 ___
 
@@ -368,7 +368,7 @@ Releases `id` only when this owner holds it.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:146](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L146)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:146](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L146)
 
 ___
 
@@ -394,7 +394,7 @@ Takes `key` once, without waiting: true for the one claimant, false when another
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:153](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L153)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:153](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L153)
 
 ___
 
@@ -410,7 +410,7 @@ Removes the claims older than the stale age: what is still due after it is tried
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:160](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L160)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:160](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L160)
 
 ___
 
@@ -432,7 +432,7 @@ Removes `id` when it is older than `staleAfter`; true when it did.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:166](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L166)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:166](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L166)
 
 ___
 
@@ -454,7 +454,7 @@ Removes locks matching `query`, whoever holds them: an administrator's tool.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:173](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L173)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:173](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L173)
 
 ___
 
@@ -474,7 +474,7 @@ Every current lock, for diagnostics.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:177](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L177)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:177](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L177)
 
 ___
 
@@ -494,4 +494,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/InstanceLocker.ts:181](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/InstanceLocker.ts#L181)
+[packages/bpmn-server/src/datastore/InstanceLocker.ts:181](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/InstanceLocker.ts#L181)

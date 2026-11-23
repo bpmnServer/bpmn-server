@@ -1,11 +1,14 @@
-# API Summary
+# The engine's API
 
-!!! warning "Generated API reference is outdated"
-    The [TypeDoc listing](api/readme.md) is generated from the current source (`npm run _docs:generate:api` in `docs/`): every class and interface, with its signatures. This summary describes the API's parts and how they fit together; see also [What's new in 3.6](whats-new-3.6.md) and the [TypeScript source](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-server/src). The [documentation maintainer guide](https://github.com/bpmnServer/bpmn-server/blob/main/docs/README.md) explains how to regenerate the reference.
+What an application calls when it holds the engine itself. Every call acts for a user, and the engine applies that
+user's rights to it.
 
-## Service Layer API
+This page is the shape of the API; every class and interface with its signatures is the
+[generated reference](api/readme.md), made from the source with `npm run _docs:generate:api` in `docs/`.
 
-Service layer API, supporting access control has the following componets
+## The parts
+
+`BPMNAPI` gives an application these, each enforcing the caller's access:
 
 - [engine](./api/interfaces/IAPIEngine.md) BPMN Execution Engine: `start`, `invoke`, `assign`, `throwMessage`,
   `throwSignal`, `startEvent`, `restart`, `upgrade`

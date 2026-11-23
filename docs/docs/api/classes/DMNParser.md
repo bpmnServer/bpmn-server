@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNParser.ts:48](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNParser.ts#L48)
+[packages/bpmn-server/src/dmn/DMNParser.ts:48](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNParser.ts#L48)
 
 ## Methods
 
@@ -59,7 +59,7 @@ Parse a DMN file; a parsed file is kept until it changes.
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNParser.ts:51](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNParser.ts#L51)
+[packages/bpmn-server/src/dmn/DMNParser.ts:51](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNParser.ts#L51)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNParser.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNParser.ts#L67)
+[packages/bpmn-server/src/dmn/DMNParser.ts:67](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNParser.ts#L67)
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNParser.ts:79](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNParser.ts#L79)
+[packages/bpmn-server/src/dmn/DMNParser.ts:79](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNParser.ts#L79)
 
 ___
 
@@ -121,4 +121,4 @@ What is wrong with a file's decisions: hit policies, rule sizes and FEEL that do
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNParser.ts:125](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNParser.ts#L125)
+[packages/bpmn-server/src/dmn/DMNParser.ts:125](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNParser.ts#L125)

@@ -13,6 +13,8 @@
 - [definitions](DMNEngine.md#definitions)
 - [decision](DMNEngine.md#decision)
 - [options](DMNEngine.md#options)
+- [matched](DMNEngine.md#matched)
+- [called](DMNEngine.md#called)
 
 ### Methods
 
@@ -21,10 +23,12 @@
 - [topDecision](DMNEngine.md#topdecision)
 - [load](DMNEngine.md#load)
 - [evaluate](DMNEngine.md#evaluate)
+- [evaluateAsync](DMNEngine.md#evaluateasync)
 - [evaluateDecision](DMNEngine.md#evaluatedecision)
 - [evaluateTable](DMNEngine.md#evaluatetable)
 - [byPriority](DMNEngine.md#bypriority)
 - [test](DMNEngine.md#test)
+- [testValue](DMNEngine.md#testvalue)
 - [value](DMNEngine.md#value)
 
 ## Constructors
@@ -45,7 +49,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L32)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:46](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L46)
 
 ## Properties
 
@@ -55,7 +59,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L28)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L38)
 
 ___
 
@@ -65,7 +69,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L29)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:39](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L39)
 
 ___
 
@@ -75,7 +79,31 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L30)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L40)
+
+___
+
+### matched
+
+• **matched**: `number`[] = `[]`
+
+the rules the last table evaluated matched, numbered from 1
+
+#### Defined in
+
+[packages/bpmn-server/src/dmn/DMNEngine.ts:42](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L42)
+
+___
+
+### called
+
+• `Private` **called**: `Map`\<`string`, `any`\>
+
+input expressions that call a function, their values worked out (an async one awaited) first: evaluateAsync
+
+#### Defined in
+
+[packages/bpmn-server/src/dmn/DMNEngine.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L44)
 
 ## Methods
 
@@ -95,7 +123,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L36)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:50](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L50)
 
 ___
 
@@ -118,7 +146,7 @@ The decision a model names (camunda:decisionRef) in a folder: a file `<ref>.dmn.
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L42)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:56](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L56)
 
 ___
 
@@ -140,7 +168,7 @@ The decision a file is for: the first one no other decision of the file requires
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:70](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L70)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:84](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L84)
 
 ___
 
@@ -163,7 +191,7 @@ Load a DMN file: its decision `decisionId`, or the decision the file is for.
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:76](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L76)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:90](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L90)
 
 ___
 
@@ -185,7 +213,30 @@ Evaluate the loaded decision with these values (or, for a table, its inputs' val
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:84](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L84)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:98](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L98)
+
+___
+
+### evaluateAsync
+
+▸ **evaluateAsync**(`input`): `Promise`\<`any`\>
+
+Evaluate it, an input expression that calls a function (`appServices.crm.tierOf(customerId)`) awaited first:
+once each, with these values. A call inside a larger expression (`f(x) = 1`) is not awaited.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `input` | `Record`\<`string`, `any`\> |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/dmn/DMNEngine.ts:113](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L113)
 
 ___
 
@@ -207,7 +258,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:95](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L95)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:136](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L136)
 
 ___
 
@@ -229,7 +280,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:120](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L120)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:161](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L161)
 
 ___
 
@@ -253,7 +304,7 @@ Results ordered by their outputs' places in the outputs' value lists (the first 
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:200](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L200)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:257](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L257)
 
 ___
 
@@ -277,7 +328,29 @@ An input cell's test of the input's value.
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:214](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L214)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:271](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L271)
+
+___
+
+### testValue
+
+▸ **testValue**(`source`, `value`, `context`): `boolean`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `source` | `string` |
+| `value` | `any` |
+| `context` | `Record`\<`string`, `any`\> |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[packages/bpmn-server/src/dmn/DMNEngine.ts:282](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L282)
 
 ___
 
@@ -301,4 +374,4 @@ A FEEL expression's value.
 
 #### Defined in
 
-[packages/bpmn-server/src/dmn/DMNEngine.ts:226](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/dmn/DMNEngine.ts#L226)
+[packages/bpmn-server/src/dmn/DMNEngine.ts:291](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/dmn/DMNEngine.ts#L291)

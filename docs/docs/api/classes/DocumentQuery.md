@@ -60,7 +60,7 @@ refused, never ignored.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L11)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:11](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L11)
 
 ___
 
@@ -85,7 +85,7 @@ matches an item without an assignee, as in MongoDB, whether the field is absent 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L30)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:30](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L30)
 
 ___
 
@@ -108,7 +108,7 @@ The first value at a path that is there: what a sort or a unique index is keyed 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:48](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L48)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:48](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L48)
 
 ___
 
@@ -129,7 +129,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:52](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L52)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:52](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L52)
 
 ___
 
@@ -149,7 +149,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L57)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:57](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L57)
 
 ___
 
@@ -171,7 +171,7 @@ Each value, and each element of an array value: what an equality or comparison i
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L63)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:63](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L63)
 
 ___
 
@@ -192,7 +192,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L69)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:69](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L69)
 
 ___
 
@@ -212,7 +212,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:95](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L95)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:103](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L103)
 
 ___
 
@@ -233,7 +233,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:101](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L101)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:109](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L109)
 
 ___
 
@@ -254,7 +254,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:109](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L109)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:117](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L117)
 
 ___
 
@@ -275,7 +275,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:114](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L114)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:122](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L122)
 
 ___
 
@@ -296,7 +296,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:133](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L133)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:141](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L141)
 
 ___
 
@@ -319,7 +319,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:146](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L146)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:154](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L154)
 
 ___
 
@@ -341,7 +341,7 @@ The document an upsert inserts: the query's plain equality fields, then the upda
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:169](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L169)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:177](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L177)
 
 ___
 
@@ -364,4 +364,4 @@ The values a unique index is keyed by, or null when the document has none of its
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentQuery.ts:176](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentQuery.ts#L176)
+[packages/bpmn-server/src/datastore/DocumentQuery.ts:184](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentQuery.ts#L184)

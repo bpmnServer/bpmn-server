@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:156](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L156)
+[packages/bpmn-server/src/interfaces/server.ts:160](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L160)
 
 ___
 
@@ -30,7 +30,7 @@ why none of the model's instances was considered: no saved model, or one with er
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:158](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L158)
+[packages/bpmn-server/src/interfaces/server.ts:162](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L162)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:159](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L159)
+[packages/bpmn-server/src/interfaces/server.ts:163](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L163)
