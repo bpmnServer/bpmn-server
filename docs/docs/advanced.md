@@ -1,4 +1,4 @@
-# Advanced Topics
+# Advanced topics
 ## command line interface
 
 ```sh

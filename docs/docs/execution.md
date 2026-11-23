@@ -1,19 +1,15 @@
-# Workflow Execution
+# How a workflow runs
 
-Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
+The engine follows the diagram. Starting a case creates its first step; each step runs, and the case moves along the
+flows to the next ones. When a step needs a person or an outside answer, the case **waits**: its state is saved, and
+nothing more happens until someone completes the task or the answer arrives. That is why a case can take months.
 
-During Execution, Model Listeners and Application Listeners are invoked.
+Along the way the model's own scripts and listeners run, and the application's services and delegate are called:
+see [Scripting](scripting.md) and [Custom delegates](delegates.md).
 
-Process Execution is performed based on BPMN 2.0 standards providing access to the following components to participate:
-- Event Listener
-- Scripts
-- Services
-- AppDelegate
-
-See [more about scripts](scripting.md)
-
-The execution `engine` is availabe through an API [see API.engine](api/interfaces/IAPIEngine.md).
-## Starting a Process
+An application drives all of this through `api.engine`
+([the engine's API](api-summary.md), [reference](api/interfaces/IAPIEngine.md)).
+## Starting a case
 For more details about scenarios of Invoking Execution Engine [Engine Invokation](invokation.md)
 
 <table><tr><td>
@@ -30,11 +26,11 @@ Once the process goes into a **wait** state, it waits for some external input:
 
 </td></tr></table>
 
-## Invoking a User Task
+## Completing a task
 
 ![](images/InvokeTask.png)
 
-## Execution Sequence
+## What happens, step by step
 
 Below is the sequence of events after each command:
 
@@ -86,7 +82,7 @@ Below is the sequence of events after each command:
 ---Event: -->process.saving { option1: 1234, restored: true }
 
 ```
-## engine.invoke (with validation failure)
+### engine.invoke, when validation fails
 
 ```
 ---invoke Approve-----
@@ -102,17 +98,17 @@ Error Message: Error: Validation failed with error:Not a valid value
 ```
 
 
-# Scope and variables
+## What a script can see
 [See Scope and Variables in Scripts](scripting.md#Scripts_scope_and_variables)
 
-# Scripts and Services Impact on Execution
+## How scripts and services affect a case
 Scripts and Services can impact workflow in the following manners:
 - Change workflow Data
 - Service Tasks and Script Tasks, receive input and return output
 - Scripts and Service Task can raise Errors and Exceptions
 
-# Raisng Errors , Escalations and Exceptions
-## Validation Scripts
+## Errors, escalations and exceptions
+### Validation scripts
 Validation Scripts can return an error as such:
 ```
     return {error:'Invalid input'};
@@ -120,7 +116,7 @@ Validation Scripts can return an error as such:
 
 As a result execution will raise an exception and the command will fail.
 
-## BPMN Errors
+### BPMN errors
 
 All Scripts and Services can Raise `BPMN Errors`, to be handled by the appropriate Error node
 ```
@@ -134,7 +130,7 @@ All Scripts and Services can Raise `BPMN Escalation`, to be handled by the appro
 ```
 The current item status will be `error` and execution will continue at the Error node.
 
-## Throwing Exceptions
+### Throwing exceptions
 ```
     throw new Error('error message');
 ```
@@ -145,7 +141,7 @@ exception's message (`statusDetails.error`, with its `code` when it has one). Th
 shows **failed at** the task and why, and an administrator's **Retry** runs the task's work again, then the
 instance goes on (`engine.retry({ 'items.id': id })`, `api.engine.retry(...)`).
 
-### Exceptions as BPMN errors
+#### Exceptions as BPMN errors
 A service, send or script task can choose otherwise: **Exceptions raise a BPMN error** in its properties
 (`owf:exceptionsAsErrors="true"`). An exception of its work, a service that throws or a connector that can not
 be called, is then raised as a BPMN error, caught as one returned with `{bpmnError}`:

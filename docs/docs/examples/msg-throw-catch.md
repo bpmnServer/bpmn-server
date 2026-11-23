@@ -1,4 +1,4 @@
-# Throwing and Catching Messages
+# Messages: telling a waiting case something happened
 
 Two separate processes can talk to each other with messages. One throws a message. The engine then gives it to a
 waiting instance that catches it, or starts a process whose start event catches it. Only when nothing catches it does

@@ -1,5 +1,5 @@
 
-# Throwing and Cathcing Signals
+# Signals: one throw, every waiting case
 
 ## Signals vs Messages
 

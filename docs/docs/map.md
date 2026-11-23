@@ -38,7 +38,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 ## Concepts
 
 - [Architecture](architecture.md): OmniWorkflow has three layers: a host that people and other systems talk to, an engine that runs processes, and a core of model and data handling that both of them use.
-- [How a workflow runs](execution.md): Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
+- [How a workflow runs](execution.md): The engine follows the diagram.
 - [Workflow data](data.md): A case's state lives in the store, which is why a process can run for days or months and across several servers.
 - [Finding instances](data_find.md): server.dataStore.find reads a page of instances from the store: a filter chooses them, a sort orders them, and a cursor walks through them a page at a time.
 - [Data objects](data-objects.md): A data object in the diagram stands for data the process works on: a client, an order, a policy.

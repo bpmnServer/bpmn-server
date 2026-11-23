@@ -1,6 +1,6 @@
-# Invoking Workflow Scenarios
+# Invoking workflows
 
-## Invoking Workflow Using WebApp
+## From the web application
 
 Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least:
 - Selection of Workflows to Start
@@ -9,7 +9,7 @@ Since workflow require a User Interface, a web-app is required as front-end to i
 
 [the Buy Used Car example in the web application](examples/buy-used-car.md#in-the-web-application)
 
-## Invoking Proccess through API
+## From code, through the API
 
 To Invoke a process from your code:
 
@@ -55,7 +55,7 @@ const client = new BPMNClient(process.env.HOST, process.env.PORT, process.env.AP
 let response = await client.engine.start('Buy Used Car');
 ``` 
 
-### Async Execution
+### Asynchronous execution
 
 The default behaviour is that `engine.start` and `engine.invoke` will execute the process in sequence specified in a synchronous fashion and returns control in one of these cases:
 
