@@ -113,6 +113,15 @@ nav:
   - Decisions (DMN): decisions.md
   - Data objects: data-objects.md
 
+- Add-ons:
+  - Assignment: add-ons/assignment.md
+  - Notifications: add-ons/notification.md
+  - Access Control: add-ons/security.md
+  - Labels: add-ons/labels.md
+  - Model Options: add-ons/modeling.md
+  - Extended Forms: add-ons/forms.md
+  - AI Agents: add-ons/ai.md
+
 - Reference:
   - Invoking Workflows: invokation.md
   - Workflow Execution: execution.md

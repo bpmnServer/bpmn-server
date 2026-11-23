@@ -11,7 +11,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Online Demo](first-workflow.md): Journey A: the quickest way to understand BPMN Server is to build, test, and run a small process.
 - [Build an Application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
 - [Integrate an Existing Application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.
-- [Installation](setup.md): init creates the sample application: processes/ (Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository), connectors/ (the services the…
+- [Installation](setup.md): init creates the sample application: processes/ (Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository), connectors/ (the editor's…
 - [Settings: .env and configuration](settings.md): An application has two places for settings.
 - [What's new in 3.6](whats-new-3.6.md): bpmn-server 3.6 separates the host from the engine, removes guest access and moves every test to Gherkin.
 - [What's new in 3.5](whats-new-3.5.md): bpmn-server 3.5 adds REST API connectors, SQLite storage, decisions (DMN) as the standard describes them, a new model editor with tests for models and decisions, and npx…
@@ -22,7 +22,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - **Part 1: Modeling — straight BPMN**
   - [1. Build a Workflow Brief](tutorial/start.md): These tutorials are for developers building a production workflow.
   - [2. Roles and Assignment](tutorial/roles.md): decide, HR can repair rejected records, and unrelated users cannot see or complete those tasks.
-  - [3. Forms and Data](tutorial/forms.md): The example form captures leave type, dates, and reason; invalid dates route back to the requester.
+  - [3. Forms and Data](tutorial/forms.md): The example form captures leave type, dates, and reason; invalid dates are refused, and the request waits for the requester.
   - [4. Decisions and Paths](tutorial/paths.md): not, and a request that needs more information goes back to the employee.
   - [5. Deadlines](tutorial/deadlines.md): once, after that long; a Date at that time.
 - **Part 2: Adding Logic — JavaScript and FEEL**
@@ -44,6 +44,16 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Decisions (DMN)](decisions.md): A business rule task evaluates a DMN decision: a decision table (or a literal expression) kept in its own file, next to the models.
 - [Data objects](data-objects.md): A data object in the diagram stands for data the process works on: a client, an order, a policy.
 
+## Add-ons
+
+- [Assignment](add-ons/assignment.md): The Assignment add-on decides who works on each task, and who may start a process.
+- [Notifications](add-ons/notification.md): The Notifications add-on tells people what happens to their work.
+- [Access Control](add-ons/security.md): The Access Control add-on decides who may see a case and what they may do in it.
+- [Labels](add-ons/labels.md): The Labels add-on names each case and task from its data: a case Client: acme · Order: 1234, a task Approve 90.
+- [Model Options](add-ons/modeling.md): The Model History add-on gives the model editor its Test and History tabs.
+- [Extended Forms](add-ons/forms.md): The Extended Forms add-on gives a form field its choices from a source, as the form is filled.
+- [AI Agents](add-ons/ai.md): The AI Agents add-on lets a person give their AI agent a link to this site: the agent then works as them.
+
 ## Reference
 
 - [Invoking Workflows](invokation.md): Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least: - Selection of Workflows to Start - Show outstanding Tasks…
@@ -54,6 +64,8 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Features](features.md): What bpmn-server, bpmn-web and bpmn-client do, area by area, each with where it is documented, its code and its tests.
 - [Performance and test coverage](performance.md): This page gives the speed, load and memory figures from BPMN Server's own test suites, the effect of the database indexes, and how much of the code the tests run.
 - [Labels](labels.md): A case is known by what identifies it: Car: Porsche 911 · Buyer: staff, not only by its case id.
+- [Lists and lookups in forms](form-lookups.md): A form field can offer choices from your application: a drop-down of departments, or a search for an employee.
+- [Form rules](form-rules.md): The engine checks a task's form rules when the task is completed.
 - [Assignment policies](assignment-policies.md): A user task can say who works on it by naming an assignment policy: a decision table, kept with the models, whose first matching rule assigns the task when it starts.
 - [Notification policies](notification-policies.md): A process can say who is told what, and when, by naming a notification policy: a decision table, kept with the models, whose every matching rule sends a notification.
 - [Advanced Topics](advanced.md): A command after --, with the answers to its questions, runs just that and quits: for scripts, and for a server (on one made by the installer, owf cli ...
@@ -70,7 +82,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Multiple Start Events](examples/multiStartEvent.md): When a definition/process has multiple start node, you need to specify the start node when starting the process:
 - [Input Fields](examples/inputFields.md)
 - [Boundary Events](examples/boundary-events.md): boundary events have started in a wait state
-- [Throwing/Catching Messages](examples/msg-throw-catch.md): In this example, we will demonstrate how can two seperate processes communicate through "Messages"
+- [Throwing/Catching Messages](examples/msg-throw-catch.md): Two separate processes can talk to each other with messages.
 - [Throwing/Catching Signals](examples/signal-throw-catch.md): Messages are directed toward a specific recipient node, Signals however are broadcast to all potential listeners.
 - [Error/Escalate Events](examples/error_events.md): Also Scripts and Services Tasks can Raise BPMN Errors/Escalation/Exception
 - [Call Process](examples/callProcess.md): In the above example 'loop' is the name of process to be called.

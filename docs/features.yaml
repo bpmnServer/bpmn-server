@@ -196,11 +196,12 @@ features:
   - id: messages-signals
     area: modeling
     name: "Messages and signals"
-    what: "Thrown and caught by events and tasks; a message starts a model or reaches the instance waiting for it."
+    what: "Thrown and caught by events and tasks; a message starts a model or reaches the instance waiting for it. A matching key picks the instance: a throw's output field named matchingKey (not thrown with the data), or this.context.messageMatchingKey in a script, for that throw only; from the API, messageMatchingKey. The Rationale says where each went: the thrower's row whom it reached (or none), each receiver's row from whom (an instance and its element, or outside: an API call), the key as the why."
     xml: ["bpmn:messageEventDefinition", "bpmn:signalEventDefinition"]
     docs: [docs/docs/examples/msg-throw-catch.md, docs/docs/examples/signal-throw-catch.md]
-    code: [packages/bpmn-server/src/elements/behaviours/MessageSignal.ts]
-    tests: [apps/testSampleApp/test/custom/messages-and-signals.test.ts, apps/testSampleApp/processes/t-throw-signals.engine.feature, apps/testSampleApp/processes/test-throw.engine.feature]
+    code: [packages/bpmn-server/src/elements/behaviours/MessageSignal.ts, packages/bpmn-server/src/server/Engine.ts, packages/bpmn-server/src/engine/Execution.ts]
+    examples: [apps/testSampleApp/processes/Invoice.bpmn, apps/testSampleApp/processes/Invoice.feature]
+    tests: [packages/bpmn-server/test/throw-events.test.mjs, apps/testSampleApp/test/custom/messages-and-signals.test.ts, apps/testSampleApp/processes/t-throw-signals.engine.feature, apps/testSampleApp/processes/test-throw.engine.feature]
   - id: errors-escalations
     area: modeling
     name: "Errors and escalations"
@@ -313,7 +314,7 @@ features:
     area: engine
     name: "Add-ons"
     what: "What is built on the engine registers for the engine's own events (register(server): server.listener.subscribe; start, assign, wait, end, process.end) and registers what has no event in server.registrations (engine/AddOns.ts: model checks, decision lookups); the engine imports nothing of it, and an add-on imports no other add-on. Who works on a user task is set in one engine step, Execution.assignItem, which records what decided it and fires assign: the assignment add-on decides on start (attributes, lane, policy), a person by assign or claim. The assignment, notification and security policies are three add-ons (src/addons/assignment, notification, security, each its own folder; what they share, the actors, in src/addons/basics; `policies` in app-config.json is the three); a server has its configuration's addOns(server), by default the policies; addOns: () => [] is the engine alone; an application adds its own. A subscriber that throws is reported and fails nothing. The API fires its own events: pre-query (a listener adds conditions to context.conditions, narrowing a read) and pre-action (a listener may refuse an action by throwing); the Policies add-on listens. What is handed to the application's code and the add-ons is one context per call (engine/Context.ts: its source item, element, dmn, query or form; user, instance, element, item, data, input), forwarding to the execution for 3.x (deprecated); the case's actors are kept on it (instance.actors)."
-    docs: [docs/design/add-ons.md, docs/design/context-object.md, docs/docs/add-ons/assignment.md, docs/docs/add-ons/security.md, docs/docs/add-ons/notification.md, docs/docs/add-ons/labels.md, docs/docs/add-ons/forms.md, docs/docs/add-ons/modeling.md]
+    docs: [docs/design/add-ons.md, docs/design/context-object.md, docs/docs/add-ons/assignment.md, docs/docs/add-ons/security.md, docs/docs/add-ons/notification.md, docs/docs/add-ons/labels.md, docs/docs/add-ons/forms.md, docs/docs/add-ons/modeling.md, docs/docs/add-ons/ai.md]
     code: [packages/bpmn-server/src/engine/AddOns.ts, packages/bpmn-server/src/engine/Context.ts, packages/bpmn-server/src/API/API.ts, packages/bpmn-server/src/elements/FormRules.ts, packages/bpmn-server/src/addons/index.ts, packages/bpmn-server/src/common/DefaultConfiguration.ts]
     tests: [packages/bpmn-server/test/add-ons.test.mjs, packages/bpmn-server/test/context.test.mjs, apps/testSampleApp/test/web/add-ons.test.mjs, apps/testSampleApp/test/ui/modeler-add-ons.test.mjs]
   - id: assignment-policies
@@ -329,7 +330,7 @@ features:
     area: security
     name: "Security policies"
     status: partial
-    what: "A process (and a user task, for its actions) names a security policy (owf:securityPolicy): a DMN table in security/<name>.dmn.xml, hit policy COLLECT, every matching rule counted and a denial winning. Inputs: the names every expression reads: the user (user.userGroups), the instance's actors (actors.initiator, an owf:actor's), the task, the data (a task's: its item's, in its branch); actions: see (summary, full), data (all, forms, paths), claim, complete, restart, events. Without one, the application's security/default.dmn.xml, else a built-in default. Asked by API v3 (instances, tasks, claim, complete, restart, start events) and the pages (the Workbench's lists, the instance page, the task form); a refused action is a 403 POLICY_DENIED naming the rule. Off until an application has security/ or SECURITY_POLICY=default."
+    what: "A process (and a user task, for its actions) names a security policy (owf:securityPolicy): a DMN table in security/<name>.dmn.xml, hit policy COLLECT, every matching rule counted and a denial winning. Inputs: the names every expression reads: the user (user.userGroups), the instance's actors (actors.initiator, an owf:actor's), the task, the data (a task's: its item's, in its branch); actions: see (summary, full), data (all, forms, paths), claim, complete, restart, events. Without one, the application's security/default.dmn.xml, else a built-in default. Asked by API v3 (instances, tasks, claim, complete, restart, start events) and the pages (the Workbench's lists, the instance page, the task form); a refused action is a 403 POLICY_DENIED naming the rule. Off until an application has security/ or SECURITY_POLICY=default. A case a rule shows as a summary (see: summary) opens as one: its name, status and the tasks the person completed in it, none of its data."
     note: "A first slice: in the editor's Policies group of a process (a task's own is written in the XML), its actors checked by verifyModel (actor-unknown) but not yet its own checks, no As whom preview; a policy can deny claim and complete but not yet give them to someone the assignment doesn't offer the task to."
     xml: ["[owf:securityPolicy]"]
     docs: [docs/design/security-policies.md]
@@ -344,7 +345,7 @@ features:
     docs: [docs/docs/notification-policies.md, docs/design/notification-policies.md]
     code: [packages/bpmn-server/src/addons/notification/NotificationPolicy.ts, packages/bpmn-server/src/addons/notification/index.ts, packages/bpmn-web/src/routes/api/instances.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/includes/notifications.pug]
     examples: [apps/hrdemo/workflow/processes/notification/LeaveNotices.dmn.xml, apps/hrdemo/server/notifications.js]
-    tests: [packages/bpmn-server/test/notifications.test.mjs, apps/testSampleApp/test/web/notifications.test.mjs]
+    tests: [packages/bpmn-server/test/notifications.test.mjs, apps/testSampleApp/test/web/notifications.test.mjs, apps/testSampleApp/test/web/case-summary.test.mjs]
   - id: expressions
     area: modeling
     name: "Expressions and conditions"
@@ -684,10 +685,17 @@ features:
     docs: [docs/docs/security.md, docs/docs/bpmn-web.md]
     code: [packages/bpmn-web/src/userAccess/UserService.ts, packages/bpmn-web/src/userAccess/UserManager.ts]
     tests: [apps/testSampleApp/test/web/users.test.mjs, apps/testSampleApp/test/web/auth.test.mjs, apps/testSampleApp/test/web/signup.test.mjs]
+  - id: ai-links
+    area: pages
+    name: "Links for AI agents"
+    what: "The AI Agents add-on: AI Agent, a menu item of its own for everyone signed in (/ai/key), gives a link for their AI agent, an API key that acts as them at the level they choose (work, design, administer; AI_ACCESS), for minutes; the agent reads the link first (/ai/<key>: whom it acts as, the rules, where to start). Examples of what to ask at each level, one click into the box. Revoked there or by signing out. With the add-on off: no menu item, no /ai pages, the links refused (AI_OFF). An application that signs people in itself gets them too: /me says may.aiLink."
+    docs: [docs/docs/add-ons/ai.md, docs/design/host-users.md]
+    code: [packages/bpmn-web/src/routes/aiAccess.ts, packages/bpmn-web/src/app.ts, packages/bpmn-web/src/views/aiKey.pug, packages/bpmn-web/src/routes/api/door.ts, packages/bpmn-server/src/addons/ai/index.ts]
+    tests: [apps/testSampleApp/test/web/ai-key.test.mjs, apps/testSampleApp/test/web/host-user-manager.test.mjs]
   - id: host-user-manager
     area: pages
     name: "The application's own sign-in"
-    what: "An application that signs people in itself gives bpmn-web its user manager (start({ userManager }), IUserManager: init, setup, apiUser): the pages take its person, API v3 its credential (a change posted from another site with its cookie refused), bpmn-web keeps no users or sessions and issues no tokens or AI links."
+    what: "An application that signs people in itself gives bpmn-web its user manager (start({ userManager }), IUserManager: init, setup, apiUser): the pages take its person, API v3 its credential (a change posted from another site with its cookie refused), bpmn-web keeps no users or sessions and issues no tokens of its own, but a person's AI link (/ai/key, as the application's person; API v3 takes it before the application's credential)."
     docs: [docs/docs/architecture.md, docs/design/host-users.md]
     code: [packages/bpmn-web/src/userAccess/IUserManager.ts, packages/bpmn-web/src/userAccess/pages.ts, packages/bpmn-web/src/routes/api/door.ts, packages/bpmn-web/src/routes/api/pageClient.ts, apps/hrdemo/server/userManager.js]
     tests: [apps/testSampleApp/test/web/host-user-manager.test.mjs]
@@ -744,7 +752,7 @@ features:
   - id: environment-band
     area: pages
     name: "The environment's band"
-    what: "APP_ENV (development, test, production) and APP_ENV_LABEL shown on every page as a band above the menu bar (Development blue, Test amber, the name always written) and as a badge in the model and decision editors; none in production unless labelled. API v3's /me says it (environment: name, label, readOnly, shown), and the HR demo shows it in its sidebar. Unset APP_ENV: not declared, no band, as before."
+    what: "APP_ENV (development, test, production) and APP_ENV_LABEL shown on every page as a band above the menu bar (Development blue, Test amber, the name always written) and as a badge in the model and decision editors; none in production unless labelled. The band also says what runs differently here: Timers off (TIMERS), Service tasks off (SERVICE_TASKS), Scripts in a sandbox (SCRIPT_SANDBOX), as set or as DEMO_MODE says; a restriction alone shows it. API v3's /me says it (environment: name, label, readOnly, restrictions, shown), and the HR demo shows it in its sidebar. Unset APP_ENV: not declared, no band, as before."
     docs: [docs/docs/environments.md]
     code: [packages/bpmn-web/src/runtime/environment.ts, packages/bpmn-web/src/views/includes/environment.pug, packages/bpmn-web/src/routes/api/v3.ts, apps/hrdemo/src/components/Layout.jsx]
     tests: [apps/testSampleApp/test/web/environment.test.mjs]
