@@ -42,7 +42,7 @@ Model in the [model editor](modeler.md): its **Problems** tab checks the model a
 
 Tests are Gherkin files beside the models, run in the engine: [Testing and debugging models](testing.md), and [Tutorial 7](tutorial/tutorial-testing.md).
 
-**Try this first:** a "Request approval" process: **Start → Submit request (user task) → Approve request (user task) → End**. Once that works, add a gateway for **Approved?** and a rejection path. It exercises most of what a real process needs.
+A first model to try: the request approval of [the online demo](first-workflow.md#in-the-online-workbench).
 
 ## 4. Integrate services
 

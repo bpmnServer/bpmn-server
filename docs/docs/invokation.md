@@ -7,7 +7,7 @@ Since workflow require a User Interface, a web-app is required as front-end to i
 - Show outstanding Tasks
 - Show recent Tasks
 
-[see Demo of WebApp ](./examples/BuyCar-Web.md)
+[the Buy Used Car example in the web application](examples/buy-used-car.md#in-the-web-application)
 
 ## Invoking Proccess through API
 
@@ -43,7 +43,7 @@ The above code uses `SystemUser`, to define another user:
 ```
 In real applications, you get userName and userGroups from you application UserAccess. 
 
-## [Invoking Remotely Using WebServices](./examples/BuyCar-Remote.md)
+## Invoking remotely, over the API ([example](examples/buy-used-car.md#from-another-application-over-the-api))
 
 NPM package 'bpmn-client' provide access to bpmn-server using remotely using webServices
 ```ts

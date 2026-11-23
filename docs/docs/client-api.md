@@ -4,7 +4,7 @@
 bpmn-client is a lightweight Node package to remotely access bpmn-server. Its `BPMNClient3` is the client of
 [API v3](#api-v3): it issues and renews each user's token with the service key ([how](bpmn-client.md#usage-api-v3-bpmn-web-37-and-later)).
 
-[See code Example using bpmn-clienthere](examples/BuyCar-Remote.md)
+[An example: Buy Used Car from another application](examples/buy-used-car.md#from-another-application-over-the-api)
 
 Alternatively, you can call bpmn-server over HTTP(S). To try the API by hand, import its OpenAPI document,
 `https://your-site/api/v3/openapi.json`, into Postman (or any OpenAPI tool): every operation, its parameters and how to

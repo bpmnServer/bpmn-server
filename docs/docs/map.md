@@ -90,10 +90,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - **bpmn-client**
   - [Installing it](bpmn-client.md)
   - [The client API](client-api.md): bpmn-client is a lightweight Node package to remotely access bpmn-server.
-- **The Buy Used Car example**
-  - [On the server](examples/BuyCar-Server.md): For the model above we will walk-through how to execute it programaticaly.
-  - [From another application](examples/BuyCar-Remote.md): For the model above we will walk-through how to execute it programaticaly.
-  - [In the web application](examples/BuyCar-Web.md): From the WebApp home page: - Select the Process - Click [Execute] link
+- [Example: Buy Used Car, three ways](examples/buy-used-car.md): One small process, run three ways: in the web application, from code in the engine's own process, and from another application over the API.
 
 ## Add-ons
 

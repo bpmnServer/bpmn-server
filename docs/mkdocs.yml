@@ -48,6 +48,9 @@ plugins:
         bpmn-changes.md: examples.md
         dt.md: decisions.md
         bpmn/intro.md: examples.md
+        examples/BuyCar-Server.md: examples/buy-used-car.md
+        examples/BuyCar-Remote.md: examples/buy-used-car.md
+        examples/BuyCar-Web.md: examples/buy-used-car.md
         application-integration-design.md: 'https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/application-integration-design.md'
 markdown_extensions:
   - toc:
@@ -175,10 +178,7 @@ nav:
   - bpmn-client:
     - Installing it: bpmn-client.md
     - The client API: client-api.md
-  - The Buy Used Car example:
-    - On the server: examples/BuyCar-Server.md
-    - From another application: examples/BuyCar-Remote.md
-    - In the web application: examples/BuyCar-Web.md
+  - 'Example: Buy Used Car, three ways': examples/buy-used-car.md
 
 - Add-ons:
   - Assignment: add-ons/assignment.md
