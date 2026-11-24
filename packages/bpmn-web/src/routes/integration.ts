@@ -49,7 +49,7 @@ export function addOnArea(manifest: { name: string; title: string; description?:
 export const INTEGRATION_POINTS: IntegrationPoint[] = [
     {
         id: 'roles', title: 'Roles',
-        about: 'The roles lanes and tasks are given to, and that policies name (roles.json): the server\'s, whichever add-ons are on.',
+        about: 'The roles lanes and tasks are given to, and that policies name (the application\'s app-contract.json): the server\'s, whichever add-ons are on. What each role is allowed to do is on Security.',
         settings: [],
     },
     {
@@ -57,8 +57,6 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         about: 'Who can reach this server, what each of them may do, and what its models are allowed to run (docs/design/security-profiles.md): the three are separate. The effective configuration is below, with a warning for a combination that is not safe.',
         settings: [
             // 1. access and authentication: who can reach the server
-            { name: 'REQUIRE_AUTHENTICATION', label: 'Sign-in required', main: true },
-            { name: 'ALLOW_INSECURE_NO_AUTH', label: 'Start without sign-in in production (not recommended)' },
             { name: 'SESSION_SECRET', label: 'Session secret' },
             { name: 'SECURE_COOKIES', label: 'Cookies only over HTTPS' },
             { name: 'AUTH_RATE_LIMIT', label: 'Sign-in attempts a minute per address' },
@@ -69,7 +67,6 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
             // 2. roles and permissions: what each role is allowed to do is the table above; DISABLE_ADMIN,
             // DISABLE_DESIGN, READ_ONLY and ENFORCE_SECURITY are not offered here — they take a permission from
             // everyone, which the table says, and they stay settable in .env
-            { name: 'SECURITY_POLICY', label: 'Default case security policy' },
             // 3. API and AI credentials: the identities that are not people
             { name: 'API_KEY', label: 'Service key (API v3)' },
             { name: 'ADMIN_API_KEY', label: 'Administration key' },
@@ -194,6 +191,9 @@ const valueOf = (settings: any[], name: string) => {
     return s.value !== '' ? s.value : s.default !== undefined ? String(s.default) : 'not set';
 };
 
+/** The rows the Security area's table always has: this server's own, beside whatever the application declares. */
+export const SERVER_ROLES = ['PUBLIC', 'User', 'SYSTEM'] as const;
+
 /** The permissions a role may hold (docs/design/security-profiles.md): the columns of the Security area's table. */
 export const PERMISSIONS = [
     { id: 'user', title: 'User', about: 'Start permitted workflows, view authorized instances, and complete assigned tasks' },
@@ -213,7 +213,7 @@ export const PERMISSIONS = [
  */
 export function rolePermissions(appRoles: string[] = [], granted: Map<string, readonly string[]> = new Map()): {
     permissions: { id: string; title: string; about: string; off?: string }[];
-    roles: { name: string; of: 'server' | 'application'; note?: string; editable?: boolean; fixed?: string[]; has: Record<string, boolean> }[];
+    roles: { name: string; of: 'server' | 'application'; note?: string; editable?: boolean; byDefault?: string[]; has: Record<string, boolean> }[];
     restrictions: string[];
 } {
     const on = (name: string) => /^(true|on|1|yes)$/i.test(String(process.env[name] ?? '').trim());
@@ -233,30 +233,36 @@ export function rolePermissions(appRoles: string[] = [], granted: Map<string, re
     const held = (wanted: Record<string, boolean>) => Object.fromEntries(
         permissions.map(p => [p.id, !p.off && !!wanted[p.id]]));
 
-    const roles: { name: string; of: 'server' | 'application'; note?: string; editable?: boolean; fixed?: string[]; has: Record<string, boolean> }[] = [];
+    const roles: { name: string; of: 'server' | 'application'; note?: string; editable?: boolean; byDefault?: string[]; has: Record<string, boolean> }[] = [];
     // PUBLIC: nobody signed in. With sign-in required it holds nothing; without it, what the code does today is give
     // everyone an administrator's rights, which is said as it is rather than as it should be.
-    roles.push({ name: 'PUBLIC', of: 'server',
+    const serverSaid = (name: string, fallback: Record<string, boolean>) => {
+        const said = granted.get(name);
+        return said ? Object.fromEntries(PERMISSIONS.map(p => [p.id, said.includes(p.id)])) : fallback;
+    };
+    roles.push({ name: 'PUBLIC', of: 'server', editable: true,
         note: anonymous
             ? 'not signed in — and no sign-in is required here, so anyone reaching this server has these'
             : 'not signed in',
-        has: held({ user: anonymous, designer: anonymous, administrator: anonymous }) });
+        has: held(serverSaid('PUBLIC', { user: anonymous, designer: anonymous, administrator: anonymous })) });
     // User: the catch-all, anyone signed in whatever their application role
-    roles.push({ name: 'User', of: 'server', note: 'anyone signed in, whatever their role',
-        has: held({ user: true, designer: false, administrator: false }) });
-    roles.push({ name: 'SYSTEM', of: 'server', note: 'the server itself, and its service account',
-        has: held({ user: true, designer: true, administrator: true }) });
+    roles.push({ name: 'User', of: 'server', editable: true, note: 'anyone signed in, whatever their role',
+        byDefault: ['user'],
+        has: held(serverSaid('User', { user: true, designer: false, administrator: false })) });
+    roles.push({ name: 'SYSTEM', of: 'server', editable: true, note: 'the server itself, and its service account',
+        byDefault: ['user', 'designer', 'administrator'],
+        has: held(serverSaid('SYSTEM', { user: true, designer: true, administrator: true })) });
     const own = new Set(roles.map(r => r.name));
     for (const name of appRoles.filter(n => !own.has(n))) {
-        // the group names this server has always matched on: those rows cannot be unticked here
+        // the default: the group names this server matches on. The contract may change it either way, so a row the
+        // contract mentions shows what it says; one it does not shows the default, and ticking it writes the contract.
         const byName = ['ADMIN', 'SYSTEM'].includes(name) ? ['designer', 'administrator']
             : name === 'DESIGNER' ? ['designer'] : [];
-        const stored = granted.get(name) ?? [];
+        const said = granted.get(name);
+        const holds = (p: string) => said ? said.includes(p) : byName.includes(p);
         roles.push({ name, of: 'application', editable: true,
-            fixed: byName,
-            has: held({ user: true,
-                designer: byName.includes('designer') || stored.includes('designer'),
-                administrator: byName.includes('administrator') || stored.includes('administrator') }) });
+            byDefault: ['user', ...byName],
+            has: held({ user: said ? said.includes('user') : true, designer: holds('designer'), administrator: holds('administrator') }) });
     }
     return { permissions, roles, restrictions };
 }

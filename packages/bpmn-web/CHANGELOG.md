@@ -26,6 +26,14 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Every cell of that table is a tick**, the server's own rows (`PUBLIC`, `User`, `SYSTEM`) and the User column
+  included. A role the contract does not mention keeps the server's default for its name; one it mentions decides
+  for itself, so a role can be given Administrator or have it taken away. A save that would leave no role an
+  administrator is refused, so the page cannot lock its own administrator out.
+- Fixed: a tick in the **User** column, and any tick on `PUBLIC`, `User` or `SYSTEM`, was dropped on save without
+  saying so — `user` was not a permission the save knew, and only the application's roles were written.
+- `REQUIRE_AUTHENTICATION`, `ALLOW_INSECURE_NO_AUTH` and `SECURITY_POLICY` are no longer offered as settings on the
+  Security page either; the Roles page and its messages name `app-contract.json`, not the retired `roles.json`.
 - **What each role is allowed to do, on the Security area**: a row for each role — `PUBLIC` (not signed in), `User`
   (anyone signed in), `SYSTEM` (the server itself), then the application's own — and a column for each permission
   (User, Designer, Administrator). An administrator ticks an application's row and it is saved to its

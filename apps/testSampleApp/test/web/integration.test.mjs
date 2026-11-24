@@ -7,6 +7,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
 import { startWebApp, why, API_KEY } from '../support/webApp.mjs';
 
 let web, admin, designer, staff;
@@ -168,12 +169,13 @@ test('each add-on its own area: its manifest\'s settings, on or off, what it has
 test('the Security area: the three questions, with a warning for a combination that is not safe', async () => {
     const page = (await admin.get('/dashboard/settings/secure')).text;
     // who may reach it, what each may do, the credentials that are not people, what a model may run
-    for (const name of ['REQUIRE_AUTHENTICATION', 'SECURITY_POLICY', 'API_KEY', 'AI_ACCESS', 'SCRIPT_SANDBOX',
+    for (const name of ['SESSION_SECRET', 'DISABLE_SIGNUP', 'API_KEY', 'AI_ACCESS', 'SCRIPT_SANDBOX',
         'TIMERS', 'DEMO_MODE'])
         assert.ok(page.includes(`data-setting="${name}"`), `${name} is on the Security page`);
-    // these take a permission from everyone, which the table says: not offered as settings here
-    for (const name of ['DISABLE_ADMIN', 'DISABLE_DESIGN', 'READ_ONLY', 'ENFORCE_SECURITY'])
-        assert.ok(!page.includes(`data-setting="${name}"`), `${name} is not offered here; the table says what it does`);
+    // what a role is allowed to do is the table's, and these decide it for everyone: not offered as settings here
+    for (const name of ['DISABLE_ADMIN', 'DISABLE_DESIGN', 'READ_ONLY', 'ENFORCE_SECURITY',
+        'REQUIRE_AUTHENTICATION', 'ALLOW_INSECURE_NO_AUTH', 'SECURITY_POLICY'])
+        assert.ok(!page.includes(`data-setting="${name}"`), `${name} is not offered here`);
     // and they are no longer on the areas they were spread over
     const models = (await admin.get('/dashboard/settings/models')).text;
     assert.ok(!models.includes('data-setting="SCRIPT_SANDBOX"'), "what a model may run is the Security area's");
@@ -205,12 +207,16 @@ test('the Security area lists what each role may do, and what a restriction take
     assert.equal(row('SYSTEM').has.administrator, true, 'the server itself');
     assert.equal(row('Employee').has.administrator, false, "an application's role holds nothing more by default");
     assert.equal(row('ADMIN').has.administrator, true, 'a name this server matches on');
-    assert.ok(row('ADMIN').fixed.includes('administrator'), 'and it cannot be unticked');
-    assert.ok(row('Employee').editable && !row('PUBLIC').editable, "the application's rows are the editable ones");
+    assert.ok(row('ADMIN').byDefault.includes('administrator'), 'by default, because of its name');
+    // every row is editable, the server's own included: a tick decides it either way
+    assert.ok(now.roles.every(r => r.editable), 'every row can be changed');
 
-    // a stored permission grants it
-    const granted = rolePermissions(['Manager'], new Map([['Manager', ['designer']]]));
-    assert.equal(granted.roles.find(r => r.name === 'Manager').has.designer, true, 'the contract granted it');
+    // what the contract says wins over the default, in both directions
+    const granted = rolePermissions(['Manager', 'ADMIN'],
+        new Map([['Manager', ['user', 'designer']], ['ADMIN', ['user']]]));
+    const g = (name) => granted.roles.find(r => r.name === name);
+    assert.equal(g('Manager').has.designer, true, 'given to a role whose name says nothing');
+    assert.equal(g('ADMIN').has.administrator, false, 'and taken from one whose name would have given it');
 
     // a restriction takes the right from everyone, administrators included, and says which setting did it
     const was = { a: process.env.DISABLE_ADMIN, r: process.env.READ_ONLY, q: process.env.REQUIRE_AUTHENTICATION };
@@ -241,6 +247,38 @@ test('the Security area lists what each role may do, and what a restriction take
     // the server's own rows, then this application's; a checkbox where the row may be changed
     for (const row of ['PUBLIC', 'User', 'SYSTEM', 'Employee', 'Manager'])
         assert.match(page, new RegExp(`data-role="${row}"`), `${row} is a row`);
+    // every cell is a checkbox: the application's roles and the server's own rows alike
     assert.match(page, /name="may:Manager:designer"/, "an application's role is editable");
-    assert.ok(!/name="may:SYSTEM:/.test(page), "the server's own rows are not");
+    assert.match(page, /name="may:SYSTEM:administrator"/, "and so are the server's own rows");
+    assert.match(page, /name="may:PUBLIC:user"/, 'PUBLIC too');
+    assert.match(page, /name="may:Manager:user"/, 'the User column as well');
+});
+
+// Saving the table: every tick is kept, the server's own rows included, and the page cannot lock its administrator out.
+test('the Security table saves every row, and refuses to leave nobody an administrator', async () => {
+    const page = (await admin.get('/dashboard/settings/secure')).text;
+    const csrf = /name="_csrf" value="([^"]+)"/.exec(page)[1];
+    const post = (form) => admin.post('/dashboard/settings/secure/permissions', { _csrf: csrf, ...form });
+    const rolesOf = () => {
+        const file = path.join(web.definitionsPath, 'app-contract.json');
+        return Object.fromEntries((JSON.parse(fs.readFileSync(file, 'utf8')).roles ?? [])
+            .map(r => [r.name, r.permissions ?? []]));
+    };
+
+    // a tick on each kind of row: the server's own (SYSTEM, PUBLIC, User) and the application's
+    await post({
+        'may:SYSTEM:user': 'on', 'may:SYSTEM:designer': 'on', 'may:SYSTEM:administrator': 'on',
+        'may:User:user': 'on', 'may:Manager:user': 'on', 'may:Manager:designer': 'on',
+    });
+    const saved = rolesOf();
+    assert.deepEqual(saved.SYSTEM, ['user', 'designer', 'administrator'], "the server's own rows are saved too");
+    assert.deepEqual(saved.User, ['user']);
+    assert.deepEqual(saved.PUBLIC, [], 'unticked is a decision, not a silence');
+    assert.deepEqual(saved.Manager, ['user', 'designer'], 'the User column is saved, not dropped');
+
+    // nobody left to administer it: refused, and nothing written
+    const before = JSON.stringify(rolesOf());
+    const refused = await post({ 'may:Manager:user': 'on' });
+    assert.match(decodeURIComponent(refused.location), /at least one role must be an administrator/);
+    assert.equal(JSON.stringify(rolesOf()), before, 'nothing was written');
 });

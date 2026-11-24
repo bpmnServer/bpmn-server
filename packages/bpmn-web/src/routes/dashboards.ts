@@ -35,7 +35,7 @@ import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
-import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea, rolePermissions } from './integration.js';
+import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea, rolePermissions, SERVER_ROLES } from './integration.js';
 import { addOnsOf, readAppConfig, addOnNames, APP_CONFIG_FILE } from '../index.js';
 import type { IAddOnManifest } from '../index.js';
 
@@ -467,15 +467,22 @@ export class Dashboards extends Common {
             const ticked = new Set(Object.keys(req.body ?? {})
                 .filter(k => k.startsWith('may:') && req.body[k])
                 .map(k => k.slice(4)));
-            const roles = store.roles.map((role: any) => {
-                const permissions = ROLE_PERMISSIONS.filter(p => ticked.has(`${role.name}:${p}`));
-                const { permissions: _was, ...rest } = role;
-                return permissions.length ? { ...rest, permissions } : rest;
-            });
+            // every role gets a permissions list, so an unticked box is a decision and not a silence. The rows the
+            // table always shows (PUBLIC, User, SYSTEM) are the server's own, and are saved beside the application's
+            // so their ticks are not dropped.
+            const of = (name: string) => ROLE_PERMISSIONS.filter(p => ticked.has(`${name}:${p}`));
+            const named = new Set(store.roles.map((r: any) => r.name));
+            const roles = [
+                ...SERVER_ROLES.filter(n => !named.has(n)).map(name => ({ name, permissions: of(name) })),
+                ...store.roles.map((role: any) => ({ ...role, permissions: of(role.name) })),
+            ];
+            // nobody could administer this server afterwards: refused, so this page cannot lock its administrator out.
+            // SYSTEM is the server's own and is not a row here, so it is not an answer to this.
+            if (!roles.some((r: any) => r.permissions.includes('administrator')))
+                return back('Nothing saved: at least one role must be an administrator, or nobody could administer this server.');
             saveContractRoles(store.file!, roles);
-            // the server reads them when it starts: say so rather than pretend it is live
-            SecureUser.granted = new Map(roles.filter((r: any) => r.permissions?.length).map((r: any) => [r.name, r.permissions]));
-            back('Saved to ' + store.where + '. What each role may do applies now, and is read again when the server restarts.');
+            SecureUser.granted = new Map(roles.map((r: any) => [r.name, r.permissions]));
+            back('Saved to ' + store.where + '. What each role is allowed to do applies now.');
         }));
         router.post('/admin/roles/delete', this.isAdmin, handler(async (req, res) => {
             const name = String(req.body.name ?? '').trim();

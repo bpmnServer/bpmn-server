@@ -100,19 +100,17 @@ mixin permissions(info)
                 div.dash-muted the application's
             each permission in info.permissions
               td.is-held(data-permission=permission.id, data-has=role.has[permission.id] ? 'yes' : 'no')
-                //- the User column is every signed-in person's, and a name this server matches on keeps what it has
-                - var fixed = permission.id === 'user' || (role.fixed || []).indexOf(permission.id) >= 0
-                if role.editable && !permission.off && !fixed
+                if role.editable && !permission.off
                   input(type='checkbox', name='may:' + role.name + ':' + permission.id, checked=role.has[permission.id],
                     aria-label=permission.title + ' for ' + role.name)
                 else if role.has[permission.id]
-                  span(aria-label='allowed', title=fixed ? 'always: this server matches on the name' : 'allowed') ✓
+                  span(aria-label='allowed', title='allowed') ✓
                 else
                   span.dash-muted(aria-label='not allowed', title='not allowed') ·
         tr
           td(colspan=info.permissions.length + 1)
             button.btn.btn-primary.btn-sm(type='submit') Save what each role may do
-    p.dash-muted A role is the user group of the same name: an application declares its roles in #[code app-contract.json], a model's lanes and candidate groups name them, and the case policy decides what their holders see. Designer and Administrator are held by the groups this server matches on (#[code ADMIN], #[code SYSTEM], #[code DESIGNER]). The roles themselves are on #[a(href='/dashboard/settings/roles') Roles].
+    p.dash-muted A role is the user group of the same name: an application declares its roles in #[code app-contract.json], a model's lanes and candidate groups name them, and the case policy decides what their holders see. A tick here decides what the role is allowed to do, whatever its name. One role must stay an administrator. The roles themselves are on #[a(href='/dashboard/settings/roles') Roles].
 
 mixin roles(info)
   dl
@@ -123,7 +121,7 @@ mixin roles(info)
       else
         +names(info.roles.list.map(r => r.name))
         if info.roles.unlisted.length
-          .dash-muted Used but not in roles.json: #{info.roles.unlisted.map(r => r.name).join(', ')}
+          .dash-muted Used by a model or a policy, but not a role: #{info.roles.unlisted.map(r => r.name).join(', ')}
   if isAdmin
     a.btn.btn-default.btn-sm(href='/dashboard/admin#roles') Manage the roles
 

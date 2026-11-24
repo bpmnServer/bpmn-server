@@ -45,3 +45,4 @@
 .integration-permissions th.is-off { opacity: 0.65; }
 .integration-permissions th .dash-muted { font-weight: 400; font-size: 0.85em; line-height: 1.4; margin-top: 2px; }
 .integration-restrictions { margin: 6px 0 10px; padding-left: 18px; list-style: disc; }
+.integration-tick { display: inline-flex; align-items: center; gap: 2px; font-size: 0.8em; cursor: pointer; }

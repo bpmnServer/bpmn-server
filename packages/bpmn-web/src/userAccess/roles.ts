@@ -31,17 +31,31 @@ export const signupDisabled = () => process.env.DISABLE_SIGNUP === 'true';
  * the server sets this when it starts. It only grants — the groups above are still matched as they always were — so
  * an application that declares none behaves exactly as before.
  */
-/** Whether one of these groups was given `permission` by the application's contract (SecureUser.granted). */
-export function granted(userGroups, permission: string): boolean {
-    if (!Array.isArray(userGroups)) return false;
+/**
+ * Whether these groups hold `permission` as the application's contract says (SecureUser.granted), and whether it said
+ * anything: a role the contract mentions decides for itself, ticked or not; one it does not mention leaves the
+ * default alone (the groups this server has always matched on).
+ */
+export function decided(userGroups, permission: string): boolean | undefined {
+    if (!Array.isArray(userGroups)) return undefined;
     const grants = SecureUser.granted;
-    return userGroups.some(group => grants.get(group)?.includes(permission));
+    let said: boolean | undefined;
+    for (const group of userGroups) {
+        const given = grants.get(group);
+        if (!given) continue;
+        if (given.includes(permission)) return true;
+        said = false;
+    }
+    return said;
 }
+/** Whether these groups hold `permission`: what the contract decided, else whether they are one of `fallback`. */
+const holds = (userGroups, permission: string, fallback: string[]) =>
+    decided(userGroups, permission) ?? inGroups(userGroups, fallback);
 
 export const isAdminGroups = (userGroups) => !adminDisabled()
-    && (inGroups(userGroups, ADMIN_GROUPS) || granted(userGroups, 'administrator'));
+    && holds(userGroups, 'administrator', ADMIN_GROUPS);
 export const isDesignerGroups = (userGroups) => !designDisabled()
-    && (inGroups(userGroups, DESIGNER_GROUPS) || granted(userGroups, 'administrator') || granted(userGroups, 'designer'));
+    && (isAdminGroups(userGroups) || holds(userGroups, 'designer', DESIGNER_GROUPS));
 /** May this request's user design models (REQUIRE_AUTHENTICATION=false: everyone, unless DISABLE_DESIGN). */
 export const canDesign = (user) => !designDisabled()
     && (process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(user?.userGroups));

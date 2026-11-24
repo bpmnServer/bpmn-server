@@ -69,22 +69,35 @@ class SecureUser implements ISecureUser {
      * ever grants: the groups below are matched as they always were, so no user loses what they had.
      */
     static granted: Map<string, readonly string[]> = new Map();
-    /** Whether one of this user's groups was given `permission` by the application's contract. */
-    #granted(permission: string): boolean {
-        for (const group of this.userGroups ?? [])
-            if (SecureUser.granted.get(group)?.includes(permission)) return true;
-        return false;
+    /**
+     * Whether this user holds `permission`, and whether anything said so at all. A role the contract mentions decides
+     * for itself — ticked, it holds the permission; mentioned without it, it does not, even where the role's name is
+     * one this server would otherwise match on. A role the contract does not mention leaves the default alone.
+     */
+    #decided(permission: string): boolean | undefined {
+        let said: boolean | undefined;
+        for (const group of this.userGroups ?? []) {
+            const given = SecureUser.granted.get(group);
+            if (!given) continue;                        // nothing said about this group
+            if (given.includes(permission)) return true; // one group holding it is enough
+            said = false;                                // mentioned, and not given it
+        }
+        return said;
     }
     isAdmin(): boolean {
         if (this.#bypass)
             return true;
-        return (this.userGroups.includes(USER_ROLE.ADMIN) || this.userGroups.includes(USER_ROLE.SYSTEM)
-            || this.#granted('administrator'));
+        const decided = this.#decided('administrator');
+        if (decided !== undefined) return decided;
+        return (this.userGroups.includes(USER_ROLE.ADMIN) || this.userGroups.includes(USER_ROLE.SYSTEM));
     }
     /** Whether this user may design models: the DESIGNER group, an administrator, or a role the contract allows it. */
     isDesigner(): boolean {
         if (this.#bypass) return true;
-        return this.isAdmin() || this.userGroups.includes(USER_ROLE.DESIGNER) || this.#granted('designer');
+        if (this.isAdmin()) return true;
+        const decided = this.#decided('designer');
+        if (decided !== undefined) return decided;
+        return this.userGroups.includes(USER_ROLE.DESIGNER);
     }
     isSystem(): boolean {
         if (this.#bypass)

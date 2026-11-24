@@ -32,9 +32,10 @@ export interface IAppContract {
     /** JSON Schemas, by name, that the expressions' types name */
     types?: Record<string, any>;
     /**
-     * The roles lanes and tasks are given to. `permissions` is what the role is allowed to do on the server
-     * beyond working its own tasks (docs/design/security-profiles.md): 'designer' designs models, 'administrator'
-     * manages users, roles, credentials and the settings. None: it works its tasks and starts what its lanes allow.
+     * The roles lanes and tasks are given to. `permissions` is what the role is allowed to do
+     * (docs/design/security-profiles.md): 'user' starts the workflows it may and works its own tasks, 'designer'
+     * designs models, 'administrator' manages users, roles, credentials and the settings. A role the contract does
+     * not mention keeps the server's default for its name; one it mentions decides for itself, either way.
      */
     roles?: { name: string; title?: string; description?: string; permissions?: ('designer' | 'administrator')[] }[];
     apis?: { id: string; openapi: string }[];
@@ -121,7 +122,7 @@ export function saveContractRoles(file: string, roles: { name: string; title?: s
 }
 
 /** What a role may be allowed to do beyond its own tasks (docs/design/security-profiles.md). */
-export const ROLE_PERMISSIONS = ['designer', 'administrator'] as const;
+export const ROLE_PERMISSIONS = ['user', 'designer', 'administrator'] as const;
 export type RolePermission = typeof ROLE_PERMISSIONS[number];
 
 /**

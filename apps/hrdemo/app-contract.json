@@ -142,24 +142,59 @@
   },
   "roles": [
     {
+      "name": "PUBLIC",
+      "permissions": [
+        "user",
+        "designer"
+      ]
+    },
+    {
+      "name": "User",
+      "permissions": [
+        "user"
+      ]
+    },
+    {
+      "name": "SYSTEM",
+      "permissions": [
+        "user",
+        "designer",
+        "administrator"
+      ]
+    },
+    {
       "name": "Employee",
       "title": "Employee",
-      "description": "Everyone: asks for leave, sees their own"
+      "description": "Everyone: asks for leave, sees their own",
+      "permissions": [
+        "user"
+      ]
     },
     {
       "name": "Manager",
       "title": "Manager",
-      "description": "Approves their reports' leave and assignments"
+      "description": "Approves their reports' leave and assignments",
+      "permissions": [
+        "user"
+      ]
     },
     {
       "name": "HR",
       "title": "HR",
-      "description": "Approves long leave, records it"
+      "description": "Approves long leave, records it",
+      "permissions": [
+        "user"
+      ]
     },
     {
       "name": "ADMIN",
       "title": "Administrator",
-      "description": "Administers the workflows"
+      "description": "Administers the workflows",
+      "permissions": [
+        "user",
+        "designer",
+        "administrator"
+      ]
     }
   ],
   "apis": [

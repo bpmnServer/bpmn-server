@@ -6,7 +6,7 @@ export { CaseAccess, PolicyDenied, securityUser, DECIDE_AT_ONCE } from '../index
 
 /**
  * The people and roles "who may" asks about (CaseAccess.instanceAccess): the user directory (bpmn-web's own users, or
- * the application's user manager's listUsers), the roles of roles.json, and who of them are administrators.
+ * the application's user manager's listUsers), the application's roles (app-contract.json), and who of them are administrators.
  */
 export async function accessDirectory(req, server): Promise<{ users: { userName: string; userGroups?: string[] }[]; roles: string[]; admins: string[] }> {
     const manager = req?.app?.get?.('userManager');
