@@ -13,6 +13,11 @@ import { checkBootConfig, reportBootConfig } from './runtime/bootConfig.js';
 import { settingsSchema } from './routes/api/settings.js';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
+/** This build's version, from the package's own package.json. */
+function packageVersion(): string {
+	try { return JSON.parse(fs.readFileSync(path.join(PACKAGE_ROOT, 'package.json'), 'utf8')).version ?? '?'; }
+	catch { return '?'; }
+}
 
 /** DATABASE=sqlite:<file>: the file, relative to the application's folder; else undefined (MongoDB at MONGO_DB_URL). */
 export function sqliteFile(value = process.env.DATABASE): string | undefined {
@@ -129,8 +134,8 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 }
 
 /**
- * The database's indexes, and the first user (admin, password ADMIN_PASSWORD) when there are no users at all; without
- * ADMIN_PASSWORD, the server's first page asks for the administrator.
+ * The database's indexes, and the first user when there are no users at all: `admin`, with ADMIN_PASSWORD or a
+ * password it makes up and prints once (UserService.install). Returns whether it made one.
  */
 export async function setup(server: BPMNServer, users: UserService | null = undefined) {
 	// the engine's stores are the engine's to set up (docs/design/engine-isolation.md); an embedded server, here
@@ -198,6 +203,9 @@ async function startMemoryDatabase() {
  *   await start({ config, appDelegate: AppDelegate, api: true, ui: true });
  */
 export async function start(options: StartOptions = {}) {
+	// which build is running, and where it was loaded from: an application with its own copy in node_modules runs that
+	// one, not a linked checkout, and the two are easy to confuse
+	console.log(`bpmn-web ${packageVersion()} from ${PACKAGE_ROOT}`);
 	// each setting's value against the settings schema, and a name in .env that is close to a setting: one line each
 	try {
 		const envFile = path.resolve('.env');
@@ -260,7 +268,9 @@ export async function start(options: StartOptions = {}) {
 		await runConsole(webApp.bpmnServer);
 		return webApp;
 	}
-	// no users, and sign-in on: the pages ask for the administrator, with a token printed here
+	// A new server makes its administrator and prints the password (UserService.install), so there is nothing for a
+	// page to ask. Where that did not happen and a server has no users at all -- its own were removed, or a store it
+	// could not write -- its pages ask for one, with a token printed here (firstRun.ts).
 	if (users && process.env.REQUIRE_AUTHENTICATION !== 'false' && await usersNow(users) === 0) {
 		const { beginFirstRun } = await import('./userAccess/firstRun.js');
 		beginFirstRun(webApp.app);

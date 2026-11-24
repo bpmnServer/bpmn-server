@@ -132,7 +132,13 @@ export class HrUserManager {
     // the demo's accounts, for its home page (HR_DEMO_ACCOUNTS=false: none shown)
     app.get('/api/hr/demo', (req, res) => res.json(process.env.HR_DEMO_ACCOUNTS === 'false'
       ? { accounts: [] }
-      : { password: demoPassword(), accounts: DEMO_USERS.map(u => ({ userName: u.userName, name: u.name, role: u.role, userGroups: ROLES[u.role] })) }));
+      : {
+        password: demoPassword(),
+        // Signing in is the sign-in page's: the accounts and their password are listed, and whoever wants one types
+        // it. HR_DEMO_SIGN_IN_AS=true puts the one-click buttons back, for a public demo people only click through.
+        signInAs: process.env.HR_DEMO_SIGN_IN_AS === 'true',
+        accounts: DEMO_USERS.map(u => ({ userName: u.userName, name: u.name, role: u.role, userGroups: ROLES[u.role] })),
+      }));
 
     // the HR users, for HR Administrators
     app.get('/api/hr/roles', (req, res) => res.json(Object.keys(ROLES)));

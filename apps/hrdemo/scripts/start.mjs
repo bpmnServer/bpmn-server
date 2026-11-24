@@ -7,10 +7,15 @@ import path from 'node:path';
 
 const root = path.join(import.meta.dirname, '..');
 const bin = name => path.join(root, 'node_modules', '.bin', process.platform === 'win32' ? `${name}.cmd` : name);
-const run = (name, args, env = {}) => spawn(bin(name), args, { cwd: root, stdio: 'inherit', shell: process.platform === 'win32', env: { ...process.env, ...env } });
+// The HR application keeps its users, sessions and notifications in a SQLite file by design (server/users.js), and
+// node:sqlite is still marked experimental, so Node warns about it in every process that loads it: the server, and
+// the build (vite.config.js imports the HR API for its dev server). The warning says nothing anyone can act on;
+// every other kind still shows.
+const QUIET = { NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ''} --no-warnings=ExperimentalWarning`.trim() };
+const run = (name, args, env = {}) => spawn(bin(name), args, { cwd: root, stdio: 'inherit', shell: process.platform === 'win32', env: { ...process.env, ...QUIET, ...env } });
 
 // the pages first, so the server has them from its first answer
-const built = spawnSync(bin('vite'), ['build', '--logLevel', 'warn'], { cwd: root, stdio: 'inherit', shell: process.platform === 'win32' });
+const built = spawnSync(bin('vite'), ['build', '--logLevel', 'warn'], { cwd: root, stdio: 'inherit', shell: process.platform === 'win32', env: { ...process.env, ...QUIET } });
 if (built.status !== 0) process.exit(built.status ?? 1);
 
 const children = [

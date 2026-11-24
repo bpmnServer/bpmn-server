@@ -74,7 +74,8 @@ by `npm run features`: edit the schema, not these tables.
 
 | Setting | Means |
 |---|---|
-| `ADMIN_PASSWORD` | **A secret.** Set, a server with no users creates the user `admin` with it. Unset (the default), its first page asks for the administrator, with a setup token it prints: [The first start](setup.md#the-first-start). A server that has users already is not changed |
+| `ADMIN_EMAIL` | The email address of the `admin` user a server with no users creates. Unset, `admin@example.com`. A server that has users already is not changed |
+| `ADMIN_PASSWORD` | **A secret.** Set, a server with no users creates the user `admin` with it. Unset, it creates `admin` with a password it makes up and prints once where the server runs: [The first start](setup.md#the-first-start). A server that has users already is not changed |
 | `AI_ACCESS` | The levels of AI links (`/ai/key`) this server offers: `off`, or some of `work`, `design`, `administer`, comma separated. Unset: all. A person is offered only the levels their rights allow. See [Chatting with your server](ai/chat-assistants.md) |
 | `AI_GUIDE` | A Markdown file: this site's own guide for AI agents, in its `/llms.txt`. Default `settings/ai-guide.md` |
 | `AI_KEY_TTL_GROUPS` | How long a user's link for an AI agent (`/ai/key`) lasts, in minutes, by group: `{"ADMIN":10,"staff":60}`. A user in several of the groups gets the shortest; in none, 30 minutes. See [Chatting with your server](ai/chat-assistants.md) |
@@ -106,6 +107,7 @@ by `npm run features`: edit the schema, not these tables.
 
 | Setting | Means |
 |---|---|
+| `APP_CONTRACT` | The application's contract file: its roles, variables, functions and pages. Unset, `app-contract.json` in the application's folder |
 | `ELEMENT_TEMPLATES` | `on` offers the application's element templates (configured tasks) in the model editor and lists them on the Design page. Off by default in 3.7.1: a preview, to be finished (docs/design/roadmap.md) |
 | `CATALOG_URL` | The model catalog to browse |
 | `CONNECTORS_ALLOW_HOSTS` | A comma list of the hosts connectors may call |

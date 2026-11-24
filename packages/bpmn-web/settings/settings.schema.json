@@ -5,8 +5,15 @@
   "description": "Every setting: .env (x-where env) and settings/config.ts (x-where config, named config:<path>). The x- keywords: docs/design/setup-wizard.md.",
   "type": "object",
   "properties": {
+    "ADMIN_EMAIL": {
+      "description": "The email address of the `admin` user a server with no users creates. Unset, `admin@example.com`. A server that has users already is not changed",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "x-restart": true
+    },
     "ADMIN_PASSWORD": {
-      "description": "**A secret.** Set, a server with no users creates the user `admin` with it. Unset (the default), its first page asks for the administrator, with a setup token it prints: [The first start](setup.md#the-first-start). A server that has users already is not changed",
+      "description": "**A secret.** Set, a server with no users creates the user `admin` with it. Unset, it creates `admin` with a password it makes up and prints once where the server runs: [The first start](setup.md#the-first-start). A server that has users already is not changed",
       "x-where": "env",
       "x-group": "access",
       "type": "string",
@@ -45,6 +52,13 @@
       "x-where": "env",
       "x-group": "access",
       "type": "boolean",
+      "x-restart": true
+    },
+    "APP_CONTRACT": {
+      "description": "The application's contract file: its roles, variables, functions and pages. Unset, `app-contract.json` in the application's folder",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
       "x-restart": true
     },
     "AUTH_RATE_LIMIT": {

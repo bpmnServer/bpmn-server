@@ -73,6 +73,14 @@ async function verify(targets: string[], json: boolean): Promise<number> {
 
 export async function main(argv: string[]): Promise<number> {
     const [command, ...rest] = argv;
+    // which build is answering, and where it came from: a global link and an application's own copy are easy to mix up.
+    // Not where the output is read by something else (--json), and not for the usage.
+    if (command && !['--help', '-h', 'help'].includes(command) && !rest.includes('--json')) {
+        const root = path.join(import.meta.dirname, '..');
+        let version = '?';
+        try { version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version ?? '?'; } catch { }
+        console.log(`bpmn-server ${version} from ${root}`);
+    }
     if (command === 'verify') {
         const json = rest.includes('--json');
         const targets = rest.filter(a => a !== '--json');

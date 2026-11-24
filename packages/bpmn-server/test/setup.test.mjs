@@ -36,11 +36,15 @@ test('setup --yes: a new application, the development profile: memory, new keys,
   assert.equal(r.status, 0, r.stdout + r.stderr);
   const env = readEnv(dir);
   assert.equal(env.MONGO_DB_URL, 'memory');
-  assert.equal(env.APP_ENV, 'test');
-  assert.equal(env.API_TRACE, 'api-trace.jsonl');
   assert.equal(env.REQUIRE_AUTHENTICATION, 'true');
-  for (const key of ['API_KEY', 'ADMIN_API_KEY', 'SESSION_SECRET', 'ADMIN_PASSWORD'])
+  for (const key of ['API_KEY', 'ADMIN_API_KEY', 'SESSION_SECRET'])
     assert.ok(env[key]?.length >= 16, key);
+  // the password is made here and printed, so whoever ran setup leaves with it
+  assert.ok(env.ADMIN_PASSWORD?.length >= 10, 'a password is made');
+  assert.match(r.stdout, new RegExp(`password ${env.ADMIN_PASSWORD.replace(/[.*+?^${}()|[\]\-]/g, '\$&')}`), 'and printed');
+  // what the dialog no longer decides (the application's own .env may still carry a default, as EMAIL_ENABLE does)
+  for (const key of ['APP_ENV', 'API_TRACE', 'DISABLE_DESIGN', 'DISABLE_SIGNUP', 'AI_ACCESS'])
+    assert.equal(env[key], undefined, `${key} is not setup's to write`);
   assert.ok(JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')).dependencies['mongodb-memory-server'], 'memory needs mongodb-memory-server');
   assert.ok(!fs.existsSync(path.join(dir, '.env.bak')), 'a new application has no .env before it');
 });
@@ -48,15 +52,11 @@ test('setup --yes: a new application, the development profile: memory, new keys,
 test('setup: the answers are written; comments and other settings kept; secrets masked in the summary', async () => {
   const dir = app('# mine\nPORT=3000\nMONGO_DB_URL=memory\nAPI_KEY=old-key\nADMIN_API_KEY=old-admin\nSESSION_SECRET=old-session\n#SMTP_USER=\nCUSTOM=kept\n');
   const { io, out } = scripted([
-    'production',                      // profile
-    'mongodb://db.example:27017/a',    // database
-    'none',                            // administrator: the first page asks
+    '1',                               // profile: 1 production
+    'mongodb://db.example:27017/a',    // database: an address instead of 1, 2 or 3
+    '2', 'chosen-password',            // administrator: 2 chooses one
     '3100', '',                        // port; the address follows it
-    'yes', 'no', 'no',                 // sign-in on, design off, sign-up off
-    'yes', 'mail@example.com', 'smtp-secret', '',   // email
     'no', 'yes', 'no',                 // keys: a new ADMIN_API_KEY only
-    'work,design',                     // AI access
-    '', 'no',                          // environment: production; no trace
     'yes',                             // write
   ]);
   assert.equal(await setup([dir, '--no-check'], io), 0, out.join('\n'));
@@ -64,37 +64,27 @@ test('setup: the answers are written; comments and other settings kept; secrets 
   assert.equal(env.MONGO_DB_URL, 'mongodb://db.example:27017/a');
   assert.equal(env.PORT, '3100');
   assert.equal(env.SITE_URL, 'http://localhost:3100');
-  assert.equal(env.DISABLE_DESIGN, 'true');
-  assert.equal(env.DISABLE_SIGNUP, 'true');
-  assert.equal(env.EMAIL_ENABLE, 'true');
-  assert.equal(env.SMTP_USER, 'mail@example.com');
-  assert.equal(env.SMTP_PASSWORD, 'smtp-secret');
-  assert.equal(env.EMAIL_FROM, 'mail@example.com');
-  assert.equal(env.AI_ACCESS, 'work,design');
-  assert.equal(env.APP_ENV, 'production');
+  assert.equal(env.ADMIN_PASSWORD, 'chosen-password', 'the one chosen, not one made');
   assert.equal(env.API_KEY, 'old-key');
   assert.notEqual(env.ADMIN_API_KEY, 'old-admin');
   assert.equal(env.CUSTOM, 'kept');
-  assert.equal(env.ADMIN_PASSWORD, undefined);
+  // the dialog no longer asks these, and does not write them
+  for (const key of ['DISABLE_DESIGN', 'DISABLE_SIGNUP', 'AI_ACCESS', 'APP_ENV', 'API_TRACE', 'SMTP_USER'])
+    assert.equal(env[key], undefined, `${key} is not asked`);
   const text = fs.readFileSync(path.join(dir, '.env'), 'utf8');
   assert.match(text, /^# mine$/m);
-  assert.match(text, /^SMTP_USER=mail@example\.com$/m, 'the commented #SMTP_USER= line is the one set');
-  assert.ok(!out.join('\n').includes('smtp-secret'), 'a secret is never shown back');
+  // the password is printed on purpose, so whoever ran setup leaves with it; what is typed is still masked
+  assert.ok(out.join('\n').includes('password chosen-password'), 'the password is stated');
   assert.equal(fs.readFileSync(path.join(dir, '.env.bak'), 'utf8').includes('old-admin'), true);
 });
 
-test('init, asked: what it serves, then the same steps as setup; the next steps follow the answers', async () => {
+test('init, asked: what to start from, then the same steps as setup; the next steps follow the answers', async () => {
   const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-setup-')), 'app');
   const { io, out } = scripted([
-    'api',                      // serve: the REST APIs only
-    'development',              // profile
-    '',                         // the database: memory, the profile's
-    '',                         // administrator: generated
+    '1',                        // start from: 1 the sample application
+    '2',                        // the database: 2 in memory
+    '',                         // administrator: 1, a password made here
     '3200', '',                 // port, address
-    '', '', '',                 // sign-in, design, sign-up
-    '',                         // email off
-    '',                         // AI access: all
-    '', '',                     // environment test, trace on
     '',                         // write
   ]);
   const logged = [], log = console.log;
@@ -102,30 +92,29 @@ test('init, asked: what it serves, then the same steps as setup; the next steps 
   try { assert.equal(await init([dir, '--no-install'], { io }), 0, out.join('\n')); }
   finally { console.log = log; }
   const env = readEnv(dir);
-  assert.equal(env.SERVE, 'api');
   assert.equal(env.MONGO_DB_URL, 'memory');
   assert.equal(env.PORT, '3200');
-  assert.equal(env.APP_ENV, 'test');
-  assert.ok(env.ADMIN_PASSWORD);
+  assert.ok(env.ADMIN_PASSWORD?.length >= 10, 'a password is made here');
+  assert.ok(out.join('\n').includes(`password ${env.ADMIN_PASSWORD}`), 'and printed');
   assert.ok(!out.some(line => /make a new one/.test(line)), 'a new application\'s keys are not offered again');
   assert.ok(!fs.existsSync(path.join(dir, 'docker-compose.yml')), 'memory: no MongoDB container');
   assert.match(logged.join('\n'), /http:\/\/localhost:3200/);
   assert.doesNotMatch(logged.join('\n'), /docker compose up/);
 });
 
-test('setup: production refuses memory; a wrong value is asked again', async () => {
+test('setup: production refuses memory; a wrong value is asked again; nothing written when not confirmed', async () => {
   const dir = app('MONGO_DB_URL=mongodb://h/a\nAPI_KEY=k\nADMIN_API_KEY=k\nSESSION_SECRET=k\n');
   const { io, out } = scripted([
-    'production', 'memory', 'mongodb://h/a',  // memory refused, asked again
-    'keep-or-not', 'abc', '3000', '',         // administrator: anything else keeps; the port must be a number
-    '', '', '', '', 'no', 'no', 'no', 'everything', 'all', '', '', 'no',
+    '1', '2', 'mongodb://h/a',   // production; 2 is in memory, refused; an address instead
+    '1',                         // administrator: a password made here
+    'abc', '3000', '',           // the port must be a number: asked again
+    'no', 'no', 'no',            // the keys that are set: keep each
+    'no',                        // write: no
   ]);
   assert.equal(await setup([dir, '--no-check'], io), 1);
   const said = out.join('\n');
   assert.match(said, /production needs a database that keeps its data/);
   assert.match(said, /PORT is a number/);
-  assert.match(said, /all, off, or some of work, design, administer/);
-  assert.match(said, /Nothing written/);
   assert.equal(readEnv(dir).MONGO_DB_URL, 'mongodb://h/a', 'not confirmed: .env as it was');
 });
 

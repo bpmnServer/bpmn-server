@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { connectMongoose } from './userStore.js';
 import User from './models/User.js';
 
@@ -78,14 +79,24 @@ export class UserService {
 	 * there are no users at all. start() runs this on every start: a server whose users have other names must not
 	 * gain an administrator with a known password. Returns true when it made the user.
 	 */
-	/** The first user, admin, with ADMIN_PASSWORD; without it none: the pages ask for the administrator (firstRun.ts). */
+	/**
+	 * The first user: `admin`, with ADMIN_PASSWORD, or one made up here and printed once where the server runs, so a
+	 * new server can be signed into without a page asking for it. ADMIN_EMAIL is its address, else admin@example.com.
+	 * Only where there are no users at all: a server whose users have other names must not gain an administrator.
+	 */
 	async install(): Promise<boolean> {
 		if (await User.countDocuments({}) > 0)
 			return false;
-		if (!process.env.ADMIN_PASSWORD)
-			return false;
-		console.log(` adding new User for 'admin'  password: (ADMIN_PASSWORD)`);
-		await this.addUser('admin', 'admin@mySite.com', process.env.ADMIN_PASSWORD, ['ADMIN']);
+		const made = !process.env.ADMIN_PASSWORD;
+		// a password nobody can guess, not admin/admin: whoever reads the console owns the server
+		const password = process.env.ADMIN_PASSWORD || crypto.randomBytes(12).toString('base64url');
+		const email = process.env.ADMIN_EMAIL || 'admin@example.com';
+		await this.addUser('admin', email, password, ['ADMIN']);
+		console.log(made
+			? ['', '  The administrator of this new server:', '    user:     admin',
+				`    password: ${password}`, `    email:    ${email}`,
+				'  Printed once. Change it on My account, or set ADMIN_PASSWORD in .env before the first start.', ''].join('\n')
+			: ` adding new User for 'admin'  password: (ADMIN_PASSWORD)`);
 		return true;
     }
 

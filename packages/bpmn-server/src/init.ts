@@ -23,14 +23,27 @@ const bpmnWebVersion = () => `^${ownVersion()}`;
  * The template: templates/app is the sample application, copied there from bpmnServer4's sampleApp when the
  * package is packed (npm run template); in the repository, sampleApp itself. --minimal: templates/minimal.
  */
-function templateFolder(minimal: boolean): string {
-    if (minimal)
-        return path.join(PACKAGE_ROOT, 'templates', 'minimal');
-    const packed = path.join(PACKAGE_ROOT, 'templates', 'app');
-    return fs.existsSync(packed) ? packed : path.join(PACKAGE_ROOT, '..', '..', 'apps', 'sampleApp');
+/** What an application can be started from (docs/design/setup-dialog.md §3.2). */
+export type StartFrom = 'sample' | 'hrdemo' | 'minimal';
+
+/**
+ * Where a template's files are, or null when this installation does not have it. The sample application is packed
+ * into the package (`templates/app`); in the repository it is `apps/sampleApp` itself. The HR demo is only in the
+ * repository so far, so an installed package offers it only when it was packed too.
+ */
+function templateFolder(from: StartFrom): string | null {
+    const packed = (name: string) => path.join(PACKAGE_ROOT, 'templates', name);
+    const inRepo = (name: string) => path.join(PACKAGE_ROOT, '..', '..', 'apps', name);
+    if (from === 'minimal') return packed('minimal');
+    const [its, repo] = from === 'hrdemo' ? [packed('hrdemo'), inRepo('hrdemo')] : [packed('app'), inRepo('sampleApp')];
+    return fs.existsSync(its) ? its : fs.existsSync(repo) ? repo : null;
 }
 /** Not copied: what each application has of its own (init writes package.json and .env). */
-const NOT_COPIED = new Set(['node_modules', 'package.json', 'package-lock.json', '.env']);
+// Not copied: what each application has of its own (init writes package.json and .env), and what a build makes.
+const NOT_COPIED = new Set(['node_modules', 'package.json', 'package-lock.json', '.env', 'dist', '.env.bak',
+    'data', 'api-trace.jsonl',
+    // a run's leavings, and a nested application a template should never carry into one it makes
+    'apps', 'out', 'out2', 'coverage', '.turbo']);
 
 export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
 
@@ -42,6 +55,9 @@ export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
   by step, as bpmn-server setup does. The options below are for scripts.
 
   --minimal        a Hello application instead: one model, one service
+  --hrdemo         start from the HR demo: its pages, users and API, and the
+                   workflows that call them (the repository only, so far)
+  --sqlite [file]  the database is a file, nothing to install (default data/bpmn.sqlite)
   --mongo <url>    the MongoDB database (default mongodb://localhost:27017/<folder>)
   --memory         a MongoDB in the application's process, to try it without a
                    database server (mongodb-memory-server; data is lost when it stops)
@@ -56,11 +72,16 @@ export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
 /** The in-process MongoDB of --memory. */
 export const MEMORY_SERVER_VERSION = '^10.4.3';
 
+/** Where --sqlite puts the database when no file is named. */
+const DEFAULT_SQLITE = 'data/bpmn.sqlite';
+
 interface InitOptions {
     folder: string; mongo: string; memory: boolean; port: string;
     /** DATABASE=sqlite:<file>, chosen in setup's steps. */
     sqlite?: string;
     api: boolean; ui: boolean; auth: boolean; install: boolean; minimal: boolean;
+    /** What the application is started from (docs/design/setup-dialog.md §3.2). */
+    from: StartFrom;
 }
 
 function parse(argv: string[]) {
@@ -84,23 +105,46 @@ const ownVersion = () => JSON.parse(fs.readFileSync(path.join(PACKAGE_ROOT, 'pac
 /** init's own questions: when bpmn-web's settings schema is not found (setup's steps need it). */
 async function ask(options: InitOptions, folderGiven: boolean, flags: Map<string, string | true>) {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    const question = async (q: string, def: string) => (await rl.question(`${q} (${def}): `)).trim() || def;
+    const question = async (q: string, def: string) => (await rl.question(`${q} [${def}]: `)).trim() || def;
+    /** What the answer just given means, so a choice is not made blind. */
+    const means = (...lines: string[]) => console.log(lines.map(l => `      ${l}`).join('\n'));
     try {
         if (!folderGiven)
             options.folder = await question('Folder', options.folder);
-        if (!flags.has('--mongo') && !flags.has('--memory'))
-            options.memory = (await question('Database: mongodb, or memory to try without one', 'mongodb')).toLowerCase().startsWith('mem');
-        if (!options.memory && !flags.has('--mongo'))
+        if (!flags.has('--mongo') && !flags.has('--memory') && !flags.has('--sqlite')) {
+            // S a file, nothing to install; M a MongoDB server; X a MongoDB in this process, emptied when it stops
+            const said = (await question('Database  S)qlite  M)ongoDB  X) in memory', 'S')).toLowerCase();
+            options.memory = said.startsWith('x');
+            if (!said.startsWith('m')) options.sqlite = DEFAULT_SQLITE;
+            means(options.sqlite ? `the database is the file ${DEFAULT_SQLITE}; nothing to install`
+                : options.memory ? 'a MongoDB inside this process; everything is lost when it stops'
+                : 'a MongoDB server you run; docker-compose.yml can bring one up');
+        }
+        if (!options.memory && !options.sqlite && !flags.has('--mongo'))
             options.mongo = await question('MongoDB', `mongodb://localhost:27017/${dbName(options.folder)}`);
         if (!flags.has('--port'))
             options.port = await question('Port', options.port);
         if (!flags.has('--api-only') && !flags.has('--ui-only')) {
-            const parts = (await question('Serve: both, api or ui', 'both')).toLowerCase();
-            options.api = parts !== 'ui';
-            options.ui = parts !== 'api';
+            console.log('');
+            console.log('What this server serves:');
+            console.log('  1) REST APIs only           your application calls it; no web pages');
+            console.log('  2) REST APIs and web pages  the task lists, the model editor, administration');
+            console.log('  3) Web pages only           no REST APIs, and no bpmn-mcp for AI clients');
+            const parts = await question('  1, 2 or 3', '2');
+            options.api = parts !== '3';
+            options.ui = parts !== '1';
         }
-        if (!flags.has('--no-auth'))
-            options.auth = !(await question('Require sign-in and security rules? yes, or no for development', 'yes')).toLowerCase().startsWith('n');
+        if (!flags.has('--no-auth')) {
+            // what each one does, before it is answered
+            console.log('');
+            console.log('What is this server for?');
+            console.log('  1) Production   a server people rely on: sign-in required, the security rules');
+            console.log('                  enforced, and the administrator made with a password it prints');
+            console.log('  2) Development  your own machine: no sign-in and no security rules, so anyone');
+            console.log('                  reaching it administers it. Turn both on in .env before anyone can');
+            const said = (await question('  1 or 2', '1')).toLowerCase();
+            options.auth = !(said.startsWith('2') || said.startsWith('d'));
+        }
     }
     finally {
         rl.close();
@@ -108,20 +152,26 @@ async function ask(options: InitOptions, folderGiven: boolean, flags: Map<string
 }
 
 /** Before setup's steps: what shapes the files, the folder and what the application serves. */
+/**
+ * Before setup's steps: the folder, and what the application is started from (docs/design/setup-dialog.md §3.2).
+ * What it serves is not asked — both, unless --api-only or --ui-only says otherwise.
+ */
 async function askShape(io: SetupIO, options: InitOptions, folderGiven: boolean, flags: Map<string, string | true>) {
     const question = async (q: string, def: string) => (await io.question(`${q} [${def}]: `)).trim() || def;
     if (!folderGiven)
-        options.folder = await question('Folder', options.folder);
-    if (!flags.has('--api-only') && !flags.has('--ui-only')) {
-        for (; ;) {
-            const parts = (await question('Serve: both, api (the REST APIs only) or ui (the web pages only)', 'both')).toLowerCase();
-            if (['both', 'api', 'ui'].includes(parts)) {
-                options.api = parts !== 'ui';
-                options.ui = parts !== 'api';
-                break;
-            }
-        }
+        options.folder = await question('  Folder', options.folder);
+    if (flags.has('--minimal') || flags.has('--hrdemo')) return;
+    // what it starts from: the HR demo only where this installation has it
+    const hrdemo = templateFolder('hrdemo');
+    io.print('');
+    io.print('Start from');
+    io.print('  1) Sample application  a few models, the services they call, no pages of its own');
+    if (hrdemo) {
+        io.print('  2) HR demo             an HR application with its own pages, users and API, and');
+        io.print('                         the workflows that call them');
     }
+    const said = await question('  ' + (hrdemo ? '1 or 2' : '1'), '1');
+    options.from = hrdemo && said.startsWith('2') ? 'hrdemo' : 'sample';
 }
 
 const dbName = (folder: string) => path.basename(path.resolve(folder)).replace(/[^A-Za-z0-9_-]/g, '_') || 'bpmn';
@@ -129,10 +179,14 @@ const dbName = (folder: string) => path.basename(path.resolve(folder)).replace(/
 /** Copies the template, filling in its placeholders; `gitignore` becomes `.gitignore` (npm drops .gitignore from packages). */
 function copyTemplate(from: string, to: string, values: Record<string, string>) {
     fs.mkdirSync(to, { recursive: true });
+    const inside = path.resolve(to) + path.sep;
     for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
         if (NOT_COPIED.has(entry.name))
             continue;
         const source = path.join(from, entry.name);
+        // the new application is inside the template's own tree: do not copy it into itself
+        if ((path.resolve(source) + path.sep).startsWith(inside))
+            continue;
         const target = path.join(to, entry.name === 'gitignore' ? '.gitignore' : entry.name);
         if (entry.isDirectory()) {
             copyTemplate(source, target, values);
@@ -148,15 +202,20 @@ function copyTemplate(from: string, to: string, values: Record<string, string>) 
 function writeApplication(options: InitOptions) {
     const dir = path.resolve(options.folder);
     const name = path.basename(dir);
-    const template = templateFolder(options.minimal);
+    const template = templateFolder(options.from);
+    if (!template)
+        throw new Error(options.from === 'hrdemo'
+            ? 'The HR demo is not in this installation: clone the repository (apps/hrdemo), or start from the sample application.'
+            : `No template for '${options.from}' in ${PACKAGE_ROOT}`);
     copyTemplate(template, dir, {
         __NAME__: name, __PORT__: options.port, __API__: String(options.api), __UI__: String(options.ui),
         __RUN__: runSteps(options).join('\n'),
         __SIGNIN__: options.auth
-            ? 'The first page asks for the administrator. It needs the setup token the server prints when it starts.'
+            ? 'The server makes its administrator the first time it starts, and prints the password once where it runs: sign in as `admin` with it. Set `ADMIN_PASSWORD` (and `ADMIN_EMAIL`) in `.env` before that first start to choose them yourself.'
             : 'Sign-in is off (`REQUIRE_AUTHENTICATION=false` in `.env`): for development only. Set it and\n`ENFORCE_SECURITY` to `true` before anyone else can reach the server.',
     });
-    if (options.memory)
+    // no MongoDB to run: nothing for docker-compose to bring up
+    if (options.memory || options.sqlite)
         fs.rmSync(path.join(dir, 'docker-compose.yml'), { force: true });
     // the sample application's README is titled sampleApp: the application's name instead
     const readme = path.join(dir, 'README.md');
@@ -221,7 +280,10 @@ function writeTsconfig(dir: string) {
 function envFile(name: string, options: InitOptions): string {
     return `# ${name}: machine settings and secrets. Not committed (.gitignore).
 PORT=${options.port}
-${options.memory ? '# memory: a MongoDB in the process, emptied when it stops; a mongodb://... URL keeps the data\n' : ''}MONGO_DB_URL=${options.memory ? 'memory' : options.mongo}
+${options.sqlite
+        ? `# sqlite: the database is this file, nothing to install; MONGO_DB_URL with a mongodb://... URL instead for a server
+DATABASE=sqlite:${options.sqlite}`
+        : `${options.memory ? '# memory: a MongoDB in the process, emptied when it stops; a mongodb://... URL keeps the data\n' : ''}MONGO_DB_URL=${options.memory ? 'memory' : options.mongo}`}
 # both, api (the REST APIs only) or ui (the web pages only)
 SERVE=${options.api && options.ui ? 'both' : options.api ? 'api' : 'ui'}
 
@@ -256,20 +318,25 @@ export async function init(argv: string[], { quiet = false, io: given }: { quiet
         console.error('--api-only and --ui-only: choose one');
         return 2;
     }
-    if (flags.has('--mongo') && flags.has('--memory')) {
-        console.error('--mongo and --memory: choose one');
+    const dbFlags = ['--mongo', '--memory', '--sqlite'].filter(f => flags.has(f));
+    if (dbFlags.length > 1) {
+        console.error(`${dbFlags.join(' and ')}: choose one`);
         return 2;
     }
     const options: InitOptions = {
         folder: positional[0] ?? 'my-app',
         mongo: (flags.get('--mongo') as string) || '',
         memory: flags.has('--memory'),
+        // --sqlite, or --sqlite=<file>: the database is a file of its own (DATABASE=sqlite:<file>)
+        sqlite: flags.has('--sqlite') ? (flags.get('--sqlite') === true ? DEFAULT_SQLITE : String(flags.get('--sqlite'))) : undefined,
         port: (flags.get('--port') as string) || '3000',
         api: !flags.has('--ui-only'),
         ui: !flags.has('--api-only'),
         auth: !flags.has('--no-auth'),
         install: !flags.has('--no-install'),
         minimal: flags.has('--minimal'),
+        // --minimal wins, as it always did; --hrdemo starts from the HR demo
+        from: flags.has('--minimal') ? 'minimal' : flags.has('--hrdemo') ? 'hrdemo' : 'sample',
     };
     // asked: setup's steps (setup.ts), from bpmn-web's settings schema; without the schema, init's own questions
     const interactive = !!given || (!flags.has('--yes') && !!process.stdin.isTTY);
@@ -287,11 +354,19 @@ export async function init(argv: string[], { quiet = false, io: given }: { quiet
             return 1;
         }
         writeApplication(options);
-        console.log(`created ${dir}`);
         if (io) {
-            const { env } = await configure(dir, {
+            // the settings, asked and written into the .env just made. Nothing was agreed (Write them: no): the
+            // folder goes again, so a cancelled dialog leaves nothing behind.
+            const { code, env } = await configure(dir, {
                 io, schema: findSchema(dir), created: true, keepDatabase: flags.has('--mongo') || flags.has('--memory'),
             });
+            if (code !== 0) {
+                // cancelled: the folder it was about to fill goes with it, so nothing is left half made
+                fs.rmSync(dir, { recursive: true, force: true });
+                console.log(`
+Cancelled. Nothing was created: ${dir} does not exist.`);
+                return code;
+            }
             // what the steps chose: the next steps say it
             options.sqlite = env.DATABASE?.startsWith('sqlite:') ? env.DATABASE.slice('sqlite:'.length) : undefined;
             options.memory = !options.sqlite && env.MONGO_DB_URL === 'memory';
@@ -301,6 +376,7 @@ export async function init(argv: string[], { quiet = false, io: given }: { quiet
             if (options.memory || options.sqlite)
                 fs.rmSync(path.join(dir, 'docker-compose.yml'), { force: true });
         }
+        console.log(`created ${dir}`);
     }
     catch (error) {
         console.error(`\n${error?.message ?? error}`);
@@ -314,7 +390,10 @@ export async function init(argv: string[], { quiet = false, io: given }: { quiet
     if (options.install) {
         console.log('npm install ...');
         // one command line, no arguments: Windows runs npm.cmd only through a shell
-        const npm = spawnSync('npm install', { cwd: dir, stdio: 'inherit', shell: true });
+        // the command and its argument apart: Node 22 deprecates passing them as one string with shell: true
+        // (DEP0190). npm is npm.cmd on Windows, which still needs a shell to be found.
+        const npm = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['install'],
+            { cwd: dir, stdio: 'inherit', shell: process.platform === 'win32' });
         if (npm.status !== 0) {
             console.error('npm install failed; run it in the folder once the problem is fixed');
             return 1;
@@ -334,7 +413,7 @@ ${options.api ? '\nAI clients: .mcp.json registers bpmn-mcp, with what the keys 
 /** The commands that run the new application, with what each is for. */
 function runSteps(options: InitOptions): string[] {
     const open = `npm start                # http://localhost:${options.port}`;
-    const signIn = options.auth ? ', then create the administrator (the setup token is printed there)' : '';
+    const signIn = options.auth ? ", then sign in as admin with the password it printed" : '';
     if (options.memory)
         return [`${open}${signIn}; a MongoDB in memory, emptied when it stops`];
     if (options.sqlite)
