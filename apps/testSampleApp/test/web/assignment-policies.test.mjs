@@ -69,8 +69,10 @@ test("a policy's tests: saved, and run on its file", async () => {
 
 test('the roles, on the Administration page: added, listed with where they are used and their users, removed; admins only', async () => {
     const admin = await web.login('admin');
-    const rolesFile = path.join(web.definitionsPath, 'roles.json');
-    fs.rmSync(rolesFile, { force: true });
+    // the roles are the application's contract since 3.7.5: this run's own copy (support/webApp.mjs, APP_CONTRACT)
+    const rolesFile = path.join(web.definitionsPath, 'app-contract.json');
+    const roleNames = () => (JSON.parse(fs.readFileSync(rolesFile, 'utf8')).roles ?? []).map(r => r.name);
+    const seeded = roleNames();
     fs.writeFileSync(path.join(web.definitionsPath, 'Roles-model.bpmn'), `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d" targetNamespace="urn:test">
   <bpmn:process id="P" isExecutable="true"><bpmn:laneSet id="ls"><bpmn:lane id="L" name="Approvers" /></bpmn:laneSet><bpmn:startEvent id="S" /></bpmn:process>
@@ -78,7 +80,7 @@ test('the roles, on the Administration page: added, listed with where they are u
     const section = html => html.slice(html.indexOf('id="roles"'), html.indexOf('id="connectors"'));
 
     let page = section((await admin.get('/dashboard/admin')).text);
-    assert.match(page, /No roles\.json yet/);
+    assert.ok(seeded.length, 'the application declares its roles in its contract');
     assert.match(page, /Used, not listed[\s\S]*Approvers[\s\S]*Roles-model: lane/, 'a lane offered');
     assert.match(page, /Director[\s\S]*policy Approval, rule 1/, "a policy's group offered");
 
@@ -86,7 +88,7 @@ test('the roles, on the Administration page: added, listed with where they are u
     assert.equal((await add('Approvers')).status, 302);
     await add('Director');
     await add('manager');
-    assert.deepEqual(JSON.parse(fs.readFileSync(rolesFile, 'utf8')), ['Approvers', 'Director', 'manager']);
+    assert.deepEqual(roleNames(), [...seeded, 'Approvers', 'Director', 'manager']);
     page = section((await admin.get('/dashboard/admin')).text);
     assert.match(page, /<td>Approvers<\/td><td>Roles-model: lane<\/td>/);
     assert.match(page, /<td>manager<\/td><td><span class="dash-muted">not used yet<\/span><\/td><td>\d+<\/td>/, "the users in the group");
@@ -97,8 +99,9 @@ test('the roles, on the Administration page: added, listed with where they are u
     assert.match(decodeURIComponent((await add('Director')).location), /a role already/);
 
     const removed = await admin.post('/dashboard/admin/roles/delete', { name: 'Approvers' });
-    assert.match(decodeURIComponent(removed.location), /Role 'Approvers' removed\. It is still used \(Roles-model: lane\)/);
-    assert.deepEqual(JSON.parse(fs.readFileSync(rolesFile, 'utf8')), ['Director', 'manager']);
+    // the message says which file it was removed from (app-contract.json since 3.7.5)
+    assert.match(decodeURIComponent(removed.location), /Role 'Approvers' removed from app-contract\.json\. It is still used \(Roles-model: lane\)/);
+    assert.deepEqual(roleNames(), [...seeded, 'Director', 'manager']);
 
     // a designer is not an administrator
     const before = fs.readFileSync(rolesFile, 'utf8');

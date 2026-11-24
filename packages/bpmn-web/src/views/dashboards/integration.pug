@@ -179,6 +179,15 @@ mixin card(p)
     a.integration-card(href='/dashboard/settings/' + p.id, id=p.id)
       h2= p.title
       p.integration-brief= p.about
+      //- what it has, in a few words (summaryOf), and anything needing attention
+      if p.summary
+        if p.summary.lines && p.summary.lines.length
+          ul.integration-summary
+            each line in p.summary.lines
+              if line
+                li= line
+        if p.summary.attention
+          p.integration-attention= p.summary.attention
       .integration-card-links
         span.integration-open Set up →
 mixin api(info)

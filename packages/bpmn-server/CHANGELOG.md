@@ -26,6 +26,8 @@ and here
 
 ## [Unreleased]
 ### Added
+- **`appContract` in the configuration**: where the application's `app-contract.json` is, as `appConfig` says where
+  its `app-config.json` is. It was read from the working folder only, so a test or a deployment could not move it.
 - **The roles are the application's** (`app-contract.json`), not the models folder's `roles.json`. `verifyModel`
   reads the contract's `roles` and falls back to `roles.json` only when the contract declares none, so an
   application that has not moved them keeps working. `saveContractRoles(file, roles)` writes them back, keeping the

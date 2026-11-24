@@ -52,6 +52,8 @@ export class Configuration implements IConfiguration {
 	}
 	/** Where the application's app-config.json is (which add-ons are on); the working folder's by default. */
 	appConfig?: string;
+	/** Where the application's app-contract.json is (its roles, variables, functions, pages); the working folder's by default. */
+	appContract?: string;
 	/** The add-ons that are on (engine/AddOns.ts): those app-config.json names, every one without it; unless the configuration gives its own. */
 	addOns(server): IAddOn[] {
 		return enabledAddOns(this.appConfig);
@@ -81,7 +83,7 @@ export class Configuration implements IConfiguration {
 		logger = undefined,
 		definitions = undefined,
 		appDelegate = undefined,
-		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined, addOns = undefined, appConfig = undefined,
+		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined, addOns = undefined, appConfig = undefined, appContract = undefined,
 		runTimers = undefined, runServiceTasks = undefined,
 		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined, formRules = undefined }: any) {
 		this.definitionsPath = definitionsPath;
@@ -101,6 +103,7 @@ export class Configuration implements IConfiguration {
 		if (scriptHandler) this.scriptHandler = scriptHandler;
 		if (addOns) this.addOns = addOns;
 		this.appConfig = appConfig;
+		this.appContract = appContract;
 		if (documentStore) this.documentStore = documentStore;
 		if (locker) this.locker = locker;
 		this.serverId = serverId;

@@ -15,10 +15,11 @@ A card opens its area's page (`/dashboard/settings/<area>`): what is in place, i
 | Area | Shows | Settings (main first) |
 |---|---|---|
 | **Roles** | The roles (the application's `app-contract.json`): the server's, whichever add-ons are on | none |
-| **The application** | The delegate's class, its functions (`appServices`) and methods (folded), who signs people in | `APP_ENV`, `READ_ONLY`, `SITE_URL`; `APP_ENV_LABEL`, `ENFORCE_SECURITY` |
-| **Connectors** | Each connector: enabled or not, its key (last 4 characters), the models that call it | `SECRETS_KEY`; `SERVICE_TASKS`, `CONNECTORS_ALLOW_HOSTS`, `CONNECTOR_CATALOG_URL` |
-| **The API the application calls** | API v3, and whether the task API (`/api2/tasks`) is on | `API_KEY`, `API_ACTING_USER_KEY`; `ADMIN_API_KEY`, the service account, `API_IMPERSONATION`, `API_RATE_LIMIT` |
-| **Models, forms and scripts** (`models`) | | `FORM_RULES`, `ELEMENT_TEMPLATES`; `VERIFY_MODELS_ON_IMPORT`, `CATALOG_URL`, `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES`, `TIMERS` |
+| **Security** (`secure`) | Who can reach this server, what each of them may do, and what its models may run — the three apart, with the effective configuration in plain words and a warning for a combination that is not safe | **Access:** `REQUIRE_AUTHENTICATION`, `ENFORCE_SECURITY`; `ALLOW_INSECURE_NO_AUTH`, `SESSION_SECRET`, `SECURE_COOKIES`, `AUTH_RATE_LIMIT`, the sign-up settings, `ADMIN_PASSWORD`. **What they may do:** `READ_ONLY`, `DISABLE_ADMIN`, `DISABLE_DESIGN`; `SECURITY_POLICY`. **Credentials:** `API_KEY`, `ADMIN_API_KEY`, `API_ACTING_USER_KEY`, `API_IMPERSONATION`, `API_RATE_LIMIT`, `AI_ACCESS`, `AI_KEY_TTL_GROUPS`. **What runs:** `SCRIPT_SANDBOX`; `SCRIPT_SANDBOX_SERVICES`, `SERVICE_TASKS`, `TIMERS`, `DEMO_MODE`, `CONNECTORS_ALLOW_HOSTS` |
+| **The application** | The delegate's class, its functions (`appServices`) and methods (folded), who signs people in | `APP_ENV`, `SITE_URL`; `APP_ENV_LABEL` |
+| **Connectors** | Each connector: enabled or not, its key (last 4 characters), the models that call it | `SECRETS_KEY`; `CONNECTOR_CATALOG_URL` |
+| **The API the application calls** | API v3, and whether the task API (`/api2/tasks`) is on | the service account (`API_SERVICE_USER_NAME`, its groups, tenant and models owner). Its keys are **Security**'s |
+| **Models, forms and scripts** (`models`) | | `FORM_RULES`, `ELEMENT_TEMPLATES`; `VERIFY_MODELS_ON_IMPORT`, `CATALOG_URL`. What a model may run is **Security**'s |
 | **AI agents** | | `AI_ACCESS`; `AI_GUIDE` |
 
 **Add-ons**: each add-on's area is named by it (`/dashboard/settings/policies`), and its settings are the ones its

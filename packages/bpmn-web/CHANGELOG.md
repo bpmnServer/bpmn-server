@@ -26,6 +26,14 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **A Security area on the Settings page** (`/dashboard/settings/secure`), answering the three questions apart: who
+  may reach this server, what each of them may do, and what its models are allowed to run. It gathers the settings
+  that were spread over the other areas and the fifteen that were only in `.env` and never shown — among them
+  `REQUIRE_AUTHENTICATION`, `DISABLE_ADMIN`, `DISABLE_DESIGN`, `SECURITY_POLICY`, `AI_ACCESS` and the sign-up and
+  session settings. Its card says the effective configuration in plain words and warns about a combination that is
+  not safe, such as no sign-in with administration on, where anyone reaching the server administers it.
+- **An area's card shows what it has**, in a few words: the summary was worked out and passed to the page but never
+  drawn.
 - **The Roles editor writes the application's contract** (`app-contract.json`), where roles belong since 3.7.5,
   instead of the models folder's `roles.json`; it still edits a `roles.json` for an application whose roles are
   there. An application whose contract comes from its delegate's `describe()` has no file to write, so the

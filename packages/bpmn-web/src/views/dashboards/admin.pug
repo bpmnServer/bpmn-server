@@ -163,9 +163,9 @@ block dash
 									td
 										if roles.writable !== false
 											form.inline(method='post', action='/dashboard/admin/roles/delete', onsubmit=`return confirm(${JSON.stringify(role.uses.length ? `Remove the role '${role.name}'? It is used by: ${role.uses.join('; ')}` : `Remove the role '${role.name}'?`)})`)
-											input(type='hidden', name='_csrf', value=_csrf)
-											input(type='hidden', name='name', value=role.name)
-											button.btn.btn-default.btn-xs(type='submit') Remove
+												input(type='hidden', name='_csrf', value=_csrf)
+												input(type='hidden', name='name', value=role.name)
+												button.btn.btn-default.btn-xs(type='submit') Remove
 					else
 						p.dash-muted= roles.writable === false ? (roles.where || 'The application') + ' declares no roles.' : 'No roles yet: add the first one, and ' + (roles.where || 'app-contract.json') + ' is written.'
 					if roles.unlisted.length
@@ -178,9 +178,9 @@ block dash
 									td
 										if roles.writable !== false
 											form.inline(method='post', action='/dashboard/admin/roles')
-											input(type='hidden', name='_csrf', value=_csrf)
-											input(type='hidden', name='name', value=role.name)
-											button.btn.btn-default.btn-xs(type='submit') Add
+												input(type='hidden', name='_csrf', value=_csrf)
+												input(type='hidden', name='name', value=role.name)
+												button.btn.btn-default.btn-xs(type='submit') Add
 					if roles.writable === false
 						p.dash-muted(style='margin-top:18px') The roles come from #{roles.where}, which this page can not change: add and remove them there.
 					else

@@ -53,23 +53,56 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         settings: [],
     },
     {
+        id: 'secure', title: 'Security',
+        about: 'Who can reach this server, what each of them may do, and what its models are allowed to run (docs/design/security-profiles.md): the three are separate. The effective configuration is below, with a warning for a combination that is not safe.',
+        settings: [
+            // 1. access and authentication: who can reach the server
+            { name: 'REQUIRE_AUTHENTICATION', label: 'Sign-in required', main: true },
+            { name: 'ENFORCE_SECURITY', label: 'Security rules enforced', main: true },
+            { name: 'ALLOW_INSECURE_NO_AUTH', label: 'Start without sign-in in production (not recommended)' },
+            { name: 'SESSION_SECRET', label: 'Session secret' },
+            { name: 'SECURE_COOKIES', label: 'Cookies only over HTTPS' },
+            { name: 'AUTH_RATE_LIMIT', label: 'Sign-in attempts a minute per address' },
+            { name: 'DISABLE_SIGNUP', label: 'Self-registration off' },
+            { name: 'SIGNUP_VERIFY_EMAIL', label: 'A new account verifies its email' },
+            { name: 'SIGNUP_GROUPS', label: 'Groups a new account gets' },
+            { name: 'ADMIN_PASSWORD', label: "The first administrator's password" },
+            // 2. roles and permissions: what each of them may do
+            { name: 'READ_ONLY', label: 'Read-only: cases run, nothing is changed', main: true },
+            { name: 'DISABLE_ADMIN', label: 'Administration off for everyone', main: true },
+            { name: 'DISABLE_DESIGN', label: 'Model design off for everyone', main: true },
+            { name: 'SECURITY_POLICY', label: 'Default case security policy' },
+            // 3. API and AI credentials: the identities that are not people
+            { name: 'API_KEY', label: 'Service key (API v3)' },
+            { name: 'ADMIN_API_KEY', label: 'Administration key' },
+            { name: 'API_ACTING_USER_KEY', label: 'Task API key (acting for a user)' },
+            { name: 'API_IMPERSONATION', label: 'Impersonation (the frozen /api)' },
+            { name: 'API_RATE_LIMIT', label: 'API calls a minute per address' },
+            { name: 'AI_ACCESS', label: 'What an AI agent may do' },
+            { name: 'AI_KEY_TTL_GROUPS', label: 'How long an AI link lasts, by group' },
+            // 4. execution safety: what the models are allowed to run
+            { name: 'SCRIPT_SANDBOX', label: 'Scripts run in a sandbox', main: true },
+            { name: 'SCRIPT_SANDBOX_SERVICES', label: 'Sandboxed scripts may call appServices' },
+            { name: 'SERVICE_TASKS', label: 'Service tasks run' },
+            { name: 'TIMERS', label: 'Timers run' },
+            { name: 'DEMO_MODE', label: 'Public demo: sandboxed scripts, no timers, no service tasks' },
+            { name: 'CONNECTORS_ALLOW_HOSTS', label: 'Hosts connectors may call' },
+        ],
+    },
+    {
         id: 'application', title: 'The application',
         about: 'Its code: the delegate, whose functions (appServices) scripts and expressions call, and its hooks (notify, loadDataObject, the events).',
         settings: [
             { name: 'APP_ENV', label: 'Environment', main: true },
             { name: 'APP_ENV_LABEL', label: 'Environment label' },
-            { name: 'READ_ONLY', label: 'Read-only (a public demo)', main: true },
             { name: 'SITE_URL', label: 'Site address', main: true },
-            { name: 'ENFORCE_SECURITY', label: 'Sign-in and security enforced' },
         ],
     },
     {
         id: 'connectors', title: 'Connectors: the application\'s APIs',
         about: 'REST APIs, each described by an OpenAPI document, that service and send tasks call by name. Their keys stay on this server.',
         settings: [
-            { name: 'SERVICE_TASKS', label: 'Service tasks run' },
             { name: 'SECRETS_KEY', label: 'Key that encrypts the stored secrets (the connectors\' keys)', main: true },
-            { name: 'CONNECTORS_ALLOW_HOSTS', label: 'Hosts connectors may call' },
             { name: 'CONNECTOR_CATALOG_URL', label: 'Connector catalog' },
         ],
     },
@@ -77,15 +110,10 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         id: 'api', title: 'The API the application calls',
         about: 'How the application starts processes and acts on tasks: API v3, the task API for acting for its users, and the keys.',
         settings: [
-            { name: 'API_KEY', label: 'Service key', main: true },
-            { name: 'ADMIN_API_KEY', label: 'Administration key' },
-            { name: 'API_ACTING_USER_KEY', label: 'Task API key (acting for a user)', main: true },
             { name: 'API_SERVICE_USER_NAME', label: 'Service account' },
             { name: 'API_SERVICE_USER_GROUPS', label: 'Service account\'s groups' },
             { name: 'API_SERVICE_TENANT_ID', label: 'Service account\'s tenant' },
             { name: 'API_SERVICE_MODELS_OWNER', label: 'Service account\'s models owner' },
-            { name: 'API_IMPERSONATION', label: 'Impersonation (/api)' },
-            { name: 'API_RATE_LIMIT', label: 'Calls a minute per address' },
         ],
     },
     {
@@ -95,9 +123,6 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
             { name: 'FORM_RULES', label: 'Form rules checked', editor: 'designer', main: true },
             { name: 'VERIFY_MODELS_ON_IMPORT', label: 'Models checked when saved through the APIs', editor: 'designer' },
             { name: 'CATALOG_URL', label: 'Model catalog' },
-            { name: 'SCRIPT_SANDBOX', label: 'Scripts run in a sandbox' },
-            { name: 'SCRIPT_SANDBOX_SERVICES', label: 'Sandboxed scripts may call appServices' },
-            { name: 'TIMERS', label: 'Timers run' },
         ],
     },
 ];
@@ -177,6 +202,30 @@ const valueOf = (settings: any[], name: string) => {
  */
 export function summaryOf(id: string, info: any, settings: any[]): { lines: string[]; attention?: string } {
     switch (id) {
+        // the three questions, in plain words: who can reach it, what they may do, what its models may run
+        case 'secure': {
+            const is = (name: string, value = 'true') => valueOf(settings, name) === value;
+            const signIn = is('REQUIRE_AUTHENTICATION', 'false')
+                ? 'No sign-in: everyone is anonymous'
+                : `Sign-in required${is('ENFORCE_SECURITY', 'false') ? ', security rules NOT enforced' : ''}`;
+            const off = [is('DISABLE_ADMIN') && 'administration', is('DISABLE_DESIGN') && 'model design'].filter(Boolean);
+            const may = is('READ_ONLY')
+                ? 'Read-only: cases run, nothing is changed'
+                : off.length ? `Off for everyone: ${off.join(' and ')}` : 'Roles decide what each person may do';
+            const runs = is('DEMO_MODE')
+                ? 'Public demo: scripts sandboxed, no timers, no service tasks'
+                : `Scripts ${is('SCRIPT_SANDBOX') ? 'in a sandbox' : 'run as they are'}`
+                  + `${is('SERVICE_TASKS', 'false') ? ', service tasks off' : ''}${is('TIMERS', 'false') ? ', timers off' : ''}`;
+            // a combination that is not safe: no sign-in is the one that gives everyone an administrator's rights
+            const open = is('REQUIRE_AUTHENTICATION', 'false') && !is('DISABLE_ADMIN') && !is('READ_ONLY');
+            return { lines: [signIn, may, runs], attention: open
+                ? 'No sign-in, and administration is on: anyone reaching this server administers it'
+                : is('REQUIRE_AUTHENTICATION', 'false') && !is('SCRIPT_SANDBOX')
+                    ? 'No sign-in, and scripts are not sandboxed: a model anyone saves runs as this server'
+                    : valueOf(settings, 'SESSION_SECRET') === 'not set' && !is('REQUIRE_AUTHENTICATION', 'false')
+                        ? 'Sign-in is required but no session secret is set'
+                        : undefined };
+        }
         case 'application': {
             const functions = (info.services ?? []).filter(s => s.kind === 'function').length;
             return { lines: [

@@ -83,6 +83,9 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 	invalid.forEach(message => console.warn('[config] ' + message));
 	const configuration = new Configuration({
 		definitionsPath: path.resolve('processes') + path.sep,
+		// the application's contract (app-contract.json): its roles, variables, functions and pages. APP_CONTRACT
+		// moves it, as a test does to keep the repository's own out of the way
+		...(process.env.APP_CONTRACT ? { appContract: path.resolve(process.env.APP_CONTRACT) } : {}),
 		templatesPath: path.join(PACKAGE_ROOT, 'emailTemplates') + path.sep,
 		timers: { precision: 3000 },
 		database: {

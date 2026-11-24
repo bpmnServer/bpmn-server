@@ -34,7 +34,8 @@ test('administrators and designers open it, with every area: the server\'s, then
             assert.match(res.text, new RegExp(`<div class="integration-card" id="${id}" data-addon="${id}"><h2><span class="integration-state is-on"[^>]*>●</span><a href="/dashboard/settings/${id}">`), `${who.userName} sees ${id}`);
         assert.ok(!res.text.includes('data-addon="forms"'), 'Extended Forms: no card of its own');
         const [server, addOns] = res.text.split(/<h2 class="integration-group"[^>]*>Add-ons<\/h2>/);
-        assert.ok(server.includes('id="application"') && server.includes('id="roles"') && !server.includes('id="security"'), 'the server\'s areas first');
+        // the server's own Security area is id="secure"; the Access Control add-on is id="security", below
+        assert.ok(server.includes('id="application"') && server.includes('id="roles"') && server.includes('id="secure"') && !server.includes('id="security"'), 'the server\'s areas first');
         assert.ok(addOns.includes('id="security"') && !addOns.includes('id="application"'), 'then the add-ons\'');
         // a card says what its area is, in a few words; what it has is on its page (the delegate's name: below)
         assert.doesNotMatch(res.text, /data-setting=/, 'no settings on the overview');
@@ -43,8 +44,8 @@ test('administrators and designers open it, with every area: the server\'s, then
         const app = await who.get('/dashboard/settings/application');
         assert.equal(app.status, 200, why(app));
         assert.match(app.text, /<code>(TestDelegate|AppDelegate)<\/code>/);
-        assert.match(app.text, /data-setting="APP_ENV"[\s\S]*<summary>More settings \(2\)<\/summary>[\s\S]*data-setting="APP_ENV_LABEL"/);
-        assert.ok(!(await who.get('/dashboard/settings/api')).text.includes(API_KEY), 'the service key is not shown');
+        assert.match(app.text, /data-setting="APP_ENV"[\s\S]*<summary>More settings \(1\)<\/summary>[\s\S]*data-setting="APP_ENV_LABEL"/);
+        assert.ok(!(await who.get('/dashboard/settings/secure')).text.includes(API_KEY), 'the service key is not shown');
     }
     // the menu has it for both; the page's address before 3.7.5 leads to it
     assert.ok((await designer.get('/dashboard')).text.includes('href="/dashboard/settings"'));
@@ -74,26 +75,26 @@ test('a designer changes the design-side settings; they go to .env, applied on r
 
 test('a designer may not change an administrator\'s setting, even by posting it', async () => {
     const before = envText();
-    const res = await designer.post('/dashboard/settings/models', { SCRIPT_SANDBOX: 'true' });
+    const res = await designer.post('/dashboard/settings/secure', { SCRIPT_SANDBOX: 'true' });
     assert.match(messageOf(res), /Nothing saved\. .*SCRIPT_SANDBOX.*not changed here/);
     assert.equal(envText(), before);
     assert.equal((await staff.post('/dashboard/settings/models', { FORM_RULES: 'true' })).status, 403);
 });
 
 test('an administrator: values checked against the schema; a secret generated, never shown; the environment\'s left alone', async () => {
-    let res = await admin.post('/dashboard/settings/api', { API_RATE_LIMIT: 'lots' });
+    let res = await admin.post('/dashboard/settings/secure', { API_RATE_LIMIT: 'lots' });
     assert.match(messageOf(res), /Nothing saved\. .*API_RATE_LIMIT.*a number/);
 
-    res = await admin.post('/dashboard/settings/connectors', { 'generate:SECRETS_KEY': 'on', CONNECTORS_ALLOW_HOSTS: 'api.example.com' });
-    assert.match(messageOf(res), /Saved to \.env: SECRETS_KEY, CONNECTORS_ALLOW_HOSTS/);
+    res = await admin.post('/dashboard/settings/connectors', { 'generate:SECRETS_KEY': 'on' });
+    assert.match(messageOf(res), /Saved to \.env: SECRETS_KEY/);
     const key = envText().match(/^SECRETS_KEY=([0-9a-f]+)$/m)?.[1];
     assert.equal(key?.length, 48, envText());
     assert.ok(!(await admin.get('/dashboard/settings/connectors')).text.includes(key), 'the new key is not shown');
 
     // API_KEY is the environment's here (not in .env): shown as set, not changed
-    const page = (await admin.get('/dashboard/settings/api')).text;
+    const page = (await admin.get('/dashboard/settings/secure')).text;
     assert.match(page, /data-setting="API_KEY"[\s\S]*?set outside \.env/);
-    res = await admin.post('/dashboard/settings/api', { API_KEY: 'another-key-of-at-least-24-chars' });
+    res = await admin.post('/dashboard/settings/secure', { API_KEY: 'another-key-of-at-least-24-chars' });
     assert.match(messageOf(res), /Nothing saved\. .*API_KEY.*not changed here/);
     assert.doesNotMatch(envText(), /^API_KEY=/m);
 
@@ -160,4 +161,26 @@ test('each add-on its own area: its manifest\'s settings, on or off, what it has
         assert.equal(old.status, 301);
         assert.equal(old.location, '/dashboard/settings/' + now);
     }
+});
+
+// The Security area (docs/design/security-profiles.md, the brief's four sections): the settings that were spread over
+// the other areas or were only in .env, and the effective configuration said in plain words.
+test('the Security area: the three questions, with a warning for a combination that is not safe', async () => {
+    const page = (await admin.get('/dashboard/settings/secure')).text;
+    // who may reach it, what each may do, the credentials that are not people, what a model may run
+    for (const name of ['REQUIRE_AUTHENTICATION', 'ENFORCE_SECURITY', 'DISABLE_ADMIN', 'DISABLE_DESIGN',
+        'SECURITY_POLICY', 'API_KEY', 'AI_ACCESS', 'SCRIPT_SANDBOX', 'TIMERS', 'DEMO_MODE'])
+        assert.ok(page.includes(`data-setting="${name}"`), `${name} is on the Security page`);
+    // and they are no longer on the areas they were spread over
+    const models = (await admin.get('/dashboard/settings/models')).text;
+    assert.ok(!models.includes('data-setting="SCRIPT_SANDBOX"'), "what a model may run is the Security area's");
+    const application = (await admin.get('/dashboard/settings/application')).text;
+    assert.ok(!application.includes('data-setting="READ_ONLY"'), "what people may do is the Security area's");
+
+    // the overview's summary: this server signs people in, so it is not the open one
+    const overview = (await admin.get('/dashboard/settings')).text;
+    const at = overview.indexOf('id="secure"');
+    const card = overview.slice(at, at + 900);
+    assert.match(card, /Sign-in required/, 'it says who may reach it');
+    assert.doesNotMatch(card, /anyone reaching this server administers it/, 'no warning: sign-in is required here');
 });

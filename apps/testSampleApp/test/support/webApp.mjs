@@ -59,6 +59,9 @@ function definitionsFolder() {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-defs-'));
     for (const file of FIXTURE_MODELS)
         fs.copyFileSync(path.join(FIXTURES, file), path.join(dir, file));
+    // the application's contract, copied so a test that adds or removes a role writes this run's own (APP_CONTRACT)
+    const contract = path.join(ROOT, 'app-contract.json');
+    if (fs.existsSync(contract)) fs.copyFileSync(contract, path.join(dir, 'app-contract.json'));
     return dir + path.sep;
 }
 
@@ -129,7 +132,10 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     }
     const webApp = new WebApp({
         // which add-ons are on: the test's own app-config.json, beside its .env (none: every one)
-        configuration: webConfiguration({ ...config(), appConfig: path.join(path.dirname(envFile), 'app-config.json') }, TestDelegate),
+        // appContract: this run's own copy of the application's contract (its roles), so a test that adds or
+        // removes a role does not write the repository's app-contract.json
+        configuration: webConfiguration({ ...config(), appConfig: path.join(path.dirname(envFile), 'app-config.json'),
+            appContract: path.join(definitionsPath, 'app-contract.json') }, TestDelegate),
         elementTemplatesPath: connectorsPath,
         // the application's own engine calls (start({ engineCalls })), added to bpmn-web's
         serverOptions: { cron: false, ...(engineCalls ? { calls: engineCalls } : {}) },
