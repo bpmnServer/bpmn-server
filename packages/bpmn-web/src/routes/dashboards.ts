@@ -11,7 +11,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, readAppContract, saveContractRoles, APP_CONTRACT_FILE, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications, connectorsTesting } from '../index.js';
+import { SecureUser, ROLE_PERMISSIONS, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, readAppContract, saveContractRoles, APP_CONTRACT_FILE, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications, connectorsTesting } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
@@ -35,7 +35,7 @@ import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
-import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea } from './integration.js';
+import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea, rolePermissions } from './integration.js';
 import { addOnsOf, readAppConfig, addOnNames, APP_CONFIG_FILE } from '../index.js';
 import type { IAddOnManifest } from '../index.js';
 
@@ -451,6 +451,32 @@ export class Dashboards extends Common {
             writeRoles(store, [...store.roles, { name }]);
             rolesBack(res, `Role '${name}' added to ${store.where}.`);
         }));
+        /**
+         * What each role is allowed to do (the Security area's table): the ticked permissions, written to the
+         * application's contract (app-contract.json). The group names this server matches on (ADMIN, SYSTEM,
+         * DESIGNER) keep what they have whatever is sent, so nobody loses access by saving this page.
+         */
+        router.post('/settings/secure/permissions', this.isAdmin, handler(async (req, res) => {
+            const back = (message: string) => res.redirect('/dashboard/settings/secure?message=' + encodeURIComponent(message));
+            let store: ReturnType<typeof rolesStore>;
+            try { store = rolesStore(); }
+            catch (exc) { return back(`The roles can not be read: ${exc.message}`); }
+            if (!store.writable || store.kind === 'legacy')
+                return back(`The roles come from ${store.where}, which this page can not change.`);
+            // name:permission for each ticked box
+            const ticked = new Set(Object.keys(req.body ?? {})
+                .filter(k => k.startsWith('may:') && req.body[k])
+                .map(k => k.slice(4)));
+            const roles = store.roles.map((role: any) => {
+                const permissions = ROLE_PERMISSIONS.filter(p => ticked.has(`${role.name}:${p}`));
+                const { permissions: _was, ...rest } = role;
+                return permissions.length ? { ...rest, permissions } : rest;
+            });
+            saveContractRoles(store.file!, roles);
+            // the server reads them when it starts: say so rather than pretend it is live
+            SecureUser.granted = new Map(roles.filter((r: any) => r.permissions?.length).map((r: any) => [r.name, r.permissions]));
+            back('Saved to ' + store.where + '. What each role may do applies now, and is read again when the server restarts.');
+        }));
         router.post('/admin/roles/delete', this.isAdmin, handler(async (req, res) => {
             const name = String(req.body.name ?? '').trim();
             let store: ReturnType<typeof rolesStore>;
@@ -725,6 +751,9 @@ export class Dashboards extends Common {
             };
             // the roles are the server's; each policy add-on's, while it is on: its policies (and the notifications they send)
             info.roles = { roles: await this.roles(dir, users, rolesStore()) };
+            // the Security area: what each role may do on this server now, and the restrictions that take a right
+            // from everyone (userAccess/roles.ts, docs/design/security-profiles.md)
+            info.secure = rolePermissions(rolesStore().names, SecureUser.granted);
             if (addOnsRunning.includes('assignment')) info.assignment = { assignment: policyNames(dir) };
             if (addOnsRunning.includes('security')) info.security = { security: security.names(), securityOn: security.on };
             if (addOnsRunning.includes('notification'))

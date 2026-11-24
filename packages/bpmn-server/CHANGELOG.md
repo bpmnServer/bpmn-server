@@ -26,6 +26,11 @@ and here
 
 ## [Unreleased]
 ### Added
+- **A role's permissions** (`app-contract.json`): a role may be given `designer` or `administrator`, and the engine
+  honours them — `SecureUser.isAdmin()` and the new `isDesigner()` consult what the contract granted as well as the
+  groups they have always matched on (`ADMIN`, `SYSTEM`, `DESIGNER`). Granting only, so no user loses what they had,
+  and an application that declares none behaves exactly as before. `rolePermissionsOf(contract)` reads them, and the
+  server publishes them when it starts.
 - **`appContract` in the configuration**: where the application's `app-contract.json` is, as `appConfig` says where
   its `app-config.json` is. It was read from the working folder only, so a test or a deployment could not move it.
 - **The roles are the application's** (`app-contract.json`), not the models folder's `roles.json`. `verifyModel`

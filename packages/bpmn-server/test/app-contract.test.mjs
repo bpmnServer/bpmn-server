@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { makeServer, definitionsFolder } from './helpers.mjs';
-import { contractProblems, compareWithCode, appVarsFor, readAppContract, saveContractRoles, verifyModel, methodNames } from '../dist/index.js';
+import { contractProblems, compareWithCode, appVarsFor, readAppContract, saveContractRoles, verifyModel, methodNames, rolePermissionsOf, SecureUser } from '../dist/index.js';
 
 const CONTRACT = {
   name: 'test',
@@ -146,4 +146,59 @@ test('saveContractRoles writes the roles back, keeping the rest of the contract'
   // removed, and a name twice is one role
   assert.deepEqual(saveContractRoles(file, [{ name: 'Director' }, { name: 'Director' }]), ['Director']);
   assert.equal(JSON.parse(fs.readFileSync(file, 'utf8')).roles.length, 1);
+});
+
+test("a role's permissions: read from the contract, checked, and granting only (never taking away)", () => {
+  // what the contract says its roles may do beyond their own tasks
+  const contract = { name: 'x', roles: [
+    { name: 'Manager', permissions: ['designer'] },
+    { name: 'HR', permissions: ['administrator'] },
+    { name: 'Employee' },
+  ] };
+  assert.deepEqual(contractProblems(contract), []);
+  const granted = rolePermissionsOf(contract);
+  assert.deepEqual(granted.get('Manager'), ['designer']);
+  assert.deepEqual(granted.get('HR'), ['administrator']);
+  assert.equal(granted.has('Employee'), false, 'a role with none is not in the map');
+
+  // a permission that is not one is a problem, not a silent grant
+  assert.equal(contractProblems({ roles: [{ name: 'R', permissions: ['root'] }] }).length, 1);
+  assert.equal(contractProblems({ roles: [{ name: 'R', permissions: 'designer' }] }).length, 1);
+  assert.deepEqual(rolePermissionsOf({ roles: [{ name: 'R', permissions: ['root'] }] }).get('R'), undefined,
+    'an unknown permission grants nothing');
+});
+
+test('the engine honours the granted permissions, and grants nothing without them', () => {
+  const was = SecureUser.granted;
+  const user = (groups) => new SecureUser({ userName: 'u', userGroups: groups }, { enforceSecurity: true });
+  try {
+    SecureUser.granted = new Map();
+    assert.equal(user(['Manager']).isAdmin(), false, 'no grants: as before');
+    assert.equal(user(['Manager']).isDesigner(), false);
+    // the group names it has always matched on keep working
+    assert.equal(user(['ADMIN']).isAdmin(), true);
+    assert.equal(user(['DESIGNER']).isDesigner(), true);
+
+    SecureUser.granted = new Map([['Manager', ['designer']], ['HR', ['administrator']]]);
+    assert.equal(user(['Manager']).isDesigner(), true, 'a granted role designs');
+    assert.equal(user(['Manager']).isAdmin(), false, 'and no more than that');
+    assert.equal(user(['HR']).isAdmin(), true, 'a granted role administers');
+    assert.equal(user(['HR']).isDesigner(), true, 'an administrator designs too');
+    assert.equal(user(['Employee']).isAdmin(), false, 'a role with no grant gains nothing');
+  } finally {
+    SecureUser.granted = was;
+  }
+});
+
+test("saveContractRoles keeps a role's permissions, and drops them when they are not sent", () => {
+  const dir = definitionsFolder();
+  const file = path.join(dir, 'app-contract.json');
+  fs.writeFileSync(file, JSON.stringify({ name: 'x', roles: [{ name: 'Manager', title: 'Manager' }] }, null, 2));
+  saveContractRoles(file, [{ name: 'Manager', title: 'Manager', permissions: ['designer'] }]);
+  let after = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.deepEqual(after.roles[0].permissions, ['designer']);
+  assert.equal(after.roles[0].title, 'Manager', 'what it had is kept');
+  saveContractRoles(file, [{ name: 'Manager', title: 'Manager' }]);
+  after = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(after.roles[0].permissions, undefined, 'unticked: the permission is gone');
 });

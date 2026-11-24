@@ -1,3 +1,4 @@
+import { SecureUser } from 'bpmn-server';
 // Who may do what in the web app, by user group. Administrators manage the app (users, data); designers
 // work on models: list, create, import, edit, check (verify), save, rename and delete them.
 // Administrators are designers too. bpmn-server names these groups in USER_ROLE.
@@ -25,8 +26,22 @@ export const designDisabled = () => process.env.DISABLE_DESIGN === 'true';
 /** DISABLE_SIGNUP=true: no self-registration; administrators add the accounts (dashboard, npm run cli). */
 export const signupDisabled = () => process.env.DISABLE_SIGNUP === 'true';
 
-export const isAdminGroups = (userGroups) => !adminDisabled() && inGroups(userGroups, ADMIN_GROUPS);
-export const isDesignerGroups = (userGroups) => !designDisabled() && inGroups(userGroups, DESIGNER_GROUPS);
+/**
+ * The permissions the application's contract gives its roles (app-contract.json, docs/design/security-profiles.md):
+ * the server sets this when it starts. It only grants — the groups above are still matched as they always were — so
+ * an application that declares none behaves exactly as before.
+ */
+/** Whether one of these groups was given `permission` by the application's contract (SecureUser.granted). */
+export function granted(userGroups, permission: string): boolean {
+    if (!Array.isArray(userGroups)) return false;
+    const grants = SecureUser.granted;
+    return userGroups.some(group => grants.get(group)?.includes(permission));
+}
+
+export const isAdminGroups = (userGroups) => !adminDisabled()
+    && (inGroups(userGroups, ADMIN_GROUPS) || granted(userGroups, 'administrator'));
+export const isDesignerGroups = (userGroups) => !designDisabled()
+    && (inGroups(userGroups, DESIGNER_GROUPS) || granted(userGroups, 'administrator') || granted(userGroups, 'designer'));
 /** May this request's user design models (REQUIRE_AUTHENTICATION=false: everyone, unless DISABLE_DESIGN). */
 export const canDesign = (user) => !designDisabled()
     && (process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(user?.userGroups));

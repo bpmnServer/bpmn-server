@@ -36,3 +36,12 @@
 .integration-list[open] > summary { margin-bottom: 4px; }
 .integration-points { margin: 8px 0 24px; font-size: 14px; }
 .integration-card-links .integration-open { margin: 0; padding: 0; }
+
+/* what each role may do (the Security area): a table of the roles and their rights */
+.integration-permissions { width: 100%; border-collapse: collapse; margin: 8px 0 4px; }
+.integration-permissions th, .integration-permissions td { border-bottom: 1px solid #e6e6e6; padding: 8px 10px; text-align: left; vertical-align: top; }
+.integration-permissions th { font-weight: 600; color: #444; }
+.integration-permissions td.is-held { text-align: center; font-size: 1.15em; }
+.integration-permissions th.is-off { opacity: 0.65; }
+.integration-permissions th .dash-muted { font-weight: 400; font-size: 0.85em; line-height: 1.4; margin-top: 2px; }
+.integration-restrictions { margin: 6px 0 10px; padding-left: 18px; list-style: disc; }

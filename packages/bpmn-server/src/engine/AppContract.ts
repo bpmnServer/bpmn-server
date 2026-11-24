@@ -31,7 +31,12 @@ export interface IAppContract {
     expressions?: IContractExpression[];
     /** JSON Schemas, by name, that the expressions' types name */
     types?: Record<string, any>;
-    roles?: { name: string; title?: string; description?: string }[];
+    /**
+     * The roles lanes and tasks are given to. `permissions` is what the role is allowed to do on the server
+     * beyond working its own tasks (docs/design/security-profiles.md): 'designer' designs models, 'administrator'
+     * manages users, roles, credentials and the settings. None: it works its tasks and starts what its lanes allow.
+     */
+    roles?: { name: string; title?: string; description?: string; permissions?: ('designer' | 'administrator')[] }[];
     apis?: { id: string; openapi: string }[];
     pages?: { id: string; url: string; title?: string }[];
 }
@@ -60,7 +65,12 @@ export function contractProblems(contract: any): string[] {
         if (e.params !== undefined && (!Array.isArray(e.params) || e.params.some(p => typeof p?.name !== 'string'))) problems.push(`${at}: params is a list of { name, type }`);
         if (e.kind === 'var' && e.params?.length) problems.push(`${at}: a variable takes no arguments`);
     });
-    list('roles').forEach((r, i) => { if (typeof r?.name !== 'string' || !r.name.trim()) problems.push(`roles[${i}]: name is required`); });
+    list('roles').forEach((r, i) => {
+        if (typeof r?.name !== 'string' || !r.name.trim()) problems.push(`roles[${i}]: name is required`);
+        if (r?.permissions !== undefined && (!Array.isArray(r.permissions)
+            || r.permissions.some(x => !ROLE_PERMISSIONS.includes(x))))
+            problems.push(`roles[${i}]: permissions is a list of ${ROLE_PERMISSIONS.join(' or ')}`);
+    });
     list('apis').forEach((a, i) => { if (typeof a?.id !== 'string' || typeof a?.openapi !== 'string') problems.push(`apis[${i}]: id and openapi are required`); });
     list('pages').forEach((p, i) => { if (typeof p?.id !== 'string' || typeof p?.url !== 'string') problems.push(`pages[${i}]: id and url are required`); });
     if (contract.types !== undefined && (typeof contract.types !== 'object' || Array.isArray(contract.types))) problems.push('types is an object of JSON Schemas by name');
@@ -108,6 +118,24 @@ export function saveContractRoles(file: string, roles: { name: string; title?: s
     fs.writeFileSync(file, JSON.stringify(contract, null, 2) + '\n');
     cache.delete(file);
     return contract.roles.map(r => r.name);
+}
+
+/** What a role may be allowed to do beyond its own tasks (docs/design/security-profiles.md). */
+export const ROLE_PERMISSIONS = ['designer', 'administrator'] as const;
+export type RolePermission = typeof ROLE_PERMISSIONS[number];
+
+/**
+ * The permissions the contract gives each role, by role name: what an application has said its roles may do, which
+ * the server grants in addition to the groups it has always matched on (ADMIN, SYSTEM, DESIGNER). Nothing is taken
+ * away by this, so a server that declares none behaves as before.
+ */
+export function rolePermissionsOf(contract: IAppContract | null | undefined): Map<string, RolePermission[]> {
+    const out = new Map<string, RolePermission[]>();
+    for (const role of contract?.roles ?? []) {
+        const given = (role.permissions ?? []).filter(p => ROLE_PERMISSIONS.includes(p));
+        if (given.length) out.set(role.name, [...new Set(given)]);
+    }
+    return out;
 }
 
 /** A contract's names, by kind: its variables and functions (by name), its roles, its pages. */

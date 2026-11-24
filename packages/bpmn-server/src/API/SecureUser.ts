@@ -63,10 +63,28 @@ class SecureUser implements ISecureUser {
     static SystemUser() {
         return new SecureUser({ userName: 'system', userGroups: [USER_ROLE.SYSTEM], tenantId: null, modelsOwner: null });
     }
+    /**
+     * The permissions the application's contract gives each of its roles (app-contract.json, rolePermissionsOf): set
+     * once when the server starts, so a role an application said may administer or design is one here too. It only
+     * ever grants: the groups below are matched as they always were, so no user loses what they had.
+     */
+    static granted: Map<string, readonly string[]> = new Map();
+    /** Whether one of this user's groups was given `permission` by the application's contract. */
+    #granted(permission: string): boolean {
+        for (const group of this.userGroups ?? [])
+            if (SecureUser.granted.get(group)?.includes(permission)) return true;
+        return false;
+    }
     isAdmin(): boolean {
         if (this.#bypass)
             return true;
-        return (this.userGroups.includes(USER_ROLE.ADMIN) || this.userGroups.includes(USER_ROLE.SYSTEM));
+        return (this.userGroups.includes(USER_ROLE.ADMIN) || this.userGroups.includes(USER_ROLE.SYSTEM)
+            || this.#granted('administrator'));
+    }
+    /** Whether this user may design models: the DESIGNER group, an administrator, or a role the contract allows it. */
+    isDesigner(): boolean {
+        if (this.#bypass) return true;
+        return this.isAdmin() || this.userGroups.includes(USER_ROLE.DESIGNER) || this.#granted('designer');
     }
     isSystem(): boolean {
         if (this.#bypass)

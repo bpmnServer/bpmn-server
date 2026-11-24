@@ -58,7 +58,6 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
         settings: [
             // 1. access and authentication: who can reach the server
             { name: 'REQUIRE_AUTHENTICATION', label: 'Sign-in required', main: true },
-            { name: 'ENFORCE_SECURITY', label: 'Security rules enforced', main: true },
             { name: 'ALLOW_INSECURE_NO_AUTH', label: 'Start without sign-in in production (not recommended)' },
             { name: 'SESSION_SECRET', label: 'Session secret' },
             { name: 'SECURE_COOKIES', label: 'Cookies only over HTTPS' },
@@ -67,10 +66,9 @@ export const INTEGRATION_POINTS: IntegrationPoint[] = [
             { name: 'SIGNUP_VERIFY_EMAIL', label: 'A new account verifies its email' },
             { name: 'SIGNUP_GROUPS', label: 'Groups a new account gets' },
             { name: 'ADMIN_PASSWORD', label: "The first administrator's password" },
-            // 2. roles and permissions: what each of them may do
-            { name: 'READ_ONLY', label: 'Read-only: cases run, nothing is changed', main: true },
-            { name: 'DISABLE_ADMIN', label: 'Administration off for everyone', main: true },
-            { name: 'DISABLE_DESIGN', label: 'Model design off for everyone', main: true },
+            // 2. roles and permissions: what each role is allowed to do is the table above; DISABLE_ADMIN,
+            // DISABLE_DESIGN, READ_ONLY and ENFORCE_SECURITY are not offered here — they take a permission from
+            // everyone, which the table says, and they stay settable in .env
             { name: 'SECURITY_POLICY', label: 'Default case security policy' },
             // 3. API and AI credentials: the identities that are not people
             { name: 'API_KEY', label: 'Service key (API v3)' },
@@ -196,6 +194,73 @@ const valueOf = (settings: any[], name: string) => {
     return s.value !== '' ? s.value : s.default !== undefined ? String(s.default) : 'not set';
 };
 
+/** The permissions a role may hold (docs/design/security-profiles.md): the columns of the Security area's table. */
+export const PERMISSIONS = [
+    { id: 'user', title: 'User', about: 'Start permitted workflows, view authorized instances, and complete assigned tasks' },
+    { id: 'designer', title: 'Designer', about: 'Create, edit, validate, and test workflow models' },
+    { id: 'administrator', title: 'Administrator', about: 'Manage users, permissions, models, credentials, and configuration' },
+] as const;
+
+/**
+ * Which permissions each role holds, as the rules decide it now (userAccess/roles.ts): a row for each role, a column
+ * for each permission. PUBLIC (nobody signed in) and SYSTEM (the server itself) are always rows; the rest are the
+ * application's own, from its contract.
+ *
+ * A role is the user group of the same name, so a role holds Designer or Administrator by being one of the groups the
+ * code matches on (ADMIN, SYSTEM, DESIGNER) — an application's role gets them only where it is spelled the same.
+ * A deployment-wide restriction (DISABLE_ADMIN, DISABLE_DESIGN, READ_ONLY) empties a column for every role,
+ * administrators included, and is given as the reason.
+ */
+export function rolePermissions(appRoles: string[] = [], granted: Map<string, readonly string[]> = new Map()): {
+    permissions: { id: string; title: string; about: string; off?: string }[];
+    roles: { name: string; of: 'server' | 'application'; note?: string; editable?: boolean; fixed?: string[]; has: Record<string, boolean> }[];
+    restrictions: string[];
+} {
+    const on = (name: string) => /^(true|on|1|yes)$/i.test(String(process.env[name] ?? '').trim());
+    const adminOff = on('DISABLE_ADMIN'), designOff = on('DISABLE_DESIGN'), readOnly = on('READ_ONLY');
+    const anonymous = String(process.env.REQUIRE_AUTHENTICATION ?? '').trim() === 'false';
+
+    const restrictions: string[] = [];
+    if (adminOff) restrictions.push('DISABLE_ADMIN: nobody administers this server, whatever their role');
+    if (designOff) restrictions.push('DISABLE_DESIGN: nobody designs models in the pages, whatever their role');
+    if (readOnly) restrictions.push('READ_ONLY: the processes and the setup stay as they are; cases still run');
+    if (anonymous) restrictions.push('REQUIRE_AUTHENTICATION=false: anyone reaching this server is treated as an administrator');
+
+    // a column, and what turns it off for everyone
+    const permissions = PERMISSIONS.map(p => ({ ...p,
+        ...(p.id === 'designer' && (designOff || readOnly) ? { off: designOff ? 'DISABLE_DESIGN' : 'READ_ONLY' } : {}),
+        ...(p.id === 'administrator' && adminOff ? { off: 'DISABLE_ADMIN' } : {}) }));
+    const held = (wanted: Record<string, boolean>) => Object.fromEntries(
+        permissions.map(p => [p.id, !p.off && !!wanted[p.id]]));
+
+    const roles: { name: string; of: 'server' | 'application'; note?: string; editable?: boolean; fixed?: string[]; has: Record<string, boolean> }[] = [];
+    // PUBLIC: nobody signed in. With sign-in required it holds nothing; without it, what the code does today is give
+    // everyone an administrator's rights, which is said as it is rather than as it should be.
+    roles.push({ name: 'PUBLIC', of: 'server',
+        note: anonymous
+            ? 'not signed in — and no sign-in is required here, so anyone reaching this server has these'
+            : 'not signed in',
+        has: held({ user: anonymous, designer: anonymous, administrator: anonymous }) });
+    // User: the catch-all, anyone signed in whatever their application role
+    roles.push({ name: 'User', of: 'server', note: 'anyone signed in, whatever their role',
+        has: held({ user: true, designer: false, administrator: false }) });
+    roles.push({ name: 'SYSTEM', of: 'server', note: 'the server itself, and its service account',
+        has: held({ user: true, designer: true, administrator: true }) });
+    const own = new Set(roles.map(r => r.name));
+    for (const name of appRoles.filter(n => !own.has(n))) {
+        // the group names this server has always matched on: those rows cannot be unticked here
+        const byName = ['ADMIN', 'SYSTEM'].includes(name) ? ['designer', 'administrator']
+            : name === 'DESIGNER' ? ['designer'] : [];
+        const stored = granted.get(name) ?? [];
+        roles.push({ name, of: 'application', editable: true,
+            fixed: byName,
+            has: held({ user: true,
+                designer: byName.includes('designer') || stored.includes('designer'),
+                administrator: byName.includes('administrator') || stored.includes('administrator') }) });
+    }
+    return { permissions, roles, restrictions };
+}
+
 /**
  * What an integration point has, in a few words, for the Settings page's overview: { lines, attention } (attention:
  * something to set up, said so). From what the page knows of it (`info`) and its settings.
@@ -204,12 +269,15 @@ export function summaryOf(id: string, info: any, settings: any[]): { lines: stri
     switch (id) {
         // the three questions, in plain words: who can reach it, what they may do, what its models may run
         case 'secure': {
+            // the settings this area offers come from its list; the restrictions it no longer offers (they take a
+            // permission from everyone: the table says so) are read from the environment as the server runs
             const is = (name: string, value = 'true') => valueOf(settings, name) === value;
-            const signIn = is('REQUIRE_AUTHENTICATION', 'false')
+            const env = (name: string, value = 'true') => String(process.env[name] ?? '').trim().toLowerCase() === value;
+            const signIn = env('REQUIRE_AUTHENTICATION', 'false')
                 ? 'No sign-in: everyone is anonymous'
-                : `Sign-in required${is('ENFORCE_SECURITY', 'false') ? ', security rules NOT enforced' : ''}`;
-            const off = [is('DISABLE_ADMIN') && 'administration', is('DISABLE_DESIGN') && 'model design'].filter(Boolean);
-            const may = is('READ_ONLY')
+                : `Sign-in required${env('ENFORCE_SECURITY', 'false') ? ', security rules NOT enforced' : ''}`;
+            const off = [env('DISABLE_ADMIN') && 'administration', env('DISABLE_DESIGN') && 'model design'].filter(Boolean);
+            const may = env('READ_ONLY')
                 ? 'Read-only: cases run, nothing is changed'
                 : off.length ? `Off for everyone: ${off.join(' and ')}` : 'Roles decide what each person may do';
             const runs = is('DEMO_MODE')
@@ -217,12 +285,12 @@ export function summaryOf(id: string, info: any, settings: any[]): { lines: stri
                 : `Scripts ${is('SCRIPT_SANDBOX') ? 'in a sandbox' : 'run as they are'}`
                   + `${is('SERVICE_TASKS', 'false') ? ', service tasks off' : ''}${is('TIMERS', 'false') ? ', timers off' : ''}`;
             // a combination that is not safe: no sign-in is the one that gives everyone an administrator's rights
-            const open = is('REQUIRE_AUTHENTICATION', 'false') && !is('DISABLE_ADMIN') && !is('READ_ONLY');
+            const open = env('REQUIRE_AUTHENTICATION', 'false') && !env('DISABLE_ADMIN') && !env('READ_ONLY');
             return { lines: [signIn, may, runs], attention: open
                 ? 'No sign-in, and administration is on: anyone reaching this server administers it'
-                : is('REQUIRE_AUTHENTICATION', 'false') && !is('SCRIPT_SANDBOX')
+                : env('REQUIRE_AUTHENTICATION', 'false') && !is('SCRIPT_SANDBOX')
                     ? 'No sign-in, and scripts are not sandboxed: a model anyone saves runs as this server'
-                    : valueOf(settings, 'SESSION_SECRET') === 'not set' && !is('REQUIRE_AUTHENTICATION', 'false')
+                    : valueOf(settings, 'SESSION_SECRET') === 'not set' && !env('REQUIRE_AUTHENTICATION', 'false')
                         ? 'Sign-in is required but no session secret is set'
                         : undefined };
         }

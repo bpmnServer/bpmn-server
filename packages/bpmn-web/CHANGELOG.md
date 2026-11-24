@@ -26,6 +26,13 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **What each role is allowed to do, on the Security area**: a row for each role — `PUBLIC` (not signed in), `User`
+  (anyone signed in), `SYSTEM` (the server itself), then the application's own — and a column for each permission
+  (User, Designer, Administrator). An administrator ticks an application's row and it is saved to its
+  `app-contract.json`, taking effect at once; the pages and APIs honour it through the same helpers as before, so
+  every route inherits it. A role the server matches on by name keeps what it has, whatever is sent.
+- `DISABLE_ADMIN`, `DISABLE_DESIGN`, `READ_ONLY` and `ENFORCE_SECURITY` are no longer offered as settings on that
+  page: each empties a column for every role, which the table now says, and they stay settable in `.env`.
 - **A Security area on the Settings page** (`/dashboard/settings/secure`), answering the three questions apart: who
   may reach this server, what each of them may do, and what its models are allowed to run. It gathers the settings
   that were spread over the other areas and the fifteen that were only in `.env` and never shown — among them

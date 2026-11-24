@@ -17,7 +17,8 @@ import { Cron } from './Cron.js';
 import { Listener } from './Listener.js';
 import { Connectors } from '../connectors/Connectors.js';
 import type { ILifecycleListener } from '../interfaces/lifecycle.js';
-import { contractProblems, compareWithCode, methodNames } from '../engine/AppContract.js';
+import { contractProblems, compareWithCode, methodNames, rolePermissionsOf } from '../engine/AppContract.js';
+import { SecureUser } from '../API/SecureUser.js';
 import type { IAddOn } from '../engine/AddOns.js';
 import { Registrations } from '../engine/AddOns.js';
 
@@ -160,6 +161,8 @@ class BPMNServer implements IBPMNServer {
 		let contract;
 		try { contract = typeof delegate?.describe === 'function' ? delegate.describe() : null; }
 		catch (error) { this.logger.log(`[app contract] can not be read: ${error?.message ?? error}`); return; }
+		// the permissions its roles are given, for isAdmin/isDesigner: granting only, so no user loses what they had
+		SecureUser.granted = rolePermissionsOf(contract);
 		if (!contract) return;
 		for (const problem of contractProblems(contract)) this.logger.log(`[app contract] error: ${problem}`);
 		let provider = null;

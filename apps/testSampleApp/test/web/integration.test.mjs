@@ -168,9 +168,12 @@ test('each add-on its own area: its manifest\'s settings, on or off, what it has
 test('the Security area: the three questions, with a warning for a combination that is not safe', async () => {
     const page = (await admin.get('/dashboard/settings/secure')).text;
     // who may reach it, what each may do, the credentials that are not people, what a model may run
-    for (const name of ['REQUIRE_AUTHENTICATION', 'ENFORCE_SECURITY', 'DISABLE_ADMIN', 'DISABLE_DESIGN',
-        'SECURITY_POLICY', 'API_KEY', 'AI_ACCESS', 'SCRIPT_SANDBOX', 'TIMERS', 'DEMO_MODE'])
+    for (const name of ['REQUIRE_AUTHENTICATION', 'SECURITY_POLICY', 'API_KEY', 'AI_ACCESS', 'SCRIPT_SANDBOX',
+        'TIMERS', 'DEMO_MODE'])
         assert.ok(page.includes(`data-setting="${name}"`), `${name} is on the Security page`);
+    // these take a permission from everyone, which the table says: not offered as settings here
+    for (const name of ['DISABLE_ADMIN', 'DISABLE_DESIGN', 'READ_ONLY', 'ENFORCE_SECURITY'])
+        assert.ok(!page.includes(`data-setting="${name}"`), `${name} is not offered here; the table says what it does`);
     // and they are no longer on the areas they were spread over
     const models = (await admin.get('/dashboard/settings/models')).text;
     assert.ok(!models.includes('data-setting="SCRIPT_SANDBOX"'), "what a model may run is the Security area's");
@@ -183,4 +186,61 @@ test('the Security area: the three questions, with a warning for a combination t
     const card = overview.slice(at, at + 900);
     assert.match(card, /Sign-in required/, 'it says who may reach it');
     assert.doesNotMatch(card, /anyone reaching this server administers it/, 'no warning: sign-in is required here');
+});
+
+// What each role may do, on the Security area (routes/integration.ts, rolePermissions): the server's own groups, the
+// application's roles, and the restrictions that take a right from everyone.
+test('the Security area lists what each role may do, and what a restriction takes from everyone', async () => {
+    const { rolePermissions } = await import('bpmn-web');
+
+    // as this server runs: sign-in required, nothing disabled
+    const now = rolePermissions(['Employee', 'Manager', 'ADMIN']);
+    assert.deepEqual(now.permissions.map(p => p.id), ['user', 'designer', 'administrator'], 'the three columns');
+    const row = (name) => now.roles.find(r => r.name === name);
+    // PUBLIC (not signed in) and User (the catch-all) and SYSTEM are always rows; then the application's
+    assert.deepEqual(now.roles.map(r => r.name), ['PUBLIC', 'User', 'SYSTEM', 'Employee', 'Manager', 'ADMIN']);
+    assert.deepEqual(row('PUBLIC').has, { user: false, designer: false, administrator: false }, 'not signed in: nothing');
+    assert.equal(row('User').has.user, true, 'anyone signed in');
+    assert.equal(row('User').has.administrator, false);
+    assert.equal(row('SYSTEM').has.administrator, true, 'the server itself');
+    assert.equal(row('Employee').has.administrator, false, "an application's role holds nothing more by default");
+    assert.equal(row('ADMIN').has.administrator, true, 'a name this server matches on');
+    assert.ok(row('ADMIN').fixed.includes('administrator'), 'and it cannot be unticked');
+    assert.ok(row('Employee').editable && !row('PUBLIC').editable, "the application's rows are the editable ones");
+
+    // a stored permission grants it
+    const granted = rolePermissions(['Manager'], new Map([['Manager', ['designer']]]));
+    assert.equal(granted.roles.find(r => r.name === 'Manager').has.designer, true, 'the contract granted it');
+
+    // a restriction takes the right from everyone, administrators included, and says which setting did it
+    const was = { a: process.env.DISABLE_ADMIN, r: process.env.READ_ONLY, q: process.env.REQUIRE_AUTHENTICATION };
+    try {
+        process.env.DISABLE_ADMIN = 'true';
+        process.env.READ_ONLY = 'true';
+        const off = rolePermissions(['Employee', 'ADMIN']);
+        assert.ok(off.restrictions.some(w => w.includes('DISABLE_ADMIN')), 'the restriction is named');
+        // the column is off for every role, the name-matched ones included, and says which setting did it
+        assert.equal(off.permissions.find(p => p.id === 'administrator').off, 'DISABLE_ADMIN');
+        assert.equal(off.roles.find(r => r.name === 'ADMIN').has.administrator, false, 'not even ADMIN');
+
+        // no sign-in: everyone is an administrator, shown as a role of its own so it is not invisible
+        process.env.DISABLE_ADMIN = ''; process.env.READ_ONLY = '';
+        process.env.REQUIRE_AUTHENTICATION = 'false';
+        const open = rolePermissions([]);
+        // what the server does today: anyone reaching it is an administrator. Said as it is, with a warning.
+        assert.equal(open.roles.find(r => r.name === 'PUBLIC').has.administrator, true);
+        assert.ok(open.restrictions.some(w => w.includes('REQUIRE_AUTHENTICATION')), 'and it is called out');
+    } finally {
+        process.env.DISABLE_ADMIN = was.a ?? ''; process.env.READ_ONLY = was.r ?? '';
+        process.env.REQUIRE_AUTHENTICATION = was.q ?? '';
+    }
+
+    // and the page draws it
+    const page = (await admin.get('/dashboard/settings/secure')).text;
+    assert.match(page, /What each role is allowed to do/);
+    // the server's own rows, then this application's; a checkbox where the row may be changed
+    for (const row of ['PUBLIC', 'User', 'SYSTEM', 'Employee', 'Manager'])
+        assert.match(page, new RegExp(`data-role="${row}"`), `${row} is a row`);
+    assert.match(page, /name="may:Manager:designer"/, "an application's role is editable");
+    assert.ok(!/name="may:SYSTEM:/.test(page), "the server's own rows are not");
 });
