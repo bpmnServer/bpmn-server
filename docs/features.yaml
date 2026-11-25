@@ -822,7 +822,7 @@ features:
     what: "npm run cli — an interactive console (start, list, complete, connectors); one command from the command line."
     docs: [docs/docs/advanced.md]
     code: [packages/bpmn-web/src/console.ts]
-    tests: [apps/testSampleApp/test/unit/console-args.test.mjs]
+    tests: [apps/testSampleApp/test/unit/console-args.test.mjs, apps/testSampleApp/test/web/console-users.test.mjs]
   - id: client-cli
     area: cli
     name: "bpmn-client command line"

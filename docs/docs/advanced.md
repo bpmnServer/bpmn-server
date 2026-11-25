@@ -38,7 +38,18 @@ npm run cli -- lm                 # the models
 npm run cli -- co                 # the connectors
 npm run cli -- cod asana          # delete the connector asana
 npm run cli -- spw alice N3w-pass # set alice's password
+npm run cli -- lu                 # list the users
 ```
+
+**Users: `lu` and `spw`.** They list and change the users bpmn-web keeps itself, on the database the console is started
+against (a MongoDB or a SQLite file; a running server sees the change at once). They need a database that outlives the
+console: with `MONGO_DB_URL=memory` the console makes its own empty one, so there is nothing of the server's to list or
+change. A password is hashed as it is saved. `spw` for a user that does not exist prints `User does not exist` and
+still exits 0, and on success it prints nothing but the prompts it was given.
+
+In an application that manages its own users ([your users: a user manager](integration/integration-guide.md#a5-your-users-a-user-manager);
+the HR demo does), `lu` lists no one and `spw` finds no user: they read bpmn-web's own users, which that application
+leaves empty. Change those users in the application. Test: `apps/testSampleApp/test/web/console-users.test.mjs`.
 
 ## Instance Locking
 
