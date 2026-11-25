@@ -37,7 +37,7 @@ contract lets the editor offer names, and the checks find a wrong one before it 
   form key `app:<page>` it has no page for, a lane that is not a role; and refuse a decision the model uses (a
   business rule task's, a policy) that calls a `write` function.
 - **At start**, the engine compares it with the delegate's code, in the log: a declared function the code
-  lacks is an error; one the code has that the contract doesn't declare, a warning.
+  lacks is an error; one the code has that the contract doesn't declare, a warning. A contract with no `expressions` says nothing about functions, so none is compared.
 - **The editor** offers its functions with their descriptions after `appServices.`.
 - **API v3:** `GET /api/v3/application` answers it (and its problems), for an agent building a model; `/llms.txt`
   links it.

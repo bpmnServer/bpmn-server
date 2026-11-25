@@ -48,6 +48,7 @@ test('compared with the code: a declared function the code lacks is an error, on
   assert.deepEqual(found.map(f => f.severity).sort(), ['error', 'warning']);
   assert.ok(found.some(f => f.severity === 'error' && /appServices\.record/.test(f.message)));
   assert.ok(found.some(f => f.severity === 'warning' && /appServices\.extra/.test(f.message)));
+  assert.deepEqual(compareWithCode({ roles: [{ name: 'Manager' }] }, { services: ['managerOf', 'extra'] }), [], 'no expressions declared: nothing to compare');
 });
 
 test('verifyModel against the contract: unknown names, the wrong number of arguments, a page, a write function in a decision', async () => {

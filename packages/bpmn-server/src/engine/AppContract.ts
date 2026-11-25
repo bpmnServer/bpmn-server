@@ -159,10 +159,12 @@ export function methodNames(aClass: any): string[] {
 
 /**
  * The contract compared with the delegate's code: a declared function the services provider lacks is an error, one
- * it has that is not declared a warning. As { severity, message }.
+ * it has that is not declared a warning. A contract that declares no `expressions` says nothing about its functions
+ * (the sample application's has only roles), so nothing is compared. As { severity, message }.
  */
 export function compareWithCode(contract: IAppContract, { services }: { services?: string[] | null }) {
     const out: { severity: 'error' | 'warning'; message: string }[] = [];
+    if (!contract.expressions) return out;
     const names = contractNames(contract);
     const check = (kind: string, declared: string[], has: string[] | null | undefined, read: string) => {
         if (!has) return;
