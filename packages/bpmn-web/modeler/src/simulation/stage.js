@@ -111,6 +111,8 @@ export function modelFacts(rootElement) {
         if (message) facts.set(el.id, { kind: 'message', name: clean(el.name), ...message });
         else if (timer) facts.set(el.id, { kind: 'timer', name: clean(el.name), ...timer });
         else if (error) facts.set(el.id, { kind: 'error', name: clean(el.name), ...error });
+        else if (type === 'bpmn:StartEvent' && !(el.eventDefinitions ?? []).length)
+            facts.set(el.id, { kind: 'start', name: clean(el.name) });
         else if (type === 'bpmn:UserTask' || type === 'bpmn:ManualTask')
             facts.set(el.id, { kind: 'user', name: clean(el.name), fields: formOf(el), formKey: attr(el, 'formKey') });
         else if (SERVICE_TYPES.includes(type))
@@ -154,6 +156,48 @@ function decisionsAbout(id, steps) {
     return out;
 }
 
+/** A list as the engine keeps one: an array, or names separated by commas. */
+const asList = value => (Array.isArray(value) ? value.flat() : value == null || value === '' ? [] : String(value).split(','))
+    .map(v => String(v ?? '').trim()).filter(Boolean);
+
+/** Who a step of the run was made by, for an element: the person who started it or completed it, or null. */
+function actorOf(id, steps) {
+    for (const step of steps ?? [])
+        if (step.element === id && step.userName) return step.userName;
+    return null;
+}
+
+/**
+ * Who a task is given to, as the item records it: its assignee, the users and groups it is offered to, and what decided
+ * it (the policy and rule, and the Rationale's own words for it). Null when the item says nobody.
+ */
+function assignedTo(item, steps) {
+    const assignee = asList(item.assignee)[0] ?? null;
+    const users = asList(item.candidateUsers).filter(u => u !== assignee);
+    const groups = asList(item.candidateGroups);
+    if (!assignee && !users.length && !groups.length) return null;
+    const why = decisionsAbout(item.elementId, steps).find(d => /assign/i.test(d.action))?.why ?? '';
+    return { assignee, users, groups, policy: item.assignment?.policy ?? null, rule: item.assignment?.rule ?? null, why };
+}
+
+/**
+ * The notifications the run recorded for this change, after the fact: the ones of this element whose event this is (a task
+ * is "assigned" as it starts; "completed" and "ended" as it is done). `to`: each name, and whether it is a group (a name some
+ * task of the run is offered to as a group).
+ */
+function noticesOf(item, phase, run) {
+    const groups = new Set((run.items ?? []).flatMap(i => asList(i.candidateGroups)));
+    const lastSeq = Math.max(0, ...(run.items ?? []).map(i => i.seq ?? 0));
+    return (run.notifications ?? [])
+        // the instance's own ("ended") has no element: it comes with the last change of the run
+        .filter(n => (n.elementId ? n.elementId === item.elementId : n.event === 'ended' && item.seq === lastSeq)
+            && (n.event === 'assigned' ? phase === 'started' : phase === 'done'))
+        .map(n => ({
+            event: n.event, subject: clean(n.subject), message: clean(n.message), status: n.status, channel: n.channel ?? null,
+            error: n.error ?? null, to: asList(n.to).map(name => ({ name, group: groups.has(name) })),
+        }));
+}
+
 /** What a frame is: started, done, or waiting. */
 const phaseOf = frame => ({ 'test-started': 'started', 'test-passed': 'done', 'test-waiting': 'waits' }[frame?.marker] ?? 'started');
 
@@ -167,7 +211,20 @@ const phaseOf = frame => ({ 'test-started': 'started', 'test-passed': 'done', 't
  */
 export function stageOf(frame, facts, run = {}) {
     const item = frame?.item;
-    const fact = item && facts?.get(item.elementId);
+    if (!item) return null;
+    const phase = phaseOf(frame);
+    const notices = noticesOf(item, phase, run);
+    const s = closeUp(frame, facts, run);
+    // an element with a notification and nothing else to show close up gets a card for it
+    if (!s) return notices.length ? { kind: 'notice', phase, id: item.elementId, notices,
+        title: notices.every(n => n.event === 'ended') ? 'The process ended' : clean(item.name) || item.elementId } : null;
+    return notices.length ? { ...s, notices } : s;
+}
+
+/** What the element itself shows close up (stageOf adds the notifications of the change). */
+function closeUp(frame, facts, run) {
+    const item = frame.item;
+    const fact = facts?.get(item.elementId);
     if (!fact) return null;
     const phase = phaseOf(frame);
     const base = { kind: fact.kind, phase, id: item.elementId, title: fact.name || item.name || item.elementId };
@@ -178,8 +235,17 @@ export function stageOf(frame, facts, run = {}) {
             // no declared form: what was entered still shows, as fields of its own
             : Object.keys(values).map(key => ({ id: key, label: key, type: 'string', input: 'text', options: [], value: values[key], filled: true }));
         const waiting = phase === 'waits';
-        return { ...base, fields: shown, formKey: fact.formKey ?? null, userName: done?.userName ?? item.userName ?? null,
+        // who it was given to as it starts; who did it when it is done (not item.userName as it starts: that is whoever
+        // acted before)
+        const by = phase === 'done' ? (done?.userName ?? actorOf(item.elementId, run.steps) ?? item.userName ?? null) : null;
+        return { ...base, fields: shown, formKey: fact.formKey ?? null, userName: by,
+            assigned: phase === 'done' ? null : assignedTo(item, run.steps),
             submitted: phase === 'done', waiting, empty: !shown.length };
+    }
+    if (fact.kind === 'start') {
+        // a process started by a person: whose name the run has; a start nobody is named at has nothing to show
+        const by = actorOf(item.elementId, run.steps) ?? item.userName ?? null;
+        return by ? { ...base, userName: by } : null;
     }
     if (fact.kind === 'timer')
         return { ...base, mode: fact.mode, when: fact.when, attachedTo: fact.attachedTo, interrupting: fact.interrupting, fired: phase === 'done' };
@@ -275,6 +341,58 @@ function lines(value, empty) {
         keys.length > 4 ? el('div', { class: 'sim-more' }, `+ ${keys.length - 4} more`) : null);
 }
 
+/** A name's colour: the same person, the same colour, everywhere. */
+const hue = name => { let h = 0; for (const c of String(name)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+/** Two letters for a name: ann -> AN, manager1 -> MA, user.one -> UO, HR Manager -> HM. */
+const initials = name => {
+    const parts = String(name).split(/[\s._@-]+/).filter(Boolean);
+    return ((parts[0]?.[0] ?? '?') + (parts.length > 1 ? parts[1][0] : parts[0]?.[1] ?? '')).toUpperCase();
+};
+/** A person's avatar: a circle of their colour and their initials; a group's is a rounded square. */
+export function avatar(name, { group = false } = {}) {
+    return el('span', { class: `sim-avatar${group ? ' group' : ''}`, style: `--h:${hue(name)}`, title: group ? `the group ${name}` : name }, initials(name));
+}
+/** An avatar with their name, and what they are doing. */
+const person = (name, role, { group = false, mark = '' } = {}) =>
+    el('div', { class: 'sim-person' }, avatar(name, { group }), el('span', { class: 'sim-person-text' }, el('b', {}, name), role ? el('small', {}, role) : null), mark ? el('span', { class: 'sim-person-mark' }, mark) : null);
+
+/** Who a task is given to as it starts: its assignee, whom it is offered to, and what decided it. */
+function assignedRows(a) {
+    if (!a) return null;
+    const how = [a.policy ? `by ${a.policy}${a.rule != null ? `, rule ${a.rule}` : ''}` : '', a.why ? shortValue(a.why, 90) : ''].filter(Boolean).join(': ');
+    return el('div', { class: 'sim-assigned' },
+        el('div', { class: 'sim-assigned-head' }, a.assignee ? 'Assigned to' : 'Offered to'),
+        a.assignee ? person(a.assignee, 'the assignee') : null,
+        ...a.users.map(u => person(u, 'may take it')),
+        ...a.groups.map(g => person(g, 'any member may take it', { group: true })),
+        how ? el('div', { class: 'sim-assigned-how' }, how) : null);
+}
+
+/** What notifying says: sent through the application, kept without being sent, or failed. */
+const NOTICE_STATUS = { sent: 'sent through the application', recorded: 'recorded, not delivered', failed: 'failed' };
+/** The notifications of a change, after the fact: whom, what they were told, and how it went. */
+function noticeSection(notices) {
+    return el('div', { class: 'sim-notices' }, ...notices.map((n, i) => el('div', { class: `sim-notice status-${n.status}`, style: `--i:${i}` },
+        el('div', { class: 'sim-notice-head' }, el('span', { class: 'sim-bell' }, '\u{1F514}'),
+            el('b', {}, 'Notified'), el('span', { class: 'sim-notice-event' }, n.event),
+            el('span', { class: 'sim-notice-status' }, NOTICE_STATUS[n.status] ?? n.status ?? '')),
+        el('div', { class: 'sim-notice-to' }, ...n.to.map(x => person(x.name, x.group ? 'group' : '', { group: x.group }))),
+        n.subject || n.message ? el('div', { class: 'sim-notice-msg' }, n.subject ? el('b', {}, n.subject) : null, n.message && n.message !== n.subject ? el('span', {}, shortValue(n.message, 140)) : null) : null,
+        n.error ? el('div', { class: 'sim-notice-error' }, shortValue(n.error, 100)) : null,
+        n.channel ? el('div', { class: 'sim-dim' }, `through ${n.channel}`) : null)));
+}
+
+function startCard(s) {
+    return [el('div', { class: 'sim-start' },
+        el('span', { class: 'sim-start-avatar' }, avatar(s.userName)),
+        el('div', { class: 'sim-start-text' }, el('b', {}, `Started by ${s.userName}`), el('span', { class: 'sim-dim' }, 'a person began this process')),
+        el('span', { class: 'sim-start-play' }, '\u25B6'))];
+}
+
+function noticeCard(s) {
+    return [noticeSection(s.notices)];
+}
+
 function formCard(s, timers) {
     const rows = s.fields.map((f, i) => {
         const value = el('span', { class: 'sim-field-value', 'data-field': f.id });
@@ -290,10 +408,12 @@ function formCard(s, timers) {
         return el('label', { class: 'sim-field' }, el('span', { class: 'sim-field-label' }, f.label), control);
     });
     const button = el('div', { class: `sim-submit${s.submitted ? ' pressed' : ''}` }, s.submitted ? '✓ Submitted' : s.waiting ? 'Waiting for the user…' : 'Submit');
-    const footer = s.submitted
-        ? el('div', { class: 'sim-foot' }, s.userName ? `Completed by ${s.userName}` : 'Completed')
-        : el('div', { class: 'sim-foot sim-dim' }, s.userName ? `${s.userName} is filling it in` : 'A person fills this in');
-    return [rows.length ? el('div', { class: 'sim-form' }, rows) : el('div', { class: 'sim-none' }, 'No fields: the task is just completed'), button, footer];
+    // who is behind it: given to someone as it starts; done by someone when it is
+    const who = s.submitted && s.userName ? el('div', { class: 'sim-assigned done' }, person(s.userName, 'completed it', { mark: '\u2713' }))
+        : assignedRows(s.assigned);
+    const footer = s.submitted && s.userName ? null
+        : el('div', { class: `sim-foot${s.submitted ? '' : ' sim-dim'}` }, s.submitted ? 'Completed' : s.assigned ? 'Waiting for them to fill it in' : 'A person fills this in');
+    return [who, rows.length ? el('div', { class: 'sim-form' }, rows) : el('div', { class: 'sim-none' }, 'No fields: the task is just completed'), button, footer];
 }
 
 function gatewayCard(s, timers) {
@@ -378,19 +498,31 @@ function errorCard(s) {
             !raise && s.attachedTo ? el('span', { class: 'sim-dim' }, `${s.attachedTo} is interrupted`) : null))];
 }
 
-const KINDS = { timer: 'Timer', error: 'Error',  user: 'User task', gateway: 'Gateway', flow: 'Condition', service: 'Service task', message: 'Message' };
+const KINDS = { start: 'Start event', notice: 'Notification', timer: 'Timer', error: 'Error',  user: 'User task', gateway: 'Gateway', flow: 'Condition', service: 'Service task', message: 'Message' };
 
 /** The card of a stage (stage-model.js's stageOf), and the timers that animate it. */
 export function stageCard(s) {
     const timers = [];
-    const body = s.kind === 'user' ? formCard(s, timers) : s.kind === 'gateway' ? gatewayCard(s, timers)
+    const body = s.kind === 'start' ? startCard(s) : s.kind === 'notice' ? noticeCard(s) : s.kind === 'user' ? formCard(s, timers) : s.kind === 'gateway' ? gatewayCard(s, timers)
         : s.kind === 'flow' ? flowCard(s) : s.kind === 'message' ? messageCard(s) : s.kind === 'timer' ? timerCard(s) : s.kind === 'error' ? errorCard(s) : serviceCard(s);
     const head = el('div', { class: 'sim-stage-head' },
         s.kind === 'gateway' ? el('span', { class: 'sim-diamond', title: s.word }, el('i', {}, s.symbol)) : null,
         el('span', { class: 'sim-stage-title' }, s.title || KINDS[s.kind]),
         el('span', { class: 'sim-stage-kind' }, KINDS[s.kind]));
-    const card = el('div', { class: `sim-stage sim-stage-${s.kind} phase-${s.phase}`, 'data-element': s.id, role: 'group', 'aria-label': `Close-up: ${s.title || KINDS[s.kind]}` }, head, ...body);
+    // the notifications of the change come after what the element did
+    const notices = s.kind !== 'notice' && s.notices?.length ? noticeSection(s.notices) : null;
+    const card = el('div', { class: `sim-stage sim-stage-${s.kind} phase-${s.phase}${notices ? ' with-notice' : ''}`, 'data-element': s.id, role: 'group', 'aria-label': `Close-up: ${s.title || KINDS[s.kind]}` }, head, ...body, notices);
     return { card, timers };
+}
+
+/** How long Play stays on what an element itself shows close up (before the people and notifications on it), ms. */
+function stayOn(s) {
+    if (s.kind === 'start') return 1500;
+    if (s.kind === 'notice') return 1600;
+    if (s.kind === 'user') return s.phase === 'done' ? 600 + 380 * Math.max(1, s.fields.filter(f => f.filled).length) + 900 : 1400;
+    if (s.kind === 'gateway') return s.phase === 'done' ? 800 + 200 * s.branches.length + 700 : 1300;
+    if (s.kind === 'service') return s.phase === 'done' ? 1600 : 1400;
+    return 1500;
 }
 
 /**
@@ -400,7 +532,7 @@ export function stageCard(s) {
  */
 export class Stage {
     constructor({ container, rectOf, facts, run }) {
-        Object.assign(this, { container, rectOf, facts, run, node: null, timers: [], id: null });
+        Object.assign(this, { container, rectOf, facts, run, node: null, badge: null, timers: [], id: null });
     }
 
     /** The change `frame` on the stage. `moving`: as it happens (zooming in); not when Back draws what was before. */
@@ -420,6 +552,21 @@ export class Stage {
         if (getComputedStyle(this.container).position === 'static') this.container.style.position = 'relative';
         this.container.appendChild(card);
         this._place(card, rect);
+        this._badge(s, rect);
+    }
+
+    /** The person behind a task or a start, on the element itself: who it is given to, or who did it or began it. */
+    _badge(s, rect) {
+        const name = s.kind === 'start' ? s.userName : s.kind === 'user' ? (s.userName ?? s.assigned?.assignee ?? s.assigned?.users?.[0]) : null;
+        const group = s.kind === 'user' && !name ? s.assigned?.groups?.[0] : null;
+        if (!name && !group) return;
+        const box = this.container.getBoundingClientRect();
+        const badge = el('span', { class: 'sim-badge' }, avatar(name ?? group, { group: !name }));
+        badge.style.left = `${rect.left - box.left + this.container.scrollLeft + rect.width - 14}px`;
+        badge.style.top = `${rect.top - box.top + this.container.scrollTop - 14}px`;
+        if (still()) badge.classList.add('no-zoom');
+        this.container.appendChild(badge);
+        this.badge = badge;
     }
 
     /** Beside the element (right of it, else left), inside the container, zooming from the element. */
@@ -445,18 +592,16 @@ export class Stage {
         this.timers = [];
         this.node?.remove();
         this.node = null;
+        this.badge?.remove();
+        this.badge = null;
     }
 
-    /** How long Play stays on a change, ms: a card is read, a form is typed in; no card, the usual. */
+    /** How long Play stays on a change, ms: a card is read, a form is typed in, the people on it and a notification after it. */
     dwell(frame, usual) {
         if (!stageOn()) return usual;
         const s = stageOf(frame, this.facts, this.run);
         if (!s || still()) return usual;
-        if (s.kind === 'user') return s.phase === 'done' ? 600 + 380 * Math.max(1, s.fields.filter(f => f.filled).length) + 900 : 1400;
-        if (s.kind === 'gateway') return s.phase === 'done' ? 800 + 200 * s.branches.length + 700 : 1300;
-        if (s.kind === 'service') return s.phase === 'done' ? 1600 : 1400;
-        if (s.kind === 'message' || s.kind === 'timer' || s.kind === 'error') return 1500;
-        return 1000;
+        return stayOn(s) + (s.assigned ? 800 : 0) + (s.notices?.length ? 1400 : 0);
     }
 
     /** The stage over: no card, and the next change zooms in afresh. */

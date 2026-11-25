@@ -84,7 +84,8 @@ async function setUp() {
         });
         reset();
         const diagram = svg.closest('.instance-diagram') ?? svg.parentElement;
-        const stage = new Stage({ container: diagram, rectOf: frame => shape(frame.item.elementId)?.getBoundingClientRect?.() ?? null, facts, run: { items, steps } });
+        const stage = new Stage({ container: diagram, rectOf: frame => shape(frame.item.elementId)?.getBoundingClientRect?.() ?? null, facts,
+            run: { items, steps, notifications: json('animationNotifications') || [] } });
         sim = new Simulation(frames, { paint, reset, changed, steps, stage });
         sim.step();
     };

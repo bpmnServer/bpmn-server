@@ -200,7 +200,8 @@ block content
         else
           p.instance-empty Diagram unavailable for this instance.
       script(type="application/json" id="jsonInfo")!= JSON.stringify(info)
-      script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, elementId: item.elementId, name: item.name, seq: item.seq, type: item.type, status: item.status }))).replace(/</g, '\\u003c')
+      script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, elementId: item.elementId, name: item.name, seq: item.seq, type: item.type, status: item.status, userName: item.userName, assignee: item.assignee, candidateUsers: item.candidateUsers, candidateGroups: item.candidateGroups, assignment: item.assignment }))).replace(/</g, '\\u003c')
+      script(type="application/json" id="animationNotifications")!= JSON.stringify((notifications || []).map(n => ({ elementId: n.elementId, event: n.event, to: n.to, subject: n.subject, message: n.message, status: n.status, channel: n.channel, error: n.error }))).replace(/</g, '\\u003c')
       script(type="application/json" id="rationaleSteps")!= JSON.stringify(rationale || []).replace(/</g, '\\u003c')
       script(src=asset("/modeler/instance.js") defer)
 

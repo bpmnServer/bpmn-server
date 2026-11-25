@@ -25,7 +25,9 @@ and here
 - **Simulate shows a close-up** (docs/docs/modeler.md, docs/docs/execution.md): a small card beside the element a
   change is about, zoomed in from it: a user task's form, empty as it starts and filled in as it is done; a gateway's
   conditions as they are evaluated and which held, with a join's flows arriving; a flow's condition; a service's
-  input and output; a message sent or received; a timer's clock; an error or escalation raised or caught. **Show
+  input and output; a message sent or received; a timer's clock; an error or escalation raised or caught; who began the process
+  and who a task is given to and who did it, as avatars (also a badge on the element); and each notification, after the fact:
+  whom it told, what it said, how it went. **Show
   close-up** (on by default, remembered in the browser) turns it off; Play stays longer on a card; nothing moves for
   less motion. It reads only what the model and the run already hold, and adds no data to the engine or the APIs
   (`modeler/src/simulation/stage.js`, in the editor's Test tab and on the instance page).

@@ -770,7 +770,7 @@ export default class TestPanel {
                 container: this._canvas.getContainer(),
                 rectOf: frame => this._elementRegistry.getGraphics(frame.item.elementId)?.getBoundingClientRect?.() ?? null,
                 facts: modelFacts(this._bpmnjs.getDefinitions()),
-                run: { items: instance.items, steps: instance.steps },
+                run: { items: instance.items, steps: instance.steps, notifications: instance.notifications },
             }),
         });
         this._simulation.step();

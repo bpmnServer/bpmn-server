@@ -176,3 +176,55 @@
 @keyframes sim-spin-hour { from { transform: rotate(120deg); } to { transform: rotate(480deg); } }
 @keyframes sim-ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
 @keyframes sim-strike { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.4); opacity: 1; } 100% { transform: scale(1); } }
+
+/* People on the close-up: an avatar (a person's colour, their initials; a group is a rounded square), who a task is given
+   to and who did it, who began a process, and a notification after the fact: whom, what, how it went. */
+.sim-avatar {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; box-sizing: border-box; width: 26px; height: 26px;
+  border-radius: 50%; background: hsl(var(--h, 210) 55% 42%); color: #fff; font: 700 11px/1 system-ui, sans-serif;
+  border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(24, 43, 60, 0.28);
+}
+.sim-avatar.group { border-radius: 7px; }
+.sim-person { display: flex; align-items: center; gap: 8px; padding: 2px 0; min-width: 0; }
+.sim-person-text { display: grid; min-width: 0; line-height: 1.15; }
+.sim-person-text b { font-weight: 600; overflow-wrap: anywhere; }
+.sim-person-text small { color: #5d6573; font-size: 10.5px; }
+.sim-person-mark { margin-left: auto; color: #067647; font-weight: 700; }
+.sim-assigned { margin: 0 0 8px; padding: 6px 8px; border-radius: 6px; background: #eef4ff; }
+.sim-assigned.done { background: #e7f6ec; }
+.sim-assigned-head { margin: 0 0 2px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: #5d6573; }
+.sim-assigned-how { margin-top: 4px; font-size: 11px; color: #5d6573; overflow-wrap: anywhere; }
+.sim-stage-start { border-left-color: #067647; }
+.sim-stage-notice { border-left-color: #c2410c; }
+.sim-start { display: flex; align-items: center; gap: 10px; }
+.sim-start-avatar .sim-avatar { width: 42px; height: 42px; font-size: 15px; }
+.sim-start-text { display: grid; flex: 1; gap: 2px; min-width: 0; }
+.sim-start-play { color: #067647; font-size: 18px; }
+.sim-notices { display: grid; gap: 6px; margin-top: 8px; }
+.sim-stage-notice .sim-notices { margin-top: 0; }
+.sim-notice { padding: 7px 9px; border: 1px solid #fed7aa; border-radius: 6px; background: #fff7ed; }
+.sim-notice.status-failed { border-color: #fecdca; background: #fef3f2; }
+.sim-notice.status-recorded { border-style: dashed; }
+.sim-notice-head { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.sim-notice-event { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #9a3412; }
+.sim-notice-status { margin-left: auto; color: #5d6573; }
+.sim-notice-to { display: grid; margin: 3px 0; }
+.sim-notice-msg { display: grid; gap: 1px; font-size: 11px; overflow-wrap: anywhere; }
+.sim-notice-error { font-size: 11px; color: #b42318; }
+.sim-badge { position: absolute; z-index: 21; pointer-events: none; }
+.sim-badge .sim-avatar { width: 24px; height: 24px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sim-avatar { animation: sim-avatar-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+  .sim-assigned .sim-person { animation: sim-slide-in 0.4s ease-out both; }
+  .sim-assigned .sim-person:nth-of-type(2) { animation-delay: 0.15s; }
+  .sim-assigned .sim-person:nth-of-type(3) { animation-delay: 0.3s; }
+  .sim-notice { animation: sim-notice-in 0.5s ease-out both; animation-delay: calc(0.7s + var(--i, 0) * 0.3s); }
+  .sim-bell { display: inline-block; animation: sim-ring-bell 0.8s ease-in-out calc(0.9s + var(--i, 0) * 0.3s) 2; transform-origin: top center; }
+  .sim-start-play { animation: sim-pulse 1s ease-in-out infinite; }
+}
+@keyframes sim-avatar-in { from { transform: scale(0.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes sim-slide-in { from { transform: translateX(-14px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sim-notice-in { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sim-ring-bell { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(18deg); } 40% { transform: rotate(-16deg); } 60% { transform: rotate(10deg); } 80% { transform: rotate(-6deg); } }
+@keyframes sim-pulse { 50% { transform: scale(1.25); opacity: 0.7; } }
