@@ -69,3 +69,22 @@ test('a cycle repeats under a forced delay: R3 reminds three times', { timeout: 
   assert.ok(after.items.some(i => i.elementId === 'Task' && i.status === 'wait'), 'the task still waits');
   await server.shutdown();
 });
+
+test('Cron\'s due times: a cron expression, an ISO duration (from a reference time), nothing or nonsense: none', async () => {
+  const { Cron } = await import('../dist/index.js');
+  const at = new Date('2026-01-02T03:04:05Z');
+  assert.equal(Cron.time(5), 5);
+  assert.equal(Cron.time(at), at.getTime());
+  assert.equal(Cron.time(at.toISOString()), at.getTime(), 'as a JSON store keeps it');
+
+  assert.equal(Cron.timeDue('', null), null);
+  assert.equal(Cron.timeDue(undefined, null), null);
+  assert.equal(Cron.timeDue('not a time', null), null);
+  assert.equal(Cron.checkCron('not a cron', new Date()), null);
+  const minute = Cron.timeDue('* * * * *', null);
+  assert.ok(minute > 0 && minute <= 60, `every minute: within the minute (${minute})`);
+  const hour = Cron.timeDue('PT1H', null);
+  assert.ok(Math.abs(hour - 3600) < 1, `an hour: ${hour}`);
+  const fromEarlier = Cron.timeDue('PT1H', Date.now() - 600_000);
+  assert.ok(Math.abs(fromEarlier - 3000) < 2, `an hour from ten minutes ago: fifty minutes (${fromEarlier})`);
+});

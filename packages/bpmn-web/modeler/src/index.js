@@ -3,6 +3,7 @@
 // buttons, the dock under the canvas (#js-dock: the Problems, Report, Test and History tabs) and the model as JSON in #model-source. window.saveDiagramFunct(option) saves, as it did in the
 // classic modeler (hosts and tests call it).
 import 'bpmn-js/dist/assets/diagram-js.css';
+import { withoutRunMarks } from './simulation/simulation.js';
 import 'bpmn-js/dist/assets/bpmn-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
@@ -16,8 +17,11 @@ import { BpmnPropertiesPanelModule, BpmnPropertiesProviderModule, CamundaPlatfor
 import CamundaBehaviorsModule from 'camunda-bpmn-js-behaviors/lib/camunda-platform';
 import { ElementTemplatesPropertiesProviderModule } from 'bpmn-js-element-templates';
 import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
-import camundaModdle from './moddle.js';
+import { moddleExtensions, upgradeToOwf } from './moddle.js';
 import BpmnServerPropertiesModule from './properties/index.js';
+import PoliciesModule from './addons/policies/index.js';
+import LabelsModule from './addons/labels/index.js';
+import FormsModule from './addons/forms/index.js';
 import ProblemsModule from './problems/index.js';
 import ReportModule from './report/index.js';
 import TestModule from './testing/index.js';
@@ -33,6 +37,15 @@ const { processName } = page.dataset;
 const canvasElement = document.getElementById('js-canvas');
 const status = document.getElementById('js-save-status');
 
+/** What the page says the editor offers (views/modeler.pug): element templates only with ELEMENT_TEMPLATES=on. */
+const options = (() => { try { return JSON.parse(document.getElementById('modeler-options')?.textContent || '{}'); } catch { return {}; } })();
+const templateModules = options.elementTemplates ? [ElementTemplatesPropertiesProviderModule, ElementTemplateChooserModule] : [];
+// the add-ons that are on bring their parts of the editor (docs/design/add-ons.md); one that is off brings none
+const addOnsOn = options.addOns ?? ['assignment', 'notification', 'security', 'labels', 'forms', 'modeling', 'ai'];
+const addOnOn = name => addOnsOn.includes(name);
+// the policies' panel groups (User assignment, Who can start, Policies): with any of the three policies' add-ons
+const addOnModules = [...(['assignment', 'notification', 'security', 'policies'].some(addOnOn) ? [PoliciesModule] : []), ...(addOnOn('labels') ? [LabelsModule] : []), ...(addOnOn('forms') ? [FormsModule] : [])];
+
 const modeler = new BpmnModeler({
     container: canvasElement,
     propertiesPanel: { parent: '#js-properties-panel' },
@@ -41,19 +54,19 @@ const modeler = new BpmnModeler({
         BpmnPropertiesProviderModule,
         CamundaPlatformPropertiesProviderModule,
         CamundaBehaviorsModule,
-        ElementTemplatesPropertiesProviderModule,
-        ElementTemplateChooserModule,
+        ...templateModules,
         BpmnServerPropertiesModule,
+        ...addOnModules,
         ProblemsModule,
         ReportModule,
-        TestModule,
+        ...(addOnOn('modeling') ? [TestModule] : []),
         DecisionsModule,
         ConnectorsModule,
         LintRulesModule,
         HistoryModule,
         { __init__: ['elementBehaviour'], elementBehaviour: ['type', ElementBehaviour] }
     ],
-    report: { container: '#js-report', processName },
+    report: { container: '#js-report', processName, addOnsOff: options.addOns ? (options.manifests ?? []).filter(m => !options.addOns.includes(m.name)) : [] },
     history: { container: '#js-history', processName },
     // what the selected element does, above the properties panel
     elementBehaviour: { parent: '#js-properties-panel' },
@@ -64,7 +77,7 @@ const modeler = new BpmnModeler({
     // tests run the saved model: save the editor's changes first
     test: { container: '#js-test', processName, save: () => saveIfChanged(), showDiagram: () => setDockFull(false) },
     problems: { list: '#js-problems', counts: '#js-problems-counts', status: '#js-problems-status', url: '/model/verify', processName },
-    moddleExtensions: { camunda: camundaModdle }
+    moddleExtensions
 });
 window.bpmnModeler = modeler;
 window.BPMNModeler = modeler;     // the classic modeler's name for it, used by hosts
@@ -203,7 +216,8 @@ function applyDockState() {
     for (const name of DOCK_TABS)
         document.getElementById(`js-tab-${name}`).setAttribute('aria-selected', String(name === tab));
     document.getElementById('js-dock-toggle').setAttribute('aria-expanded', String(!panelState.dockCollapsed));
-    for (const [name, view] of [['report', modeler.get('report')], ['test', modeler.get('testPanel')], ['history', modeler.get('historyPanel')]]) {
+    for (const [name, view] of [['report', modeler.get('report')], ['test', modeler.get('testPanel', false)], ['history', modeler.get('historyPanel', false)]]) {
+        if (!view) continue;
         if (tab === name && !panelState.dockCollapsed)
             view.show();
         else
@@ -219,7 +233,7 @@ function showTab(tab) {
 }
 document.getElementById('js-tab-problems').addEventListener('click', () => showTab('problems'));
 document.getElementById('js-tab-report').addEventListener('click', () => showTab('report'));
-document.getElementById('js-tab-test').addEventListener('click', () => showTab('test'));
+document.getElementById('js-tab-test')?.addEventListener('click', () => showTab('test'));
 document.getElementById('js-tab-history')?.addEventListener('click', () => showTab('history'));
 document.getElementById('js-dock-full').addEventListener('click', () => setDockFull(!dockFull));
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && dockFull) setDockFull(false); });
@@ -281,6 +295,7 @@ function fitDiagram() {
 
 /** The configured tasks of the application (GET /model/templates), offered under Template in the panel. */
 async function loadTemplates() {
+    if (!options.elementTemplates) return;     // off: ELEMENT_TEMPLATES
     try {
         const response = await fetch('/model/templates');
         if (!response.ok)
@@ -303,18 +318,44 @@ async function open() {
         const { warnings } = await modeler.importXML(xml);
         if (warnings.length)
             console.warn('import warnings', warnings);
+        // OWF's attributes once written as camunda: are owf: now; saved so when the model is next saved
+        if (upgradeToOwf(modeler.getDefinitions())) {
+            changed = true;
+            showStatus('Its OmniWorkflow attributes are now owf: (they were camunda:); saved with the model.');
+        }
         fitDiagram();
+        showElementOfAddress();
     } catch (err) {
         showStatus('Could not open the model: ' + err.message, true);
         console.error(err);
     }
 }
 
+/**
+ * The address's `#element=<id>` (the Design dashboard's links to where a model uses a feature): that element selected
+ * and shown, in the sub-process it is drawn in.
+ */
+function showElementOfAddress() {
+    const id = /^#element=(.+)$/.exec(window.location.hash)?.[1];
+    if (!id) return;
+    const elementId = decodeURIComponent(id);
+    const element = modeler.get('elementRegistry').get(elementId);
+    if (!element) return showStatus(`No element '${elementId}' in this model`, true);
+    const canvas = modeler.get('canvas');
+    try {
+        const root = canvas.findRoot?.(element);
+        if (root && root !== canvas.getRootElement()) canvas.setRootElement(root);
+        if (element !== canvas.getRootElement()) canvas.scrollToElement(element);
+    } catch { /* shown where it is drawn; the selection says which it is */ }
+    modeler.get('selection').select(element);
+}
+
 async function saveDiagram(option) {
     try {
         showStatus('Saving…');
         const { xml } = await modeler.saveXML({ format: true });
-        const { svg } = await modeler.saveSVG();
+        // the picture of the model, not of the run the Test tab shows on it
+        const svg = withoutRunMarks((await modeler.saveSVG()).svg);
         const response = await fetch(window.location.pathname, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

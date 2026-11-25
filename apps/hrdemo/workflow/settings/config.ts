@@ -5,14 +5,14 @@ import path from 'node:path';
 
 const ROOT = path.join(import.meta.dirname, '..');
 
-/** The element templates the model editor offers (*.json); their services are in connectors/appServices.ts. */
+/** The element templates the model editor offers (*.json); their services are in delegates/appServices.ts. */
 export const connectorsPath = path.join(ROOT, 'connectors');
 
 /** Read when called: DEFINITIONS_PATH (the tests' own folder) wins over processes/. */
 export function config() {
     return {
         definitionsPath: process.env.DEFINITIONS_PATH || path.join(ROOT, 'processes') + path.sep,
-        // the delegate's services, as npm run services lists them
-        servicesFile: path.join(ROOT, 'services.json'),
+        // the delegate's source: its services' names are read from it when the server starts
+        delegateFile: path.join(ROOT, 'delegates', 'appDelegate.ts'),
     };
 }

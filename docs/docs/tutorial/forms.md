@@ -1,7 +1,11 @@
 # Tutorial 3: Forms and data
 
-**The requirement:** the employee says what kind of leave, from when to when, and why. Dates that make no sense go back
-to them, before any manager sees the request.
+**Developer outcome:** define the form contract and validate it in the process before the request reaches a manager.
+The example form captures leave type, dates, and reason; invalid dates are refused, and the request waits for the
+requester.
+
+The form definition belongs to Part 1. The JavaScript validation shown below is the tutorial's first preview of Part 2;
+the BPMN structure stays understandable even when the executable logic is added later.
 
 ## The form
 
@@ -15,26 +19,28 @@ A user task's **Form fields** are what its page asks for, and they become the in
 | `StartDate`, `EndDate` | date | `data.StartDate`, `data.EndDate` |
 | `RequestReason` | string | `data.RequestReason` |
 
+The leave type and both dates are **required** (a field's **Constraints**: `required`).
+
 An **enum** is a list to choose from: a value the process can test, unlike free text. **Approve**'s form has
 `approval` (Approve, Reject, Information Required) and a `comment` for the employee.
 
 ## Checking what was entered
 
-A form field has no rules of its own, so the model checks the request itself, where every rule can be read and
-tested. **Check the dates** is a script task:
-
-![Check the dates](design/check-dates.png)
+The form checks what was entered when Request is completed, before anything is saved: its fields' rules (a type, a
+**required** value, lengths and limits; see [Form rules](../form-rules.md)), then Request's **validate** listener, a
+script for the rules that compare fields:
 
 ```js
+if (!data.StartDate || !data.EndDate) return;
 const day = 24 * 60 * 60 * 1000;
-const days = Math.round((new Date(item.data.EndDate) - new Date(item.data.StartDate)) / day) + 1;
-item.data.days = Number.isNaN(days) ? 0 : days;
-item.data.datesValid = item.data.days >= 1;
+const days = Math.round((new Date(data.EndDate) - new Date(data.StartDate)) / day) + 1;
+if (!(days >= 1)) return { error: 'The end date is before the start date', field: 'EndDate' };
+data.days = days;
 ```
 
-It keeps `data.days`, used later by HR's system, and `data.datesValid`. The gateway after it, **Dates valid?**, sends
-a request with wrong dates (missing, or the end before the start) back to Request. The editor checks a script as you
-type it: a syntax error is in the **Problems** tab at once.
+A form that breaks a rule is refused: the employee sees why, Request still waits for them, and nothing reaches a
+manager. A form that passes keeps `data.days`, used later by the approval and by HR's system. The editor checks a
+script as you type it: a syntax error is in the **Problems** tab at once.
 
 ## The data the process keeps
 
@@ -44,8 +50,8 @@ year: `RequestReason`, not `f3`. See [Data](../data.md).
 
 ## Design choices
 
-- **Validate in the model** when a rule is about the process (dates, amounts, combinations of fields), so it is
-  documented, visible in the diagram, and tested.
+- **Validate in the form** when a rule is about what was entered (required, dates in order, amounts): it is refused
+  at once, with the reason, and the diagram keeps only the steps of the process. The rules are in the model, and tested.
 - **Keep what later steps need** (`days`) rather than computing it again in each.
 - **One form per role.** The manager's form has only what the manager decides.
 

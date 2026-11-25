@@ -1,0 +1,25 @@
+extends layout
+
+//- A case its security policy shows this person as a summary only (`see: summary`): the case as a line, and the tasks
+//- they completed in it; none of its data or its other steps (routes/api/instances.ts, page).
+block content
+  .container(style="max-width: 860px")
+    h2= item.label || item.name
+    p.text-muted
+      | #{item.name}
+      | · #{item.status === 'end' ? 'ended' : item.status}
+      if item.startedAt
+        |  · started #{new Date(item.startedAt).toLocaleString()}
+      if item.endedAt
+        |  · ended #{new Date(item.endedAt).toLocaleString()}
+    .alert.alert-info
+      | You see this case as a summary: its data and its steps are not shown to you, as its access policy says.
+    if item.tasks.length
+      h4 Your tasks in it
+      ul
+        each t in item.tasks
+          li
+            | #{t.name}
+            if t.endedAt
+              span.text-muted  · completed #{new Date(t.endedAt).toLocaleString()}
+    p: a(href='/dashboard') Back to My work

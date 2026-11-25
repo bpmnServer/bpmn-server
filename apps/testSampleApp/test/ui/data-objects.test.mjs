@@ -42,7 +42,7 @@ test.before(async () => {
     web = await startWebApp();
     browser = await chromium.launch();
     fs.writeFileSync(path.join(web.definitionsPath, 'orders.bpmn'), MODEL);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
     await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());
     page = await context.newPage();

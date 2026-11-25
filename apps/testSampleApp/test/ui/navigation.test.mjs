@@ -80,7 +80,8 @@ test('the properties panel opens the groups that have values; a description show
         assert.equal(g.open, true, `${g.title} has values: open`);
     assert.ok(groups.some(g => !g.set && !g.open), 'a group without values stays closed');
 
-    const description = page.locator('#js-properties-panel .bio-properties-panel-entry .bio-properties-panel-description').first();
+    // in an open group: a closed group's fields can't be hovered
+    const description = page.locator('#js-properties-panel .bio-properties-panel-group:has(.bio-properties-panel-group-header.open) .bio-properties-panel-entry .bio-properties-panel-description').first();
     if (await description.count()) {
         assert.equal(await description.isVisible(), false, 'hidden until hovered');
         await description.locator('xpath=ancestor::div[contains(@class, "bio-properties-panel-entry")][1]').hover();
@@ -131,7 +132,7 @@ test('a joining gateway: its behaviour follows its flows', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
     fs.writeFileSync(path.join(web.definitionsPath, 'join-behaviour.bpmn'), await layoutProcess(xml));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const { page, errors, close } = await openEditor('join-behaviour');
     await page.selectOption('#js-element-picker', 'Join');
     const join = await behaviour(page);

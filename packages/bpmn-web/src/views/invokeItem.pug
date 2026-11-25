@@ -26,17 +26,35 @@ block content
 					label(for="#{field.id}")
 							<strong>#{field.label}</strong>
 					
-					if (field.type=='enum')
-						select(name=`${field.id}`,class="form-control")
+					//- its choices from a source (<owf:list>, <owf:lookup>): public/javascripts/formLookup.js; its label saved as <id>Display
+					- var lookup = lookups && lookups[field.id]
+					- var choicesUrl = lookup ? `/dashboard/choices/task/${encodeURIComponent(id)}/${encodeURIComponent(field.id)}` : null
+					- var caseData = (instance && instance.data) || {}
+					- var chosen = caseData[field.id] == null ? '' : String(caseData[field.id])
+					- var chosenDisplay = caseData[field.id + 'Display'] == null ? '' : String(caseData[field.id + 'Display'])
+					//- its rules as attributes (routes/formAttributes.ts); a read-only drop-down is disabled, so not sent: the case keeps its value
+					- var rules = (attrs && attrs[field.id]) || {}
+					- var selectRules = Object.assign({}, rules); if (selectRules.readonly) { delete selectRules.readonly; selectRules.disabled = true; }
+					if (lookup && lookup.kind=='list')
+						select(name=`${field.id}`,class="form-control",data-choices-url=choicesUrl,data-value=chosen || field.defaultValue || '',data-filtered=(lookup.filter ? 'true' : 'false'),data-display-for=`${field.id}-display`)&attributes(selectRules)
+							option(value='')
+						input(id=`${field.id}-display`,type='hidden',name=`${field.id}Display`,value=chosenDisplay)
+					else if (lookup)
+						input(id=`${field.id}-text`,type='text',autocomplete='off',class="form-control",list=`${field.id}-choices`,value=chosenDisplay,data-choices-url=choicesUrl,data-value-for=`${field.id}-key`,data-display-for=`${field.id}-display`)&attributes(rules)
+						input(id=`${field.id}-key`,type='hidden',name=`${field.id}`,value=(chosenDisplay ? chosen : ''))
+						input(id=`${field.id}-display`,type='hidden',name=`${field.id}Display`,value=chosenDisplay)
+						datalist(id=`${field.id}-choices`)
+					else if (field.type=='enum')
+						select(name=`${field.id}`,class="form-control")&attributes(selectRules)
 							each v in (field['$children'])
 								if (v.$type=='camunda:value')
-									if (v.id == field.defaultValue)
+									if (v.id == (chosen || field.defaultValue))
 										option(value=`${v.id}` selected) #{v.name}
 									else
 										option(value=`${v.id}`) #{v.name}
 					else if (field.type=='date')
-						input(name=`${field.id}` type='date' class="form-control")
+						input(name=`${field.id}` type='date' class="form-control" value=chosen.slice(0, 10))&attributes(rules)
 					else
-						input(name=`${field.id}` class="form-control")
+						input(name=`${field.id}` class="form-control" value=chosen)&attributes(rules)
 			button.btn.btn-primary(type="submit") Submit
 			

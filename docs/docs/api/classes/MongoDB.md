@@ -56,7 +56,7 @@ The MongoDB adapter of the storage port: one client, opened on first use, closed
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L35)
+[packages/bpmn-server/src/datastore/MongoDB.ts:35](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L35)
 
 ## Properties
 
@@ -66,7 +66,7 @@ The MongoDB adapter of the storage port: one client, opened on first use, closed
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L29)
+[packages/bpmn-server/src/datastore/MongoDB.ts:29](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L29)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L30)
+[packages/bpmn-server/src/datastore/MongoDB.ts:30](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L30)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L31)
+[packages/bpmn-server/src/datastore/MongoDB.ts:31](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L31)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L32)
+[packages/bpmn-server/src/datastore/MongoDB.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L32)
 
 ___
 
@@ -106,7 +106,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L33)
+[packages/bpmn-server/src/datastore/MongoDB.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L33)
 
 ## Methods
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L40)
+[packages/bpmn-server/src/datastore/MongoDB.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L40)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L45)
+[packages/bpmn-server/src/datastore/MongoDB.ts:45](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L45)
 
 ___
 
@@ -154,15 +154,17 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L49)
+[packages/bpmn-server/src/datastore/MongoDB.ts:49](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L49)
 
 ___
 
 ### find
 
-▸ **find**(`dbName`, `collName`, `qry`, `projection?`, `sort?`): `Promise`\<`WithId`\<`Document`\>[]\>
+▸ **find**(`dbName`, `collName`, `qry`, `projection?`, `sort?`, `limit?`): `Promise`\<`WithId`\<`Document`\>[]\>
 
-Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's db name; ignored by single-database adapters).
+Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's
+db name; ignored by single-database adapters). `limit`: at most that many, the first after sorting; optional, so
+an adapter written before it may return more, and callers cut the answer to it themselves.
 
 #### Parameters
 
@@ -173,6 +175,7 @@ Documents of `collection` matching `query`, projected and sorted. `database` nam
 | `qry` | `any` | `undefined` |
 | `projection` | `any` | `null` |
 | `sort` | `any` | `null` |
+| `limit?` | `number` | `undefined` |
 
 #### Returns
 
@@ -184,7 +187,7 @@ Documents of `collection` matching `query`, projected and sorted. `database` nam
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L56)
+[packages/bpmn-server/src/datastore/MongoDB.ts:56](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L56)
 
 ___
 
@@ -212,7 +215,7 @@ How many documents of `collection` match `query`. Optional: without it, callers 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L72)
+[packages/bpmn-server/src/datastore/MongoDB.ts:73](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L73)
 
 ___
 
@@ -241,7 +244,7 @@ Declares an index; `{ unique: true }` makes [insert](../interfaces/IDocumentStor
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:83](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L83)
+[packages/bpmn-server/src/datastore/MongoDB.ts:84](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L84)
 
 ___
 
@@ -269,7 +272,7 @@ Inserts all of `documents`, or none: a unique-index conflict throws a [Duplicate
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:101](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L101)
+[packages/bpmn-server/src/datastore/MongoDB.ts:102](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L102)
 
 ___
 
@@ -299,7 +302,7 @@ Updates the first document matching `query` (`$set` fields, or replaces it); `{ 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:117](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L117)
+[packages/bpmn-server/src/datastore/MongoDB.ts:118](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L118)
 
 ___
 
@@ -327,7 +330,7 @@ Removes every document matching `query`; returns `{ deletedCount }`.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:131](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L131)
+[packages/bpmn-server/src/datastore/MongoDB.ts:132](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L132)
 
 ___
 
@@ -349,7 +352,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:149](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L149)
+[packages/bpmn-server/src/datastore/MongoDB.ts:150](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L150)
 
 ___
 
@@ -369,7 +372,7 @@ Releases connections. Idempotent.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:163](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L163)
+[packages/bpmn-server/src/datastore/MongoDB.ts:164](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L164)
 
 ___
 
@@ -383,4 +386,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MongoDB.ts:170](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L170)
+[packages/bpmn-server/src/datastore/MongoDB.ts:171](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MongoDB.ts#L171)

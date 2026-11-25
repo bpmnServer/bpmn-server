@@ -2,14 +2,17 @@ import { Execution } from './Execution.js';
 import { Item } from './Item.js';
 import { Token } from './Token.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
-import { expressionScript, scriptOf, templateParts, evaluateTemplate, isFeel, conditionScript } from './Expressions.js';
+import { expressionScript, scriptOf, templateParts, evaluateTemplate, isFeel, conditionScript, freeNames } from './Expressions.js';
 import { evaluate as feelEvaluate } from 'feelin';
+import { feelView, itemView, instanceView, namesAt } from './DecisionContext.js';
 import { spawn } from 'child_process';
 import vm from 'node:vm';
+import { appVarsFor, appVarsRead } from './AppContract.js';
+import { itemContext, elementContext } from './Context.js';
 
     
 /** What scripts see already: a context can not replace these. */
-const RESERVED = new Set(['data', 'item', 'instance', 'input', 'output', 'appDelegate', 'appServices', 'appUtils', 'this']);
+const RESERVED = new Set(['data', 'item', 'instance', 'input', 'output', 'appDelegate', 'appServices', 'appUtils', 'appVars', 'this']);
 
 /** A variable scripts see besides their own: its value, from a copy of the data (so it can not change the process's). */
 export type ScriptContext = Record<string, (scope: { data: any }) => any>;
@@ -23,6 +26,68 @@ class ScriptHandler implements IScriptHandler{
             if (RESERVED.has(name) || !/^[A-Za-z_$][\w$]*$/.test(name))
                 throw new Error(`The script context can not have a variable named '${name}'`);
         this.context = options.context ?? {};
+    }
+
+    /**
+     * The names every expression sees besides the scope's own (docs/design/expressions.md): `user` (the operation's,
+     * by name), and the add-ons' names for the item's place (engine/AddOns.ts: the policies' add-ons' `actors`). An
+     * application's script context of the same name is used instead. `materialized`: plain values, for the sandbox.
+     */
+    standardValues(scope, materialized = false): Record<string, any> {
+        const execution = ScriptHandler.executionOf(scope);
+        if (!execution) return {};
+        const token = scope?.token ?? (Object.prototype.hasOwnProperty.call(scope, 'startNodeId') ? scope : undefined);
+        const standard = {
+            ...namesAt(execution.server, { instance: execution.instance, definition: execution.definition, materialized,
+                items: typeof execution.getItems === 'function' ? execution.getItems() : undefined, scope: token ? token.dataPath ?? '' : null }),
+            user: { userName: execution.userName ?? null },
+        };
+        for (const name of Object.keys(this.context)) delete standard[name];
+        return standard;
+    }
+
+    private static reads = new Map<string, Set<string>>();
+    /** The names a script reads without declaring them (Expressions.freeNames), remembered by its text. */
+    static namesRead(body: string): Set<string> {
+        let names = ScriptHandler.reads.get(body);
+        if (!names) {
+            try { names = new Set(freeNames(body)); } catch { names = new Set(); }
+            if (ScriptHandler.reads.size > 500) ScriptHandler.reads.delete(ScriptHandler.reads.keys().next().value);
+            ScriptHandler.reads.set(body, names);
+        }
+        return names;
+    }
+
+    /** The execution a scope (an item, a token, an execution) is of. */
+    static executionOf(scope): any {
+        if (!scope || typeof scope !== 'object') return undefined;
+        if (Object.prototype.hasOwnProperty.call(scope, 'tokens')) return scope;
+        return scope.token?.execution ?? scope.execution;
+    }
+
+    /**
+     * The application's variables a text reads (appVars.<name>, docs/design/app-contract.md §2.1), worked out before it
+     * runs: the delegate's getAppVars, made from this evaluation's context (its data, user, instance, item, and what is
+     * evaluating: `evaluatingSource`). None read: none asked.
+     */
+    async appVarsOf(scope, text: string): Promise<Record<string, any> | undefined> {
+        const names = appVarsRead(text);
+        if (!names.length) return undefined;
+        const execution = ScriptHandler.executionOf(scope);
+        const delegate = execution?.appDelegate;
+        const item = scope?.token ? scope : undefined;
+        // the context (docs/design/context-object.md), as a service is handed it: an item's, else its element's; with
+        // the names the script sees (actors), and evaluatingSource, the source's name before 3.7.5 (deprecated)
+        const source = {
+            kind: item ? 'item' : 'element', type: item?.element?.type === 'bpmn:SequenceFlow' ? 'flow' : 'node',
+            id: item?.elementId ?? scope?.currentNode?.id ?? 'process', elementId: item?.elementId ?? scope?.currentNode?.id };
+        const fields = {
+            data: scope?.data ?? execution?.instance?.data ?? {}, user: { userName: execution?.userName ?? null },
+            ...this.standardValues(scope, true), source, evaluatingSource: { type: source.type, id: source.id },
+        } as any;
+        const context = item ? itemContext(item, fields)
+            : elementContext(execution, scope?.currentNode ?? scope?.node, fields);
+        return appVarsFor(delegate, context, names);
     }
 
     /** The context's values for a scope. */
@@ -43,10 +108,26 @@ class ScriptHandler implements IScriptHandler{
         return this.evaluateExpression(scope, conditionScript(expression, language), label);
     }
 
-    /** A FEEL expression over the data: its values by name, and `data` itself. */
+    /**
+     * A FEEL expression, with the names every expression sees (docs/design/expressions.md): the data's fields by name,
+     * `data`, `this` and `item`, `instance`, `input`, `output`, `actors`, `user`, `appServices`. A call to an async
+     * service, as the whole expression, is awaited.
+     */
     async evaluateFeel(scope, expression) {
-        const data = scope?.data ?? {};
-        const { value } = feelEvaluate(scriptOf(String(expression).trim()), { ...data, data, ...this.contextValues(scope) });
+        const execution = ScriptHandler.executionOf(scope);
+        const data = scope?.data ?? execution?.instance?.data ?? {};
+        const item = scope?.token ? scope : undefined;
+        const seen = itemView(item, data);
+        const context = {
+            ...data, data, input: item?.input ?? {}, output: item?.output ?? {}, this: seen, item: seen,
+            instance: instanceView(execution?.instance), appServices: feelView(execution?.servicesProvider) ?? {},
+            ...this.standardValues(scope), ...this.contextValues(scope),
+        };
+        // the application's variables it reads (appVars.<name>), worked out before it runs
+        const vars = await this.appVarsOf(scope, String(expression));
+        if (vars) (context as any).appVars = vars;
+        let { value } = feelEvaluate(scriptOf(String(expression).trim()), context);
+        if (value instanceof Promise) value = await value;
         return value === undefined ? null : value;
     }
 
@@ -192,8 +273,13 @@ class ScriptHandler implements IScriptHandler{
         });
     }
     /** Runs a script, with the context's variables as its parameters. */
-    private compiled(scope, body: string, label: string) {
-        const context = this.contextValues(scope);
+    private async compiled(scope, body: string, label: string) {
+        // the standard names a script reads without declaring them (a script's own `const user` stays its own)
+        const reads = ScriptHandler.namesRead(body);
+        const standard = Object.fromEntries(Object.entries(this.standardValues(scope)).filter(([name]) => reads.has(name)));
+        const context: Record<string, any> = { ...standard, ...this.contextValues(scope) };
+        // the application's variables it reads (appVars.<name>), worked out before it runs, so any expression can read them
+        if (reads.has('appVars')) context.appVars = await this.appVarsOf(scope, body) ?? {};
         return ScriptHandler.compile(scope, body, label, Object.keys(context)).call(scope, ...Object.values(context));
     }
     /** bpmn:///<model>/<element>/<label>.js: the element is the item's; a process's own scripts are under 'process'. */
@@ -223,6 +309,7 @@ class ScriptHandler implements IScriptHandler{
             return `
             var appDelegate=this.appDelegate;
             var instance=this.instance;
+            var data=this.instance.data;      // a process's own script: the instance's data, at the top
             var appServices=this.servicesProvider;
             var appUtils=appDelegate.appUtils;
             `;
@@ -261,6 +348,10 @@ ${code.trim()}`;
 
     let output = '';
     let error = '';
+
+    // Python not installed (ENOENT): the script fails, not the server; without these the error is uncaught and ends the process
+    python.on('error', (err) => reject(new Error(`Python could not be started (${pythonCmd}): ${err.message}`)));
+    python.stdin.on('error', () => { /* the process is gone; 'error' or 'close' says why */ });
 
     // Handle stdout
     python.stdout.on('data', (data) => {

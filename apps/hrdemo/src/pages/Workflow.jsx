@@ -6,7 +6,43 @@ import { useLocation, useNavigate } from 'react-router-dom';
 // Moving inside the frame keeps the address in step, so a refresh or a shared link opens the same page.
 const PREFIX = '/workflow';
 
-const owfPath = location => (location.pathname.slice(PREFIX.length) || '/') + location.search;
+// owf's Workbench is its address, /: asked as /?owf, which the server answers with the Workbench in this frame
+// (server/userManager.js: / opened anywhere else is the HR home page)
+// A place on the page (#start-events: My Work's Start a process) is passed on: asked again while the page is there,
+// it is opened again, there (the frame's own address, once loaded, is kept without it)
+const owfPath = location => {
+  const path = (location.pathname.slice(PREFIX.length) || '/') + location.search;
+  return (path === '/' ? '/?owf' : path) + (location.hash || '');
+};
+/** The frame's address as the HR address shows it: /?owf is the Workbench, /hr/workflow. */
+const shownPath = at => (at.pathname === '/' && at.search === '?owf' ? '/' : at.pathname + at.search);
+
+/** An owf page's address, as the HR layout shows it: /model/edit/x is /hr/workflow/model/edit/x. Others as they are. */
+function inHr(url, base = window.location.href) {
+  try {
+    const at = new URL(url, base);
+    if (at.origin !== window.location.origin || at.pathname.startsWith('/hr')) return url;
+    return `/hr${PREFIX}${at.pathname === '/' ? '' : at.pathname}${at.search}${at.hash}`;
+  } catch {
+    return url;
+  }
+}
+
+/**
+ * What an owf page in the frame opens in a window or tab of its own (Run, the Test tab's Open instance, a decision or
+ * a policy, History's versions) opens in the HR layout too, not as owf's own page: its window.open, and its links to
+ * another window. owf's pages opened by themselves (its address, a bookmark) stay owf's.
+ */
+function keepInHr(doc, win) {
+  if (!win || win.__keptInHr) return;
+  win.__keptInHr = true;
+  const open = win.open.bind(win);
+  win.open = (url, ...rest) => open(url == null || url === '' ? url : inHr(String(url), win.location.href), ...rest);
+  doc.addEventListener('click', event => {
+    const link = event.target?.closest?.('a[href][target]');
+    if (link && !['_self', '_top', '_parent', ''].includes(link.target)) link.href = inHr(link.getAttribute('href'), win.location.href);
+  }, true);
+}
 
 export default function Workflow() {
   const location = useLocation();
@@ -19,9 +55,22 @@ export default function Workflow() {
   // a sidebar link (or back and forward) to another owf page: the frame goes there
   useEffect(() => {
     const wanted = owfPath(location);
+    // "owf is not behind these pages" is for that page: another one is tried again
+    setMissing(false);
+    // a place on the page the frame shows already (asked again: each time): there, without loading it again
+    const [path, place] = wanted.split('#');
+    const page = framePage();
+    if (place && page && page.at.pathname + page.at.search === path) {
+      page.doc.getElementById(place)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     if (wanted !== shown.current) {
       shown.current = wanted;
-      setSrc(wanted);
+      // the frame moved on by itself (a link in it: the Workbench to an instance), so its src is still the page it
+      // started on: setting the same src again does nothing, so the frame is sent there
+      const win = frame.current?.contentWindow;
+      if (win && frame.current.getAttribute('src') === wanted) win.location.assign(wanted);
+      else setSrc(wanted);
     }
   }, [location]);
 
@@ -61,15 +110,22 @@ export default function Workflow() {
     const { doc, at } = page;
     // the HR application's own page (its sign-in, its account): in the whole window, not in the frame
     if (/^\/hr\/(login|account)/.test(at.pathname)) return window.location.assign(at.pathname + at.search);
+    // signed out meanwhile (here or in another tab; the session ended): the server sent the frame to the welcome
+    // page. Sign in, and come back to this workflow page
+    if (/^\/hr\/welcome/.test(at.pathname))
+      return window.location.assign('/hr/login?returnTo=' + encodeURIComponent(window.location.pathname + window.location.search));
     // no owf here (npm run dev without HR_API): its address came back to these pages
     if (at.pathname.startsWith('/hr')) return setMissing(true);
     dress(doc);
     // links that leave owf (to the HR pages) open in the whole window
     doc.querySelectorAll('a[href^="/hr"]').forEach(a => a.setAttribute('target', '_top'));
+    keepInHr(doc, frame.current.contentWindow);
+    // the frame's own address is kept (as owfPath gives it: /?owf for the Workbench); the HR address shows it as /
     const now = at.pathname + at.search;
     if (now !== shown.current) {
       shown.current = now;
-      navigate(PREFIX + (now === '/' ? '' : now), { replace: true });
+      const path = shownPath(at);
+      navigate(PREFIX + (path === '/' ? '' : path), { replace: true });
     }
     if (doc.title) document.title = `${doc.title} · HR System`;
     // a task may have been completed, or a process started: the task panel reads them again

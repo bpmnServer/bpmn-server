@@ -18,7 +18,7 @@ test.before(async () => {
     web = await startWebApp();
     fs.copyFileSync(path.join(SAMPLES, 'loan_approval.dmn.xml'), path.join(web.definitionsPath, 'loan_approval.dmn.xml'));
     fs.copyFileSync(path.join(SAMPLES, 'Business Rules.bpmn'), path.join(web.definitionsPath, 'rules.bpmn'));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     browser = await chromium.launch();
     context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());
@@ -191,4 +191,24 @@ test('the Report shows a business rule task\'s decision table and where its resu
     assert.equal(await section.locator('.report-decision-table tbody tr').count(), 5);
     assert.match(await section.innerText(), /Result saved in data\.loan/);
     assert.deepEqual(errors, []);
+});
+
+test('an input column named for a table\'s own variable shows its calculation under its name', async () => {
+    fs.mkdirSync(path.join(web.definitionsPath, 'assignment'), { recursive: true });
+    fs.writeFileSync(path.join(web.definitionsPath, 'assignment', 'OwnManager.dmn.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="d" name="OwnManager" namespace="t">
+  <decision id="OwnManager" name="OwnManager"><decisionTable id="t" hitPolicy="FIRST">
+    <input id="days" label="Days"><inputExpression id="e1" typeRef="number"><text>days</text></inputExpression></input>
+    <input id="mgr" label="employeeManager"><inputExpression id="e2" typeRef="string"><text>appServices.managerOf(actors.initiator)</text></inputExpression></input>
+    <output id="o1" name="assignee" typeRef="string" />
+    <rule id="r1"><inputEntry id="a"><text>-</text></inputEntry><inputEntry id="b"><text>not(null)</text></inputEntry><outputEntry id="c"><text>employeeManager</text></outputEntry></rule>
+  </decisionTable></decision>
+</definitions>`);
+    const editor = await context.newPage();
+    await editor.goto(`${web.base}/model/policy/OwnManager`);
+    await editor.waitForSelector('.tjs-table');
+    await editor.waitForSelector('th[data-col-id="mgr"] .owf-input-expression');
+    assert.equal(await editor.locator('th[data-col-id="mgr"] .owf-input-expression').innerText(), 'appServices.managerOf(actors.initiator)');
+    assert.equal(await editor.locator('th[data-col-id="days"] .owf-input-expression').count(), 0, 'Days is days: nothing more to say');
+    await editor.close();
 });

@@ -35,7 +35,7 @@ test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0));
 
 test('scripts run on the events the editor offers, and only those', async () => {
     fs.writeFileSync(path.join(web.definitionsPath, 'script-events.bpmn'), MODEL);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const engine = web.bpmnServer.engine;
     const started = await engine.start('script-events', {});
     await engine.assign({ id: started.id, 'items.elementId': 'Task' }, {}, { assignee: 'someone' }, 'admin');

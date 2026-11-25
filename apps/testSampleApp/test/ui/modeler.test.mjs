@@ -23,7 +23,7 @@ test.after(async () => {
 /** A copy of the leave-request model under a new name, so each test edits its own. */
 async function copyModel(name) {
     fs.copyFileSync(path.join(FIXTURES, 'leave-request.bpmn'), path.join(web.definitionsPath, name + '.bpmn'));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     return name;
 }
 
@@ -92,6 +92,19 @@ test('the editor fills the window with the panel beside the diagram', async () =
         assert.deepEqual(errors, []);
         await context.close();
     }
+});
+
+test('#element=<id> in the address opens the model at that element, selected (the Design dashboard\'s feature links)', async () => {
+    const model = await copyModel('opened-at');
+    const { page, errors, context } = await openEditor(model);
+    await page.goto(`${web.base}/model/edit/${model}#element=Approve`);
+    await page.reload();
+    await page.waitForSelector('#js-canvas .djs-element.selected[data-element-id="Approve"]');
+    await page.goto(`${web.base}/model/edit/${model}#element=NoSuch`);
+    await page.reload();
+    await page.waitForFunction(() => /No element 'NoSuch'/.test(document.body.innerText));
+    assert.deepEqual(errors, []);
+    await context.close();
 });
 
 test('the panel is resized and hidden, and remembers both', async () => {

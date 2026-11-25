@@ -10,6 +10,10 @@ export { WebAppDelegate } from './runtime/WebAppDelegate.js';
 export { apiKeyAuth } from './routes/middleware/apiKeyAuth.js';
 // for an application's own API routes taking its session cookie: refuse a change posted from another site (CSRF)
 export { crossSiteWrite } from './routes/api/door.js';
+// form keys (docs/design/form-keys.md): the address a task's or start event's page is at, and what owf adds to it
+export { hasFormKey, formKeyAddress, withIdentifiers } from './routes/formKey.js';
+// what each role may do on this server, for the Security settings area (docs/design/security-profiles.md)
+export { rolePermissions } from './routes/integration.js';
 export { UserService } from './userAccess/UserService.js';
 // who signs in: bpmn-web's own (UserManager), or the application's (start({ userManager }))
 export { UserManager } from './userAccess/UserManager.js';

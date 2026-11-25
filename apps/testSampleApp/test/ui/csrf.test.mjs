@@ -61,7 +61,7 @@ test('a task form submits', async () => {
 
 test('the rename form submits', async () => {
   fs.copyFileSync(path.join(FIXTURES, 'leave-request.bpmn'), path.join(web.definitionsPath, 'to-rename.bpmn'));
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
   const { page, refused, close } = await signedIn();
   await page.goto(`${web.base}/model/rename/to-rename`);
   await page.fill('[name=newName]', 'renamed-in-browser');

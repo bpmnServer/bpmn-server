@@ -7,6 +7,8 @@ Models are edited by users in the `DESIGNER` group and by administrators (`ADMIN
 create, import, edit, check, save, rename and delete models; administration (users, resetting data) stays with
 administrators.
 
+![The model editor: the diagram, the properties panel, and the Problems and Test tabs](images/model-editor.png)
+
 ## The properties panel
 
 Each field is one bpmn-server reads, with what it means when the process runs:
@@ -27,8 +29,9 @@ Each field is one bpmn-server reads, with what it means when the process runs:
 - **Data objects:** the field the object fills in the instance data (`data.client`), and the elements that load
   it. See [Data objects](data-objects.md).
 - **Call activities:** the model they start.
-- **Templates:** configured tasks (a service task that calls a given service with its inputs, a user task for a
-  given group), from the application's element templates (Camunda 7 template format).
+- **Templates** (a preview, off in 3.7.1: `ELEMENT_TEMPLATES=on`): configured tasks (a service task that calls a
+  given service with its inputs, a user task for a given group), from the application's element templates (Camunda 7
+  template format). To be finished: [the roadmap](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/roadmap.md).
 
 Camunda engine settings bpmn-server does not run (asynchronous continuations, Java classes, external tasks,
 field injection, …) are not offered. When a model has one, the panel still shows it, and Problems
@@ -70,12 +73,18 @@ page shows the same report of its model (under **Model report**), and the Histor
   `key: value` lines (scripts in full) and its problems; nested under an element, its boundary events, a
   sub-process's elements and its outgoing flows with their conditions. Then the data objects and annotations.
 
-A setting the report has no words of its own for (another tool's extension, a form field's validation) is still
-there, as `key: value`. A business rule task shows its decision's table. Clicking an id selects the element on the
-diagram. **Print** saves the report as a PDF.
+A setting the report has no words of its own for (another tool's extension) is still there, as `key: value`. An
+element's form is a table, a field a row: its type, label, default, options, and the rest it sets (its validation).
+On an instance's page, a click on an element of the diagram shows its section of the report, and what the run did
+with it. bpmn-server's own settings have lines of their own: `label` and `endLabel`, a user task's
+`assignmentPolicy`, a process's or a task's `securityPolicy`. A business rule task shows its decision's table, a
+user task its [assignment policy](assignment-policies.md)'s, and a process its security policy's: the one it names,
+else the application's default (`security/default.dmn.xml`), else a line saying the built-in default
+decides (only while security policies are on). Clicking an id selects the element on the diagram. **Print** saves
+the report as a PDF.
 
-The report is also what [History](#history) compares: as text, the model's problems and the decisions' tables
-left out (they are not in the model file).
+The report is also what [History](#history) compares: as text, the model's problems and the decisions' and
+policies' tables left out (they are not in the model file).
 
 ## Testing a model
 
@@ -102,6 +111,10 @@ Two commands close what is left:
 - **Fill**, on an element not reached, records a new scenario with that element as its goal. The data the way there asks is filled
   in, and the recording says which step is next, when the goal is reached, and when the run can no longer get there.
 
+By the scenario's name, **Saved** or **Saving…** says whether your changes are saved; **Not saved**, with **Retry**,
+stays until a save succeeds. A new scenario has no steps: **Record** is the button to start with, and **Run** waits
+while a recording is on.
+
 1. **New** adds a scenario, and **Record** starts the process with its start data and shows what waits as the next
    steps: user tasks (**Complete step**), receive tasks (**Receive**) and events (**Trigger event**), each with its data.
 2. Completing a step shows what waits next, until nothing waits: the recording then closes by itself and shows its
@@ -111,6 +124,8 @@ Two commands close what is left:
    stopping, and run its checks.
 4. **Add check** adds a check, at the start, after a step or at the end, and it shows under its step, in words, with **Edit**: the instance's status, a data value, or an element passed
    (how many times, in what status). After a run its shield is green or red, and a failed check says what was found.
+   A check after a step the scenario doesn't have (yet, or any more: the step removed, or recorded along another
+   path) is saved as a check at the end, since the `.feature` has nowhere else to put it.
 
 **A task by itself:** select a task on the diagram and choose **New**, *The task selected* (or choose it under
 **Start at**, *A task by itself*). The scenario runs that task alone, with the data you give as its input: a script or a service
@@ -118,12 +133,26 @@ runs and the run ends; a user task waits for its step, then the run ends. Nothin
 has the items, the data and the decisions as any other, and **Debug** changes its data and runs it again. It is
 saved, repeated and checked as the other scenarios.
 
+**The result** of the run shown: **✓ Passed** or **✗ Failed** with how many checks, and the checks that failed listed
+under it with what was found; a run with no checks says **○ Ran: nothing checked** (and the list shows ○), since
+it passed nothing. It says when and how the run was made, and *the scenario changed since* or *the model changed
+since* when the result is no longer the scenario's as it is now. A check's shield is empty until a run checks it,
+then green or red.
+
 Each scenario keeps its last run with its instance; the next run replaces them. By its result are **Open instance**
 and the commands for that run, **Simulate** and **Debug** each opening its panel under them, and **Delete**:
 
 - **Simulate** plays the run on the diagram: an element turns blue when it starts and green when it ends, orange if it
-  still waits, numbered in the order they started; **Back**, **Step**, **Play** and **Stop**.
+  still waits, numbered in the order they started; **Back**, **Step**, **Play** and **Stop**. **Show details** says
+  what the Rationale says of each change: who did it, with what data, and why (a flow's condition and the values it
+  read, a gateway's choice). An instance's page has the same Simulate.
+  **Show close-up** (on by default) puts a small card beside the element a change is about, zooming in from it: who began the process (a start event) and who a task is given to, or offered to, and who did it, each as an avatar; a user task's form, empty as it starts and filled in as it is done; a gateway's conditions as they are evaluated, then which held (and, at a join, the flows arriving); a flow's condition; a service's input and output; a message sent or received; a timer's clock; an error or escalation raised or caught; and each notification, after the fact: whom it told, what it said, and how it went (sent, recorded or failed).
+  It shows only what the model and the run already hold: with no data it shows the shape, not values.
+  It moves: a flow taken draws itself as a token travels it, an element that starts glows blue and one that ends
+  flashes green, a waiting one's dashed outline crawls, and each number pops in. **Back** redraws without moving, and
+  nothing moves when the system asks for less motion.
 - **Debug** changes the instance's variables for the next steps; **Restart here**, on a step done, goes back to it.
+  Debugging a kept run changes that run only: the scenario's steps and their data stay as they were.
 
 **Inspect this run** shows its data, items, the Rationale (as on the instance page: what happened, in order, and why) and log. **Add as a check**, on an item or a value,
 checks it is as it is there: its status or its value, where the run waits (after the last step done, or at the start
@@ -143,8 +172,10 @@ rows. Its filters open the steps with a row of what they show, and hide the othe
 **Full window**, in the bar of the tabs, puts them over the whole page; **Back to the editor** or Esc returns, and so does
 Simulate, which shows on the diagram.
 
-Test runs are ordinary instances whose ids start with `test-`, tagged in the database with their process and scenario:
-run tests on a development or test server. They are left out of the lists of instances and tasks; **Open instance** opens one.
+Test runs are ordinary instances whose ids start with `test-`, tagged in the database with their process and scenario.
+Tests run on a development or test server (`APP_ENV`), never in production. Their instances and tasks are listed with
+the others, marked **test**. Each scenario's last case is also saved as a file with the models, which production shows:
+see [Test cases](environments.md#test-cases).
 
 The **Design dashboard** (`/dashboard/design`) shows each model's and decision's tests with the last run's result
 (and why it failed), runs one model's or decision's tests, or **Run all tests**. Each model also shows its description
@@ -152,6 +183,12 @@ The **Design dashboard** (`/dashboard/design`) shows each model's and decision's
 Test tab's rules. What a run reached is saved on its test instance, so deleting the instance removes the run and its
 coverage; it says how many scenarios have not run, and *out of date* when the model was saved after them. A **Run** here keeps each scenario's
 run, as the Test tab does.
+
+Beside the search of the models, **Any feature** lists the [features](features.md) the models use (user tasks, timers,
+connectors, forms, ...), each with how many models use it. Choose one, and only the models that use it are listed, each
+with where: the elements, each a link that opens the model at that element (`/model/edit/<model>#element=<id>`). What
+shows a feature in a model's XML is the catalog's (its **In the model** column); from the command line,
+`npm run features -- --models <folder> --feature <id>`.
 
 The scenarios are saved in the models folder, beside the model, as Gherkin: `<model>.feature` (see below).
 

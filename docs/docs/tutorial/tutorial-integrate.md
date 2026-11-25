@@ -1,6 +1,6 @@
-# Integrate an existing application
+# Tutorial 10: Integrate an existing application
 
-Your company already has an HR application, with its own users and pages. Here it runs the leave request (the sample application's **Leave Application**) on BPMN Server over its API, [API v3](../api-v3.md): it starts requests, shows each user their tasks, and completes them. The server must be running.
+Your company already has an HR application, with its own users and pages. Here it runs the leave request (the sample application's **Leave Application**) on OmniWorkflow over its API, [API v3](../api-v3.md): it starts requests, shows each user their tasks, and completes them. The server must be running.
 
 ## The key
 
@@ -15,7 +15,7 @@ The leave request gives **Request** to whoever started it: its start event keeps
 | With a user's token (`Authorization: Bearer <token>`) | That user, with the groups the token was issued with |
 | With the key alone (`x-api-key`) | The server's service account (`API_SERVICE_USER_NAME`), never one of your users |
 
-Your application signs its users in, not BPMN Server: it decides who they are and which groups they are in, then asks for their token.
+Your application signs its users in, not OmniWorkflow: it decides who they are and which groups they are in, then asks for their token.
 
 ## Call the API
 
@@ -89,4 +89,4 @@ From Node.js, [bpmn-client](../bpmn-client.md) also wraps the older APIs (`/api`
 
 More: [Integrate an existing application](../integrate.md), [Application integration](../customization.md).
 
-One of the walkthroughs after the [tutorials](start.md): previous, [Execute from Node.js](tutorial-script.md); next, [Connect external services](tutorial-connectors.md).
+Previous: [Tutorial 9, execute from Node.js](tutorial-script.md). Next: [Tutorial 11, connect external services](tutorial-connectors.md).

@@ -1,6 +1,6 @@
 # The host writes nothing of the engine's
 
-Status: decided (2026-11-11), being built in 3.7. The Fable Review, H3; [multi-app-tenants.md](multi-app-tenants.md) §10 step 3, brought
+Status: built in 3.7 (2026-11-11), but for step 6 (the console on the API), left for later. The Fable Review, H3; [multi-app-tenants.md](multi-app-tenants.md) §10 step 3, brought
 before tenants. Related: [architecture.md](../docs/architecture.md) (Isolation), `server/LaunchedServer.ts`.
 
 ## 1. Why
@@ -12,7 +12,7 @@ writes through them. So a "separate engine" still needs, on the host:
 
 - the database's credentials, with write rights;
 - the models folder, writable;
-- `CONNECTORS_KEY` (it encrypts a connector's key when Administration sets it).
+- `SECRETS_KEY` (it encrypts a connector's key when Administration sets it).
 
 A host that is broken into has all the engine has but running code; and 3.8's workspaces can not give each its own
 engine while the host writes their data.
@@ -46,7 +46,7 @@ through them throws, naming the call to use instead. Two ways for those reads, t
 **What follows:**
 
 - With the engine elsewhere, the host needs no write rights on the database, no writable models folder, no
-  `CONNECTORS_KEY`: only the engine's address and key.
+  `SECRETS_KEY`: only the engine's address and key.
 - In one process (the default), nothing changes for anyone: the calls are function calls.
 - A test makes the host's store throw on any write of the engine's collections, and runs bpmn-web's suites against it.
 - `architecture.md`'s Isolation table becomes true; the `todo` test in `engine-results.test.mjs` passes.
@@ -66,8 +66,8 @@ through them throws, naming the call to use instead. Two ways for those reads, t
 4. **Now, in 3.7.**
 5. **The console calls the server's API**, as any client: it needs the server running, and holds none of its objects.
 6. **Connectors are files** (connectors-as-files.md), so their definitions are written as the models are, by the host.
-   What is still in the database, each server's key (encrypted with `CONNECTORS_KEY`) and last test, is the engine's:
-   `setKey`, `clearKey` and `test` are engine calls, and the host needs no `CONNECTORS_KEY`.
+   What is still in the database, each server's key (encrypted with `SECRETS_KEY`) and last test, is the engine's:
+   `setKey`, `clearKey` and `test` are engine calls, and the host needs no `SECRETS_KEY`.
 
 ## 5. Four components, apart (2026-11-11)
 
@@ -88,12 +88,15 @@ workspaces, a workspace's models and instances each behind its own.
 1. **Locks**: `locks.release`, `locks.releaseAll`, `locks.claim`, `locks.releaseClaim` engine calls; Administration, the
    task API and `WebAppDelegate` use them.
 2. **Connectors**: their files written by the host, as the models; `setKey`, `clearKey` and `test` engine calls, the key
-   encrypted where the engine is; the host needs no `CONNECTORS_KEY`.
+   encrypted where the engine is; the host needs no `SECRETS_KEY`.
 3. **Models**: the models' files written by a file-only part (no database), the model checked before; the engine's
    index updated by `models.changed(name)`, `models.renamed(from, to)`, `models.removed(name)`; the stores' setup
    (`install`) an engine call.
 4. **Tests**: what the Test tab and `/api/v3/models/{name}/test` write, written by the engine.
 5. **The instance viewer and model access**: `LaunchedServer.dataStore` becomes the instance viewer (reads only, a write throws naming the call);
    `definitions` model access; a test runs bpmn-web's suites with them so; the `todo` test passes.
-6. **The console** on the API.
+6. **The console** on the API. **Left for later** (2026-11-11): until then it runs in the host's process and uses
+   the engine calls (locks, a connector's key, test and removal, deleting instances). On the API it needs routes v3 does
+   not have (connectors, locks, items and recovering one, the models' events, a process's instances deleted), for an
+   administrator, and per workspace under `/<workspace>/api/v3` (multi-app-tenants.md).
 7. **Docs**: architecture.md's Isolation, setup.md (what a host needs with the engine elsewhere).

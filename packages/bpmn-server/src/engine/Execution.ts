@@ -1,4 +1,13 @@
 import { v4 as uuid } from '@lukeed/uuid';
+import { ASSIGNMENT_FIELDS } from './AddOns.js';
+
+/** Whether two assignments name the same people: the assignee, and the candidates as lists (text with commas, or one). */
+function sameWho(a: Record<string, any>, b: Record<string, any>): boolean {
+    const list = (v) => (Array.isArray(v) ? v : v == null || v === '' ? [] : String(v).split(',')).map(x => String(x ?? '').trim()).filter(Boolean);
+    return String(a.assignee ?? '') === String(b.assignee ?? '')
+        && JSON.stringify(list(a.candidateUsers)) === JSON.stringify(list(b.candidateUsers))
+        && JSON.stringify(list(a.candidateGroups)) === JSON.stringify(list(b.candidateGroups));
+}
 import { Item } from './Item.js';
 import { Token, TOKEN_TYPE  } from './Token.js';
 import { Loop} from './Loop.js';
@@ -11,6 +20,7 @@ import type { IExecution } from '../interfaces/engine.js';
 import { DataHandler } from './DataHandler.js';
 import { ServerComponent } from '../server/ServerComponent.js';
 import { InstanceObject } from './Model.js';
+import { itemContext, elementContext } from './Context.js';
 
 /**
  *  is accessed two ways:
@@ -139,7 +149,7 @@ class Execution extends ServerComponent implements IExecution {
         this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
         this.instance.status = EXECUTION_STATUS.running;
-        this.appDelegate.executionStarted(this);
+        this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
 
         
         if (inputData)
@@ -162,6 +172,8 @@ class Execution extends ServerComponent implements IExecution {
         }
 
         this.process = startNode.process;
+        // started by a message or a signal another instance threw (Engine.throwMessage, throwSignal): the Rationale says so
+        this.receivedRow(options, startNode.id, startNode.name, null, 'is started by');
         //await this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
 
         await this.doExecutionEvent(this, EXECUTION_EVENT.process_start);
@@ -208,21 +220,41 @@ class Execution extends ServerComponent implements IExecution {
                 this.item=i;
             }
         });
-        Object.keys(assignment).forEach(key => {
-            this.item[key]=assignment[key];
-        });
-
+        const reassigning = ASSIGNMENT_FIELDS.some(f => f in assignment);
+        const before = Object.fromEntries(ASSIGNMENT_FIELDS.map(f => [f, this.item[f]]));
         this.appendData(inputData, this.item, null, assignment);
 
-        await this.item.node.doEvent(this.item, EXECUTION_EVENT.node_assign);
+        // what decided who works on it: a person's change is theirs; a claim (taking an unassigned task oneself) keeps
+        // what offered it, and so does the same people again (a form sends every field)
+        const after = { ...before, ...Object.fromEntries(ASSIGNMENT_FIELDS.filter(f => f in assignment).map(f => [f, assignment[f]])) };
+        const claim = !!this.userName && !before.assignee && assignment['assignee'] === this.userName
+            && !ASSIGNMENT_FIELDS.some(f => f !== 'assignee' && f in assignment);
+        const why = reassigning && !claim && !sameWho(before, after) ? { userName: this.userName } : undefined;
+        await this.assignItem(this.item, assignment, why, this.userName ?? 'the system');
 
         await this.item.node.validate(this.item);
-        this.info(`Task ${this.item.node.name} -${this.item.node.id} Assigned by ${this.userName} to:${assignment}`);
+        this.info(`Task ${this.item.node.name} -${this.item.node.id} Assigned by ${this.userName} to:${JSON.stringify(assignment)}`
+            + (reassigning ? ` (it was ${JSON.stringify(before)})` : ''));
         await this.save();
         this.log('Execution('+this.name+').assign: finished!');
     }
     /**
-     * 
+     * Who works on a task, changed: the one step for every change, a person's (assign, a claim) or an add-on's as the
+     * task starts (an assignment policy). Sets the fields given, records what decided it (`item.assignment`, when `why`
+     * is given), and fires `assign`, its details: `before` (who worked on it), `assignment` (the fields given), `why`,
+     * `previous` (what had decided it), `changed` (whether who works on it changed), `by` (the person; none for an
+     * add-on's as the task starts).
+     */
+    public async assignItem(item: Item, changes: Record<string, any>, why?: Record<string, any>, by?: string) {
+        const before = Object.fromEntries(ASSIGNMENT_FIELDS.map(f => [f, item[f]]));
+        const previous = item.assignment;
+        Object.keys(changes).forEach(key => { item[key] = changes[key]; });
+        if (why) item.assignment = why as any;
+        const changed = !sameWho(before, Object.fromEntries(ASSIGNMENT_FIELDS.map(f => [f, item[f]])));
+        await item.node.doEvent(item, EXECUTION_EVENT.node_assign, null, { before, assignment: changes, why, previous, changed, by });
+    }
+    /**
+     *
      * invoke scenarios:
      *      itemId
      *      elementId   - but only one is active
@@ -245,7 +277,7 @@ class Execution extends ServerComponent implements IExecution {
         let firstToken=this.tokens.get(0);
         this.process=firstToken.path[0].node.process;
         //
-        this.appDelegate.executionStarted(this);
+        this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
         this.tokens.forEach(t => {
@@ -266,6 +298,8 @@ class Execution extends ServerComponent implements IExecution {
             options,
             inputData});
 
+        // a message or a signal another instance threw (Engine.throwMessage, throwSignal): the Rationale says so
+        if (token) this.receivedRow(options, token.currentItem.elementId, token.currentItem.node?.name, token.currentItem.seq, 'receives');
         if (token) {
             this.log('Execution('+this.name+').signal: .. launching a token signal');
 
@@ -356,7 +390,7 @@ public async retry(itemId, userName?: string) :Promise<IExecution>  {
         throw new Error(`Item ${itemId} has not failed: only an item whose status is error can be retried`);
     this.servicesProvider = await this.appDelegate.getServicesProvider();
     this.process = this.tokens.get(0).path[0].node.process;
-    this.appDelegate.executionStarted(this);
+    this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
     this.item = item;
     this.operationBegins({ type: 'execution', label: 'Retry Item', action: 'retry', id: item.elementId, itemId, userName });
     await token.retry(item);
@@ -407,7 +441,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
         this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
-        this.appDelegate.executionStarted(this);
+        this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
 
@@ -492,7 +526,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
         this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
-        this.appDelegate.executionStarted(this);
+        this.appDelegate.executionStarted(this, elementContext(this, undefined, { what: 'started' }));
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
 
@@ -535,9 +569,14 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
     }
     getItems(): Item[] {
+        // each item once: a loop's token with an empty path borrows its first round's item (Token.goNext, issue 186),
+        // and it was saved twice, once for each token
         const items = [];
+        const seen = new Set<Item>();
         this.tokens.forEach(t => {
             t.path.forEach(i => {
+                if (seen.has(i)) return;
+                seen.add(i);
                 items.push(i);
             })
         }
@@ -763,16 +802,21 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
     async doExecutionEvent(process,event,eventDetails={}) {
         //this.item = null;
-        await this.dispatch(event, eventDetails);
+        await this.dispatch(event, eventDetails, null);
     }
 
     async doItemEvent(item, event,eventDetails={}) {
         this.item = item;
-        await this.dispatch(event, eventDetails);
+        await this.dispatch(event, eventDetails, item);
     }
-    /** The server's listeners, then its lifecycle subscribers (server/Listener.ts); a plain emitter only emits. */
-    private async dispatch(event, eventDetails) {
-        const payload = { event, context: this, eventDetails };
+    /**
+     * The server's listeners, then its lifecycle subscribers (server/Listener.ts); a plain emitter only emits. They are
+     * handed the event's context (docs/design/context-object.md): its item's, fixed for it, or the process's.
+     */
+    private async dispatch(event, eventDetails, item) {
+        const context = item ? itemContext(item, { what: event, event, details: eventDetails })
+            : elementContext(this, undefined, { what: event, event, details: eventDetails, ...(this.item ? { item: this.item } : {}) });
+        const payload = { event, context, eventDetails };
         if (typeof this.listener.dispatch === 'function') return this.listener.dispatch(event, payload);
         this.listener.emit(event, payload);
         this.listener.emit('all', payload);
@@ -799,6 +843,15 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
             changed: items.filter(item => this.statusBefore.get(item.id) !== item.status).map(fact),
             waiting: items.filter(item => item.status === ITEM_STATUS.wait).map(fact) }));
         this.statusBefore = new Map(items.map(item => [item.id, item.status]));
+    }
+    /** The receiver's row of a thrown message or signal (options.thrown: { kind, name, key, from }): from whom it came. */
+    private receivedRow(options, elementId: string, elementName: string, seq: number | null, verb: string) {
+        const thrown = options?.['thrown'];
+        if (!thrown) return;
+        const where = elementName ? `'${elementName}' (${elementId})` : elementId;
+        const from = thrown.from ? `${thrown.from.name} at ${thrown.from.elementName ? `'${thrown.from.elementName}' (${thrown.from.elementId})` : thrown.from.elementId}` : 'outside (an API call)';
+        const key = thrown.key && Object.keys(thrown.key).length ? `its matching key: ${JSON.stringify(thrown.key)}` : 'no matching key';
+        this.decision({ seq, element: where, action: `${verb} ${thrown.kind} '${thrown.name}' from ${from}`, why: [key] });
     }
     private record(entry) {
         if (this.keepLogs) this.instance.logs.push(entry);

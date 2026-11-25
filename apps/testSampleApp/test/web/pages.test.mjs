@@ -81,7 +81,8 @@ test('the instance page shows the diagram with its elements and the replay data'
   const res = await admin.get(`/instanceDetails?id=${instanceId}`);
   assert.match(res.text, /data-element-id="Submit"/, 'diagram elements addressable for decorations');
   assert.match(res.text, /id="animationItems"/);
-  assert.match(res.text, /Show animation/);
+  assert.match(res.text, /id="startSimulation"[^>]*>[^]*?Simulate/, "Simulate, as the editor's");
+  assert.match(res.text, /src="\/modeler\/instance.js\?v=\d+"/, 'its URL carries its build: a browser never keeps an old one');
   assert.match(res.text, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/, 'dates are formatted');
 });
 
@@ -126,6 +127,16 @@ test('the instance page gives the Rationale: the run from start to end, each ste
   assert.equal(rows[4].why, '', 'no why for an event');
 });
 
+test('every page loads its own scripts and stylesheets by a URL that carries their build (public/ is cached for a year)', async () => {
+  const unversioned = [];
+  for (const [url] of [...userPages(), ...adminPages(), ['/dashboard/design'], [`/model/decision/x`]]) {
+    const res = await admin.get(url);
+    for (const [, ref] of res.text.matchAll(/(?:src|href)="(\/(?:modeler|javascripts|stylesheets)\/[^"]+)"/g))
+      if (!/\?v=\d+$/.test(ref)) unversioned.push(`${url}: ${ref}`);
+  }
+  assert.deepEqual(unversioned, []);
+});
+
 test('static assets are served', async () => {
   for (const url of ['/stylesheets/app.css', '/javascripts/SVGHelper.js', '/javascripts/modeller-withPropertyPanel.js'])
     assert.equal((await admin.get(url)).status, 200, url);
@@ -148,9 +159,46 @@ test('the instance page carries its model for the Report (drawn by /modeler/repo
   const page = await admin.get(`/instanceDetails?id=${instanceId}`);
   assert.equal(page.status, 200, why(page));
   assert.match(page.text, /<script type="application\/json" data-report-source="model-report">/);
-  assert.match(page.text, /src="\/modeler\/report.js"/);
+  assert.match(page.text, /src="\/modeler\/report.js\?v=\d+"/, 'its URL carries its build: a browser never keeps an old report');
   const json = page.text.match(/data-report-source="model-report">([^]*?)<\/script>/)[1];
   assert.ok(!json.includes('<'), 'no < in the script element: a model can not end it early');
   assert.match(JSON.parse(json), /id="ToApprove"/, 'the model, its flows included');
   assert.equal((await admin.get('/modeler/report.js')).status, 200);
+});
+
+test('the diagram is of the model, not of a run: marks a picture was saved with (the Test tab\'s) are not shown', async () => {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+  const first = await admin.get(`/instanceDetails?id=${instanceId}`);
+  const drawn = /<svg[^]*?<\/svg>/.exec(first.text)[0];
+  // saved while the Test tab showed a run on it: Submit waiting, with a mark of where the picture came from
+  const marked = drawn.replace('<svg', '<svg data-saved="yes"')
+    .replace(/(<g class="[^"]*)("[^>]*data-element-id="Submit")/, '$1 test-waiting$2');
+  assert.match(marked, /test-waiting[^>]*data-element-id="Submit"/);
+  const file = path.join(web.definitionsPath, `${MODEL}.svg`);
+  fs.writeFileSync(file, marked);
+  try {
+    const { instance } = await web.bpmnServer.engine.start(MODEL, {});
+    const page = await admin.get(`/instanceDetails?id=${instance.id}`);
+    assert.match(page.text, /data-saved="yes"/, 'the saved picture');
+    assert.doesNotMatch(page.text, /class="[^"]*\btest-waiting/, 'without the run\'s marks');
+  } finally {
+    fs.rmSync(file, { force: true });
+  }
+});
+
+test('the instance page: its actors under its data; without security policies, no Access section', async () => {
+  const page = (await admin.get(`/instanceDetails?id=${instanceId}`)).text;
+  assert.match(page, /<h3 class="instance-subheading" id="instance-actors-heading">Actors<\/h3>/);
+  assert.match(page, /<div data-actor="initiator"><dt>initiator<\/dt><dd>[^<]+<\/dd><\/div>/, 'who started it');
+  assert.doesNotMatch(page, /id="access-heading"/, 'security policies are off here: who may do what is today\'s rules');
+});
+
+test('element templates are a preview, off by default (ELEMENT_TEMPLATES): none offered, the editor without its chooser', async () => {
+  const catalog = await admin.get('/model/templates');
+  assert.equal(catalog.status, 200);
+  assert.deepEqual(JSON.parse(catalog.text), { templates: [], rejected: [], warnings: [], off: true });
+  const editor = (await admin.get(`/model/edit/${encodeURIComponent(MODEL)}`)).text;
+  assert.equal(JSON.parse(/<script id="modeler-options" type="application\/json">([^<]*)<\/script>/.exec(editor)[1]).elementTemplates, false);
+  assert.doesNotMatch((await admin.get('/dashboard/design')).text, /task templates/i);
 });

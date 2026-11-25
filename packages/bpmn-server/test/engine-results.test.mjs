@@ -4,8 +4,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
 import { CacheManager, verifyModel } from '../dist/index.js';
 import { makeLaunched, makeServer, coverage, TestDelegate, PROCESSES } from './helpers.mjs';
 
@@ -105,28 +103,34 @@ test('with no engine: models read and save, and what would run says so', async (
   await server.shutdown();
 });
 
-test('the application is known by the names its scan left in a file, not by its code', async (t) => {
-  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-services-')), 'services.json');
-  fs.writeFileSync(file, JSON.stringify({ services: ['echo', 'billing.charge'], extra: ['madeAsItRuns'] }));
-  const server = await makeLaunched({ extra: { servicesFile: file } });
+test('the application is known by the names read from its source at start, not by its code', async (t) => {
+  // as the host gives them (bpmn-web: read from the delegate's source as the server starts), still being read
+  const server = await makeLaunched({ extra: { serviceNames: Promise.resolve(['echo', 'billing.charge']) } });
   const provider = await server.appDelegate.getServicesProvider();
   assert.equal(typeof provider.echo, 'function');
   assert.equal(typeof provider.billing.charge, 'function');
-  assert.equal(typeof provider.madeAsItRuns, 'function');
   assert.equal(provider.other, undefined);
-  const asksEngine = await makeLaunched({ services: { fromTheEngine: async () => { } }, extra: { servicesFile: file + '.none' } });
-  assert.equal(typeof (await asksEngine.appDelegate.getServicesProvider()).fromTheEngine, 'function', 'no file: the engine knows');
-  const missing = await makeLaunched({ engine: 'none', extra: { servicesFile: file + '.none' } });
-  assert.equal(await missing.appDelegate.getServicesProvider(), null, 'no file and no engine: no names, so nothing is checked');
+  const asksEngine = await makeLaunched({ services: { fromTheEngine: async () => { } }, extra: { serviceNames: Promise.resolve(null) } });
+  assert.equal(typeof (await asksEngine.appDelegate.getServicesProvider()).fromTheEngine, 'function', 'not read: the engine knows');
+  const missing = await makeLaunched({ engine: 'none' });
+  assert.equal(await missing.appDelegate.getServicesProvider(), null, 'not read and no engine: no names, so nothing is checked');
   await server.shutdown();
   await asksEngine.shutdown();
   await missing.shutdown();
 });
 
-test('a launched server still has a way in: dataStore and definitions are the engine\'s own objects', { todo: 'until the engine runs elsewhere, and they are core\'s' }, async () => {
+test('a launched server has no way in: its dataStore, definitions and connectors read, and refuse the engine\'s writes (engine-isolation.md)', async () => {
   const server = await makeLaunched();
+  assert.equal(server.dataStore.server, undefined, 'no way back to the engine');
+  assert.equal(server.dataStore.db, undefined, 'no raw store: documentStore is the host\'s own');
+  assert.equal(server.definitions.server, undefined);
+  assert.ok(Array.isArray(await server.dataStore.findInstances({}, 'summary')), 'the instance viewer reads');
+  assert.ok(Array.isArray(await server.dataStore.locker.list()), 'and lists the locks');
+  for (const write of [() => server.dataStore.saveInstance({}), () => server.dataStore.deleteInstances({}), () => server.dataStore.locker.delete({}),
+    () => server.definitions.save('x', '<x/>'), () => server.definitions.deleteModel('x'), () => server.connectors.setKey('x', 'k'), () => server.connectors.remove('x')])
+    assert.throws(write, error => error.code === 'ENGINE_ONLY' && /engine-isolation/.test(error.message));
+  assert.ok(server.documentStore, 'the host\'s own store, for its own data');
   await server.shutdown();
-  assert.equal(server.dataStore.server, undefined);
 });
 
 test('embedding stays as it was: the running execution', async () => {

@@ -1,11 +1,11 @@
 # Tutorial 8: Review before release
 
-**The requirement:** before anyone relies on it, the model is checked, read by the people who own the process, and run
-once as its users would run it.
+**Developer outcome:** before release, validate the model, review the generated behavior with process owners, and run
+an end-to-end acceptance check using representative user identities.
 
 ## Checked
 
-- The **Problems** tab says *No problems found*. `npm run verify` checks every model the same way, from the command
+- The **Problems** tab says *Model is validated: no problems found*. `npm run verify` checks every model the same way, from the command
   line.
 - **Run all** in the Test tab, or `npm test`: every scenario passes.
 
@@ -19,7 +19,7 @@ assignment, its form, its conditions, its timers and services:
 Print it, or send it, to the people who own the process: it is what they review, not the XML. The **History** tab
 keeps each saved version, by who saved it: **Compare** shows what changed between two.
 
-## Run once, as its users
+## Run an end-to-end acceptance check
 
 1. Sign in as `user1`. **My work → Start a process → Leave Application**, then open **Request** under **Assigned to
    me**, fill it in, and complete it.
@@ -40,4 +40,4 @@ asked to do.
 - A task whose form asks for something nobody uses, or misses something somebody needs.
 - Names the business doesn't use.
 
-Previous: [Tutorial 7](tutorial-testing.md). Next: [Tutorial 9, release](release.md).
+Previous: [Tutorial 7](tutorial-testing.md). Next: [Tutorial 9, execute from Node.js](tutorial-script.md).

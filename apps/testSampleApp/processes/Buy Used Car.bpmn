@@ -55,7 +55,7 @@ Gateways</bpmn:documentation>
     <bpmn:sequenceFlow id="flow_gw2_drive" sourceRef="gateway_2" targetRef="task_Drive" />
     <bpmn:sequenceFlow id="flow_drive_end" sourceRef="task_Drive" targetRef="Event_19ebav7" />
     <bpmn:sequenceFlow id="flow_buy_gw" sourceRef="task_Buy" targetRef="gateway_1" />
-    <bpmn:startEvent id="StartEvent_158yep3" name="Start Event" camunda:initiator="starterUserId" camunda:candidateUsers="Ralph" camunda:candidateGroups="drivers">
+    <bpmn:startEvent id="StartEvent_158yep3" name="Start Event" camunda:initiator="starterUserId" camunda:candidateUsers="Ralph" camunda:candidateGroups="Driver">
       <bpmn:documentation>Buy a Used Car, Starting the process</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:executionListener event="end">

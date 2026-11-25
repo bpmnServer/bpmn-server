@@ -54,6 +54,12 @@ super class for various objects that are part of the server
 - [getSVG](ModelsDatastore.md#getsvg)
 - [before](ModelsDatastore.md#before)
 - [keepVersion](ModelsDatastore.md#keepversion)
+- [saveFiles](ModelsDatastore.md#savefiles)
+- [deleteFiles](ModelsDatastore.md#deletefiles)
+- [renameFiles](ModelsDatastore.md#renamefiles)
+- [indexModel](ModelsDatastore.md#indexmodel)
+- [unindexModel](ModelsDatastore.md#unindexmodel)
+- [renameIndex](ModelsDatastore.md#renameindex)
 - [save](ModelsDatastore.md#save)
 - [history](ModelsDatastore.md#history)
 - [historySource](ModelsDatastore.md#historysource)
@@ -98,7 +104,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L14)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:26](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L26)
 
 ## Properties
 
@@ -112,7 +118,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L18)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:18](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L18)
 
 ___
 
@@ -128,7 +134,7 @@ The storage adapter: the server's shared `documentStore`, else this datastore's 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L20)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L20)
 
 ___
 
@@ -142,7 +148,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L10)
+[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L10)
 
 ## Accessors
 
@@ -156,7 +162,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L18)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:30](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L30)
 
 ___
 
@@ -172,7 +178,7 @@ Every save of a model, kept beside it (`.history/<name>/`), in the models folder
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:102](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L102)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:114](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L114)
 
 ___
 
@@ -188,7 +194,7 @@ Is a version kept for each save (`modelHistory`, default true)?
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:117](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L117)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:129](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L129)
 
 ___
 
@@ -206,7 +212,7 @@ ModelsDatastoreDB.configuration
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L15)
+[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -224,7 +230,7 @@ ModelsDatastoreDB.logger
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L16)
+[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -242,7 +248,7 @@ ModelsDatastoreDB.cron
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L17)
+[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L17)
 
 ___
 
@@ -260,7 +266,7 @@ ModelsDatastoreDB.cache
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L18)
+[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -278,7 +284,7 @@ ModelsDatastoreDB.appDelegate
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L19)
+[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -296,7 +302,7 @@ ModelsDatastoreDB.engine
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L20)
+[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -314,7 +320,7 @@ ModelsDatastoreDB.dataStore
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L21)
+[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L21)
 
 ___
 
@@ -334,7 +340,7 @@ ModelsDatastoreDB.lockManager
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L23)
+[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L23)
 
 ___
 
@@ -352,7 +358,7 @@ ModelsDatastoreDB.definitions
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L24)
+[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L24)
 
 ___
 
@@ -370,7 +376,7 @@ ModelsDatastoreDB.listener
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L25)
+[packages/bpmn-server/src/server/ServerComponent.ts:25](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L25)
 
 ___
 
@@ -388,7 +394,7 @@ ModelsDatastoreDB.scriptHandler
 
 #### Defined in
 
-[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L26)
+[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/ServerComponent.ts#L26)
 
 ## Methods
 
@@ -417,7 +423,7 @@ ModelsDatastoreDB.scriptHandler
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L21)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L33)
 
 ___
 
@@ -445,7 +451,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L26)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L38)
 
 ___
 
@@ -467,7 +473,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L63)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:75](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L75)
 
 ___
 
@@ -491,7 +497,7 @@ A model file's text; null only when it does not exist (an unreadable file throws
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L69)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:81](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L81)
 
 ___
 
@@ -516,7 +522,7 @@ Writes a model file whole or not at all: to a temporary file beside it, then ren
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:81](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L81)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:93](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L93)
 
 ___
 
@@ -545,7 +551,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:89](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L89)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:101](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L101)
 
 ___
 
@@ -576,7 +582,7 @@ The model's diagram, or null when it has none (the SVG is optional).
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:97](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L97)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:109](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L109)
 
 ___
 
@@ -598,7 +604,7 @@ The model's file and its time before a save: kept first when the model has no hi
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:105](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L105)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:117](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L117)
 
 ___
 
@@ -624,7 +630,144 @@ Keeps a save in the model's history; a history that can not be written does not 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:120](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L120)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:132](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L132)
+
+___
+
+### saveFiles
+
+▸ **saveFiles**(`name`, `bpmn`, `svg?`, `savedBy?`): `Promise`\<`boolean`\>
+
+The model's files written, after it is checked (it must load): no database. `savedBy` kept with the version.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `bpmn` | `any` |
+| `svg?` | `any` |
+| `savedBy?` | `string` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:147](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L147)
+
+___
+
+### deleteFiles
+
+▸ **deleteFiles**(`name`): `Promise`\<`void`\>
+
+The model's files gone, its tests and history too: no database.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:158](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L158)
+
+___
+
+### renameFiles
+
+▸ **renameFiles**(`name`, `newName`): `Promise`\<`boolean`\>
+
+The model's files renamed, its tests calling it by its new name, its history moved: no database.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `newName` | `any` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:168](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L168)
+
+___
+
+### indexModel
+
+▸ **indexModel**(`name`): `Promise`\<`void`\>
+
+The engine's index of a model, from its file as it is now.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:182](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L182)
+
+___
+
+### unindexModel
+
+▸ **unindexModel**(`name`): `Promise`\<`void`\>
+
+A model gone from the engine's index.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:186](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L186)
+
+___
+
+### renameIndex
+
+▸ **renameIndex**(`name`, `newName`): `Promise`\<`void`\>
+
+A model renamed in the engine's index.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `newName` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:190](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L190)
 
 ___
 
@@ -658,7 +801,7 @@ Saves the model; `savedBy` (a user name) is kept with the version in its history
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:132](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L132)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:195](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L195)
 
 ___
 
@@ -684,7 +827,7 @@ The model's saved versions, newest first.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:147](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L147)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:210](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L210)
 
 ___
 
@@ -711,7 +854,7 @@ A saved version of the model, or null.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:151](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L151)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:214](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L214)
 
 ___
 
@@ -738,7 +881,7 @@ Removes one saved version of the model; false when there is none.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:155](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L155)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:218](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L218)
 
 ___
 
@@ -764,7 +907,7 @@ Removes the model's history; returns how many versions it had.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:159](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L159)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:222](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L222)
 
 ___
 
@@ -793,13 +936,15 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:163](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L163)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:226](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L226)
 
 ___
 
 ### renameModel
 
 ▸ **renameModel**(`name`, `newName`, `owner?`): `Promise`\<`boolean`\>
+
+The model's files go with it, its tests too; in its tests, the model is then called by its new name.
 
 #### Parameters
 
@@ -823,7 +968,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:172](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L172)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:236](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L236)
 
 ___
 
@@ -855,7 +1000,7 @@ use when modifying the files manually or importing new environment
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:189](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L189)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:256](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L256)
 
 ___
 
@@ -875,7 +1020,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastore.ts:231](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L231)
+[packages/bpmn-server/src/datastore/ModelsDatastore.ts:298](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastore.ts#L298)
 
 ___
 
@@ -893,7 +1038,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L34)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:34](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L34)
 
 ___
 
@@ -917,7 +1062,7 @@ Every document of the models and events collections, by collection name: for a b
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L38)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L38)
 
 ___
 
@@ -945,7 +1090,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L44)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L44)
 
 ___
 
@@ -972,7 +1117,7 @@ load definition for instance
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L67)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:67](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L67)
 
 ___
 
@@ -1001,7 +1146,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:80](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L80)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:80](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L80)
 
 ___
 
@@ -1026,7 +1171,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:86](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L86)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:86](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L86)
 
 ___
 
@@ -1055,7 +1200,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:107](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L107)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:107](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L107)
 
 ___
 
@@ -1084,7 +1229,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:137](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L137)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:137](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L137)
 
 ___
 
@@ -1110,7 +1255,7 @@ creates a new collection and add an index
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:197](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L197)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:197](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L197)
 
 ___
 
@@ -1135,7 +1280,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:204](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L204)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:204](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L204)
 
 ___
 
@@ -1164,7 +1309,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:230](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L230)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:230](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L230)
 
 ___
 
@@ -1190,4 +1335,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:273](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L273)
+[packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts:273](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelsDatastoreDB.ts#L273)

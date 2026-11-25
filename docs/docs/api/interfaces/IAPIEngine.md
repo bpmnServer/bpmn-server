@@ -42,7 +42,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:105](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L105)
+[packages/bpmn-server/src/API/API.ts:159](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L159)
 
 ___
 
@@ -67,7 +67,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:112](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L112)
+[packages/bpmn-server/src/API/API.ts:166](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L166)
 
 ___
 
@@ -94,7 +94,7 @@ Also, updates item data
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:117](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L117)
+[packages/bpmn-server/src/API/API.ts:171](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L171)
 
 ___
 
@@ -120,7 +120,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:121](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L121)
+[packages/bpmn-server/src/API/API.ts:175](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L175)
 
 ___
 
@@ -146,7 +146,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:125](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L125)
+[packages/bpmn-server/src/API/API.ts:179](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L179)
 
 ___
 
@@ -172,7 +172,7 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:129](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L129)
+[packages/bpmn-server/src/API/API.ts:183](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L183)
 
 ___
 
@@ -199,7 +199,7 @@ this add a savePoint for each item, allowing you to select that item to restore 
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:143](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L143)
+[packages/bpmn-server/src/API/API.ts:197](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L197)
 
 ___
 
@@ -225,4 +225,4 @@ However, this routine will upgrade already started instances with the revised mo
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:154](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L154)
+[packages/bpmn-server/src/API/API.ts:208](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L208)

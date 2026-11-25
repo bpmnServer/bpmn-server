@@ -1,4 +1,4 @@
-# Connect external services
+# Tutorial 11: Connect external services
 
 A process often needs another system: check a balance, create a ticket, wait for a payment. In this tutorial a service task calls GitHub's REST API with no code, a missing repository takes another path, and then the process hears back from outside.
 
@@ -10,7 +10,7 @@ A connector is a REST API, described by an OpenAPI document, that an administrat
 
 **You should see** the connector's page, saying *Connector 'github' added*, with GitHub's operations (more than a thousand), each one enabled for designers or not. Its id is `github`: models call its operations as `github/<operation>`.
 
-GitHub's public repositories need no key: calls without one are allowed 60 an hour. A key (a token) would be kept encrypted with `CONNECTORS_KEY` from `.env`, and never in a model. If `.env` sets `CONNECTORS_ALLOW_HOSTS`, it must include `api.github.com`. See [Connectors](../connectors.md#adding-a-connector-administrators).
+GitHub's public repositories need no key: calls without one are allowed 60 an hour. A key (a token) would be kept encrypted with `SECRETS_KEY` from `.env`, and never in a model. If `.env` sets `CONNECTORS_ALLOW_HOSTS`, it must include `api.github.com`. See [Connectors](../connectors.md#adding-a-connector-administrators).
 
 ## The service task
 
@@ -42,22 +42,36 @@ The **Problems** tab checks connector tasks as you edit: a connector or operatio
 
 The other system tells a process that something happened, such as a payment that arrived, by **delivering a message** through the API. The process waits for it with a message catch event, or a receive task, named for that message:
 
-```ts
-import { BPMNClient } from 'bpmn-client';
+```sh
+curl -X POST https://your-server/api/v3/messages/PaymentReceived \
+  -H "x-api-key: $API_KEY" -H "content-type: application/json" \
+  -d '{ "data": { "amount": 250 }, "matchingKey": { "data.orderNo": "I-7" } }'
+```
 
-const server = new BPMNClient('localhost', 3000, process.env.API_KEY);
-const result = await server.engine.throwMessage('PaymentReceived', { amount: 250 }, { id: instanceId });
-if (!result.id) console.log('nothing received it');
+From Node.js, with [bpmn-client](../bpmn-client.md):
+
+```ts
+import { BPMNClient3 } from 'bpmn-client';
+
+const service = new BPMNClient3({ url: 'https://your-server', apiKey: process.env.API_KEY });
+const { instance } = await service.messages.throw('PaymentReceived', { amount: 250 }, { 'data.orderNo': 'I-7' });
+if (!instance) console.log('nothing was waiting for it');
 ```
 
 What delivery does:
 
-- **One receiver.** The first waiting item for that message that the third argument matches (here, the instance `instanceId`) receives it, with the data. A **signal** (`throwSignal`) reaches every one waiting.
-- **Nothing waiting starts a process.** If no instance waits for it and a model has a message start event for it, that model is started, each time the message is delivered. A sender that retries, as webhooks do, can start a second one: send each event once, or have your handler check first.
-- **Nothing at all** answers an empty object: no instance, nothing done.
-- **Errors come back in the body**, with HTTP status 200: `{ "errors": "..." }`. bpmn-client throws them as errors; a plain HTTP call must check for them.
-- **Who may deliver.** Through `/api` (`BPMNClient`, `API_KEY`), any caller with the key. Through `/api2` (`BPMNClient2`), only a system account: the service account's `API_SERVICE_USER_GROUPS` must include `SYSTEM`.
+- **One receiver.** The message goes to one waiting item. The **matching key** says which: a query over the waiting
+  cases, such as `{ "data.orderNo": "I-7" }`. Without one, the first case found waiting receives it. A **signal**
+  (`POST /signals/{id}`) reaches every case the key matches.
+- **Nothing waiting starts a process.** If no case waits for it and a model has a message start event for it, that
+  model is started, **each time the message is delivered**. A sender that retries, as webhooks do, can start a second
+  case: send each event once, or have your handler check first.
+- **Nothing at all** answers `{ instance: null }`: no case, nothing done.
+- **Who may deliver.** The service key (`API_KEY`), whose account must include `SYSTEM` in
+  `API_SERVICE_USER_GROUPS`. Messages and signals are system work, not a user's.
+- **Where it went** is recorded in the case's Rationale, on both sides: what the message reached, and where the
+  receiving case got it from. See [Messages](../examples/msg-throw-catch.md).
 
-BPMN Server has no inbound webhook routes: the other system's webhook calls this API, directly or through a small handler in your application. Named webhook routes, with retries that never start a second process, are a proposal: see [the integration design](../application-integration-design.md#5-inbound-webhooks-and-api).
+OmniWorkflow has no inbound webhook routes: the other system's webhook calls this API, directly or through a small handler in your application. Named webhook routes, with retries that never start a second process, are a proposal: see [the integration design](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/application-integration-design.md#5-inbound-webhooks-and-api).
 
-One of the walkthroughs after the [tutorials](start.md): previous, [Integrate an existing application](tutorial-integrate.md).
+Previous: [Tutorial 10, integrate an existing application](tutorial-integrate.md). Next: [Tutorial 12, release](release.md).

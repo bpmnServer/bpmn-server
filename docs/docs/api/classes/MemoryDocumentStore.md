@@ -53,7 +53,7 @@ stand for one database they all use.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L13)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:13](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L13)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L14)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:14](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L14)
 
 ## Methods
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L16)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:16](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L16)
 
 ___
 
@@ -105,15 +105,17 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L17)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:17](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L17)
 
 ___
 
 ### find
 
-▸ **find**(`database`, `collection`, `query`, `projection?`, `sort?`): `Promise`\<`any`[]\>
+▸ **find**(`database`, `collection`, `query`, `projection?`, `sort?`, `limit?`): `Promise`\<`any`[]\>
 
-Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's db name; ignored by single-database adapters).
+Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's
+db name; ignored by single-database adapters). `limit`: at most that many, the first after sorting; optional, so
+an adapter written before it may return more, and callers cut the answer to it themselves.
 
 #### Parameters
 
@@ -124,6 +126,7 @@ Documents of `collection` matching `query`, projected and sorted. `database` nam
 | `query` | [`StorageQuery`](../readme.md#storagequery) | `undefined` |
 | `projection` | `Record`\<`string`, `any`\> | `null` |
 | `sort` | `Record`\<`string`, ``-1`` \| ``1``\> | `null` |
+| `limit?` | `number` | `undefined` |
 
 #### Returns
 
@@ -135,7 +138,7 @@ Documents of `collection` matching `query`, projected and sorted. `database` nam
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L23)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:23](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L23)
 
 ___
 
@@ -163,7 +166,7 @@ How many documents of `collection` match `query`. Optional: without it, callers 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L28)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L28)
 
 ___
 
@@ -191,7 +194,7 @@ Inserts all of `documents`, or none: a unique-index conflict throws a [Duplicate
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L32)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L32)
 
 ___
 
@@ -222,7 +225,7 @@ Updates the first document matching `query` (`$set` fields, or replaces it); `{ 
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L40)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L40)
 
 ___
 
@@ -250,7 +253,7 @@ Removes every document matching `query`; returns `{ deletedCount }`.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L54)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:54](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L54)
 
 ___
 
@@ -280,7 +283,7 @@ Declares an index; `{ unique: true }` makes [insert](../interfaces/IDocumentStor
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L61)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:61](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L61)
 
 ___
 
@@ -300,7 +303,7 @@ Releases connections. Idempotent.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:73](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L73)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:73](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L73)
 
 ___
 
@@ -323,4 +326,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:75](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L75)
+[packages/bpmn-server/src/datastore/MemoryDocumentStore.ts:75](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/MemoryDocumentStore.ts#L75)

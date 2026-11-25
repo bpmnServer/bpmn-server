@@ -1,0 +1,9 @@
+/* an element's popup on an instance's diagram: its section of the Model report, then what the run did with it */
+.report-popup { font-size: 13px; line-height: 1.4; }
+.report-popup h3 { margin: 0 0 6px; font-size: 14px; }
+.report-popup-kind { margin: 0 0 8px; color: #5d6573; font-size: 12px; }
+.report-popup-run { margin: 8px 0 0; padding-top: 6px; border-top: 1px solid #e3e8f0; }
+.report-popup-dialog { overflow: auto; }
+/* an instance's diagram is not edited: what is drawn of an element is what a click finds (diagram-js leaves it to a
+   hit area a saved picture may not have) */
+.instance-diagram .djs-element .djs-visual { pointer-events: visiblePainted; cursor: pointer; }

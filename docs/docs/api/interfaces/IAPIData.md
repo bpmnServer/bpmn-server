@@ -39,13 +39,13 @@ api.data.getPendingUserTasks({"item.assignee":user.userName});
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:172](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L172)
+[packages/bpmn-server/src/API/API.ts:226](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L226)
 
 ___
 
 ### findItems
 
-▸ **findItems**(`query`, `user?`): `Promise`\<[`IItemData`](IItemData.md)[]\>
+▸ **findItems**(`query`, `user?`, `options?`): `Promise`\<[`IItemData`](IItemData.md)[]\>
 
 returns list of `item`s
 
@@ -55,6 +55,8 @@ returns list of `item`s
 | :------ | :------ |
 | `query` | `any` |
 | `user?` | [`ISecureUser`](ISecureUser.md) |
+| `options?` | `Object` |
+| `options.lean?` | `boolean` |
 
 #### Returns
 
@@ -62,7 +64,7 @@ returns list of `item`s
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:176](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L176)
+[packages/bpmn-server/src/API/API.ts:230](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L230)
 
 ___
 
@@ -83,7 +85,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:177](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L177)
+[packages/bpmn-server/src/API/API.ts:231](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L231)
 
 ___
 
@@ -107,7 +109,7 @@ returns list of `instance`s
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:181](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L181)
+[packages/bpmn-server/src/API/API.ts:235](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L235)
 
 ___
 
@@ -130,4 +132,4 @@ deletes the `instance`s
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:185](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L185)
+[packages/bpmn-server/src/API/API.ts:239](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L239)

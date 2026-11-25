@@ -1,6 +1,7 @@
-# Tutorial 9: Release
+# Tutorial 12: Release
 
-**The requirement:** the workflow reaches real users on a server, and every later change is checked the same way
+**Developer outcome:** deploy the workflow for real users, with the application and server configured safely, and keep
+the same checks running for every later change.
 before it does.
 
 ## The checks on every change
@@ -58,5 +59,4 @@ Every setting: [Settings](../settings.md).
 A leave request in which every path is designed, assigned, checked, documented and tested; an application whose
 checks run on every change; and a server that runs it for real users.
 
-Previous: [Tutorial 8](review.md). More, beyond the leave request: [Execute from Node.js](tutorial-script.md),
-[Integrate an existing application](tutorial-integrate.md), [Connect external services](tutorial-connectors.md).
+Previous: [Tutorial 11](tutorial-connectors.md). This completes the tutorial.

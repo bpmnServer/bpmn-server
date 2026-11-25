@@ -16,6 +16,10 @@ An application has two places for settings. One rule decides which:
 1. A real environment variable wins over the same name in `.env`.
 2. A value in `settings/config.ts` wins over bpmn-web's defaults, including defaults that come from `.env`, such as `MODEL_HISTORY`. So a setting belongs in one place only.
 
+**Which environment a server is** (`APP_ENV`), shown on every page, and **read-only servers** (`READ_ONLY`): [Environments](environments.md).
+
+**Administrators and designers can change many of them in the browser:** [the Settings page](integration-settings.md) (Dashboard ▸ Settings) writes them to `.env`.
+
 **With a separate engine,** give the host and the engine the same `.env`. Only the settings marked *engine* below have to be on the engine, but sharing one file keeps them in step. `ENGINE_AT` is only read by the host.
 
 ## Everything `.env` can hold
@@ -28,7 +32,8 @@ by `npm run features`: edit the schema, not these tables.
 
 | Setting | Means |
 |---|---|
-| `APP_ENV` | The environment: `test` makes the sample application use its test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Default: production |
+| `APP_ENV` | The environment: `development`, `test` or `production`. The pages show it as a band (Development blue, Test amber), and API v3's `/me` says it. `test` also makes the sample applications use their test services (`delegates/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Unset: not declared, as before 3.7.2 (no band; the real services). See [Environments](environments.md) |
+| `APP_ENV_LABEL` | What the environment's band says instead of its name, in any environment: `Staging`, `Public demo`. Shown in production too |
 | `BODY_LIMIT` | The largest request. Default `50mb` |
 | `DOCS_PATH` | The folder of the docs pages the server shows |
 | `HTTPS`, `SSL_CERT_PATH`, `SSL_KEY_PATH` | Serve HTTPS directly |
@@ -69,7 +74,8 @@ by `npm run features`: edit the schema, not these tables.
 
 | Setting | Means |
 |---|---|
-| `ADMIN_PASSWORD` | **A secret.** Set, a server with no users creates the user `admin` with it. Unset (the default), its first page asks for the administrator, with a setup token it prints: [The first start](setup.md#the-first-start). A server that has users already is not changed |
+| `ADMIN_EMAIL` | The email address of the `admin` user a server with no users creates. Unset, `admin@example.com`. A server that has users already is not changed |
+| `ADMIN_PASSWORD` | **A secret.** Set, a server with no users creates the user `admin` with it. Unset, it creates `admin` with a password it makes up and prints once where the server runs: [The first start](setup.md#the-first-start). A server that has users already is not changed |
 | `AI_ACCESS` | The levels of AI links (`/ai/key`) this server offers: `off`, or some of `work`, `design`, `administer`, comma separated. Unset: all. A person is offered only the levels their rights allow. See [Chatting with your server](ai/chat-assistants.md) |
 | `AI_GUIDE` | A Markdown file: this site's own guide for AI agents, in its `/llms.txt`. Default `settings/ai-guide.md` |
 | `AI_KEY_TTL_GROUPS` | How long a user's link for an AI agent (`/ai/key`) lasts, in minutes, by group: `{"ADMIN":10,"staff":60}`. A user in several of the groups gets the shortest; in none, 30 minutes. See [Chatting with your server](ai/chat-assistants.md) |
@@ -79,8 +85,11 @@ by `npm run features`: edit the schema, not these tables.
 | `DISABLE_DESIGN` | `true`: no model editor or test runs, and **no test calls on the engine**. Set it on both for production |
 | `DISABLE_SIGNUP` | `true`: no self-registration |
 | `ENFORCE_SECURITY`, `REQUIRE_AUTHENTICATION` | On unless set to `false` (`init` writes `true`). `false` turns off sign-in and the security rules: for development only |
+| `NOTIFICATIONS` | Notification policies (docs/design/notification-policies.md): `record` keeps every notification in wf_notifications without delivering it (the application's notify is not called), for a test or staging server; unset, they are delivered (a test run's are only kept) |
+| `SECURITY_POLICY` | Security policies (docs/design/security-policies.md): unset, they are on when the models folder has `security/`; `default` turns them on with the built-in default policy; `off` turns them off |
 | `SESSION_SECRET` | **A secret, required in production.** Secures sessions and CSRF tokens |
 | `SIGNUP_GROUPS`, `SIGNUP_VERIFY_EMAIL` | Sign-up sends a verification email, and gives these groups once verified |
+| `READ_ONLY` | `true`: people use the server but can't change it. They start cases and complete tasks; the models, decision tables, policies, tests, roles, connectors, settings and users can't be changed, through a page or an API. For a public demo. See [Environments](environments.md#read-only) |
 
 ### REST APIs
 
@@ -98,11 +107,17 @@ by `npm run features`: edit the schema, not these tables.
 
 | Setting | Means |
 |---|---|
+| `APP_CONTRACT` | The application's contract file: its roles, variables, functions and pages. Unset, `app-contract.json` in the application's folder |
+| `ELEMENT_TEMPLATES` | `on` offers the application's element templates (configured tasks) in the model editor and lists them on the Design page. Off by default in 3.7.1: a preview, to be finished (docs/design/roadmap.md) |
 | `CATALOG_URL` | The model catalog to browse |
 | `CONNECTORS_ALLOW_HOSTS` | A comma list of the hosts connectors may call |
-| `CONNECTORS_KEY` | **A secret.** Encrypts connectors' keys. Required to give a connector a key, and keep it: backups need the same one |
+| `SECRETS_KEY` | **A secret.** Encrypts the secrets the server stores: each connector's own key (entered on the Settings page). Not a connector's credential. Required to give a connector a key, and keep it: backups need the same one. Before 3.7.5: `CONNECTORS_KEY`, still read |
+| `CONNECTORS_KEY` | **A secret.** `SECRETS_KEY`'s name before 3.7.5: still read when `SECRETS_KEY` is not set, with a warning to rename it |
 | `CONNECTOR_CATALOG_URL` | The connector catalog to offer |
 | `MODEL_HISTORY` | `false` keeps no saved versions of models |
+| `MODEL_TESTS` | `false`: the model editor has no Test tab (a model's scenarios, run in the engine) |
+| `EXTENDED_FORMS` | `false`: a form field's choices from a source (`owf:list`, `owf:lookup`) are not offered; the fields are plain ones |
+| `FORM_RULES` | `false`: a form's rules (a field's type, its constraints, a list's choices) are not checked when a task is completed |
 | `VERIFY_MODELS_ON_IMPORT` | `warn`, `enforce` or `off`, for models saved through the APIs |
 
 ### Email

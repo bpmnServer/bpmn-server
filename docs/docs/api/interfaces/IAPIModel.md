@@ -44,7 +44,7 @@ retrieve Model data
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:200](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L200)
+[packages/bpmn-server/src/API/API.ts:254](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L254)
 
 ___
 
@@ -69,7 +69,7 @@ save a model to the modelStore
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:207](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L207)
+[packages/bpmn-server/src/API/API.ts:261](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L261)
 
 ___
 
@@ -92,7 +92,7 @@ list all models authorized to the user
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:211](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L211)
+[packages/bpmn-server/src/API/API.ts:265](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L265)
 
 ___
 
@@ -115,7 +115,7 @@ returns Model Events (like timers) for authorized to the user and based on speci
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:216](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L216)
+[packages/bpmn-server/src/API/API.ts:270](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L270)
 
 ___
 
@@ -138,7 +138,7 @@ returns Model Start Events for authorized to the user and based on specifid quer
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:221](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L221)
+[packages/bpmn-server/src/API/API.ts:275](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L275)
 
 ___
 
@@ -161,7 +161,7 @@ delete the specified model
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:226](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L226)
+[packages/bpmn-server/src/API/API.ts:280](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L280)
 
 ___
 
@@ -185,7 +185,7 @@ delete the specified model
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:230](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L230)
+[packages/bpmn-server/src/API/API.ts:284](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L284)
 
 ___
 
@@ -208,7 +208,7 @@ returns the bpmn (xml) for the model
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:234](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L234)
+[packages/bpmn-server/src/API/API.ts:288](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L288)
 
 ___
 
@@ -231,7 +231,7 @@ load a model
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:238](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L238)
+[packages/bpmn-server/src/API/API.ts:292](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L292)
 
 ___
 
@@ -255,4 +255,4 @@ Exports the specified models based on a query to a folder
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:242](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L242)
+[packages/bpmn-server/src/API/API.ts:296](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L296)

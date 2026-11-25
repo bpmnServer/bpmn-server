@@ -34,16 +34,24 @@ function siteOwnGuide(): string | null {
 /** Which environment this site is (APP_ENV): a test one has its own services, which reach nothing outside. */
 function environment(): string {
     const env = process.env.APP_ENV || 'production';
-    return env === 'test'
+    // READ_ONLY=true (runtime/readOnly.ts): an agent can run cases here, not save models
+    const readOnly = (process.env.READ_ONLY ?? '').toLowerCase() === 'true'
+        ? '. **Read-only** (READ_ONLY=true): cases can be started and tasks completed; models, decisions, policies and tests can\'t be saved here'
+        : '';
+    return (env === 'test'
         ? '**test** (APP_ENV=test): its services are the test environment\'s, with the same names; nothing is sent or recorded outside. Test here freely'
-        : `**${env}**: services are real (they send, they record). Build and test models on a test site; a scenario can still replace a service with \`@stub service:<name>\``;
+        : `**${env}**: services are real (they send, they record). Build and test models on a test site; a scenario can still replace a service with \`@stub service:<name>\``) + readOnly;
 }
+
+/** The application's contract (app-contract.json), when it has one. */
+const contractOf = server => { try { return server.appDelegate?.describe?.() ?? null; } catch { return null; } };
 
 async function facts(webApp, origin: string) {
     const server = webApp.bpmnServer;
     const list = items => items.length ? items.map(i => `\`${i}\``).join(', ') : 'none';
     let services: string[] = [];
-    try { services = JSON.parse(fs.readFileSync(server.configuration.servicesFile ?? path.resolve('services.json'), 'utf8')).services ?? []; } catch { /* none listed */ }
+    // read from the delegate's source when the server started (runtime/serviceNames.ts)
+    try { services = (await server.configuration.serviceNames) ?? []; } catch { /* none known */ }
     let connectors: string[] = [];
     try { connectors = (await server.connectors?.list() ?? []).filter(c => c.enabled !== false).map(c => c.id); } catch { /* none */ }
     let groups: string[] = [];
@@ -55,6 +63,7 @@ async function facts(webApp, origin: string) {
         `- Environment: ${environment()}`,
         `- Services a model can call (\`camunda:delegateExpression\` or \`implementation\`): ${list(services)}. Anything else is not on this site: use a script task`,
         `- Connectors (\`camunda:connector\`): ${list(connectors)}`,
+        ...(contractOf(server) ? [`- The application's contract (its variables \`appVars.<name>\` and functions \`appServices.<name>\`, with their types; its roles and pages): ${origin}/api/v3/application`] : []),
         `- User groups in use: ${list(groups)}. Give each role a lane named as its group: the lane's tasks are offered to that group (\`@login ... with role of\` in tests)`,
         `- A model opens in the editor at ${origin}/model/edit/<name>, for a person signed in to this site (the API key does not open it)`,
     ].join('\n');

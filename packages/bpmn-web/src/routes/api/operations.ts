@@ -1,5 +1,6 @@
-import { BPMNAdminAPI, SecureUser } from '../../index.js';
+import { BPMNAdminAPI, SecureUser, registrationsOf } from '../../index.js';
 import { ViewHelper } from '../ViewHelper.js';
+import { CaseAccess } from '../caseAccess.js';
 import { invokeDecision } from '../decisions.js';
 import { assertModelAcceptable, checkModel } from '../../runtime/modelVerification.js';
 
@@ -65,7 +66,8 @@ export class Operations {
     start(user: SecureUser, name: string, { data, options = {} }: EngineInput = {}) {
         return this.api.engine.start(name, data, user, options);
     }
-    assign(user: SecureUser, query, data, assignment, options = {}) {
+    /** The case's security policy may refuse giving the task to someone else (the API's pre-action). */
+    async assign(user: SecureUser, query, data, assignment, options = {}) {
         return this.api.engine.assign(query, data, assignment, user, options);
     }
     invoke(user: SecureUser, query, { data, options }: EngineInput = {}) {
@@ -79,7 +81,7 @@ export class Operations {
     }
     /** An instance, through the engine (its live copy if this server runs it). */
     get(user: SecureUser, query) {
-        return this.server.engine.get(user.qualifyInstances(query ?? {}));
+        return this.api.data.qualifyQuery('instances', query, user).then(q => this.server.engine.get(q));
     }
     throwMessage(user: SecureUser, messageId: string, data, messageMatchingKey = {}, options = {}) {
         return this.api.engine.throwMessage(messageId, data, messageMatchingKey, user, options);

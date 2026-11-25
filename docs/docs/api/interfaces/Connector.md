@@ -18,6 +18,7 @@
 - [retries](Connector.md#retries)
 - [auth](Connector.md#auth)
 - [test](Connector.md#test)
+- [testing](Connector.md#testing)
 - [createdAt](Connector.md#createdat)
 - [updatedAt](Connector.md#updatedat)
 
@@ -29,7 +30,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L46)
+[packages/bpmn-server/src/connectors/Connectors.ts:52](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L52)
 
 ___
 
@@ -39,7 +40,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:47](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L47)
+[packages/bpmn-server/src/connectors/Connectors.ts:53](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L53)
 
 ___
 
@@ -49,7 +50,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:48](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L48)
+[packages/bpmn-server/src/connectors/Connectors.ts:54](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L54)
 
 ___
 
@@ -57,7 +58,7 @@ ___
 
 • **openapi**: `Object`
 
-the document, kept as it was read (packed: see `document(id)` to read it)
+where the document came from and what it is; the document itself in the file (`document(id)` reads it)
 
 #### Type declaration
 
@@ -67,12 +68,12 @@ the document, kept as it was read (packed: see `document(id)` to read it)
 | `version` | `string` |
 | `title?` | `string` |
 | `fetchedAt` | `string` |
-| `packed` | `string` |
 | `bytes` | `number` |
+| `document?` | `any` |
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L50)
+[packages/bpmn-server/src/connectors/Connectors.ts:56](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L56)
 
 ___
 
@@ -82,7 +83,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:51](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L51)
+[packages/bpmn-server/src/connectors/Connectors.ts:57](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L57)
 
 ___
 
@@ -94,7 +95,7 @@ the operations designers may use, by operationId
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L53)
+[packages/bpmn-server/src/connectors/Connectors.ts:59](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L59)
 
 ___
 
@@ -106,7 +107,7 @@ the groups that may design with it; empty: every designer
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L55)
+[packages/bpmn-server/src/connectors/Connectors.ts:61](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L61)
 
 ___
 
@@ -116,7 +117,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L56)
+[packages/bpmn-server/src/connectors/Connectors.ts:62](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L62)
 
 ___
 
@@ -126,7 +127,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L57)
+[packages/bpmn-server/src/connectors/Connectors.ts:63](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L63)
 
 ___
 
@@ -136,7 +137,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L58)
+[packages/bpmn-server/src/connectors/Connectors.ts:64](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L64)
 
 ___
 
@@ -146,7 +147,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L59)
+[packages/bpmn-server/src/connectors/Connectors.ts:65](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L65)
 
 ___
 
@@ -166,7 +167,19 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L60)
+[packages/bpmn-server/src/connectors/Connectors.ts:66](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L66)
+
+___
+
+### testing
+
+• `Optional` **testing**: [`ConnectorTesting`](ConnectorTesting.md)
+
+what it answers outside production (APP_ENV development or test only): ConnectorTesting
+
+#### Defined in
+
+[packages/bpmn-server/src/connectors/Connectors.ts:68](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L68)
 
 ___
 
@@ -176,7 +189,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L61)
+[packages/bpmn-server/src/connectors/Connectors.ts:69](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L69)
 
 ___
 
@@ -186,4 +199,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/Connectors.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/Connectors.ts#L62)
+[packages/bpmn-server/src/connectors/Connectors.ts:70](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/Connectors.ts#L70)

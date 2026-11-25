@@ -1,5 +1,6 @@
 // Builds the model editor (modeler/src) into public/modeler: modeler.js and modeler.css, and the decision
-// editor: decision.js and decision.css; the Report for other pages (an instance's): report.js and report.css.
+// editor: decision.js and decision.css; the Report for other pages (an instance's): report.js and report.css; an
+// instance's page's Simulate: instance.js and instance.css.
 //   node modeler/build.mjs            production build
 //   node modeler/build.mjs --watch    rebuild on change, with source maps
 //   node modeler/build.mjs --dev      one build, not minified, with source maps
@@ -12,7 +13,7 @@ const dev = watch || process.argv.includes('--dev');
 
 const options = {
     absWorkingDir: root,
-    entryPoints: { modeler: 'modeler/src/index.js', decision: 'modeler/src/decision.js', report: 'modeler/src/report/view.js' },
+    entryPoints: { modeler: 'modeler/src/index.js', decision: 'modeler/src/decision.js', report: 'modeler/src/report/view.js', instance: 'modeler/src/instance/view.js' },
     outdir: 'public/modeler',
     bundle: true,
     format: 'iife',

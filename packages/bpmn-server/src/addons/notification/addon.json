@@ -1,0 +1,41 @@
+{
+  "name": "notification",
+  "title": "Notifications",
+  "brief": "Who is told what, as work starts and ends.",
+  "description": "Who is told what as tasks start and end: notification policies, decision tables whose rules say whom and with what message; kept, and delivered by the application's notify or by email.",
+  "docs": "add-ons/notification/",
+  "attributes": [
+    "owf:notificationPolicy"
+  ],
+  "settings": [
+    {
+      "name": "NOTIFICATIONS",
+      "label": "Delivery",
+      "main": true
+    },
+    {
+      "name": "EMAIL_ENABLE",
+      "label": "Email sent",
+      "main": true
+    },
+    {
+      "name": "EMAIL_FROM",
+      "label": "Sender",
+      "main": true
+    },
+    {
+      "name": "SMTP_USER",
+      "label": "Mail account",
+      "main": true
+    },
+    {
+      "name": "SMTP_PASSWORD",
+      "label": "Mail password",
+      "main": true
+    },
+    {
+      "name": "EMAIL_LOG",
+      "label": "Email log"
+    }
+  ]
+}

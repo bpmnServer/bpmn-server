@@ -13,6 +13,11 @@ import { checkBootConfig, reportBootConfig } from './runtime/bootConfig.js';
 import { settingsSchema } from './routes/api/settings.js';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
+/** This build's version, from the package's own package.json. */
+function packageVersion(): string {
+	try { return JSON.parse(fs.readFileSync(path.join(PACKAGE_ROOT, 'package.json'), 'utf8')).version ?? '?'; }
+	catch { return '?'; }
+}
 
 /** DATABASE=sqlite:<file>: the file, relative to the application's folder; else undefined (MongoDB at MONGO_DB_URL). */
 export function sqliteFile(value = process.env.DATABASE): string | undefined {
@@ -57,6 +62,14 @@ export interface StartOptions {
 	userManager?: IUserManager;
 	/** The API's settings (keys, service account, impersonation) of this server; default `.env`'s (runtime/hostSettings.ts). */
 	hostSettings?: WorkflowApplication['hostSettings'];
+	/** The .env the Settings page (/dashboard/settings) changes; default the working folder's. */
+	envFile?: string;
+	/**
+	 * The application's own engine calls, added to bpmn-web's (#294): they run in the engine, under its lock, and a
+	 * host route asks for one by name (`web.bpmnServer.engine.call('app.x', ...)`). With the engine elsewhere
+	 * (ENGINE_AT), give the same calls to its startEngineService.
+	 */
+	engineCalls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>>;
 }
 
 function isTrue(param) {
@@ -75,6 +88,9 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 	invalid.forEach(message => console.warn('[config] ' + message));
 	const configuration = new Configuration({
 		definitionsPath: path.resolve('processes') + path.sep,
+		// the application's contract (app-contract.json): its roles, variables, functions and pages. APP_CONTRACT
+		// moves it, as a test does to keep the repository's own out of the way
+		...(process.env.APP_CONTRACT ? { appContract: path.resolve(process.env.APP_CONTRACT) } : {}),
 		templatesPath: path.join(PACKAGE_ROOT, 'emailTemplates') + path.sep,
 		timers: { precision: 3000 },
 		database: {
@@ -103,18 +119,23 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 		runServiceTasks: runSetting('SERVICE_TASKS'),
 		// MODEL_HISTORY=false: saves keep no versions, and the editor has no History tab
 		modelHistory: process.env.MODEL_HISTORY?.toLowerCase() !== 'false',
+		// FORM_RULES=false: a task's form rules are not checked when it is completed
+		formRules: process.env.FORM_RULES?.toLowerCase() !== 'false',
 		cacheManager: server => new NoCacheManager(server),
 		// DATABASE=sqlite:<file>: everything in one SQLite file (instances, models, locks, users, sessions)
 		...(sqliteFile() ? { documentStore: () => sqliteStore(sqliteFile()) } : {}),
 		...engineEnv,
 		...settings,
 	} as any);
+	// the Model History add-on off (app-config.json): a save keeps no version
+	try { if (!configuration.addOns(null).some(a => a.name === 'modeling')) configuration.modelHistory = false; }
+	catch { /* app-config.json can't be read: the server's start says so */ }
 	return configuration;
 }
 
 /**
- * The database's indexes, and the first user (admin, password ADMIN_PASSWORD) when there are no users at all; without
- * ADMIN_PASSWORD, the server's first page asks for the administrator.
+ * The database's indexes, and the first user when there are no users at all: `admin`, with ADMIN_PASSWORD or a
+ * password it makes up and prints once (UserService.install). Returns whether it made one.
  */
 export async function setup(server: BPMNServer, users: UserService | null = undefined) {
 	// the engine's stores are the engine's to set up (docs/design/engine-isolation.md); an embedded server, here
@@ -182,6 +203,9 @@ async function startMemoryDatabase() {
  *   await start({ config, appDelegate: AppDelegate, api: true, ui: true });
  */
 export async function start(options: StartOptions = {}) {
+	// which build is running, and where it was loaded from: an application with its own copy in node_modules runs that
+	// one, not a linked checkout, and the two are easy to confuse
+	console.log(`bpmn-web ${packageVersion()} from ${PACKAGE_ROOT}`);
 	// each setting's value against the settings schema, and a name in .env that is close to a setting: one line each
 	try {
 		const envFile = path.resolve('.env');
@@ -218,7 +242,8 @@ export async function start(options: StartOptions = {}) {
 		routes: options.routes,
 		userManager: options.userManager,
 		hostSettings: options.hostSettings,
-		serverOptions: options.setupOnly || options.console ? { cron: false } : {},
+		envFile: options.envFile,
+		serverOptions: { ...(options.setupOnly || options.console ? { cron: false } : {}), ...(options.engineCalls ? { calls: options.engineCalls } : {}) },
 	};
 	const { WebApp } = await import('./app.js');
 	const webApp = new WebApp(application);
@@ -234,20 +259,18 @@ export async function start(options: StartOptions = {}) {
 				? 'setup done: the database is ready; the application manages its users'
 			: await usersNow(users) > 0
 				? 'setup done: the database is ready; it already has users, none was added'
-				: 'setup done: the database is ready; no users yet: start the server, and its first page asks for the administrator');
+				: 'setup done: the database is ready; no users yet: start the server: it makes the administrator, and prints its password once');
 		await webApp.bpmnServer.shutdown();
 		process.exit(0);
 	}
 	if (options.console) {
 		const { runConsole } = await import('./console.js');
-		await runConsole(webApp.bpmnServer);
+		// an application that manages its own users (users is null) has none of bpmn-web's for lu and spw to show
+		await runConsole(webApp.bpmnServer, undefined, { ownUsers: !users });
 		return webApp;
 	}
-	// no users, and sign-in on: the pages ask for the administrator, with a token printed here
-	if (users && process.env.REQUIRE_AUTHENTICATION !== 'false' && await usersNow(users) === 0) {
-		const { beginFirstRun } = await import('./userAccess/firstRun.js');
-		beginFirstRun(webApp.app);
-	}
+	// A server with no users makes its administrator, and prints the password, as it starts (UserService.install): there
+	// is no page that asks for one.
 	webApp.start();
 	return webApp;
 }

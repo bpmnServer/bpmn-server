@@ -21,7 +21,7 @@ A saved version of a model.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:6](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L6)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:6](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L6)
 
 ___
 
@@ -33,7 +33,7 @@ when it was saved (ISO): its file's time
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:8](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L8)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:8](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L8)
 
 ___
 
@@ -45,7 +45,7 @@ who saved it, when known
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L10)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:10](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L10)
 
 ___
 
@@ -57,4 +57,4 @@ its size in bytes: its file's
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/ModelHistory.ts:12](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelHistory.ts#L12)
+[packages/bpmn-server/src/datastore/ModelHistory.ts:12](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/ModelHistory.ts#L12)

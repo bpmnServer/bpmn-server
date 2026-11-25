@@ -17,6 +17,7 @@ import { pathToFileURL } from 'node:url';
 
 import { verifyModel } from './elements/verifyModel.js';
 import type { IModelIssue } from './elements/verifyModel.js';
+import { enabledAddOns, addOnManifests } from './addons/index.js';
 import { init, INIT_USAGE } from './init.js';
 import { setup } from './setup.js';
 
@@ -54,7 +55,7 @@ async function verify(targets: string[], json: boolean): Promise<number> {
         if (!files.length)
             results.push({ file: target, valid: false, errors: 1, warnings: 0, issues: [{ severity: 'error', code: 'not-found', message: 'no .bpmn files' }] });
         for (const file of files) {
-            const result = await verifyModel(fs.readFileSync(file, 'utf8'), undefined, path.basename(file, '.bpmn'), { decisionsFolder: path.dirname(file) });
+            const result = await verifyModel(fs.readFileSync(file, 'utf8'), undefined, path.basename(file, '.bpmn'), { decisionsFolder: path.dirname(file), addOns: enabledAddOns(), manifests: addOnManifests() });
             results.push({ file, ...result });
         }
     }
@@ -72,6 +73,14 @@ async function verify(targets: string[], json: boolean): Promise<number> {
 
 export async function main(argv: string[]): Promise<number> {
     const [command, ...rest] = argv;
+    // which build is answering, and where it came from: a global link and an application's own copy are easy to mix up.
+    // Not where the output is read by something else (--json), and not for the usage.
+    if (command && !['--help', '-h', 'help'].includes(command) && !rest.includes('--json')) {
+        const root = path.join(import.meta.dirname, '..');
+        let version = '?';
+        try { version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version ?? '?'; } catch { }
+        console.log(`bpmn-server ${version} from ${root}`);
+    }
     if (command === 'verify') {
         const json = rest.includes('--json');
         const targets = rest.filter(a => a !== '--json');

@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
 
 // The right-hand panel: the person's tasks waiting in the workflows (BPMN Server's API v3, with the HR session), on
-// every HR page. A task opens in the workflow pages (pages/Workflow.jsx). It refreshes now and then, when the window
-// comes back, and when a workflow page loads (a task completed there): the event 'workflow-changed'.
-const REFRESH_MS = 30_000;
+// every HR page. A task opens in the workflow pages (pages/Workflow.jsx). It reads the tasks when the page loads, when the
+// person asks (its Refresh button), and when a workflow page loads (a task completed there): the event 'workflow-changed'. It
+// does not poll: each read is a query of the tasks (fable-review.md H5).
 const KEY = 'hr.taskPanel';
 const RECENT = 5;
 
@@ -57,10 +57,8 @@ export default function TaskPanel({ onToggle, onCount }) {
 
   useEffect(() => {
     load();
-    const timer = setInterval(load, REFRESH_MS);
-    window.addEventListener('focus', load);
     window.addEventListener('workflow-changed', load);
-    return () => { clearInterval(timer); window.removeEventListener('focus', load); window.removeEventListener('workflow-changed', load); };
+    return () => window.removeEventListener('workflow-changed', load);
   }, [load]);
 
   useEffect(() => { onToggle?.(open && tasks !== false); }, [open, tasks, onToggle]);
@@ -88,7 +86,17 @@ export default function TaskPanel({ onToggle, onCount }) {
   useEffect(() => { onCount?.(tasks === false ? null : waiting); }, [tasks, waiting, onCount]);
   const go = to => { if (isPhone()) setOpen(false); navigate(to); };
 
-  const open_ = t => go(`/workflow/invokeItem?id=${encodeURIComponent(t.id)}&processName=${encodeURIComponent(t.processName)}&elementId=${encodeURIComponent(t.elementId)}`);
+  /**
+   * Where a task opens. A model may name one of HR's own forms (`camunda:formKey`, docs/design/form-keys.md flow A):
+   * then the task's `form.formKey` is that page's address, and we open it ourselves with the identifiers it needs —
+   * never through owf, and with no case data in the address. Anything else opens in the workflow pages, as before.
+   */
+  const open_ = t => {
+    const key = t.form?.formKey;
+    if (typeof key === 'string' && key.startsWith('/'))
+      return go(`${key}?instance=${encodeURIComponent(t.instanceId)}&item=${encodeURIComponent(t.id)}&returnTo=${encodeURIComponent(window.location.pathname)}`);
+    return go(`/workflow/invokeItem?id=${encodeURIComponent(t.id)}&processName=${encodeURIComponent(t.processName)}&elementId=${encodeURIComponent(t.elementId)}`);
+  };
   const row = t => (
     <li key={t.id}>
       <button className="task-item" onClick={() => open_(t)} title={`Open ${t.name || t.elementId}`}>
@@ -139,7 +147,7 @@ export default function TaskPanel({ onToggle, onCount }) {
                 : <p className="task-empty">Nothing completed yet.</p>}
             </>
           )}
-          <button className="btn btn-sm task-all" onClick={() => go('/workflow/dashboard')}>My Work: start a process</button>
+          <button className="btn btn-sm task-all" onClick={() => go('/workflow/dashboard#start-events')}>My Work: start a process</button>
         </aside>
       )}
     </>

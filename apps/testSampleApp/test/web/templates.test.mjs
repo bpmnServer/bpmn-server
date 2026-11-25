@@ -8,6 +8,9 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { startWebApp, why } from '../support/webApp.mjs';
 
+// element templates are a preview in 3.7.1, off unless ELEMENT_TEMPLATES=on (docs/design/roadmap.md)
+process.env.ELEMENT_TEMPLATES = 'on';
+
 const WEB = path.resolve(import.meta.dirname, '..', '..', '..', '..', 'packages', 'bpmn-web');
 const { checkTemplate, loadTemplateCatalog } = await import(pathToFileURL(path.join(WEB, 'dist', 'routes', 'elementTemplates.js')));
 

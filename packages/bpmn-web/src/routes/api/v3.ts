@@ -1,4 +1,5 @@
 import express from 'express';
+import { accessDirectory } from '../caseAccess.js';
 import { door } from './door.js';
 import { Tokens, TokenError } from './tokens.js';
 import { canDesign, isAdminGroups } from '../../userAccess/roles.js';
@@ -13,6 +14,12 @@ import { hostUserManager } from '../../userAccess/UserManager.js';
 import { originOf } from '../modelApi.js';
 import { InstanceOperations, InstanceError, DEFAULT_LIMIT as INSTANCES_LIMIT } from './instances.js';
 import { invokeDecision } from '../decisions.js';
+import { labelFilterQuery, labeledTasks, labeledInstances, LabelFilterError, listViewOf } from './labels.js';
+import { ListColumnError } from '../../index.js';
+import { serverEnvironment } from '../../runtime/environment.js';
+import { levelsFor } from '../aiAccess.js';
+import { GuideOperations, GuideError } from './guide.js';
+import { contractProblems } from '../../index.js';
 
 /*
  * API v3, /api/v3 (docs/design/api-v3.md): every call through the door (a user's token, or the service key) and as
@@ -33,6 +40,7 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
     const router = express.Router();
     const tokens = new Tokens(server);
     const tasks = new TaskOperations(server);
+    const guides = new GuideOperations(server);
     const instances = new InstanceOperations(server);
     const models = new ModelOperations(server);
     const settings = new SettingsOperations(server);
@@ -83,59 +91,101 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         catch (error) {
             if (error instanceof ModelError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
-            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError)
+            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError || error instanceof LabelFilterError || error instanceof ListColumnError || error instanceof GuideError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
             if (body.code === 'BAD_AFTER')
                 return res.status(400).json({ error: { code: 'BAD_CURSOR', message: 'cursor is a page\'s next' } });
-            res.status(code).json({ error: { code: body.code, message: body.errors } });
+            res.status(code).json({ error: { code: body.code, message: body.errors, ...(body.details ? { details: body.details } : {}) } });
         }
     };
+
+    // the application's contract (app-contract.json, docs/design/app-contract.md): what a model may use of it; 404 without one
+    router.get('/application', (req, res) => {
+        let contract = null;
+        try { contract = server.appDelegate?.describe?.() ?? null; } catch { contract = null; }
+        if (!contract) return res.status(404).json({ error: { code: 'NO_CONTRACT', message: 'This application publishes no contract (app-contract.json)' } });
+        res.json({ ...contract, problems: contractProblems(contract) });
+    });
 
     // who I am, and what I may do
     router.get('/me', handler(async (req, user) => ({
         userName: user.userName,
         groups: user.userGroups,
         credential: req.apiCredential,
-        may: { start: true, design: canDesign(user), administer: isAdminGroups(user.userGroups) },
+        // aiLink: a link for their AI agent (/ai/key), with the AI Agents add-on on and a level for them
+        may: { start: true, design: canDesign(user), administer: isAdminGroups(user.userGroups),
+            aiLink: req.app?.locals?.addOnOn?.('ai') !== false && levelsFor(user).length > 0 },
+        // the server's environment, for an application's own layout to show (runtime/environment.ts)
+        environment: serverEnvironment(),
     })));
 
     // ---- processes: what this user may start, and starting one as them
 
     router.get('/processes/startable', handler(async (req, user) => ({ items: await tasks.startable(user) })));
-    router.post('/processes/:name/start', handler((req, user) => tasks.start(user, req.params.name, { data: req.body?.data ?? {}, startNodeId: req.body?.startNodeId }), 201));
+    // a process explained, for whoever may start it or works in it (guide.ts)
+    router.get('/processes/:name/guide', handler((req, user) => guides.guide(user, req.params.name)));
+    router.post('/processes/:name/start', handler(async (req, user) => {
+        const { instance, task } = await tasks.start(user, req.params.name, { data: req.body?.data ?? {}, startNodeId: req.body?.startNodeId });
+        return { instance: (await labeledInstances(server, [instance]))[0], task: task ? (await labeledTasks(server, [task]))[0] : null };
+    }, 201));
+    // a start form's field with a list or a lookup: its choices, for { text, data, startNodeId } (docs/design/form-lookups.md)
+    router.post('/processes/:name/choices/:field', handler(async (req, user) => tasks.startChoices(user, req.params.name, req.params.field, req.body ?? {})));
 
-    // ---- tasks: the waiting tasks this user has a part in; one with its form; claim; complete
+    // ---- tasks: the waiting tasks this user has a part in; one with its form; claim; complete. Each labeled (labels.ts).
 
+    const oneTask = async task => (await labeledTasks(server, [task]))[0];
     router.get('/tasks', handler(async (req, user) => {
+        // a filter by label: ?model=&field=&op=&value=&search=
+        const query = await labelFilterQuery(server, req.query, typeof req.query.model === 'string' ? req.query.model : undefined) ?? {};
         // the ones this user completed, newest first
         if (req.query.status === 'completed')
-            return { items: await tasks.completed(user, { limit: req.query.limit === undefined ? 10 : Number(req.query.limit) }) };
+            return { items: await labeledTasks(server, await tasks.completed(user, { limit: req.query.limit === undefined ? 10 : Number(req.query.limit), query })) };
+        // the person's columns, and what it is sorted by: ?columns=Client,data.amount&sort=Client&order=asc
+        const view = await listViewOf(server, req.query, typeof req.query.model === 'string' ? req.query.model : undefined);
         const { tasks: items, next } = await tasks.list(user, {
             limit: req.query.limit === undefined ? DEFAULT_LIMIT : Number(req.query.limit),
             after: fromCursor(req.query.cursor),
+            query, ...view,
         });
-        return { items, ...(next ? { next: toCursor(next) } : {}) };
+        return { items: await labeledTasks(server, items), ...(next ? { next: toCursor(next) } : {}) };
     }));
-    router.get('/tasks/:id', handler((req, user) => tasks.get(user, req.params.id)));
-    router.post('/tasks/:id/claim', handler((req, user) => tasks.claim(user, req.params.id)));
-    router.post('/tasks/:id/complete', handler((req, user) => tasks.complete(user, req.params.id, req.body?.data ?? {})));
+    router.get('/tasks/:id', handler(async (req, user) => oneTask(await tasks.get(user, req.params.id))));
+    // a form field with a list or a lookup: its choices, for { text, data } (docs/design/form-lookups.md)
+    router.post('/tasks/:id/choices/:field', handler(async (req, user) => tasks.choices(user, req.params.id, req.params.field, req.body ?? {})));
+    router.post('/tasks/:id/claim', handler(async (req, user) => ({ task: await oneTask((await tasks.claim(user, req.params.id)).task) })));
+    router.post('/tasks/:id/complete', handler(async (req, user) => {
+        const { task, instance } = await tasks.complete(user, req.params.id, req.body?.data ?? {});
+        return { task: await oneTask(task), instance: (await labeledInstances(server, [instance]))[0] };
+    }));
 
     // ---- instances: those this user may see; one; why it went the way it did; what moves it on
 
     const limitOf = (req, fallback) => req.query.limit === undefined ? fallback : Number(req.query.limit);
     router.get('/instances', handler(async (req, user) => {
+        const name = typeof req.query.name === 'string' ? req.query.name : undefined;
         const { instances: items, next } = await instances.list(user, {
             status: typeof req.query.status === 'string' ? req.query.status : undefined,
-            name: typeof req.query.name === 'string' ? req.query.name : undefined,
+            name,
             limit: limitOf(req, INSTANCES_LIMIT),
             after: fromCursor(req.query.cursor),
+            // a filter by label, within the model named: ?field=&op=&value=&search=
+            query: await labelFilterQuery(server, req.query, name),
+            // the person's columns, and what it is sorted by: ?columns=Client,data.amount&sort=Client&order=asc
+            ...await listViewOf(server, req.query, name),
         });
         return { items, ...(next ? { next: toCursor(next) } : {}) };
     }));
     router.get('/instances/:id', handler((req, user) => instances.get(user, req.params.id)));
     router.get('/instances/:id/rationale', handler((req, user) => instances.rationale(user, req.params.id)));
+    router.get('/instances/:id/notifications', handler((req, user) => instances.notifications(user, req.params.id)));
+    // who may do what with a case names people: an administrator's own token or the service key; never an AI link
+    router.get('/instances/:id/access', (req: any, res, next) => req.apiScope
+        ? res.status(403).json({ error: { code: 'LEVEL_REFUSED', message: 'An AI link does not reach who may do what' } })
+        : req.apiCredential === 'service' || isAdminGroups(req.apiUser?.userGroups) ? next()
+        : res.status(403).json({ error: { code: 'ADMIN_REQUIRED', message: 'Only an administrator sees who may do what with an instance' } }),
+        handler(async (req, user) => instances.whoMay(user, req.params.id, await accessDirectory(req, server))));
     router.post('/instances/:id/events/:elementId', handler(async (req, user) => ({ instance: await instances.startEvent(user, req.params.id, req.params.elementId, req.body?.data ?? {}) })));
     router.post('/instances/:id/restart', handler(async (req, user) => ({ instance: await instances.restart(user, req.params.id, req.body?.itemId, req.body?.data ?? {}) })));
     router.delete('/instances/:id', handler((req, user) => instances.remove(user, req.params.id)));

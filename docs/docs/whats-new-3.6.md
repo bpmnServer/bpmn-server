@@ -51,7 +51,7 @@ an event.
 
 ## Building workflows with an AI agent
 
-A guide for AI agents that build workflows on BPMN Server: the loop, what to read, working locally (`verify --json`,
+A guide for AI agents that build workflows on OmniWorkflow: the loop, what to read, working locally (`verify --json`,
 `npm test`), and the API calls that work remotely today. See [Building workflows with AI](ai/building-workflows.md).
 A new application's `npm test` runs every model's `.feature` file in memory.
 

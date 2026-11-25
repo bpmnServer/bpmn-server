@@ -103,7 +103,7 @@ test('import refuses unsafe file names', async () => {
 
 test('the modeler lays out a saved model without a diagram, without changing the file', async () => {
   fs.writeFileSync(path.join(web.definitionsPath, 'no-diagram.bpmn'), NO_DIAGRAM);
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
   const res = await designer.get('/model/edit/no-diagram');
   assert.equal(res.status, 200, why(res));
   const modelJson = /<script id="model-source" type="application\/json">([\s\S]*?)<\/script>/.exec(res.text)[1];

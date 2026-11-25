@@ -6,25 +6,28 @@ html(lang="en")
     if cspHost
       //- allow rendering inside the ITSM host iframe
       meta(http-equiv="Content-Security-Policy" content=`frame-ancestors 'self' ${cspHost}`)
-    title= `${name} - Decision editor`
+    title= `${name} - ${kind || 'Decision'} editor`
     meta(name="csrf-token" content=_csrf)
-    script(src="/javascripts/csrf.js")
+    script(src=asset("/javascripts/csrf.js"))
     link(rel="stylesheet" href=asset("/modeler/decision.css"))
+    link(rel="stylesheet" href=asset("/stylesheets/environment.css"))
   body(class=(typeof framed !== 'undefined' && framed) ? 'framed' : undefined)
     #decision-page(data-name=name data-exists=exists ? 'true' : 'false')
       header.modeler-header
         include includes/editorMenu.pug
+        include includes/environment.pug
         //- framed in a page of this site: its layout has the places; the editor's own actions stay
         unless typeof framed !== 'undefined' && framed
           a.brand(href="/" title="Home")
             img(src="/images/omniworkflow_icon.png" alt="Home")
           +editorMenu
         h1= name
-        span.decision-file= `${name}.dmn.xml`
+        span.decision-file= file || `${name}.dmn.xml`
+        +environmentBadge
         span#js-save-status.modeler-status(role="status")
         nav#js-views.decision-views(aria-label="Decisions")
         nav.modeler-actions
-          button#js-save.primary(type="button" title="Ctrl+S") Save
+          button#js-save.primary(type="button" title=(typeof environment !== 'undefined' && environment && environment.readOnly) ? 'This server is read-only' : 'Ctrl+S' disabled=(typeof environment !== 'undefined' && environment && environment.readOnly)) Save
         +editorUser
       .decision-body
         #js-decision.decision-canvas

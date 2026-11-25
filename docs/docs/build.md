@@ -1,6 +1,6 @@
 # Build a workflow application
 
-Journey B: your own application on BPMN Server, with your models, users and services. The [tutorials](tutorial/start.md) take you through it with one example.
+Your own application on OmniWorkflow, with your models, users and services. The [tutorials](tutorial/start.md) take you through it with one example.
 
 What `init` makes is a skeleton: bpmn-web with your models and services, working from the first start. Keep its pages for
 a team that works inside it, or replace its sign-in and pages with your own application's, keeping bpmn-web's APIs and
@@ -17,7 +17,7 @@ cd my-app
 npm start
 ```
 
-Open **http://localhost:3000**. The first page asks for the administrator: give the setup token the server printed when it started, and choose a name and password. See [The first start](setup.md#the-first-start). The in-memory database is **temporary** and is cleared when the application stops.
+Open **http://localhost:3000**. Sign in as `admin`, with the password the server prints when it first starts. See [The first start](setup.md#the-first-start). The in-memory database is **temporary** and is cleared when the application stops.
 
 For data that is kept, create the application without `--memory`: it uses MongoDB, or SQLite as [Custom persistence](persistence.md) shows. See [Installation](setup.md).
 
@@ -26,7 +26,7 @@ The generated project contains:
 | Location | Role |
 | --- | --- |
 | `processes/` | BPMN process models and DMN decisions, with their tests |
-| `connectors/appServices.ts` | TypeScript services called by service tasks |
+| `delegates/appServices.ts` | TypeScript services called by service tasks |
 | `delegates/appDelegate.ts` | Application lifecycle hooks and service provider |
 | `settings/config.ts` | How the application behaves |
 | `.env` | What differs per machine, and secrets |
@@ -42,7 +42,7 @@ Model in the [model editor](modeler.md): its **Problems** tab checks the model a
 
 Tests are Gherkin files beside the models, run in the engine: [Testing and debugging models](testing.md), and [Tutorial 7](tutorial/tutorial-testing.md).
 
-**Try this first:** a "Request approval" process: **Start → Submit request (user task) → Approve request (user task) → End**. Once that works, add a gateway for **Approved?** and a rejection path. It exercises most of what a real process needs.
+A first model to try: the request approval of [try.omniworkflow.com](first-workflow.md#tryomniworkflowcom-your-own-workflows).
 
 ## 4. Integrate services
 

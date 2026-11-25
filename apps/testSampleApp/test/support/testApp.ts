@@ -38,7 +38,7 @@ export class Run {
     }
     /** The elements waiting (user tasks, receive tasks, catching and boundary events), by id. */
     waiting(): string[] {
-        return [...new Set((this.instance.items ?? []).filter(i => i.status === 'wait').map(i => i.elementId))];
+        return [...new Set<string>((this.instance.items ?? []).filter(i => i.status === 'wait').map(i => String(i.elementId)))];
     }
 
     /** Complete the waiting element with data, as `user`; fails when it is not waiting. */

@@ -22,7 +22,10 @@
 - [apiKey](Configuration.md#apikey)
 - [moddleOptions](Configuration.md#moddleoptions)
 - [servicesFile](Configuration.md#servicesfile)
+- [delegateFile](Configuration.md#delegatefile)
+- [serviceNames](Configuration.md#servicenames)
 - [sendGridAPIKey](Configuration.md#sendgridapikey)
+- [appConfig](Configuration.md#appconfig)
 - [serverId](Configuration.md#serverid)
 - [locks](Configuration.md#locks)
 - [shutdownTimeout](Configuration.md#shutdowntimeout)
@@ -31,6 +34,7 @@
 - [runServiceTasks](Configuration.md#runservicetasks)
 - [connectors](Configuration.md#connectors)
 - [modelHistory](Configuration.md#modelhistory)
+- [formRules](Configuration.md#formrules)
 
 ### Methods
 
@@ -39,6 +43,8 @@
 - [dataStore](Configuration.md#datastore)
 - [cacheManager](Configuration.md#cachemanager)
 - [scriptHandler](Configuration.md#scripthandler)
+- [addOns](Configuration.md#addons)
+- [addOnManifests](Configuration.md#addonmanifests)
 - [documentStore](Configuration.md#documentstore)
 - [locker](Configuration.md#locker)
 
@@ -62,7 +68,7 @@ Each factory given replaces the default one; one left out keeps it.
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L63)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:79](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L79)
 
 ## Properties
 
@@ -76,7 +82,7 @@ Each factory given replaces the default one; one left out keeps it.
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L16)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:18](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L18)
 
 ___
 
@@ -90,7 +96,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L17)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L19)
 
 ___
 
@@ -111,7 +117,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L18)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L20)
 
 ___
 
@@ -137,7 +143,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L19)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:21](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L21)
 
 ___
 
@@ -151,7 +157,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L29)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:31](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L31)
 
 ___
 
@@ -165,7 +171,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L30)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L32)
 
 ___
 
@@ -181,7 +187,7 @@ Extensions to the BPMN model's types (bpmn-moddle's); reading a model needs them
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L31)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L33)
 
 ___
 
@@ -189,7 +195,7 @@ ___
 
 • `Optional` **servicesFile**: `string`
 
-The names of the application's services (scanServices in bpmn-web), for what checks models outside the engine. Default: services.json in the current folder.
+No longer read (before 3.7.2: a services.json the scan wrote); the names come from the delegate's source.
 
 #### Implementation of
 
@@ -197,7 +203,40 @@ The names of the application's services (scanServices in bpmn-web), for what che
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L32)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:34](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L34)
+
+___
+
+### delegateFile
+
+• `Optional` **delegateFile**: `string`
+
+Where the application's delegate's source is, read at start for its services' names (default delegates/appDelegate.ts).
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[delegateFile](../interfaces/IConfiguration.md#delegatefile)
+
+#### Defined in
+
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:35](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L35)
+
+___
+
+### serviceNames
+
+• `Optional` **serviceNames**: `string`[] \| `Promise`\<`string`[]\>
+
+The names of the application's services, read from the delegate's source at start (bpmn-web: runtime/serviceNames.ts),
+for what checks models outside the engine; null when it could not be read (the engine is asked instead).
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[serviceNames](../interfaces/IConfiguration.md#servicenames)
+
+#### Defined in
+
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:36](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L36)
 
 ___
 
@@ -207,7 +246,23 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L33)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:37](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L37)
+
+___
+
+### appConfig
+
+• `Optional` **appConfig**: `string`
+
+Where the application's app-config.json is (which add-ons are on); the working folder's by default.
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[appConfig](../interfaces/IConfiguration.md#appconfig)
+
+#### Defined in
+
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:54](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L54)
 
 ___
 
@@ -223,7 +278,7 @@ This process's identity as a lock owner (default `SERVER_ID`, else host, process
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L53)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:67](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L67)
 
 ___
 
@@ -245,7 +300,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L54)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:68](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L68)
 
 ___
 
@@ -261,7 +316,7 @@ How long `shutdown()` waits for running executions, in milliseconds (10000).
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L55)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:69](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L69)
 
 ___
 
@@ -279,7 +334,7 @@ Both of the above false. Set them instead.
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L56)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:70](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L70)
 
 ___
 
@@ -296,7 +351,7 @@ says so in the run's decisions. Default true.
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L57)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:71](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L71)
 
 ___
 
@@ -312,7 +367,7 @@ false: service tasks call nothing: they end with no output, and say so in the ru
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L58)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:72](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L72)
 
 ___
 
@@ -328,7 +383,7 @@ Connectors' calls (docs/docs/connectors.md): the defaults a connector's own time
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L59)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:73](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L73)
 
 ___
 
@@ -344,7 +399,23 @@ Each save of a model keeps a version in `.history/<name>/` beside it, for the ed
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L60)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:74](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L74)
+
+___
+
+### formRules
+
+• `Optional` **formRules**: `boolean`
+
+false: a form's rules are not checked (elements/FormRules.ts). Default true.
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[formRules](../interfaces/IConfiguration.md#formrules)
+
+#### Defined in
+
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:76](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L76)
 
 ## Methods
 
@@ -368,7 +439,7 @@ Each save of a model keeps a version in `.history/<name>/` beside it, for the ed
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L34)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L38)
 
 ___
 
@@ -392,7 +463,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L37)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:41](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L41)
 
 ___
 
@@ -416,7 +487,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L40)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L44)
 
 ___
 
@@ -440,7 +511,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L43)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:47](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L47)
 
 ___
 
@@ -464,7 +535,53 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L46)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:50](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L50)
+
+___
+
+### addOns
+
+▸ **addOns**(`server`): [`IAddOn`](../interfaces/IAddOn.md)[]
+
+The add-ons that are on (engine/AddOns.ts): those app-config.json names, every one without it; unless the configuration gives its own.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
+
+#### Returns
+
+[`IAddOn`](../interfaces/IAddOn.md)[]
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[addOns](../interfaces/IConfiguration.md#addons)
+
+#### Defined in
+
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:56](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L56)
+
+___
+
+### addOnManifests
+
+▸ **addOnManifests**(): [`IAddOnManifest`](../interfaces/IAddOnManifest.md)[]
+
+Every add-on bpmn-server comes with, on or off: their manifests.
+
+#### Returns
+
+[`IAddOnManifest`](../interfaces/IAddOnManifest.md)[]
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[addOnManifests](../interfaces/IConfiguration.md#addonmanifests)
+
+#### Defined in
+
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:60](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L60)
 
 ___
 
@@ -490,7 +607,7 @@ The storage adapter both data stores use (MongoDB when absent): an in-memory sto
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:51](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L51)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:65](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L65)
 
 ___
 
@@ -516,4 +633,4 @@ The lock adapter (the data store's own when absent).
 
 #### Defined in
 
-[packages/bpmn-server/src/common/DefaultConfiguration.ts:52](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/common/DefaultConfiguration.ts#L52)
+[packages/bpmn-server/src/common/DefaultConfiguration.ts:66](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/common/DefaultConfiguration.ts#L66)

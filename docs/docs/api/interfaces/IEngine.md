@@ -50,7 +50,7 @@ loads a definitions  and start execution
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L54)
+[packages/bpmn-server/src/interfaces/server.ts:57](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L57)
 
 ___
 
@@ -74,7 +74,7 @@ this will also resume execution
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L72)
+[packages/bpmn-server/src/interfaces/server.ts:75](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L75)
 
 ___
 
@@ -109,7 +109,7 @@ instance,task	{instanceId: instanceId, elementId: value }
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:89](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L89)
+[packages/bpmn-server/src/interfaces/server.ts:92](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L92)
 
 ___
 
@@ -133,7 +133,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:91](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L91)
+[packages/bpmn-server/src/interfaces/server.ts:94](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L94)
 
 ___
 
@@ -156,7 +156,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:94](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L94)
+[packages/bpmn-server/src/interfaces/server.ts:97](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L97)
 
 ___
 
@@ -178,7 +178,7 @@ Removes the instances a query matches, each under its lock and with its timers.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:97](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L97)
+[packages/bpmn-server/src/interfaces/server.ts:100](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L100)
 
 ___
 
@@ -201,7 +201,7 @@ Marks a saved instance with a tag of the caller's.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:99](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L99)
+[packages/bpmn-server/src/interfaces/server.ts:102](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L102)
 
 ___
 
@@ -234,28 +234,24 @@ Invoking a start event (of a secondary process) against an existing instance
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:117](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L117)
+[packages/bpmn-server/src/interfaces/server.ts:120](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L120)
 
 ___
 
 ### throwMessage
 
-▸ **throwMessage**(`messageId`, `data`, `matchingQuery`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **throwMessage**(`messageId`, `data`, `matchingQuery`, `from?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
-signal/message raise a signal or throw a message
-
-will seach for a matching event/task given the signalId/messageId
-
-that can be againt a running instance or it may start a new instance
-----------------------------------------------------------------------------
+`from`: the item throwing it, in an instance; the Rationale says whom it reached, and each receiver from whom.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `messageId` | `any` | the id of the message or signal as per bpmn definition |
-| `data` | `Object` | message data |
-| `matchingQuery` | `Object` | - |
+| Name | Type |
+| :------ | :------ |
+| `messageId` | `any` |
+| `data` | `Object` |
+| `matchingQuery` | `Object` |
+| `from?` | [`IItem`](IItem.md) |
 
 #### Returns
 
@@ -263,7 +259,7 @@ that can be againt a running instance or it may start a new instance
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:131](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L131)
+[packages/bpmn-server/src/interfaces/server.ts:135](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L135)
 
 ___
 
@@ -286,7 +282,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:132](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L132)
+[packages/bpmn-server/src/interfaces/server.ts:136](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L136)
 
 ___
 
@@ -309,7 +305,7 @@ Runs a failed item's work again (an item whose status is `error`), and the insta
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:134](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L134)
+[packages/bpmn-server/src/interfaces/server.ts:138](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L138)
 
 ___
 
@@ -332,7 +328,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:135](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L135)
+[packages/bpmn-server/src/interfaces/server.ts:139](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L139)
 
 ___
 
@@ -356,7 +352,7 @@ Cancels a running instance: terminated and saved, never deleted.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:137](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L137)
+[packages/bpmn-server/src/interfaces/server.ts:141](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L141)
 
 ___
 
@@ -377,7 +373,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:139](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L139)
+[packages/bpmn-server/src/interfaces/server.ts:143](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L143)
 
 ___
 
@@ -401,4 +397,4 @@ Moves the instances that have not ended onto their model's current saved source 
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/server.ts:141](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/server.ts#L141)
+[packages/bpmn-server/src/interfaces/server.ts:145](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/server.ts#L145)

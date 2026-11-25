@@ -27,16 +27,51 @@ Feature: Leave Application
       And @check :leave data.recordId is "LV-1"
       And @check :leave passed element:Tell 1 times
 
-  Scenario: Wrong dates go back to the employee
+  Scenario: A long leave goes to HR, not to a manager (the policy LeaveApproval)
     When user:user1 @login with role of "Employee"
       And @start process:"Leave Application" as :leave
       And @invoke element:Request in :leave
+        | LeaveType     | Vacation   |
+        | StartDate     | 2026-12-01 |
+        | EndDate       | 2026-12-20 |
+        | RequestReason | Travel     |
+      And user:manager1 @login with role of "Manager"
+    Then @check :leave has 0 items of element:Approve with status "wait" for me
+    When user:hr1 @login with role of "HR"
+    Then @check :leave has 1 items of element:Approve with status "wait" for me
+
+  Scenario: An employee's leave goes to their own manager (the policy LeaveApproval, appServices.managerOf)
+    When user:david.kim @login with role of "Employee"
+      And @start process:"Leave Application" as :leave
+      And @invoke element:Request in :leave
+        | LeaveType     | Vacation   |
+        | StartDate     | 2026-12-01 |
+        | EndDate       | 2026-12-05 |
+        | RequestReason | Holidays   |
+      And user:manager1 @login with role of "Manager"
+    Then @check :leave has 0 items of element:Approve with status "wait" for me
+    When user:sarah.chen @login with role of "Manager"
+    Then @check :leave has 1 items of element:Approve with status "wait" for me
+
+  Scenario: Wrong dates are refused by the form; the request waits for the employee
+    When user:user1 @login with role of "Employee"
+      And @start process:"Leave Application" as :leave
+      And @invoke element:Request in :leave is refused
         | LeaveType | Vacation   |
         | StartDate | 2026-12-05 |
         | EndDate   | 2026-12-01 |
-    Then @check :leave has 2 items of element:Request
+      And @invoke element:Request in :leave is refused
+        | LeaveType | Vacation   |
+        | StartDate | 2026-12-05 |
+    Then @check :leave has 1 items of element:Request
       And @check :leave last element:Request status is "wait"
       And @check :leave passed element:Approve 0 times
+    When @invoke element:Request in :leave
+        | LeaveType | Vacation   |
+        | StartDate | 2026-12-01 |
+        | EndDate   | 2026-12-05 |
+    Then @check :leave data.days is 5
+      And @check :leave last element:Approve status is "wait"
 
   Scenario: A rejected request is not recorded, and the employee is told
     Given @stub service:notifyUsers with
@@ -109,3 +144,21 @@ Feature: Leave Application
         | EndDate   | 2026-12-05 |
     Then @wait :leave passed element:Remind
       And @check :leave last element:Approve status is "wait"
+
+  Scenario: Scenario 9
+    When @start process:"Leave Application" as :instance
+    And @invoke element:Request in :instance
+      | LeaveType | "Vacation" |
+      | StartDate | "2026-11-06" |
+      | EndDate | "2026-11-27" |
+      | RequestReason | "" |
+
+  Scenario: Scenario 10
+    When @start process:"Leave Application" as :instance
+    And @invoke element:Request in :instance is refused
+      | LeaveType | "Vacation" |
+      | StartDate | "" |
+      | EndDate | "" |
+      | RequestReason | "" |
+      | Department | "" |
+      | CoveredBy | "" |

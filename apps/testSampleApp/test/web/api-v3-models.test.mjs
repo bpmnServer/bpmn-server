@@ -36,7 +36,7 @@ const v3 = (method, url, credential, body) => new WebClient(web.base).request(me
 const tokenFor = async (userName, groups) => (await v3('POST', '/tokens', 'service', { userName, groups })).body.token;
 
 test.before(async () => {
-  web = await startWebApp({ env: { APP_ENV: 'production', API_TRACE: '' } });
+  web = await startWebApp({ env: { APP_ENV: 'development', API_TRACE: '' } });
   // a designer's token is the person's own (the page's, or their AI link): issued here as the pages issue it
   const { Tokens } = await import('../../../../packages/bpmn-web/dist/routes/api/tokens.js');
   designer = (await new Tokens(web.bpmnServer).issue({ userName: 'dee', groups: ['DESIGNER'] }, 'dee', { own: true })).token;

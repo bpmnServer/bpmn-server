@@ -1,9 +1,9 @@
-// @features: host-user-manager
+// @features: ai-links, host-user-manager
 // An application that signs people in itself (docs/design/host-users.md): its user manager given to bpmn-web
 // (start({ userManager }), IUserManager). bpmn-web keeps no users, sessions or credentials of its own: the pages take
 // the application's person; API v3 takes the application's credential (apiUser), refuses a change posted from another
-// site with its cookie (CSRF), and issues no tokens or AI links; Administration and /api/v3/users say the application
-// manages the users. The service key still opens the API.
+// site with its cookie (CSRF), and issues no tokens but a person's AI link (/ai/key, as the application's person);
+// Administration and /api/v3/users say the application manages the users. The service key still opens the API.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import session from 'express-session';
@@ -105,14 +105,32 @@ test('the service key still opens the API, before the application\'s credential,
   assert.equal(res.status, 201, why(res));
 });
 
-test('bpmn-web issues no credentials: no tokens, no AI links', async () => {
+test('bpmn-web issues no tokens of its own', async () => {
   const issued = await web.api('POST', '/api/v3/tokens', { userName: 'ann', groups: ['staff'], minutes: 5 });
   assert.equal(issued.status, 409, why(issued));
   assert.equal(issued.body.error.code, 'TOKENS_ELSEWHERE');
   const revoked = await web.api('DELETE', '/api/v3/tokens?userName=ann');
   assert.equal(revoked.body.error.code, 'TOKENS_ELSEWHERE');
+});
+
+test("but a person's AI link: the application's person gets one at /ai/key, and the agent acts as them", async () => {
   const ann = await signIn('ann');
-  assert.equal((await ann.get('/ai/key')).status, 404);
+  assert.equal((await ann.get('/api/v3/me')).body.may.aiLink, true, 'the menu offers it');
+  const page = await ann.get('/dashboard');
+  assert.match(page.text, /<a href="\/ai\/key">AI Agent<\/a>/, 'a menu item of its own');
+  const res = await ann.get('/ai/key?format=json');
+  assert.equal(res.status, 200, why(res));
+  const key = /\/ai\/(bpt_[\w-]+)$/.exec(res.body.url)?.[1];
+  assert.ok(key, res.body.url);
+  const agent = (method, url) => new WebClient(web.base).request(method, '/api/v3' + url, { headers: { authorization: `Bearer ${key}` } });
+  const me = await agent('GET', '/me');
+  assert.equal(me.status, 200, why(me));
+  assert.deepEqual([me.body.userName, me.body.credential], ['ann', 'token']);
+  // another Bearer is the application's to judge, as before: its apiUser knows no such person
+  assert.equal((await new WebClient(web.base).get('/api/v3/me', { headers: { authorization: 'Bearer bpt_not-a-link' } })).status, 401);
+  // revoking stops the link
+  assert.equal((await ann.request('POST', '/ai/revoke')).status, 302);
+  assert.equal((await agent('GET', '/me')).status, 401);
 });
 
 test('bpmn-web manages no users: Administration and /api/v3/users say the application does', async () => {

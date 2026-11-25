@@ -71,17 +71,19 @@ function init(...args) {
 test('init: the sample application, on MongoDB with sign-in, by default', () => {
   const app = init('--port', '3050');
   for (const file of ['package.json', '.env', '.gitignore', 'README.md', 'docker-compose.yml', 'tsconfig.json', 'index.ts',
-    'settings/config.ts', 'delegates/appDelegate.ts', 'connectors/appServices.ts', 'connectors/echo.json',
+    'settings/config.ts', 'delegates/appDelegate.ts', 'delegates/appServices.ts', 'connectors/echo.json',
     'processes/Hello.bpmn', 'processes/Buy Used Car.bpmn', 'processes/Leave Application.bpmn'])
     assert.ok(app.exists(file), file);
   // the sample's tests come with it (npm test: every model's .feature); nothing installed
   assert.ok(app.exists('test/features.ts'), "the models' tests");
   assert.ok(!app.exists('node_modules'), 'no node_modules');
+  assert.match(app.read('.gitignore'), /^api-trace\.jsonl$/m, 'the API trace (API_TRACE) is not committed');
   const env = app.read('.env');
   assert.match(env, /^MONGO_DB_URL=mongodb:\/\/localhost:27017\/app$/m);
   assert.match(env, /^SERVE=both$/m);
   assert.match(env, /^REQUIRE_AUTHENTICATION=true$/m);
   assert.match(env, /^API_KEY=[0-9a-f]{48}$/m);
+  assert.match(env, /^SECRETS_KEY=[0-9a-f]{48}$/m, 'the key the server encrypts its stored secrets with');
   assert.match(env, /^PORT=3050$/m);
   const pkg = JSON.parse(app.read('package.json'));
   assert.equal(pkg.name, 'app');
@@ -96,6 +98,7 @@ test('init: the sample application, on MongoDB with sign-in, by default', () => 
   assert.equal(pkg.dependencies['mongodb-memory-server'], undefined);
   assert.equal(pkg.scripts.start, 'tsx index.ts');
   assert.equal(pkg.scripts.test, 'tsx test/features.ts');
+  assert.ok(!app.exists('services.json'), 'the services are read from the delegate when the server starts');
   assert.match(app.read('README.md'), /^# app$/m, 'titled with the application\'s name');
   assert.match(app.r.stdout, /docker compose up -d/);
   assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the sample models pass');

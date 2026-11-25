@@ -97,12 +97,50 @@ test('paged search on a store that is not MongoDB: pages by a cursor, items unwo
   const waiting = await server.dataStore.find({ filter: { 'items.status': 'wait' }, limit: 10 });
   assert.equal(waiting.data.length, 5);
   assert.ok(waiting.data.every(d => d.items.elementId === 'AssessClaim'), 'one entry per matching item, `items` being it');
+  // docs/docs/data_find.md: walking every page with nextCursor, each instance once, and the projection's fields
+  const seen = [];
+  let after;
+  do {
+    const page = await server.dataStore.find({ filter: { name: 'property-claim' }, sort: { startedAt: -1 },
+      projection: { id: 1, name: 1, startedAt: 1 }, limit: 2, after });
+    assert.equal(page.error, undefined);
+    for (const instance of page.data ?? []) seen.push(instance.id);
+    after = page.nextCursor ?? undefined;
+  } while (after);
+  assert.deepEqual(seen, [...ids].reverse(), 'every instance once, newest first');
+
   const last = await server.dataStore.find({ filter: {}, lastItem: { status: 'end' }, limit: 10 });
   assert.equal(last.data.length, 5);
   for (const d of last.data) {
     const expected = d.items.filter(i => i.status === 'end').sort((x, y) => y.seq - x.seq)[0];
     assert.equal(d.lastItem.id, expected.id, 'its ended item with the highest seq');
   }
+  await server.shutdown();
+});
+
+test('a page of a list in the store: find\'s limit after sorting, on both stores; instances with a limit; items read lean (fable-review.md H5)', async () => {
+  const fs = await import('node:fs'), os = await import('node:os'), path = await import('node:path');
+  const { SqliteDocumentStore } = await import('../dist/index.js');
+  const sqlite = new SqliteDocumentStore(path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-limit-')), 'l.db'));
+  const docs = [3, 1, 4, 2, 5].map(n => ({ id: `i${n}`, n }));
+  for (const store of [new MemoryDocumentStore(), sqlite]) {
+    await store.insert('d', 'c', docs);
+    assert.deepEqual((await store.find('d', 'c', {}, null, { n: -1 }, 2)).map(d => d.n), [5, 4], 'the first two after sorting');
+    assert.equal((await store.find('d', 'c', {}, null, null)).length, 5, 'no limit: all');
+  }
+
+  const { server } = await makeServer({ services: coverage(true) });
+  for (let i = 0; i < 3; i++) { await server.engine.start('property-claim', { n: i, big: 'x'.repeat(1000) }); await new Promise(r => setTimeout(r, 5)); }
+  const newest = await server.dataStore.findInstances({ name: 'property-claim' }, { projection: { id: 1, startedAt: 1 }, sort: { startedAt: -1 }, limit: 2 });
+  assert.equal(newest.length, 2);
+  assert.ok(new Date(newest[0].startedAt) >= new Date(newest[1].startedAt), 'newest first');
+  assert.equal(newest[0].items, undefined, 'only what was asked for');
+
+  const lean = await server.dataStore.findItems({ 'items.status': 'wait' }, { lean: true });
+  const whole = await server.dataStore.findItems({ 'items.status': 'wait' });
+  assert.deepEqual(lean.map(i => i.id).sort(), whole.map(i => i.id).sort(), 'the same items');
+  assert.ok(lean.every(i => i.instanceData === undefined && i.data === undefined && i.instanceId && i.processName), 'without the instances\' data');
+  assert.ok(whole.every(i => i.instanceData?.big), 'read whole, as before');
   await server.shutdown();
 });
 

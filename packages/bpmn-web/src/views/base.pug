@@ -4,6 +4,7 @@ html
     block title
       title= title
     include includes/head.pug
+    include includes/environment.pug
     block head
   //- framed: shown inside a page of this site (userAccess/pages.ts), whose layout has the places: no menu bar, and
   //- the body's class `framed` for the hosting application's own styles
@@ -11,6 +12,7 @@ html
   body(class=inFrame ? 'framed' : undefined)
     header
       unless inFrame
+        +environmentBand
         nav.navbar.navbar-default(role="navigation")
           .navbar-header
             a.navbar-brand(href="/")

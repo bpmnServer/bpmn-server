@@ -67,10 +67,12 @@ export default function Welcome() {
           {demo.accounts.length === 0
             ? <p>This server shows no demo accounts: ask its administrator for one.</p>
             : <>
-                <p>Every account's password is <code>{demo.password}</code>. Sign in as one, or use the button.</p>
+                <p>Every account's password is <code>{demo.password}</code>. {demo.signInAs === false
+                  ? <>Sign in with one of them on the <Link to="/login">sign-in page</Link>.</>
+                  : <>Sign in as one, or use the button.</>}</p>
                 {error && <div className="login-error">{error}</div>}
                 <table className="data-table">
-                  <thead><tr><th>User name</th><th>Name</th><th>Role</th><th>Workflow groups</th><th></th></tr></thead>
+                  <thead><tr><th>User name</th><th>Name</th><th>Role</th><th>Workflow groups</th>{demo.signInAs !== false && <th></th>}</tr></thead>
                   <tbody>
                     {demo.accounts.map(a => (
                       <tr key={a.userName}>
@@ -78,7 +80,8 @@ export default function Welcome() {
                         <td>{a.name}</td>
                         <td>{a.role}</td>
                         <td>{a.userGroups.join(', ')}</td>
-                        <td><button className="btn btn-sm" onClick={() => signInAs(a.userName)}>Sign in as {a.userName}</button></td>
+                        {demo.signInAs !== false &&
+                          <td><button className="btn btn-sm" onClick={() => signInAs(a.userName)}>Sign in as {a.userName}</button></td>}
                       </tr>
                     ))}
                   </tbody>
@@ -92,7 +95,7 @@ export default function Welcome() {
         <ol className="card-body">
           <li>Sign in as <code>david.kim</code> (an employee). Under Workflow, open <b>My Work</b> and start <b>Leave Application</b>; fill in the request.</li>
           <li>Sign out, and sign in as <code>sarah.chen</code> (a manager). Her <b>My Work</b> has <b>Approve</b>: approve it, reject it, or ask for more information.</li>
-          <li>Approved, it is recorded and the employee told (here, in the server's log). As <code>admin</code>, follow it in the <b>Workbench</b>, and see the model in <b>Design</b>.</li>
+          <li>Approved, it is recorded and the employee told: each of them sees what they were sent under Workflow, <b>Notifications</b>. As <code>admin</code>, follow it in the <b>Workbench</b>, and see the model in <b>Design</b>.</li>
           <li>As <code>admin</code>, <b>Users</b> (under Administration) adds people and sets their role: what they may do in the workflows follows.</li>
         </ol>
       </section>

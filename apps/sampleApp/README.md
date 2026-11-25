@@ -12,14 +12,14 @@ npm run setup            # the database's indexes
 npm start                # http://localhost:3000 (PORT in .env)
 ```
 
-The first page asks for the administrator. It needs the setup token the server prints when it starts.
+Sign in as `admin`, with the password the server prints when it first starts.
 
 ## What is where
 
 | | |
 |---|---|
 | `processes/` | The models: Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules (with its decision table `loanApproval.dmn.xml`), GitHub repository (calls GitHub's REST API: add GitHub from the connectors catalog first). Edit them in the browser (Models) or any BPMN editor. |
-| `connectors/appServices.ts` | The services service tasks call by name (`greet`, `echo`, `add`, ...). |
+| `delegates/appServices.ts` | The services service tasks call by name (`greet`, `echo`, `add`, ...). |
 | `connectors/*.json` | Element templates the model editor offers for configured tasks. |
 | `delegates/appDelegate.ts` | The application delegate (on bpmn-web's `WebAppDelegate`): the services, data objects (`loadDataObject`), engine events. |
 | `settings/config.ts` | bpmn-server settings that replace bpmn-web's defaults. |

@@ -12,16 +12,16 @@ const DEFAULTS = { SCRIPT_SANDBOX: false, SCRIPT_SANDBOX_SERVICES: true, TIMERS:
 
 export type RunSetting = keyof typeof DEFAULTS;
 
-const fromEnvironment = (): Record<RunSetting, string | undefined> => ({
-    SCRIPT_SANDBOX: process.env.SCRIPT_SANDBOX,
-    SCRIPT_SANDBOX_SERVICES: process.env.SCRIPT_SANDBOX_SERVICES,
-    TIMERS: process.env.TIMERS,
-    SERVICE_TASKS: process.env.SERVICE_TASKS,
+const fromEnvironment = (env: NodeJS.ProcessEnv): Record<RunSetting, string | undefined> => ({
+    SCRIPT_SANDBOX: env.SCRIPT_SANDBOX,
+    SCRIPT_SANDBOX_SERVICES: env.SCRIPT_SANDBOX_SERVICES,
+    TIMERS: env.TIMERS,
+    SERVICE_TASKS: env.SERVICE_TASKS,
 });
 
-export function runSetting(name: RunSetting): boolean {
-    const value = fromEnvironment()[name];
+export function runSetting(name: RunSetting, env: NodeJS.ProcessEnv = process.env): boolean {
+    const value = fromEnvironment(env)[name];
     if (value)
         return value.toLowerCase().startsWith('true');
-    return process.env.DEMO_MODE?.toLowerCase().startsWith('true') ? DEMO_MODE_SETTINGS[name] : DEFAULTS[name];
+    return env.DEMO_MODE?.toLowerCase().startsWith('true') ? DEMO_MODE_SETTINGS[name] : DEFAULTS[name];
 }

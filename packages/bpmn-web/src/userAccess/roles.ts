@@ -1,3 +1,4 @@
+import { SecureUser } from 'bpmn-server';
 // Who may do what in the web app, by user group. Administrators manage the app (users, data); designers
 // work on models: list, create, import, edit, check (verify), save, rename and delete them.
 // Administrators are designers too. bpmn-server names these groups in USER_ROLE.
@@ -25,8 +26,36 @@ export const designDisabled = () => process.env.DISABLE_DESIGN === 'true';
 /** DISABLE_SIGNUP=true: no self-registration; administrators add the accounts (dashboard, npm run cli). */
 export const signupDisabled = () => process.env.DISABLE_SIGNUP === 'true';
 
-export const isAdminGroups = (userGroups) => !adminDisabled() && inGroups(userGroups, ADMIN_GROUPS);
-export const isDesignerGroups = (userGroups) => !designDisabled() && inGroups(userGroups, DESIGNER_GROUPS);
+/**
+ * The permissions the application's contract gives its roles (app-contract.json, docs/design/security-profiles.md):
+ * the server sets this when it starts. It only grants — the groups above are still matched as they always were — so
+ * an application that declares none behaves exactly as before.
+ */
+/**
+ * Whether these groups hold `permission` as the application's contract says (SecureUser.granted), and whether it said
+ * anything: a role the contract mentions decides for itself, ticked or not; one it does not mention leaves the
+ * default alone (the groups this server has always matched on).
+ */
+export function decided(userGroups, permission: string): boolean | undefined {
+    if (!Array.isArray(userGroups)) return undefined;
+    const grants = SecureUser.granted;
+    let said: boolean | undefined;
+    for (const group of userGroups) {
+        const given = grants.get(group);
+        if (!given) continue;
+        if (given.includes(permission)) return true;
+        said = false;
+    }
+    return said;
+}
+/** Whether these groups hold `permission`: what the contract decided, else whether they are one of `fallback`. */
+const holds = (userGroups, permission: string, fallback: string[]) =>
+    decided(userGroups, permission) ?? inGroups(userGroups, fallback);
+
+export const isAdminGroups = (userGroups) => !adminDisabled()
+    && holds(userGroups, 'administrator', ADMIN_GROUPS);
+export const isDesignerGroups = (userGroups) => !designDisabled()
+    && (isAdminGroups(userGroups) || holds(userGroups, 'designer', DESIGNER_GROUPS));
 /** May this request's user design models (REQUIRE_AUTHENTICATION=false: everyone, unless DISABLE_DESIGN). */
 export const canDesign = (user) => !designDisabled()
     && (process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(user?.userGroups));

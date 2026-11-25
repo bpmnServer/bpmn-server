@@ -14,7 +14,7 @@ const page = fs.readFileSync(GUIDE, 'utf8').replace(/\r\n/g, '\n');
 const block = lang => new RegExp('```' + lang + '\\n([\\s\\S]*?)```').exec(page)?.[1];
 
 let web;
-test.before(async () => { web = await startWebApp({ env: { APP_ENV: 'production', API_TRACE: '' } }); });
+test.before(async () => { web = await startWebApp({ env: { APP_ENV: 'development', API_TRACE: '' } }); });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 const api = (method, url, body) => web.api(method, '/api2' + url, body);
 

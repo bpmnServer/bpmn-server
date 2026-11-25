@@ -1,13 +1,25 @@
 import flash from 'express-flash';
 import lusca from 'lusca';
 import { adminDisabled, canDesign, isAdminGroups, signupDisabled } from './roles.js';
-import { firstRunPending } from './firstRun.js';
+import { serverEnvironment } from '../runtime/environment.js';
 
 /*
  * What bpmn-web's pages need on every request, whichever user manager signs people in (IUserManager): messages
  * (req.flash), CSRF protection, the menu's values, and the page to go back to after signing in. All in the session the
  * user manager keeps.
  */
+
+/**
+ * The page to go back to after signing in: the one that asked for it (a page of bpmn-web's that needs a person, at the
+ * moment it sends them to /login). Only a page to look at (GET), never the sign-in pages themselves. Not every page
+ * asked for while signed out: an application's own pages (its sign-in, its welcome page) were kept too, and signing in
+ * then went back to the sign-in form.
+ */
+export function rememberPage(req) {
+	if (!req.session || (req.method !== 'GET' && req.method !== 'HEAD')) return;
+	if (/^\/(login|logout|signup|forgot|reset)(\/|$)|^\/auth\//.test(req.path) || /\./.test(req.path)) return;
+	req.session.returnTo = req.originalUrl;
+}
 
 /** After the user manager's init: messages and CSRF protection. */
 export function pageSessions(app) {
@@ -29,19 +41,11 @@ export function pageSessions(app) {
 	app.use((req, res, next) => apiPath.test(req.path) ? next() : csrf(req, res, next));
 }
 
-/** Before the user manager's routes: headers, the first-run page, the menu's values, the page to go back to. */
+/** Before the user manager's routes: headers, the menu's values, the page to go back to. */
 export function pageLocals(app) {
 	app.use(lusca.xframe('SAMEORIGIN'));
 	app.use(lusca.xssProtection(true));
 	app.disable('x-powered-by');
-
-	// a server with no users yet: its pages ask for the administrator first (firstRun.ts)
-	app.use((req, res, next) => {
-		if (!firstRunPending(req.app) || req.path === '/setup' || /\./.test(req.path)
-			|| /^\/(api|api2|admin\/api|admin\/api2|healthz)(\/|$)/.test(req.path))
-			return next();
-		return res.redirect('/setup');
-	});
 
 	app.use((req, res, next) => {
 		res.locals.user = req.user;
@@ -55,6 +59,8 @@ export function pageLocals(app) {
 		res.locals.canAdminister = !adminDisabled()
 			&& (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups));
 		res.locals.currentPath = req.path;
+		// the environment's band (views/includes/environment.pug): APP_ENV, APP_ENV_LABEL, READ_ONLY
+		res.locals.environment = serverEnvironment();
 		// a page shown inside a page of this site (the application's own layout, `framed`): without its menu bar, as the
 		// application's layout has the places. Browsers say so on HTTPS and localhost (Sec-Fetch-Dest, Sec-Fetch-Site);
 		// a page opened by itself, or framed by another site, keeps its menu (the Fable Review, M7)
@@ -67,14 +73,8 @@ export function pageLocals(app) {
 		// session kept for each of their calls (the pages' own, through routes/api/pageClient.ts) is waste
 		if (/^\/(admin\/)?api(2|\/|$)|^\/api2/.test(req.path) || !req.session)
 			return next();
-		if (!req.user
-			&& req.path !== '/login'
-			&& req.path !== '/signup'
-			&& !req.path.match(/^\/auth/)
-			&& !req.path.match(/\./)) {
-			req.session.returnTo = req.originalUrl;
-		} else if (req.user
-			&& (req.path === '/account' || req.path.match(/^\/api/))) {
+		// signed out, a page that needs a person keeps itself (rememberPage, where it sends them to /login)
+		if (req.user && (req.path === '/account' || req.path.match(/^\/api/))) {
 			req.session.returnTo = req.originalUrl;
 		}
 		next();

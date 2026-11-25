@@ -23,8 +23,8 @@ export interface Operation {
     parameters: OperationParameter[];
     /** the JSON request body, when the operation takes one */
     body?: { required: boolean; schema?: any; contentType: string };
-    /** the responses by status ('200', '404', 'default'): their description and JSON schema */
-    responses: Record<string, { description?: string; schema?: any }>;
+    /** the responses by status ('200', '404', 'default'): their description, JSON schema, and the document's example */
+    responses: Record<string, { description?: string; schema?: any; example?: any }>;
     /** the security requirements (names of securitySchemes); none given: the document's */
     security?: string[];
 }
@@ -128,10 +128,14 @@ export function resolveRefs(document: any): any {
 }
 
 /** The JSON schema of a content map's JSON entry (application/json, or any +json). */
-function jsonContent(content): { contentType: string; schema?: any } | undefined {
+function jsonContent(content): { contentType: string; schema?: any; example?: any } | undefined {
     if (!content || typeof content !== 'object') return undefined;
     const type = Object.keys(content).find(t => /^application\/(.+\+)?json\b/i.test(t)) ?? Object.keys(content).find(t => /json/i.test(t));
-    return type ? { contentType: type, schema: content[type]?.schema } : undefined;
+    if (!type) return undefined;
+    // its example: `example`, else the first of `examples`
+    const media = content[type] ?? {};
+    const example = media.example !== undefined ? media.example : Object.values<any>(media.examples ?? {})[0]?.value;
+    return { contentType: type, schema: media.schema, ...(example !== undefined ? { example } : {}) };
 }
 
 /** Every operation of the document that has an operationId, by it; `skipped` lists those that have none. */
@@ -160,7 +164,10 @@ export function listOperations(document: any): { operations: Map<string, Operati
             const body = op.requestBody ? jsonContent(op.requestBody.content) : undefined;
             const responses = {};
             for (const [status, response] of Object.entries<any>(op.responses ?? {}))
-                responses[status] = { description: response?.description, schema: jsonContent(response?.content)?.schema };
+            {
+                const json = jsonContent(response?.content);
+                responses[status] = { description: response?.description, schema: json?.schema, ...(json?.example !== undefined ? { example: json.example } : {}) };
+            }
             operations.set(op.operationId, {
                 operationId: op.operationId, method: method.toUpperCase(), path,
                 summary: op.summary, description: op.description,
@@ -172,4 +179,29 @@ export function listOperations(document: any): { operations: Map<string, Operati
         }
     }
     return { operations, skipped };
+}
+
+/**
+ * A value as a schema describes it (a connector's answer outside production, from its document): its example, else
+ * its default, else one made from its type: an object's properties, an array of one item, the first of an enum, a
+ * date for a date, 0, false, a string.
+ */
+export function exampleOf(schema: any, depth = 0): any {
+    if (!schema || typeof schema !== 'object' || depth > 8) return null;
+    if (schema.example !== undefined) return schema.example;
+    if (Array.isArray(schema.examples) && schema.examples.length) return schema.examples[0];
+    if (schema.default !== undefined) return schema.default;
+    if (Array.isArray(schema.enum) && schema.enum.length) return schema.enum[0];
+    const of = schema.allOf ?? schema.oneOf ?? schema.anyOf;
+    if (Array.isArray(of) && of.length)
+        return schema.allOf ? Object.assign({}, ...of.map(s => exampleOf(s, depth + 1)).filter(v => v && typeof v === 'object')) : exampleOf(of[0], depth + 1);
+    const type = Array.isArray(schema.type) ? schema.type.find(t => t !== 'null') : schema.type;
+    switch (type ?? (schema.properties ? 'object' : schema.items ? 'array' : undefined)) {
+        case 'object': return Object.fromEntries(Object.entries<any>(schema.properties ?? {}).map(([k, v]) => [k, exampleOf(v, depth + 1)]));
+        case 'array': return [exampleOf(schema.items, depth + 1)];
+        case 'integer': case 'number': return 0;
+        case 'boolean': return false;
+        case 'string': return schema.format === 'date' ? '2026-01-01' : schema.format === 'date-time' ? '2026-01-01T00:00:00Z' : schema.format === 'email' ? 'someone@example.com' : 'string';
+        default: return null;
+    }
 }

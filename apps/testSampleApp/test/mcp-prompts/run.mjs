@@ -39,7 +39,7 @@ async function reset() {
   await dataStore.deleteInstances({});
   for (const model of await ctx.models()) {
     const name = model.name ?? model;
-    if (!startingModels.has(name)) await web.bpmnServer.definitions.deleteModel(name);
+    if (!startingModels.has(name)) await web.bpmnServer.models.remove(name);
   }
 }
 

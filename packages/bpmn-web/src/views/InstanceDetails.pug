@@ -3,10 +3,12 @@ extends layout
 block content
   //- cached for a year: its URL carries its build time, so a browser takes a new one when it changes
   link(rel="stylesheet", href=asset("/stylesheets/instance-details.css"))
-  link(rel="stylesheet", href="/modeler/report.css")
+  link(rel="stylesheet", href=asset("/modeler/report.css"))
+  link(rel="stylesheet", href=asset("/modeler/instance.css"))
   - var docs = JSON.parse(definition || '{}');
   - var info = (logs || []).filter(l => l.type === 'info');
   include includes/dates.pug
+  include includes/notifications.pug
   - var lastAt = lastItem && (lastItem.endedAt || lastItem.startedAt);
 
   script(type="text/javascript").
@@ -21,6 +23,13 @@ block content
       button.querySelector('.fa').className = panel.hidden ? 'fa fa-chevron-down' : 'fa fa-chevron-up';
     }
     function showDocs() { toggleDetails('docs', 'showDoc'); }
+    // a click on a section's heading (not on its button, a link or a field) opens or closes it, as its button does
+    document.addEventListener('click', function (e) {
+      var heading = e.target.closest && e.target.closest('.instance-collapsible > .instance-card-heading');
+      if (!heading || e.target.closest('button, a, input, select, label')) return;
+      var button = heading.querySelector('button[aria-controls]');
+      if (button) button.click();
+    });
     function showLogs() { toggleDetails('logs', 'showHide'); }
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('#logs table tr td').forEach(function (td) {
@@ -87,22 +96,46 @@ block content
       document.getElementById('filter-clear').addEventListener('click', function () {
         typeSelect.value = ''; elementSelect.value = ''; apply(false);
       });
-      // at first: the user tasks, when the instance has any
-      if (elements.some(function (e) { return e.type === 'bpmn:UserTask'; })) {
-        typeSelect.value = 'bpmn:UserTask';
-        apply(false);
-      }
+      // at first: everything (a filter you choose narrows it)
     }
 
   main#instances.instance-page
     header.instance-page-header
       div
-        a.instance-back(href="/#instances")
-          i.fa.fa-arrow-left(aria-hidden="true")
-          | Back to instances
-        h1 #{title}
-        p.instance-subtitle #{instance.name}
+        if testCase
+          a.instance-back(href=`/test-cases/${encodeURIComponent(testCase.model)}`)
+            i.fa.fa-arrow-left(aria-hidden="true")
+            | Back to test cases
+        else
+          a.instance-back(href="/#instances")
+            i.fa.fa-arrow-left(aria-hidden="true")
+            | Back to instances
+        h1 #{testCase ? 'Test case' : title}
+        p.instance-subtitle #{instance.label && instance.label !== instance.name ? instance.label + ' · ' + instance.name : instance.name}
+        p.instance-guide
+          a.guide-link(href=`/guide/${encodeURIComponent(instance.name)}`) How this process goes
       span.instance-id(title=instance.id) ID: #{instance.id}
+        if String(instance.id || '').startsWith('test-')
+          span.status-badge.status-test(title="A test run's case: an ordinary case, marked so") test
+    //- a test case from its file (testing/testCases.ts): the scenario that ran, read-only
+    if testCase
+      section.instance-card.test-case-card(aria-label="Test case")
+        p
+          b Scenario:
+          |  #{testCase.scenario} ·#{' '}
+          if testCase.ok
+            span.status-badge.status-end passed
+          else
+            span.status-badge.status-error(title=testCase.error || undefined) failed
+          |  · ran #{prettyDate(testCase.ranAt)}
+        if !testCase.ok && testCase.error
+          p.instance-hint #{testCase.error}
+        p.instance-hint
+          if testCase.current
+            | It ran against the model as it is now.
+          else
+            | The model was changed after this ran: this is the model as it ran then. Run the tests again for the case as it is now.
+          |  Kept as a file with the models; read-only.
 
     .instance-summary-grid
       section.instance-card(aria-labelledby="instance-info-heading")
@@ -140,6 +173,14 @@ block content
                 dd #{v.value}
         else
           p.instance-empty No instance data.
+        //- who did what in it: actors.initiator, a model's own (owf:actor), a waiting task's assignee and candidates
+        if actors && actors.length
+          h3.instance-subheading#instance-actors-heading Actors
+          dl.instance-facts.instance-data(aria-labelledby="instance-actors-heading")
+            each a in actors
+              div(data-actor=a.name)
+                dt #{a.name}
+                dd #{a.who}
 
     section.instance-card.instance-diagram-card(aria-labelledby="diagram-heading")
       .instance-card-heading
@@ -148,17 +189,21 @@ block content
           button#showTokens.btn.btn-default(type="button", onclick="$('.decor-token').toggle()")
             i.fa.fa-map-marker(aria-hidden="true")
             | Show tokens
-          button#startAnimation.btn.btn-default(type="button", onclick="startAnimation()")
+          //- instance.js (modeler/src/instance/view.js): the editor's Simulate, on this diagram
+          button#startSimulation.btn.btn-default(type="button", disabled, aria-pressed="false", title="The run on the diagram one change at a time, as the editor's Test tab shows it")
             i.fa.fa-play(aria-hidden="true")
-            | Show animation
-        span#animationStatus.instance-animation-status(role="status", aria-live="polite")
+            | Simulate
+      #simulation
       .instance-diagram
         if svg
           div!= svg
         else
           p.instance-empty Diagram unavailable for this instance.
       script(type="application/json" id="jsonInfo")!= JSON.stringify(info)
-      script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, seq: item.seq, type: item.type, status: item.status }))).replace(/</g, '\\u003c')
+      script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, elementId: item.elementId, name: item.name, seq: item.seq, type: item.type, status: item.status, userName: item.userName, assignee: item.assignee, candidateUsers: item.candidateUsers, candidateGroups: item.candidateGroups, assignment: item.assignment }))).replace(/</g, '\\u003c')
+      script(type="application/json" id="animationNotifications")!= JSON.stringify((notifications || []).map(n => ({ elementId: n.elementId, event: n.event, to: n.to, subject: n.subject, message: n.message, status: n.status, channel: n.channel, error: n.error }))).replace(/</g, '\\u003c')
+      script(type="application/json" id="rationaleSteps")!= JSON.stringify(rationale || []).replace(/</g, '\\u003c')
+      script(src=asset("/modeler/instance.js") defer)
 
     //- Filters for the items, the Rationale and the logs: a type of element, an element (of that type)
     - var kindOf = t => String(t || '').replace(/^bpmn:/, '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
@@ -179,80 +224,15 @@ block content
       span#filter-count.instance-hint(role="status")
       script(type="application/json" id="filterElements")!= JSON.stringify(filterElements.map(e => ({ id: e.id, type: e.type }))).replace(/</g, '\\u003c')
 
-    section.instance-card(aria-labelledby="items-heading")
-      .instance-card-heading
-        div
-          h2#items-heading Instance items
-          p.instance-hint Times are measured from the start of execution.
-      .instance-table-scroll
-        table#dataTable.instance-table
-          thead
-            tr
-              th(scope="col") Seq #
-              th(scope="col") Element
-              th(scope="col") Started
-              th(scope="col") Ended
-              th(scope="col") Status
-              th(scope="col") Type
-              th(scope="col") User
-              th(scope="col") Action
-              th(scope="col") Assignee
-              th(scope="col") Candidate users
-              th(scope="col") Candidate groups
-              th(scope="col") Due date
-              th(scope="col") Follow-up date
-              th(scope="col") Priority
-          tbody
-            - let seq = 0;
-            each item in (items || [])
-              - var ref = `?id=${encodeURIComponent(item.id)}&processName=${encodeURIComponent(instance.name)}&elementId=${encodeURIComponent(item.elementId)}`;
-              - var label = (item.status === 'wait' && item.type === 'bpmn:UserTask') ? 'Execute' : '';
-              - var label2 = (item.status === 'wait' && item.type === 'bpmn:UserTask') ? 'Assign' : '';
-              //- an administrator completes a waiting event, or a receive task (it waits for a message, as an event does)
-              - if (user && user.isAdmin() && item.status === 'wait' && (item.type.includes('Event') || item.type === 'bpmn:ReceiveTask')) label = 'Force';
-              - var key = item.itemKey ? `[${item.itemKey}]` : '';
-              - seq++;
-              tr(data-element=item.elementId)
-                //- the engine's seq (from 1), as the Rationale, the diagram and the log give it
-                td #{item.seq != null ? item.seq : seq}
-                td.instance-nowrap #{item.elementId}
-                td #{item.name} #{key}
-                td.instance-nowrap #{prettyDate(item.startedAt)}
-                td.instance-nowrap #{prettyDate(item.endedAt)}
-                td
-                  span.status-badge(class=item.status === 'wait' ? 'status-wait' : item.status === 'error' ? 'status-error' : 'status-end') #{item.status}
-                  if item.status === 'error' && item.statusDetails && item.statusDetails.error
-                    div.item-error #{item.statusDetails.error}
-                td.instance-nowrap #{item.type}
-                td #{item.userName}
-                td.instance-actions
-                  if item.status === 'error' && user && user.isAdmin()
-                    form.retry-form(action="/retryItem" method="post")
-                      input(type="hidden" name="_csrf" value=_csrf)
-                      input(type="hidden" name="itemId" value=item.id)
-                      button.btn.btn-primary.btn-xs(type="submit" title="Run the task's work again") Retry
-                  if label
-                    a.btn.btn-primary.btn-xs(href=`/invokeItem${ref}`) #{label}
-                    if label2
-                      a.btn.btn-default.btn-xs(href=`/assign${ref}`) #{label2}
-                td #{item.assignee}
-                td #{item.candidateUsers}
-                td #{item.candidateGroups}
-                td.instance-nowrap #{prettyDate(item.dueDate)}
-                td.instance-nowrap #{prettyDate(item.followUpDate)}
-                td #{item.priority}
-            if !items || !items.length
-              tr
-                td(colspan="15") No items to show.
-
     section.instance-card.instance-collapsible(aria-labelledby="rationale-heading")
       .instance-card-heading
         div
           h2#rationale-heading Rationale
           p.instance-hint Step by step: each action on the instance (its start, a task completed, a timer, a message), then what it caused and why: conditions with the values they read, gateways, joins, timers.
-        button#showRationale.btn.btn-default(type="button", onclick="toggleDetails('rationale', 'showRationale')", aria-expanded="false", aria-controls="rationale", aria-label="Toggle the Rationale")
-          i.fa.fa-chevron-down(aria-hidden="true")
-      #rationale.instance-table-scroll(hidden)
+        button#showRationale.btn.btn-default(type="button", onclick="toggleDetails('rationale', 'showRationale')", aria-expanded="true", aria-controls="rationale", aria-label="Toggle the Rationale")
+          i.fa.fa-chevron-up(aria-hidden="true")
+      //- open, each step one line: a click on a step opens it to what it caused, and why
+      #rationale.instance-table-scroll
         table.instance-table.rationale-table
           thead
             tr
@@ -301,6 +281,149 @@ block content
               tr
                 td(colspan="6") Nothing to show: the server keeps an instance's log when its configuration says so (SAVE_LOGS).
 
+    //- under the Rationale, for designers and administrators while security policies are on: who may do what with
+    //- the instance now (its policy asked for each person and role: CaseAccess.instanceAccess)
+    if access && access.on && accessDetails
+      section.instance-card.instance-collapsible(aria-labelledby="access-heading")
+        .instance-card-heading
+          div
+            h2#access-heading Access
+            p.instance-hint Who may do what now, as the security policy says, asked for each person and role (those with no access are not listed). How each task was assigned is in the Rationale.
+          button#showAccess.btn.btn-default(type="button", onclick="toggleDetails('access', 'showAccess')", aria-expanded="true", aria-controls="access", aria-label="Toggle assignment and access")
+            i.fa.fa-chevron-up(aria-hidden="true")
+        #access.instance-table-scroll
+          - var yes = v => v ? 'yes' : '—';
+          if access.on && accessDetails
+            h3.access-title Who may see it
+            - var seeing = access.cases.filter(r => r.see !== 'none')
+            table.instance-table.access-table#access-case
+              thead
+                tr
+                  th(scope="col") Who
+                  th(scope="col") Because
+                  th(scope="col") Sees
+                  th(scope="col") Data
+                  th(scope="col") Restart
+                  th(scope="col") Start events
+                  th(scope="col") Rules
+              tbody
+                each row in seeing
+                  tr(data-who=row.who.label, data-kind=row.who.kind)
+                    td: strong #{row.who.label}
+                    td.instance-hint #{row.who.because}
+                    td #{row.see === 'none' ? '—' : row.see}
+                    td #{row.data}
+                    td #{yes(row.restart)}
+                    td #{yes(row.events)}
+                    td.instance-hint #{row.rules}
+          //- each waiting task: who may act on it (a task's assignment, after the fact, is the Rationale's)
+          each t in access.tasks
+            - var mayAct = (t.who || []).filter(r => r.offered || r.claim || r.complete || r.assign)
+            if accessDetails && mayAct.length
+              .access-task(data-element=t.elementId, data-seq=t.seq)
+                h3.access-title Who may act on ##{t.seq} #{t.name || t.elementId}
+                table.instance-table.access-table
+                  thead
+                    tr
+                      th(scope="col") Who
+                      th(scope="col") Offered
+                      th(scope="col") May claim
+                      th(scope="col") May complete
+                      th(scope="col") May assign
+                      th(scope="col") Rules
+                  tbody
+                    each row in mayAct
+                      tr(data-who=row.who.label, data-kind=row.who.kind)
+                        td: strong #{row.who.label}
+                        td #{yes(row.offered)}
+                        td #{yes(row.claim)}
+                        td #{yes(row.complete)}
+                        td #{yes(row.assign)}
+                        td.instance-hint #{row.rules}
+
+    //- whom its notification policies told what, delivered or not (wf_notifications)
+    if notifications && notifications.length
+      section.instance-card.instance-collapsible(aria-labelledby="notifications-heading")
+        .instance-card-heading
+          div
+            h2#notifications-heading Notifications
+            p.instance-hint Whom its notification policies told what, oldest first, delivered or not. All of them: #[a(href='/dashboard/notifications') Notifications].
+          button#showNotifications.btn.btn-default(type="button", onclick="toggleDetails('notifications', 'showNotifications')", aria-expanded="true", aria-controls="notifications", aria-label="Toggle notifications")
+            i.fa.fa-chevron-up(aria-hidden="true")
+        #notifications.instance-table-scroll
+          +notificationsTable(notifications, false)
+
+    section.instance-card(aria-labelledby="items-heading")
+      .instance-card-heading
+        div
+          h2#items-heading Instance items
+          p.instance-hint Times are measured from the start of execution.
+      .instance-table-scroll
+        table#dataTable.instance-table
+          thead
+            tr
+              th(scope="col") Seq #
+              th(scope="col") Element
+              th(scope="col") Name
+              th(scope="col") Started
+              th(scope="col") Ended
+              th(scope="col") Status
+              th(scope="col") Type
+              th(scope="col") User
+              th(scope="col") Action
+              th(scope="col") Assignee
+              th(scope="col") Candidate users
+              th(scope="col") Candidate groups
+              th(scope="col") Due date
+              th(scope="col") Follow-up date
+              th(scope="col") Priority
+          tbody
+            - let seq = 0;
+            each item in (items || [])
+              - var ref = `?id=${encodeURIComponent(item.id)}&processName=${encodeURIComponent(instance.name)}&elementId=${encodeURIComponent(item.elementId)}`;
+              - var label = (item.status === 'wait' && item.type === 'bpmn:UserTask') ? 'Execute' : '';
+              - var label2 = (item.status === 'wait' && item.type === 'bpmn:UserTask') ? 'Assign' : '';
+              //- an administrator completes a waiting event, or a receive task (it waits for a message, as an event does)
+              - if (user && user.isAdmin() && item.status === 'wait' && (item.type.includes('Event') || item.type === 'bpmn:ReceiveTask')) label = 'Force';
+              - var key = item.itemKey ? `[${item.itemKey}]` : '';
+              - seq++;
+              tr(data-element=item.elementId)
+                //- the engine's seq (from 1), as the Rationale, the diagram and the log give it
+                td #{item.seq != null ? item.seq : seq}
+                td.instance-nowrap #{item.elementId}
+                td #{item.name} #{key}
+                  //- the element's label (camunda:label, camunda:endLabel), when it has one
+                  if item.label
+                    div.item-label #{item.label}
+                td.instance-nowrap #{prettyDate(item.startedAt)}
+                td.instance-nowrap #{prettyDate(item.endedAt)}
+                td
+                  span.status-badge(class=item.status === 'wait' ? 'status-wait' : item.status === 'error' ? 'status-error' : 'status-end') #{item.status}
+                  if item.status === 'error' && item.statusDetails && item.statusDetails.error
+                    div.item-error #{item.statusDetails.error}
+                td.instance-nowrap #{item.type}
+                td #{item.userName}
+                td.instance-actions
+                  //- a test case from its file: nothing to act on
+                  if !testCase && item.status === 'error' && user && user.isAdmin()
+                    form.retry-form(action="/retryItem" method="post")
+                      input(type="hidden" name="_csrf" value=_csrf)
+                      input(type="hidden" name="itemId" value=item.id)
+                      button.btn.btn-primary.btn-xs(type="submit" title="Run the task's work again") Retry
+                  if label && !testCase
+                    a.btn.btn-primary.btn-xs(href=`/invokeItem${ref}`) #{label}
+                    if label2
+                      a.btn.btn-default.btn-xs(href=`/assign${ref}`) #{label2}
+                td #{item.assignee}
+                td #{item.candidateUsers}
+                td #{item.candidateGroups}
+                td.instance-nowrap #{prettyDate(item.dueDate)}
+                td.instance-nowrap #{prettyDate(item.followUpDate)}
+                td #{item.priority}
+            if !items || !items.length
+              tr
+                td(colspan="15") No items to show.
+
     section.instance-card.instance-collapsible(aria-labelledby="docs-heading")
       .instance-card-heading
         h2#docs-heading Model report
@@ -309,7 +432,7 @@ block content
       #docs.instance-report(hidden)
         script(type="application/json" data-report-source="model-report")!= modelJson
         #model-report
-      script(src="/modeler/report.js" defer)
+      script(src=asset("/modeler/report.js") defer)
 
     section.instance-card.instance-collapsible(aria-labelledby="logs-heading")
       .instance-card-heading

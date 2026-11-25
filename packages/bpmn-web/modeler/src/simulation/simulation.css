@@ -1,0 +1,230 @@
+/* Simulate (simulation.js): its panel, and the run on the diagram, in the editor and on an instance's page */
+.test-command-panel { margin: 0 0 8px; padding: 7px 10px; border: 1px solid #b9c6da; border-left: 4px solid #1f62c8; border-radius: 4px; background: #fbfcfe; }
+.test-command-panel[hidden] { display: none; }
+.test-sim-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.test-sim-text { flex: 1 1 240px; margin-left: 6px; color: #3d4450; font-size: 12px; }
+.test-sim-details-toggle { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 0 6px; font-size: 12px; font-weight: normal; color: #3d4450; cursor: pointer; }
+.test-sim-details { flex-basis: 100%; margin: 4px 0 0; padding: 6px 10px 6px 24px; border-top: 1px solid #e3e8f0; font-size: 12px; color: #182b3c; }
+.test-sim-details[hidden] { display: none; }
+.test-sim-details li { margin: 2px 0; overflow-wrap: anywhere; }
+.test-sim-details-none { list-style: none; margin-left: -14px; color: #5d6573; }
+.test-sim-details-item { list-style: none; margin-left: -14px; font-weight: 600; }
+
+/* the run on the diagram: started blue, done green, still waiting orange (dashed) */
+.djs-element.test-started .djs-visual > :first-child { stroke: #1f62c8 !important; stroke-width: 3px !important; }
+.djs-element.test-passed .djs-visual > :first-child { stroke: #067647 !important; stroke-width: 3px !important; }
+.djs-element.test-waiting .djs-visual > :first-child { stroke: #dc6803 !important; stroke-width: 3px !important; stroke-dasharray: 6 3; }
+/* a flow's line (its first child is the arrowhead's <defs>) */
+.djs-connection.test-passed .djs-visual > path { stroke: #067647 !important; stroke-width: 2px !important; }
+
+/* The changes, moving (simulation.js, animateChange): an element that starts glows blue, one done flashes green, a
+   flow taken draws itself as a token travels it, a waiting one's dashes crawl, a number pops in. None for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .djs-element.sim-anim.test-started .djs-visual > :first-child { animation: sim-start 0.7s ease-out; }
+  .djs-element.sim-anim.test-passed:not(.djs-connection) .djs-visual > :first-child { animation: sim-done 0.6s ease-out; }
+  .djs-element.test-waiting .djs-visual > :first-child { animation: sim-wait 1.2s linear infinite; }
+  .djs-connection.sim-anim.test-passed .djs-visual > path {
+    stroke-dasharray: var(--sim-len); animation: sim-draw var(--sim-dur, 0.4s) ease-in-out;
+  }
+  .sim-token { fill: #1f62c8; stroke: #fff; stroke-width: 2px; pointer-events: none; filter: drop-shadow(0 0 3px rgba(31, 98, 200, 0.8)); }
+  .sim-pop { animation: sim-pop 0.35s ease-out; transform-box: fill-box; transform-origin: center; }
+}
+@keyframes sim-start {
+  0% { filter: drop-shadow(0 0 0 rgba(31, 98, 200, 0)); }
+  35% { filter: drop-shadow(0 0 9px rgba(31, 98, 200, 0.9)); }
+  100% { filter: drop-shadow(0 0 0 rgba(31, 98, 200, 0)); }
+}
+@keyframes sim-done {
+  0% { fill: #b7ebc6; filter: drop-shadow(0 0 7px rgba(6, 118, 71, 0.7)); }
+  100% { filter: drop-shadow(0 0 0 rgba(6, 118, 71, 0)); }
+}
+@keyframes sim-wait { to { stroke-dashoffset: -18; } }
+@keyframes sim-draw { from { stroke-dashoffset: var(--sim-len); } to { stroke-dashoffset: 0; } }
+@keyframes sim-pop { 0% { transform: scale(0.2); opacity: 0; } 70% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(1); } }
+
+/* The close-up (stage.js): a card beside the element a change is about, zoomed in from it. A user task's form is typed
+   in, a gateway's conditions are evaluated one by one, a flow's condition holds, a service takes an input and answers. */
+.sim-stage {
+  position: absolute; z-index: 20; width: 292px; box-sizing: border-box; padding: 9px 11px 10px; pointer-events: none;
+  background: #fff; border: 1px solid #b9c6da; border-left: 5px solid #1f62c8; border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(24, 43, 60, 0.28); font: 12px/1.35 system-ui, sans-serif; color: #182b3c; text-align: left;
+}
+.sim-stage-gateway { border-left-color: #b54708; }
+.sim-stage-flow { border-left-color: #067647; }
+.sim-stage-service { border-left-color: #6941c6; }
+.sim-stage.phase-done { border-left-color: #067647; }
+.sim-stage.phase-waits { border-left-color: #dc6803; }
+.sim-stage-head { display: flex; align-items: center; gap: 8px; margin: 0 0 7px; }
+.sim-stage-title { flex: 1; font-weight: 600; font-size: 13px; overflow-wrap: anywhere; }
+.sim-stage-kind { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: #5d6573; }
+.sim-dim { color: #6b7280; }
+.sim-none { color: #6b7280; font-style: italic; }
+.sim-foot { margin: 8px 0 0; padding: 5px 0 0; border-top: 1px solid #e3e8f0; color: #3d4450; }
+.sim-why { font-size: 11px; color: #5d6573; }
+.sim-word { margin: 0 0 6px; color: #5d6573; font-size: 11px; }
+
+/* a form */
+.sim-form { display: grid; gap: 6px; }
+.sim-field { display: grid; gap: 2px; margin: 0; }
+.sim-field-label { font-size: 11px; color: #5d6573; }
+.sim-field-control { position: relative; min-height: 22px; padding: 3px 8px; border: 1px solid #c4ccd8; border-radius: 4px; background: #f8fafc; }
+.sim-field-control.filled { border-color: #1f62c8; background: #fff; }
+.sim-field-value { display: block; min-height: 15px; overflow-wrap: anywhere; }
+.sim-field-value.typing::after { content: '▏'; margin-left: 1px; color: #1f62c8; animation: sim-blink 0.7s steps(1) infinite; }
+.sim-caret-down { position: absolute; right: 8px; top: 3px; color: #5d6573; }
+.sim-submit { margin: 8px 0 0; padding: 4px 0; text-align: center; border-radius: 4px; background: #e8eef9; color: #1f62c8; font-weight: 600; }
+.sim-submit.pressed { background: #067647; color: #fff; }
+
+/* a gateway: a diamond, its branches and what each condition came to */
+.sim-diamond { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex: none; }
+.sim-diamond::before { content: ''; position: absolute; width: 17px; height: 17px; border: 2px solid #b54708; background: #fff; transform: rotate(45deg); }
+.sim-diamond i { position: relative; font-style: normal; font-weight: 700; color: #b54708; font-size: 13px; }
+.sim-branches { display: grid; gap: 5px; }
+.sim-branch { display: flex; align-items: flex-start; gap: 7px; padding: 4px 6px; border-radius: 4px; background: #f8fafc; }
+.sim-branch.taken { background: #e7f6ec; }
+.sim-branch.not-taken { opacity: 0.6; }
+.sim-branch-text { display: grid; gap: 1px; min-width: 0; }
+.sim-branch-name { font-weight: 600; }
+.sim-cond { font: 11px/1.3 ui-monospace, Consolas, monospace; color: #3d4450; overflow-wrap: anywhere; background: none; padding: 0; }
+.sim-mark { flex: none; width: 18px; height: 18px; border-radius: 50%; text-align: center; font-weight: 700; line-height: 18px; background: #e3e8f0; color: #5d6573; }
+.sim-mark.yes { background: #067647; color: #fff; }
+.sim-mark.no { background: #b42318; color: #fff; }
+
+/* a service: the input goes in, the output comes out */
+.sim-call { display: grid; grid-template-columns: 1fr 22px auto 22px 1fr; align-items: center; gap: 3px; }
+.sim-io { min-width: 0; padding: 4px 6px; border: 1px solid #d5dbe6; border-radius: 4px; background: #f8fafc; }
+.sim-out.failed { border-color: #b42318; background: #fef3f2; }
+.sim-out.pending { opacity: 0.55; }
+.sim-io-head { margin: 0 0 2px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: #5d6573; }
+.sim-lines { display: grid; gap: 1px; font-size: 11px; }
+.sim-lines > div { display: flex; gap: 4px; min-width: 0; }
+.sim-key { color: #6941c6; font-weight: 600; }
+.sim-val { overflow-wrap: anywhere; }
+.sim-more { color: #6b7280; }
+.sim-gear { display: grid; justify-items: center; gap: 1px; max-width: 74px; text-align: center; }
+.sim-gear > span { font-size: 22px; line-height: 1; color: #6941c6; display: inline-block; }
+.sim-gear small { font-size: 10px; color: #5d6573; overflow-wrap: anywhere; }
+.sim-arrow { position: relative; height: 2px; background: #c4ccd8; }
+.sim-arrow::after { content: ''; position: absolute; right: -1px; top: -3px; border: 4px solid transparent; border-left: 6px solid #c4ccd8; border-right: 0; }
+.sim-arrow .sim-packet { display: none; }
+.sim-arrow-out.on { background: #067647; }
+.sim-arrow-out.on::after { border-left-color: #067647; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sim-stage { animation: sim-zoom 0.38s cubic-bezier(0.2, 0.9, 0.3, 1.15) both; }
+  .sim-stage.no-zoom { animation: none; }
+  .sim-gear.spin > span { animation: sim-spin 1.1s linear infinite; }
+  .sim-arrow-in .sim-packet, .sim-arrow-out.on .sim-packet {
+    display: block; position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #6941c6; animation: sim-packet 0.9s ease-in-out infinite;
+  }
+  .sim-arrow-out.on .sim-packet { background: #067647; animation-iteration-count: 2; }
+  .sim-mark { transition: background 0.2s; }
+  .sim-submit.pressed { animation: sim-press 0.4s ease-out; }
+}
+@keyframes sim-zoom { from { transform: scale(0.15); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes sim-blink { 50% { opacity: 0; } }
+@keyframes sim-spin { to { transform: rotate(360deg); } }
+@keyframes sim-packet { from { left: 0; opacity: 0.2; } 20% { opacity: 1; } to { left: calc(100% - 8px); opacity: 0.2; } }
+@keyframes sim-press { 0% { transform: scale(1); } 40% { transform: scale(0.94); } 100% { transform: scale(1); } }
+
+/* a message: the envelope leaves the element as it sends, and arrives at it as it receives */
+.sim-stage-message { border-left-color: #0e7090; }
+.sim-msg { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 6px; }
+.sim-msg-end { max-width: 92px; padding: 4px 7px; border: 1px solid #c4ccd8; border-radius: 6px; background: #f8fafc; font-size: 11px; text-align: center; overflow-wrap: anywhere; }
+.sim-msg-here { border-color: #0e7090; background: #ecfbff; font-weight: 600; }
+.sim-msg-track { position: relative; height: 22px; }
+.sim-msg-track::before { content: ''; position: absolute; left: 0; right: 0; top: 10px; height: 2px; background: #c4ccd8; }
+.sim-envelope { position: absolute; top: 0; left: 0; font-size: 18px; line-height: 22px; color: #0e7090; }
+.sim-msg-send .sim-envelope { left: calc(100% - 18px); }
+.sim-msg-track.waiting .sim-envelope { opacity: 0.4; color: #dc6803; }
+.sim-msg-track.waiting::before { background: repeating-linear-gradient(90deg, #dc6803 0 6px, transparent 6px 10px); }
+@media (prefers-reduced-motion: no-preference) {
+  .sim-msg-send .sim-msg-track.go:not(.sent) .sim-envelope { animation: sim-send 1.1s ease-in-out both; }
+  .sim-msg-receive .sim-msg-track.go .sim-envelope { animation: sim-receive 1.1s ease-in-out both; }
+  .sim-msg-track.waiting .sim-envelope { animation: sim-await 1.2s ease-in-out infinite; }
+}
+@keyframes sim-send { from { left: 0; opacity: 1; } 85% { opacity: 1; } to { left: calc(100% - 18px); opacity: 0.2; } }
+@keyframes sim-receive { from { left: 0; opacity: 0.3; } to { left: calc(100% - 18px); opacity: 1; } }
+@keyframes sim-await { 50% { transform: translateX(6px); opacity: 0.8; } }
+
+/* a timer: a clock, its hands turning while it waits; an error: a bolt; a join: the flows that have arrived */
+.sim-stage-timer { border-left-color: #b54708; }
+.sim-stage-error { border-left-color: #b42318; }
+.sim-timer { display: flex; align-items: center; gap: 10px; }
+.sim-clock { position: relative; flex: none; width: 38px; height: 38px; border: 3px solid #b54708; border-radius: 50%; background: #fff; box-sizing: border-box; }
+.sim-clock::after { content: ''; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px; border-radius: 50%; background: #b54708; }
+.sim-hand { position: absolute; left: 50%; bottom: 50%; width: 2px; background: #b54708; transform-origin: bottom center; }
+.sim-hand-min { height: 13px; margin-left: -1px; }
+.sim-hand-hour { height: 8px; margin-left: -1px; transform: rotate(120deg); }
+.sim-timer.fired .sim-clock { border-color: #067647; }
+.sim-timer.fired .sim-hand, .sim-timer.fired .sim-clock::after { background: #067647; }
+.sim-timer-text { display: grid; gap: 1px; min-width: 0; }
+.sim-error { display: flex; align-items: center; gap: 10px; }
+.sim-bolt { flex: none; font-size: 30px; line-height: 1; color: #b42318; }
+.sim-error.catch .sim-bolt { color: #b54708; }
+.sim-error-text { display: grid; gap: 2px; }
+.sim-join { display: flex; align-items: center; gap: 5px; margin: 0 0 6px; }
+.sim-dot { width: 11px; height: 11px; border: 2px solid #98a2b3; border-radius: 50%; box-sizing: border-box; }
+.sim-dot.in { background: #067647; border-color: #067647; }
+@media (prefers-reduced-motion: no-preference) {
+  .sim-timer:not(.fired) .sim-hand-min { animation: sim-spin 1.6s linear infinite; }
+  .sim-timer:not(.fired) .sim-hand-hour { animation: sim-spin-hour 19s linear infinite; }
+  .sim-timer.fired .sim-clock { animation: sim-ring 0.5s ease-out; }
+  .sim-error .sim-bolt { animation: sim-strike 0.6s ease-out; }
+  .sim-dot.last { animation: sim-pop 0.4s ease-out; }
+}
+@keyframes sim-spin-hour { from { transform: rotate(120deg); } to { transform: rotate(480deg); } }
+@keyframes sim-ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+@keyframes sim-strike { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.4); opacity: 1; } 100% { transform: scale(1); } }
+
+/* People on the close-up: an avatar (a person's colour, their initials; a group is a rounded square), who a task is given
+   to and who did it, who began a process, and a notification after the fact: whom, what, how it went. */
+.sim-avatar {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; box-sizing: border-box; width: 26px; height: 26px;
+  border-radius: 50%; background: hsl(var(--h, 210) 55% 42%); color: #fff; font: 700 11px/1 system-ui, sans-serif;
+  border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(24, 43, 60, 0.28);
+}
+.sim-avatar.group { border-radius: 7px; }
+.sim-person { display: flex; align-items: center; gap: 8px; padding: 2px 0; min-width: 0; }
+.sim-person-text { display: grid; min-width: 0; line-height: 1.15; }
+.sim-person-text b { font-weight: 600; overflow-wrap: anywhere; }
+.sim-person-text small { color: #5d6573; font-size: 10.5px; }
+.sim-person-mark { margin-left: auto; color: #067647; font-weight: 700; }
+.sim-assigned { margin: 0 0 8px; padding: 6px 8px; border-radius: 6px; background: #eef4ff; }
+.sim-assigned.done { background: #e7f6ec; }
+.sim-assigned-head { margin: 0 0 2px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: #5d6573; }
+.sim-assigned-how { margin-top: 4px; font-size: 11px; color: #5d6573; overflow-wrap: anywhere; }
+.sim-stage-start { border-left-color: #067647; }
+.sim-stage-notice { border-left-color: #c2410c; }
+.sim-start { display: flex; align-items: center; gap: 10px; }
+.sim-start-avatar .sim-avatar { width: 42px; height: 42px; font-size: 15px; }
+.sim-start-text { display: grid; flex: 1; gap: 2px; min-width: 0; }
+.sim-start-play { color: #067647; font-size: 18px; }
+.sim-notices { display: grid; gap: 6px; margin-top: 8px; }
+.sim-stage-notice .sim-notices { margin-top: 0; }
+.sim-notice { padding: 7px 9px; border: 1px solid #fed7aa; border-radius: 6px; background: #fff7ed; }
+.sim-notice.status-failed { border-color: #fecdca; background: #fef3f2; }
+.sim-notice.status-recorded { border-style: dashed; }
+.sim-notice-head { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.sim-notice-event { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #9a3412; }
+.sim-notice-status { margin-left: auto; color: #5d6573; }
+.sim-notice-to { display: grid; margin: 3px 0; }
+.sim-notice-msg { display: grid; gap: 1px; font-size: 11px; overflow-wrap: anywhere; }
+.sim-notice-error { font-size: 11px; color: #b42318; }
+.sim-badge { position: absolute; z-index: 21; pointer-events: none; }
+.sim-badge .sim-avatar { width: 24px; height: 24px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sim-avatar { animation: sim-avatar-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+  .sim-assigned .sim-person { animation: sim-slide-in 0.4s ease-out both; }
+  .sim-assigned .sim-person:nth-of-type(2) { animation-delay: 0.15s; }
+  .sim-assigned .sim-person:nth-of-type(3) { animation-delay: 0.3s; }
+  .sim-notice { animation: sim-notice-in 0.5s ease-out both; animation-delay: calc(0.7s + var(--i, 0) * 0.3s); }
+  .sim-bell { display: inline-block; animation: sim-ring-bell 0.8s ease-in-out calc(0.9s + var(--i, 0) * 0.3s) 2; transform-origin: top center; }
+  .sim-start-play { animation: sim-pulse 1s ease-in-out infinite; }
+}
+@keyframes sim-avatar-in { from { transform: scale(0.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes sim-slide-in { from { transform: translateX(-14px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sim-notice-in { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sim-ring-bell { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(18deg); } 40% { transform: rotate(-16deg); } 60% { transform: rotate(10deg); } 80% { transform: rotate(-6deg); } }
+@keyframes sim-pulse { 50% { transform: scale(1.25); opacity: 0.7; } }

@@ -9,6 +9,9 @@ import { UserService } from "./userAccess/UserService.js";
 
 let server: BPMNServer;
 let userService: UserService;
+/** The application manages its own users (start({ userManager })): the commands on users have none of bpmn-web's to show. */
+let ownUsers = false;
+const OWN_USERS = "This application manages its own users (start({ userManager })): list and change them in the application.\nbpmn-web's own user store, which these commands read, is not used.";
 let api: BPMNAPI;
 
 //const cl = readline.createInterface(process.stdin,null);
@@ -81,9 +84,11 @@ const question = function(q):Promise<string> {
 /**
  * Runs the console on a server until the user quits (q), then exits the process. `args`: a command and the answers
  * to its questions (default: the words after --cli, as in `npm run cli -- cod asana`): it runs, then the console
- * quits; a yes/no question it does not answer is yes (the command line said so).
+ * quits; a yes/no question it does not answer is yes (the command line said so). `options.ownUsers`: the application
+ * keeps its own users, so lu and spw say so rather than read bpmn-web's, which it leaves empty.
  */
-export async function runConsole(bpmnServer: BPMNServer, args: string[] = commandLineArgs()) {
+export async function runConsole(bpmnServer: BPMNServer, args: string[] = commandLineArgs(), options: { ownUsers?: boolean } = {}) {
+	ownUsers = options.ownUsers === true;
 	server = bpmnServer;
 	api = new BPMNAPI(server);
 	userService = new UserService();
@@ -224,6 +229,7 @@ async function completeUserTask() {
 			break;
 		case 'lu':
 			console.log("listing Users");
+			if (ownUsers) { console.log(OWN_USERS); break; }
 			var users = await userService.findUsers({});
 			console.log('users:\n name\t email\t userGroups');
 			users.forEach(u => {
@@ -241,11 +247,14 @@ async function completeUserTask() {
 			break;
 		case 'spw':
 			console.log("setting user password");
+			if (ownUsers) { console.log(OWN_USERS); process.exitCode = 1; break; }
 
 			const userName = await question('UserName: ');
 			const newPassword = await question('NewPassword: ');
 
-			list = await userService.setPassword(userName, newPassword);
+			// a script can tell: it exits 1 when there was no such user
+			if (await userService.setPassword(userName, newPassword)) console.log(`Password set for ${userName}.`);
+			else process.exitCode = 1;
 	}
   
   }
@@ -255,6 +264,17 @@ async function completeUserTask() {
 	process.exit();
 
 }
+/**
+ * The engine's own calls, where it has them (a launched server: docs/design/engine-isolation.md): a connector's key,
+ * test and removal, locks, instances deleted. An embedded server has none: its own objects do it.
+ */
+const engineCalls = () => typeof (server.engine as any).releaseLocks === 'function' ? server.engine as any : null;
+async function releaseLocks(instanceId?: string) {
+	const engine = engineCalls();
+	if (engine) return engine.releaseLocks(instanceId);
+	await (server.dataStore.locker as any).delete(instanceId ? { id: instanceId } : {});
+}
+
 /** Connectors (docs/docs/connectors.md): REST APIs described by OpenAPI, which service tasks call. */
 async function connectorCommand(option: string) {
 	const connectors = server.connectors;
@@ -286,7 +306,11 @@ async function connectorCommand(option: string) {
 			const key = await question('Key (basic: user:password): ');
 			const how = scheme === 'bearer' || scheme === 'basic' ? { type: scheme as any }
 				: scheme.startsWith('apiKey:') ? { type: 'apiKey' as const, in: 'header' as const, name: scheme.slice(7) } : scheme || undefined;
-			const updated = await connectors.setKey(id, key.trim(), how);
+			const engine = engineCalls();
+			// how it is sent, into the connector's file; the key itself to the engine, which encrypts it
+			const updated = engine
+				? (await connectors.setScheme(id, how as any, key.trim()), await engine.setConnectorKey(id, key.trim()))
+				: await connectors.setKey(id, key.trim(), how);
 			console.log(`key set for '${id}': ${updated.auth.type} ...${updated.auth.last4}`);
 			break;
 		}
@@ -298,7 +322,8 @@ async function connectorCommand(option: string) {
 		}
 		case 'cot': {
 			const operation = (await question('Operation (empty: a GET that needs no input): ')).trim();
-			const result = await connectors.test(id, operation || undefined);
+			const engine = engineCalls();
+			const result = engine ? await engine.testConnector(id, operation || undefined) : await connectors.test(id, operation || undefined);
 			console.log(`${result.ok ? 'ok' : 'failed'}: ${result.operation}: ${result.message}`);
 			break;
 		}
@@ -310,7 +335,16 @@ async function connectorCommand(option: string) {
 		}
 		case 'cod': {
 			if (!await confirm(`Delete the connector '${id}'? (y/n): `)) break;
-			console.log(await connectors.remove(id) ? `'${id}' deleted` : `no connector '${id}'`);
+			const engine = engineCalls();
+			// its file, then its key and test, the engine's
+			let removed: boolean;
+			if (engine) {
+				const file = connectors.removeFile(id);
+				removed = (await engine.connectorRemoved(id)) || file;
+			}
+			else
+				removed = await connectors.remove(id);
+			console.log(removed ? `'${id}' deleted` : `no connector '${id}'`);
 			break;
 		}
 		case 'coc': {
@@ -520,7 +554,7 @@ async function checkLocks() {
 		}
 		const response = await question('delete all(Y/N?')
 		if (response == 'Y' || response == 'y') {
-			await (server.dataStore.locker as any).delete({});
+			await releaseLocks();
 		}
 	}
 
@@ -548,8 +582,8 @@ async function recover() {
 					console.log('deleting ',item.id);
 
 					try {
-						await (server.dataStore.locker as any).delete({id: item.instanceId});
-						await server.dataStore.deleteInstances({id: item.instanceId});
+						await releaseLocks(item.instanceId);
+						await server.engine.deleteInstances({id: item.instanceId});
 					}
 					catch(exc) {
 						console.log(exc);
@@ -564,7 +598,7 @@ async function recover() {
 
 					try {
 
-					await (server.dataStore.locker as any).delete({id: item.instanceId});
+					await releaseLocks(item.instanceId);
 
 					let ret = await server.engine.invoke({ "items.id": item.id }, {}, null, { recover: true });
 					console.log('done');

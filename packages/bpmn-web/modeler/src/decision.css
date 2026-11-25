@@ -61,3 +61,6 @@
 .decision-canvas .dmn-literal-expression-container {
     padding: 16px;
 }
+
+/* an input column's calculation under its name (decision.js showInputExpressions) */
+.owf-input-expression { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; color: #52575f; margin-top: 2px; overflow-wrap: anywhere; }

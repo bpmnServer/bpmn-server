@@ -1,4 +1,6 @@
 
+import { runningDecisionContext } from '../engine/DecisionContext.js';
+import { owfAttribute, legacyAttributes } from './owfAttributes.js';
 import { Node } from './Node.js';
 
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
@@ -16,6 +18,7 @@ import { DMNEngine } from '../dmn/DMNEngine.js';
 import { ConnectorError } from '../connectors/Connectors.js';
 import { ConnectorBehaviour } from './behaviours/Connector.js';
 import { Behaviour_names } from './behaviours/BehaviourLoader.js';
+import { itemContext } from '../engine/Context.js';
 
 // ---------------------------------------------
 class ScriptTask extends Node {
@@ -134,7 +137,9 @@ class ServiceTask extends Node {
 
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
-        const servicesProvider= stub ? null : await appDelegate.getServicesProvider(item.token.execution);
+        // the context of this call (docs/design/context-object.md): what the service and the delegate are handed
+        const context = itemContext(item, { what: this.serviceName, input: item.input });
+        const servicesProvider= stub ? null : await appDelegate.getServicesProvider(item.token.execution, context);
 
         let obj = servicesProvider;
 
@@ -157,9 +162,9 @@ class ServiceTask extends Node {
         if (stub) {
             ret = await stub(item.input, item.data);
         } else if (typeof method === 'function') {
-            ret = await (method as Function).call(owner, item.input, item.context);
+            ret = await (method as Function).call(owner, item.input, context);
         } else {
-            ret = await appDelegate['serviceCalled'](item.input, item.context, item);
+            ret = await appDelegate['serviceCalled'](item.input, item.context, item, context);
         }
         
         item.log("service returned " + ret);
@@ -211,10 +216,12 @@ class BusinessRuleTask extends ServiceTask {
         const folder = token.execution.server.configuration.definitionsPath;
         const found = await DMNEngine.find(folder, ref);
         token.log(`..invoking business rule ${ref}: decision '${found.decision.name}' in ${found.filePath}`);
-        const dmn = await new DMNEngine({ log: message => token.log(message) }).load(found.filePath, found.decision.id);
+        const dmn = await new DMNEngine({ log: message => token.log(message), listInputs: true }).load(found.filePath, found.decision.id);
 
-        const context = { ...(token.data || {}), ...(item.input || {}) };
-        const result = dmn.evaluate(context);
+        // the names every expression reads (engine/DecisionContext.ts): the data in its scope, the task's prepared inputs,
+        // who acts, the actors, the application's services and facts
+        const context = await runningDecisionContext(item, { kind: 'decision', name: ref, task: this.id });
+        const result = await dmn.evaluateAsync(context);
         item.output = this.mapResult(result);
         if (this.resultVariable)
             token.data[this.resultVariable] = item.output;
@@ -267,69 +274,55 @@ class SendTask extends ServiceTask {
     } */
 }
 
+/**
+ * A user task's attribute (`camunda:<attr>`), evaluated: an expression, a `#` script, else its text with its `${...}`
+ * parts filled in (a text with commas a list). Null when the task has none. For the task's own attributes, and for the
+ * add-ons that read others (who works on it).
+ */
+export async function taskAttribute(item, def, attr: string, isDate = false): Promise<{ value: any } | null> {
+    const exp = def?.$attrs?.['camunda:' + attr];
+    if (!exp) return null;
+    let value;
+    if (expressionScript(exp) !== null)
+        value = await item.context.scriptHandler.evaluateExpression(item, exp, attr);
+    else if (exp.startsWith('#'))
+        value = await item.context.scriptHandler.executeScript(item, 'return ' + exp.substring(1), attr);
+    else {
+        // a text with ${...} parts is filled in first: group-${data.region}, ${data.a},${data.b}
+        const text = templateParts(exp) ? await evaluateTemplate(item.context.scriptHandler, item, exp) : exp;
+        value = text.includes(',') ? text.split(',') : text;
+    }
+    if (isDate) value = new Date(value);
+    item.token.log('..setting attribute ' + attr + ' exp: ' + exp + '=' + value);
+    return { value };
+}
+
 class UserTask extends Node {
 
-    async end(item: Item,cancel=false) {
-
-        return await super.end(item,cancel);
-    }
     async start(item: Item): Promise<NODE_ACTION> {
-        if (this.def.$attrs)
-            {
-            await this.setAssignVal(item,"assignee");
-            await this.setAssignVal(item,"candidateGroups");
-            await this.setAssignVal(item,"candidateUsers");
-            await this.setAssignVal(item,"dueDate",true);
-            await this.setAssignVal(item,"followUpDate",true);
-            await this.setAssignVal(item,"priority");
-            }
-        // a task in a lane is offered to the group of the lane's name too; a single candidate group is text, not a list
-        if (this.lane && this.lane !=='')
-            {
-            const groups = item.candidateGroups == null ? [] : Array.isArray(item.candidateGroups) ? item.candidateGroups : [item.candidateGroups];
-            if (!groups.includes(this.lane))
-                groups.push(this.lane);
-            item.candidateGroups = groups;
-            }
-
+        // the task's own: when it is due, its follow-up, its priority. Who works on it (assignee, candidates, the
+        // lane's group) is an add-on's, as the task starts (addons/assignment, Execution.assignItem)
+        for (const [attr, isDate] of [['dueDate', true], ['followUpDate', true], ['priority', false]] as const) {
+            const found = await taskAttribute(item, this.def, attr, isDate);
+            if (found) item[attr] = found.value;
+        }
         return await super.start(item);
     }
-    async setAssignVal(item,attr,dateFormat=false) {
-        const exp=this.def.$attrs["camunda:"+attr];
-
-        if (!exp)
-            return;
-        var val;
-        if (expressionScript(exp) !== null)
-        {
-            val = await item.context.scriptHandler.evaluateExpression(item, exp, attr);
-        }
-        else if (exp.startsWith('#')) {
-            val = await item.context.scriptHandler.executeScript(item, 'return '+exp.substring(1), attr);
-        }
-        else
-        {
-            // a text with ${...} parts is filled in first: group-${data.region}, ${data.a},${data.b}
-            const text = templateParts(exp) ? await evaluateTemplate(item.context.scriptHandler, item, exp) : exp;
-            val = text.includes(",") ? text.split(",") : text;
-        }
-
-        if (dateFormat)
-            val=new Date(val);
-
-        item[attr] = val;
-        item.token.log('..setting attribute '+attr+' exp: '+exp+'='+val);
-        //console.log('----setAttVal', attr, exp, val);
-    }
     describe() {
-        let attrs = ["assignee","candidateGroups", "candidateUsers", "dueDate", "followUpDate", "priority"];
+        let attrs = ["assignee","candidateGroups", "candidateUsers", "label", "endLabel", "dueDate", "followUpDate", "priority"];
         let desc = super.describe();
 
         attrs.forEach(attr => {
-            let val = this.def.$attrs["camunda:" + attr];
+            let val = owfAttribute(this.def, attr);
             if (val)
                 desc.push([attr, val]);
         });
+        // the OWF attributes the engine doesn't read itself: an add-on's (owf:assignmentPolicy, owf:notificationPolicy)
+        const shown = new Set(attrs);
+        const others = [...Object.keys(this.def?.$attrs ?? {}).filter(k => k.startsWith('owf:')).map(k => k.slice(4)), ...legacyAttributes(this.def)];
+        for (const attr of new Set(others))
+            if (!shown.has(attr) && owfAttribute(this.def, attr) != null)
+                desc.push([attr, owfAttribute(this.def, attr)]);
         return desc;
     }
     get requiresWait() { return true; }

@@ -33,7 +33,7 @@ const errors = [];
 const MODEL = 'shop-order';      // a model calling the shop, written in the before hook
 
 test.before(async () => {
-    process.env.CONNECTORS_KEY ??= 'a test encryption key';
+    process.env.SECRETS_KEY ??= 'a test encryption key';
     api = http.createServer((req, res) => {
         const send = (status, body) => { res.writeHead(status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
         const customer = /^\/customers\/([^/?]+)/.exec(req.url);
@@ -46,7 +46,7 @@ test.before(async () => {
 
     web = await startWebApp();
     const connectors = web.bpmnServer.connectors;
-    await connectors.install();
+    await web.bpmnServer.engine.install();
     await connectors.add({ id: 'shop', document: SHOP_DOC, baseUrl: base });
     await connectors.add({ id: 'finance', document: SHOP_DOC, baseUrl: base, groups: ['FINANCE'] });      // not the designer's
     await connectors.add({ id: 'off', document: SHOP_DOC, baseUrl: base, enabled: false });
@@ -55,7 +55,7 @@ test.before(async () => {
         <camunda:outputParameter name="tier">\${output.tier}</camunda:outputParameter>
         <camunda:outputParameter name="custom">\${output.tier + '!'}</camunda:outputParameter>`));
     fs.writeFileSync(path.join(web.definitionsPath, 'gone-connector.bpmn'), model('gone/someOperation', ''));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 
     browser = await chromium.launch();
     context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
@@ -427,7 +427,6 @@ test('run from the Test tab: the start data reaches the connector, the answer is
     await page.waitForSelector('#js-canvas .djs-shape');
     await page.click('#js-tab-test');
     await page.waitForSelector('#js-test .test-panel');
-    await page.click('#js-test .test-new-menu summary');
     await page.click('#js-test .test-new');
     await page.click('#js-test .test-run');
     await page.waitForSelector('.test-start');

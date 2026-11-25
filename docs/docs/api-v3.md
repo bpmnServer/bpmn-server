@@ -19,14 +19,19 @@ Errors are `{ "error": { "code", "message" } }`, with the status the error's kin
 |---|---|
 | [GET /me](#get-me) | Who this call acts as, and what they may do |
 | [GET /processes/startable](#get-processesstartable) | The start events this user may use, with their forms |
+| [GET /processes/{name}/guide](#get-processesnameguide) | A process explained, for whoever may start it or works in it: its steps (who does each, what its form asks, where it goes next), its policies, and its scenarios in plain words, each with its test case |
 | [POST /processes/{name}/start](#post-processesnamestart) | Start a process as this user |
+| [POST /processes/{name}/choices/{field}](#post-processesnamechoicesfield) | A field of a start form with a list or a lookup (&lt;owf:list>, &lt;owf:lookup>): its choices, from the source the model names |
 | [GET /tasks](#get-tasks) | The waiting tasks this user has a part in, oldest first; with status=completed, the ones they completed, newest first |
 | [GET /tasks/{id}](#get-tasksid) | One task, with its instance's data and its form |
+| [POST /tasks/{id}/choices/{field}](#post-tasksidchoicesfield) | A field of a task form with a list or a lookup (&lt;owf:list>, &lt;owf:lookup>): its choices, from the source the model names |
 | [POST /tasks/{id}/claim](#post-tasksidclaim) | The task becomes this user's |
 | [POST /tasks/{id}/complete](#post-tasksidcomplete) | Complete the task, recording this user |
 | [GET /instances](#get-instances) | The instances this user may see, newest first |
 | [GET /instances/{id}](#get-instancesid) | One instance: its data and items |
 | [DELETE /instances/{id}](#delete-instancesid) | Delete it (administrators) |
+| [GET /instances/{id}/access](#get-instancesidaccess) | Who was given its tasks, and who may do what with it (administrators) |
+| [GET /instances/{id}/notifications](#get-instancesidnotifications) | What its notification policies notified: whom, with what message, delivered or kept |
 | [GET /instances/{id}/rationale](#get-instancesidrationale) | Why it went the way it did, step by step |
 | [POST /instances/{id}/events/{elementId}](#post-instancesideventselementid) | A start event of the running instance |
 | [POST /instances/{id}/restart](#post-instancesidrestart) | Run an item again, and the instance on from it |
@@ -53,6 +58,7 @@ Errors are `{ "error": { "code", "message" } }`, with the status the error's kin
 | [POST /settings/checks/{name}](#post-settingschecksname) | Run a check: database, engine, url (SITE_URL) or email |
 | [POST /tokens](#post-tokens) | A token for one of the application's users (the service key) |
 | [DELETE /tokens](#delete-tokens) | Revoke every token of a user (the service key) |
+| [GET /application](#get-application) | The application's contract (app-contract.json): the variables (appVars) and functions (appServices) an expression may use, with their types; its roles, APIs and pages; and its problems |
 
 ## Who am I
 
@@ -76,6 +82,20 @@ The start events this user may use, with their forms.
 | 200 | A list | { items, next } |
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 
+### GET /processes/{name}/guide
+
+A process explained, for whoever may start it or works in it: its steps (who does each, what its form asks, where it goes next), its policies, and its scenarios in plain words, each with its test case.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `name` | path | string | yes | The model |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | The guide | { name, description, steps, policies, examples } |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+
 ### POST /processes/{name}/start
 
 Start a process as this user.
@@ -98,6 +118,31 @@ Body (JSON):
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 404 | No such thing, or not this user's to see | [Error](#error) |
 
+### POST /processes/{name}/choices/{field}
+
+A field of a start form with a list or a lookup (<owf:list>, <owf:lookup>): its choices, from the source the model names.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `name` | path | string | yes | The model |
+| `field` | path | string | yes | The form field |
+
+Body (JSON):
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `text` | string |  | What the person typed: a lookup is searched by it; a list ignores it |
+| `data` | object |  | The form values as they are: a filter reads them, then the case data |
+| `startNodeId` | string |  | The start event; its first when not given |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | The choices: each key (saved as the value of the field; its label as &lt;id>Display) and what is shown | { items, next } |
+| 400 | The input is not right | [Error](#error) |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+| 502 | A connector the call needs failed | [Error](#error) |
+
 ## Tasks
 
 ### GET /tasks
@@ -109,6 +154,14 @@ The waiting tasks this user has a part in, oldest first; with status=completed, 
 | `limit` | query | integer |  | default 50, at least 1, at most 200 |
 | `cursor` | query | string |  | A page's `next` |
 | `status` | query | `"waiting"` or `"completed"` |  | completed: the latest this user completed (limit, default 10) |
+| `model` | query | string |  | Only this model's tasks; its named values for field and search |
+| `field` | query | string |  | A value the models' case labels show: by its name (`Client: ${data.clientId}` is Client; `${data.caseId}` alone is caseId); or a field of the cases' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels' values |
+| `op` | query | `"contains"` or `"is"` or `"gt"` or `"lt"` |  | contains: any case; is: exactly (a number also matches as a number); gt, lt: more, less than (a number as a number, else as text); default "contains" |
+| `value` | query | string |  |  |
+| `search` | query | string |  | Contained in any named value |
+| `columns` | query | string |  | Comma-separated, at most 12: a value the labels name (`Client`) or a data path (`data.amount`). Each item answers `columns`, its values as text, from what this user may read of its case |
+| `sort` | query | string |  | started, due, model, name, priority, or one of the columns (default started, oldest first); 400 BAD_SORT for another. With security policies, a data column no label reads is 400 SORT_REFUSED. A sorted list's cursor is its position |
+| `order` | query | `"asc"` or `"desc"` |  |  |
 
 | Answer | Means | Body |
 |---|---|---|
@@ -129,6 +182,30 @@ One task, with its instance's data and its form.
 | 200 | The task | [TaskWithForm](#taskwithform) |
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 404 | No such thing, or not this user's to see | [Error](#error) |
+
+### POST /tasks/{id}/choices/{field}
+
+A field of a task form with a list or a lookup (<owf:list>, <owf:lookup>): its choices, from the source the model names.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `id` | path | string | yes | The task |
+| `field` | path | string | yes | The form field |
+
+Body (JSON):
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `text` | string |  | What the person typed: a lookup is searched by it; a list ignores it |
+| `data` | object |  | The form values as they are: a filter reads them, then the case data |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | The choices: each key (saved as the value of the field; its label as &lt;id>Display) and what is shown | { items, next } |
+| 400 | The input is not right | [Error](#error) |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+| 502 | A connector the call needs failed | [Error](#error) |
 
 ### POST /tasks/{id}/claim
 
@@ -177,9 +254,16 @@ The instances this user may see, newest first.
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
 | `status` | query | string |  |  |
-| `name` | query | string |  |  |
+| `name` | query | string |  | Only this model's instances; its named values for field and search |
 | `limit` | query | integer |  | default 50, at least 1, at most 200 |
 | `cursor` | query | string |  | A page's `next` |
+| `field` | query | string |  | A value the models' case labels show: by its name (`Client: ${data.clientId}` is Client; `${data.caseId}` alone is caseId); or a field of the cases' data (`data.amount`; with security policies, only one a label reads, else 400 FILTER_REFUSED); none: any of the labels' values |
+| `op` | query | `"contains"` or `"is"` or `"gt"` or `"lt"` |  | contains: any case; is: exactly (a number also matches as a number); gt, lt: more, less than (a number as a number, else as text); default "contains" |
+| `value` | query | string |  |  |
+| `search` | query | string |  | Contained in any named value |
+| `columns` | query | string |  | Comma-separated, at most 12: a value the labels name (`Client`) or a data path (`data.amount`). Each item answers `columns`, its values as text, from what this user may read of its case |
+| `sort` | query | string |  | started, ended, model, status, or one of the columns (default started, newest first); 400 BAD_SORT for another. With security policies, a data column no label reads is 400 SORT_REFUSED. A sorted list's cursor is its position |
+| `order` | query | `"asc"` or `"desc"` |  |  |
 
 | Answer | Means | Body |
 |---|---|---|
@@ -214,6 +298,35 @@ Delete it (administrators).
 | 200 | Deleted | { deleted } |
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 403 | Not this user's to do | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+
+### GET /instances/{id}/access
+
+Who was given its tasks, and who may do what with it (administrators).
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `id` | path | string | yes | The instance |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | Its assignment and access | { id, name, on, cases, tasks } |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 403 | Not this user's to do | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+
+### GET /instances/{id}/notifications
+
+What its notification policies notified: whom, with what message, delivered or kept.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `id` | path | string | yes | The instance |
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | Its notifications, oldest first | { id, name, status, items } |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 404 | No such thing, or not this user's to see | [Error](#error) |
 
 ### GET /instances/{id}/rationale
@@ -701,6 +814,18 @@ Credential: The service key (API_KEY): the service account only.
 | 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
 | 403 | Not this user's to do | [Error](#error) |
 
+## Other
+
+### GET /application
+
+The application's contract (app-contract.json): the variables (appVars) and functions (appServices) an expression may use, with their types; its roles, APIs and pages; and its problems.
+
+| Answer | Means | Body |
+|---|---|---|
+| 200 | The contract | { name, expressions, types, roles, apis, pages, problems } |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 404 | No such thing, or not this user's to see | [Error](#error) |
+
 ## Shapes
 
 ### Error
@@ -715,14 +840,15 @@ Credential: The service key (API_KEY): the service account only.
 |---|---|---|---|
 | `userName` | string |  |  |
 | `groups` | list of string |  |  |
-| `credential` | `"token"` or `"service"` |  |  |
-| `may` | { start, design, administer } |  |  |
+| `credential` | `"token"` or `"service"` or `"host"` |  |  |
+| `may` | { start, design, administer, aiLink } |  |  |
+| `environment` | { name, label, readOnly, restrictions, shown } |  | The environment of the server: APP_ENV (null when not set), its label, READ_ONLY, what runs differently here (Timers off, Service tasks off, Scripts in a sandbox), and whether pages show it |
 
 ### Form
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `fields` | list of { id, label, type, defaultValue, values, validation } |  |  |
+| `fields` | list of { id, label, type, defaultValue, values, validation, list: [Choices](#choices), lookup: [Choices](#choices) } |  |  |
 | `formKey` | string |  |  |
 
 ### Startable
@@ -754,6 +880,36 @@ Credential: The service key (API_KEY): the service account only.
 | `followUpDate` | string |  |  |
 | `priority` | any |  |  |
 | `completedBy` | string |  |  |
+| `assignedBy` | { policy, rule, userName } |  | What decided who works on it, when something did: its assignment policy and rule, or who reassigned it |
+| `label` | string |  | Its own label, else its name and its case's; filled in when answered |
+| `labelValues` | list of [LabelValue](#labelvalue) |  |  |
+| `caseLabel` | string |  | Its case's label |
+| `caseLabelValues` | list of [LabelValue](#labelvalue) |  |  |
+| `columns` | object |  | The columns asked (?columns=), by key: their values as text, from its case |
+
+### LabelValue
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string |  |  |
+| `path` | string |  | The data path it reads |
+| `value` | any |  |  |
+
+### Choice
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `key` | string |  | Saved as the value of the field |
+| `display` | string |  | Shown, and saved as &lt;id>Display |
+
+### Choices
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `source` | string |  | service:&lt;name> or connector:&lt;connector>/&lt;operationId> |
+| `key` | string |  |  |
+| `display` | string |  |  |
+| `filter` | string |  | A data path, ${data.&lt;field>} |
 
 ### TaskWithForm
 
@@ -774,6 +930,9 @@ Everything of [Task](#task), and:
 | `startedAt` | string |  |  |
 | `endedAt` | string or null |  |  |
 | `data` | object |  |  |
+| `label` | string |  | Its label (the model's owf:label, the application's, else &lt;model> #&lt;caseId>): on the lists, one instance, a start and a completion |
+| `labelValues` | list of [LabelValue](#labelvalue) |  |  |
+| `columns` | object |  | On a list, the columns asked (?columns=), by key: their values as text |
 
 ### User
 
@@ -834,4 +993,4 @@ Everything of [Instance](#instance), and:
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `items` | list of object |  |  |
+| `items` | list of { label, labelValues } |  |  |

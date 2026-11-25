@@ -1,40 +1,32 @@
+include labelFilter.pug
+include listColumns.pug
 div.tasks-content
 	h3 Pending Tasks
+	//- this list's filter (routes/labelFilter.ts): by the named values of the tasks' cases
+	if taskFilter
+		+labelFilter(taskFilter)
+	if taskView
+		+listColumnsPicker(taskView)
 	if !waiting.length
-		p.empty-state There are no pending tasks for this user.
+		if taskFilter && taskFilter.active
+			p.empty-state No pending tasks match this filter.
+		else
+			p.empty-state There are no pending tasks for this user.
+	//- the columns shown, in the person's order (routes/listView.ts); who may work on a task is for administrators
+	- var shownColumns = (taskView ? taskView.layout : [{ key: '@task', title: 'Task' }, { key: '@case', title: 'Case' }, { key: '@process', title: 'Process' }, { key: '@waiting', title: 'Waiting' }]).filter(h => (user && user.isAdmin()) || !/^@candidate/.test(h.key))
 	table
 		tr
-			th Name -id
-			th Model
-			th CaseId
-			th Started
-			th Action 
-			th Assignee
-			th Candidate Users
-			th Candidate Groups
-			th Due date
-			th Follow-up date
-			th Priority
+			each h in shownColumns
+				+listHeading(h)
+			th
 		each item in waiting
 			- var ref1 = "/invokeItem?id="+item.id+"&processName="+item.processName+"&elementId="+item.elementId;
 			- var ref2 = "/assign?id="+item.id+"&processName="+item.processName+"&elementId="+item.elementId;
-			- var caseId=item.instanceData?item.instanceData.caseId:(item.data ? item.data.caseId : '');
-
 			tr
-				td #{item.name} - #{item.elementId}
-				td #{item.processName} 
-				td #{caseId}
-				td #{item.fromNow}
+				each h in shownColumns
+					+taskCell(h.key, item)
 				td
 					//- assignment is optional: whoever may see a task (assignee, candidate, unassigned) may execute it
 					a(href=`${ref1}`) Execute
 					<br />
 					a(href=`${ref2}`) Assign
-				td #{item.assignee}
-				if user && user.isAdmin()
-					td #{item.candidateUsers}
-					td #{item.candidateGroups}
-				td #{item.dueFrom}
-				td #{item.followFrom}
-				td #{item.priority}
-						

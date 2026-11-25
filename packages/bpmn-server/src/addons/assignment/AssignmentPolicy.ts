@@ -1,0 +1,165 @@
+/**
+ * The assignment add-on's policies (docs/design/assignment.md): a user task names one, `owf:assignmentPolicy="Approval"`, and
+ * when it starts the policy says who works on it. A policy is a DMN decision table in the models folder,
+ * `policies/assignment/<name>.dmn.xml`: conditions on the case's data in FEEL, the first rule that matches assigns. Its outputs
+ * are the task's usual fields, `assignee`, `candidateUsers` and `candidateGroups`; a cell is a FEEL value, or a model
+ * expression `$(...)` evaluated as the model's other expressions are (it can call appServices).
+ *
+ * The policy wins: each field its rule sets replaces what the model and the lane gave. No rule, no policy, or a
+ * failing one: it assigns nothing, and the Rationale says why. A task never fails because of its policy.
+ */
+import * as fs from 'fs';
+import * as path from 'path';
+import { DMNEngine } from '../../dmn/DMNEngine.js';
+import { expressionScript, isExpression } from '../../engine/Expressions.js';
+import { label } from '../../elements/Flow.js';
+import { runningDecisionContext } from '../../engine/DecisionContext.js';
+import { ASSIGNMENT_FIELDS } from '../../engine/AddOns.js';
+import { movePolicyFolder } from '../basics/folders.js';
+
+/** What a policy's rule sets: the engine's assignment fields. */
+export const POLICY_FIELDS = ASSIGNMENT_FIELDS;
+/** The models folder's assignment policies: the Assignment add-on's own folder (before 3.7.5, policies/assignment). */
+export const POLICIES_FOLDER = 'assignment';
+
+/** What decided a task's assignment, kept on the item: its policy and rule, or the person who reassigned it. */
+export interface IItemAssignment {
+    policy?: string;
+    rule?: number;
+    /** who reassigned it by hand (Execution.assign), replacing what its policy decided */
+    userName?: string;
+}
+
+/** A policy's file in a models folder, or null when it isn't there. */
+export function policyFile(definitionsPath: string, name: string): string | null {
+    if (!definitionsPath || !name || /[\\/]|\.\./.test(name)) return null;
+    const file = path.join(movePolicyFolder(definitionsPath, 'assignment'), `${name}.dmn.xml`);
+    return fs.existsSync(file) ? file : null;
+}
+
+/** The policies of a models folder, by name. */
+export function policyNames(definitionsPath: string): string[] {
+    if (!definitionsPath) return [];
+    const folder = movePolicyFolder(definitionsPath, 'assignment');
+    if (!fs.existsSync(folder)) return [];
+    return fs.readdirSync(folder).filter(f => /\.dmn\.xml$/i.test(f)).map(f => f.replace(/\.dmn\.xml$/i, '')).sort();
+}
+
+const asList = (value): string[] => (Array.isArray(value) ? value : String(value).split(','))
+    .map(v => String(v ?? '').trim()).filter(Boolean);
+
+/**
+ * A policy evaluated with this data: the first matching rule's number and its outputs (a `$(...)` cell as its text,
+ * for the caller to evaluate), or no rule. Throws when the file can't be read or a cell isn't FEEL.
+ */
+export async function evaluatePolicy(file: string, context: Record<string, any>, log?: (message: string) => void): Promise<{ rule?: number; outputs: Record<string, any> | null }> {
+    const dmn = await new DMNEngine({ log, keepOutput: isExpression, listInputs: true }).load(file);
+    const result = await dmn.evaluateAsync({ ...(context || {}) });
+    const outputs = (Array.isArray(result) ? result[0] : result) ?? null;
+    return { rule: outputs ? dmn.matched[0] : undefined, outputs };
+}
+
+/**
+ * Evaluates the task's policy: what the matching rule's outputs give (each field it sets to replace the model's), and
+ * what decided it; null when it assigns nothing. Writes a Rationale entry either way; never throws. The caller sets
+ * them (Execution.assignItem).
+ */
+export async function applyPolicy(node, item, policy: string): Promise<{ set: Record<string, any>; why: IItemAssignment } | null> {
+    const token = item.token;
+    const element = `user task ${label(node)}`;
+    const decide = (action: string, why: string[]) => token.decision({ seq: item.seq, element, action, why });
+    const unassigned = (why: string[]) => decide('is not assigned by its policy', [`policy ${policy}`, ...why]);
+    try {
+        const file = policyFile(token.execution.server.configuration.definitionsPath, policy);
+        if (!file)
+            return unassigned([`there is no ${POLICIES_FOLDER}/${policy}.dmn.xml`]);
+        // the names every expression reads (engine/DecisionContext.ts): the data in its scope, the task's prepared
+        // inputs (camunda:inputOutput), who acts, the actors, the application's services and facts
+        const context = await runningDecisionContext(item, { kind: 'assignment', name: policy, task: node.id });
+        const { rule, outputs } = await evaluatePolicy(file, context, message => token.log(message));
+        if (!outputs)
+            return unassigned(['no rule matched']);
+
+        const set: Partial<Record<typeof POLICY_FIELDS[number], any>> = {};
+        for (const field of POLICY_FIELDS) {
+            let value = outputs[field];
+            if (value == null || value === '') continue;
+            if (isExpression(value) && expressionScript(value) !== null)
+                value = await item.context.scriptHandler.evaluateExpression(item, value, field);
+            // an empty list, [], clears the candidates the attributes or the lane gave: "this assignee, and no one else"
+            if (Array.isArray(value) && !value.length && field !== 'assignee') { set[field] = []; continue; }
+            if (value == null || value === '' || (Array.isArray(value) && !value.length)) continue;
+            set[field] = field === 'assignee' ? String(value) : asList(value);
+        }
+        if (!Object.entries(set).some(([, value]) => Array.isArray(value) ? value.length : value))
+            return unassigned([`rule ${rule} matched, and gave no one`]);
+
+        token.log(`..assignment policy ${policy}, rule ${rule}: ${JSON.stringify(set)}`);
+        decide(`is ${whom(set)}`, [`policy ${policy}, rule ${rule}`]);
+        return { set, why: { policy, rule } };
+    }
+    catch (exc) {
+        unassigned([`the policy failed: ${exc?.message ?? exc}`]);
+        return null;
+    }
+}
+
+/** An assignment in words: `assigned to ann, and offered to bob, Manager`, or `assigned to no one`. */
+function whom(fields: { assignee?: any; candidateUsers?: any; candidateGroups?: any }): string {
+    const offered = [...asList(fields.candidateUsers ?? []), ...asList(fields.candidateGroups ?? [])];
+    return [
+        fields.assignee ? `assigned to ${fields.assignee}` : null,
+        offered.length ? `offered to ${offered.join(', ')}` : null,
+    ].filter(Boolean).join(', and ') || 'assigned to no one';
+}
+
+/**
+ * A person changed a waiting task's assignee or candidates (Execution.assign, its `assign` event), and the Rationale
+ * says what it was and what it is now. `before`: its fields beforehand; `changed`: the assignment's fields given;
+ * `previous`: what had decided it. A claim (taking an unassigned task oneself) keeps what offered it to them; any other
+ * change is that person's (the engine records it).
+ */
+export function reassigned(execution, item, before: Record<string, any>, changed: Record<string, any>, userName: string, previous?: IItemAssignment): void {
+    const now = Object.fromEntries(POLICY_FIELDS.map(f => [f, item[f]]));
+    // the same people as before (a form sends every field): nothing to say, and what decided it stays
+    if (whom(now) === whom(before)) return;
+    const earlier = previous?.policy ? `policy ${previous.policy}, rule ${previous.rule}` : previous?.userName;
+    const was = `it was ${whom(before)}${earlier ? ` (${earlier})` : ''}`;
+    const element = `user task ${label(item.node)}`;
+    const claim = userName && !before.assignee && changed.assignee === userName
+        && !POLICY_FIELDS.some(f => f !== 'assignee' && f in changed);
+    if (claim)
+        return execution.decision({ seq: item.seq, element, action: `is claimed by ${userName}`, why: [was] });
+    execution.decision({ seq: item.seq, element, action: `is reassigned by ${userName ?? 'the system'}: ${whom(now)}`, why: [was] });
+}
+
+/**
+ * Where each name is used as a role in a models folder: the lanes of its models (`<model>: lane`), and the groups its
+ * policies assign as literals (`policy <name>, rule <n>`). By name.
+ */
+export async function roleUses(definitionsPath: string): Promise<Map<string, string[]>> {
+    const uses = new Map<string, string[]>();
+    const add = (name: string, where: string) => uses.set(name, [...(uses.get(name) ?? []), where]);
+    if (!definitionsPath || !fs.existsSync(definitionsPath)) return uses;
+    for (const file of fs.readdirSync(definitionsPath).filter(f => /\.bpmn$/i.test(f))) {
+        const source = fs.readFileSync(path.join(definitionsPath, file), 'utf8');
+        for (const m of source.matchAll(/<(?:\w+:)?lane\b[^>]*?\bname="([^"]*)"/g))
+            add(m[1].trim(), `${file.replace(/\.bpmn$/i, '')}: lane`);
+    }
+    const { DMNParser } = await import('../../dmn/DMNParser.js');
+    for (const policy of policyNames(definitionsPath)) {
+        try {
+            const definitions = await DMNParser.loadFile(path.join(definitionsPath, POLICIES_FOLDER, `${policy}.dmn.xml`));
+            const table = DMNEngine.topDecision(definitions)?.table;
+            const groups = table ? table.outputs.findIndex(o => o.name === 'candidateGroups') : -1;
+            if (groups < 0) continue;
+            table.rules.forEach((rule, r) => {
+                const literal = /^"([^"]*)"$/.exec((rule.outputEntries[groups] ?? '').trim());
+                for (const group of literal ? literal[1].split(',').map(g => g.trim()).filter(Boolean) : [])
+                    add(group, `policy ${policy}, rule ${r + 1}`);
+            });
+        }
+        catch { /* a policy that can't be read: verifyModel says so */ }
+    }
+    return uses;
+}

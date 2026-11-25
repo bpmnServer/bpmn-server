@@ -1,8 +1,8 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { moddleOptions as defaultModdleOptions } from '../elements/js-bpmn-moddle.js';
 import type { BPMNServer } from './BPMNServer.js';
 import { engineCalls } from './EngineService.js';
+import { readAppContract, APP_CONTRACT_FILE } from '../engine/AppContract.js';
 
 /** Running or testing a process, when nothing can run it: the rest (models, their history, their checks) goes on. */
 export class EngineNotRunningError extends Error {
@@ -78,20 +78,26 @@ export class LaunchedEngine {
     claim(key: string): Promise<boolean> { return this.#ask('claim', [key]); }
     releaseClaim(key: string): Promise<boolean> { return this.#ask('releaseClaim', [key]); }
     /** The engine's stores set up: their indexes (at setup, at start). */
-    install() { return this.#ask('install', []); }
+    install(options: { rebuild?: boolean } = {}) { return this.#ask('install', [options]); }
     /** The engine's index of the models, told what changed in their files. */
     modelSaved(name: string) { return this.#ask('modelSaved', [name]); }
     modelRemoved(name: string) { return this.#ask('modelRemoved', [name]); }
     modelRenamed(name: string, newName: string) { return this.#ask('modelRenamed', [name, newName]); }
-    /** A connector's key for this server, stored encrypted by the engine (CONNECTORS_KEY is the engine's). */
+    /** A connector's key for this server, stored encrypted by the engine (SECRETS_KEY is the engine's). */
     setConnectorKey(id: string, key: string, userName?: string) { return this.#ask('setConnectorKey', [id, key, userName]); }
     clearConnectorKey(id: string) { return this.#ask('clearConnectorKey', [id]); }
+    /** A connector's file removed by the host: its key and test go, where the engine keeps them. */
+    connectorRemoved(id: string) { return this.#ask('connectorRemoved', [id]); }
     /** A connector's connection tested, from the engine, which makes its calls; the result kept there. */
     testConnector(id: string, operationId?: string, input = {}) { return this.#ask('testConnector', [id, operationId, input]); }
     upgrade(...args: any[]) { return this.#ask('upgrade', args); }
     upgradeRunning(...args: any[]) { return this.#ask('upgradeRunning', args); }
     invokeDecision(...args: any[]) { return this.#ask('invokeDecision', args); }
+    /** A form field's choices, from the source its list or lookup names: the engine's, where the code and keys are. */
+    formChoices(processName: string, elementId: string, fieldId: string, criteria = {}, context = {}) { return this.#ask('formChoices', [processName, elementId, fieldId, criteria, context]); }
     facts() { return this.#ask('facts', []); }
+    /** Cases' labels by the application's instanceLabel hook, in the engine where its code is (#295). */
+    instanceLabels(instances: any[]) { return this.#ask('instanceLabels', [instances]); }
     checkModel(name: string, source: string) { return this.#ask('checkModel', [name, source]); }
     /** A call added to the engine's (`calls` of launch, and of startEngineService where the engine is). */
     call(method: string, ...args: any[]) { return this.#ask(method, args); }
@@ -114,28 +120,45 @@ function providerOf(names: string[]) {
 }
 
 /**
- * What a launched server knows of its application without any of its code: the names of its services, from the file its
- * scan made (scanServices in bpmn-web) or else from the engine, and the model extensions. The code is inside the engine,
+ * What a launched server knows of its application without any of its code: the names of its services, read from the
+ * delegate's source at start (configuration.serviceNames) or else from the engine, and the model extensions. The code is inside the engine,
  * which is asked for the application's own checks of a model.
  */
 class ApplicationFacts {
     /** What the engine says of the model extensions, once asked. */
     moddleFromEngine;
+    /** Whether the application labels cases in code (its instanceLabel hook), as the engine says. */
+    labelsInEngine = false;
 
     constructor(private readonly configuration, private readonly engine: LaunchedEngine) { }
 
     get moddleOptions() { return this.moddleFromEngine ?? this.configuration.moddleOptions ?? defaultModdleOptions; }
 
     async getServicesProvider() {
-        try {
-            const scanned = JSON.parse(fs.readFileSync(this.configuration.servicesFile ?? path.resolve('services.json'), 'utf8'));
-            return providerOf([...(scanned.services ?? []), ...(scanned.extra ?? [])]);
-        }
-        catch {
-            // no file: the engine knows, when there is one; else no names, so services are not checked
-            if (!this.engine.running) return null;
-            return this.engine.facts().then(facts => providerOf(facts.services), () => null);
-        }
+        // read from the delegate's source when the server started
+        const names = await this.configuration.serviceNames;
+        if (names) return providerOf(names);
+        // not read: the engine knows, when there is one; else no names, so services are not checked
+        if (!this.engine.running) return null;
+        return this.engine.facts().then(facts => providerOf(facts.services), () => null);
+    }
+
+    /**
+     * Cases' labels by the application's instanceLabel hook, asked of the engine where its code is, all at once (#295).
+     * Null for each when it has none, or the engine can't be asked.
+     */
+    async caseLabelsByHook(instances: any[]): Promise<(string | null)[]> {
+        const none = instances.map(() => null);
+        if (!this.labelsInEngine || !this.engine.running || !instances.length) return none;
+        // the cases as data: what the hook reads, without their model source and log
+        const cases = instances.map(({ source, logs, ...instance }) => instance);
+        try { return await this.engine.instanceLabels(JSON.parse(JSON.stringify(cases))); }
+        catch { return none; }
+    }
+
+    /** The application's contract (app-contract.json): a file, read here as the engine reads it (DefaultAppDelegate.describe). */
+    describe() {
+        return readAppContract(this.configuration.appContract ?? path.resolve(APP_CONTRACT_FILE)).contract;
     }
 
     /** The application's own checks, which are its code: the engine's to run. Without one, it is said they did not. */
@@ -151,6 +174,30 @@ class ApplicationFacts {
         }
     }
 }
+
+/**
+ * A view of one of the engine's objects for the host (docs/design/engine-isolation.md): its reads go through; a write
+ * of the engine's data throws, saying what to use instead; `hidden` (a way back to the engine, its raw store) is not
+ * there.
+ */
+function view<T extends object>(target: T, refused: Record<string, string>, hidden: string[] = [], more: Record<string, () => any> = {}): T {
+    return new Proxy(target, {
+        get(object, property) {
+            if (typeof property === 'string') {
+                if (hidden.includes(property)) return undefined;
+                if (property in more) return more[property]();
+                if (property in refused)
+                    return () => { throw Object.assign(new Error(`${String(property)}: not the host's to do. ${refused[property]} (docs/design/engine-isolation.md)`), { code: 'ENGINE_ONLY' }); };
+            }
+            const value = Reflect.get(object, property, object);
+            return typeof value === 'function' ? value.bind(object) : value;
+        },
+    });
+}
+
+const INSTANCES_ARE_THE_ENGINES = 'Instances are the engine\'s: ask it (server.engine)';
+const MODELS_INDEX = 'The engine keeps the models\' index: change the files (server.models), and it is told';
+const KEYS_ARE_THE_ENGINES = 'A connector\'s key and test are the engine\'s: server.engine.setConnectorKey, clearConnectorKey, testConnector, connectorRemoved';
 
 /**
  * What `BPMNServer.launch(...)` gives: a server seen from outside its engine, with data only.
@@ -174,19 +221,54 @@ export class LaunchedServer {
         const calls = at ? null : { ...engineCalls(server), ...options.calls?.(server) };
         this.engine = new LaunchedEngine(at === 'none' ? null : at ? remoteCall(at, options.engineKey, options.engineTimeout) : (method, args) => calls[method](...args));
         this.appDelegate = new ApplicationFacts(server.configuration, this.engine);
-        if (!at) this.appDelegate.moddleFromEngine = server.appDelegate.moddleOptions;
+        if (!at) {
+            this.appDelegate.moddleFromEngine = server.appDelegate.moddleOptions;
+            this.appDelegate.labelsInEngine = typeof (server.appDelegate as any)?.instanceLabel === 'function';
+        }
         // an engine elsewhere may not have started yet: what is not known of it then falls back on the settings
         this.#ready = at && at !== 'none'
-            ? server.ready.then(() => this.engine.facts().then(facts => { this.appDelegate.moddleFromEngine = facts.moddleOptions; }, () => { }))
+            ? server.ready.then(() => this.engine.facts().then(facts => { this.appDelegate.moddleFromEngine = facts.moddleOptions; this.appDelegate.labelsInEngine = facts.instanceLabel === true; }, () => { }))
             : server.ready;
     }
 
     get ready() { return this.#ready; }
     get configuration() { return this.#server.configuration; }
     get logger() { return this.#server.logger; }
-    get dataStore() { return this.#server.dataStore; }
-    get definitions() { return this.#server.definitions; }
-    get connectors() { return this.#server.connectors; }
+    /**
+     * The instance viewer: instances, their items and locks, read only (docs/design/engine-isolation.md). Writing them
+     * is the engine's (`engine`); the raw store is not here (`documentStore` is the host's own, for its own data).
+     */
+    get dataStore() {
+        const dataStore = this.#server.dataStore as any;
+        const locker = () => dataStore.locker && view(dataStore.locker, {
+            lock: INSTANCES_ARE_THE_ENGINES, release: 'Locks are the engine\'s: server.engine.releaseLocks, claim, releaseClaim',
+            claim: 'Locks are the engine\'s: server.engine.claim', delete: 'Locks are the engine\'s: server.engine.releaseLocks',
+        }, ['server', 'db', 'dataStore']);
+        return view(dataStore, {
+            save: INSTANCES_ARE_THE_ENGINES, saveInstance: INSTANCES_ARE_THE_ENGINES, deleteInstances: INSTANCES_ARE_THE_ENGINES,
+            tagInstance: INSTANCES_ARE_THE_ENGINES, updateInstanceSource: INSTANCES_ARE_THE_ENGINES, archive: INSTANCES_ARE_THE_ENGINES,
+            install: 'The engine sets up its stores: server.engine.install',
+        }, ['server', 'db', 'monitor'], { locker });
+    }
+    /** Model access: the models' files (read and written, with no database), and the engine's index read only. */
+    get definitions() {
+        return view(this.#server.definitions as any, {
+            save: MODELS_INDEX, saveModel: MODELS_INDEX, deleteModel: MODELS_INDEX, renameModel: MODELS_INDEX, import: MODELS_INDEX,
+            install: 'The engine sets up its stores: server.engine.install', rebuild: MODELS_INDEX, updateTimer: MODELS_INDEX,
+            indexModel: MODELS_INDEX, unindexModel: MODELS_INDEX, renameIndex: MODELS_INDEX,
+        }, ['server', 'db']);
+    }
+    /** The connectors: their files (model access's); their keys and tests the engine's. */
+    get connectors() {
+        const connectors = this.#server.connectors as any;
+        return connectors && view(connectors, {
+            setKey: KEYS_ARE_THE_ENGINES, clearKey: KEYS_ARE_THE_ENGINES, storeKey: KEYS_ARE_THE_ENGINES, forgetKey: KEYS_ARE_THE_ENGINES,
+            test: KEYS_ARE_THE_ENGINES, forget: KEYS_ARE_THE_ENGINES,
+            remove: "Remove its file (connectors.removeFile); its key and test are the engine's: server.engine.connectorRemoved", install: 'The engine sets up its stores: server.engine.install',
+        }, ['server']);
+    }
+    /** The host's own store, for what is the host's (users, sessions, API tokens): not the engine's collections. */
+    get documentStore() { return (this.#server as any).documentStore ?? (this.#server.dataStore as any).db; }
     /**
      * The models, as the host changes them (docs/design/engine-isolation.md): model access writes their files, with no
      * database, and the engine updates its index of them. Models kept in the database alone (no folder) are saved there.

@@ -1,7 +1,7 @@
 # Chatting with your server
 
 Your users can build and test workflows by chatting with an AI assistant (ChatGPT, Claude, ...) that works on your
-BPMN Server for them: it reads the site's guide, writes the model and its tests, saves them, runs the tests, reads why
+OmniWorkflow for them: it reads the site's guide, writes the model and its tests, saves them, runs the tests, reads why
 one failed, and corrects it. This page says how to connect an assistant to a server, today and with 3.7.
 
 Today the assistant uses the same API as any client: the site's guide at `/llms.txt`, and

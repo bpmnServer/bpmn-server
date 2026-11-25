@@ -11,14 +11,17 @@ import path from 'node:path';
 import { layoutModel } from './layout.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
-import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
+import { movePolicyFolder } from '../index.js';
+import type { PolicyKind } from '../index.js';
+import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluatePolicy, isExpression, POLICIES_FOLDER, POLICY_FIELDS, SecurityPolicy, SECURITY_FOLDER, decisionContext, actorsOf, NOTIFICATION_FOLDER, notificationPolicyNames } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
-import { loadTemplateCatalog } from './elementTemplates.js';
+import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
 import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
-import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
-import { withReached } from '../testing/modelCoverage.js';
+import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest, withNotifications } from '../testing/scenarios.js';
+import { withReached, idsByName } from '../testing/modelCoverage.js';
+import { appServiceNames } from './integration.js';
 
 
 const awaitHandlerFactory = (middleware) => {
@@ -374,6 +377,8 @@ export class Model extends Common {
             catch (exc) {
                 services = undefined;   // a provider that needs a running execution: service names are not checked
             }
+            // off (ELEMENT_TEMPLATES): none offered
+            if (!templatesOn()) return response.json({ templates: [], rejected: [], warnings: [], off: true });
             const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, services);
             for (const rejected of catalog.rejected)
                 console.log(`element template ${rejected.file} ${rejected.id ?? ''} left out: ${rejected.problems.join('; ')}`);
@@ -457,11 +462,23 @@ export class Model extends Common {
 
         router.get('/decisions', awaitHandlerFactory(async (request, response) => {
             // the files and their XML: the editor reads their decisions, inputs and outputs
+            const folder = bpmnServer.configuration.definitionsPath;
             const decisions = decisionFiles().map(file => ({
                 name: file.replace(DMN_FILE, ''), file,
-                xml: FS.readFileSync(path.join(bpmnServer.configuration.definitionsPath, file), 'utf8')
+                xml: FS.readFileSync(path.join(folder, file), 'utf8')
             }));
-            response.json({ decisions });
+            // and the policies, assignment and security: the Report shows a task's and a process's tables
+            const policy = (subfolder: string) => (name: string) => {
+                const file = `${subfolder}/${name}.dmn.xml`;
+                try { return { name, file, xml: FS.readFileSync(path.join(folder, file), 'utf8') }; }
+                catch { return null; }
+            };
+            const security = new SecurityPolicy(folder);
+            response.json({ decisions, policies: {
+                assignment: policyNames(folder).map(policy(POLICIES_FOLDER)).filter(Boolean),
+                security: security.names().map(policy(SECURITY_FOLDER)).filter(Boolean),
+                securityOn: security.on,
+            } });
         }));
 
         router.get('/decision/:decision', awaitHandlerFactory(async (request, response) => {
@@ -487,6 +504,155 @@ export class Model extends Common {
                 return response.status(400).json({ errors: 'Not a DMN file' });
             FS.writeFileSync(path.join(bpmnServer.configuration.definitionsPath, decisionFile(name)), xml);
             response.json({ saved: decisionFile(name) });
+        }));
+
+        // ---- assignment policies (docs/docs/assignment-policies.md): decision tables `assignment/<name>.dmn.xml` of the
+        // models folder, edited in the decision editor; their tests kept as a decision's, under `<name>.policy`
+        // the Assignment add-on's folder; one from before 3.7.5 (policies/assignment) moved there first
+        const policiesFolder = () => movePolicyFolder(bpmnServer.configuration.definitionsPath, 'assignment');
+        const policyPath = (name: string) => path.join(policiesFolder(), `${name}.dmn.xml`);
+        const policyTests = (name: string) => `${name}.policy`;
+
+        // each kind of policy is its add-on's (docs/design/add-ons.md: assignment, security, notification): off, its pages
+        // and calls are not there
+        router.use(['/policies', '/policy', ...Object.keys(OTHER_POLICIES).map(kind => `/${kind}-policy`)], (request, response, next) => {
+            const kind = /\/policies\b/.test(request.originalUrl) ? String(request.query.kind ?? 'assignment')
+                : /\/(\w+)-policy\b/.exec(request.originalUrl)?.[1] ?? 'assignment';
+            return request.app.locals.addOnOn?.(kind) === false ? response.status(404).send(`The ${kind} add-on is off (app-config.json)`) : next();
+        });
+
+        /** A kind's policies, with their XML: ?kind=assignment (the default), security or notification. */
+        router.get('/policies', awaitHandlerFactory(async (request, response) => {
+            const folder = bpmnServer.configuration.definitionsPath;
+            const kind = String(request.query.kind ?? 'assignment');
+            if (kind !== 'assignment') {
+                const other = OTHER_POLICIES[kind];
+                if (!other) return response.status(400).json({ error: `kind is assignment, ${Object.keys(OTHER_POLICIES).join(' or ')}` });
+                const names = other.names(folder);
+                return response.json({ kind, policies: names.map(name => ({ name, xml: FS.readFileSync(path.join(folder, other.folder, `${name}.dmn.xml`), 'utf8') })) });
+            }
+            response.json({ policies: policyNames(folder).map(name => ({ name, xml: FS.readFileSync(policyPath(name), 'utf8') })) });
+        }));
+
+        // ---- security and notification policies: their own folders, edited and tested in the decision editor as an
+        // assignment policy is (/model/security-policy/<name>, /model/notification-policy/<name>); their tests as a
+        // decision's, under `<name>.<kind>-policy`
+        for (const [kind, other] of Object.entries(OTHER_POLICIES)) {
+            const fileOf = (name: string) => path.join(movePolicyFolder(bpmnServer.configuration.definitionsPath, kind as PolicyKind), `${name}.dmn.xml`);
+            const testsOf = (name: string) => `${name}.${kind}-policy`;
+            const base = `/${kind}-policy/:policy`;
+            router.get(base, awaitHandlerFactory(async (request, response) => {
+                const name = request.params.policy;
+                if (!isSafeModelName(name)) return response.status(400).send('Invalid policy name');
+                const exists = FS.existsSync(fileOf(name));
+                const xml = exists ? FS.readFileSync(fileOf(name), 'utf8') : other.starter(name);
+                response.render('decision', {
+                    name, exists, file: `${other.folder}/${name}.dmn.xml`, kind: other.title,
+                    modelJson: JSON.stringify(xml).replace(/</g, '\\u003c'),
+                    cspHost: process.env.ITSM_HOST,
+                });
+            }));
+            router.post(base, awaitHandlerFactory(async (request, response) => {
+                const name = request.params.policy;
+                const xml = request.body && request.body.xml;
+                if (!isSafeModelName(name)) return response.status(400).json({ errors: 'Invalid policy name' });
+                if (typeof xml !== 'string' || !/<(\w+:)?definitions[\s>]/.test(xml)) return response.status(400).json({ errors: 'Not a DMN file' });
+                FS.mkdirSync(path.dirname(fileOf(name)), { recursive: true });
+                FS.writeFileSync(fileOf(name), xml);
+                response.json({ saved: `${other.folder}/${name}.dmn.xml` });
+            }));
+            router.get(`${base}/tests`, awaitHandlerFactory(async (request, response) => {
+                if (!isSafeModelName(request.params.policy)) return response.status(400).json({ error: 'Invalid policy name' });
+                response.json({ tests: await loadDecisionTests(testsOf(request.params.policy)) });
+            }));
+            router.put(`${base}/tests`, awaitHandlerFactory(async (request, response) => {
+                const tests = request.body?.tests;
+                const problems = isSafeModelName(request.params.policy) ? checkDecisionTests(tests) : ['Invalid policy name'];
+                if (problems.length) return response.status(400).json({ error: problems.join('; ') });
+                await saveDecisionTests(testsOf(request.params.policy), tests, request.user?.userName);
+                response.json({ saved: tests.length });
+            }));
+            router.post(`${base}/tests/run`, awaitHandlerFactory(async (request, response) => {
+                const name = request.params.policy;
+                if (!isSafeModelName(name)) return response.status(400).json({ error: 'Invalid policy name' });
+                if (!FS.existsSync(fileOf(name))) return response.status(404).json({ error: `No ${other.folder}/${name}.dmn.xml: save the policy first` });
+                const tests = request.body?.tests ?? await loadDecisionTests(testsOf(name));
+                const problems = checkDecisionTests(tests);
+                if (problems.length) return response.status(400).json({ error: problems.join('; ') });
+                response.json({ results: await runDecisionTestsInEngine(bpmnServer, `${other.folder}/${name}.dmn.xml`, tests) });
+            }));
+        }
+
+        router.get('/policy/:policy', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.policy;
+            if (!isSafeModelName(name))
+                return response.status(400).send('Invalid policy name');
+            const exists = FS.existsSync(policyPath(name));
+            const xml = exists ? FS.readFileSync(policyPath(name), 'utf8') : newPolicy(name);
+            response.render('decision', {
+                name, exists, file: `${POLICIES_FOLDER}/${name}.dmn.xml`, kind: 'Assignment policy',
+                modelJson: JSON.stringify(xml).replace(/</g, '\\u003c'),
+                cspHost: process.env.ITSM_HOST,
+            });
+        }));
+
+        router.post('/policy/:policy', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.policy;
+            const xml = request.body && request.body.xml;
+            if (!isSafeModelName(name))
+                return response.status(400).json({ errors: 'Invalid policy name' });
+            if (typeof xml !== 'string' || !/<(\w+:)?definitions[\s>]/.test(xml))
+                return response.status(400).json({ errors: 'Not a DMN file' });
+            FS.mkdirSync(policiesFolder(), { recursive: true });
+            FS.writeFileSync(policyPath(name), xml);
+            response.json({ saved: `${POLICIES_FOLDER}/${name}.dmn.xml` });
+        }));
+
+        /** Who a policy gives a task to, with this data: { rule, outputs } (a $(...) output as written: it runs in a task). */
+        router.post('/policy/:policy/preview', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.policy;
+            if (!isSafeModelName(name))
+                return response.status(400).json({ error: 'Invalid policy name' });
+            if (!FS.existsSync(policyPath(name)))
+                return response.status(404).json({ error: `No ${POLICIES_FOLDER}/${name}.dmn.xml` });
+            const data = request.body?.data;
+            try {
+                // what the task's policy reads: the one decision context (engine/DecisionContext.ts), of this data
+                const context = await decisionContext({ kind: 'assignment', name, data: data && typeof data === 'object' ? data : {}, names: { actors: actorsOf({}) }, appDelegate: bpmnServer.appDelegate });
+                const { rule, outputs } = await evaluatePolicy(policyPath(name), context);
+                const fields = outputs ? Object.fromEntries(POLICY_FIELDS.filter(f => outputs[f] != null && outputs[f] !== '')
+                    .map(f => [f, outputs[f]])) : null;
+                response.json({ rule: rule ?? null, outputs: fields, expressions: fields ? Object.keys(fields).filter(f => isExpression(fields[f])) : [] });
+            }
+            catch (exc) {
+                response.json({ error: exc?.message ?? String(exc) });
+            }
+        }));
+
+        router.get('/policy/:policy/tests', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.policy))
+                return response.status(400).json({ error: 'Invalid policy name' });
+            response.json({ tests: await loadDecisionTests(policyTests(request.params.policy)) });
+        }));
+        router.put('/policy/:policy/tests', awaitHandlerFactory(async (request, response) => {
+            const tests = request.body?.tests;
+            const problems = isSafeModelName(request.params.policy) ? checkDecisionTests(tests) : ['Invalid policy name'];
+            if (problems.length)
+                return response.status(400).json({ error: problems.join('; ') });
+            await saveDecisionTests(policyTests(request.params.policy), tests, request.user?.userName);
+            response.json({ saved: tests.length });
+        }));
+        router.post('/policy/:policy/tests/run', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.policy;
+            if (!isSafeModelName(name))
+                return response.status(400).json({ error: 'Invalid policy name' });
+            if (!FS.existsSync(policyPath(name)))
+                return response.status(404).json({ error: `No ${POLICIES_FOLDER}/${name}.dmn.xml: save the policy first` });
+            const tests = request.body?.tests ?? await loadDecisionTests(policyTests(name));
+            const problems = checkDecisionTests(tests);
+            if (problems.length)
+                return response.status(400).json({ error: problems.join('; ') });
+            response.json({ results: await runDecisionTestsInEngine(bpmnServer, `${POLICIES_FOLDER}/${name}.dmn.xml`, tests) });
         }));
 
         // ---- the connectors a designer may use (enabled, for the designer's groups), with their enabled operations:
@@ -567,25 +733,19 @@ export class Model extends Common {
             catch (exc) {
                 provider = null;    // a provider that needs a running execution
             }
-            const names = (obj) => {
-                const found = new Set<string>();
-                for (let o = obj; o && o !== Object.prototype && o !== Function.prototype; o = Object.getPrototypeOf(o))
-                    for (const key of Object.getOwnPropertyNames(o))
-                        if (key !== 'constructor' && !key.startsWith('_')) found.add(key);
-                return [...found];
-            };
-            const services = [];
-            if (provider && typeof provider === 'object') {
-                for (const name of names(provider)) {
-                    let value;
-                    try { value = provider[name]; } catch { continue; }
-                    services.push({ name, kind: typeof value === 'function' ? 'function' : 'property' });
-                    if (value && typeof value === 'object' && !Array.isArray(value) && name !== 'appDelegate')
-                        for (const inner of names(value).slice(0, 50))
-                            services.push({ name: `${name}.${inner}`, kind: typeof value[inner] === 'function' ? 'function' : 'property' });
-                }
+            const services: { name: string; kind: string; description?: string }[] = appServiceNames(provider);
+            // the application's contract (app-contract.json): its functions' descriptions, those the provider doesn't
+            // list (made as it runs), and its variables (appVars.<name>)
+            let contract = null;
+            try { contract = bpmnServer.appDelegate?.describe?.() ?? null; } catch { contract = null; }
+            for (const e of (contract?.expressions ?? []).filter(e => e.kind === 'function')) {
+                const listed = services.find(s => s.name === e.name);
+                const description = [e.params ? `(${e.params.map(p => p.name).join(', ')})` : '', e.description ?? ''].filter(Boolean).join(' ');
+                if (listed) listed.description = description || undefined;
+                else services.push({ name: e.name, kind: 'function', ...(description ? { description } : {}) });
             }
-            response.json({ services });
+            const vars = (contract?.expressions ?? []).filter(e => e.kind === 'var').map(e => ({ name: e.name, kind: 'variable', ...(e.description ? { description: e.description } : {}) }));
+            response.json({ services, vars });
         }));
 
         // ---- the editor's History tab: every save of a model (ModelHistory: files in the models folder's .history)
@@ -621,9 +781,13 @@ export class Model extends Common {
         // ---- the editor's Test tab: scenarios per model, run on the saved model
 
         router.get('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.process))
+                return response.status(400).json({ error: 'Invalid model name' });
             response.json({ scenarios: await withRuns(bpmnServer, request.params.process, await loadScenarios(request.params.process)) });
         }));
         router.put('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.process))
+                return response.status(400).json({ error: 'Invalid model name' });
             const scenarios = request.body?.scenarios;
             const problems = checkScenarios(scenarios);
             if (problems.length) {
@@ -631,7 +795,7 @@ export class Model extends Common {
                 return;
             }
             await withReached(bpmnServer, request.params.process, scenarios);
-            await saveScenarios(request.params.process, scenarios, request.user?.userName);
+            await saveScenarios(request.params.process, scenarios, request.user?.userName, await idsByName(bpmnServer, request.params.process));
             await saveRuns(bpmnServer, request.params.process, scenarios);
             response.json({ saved: scenarios.length });
         }));
@@ -684,21 +848,24 @@ export class Model extends Common {
         }));
         /** Recording: start, then complete waiting items one at a time. */
         router.post('/test/start', awaitHandlerFactory(async (request, response) => {
-            const { processName, startNodeId, data, only } = request.body ?? {};
+            // user: who starts it, else the tester (a test instance: a designer may act as anyone in it)
+            const { processName, startNodeId, data, only, user } = request.body ?? {};
             try {
-                response.json({ instance: summarize(await startTest(bpmnServer, processName, startNodeId, data ?? {}, request.user?.userName, only === true)) });
+                response.json({ instance: summarize(await startTest(bpmnServer, processName, startNodeId, data ?? {}, String(user || '').trim() || request.user?.userName, only === true)) });
             } catch (exc) {
                 response.status(422).json({ error: String(exc?.message ?? exc) });
             }
         }));
         router.post('/test/invoke', awaitHandlerFactory(async (request, response) => {
-            const { instanceId, itemId, data } = request.body ?? {};
+            const { instanceId, itemId, data, user, role } = request.body ?? {};
             if (!String(instanceId || '').startsWith('test-')) {
                 response.status(400).json({ error: 'only test instances are completed here' });
                 return;
             }
             try {
-                response.json({ instance: summarize(await completeTest(bpmnServer, instanceId, itemId, data ?? {}, request.user?.userName)) });
+                // user, role: who completes it (a role: only an item offered to them), else the tester
+                const who = String(user || '').trim();
+                response.json({ instance: summarize(await completeTest(bpmnServer, instanceId, itemId, data ?? {}, who || request.user?.userName, (who && String(role || '').trim()) || undefined)) });
             } catch (exc) {
                 response.status(422).json({ error: String(exc?.message ?? exc), instance: summarize(await findTest(bpmnServer, instanceId).catch(() => null)) });
             }
@@ -737,7 +904,7 @@ export class Model extends Common {
                 return;
             }
             const all = [...expectChecks(expect), ...(Array.isArray(checks) ? checks : [])];
-            response.json({ checks: checksAt(all, after?.element ? after : at === 'start' ? 'start' : 'end', instance), instance: summarize(instance) });
+            response.json({ checks: checksAt(all, after?.element ? after : at === 'start' ? 'start' : 'end', await withNotifications(bpmnServer, instance, all)), instance: summarize(instance) });
         }));
 
         /** The debugger: a test instance's data replaced (the next steps run with it). */
@@ -782,6 +949,75 @@ export class Model extends Common {
         }));
         return router;
     }
+}
+
+/** A new policy's table: its hit policy, its inputs (label, expression), its outputs (name, label). */
+function starterTable(name: string, hitPolicy: string, inputs: [string, string][], outputs: [string, string][]): string {
+    const id = /^[A-Za-z_]/.test(name) ? name.replace(/[^\w.-]/g, '_') : 'policy_' + name.replace(/[^\w.-]/g, '_');
+    const label = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="${id}_definitions" name="${label}" namespace="http://bpmn-server/dmn">
+  <decision id="${id}" name="${label}">
+    <decisionTable id="${id}_table" hitPolicy="${hitPolicy}">
+${inputs.map(([inputLabel, expression], i) => `      <input id="${id}_input${i + 1}" label="${inputLabel}">
+        <inputExpression id="${id}_inputExpression${i + 1}" typeRef="string">
+          <text>${expression}</text>
+        </inputExpression>
+      </input>`).join('\n')}
+${outputs.map(([output, outputLabel]) => `      <output id="${id}_${output}" label="${outputLabel}" name="${output}" typeRef="string" />`).join('\n')}
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="${id}_diagram">
+      <dmndi:DMNShape id="${id}_shape" dmnElementRef="${id}">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>`;
+}
+
+/** The policies besides assignment's: their folders, names, the decision editor's title, a new one's table. */
+const OTHER_POLICIES: Record<string, { folder: string; title: string; names: (folder: string) => string[]; starter: (name: string) => string }> = {
+    security: {
+        folder: SECURITY_FOLDER, title: 'Security policy', names: folder => new SecurityPolicy(folder).names(),
+        // every rule that matches counts, a denial wins: who the user is, the task asked about
+        starter: name => starterTable(name, 'COLLECT', [['Initiator', 'actors.initiator'], ['Groups', 'user.userGroups'], ['Task', 'task']],
+            [['see', 'See'], ['data', 'Data'], ['claim', 'Claim'], ['complete', 'Complete'], ['assign', 'Assign'], ['restart', 'Restart']]),
+    },
+    notification: {
+        folder: NOTIFICATION_FOLDER, title: 'Notification policy', names: folder => notificationPolicyNames(folder),
+        // every rule that matches notifies: at which event, about which task
+        starter: name => starterTable(name, 'COLLECT', [['Event', 'event'], ['Task', 'task']],
+            [['notify', 'Notify'], ['template', 'Template'], ['channel', 'Channel']]),
+    },
+};
+
+/** A new policy: a FIRST table on one input, its outputs the assignment's fields. */
+function newPolicy(name: string): string {
+    const id = /^[A-Za-z_]/.test(name) ? name.replace(/[^\w.-]/g, '_') : 'policy_' + name.replace(/[^\w.-]/g, '_');
+    const label = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="${id}_definitions" name="${label}" namespace="http://bpmn-server/dmn">
+  <decision id="${id}" name="${label}">
+    <decisionTable id="${id}_table" hitPolicy="FIRST">
+      <input id="${id}_input1" label="Input">
+        <inputExpression id="${id}_inputExpression1" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="${id}_assignee" label="Assignee" name="assignee" typeRef="string" />
+      <output id="${id}_candidateGroups" label="Candidate groups" name="candidateGroups" typeRef="string" />
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="${id}_diagram">
+      <dmndi:DMNShape id="${id}_shape" dmnElementRef="${id}">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>`;
 }
 
 /** A new decision file: one decision table, named for the file, with an input, an output and a rule to start from. */

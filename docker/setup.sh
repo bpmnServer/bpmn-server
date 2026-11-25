@@ -22,11 +22,12 @@ ask() {
 port=$(ask "Host port" "$(old PORT | grep . || printf 3000)")
 case "$port" in ''|*[!0-9]*) echo "Invalid port" >&2; exit 2;; esac
 [ "$port" -ge 1 ] && [ "$port" -le 65535 ] || { echo "Invalid port" >&2; exit 2; }
-database=$(ask "Database (memory/mongo)" "$(case "$(old MONGO_DB_URL)" in mongodb*) printf mongo;; *) printf memory;; esac)")
+# MongoDB keeps the data; memory (nothing to run, nothing kept) only where it was chosen before
+database=$(ask "Database (mongo/memory)" "$(case "$(old MONGO_DB_URL)" in memory) printf memory;; *) printf mongo;; esac)")
 case "$database" in
   memory) db_url=memory;;
   mongo) db_url=mongodb://mongo:27017/bpmn;;
-  *) echo "Choose memory or mongo" >&2; exit 2;;
+  *) echo "Choose mongo or memory" >&2; exit 2;;
 esac
 source=$(ask "Image (published/local)" "$(case "$(old BPMN_IMAGE)" in *:local) printf local;; *) printf published;; esac)")
 case "$source" in
@@ -54,6 +55,7 @@ API_SERVICE_USER_GROUPS=SYSTEM
 API_KEY=$(secret API_KEY)
 ADMIN_API_KEY=$(secret ADMIN_API_KEY)
 SESSION_SECRET=$(secret SESSION_SECRET)
+SECRETS_KEY=$(secret SECRETS_KEY)
 ADMIN_PASSWORD=$admin
 EOF
 mv "$tmp" .env

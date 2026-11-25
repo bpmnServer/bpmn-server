@@ -1,17 +1,20 @@
 # Integrate an existing application
 
-> **Integration protocol (canonical):** [OWF Integration Protocol](../design/integration-protocol.md) defines the application-scoped operation allowlist, OpenAPI entity discovery, native-form lookups and shared editor/runtime validation. Existing features versus proposed extensions are distinguished there.
+> **Integration protocol (canonical):** [OWF Integration Protocol](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/integration-protocol.md) defines the application-scoped operation allowlist, OpenAPI entity discovery, native-form lookups and shared editor/runtime validation. Existing features versus proposed extensions are distinguished there.
 
+Journey C: your application keeps its own UI, users and data, and OmniWorkflow runs its processes, on a private network behind it: [Your application in control](architecture.md#your-application-in-control). The walkthrough [Integrate an existing application](tutorial/tutorial-integrate.md) does it with the leave request.
 
-Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: [Your application in control](architecture.md#your-application-in-control). The walkthrough [Integrate an existing application](tutorial/tutorial-integrate.md) does it with the leave request.
+**Where to start:** [Integration, step by step](integration/integration-guide.md) is the roadmap, with a checklist for each
+way (embedded in your server, or remote over the API), and [Calling OmniWorkflow from your application](tutorial/calling-owf.md)
+is the tutorial that builds it with the leave request. This page is the overview of the remote way.
 
 ## 1. Connect
 
-Your application talks to a running BPMN Server over its API, [API v3](api-v3.md) (`/api/v3`), from any language, with one key: the server's `API_KEY`. Keep it on your application's server. The API describes itself: `GET /api/v3/openapi.json`, with no key. `ADMIN_API_KEY` is for the administration APIs: [Settings](settings.md#rest-apis).
+Your application talks to a running OmniWorkflow over its API, [API v3](api-v3.md) (`/api/v3`), from any language, with one key: the server's `API_KEY`. Keep it on your application's server. The API describes itself: `GET /api/v3/openapi.json`, with no key. `ADMIN_API_KEY` is for the administration APIs: [Settings](settings.md#rest-apis).
 
 ## 2. Map your users
 
-Your application signs its users in, not BPMN Server. It acts for them with **tokens**:
+Your application signs its users in, not OmniWorkflow. It acts for them with **tokens**:
 
 - **A token for each user**: with the key, `POST /api/v3/tokens` `{ userName, groups, minutes }` answers a token for that user, with the groups your application gives them (never `SYSTEM`, `ADMIN` or `DESIGNER`). Each call with `Authorization: Bearer <token>` acts as that user, under the models' rules: their lanes, assignees, candidate users and groups. `DELETE /api/v3/tokens?userName=` revokes them when they sign out or leave.
 - **Starting a process for a user**: `POST /api/v3/processes/{name}/start` with their token starts it as them, if the model lets them (its start event's lane or candidates), and answers their first task; they are the process's initiator. A model that gives the first task to its initiator, as the leave request does, gives it to them.
@@ -19,7 +22,7 @@ Your application signs its users in, not BPMN Server. It acts for them with **to
 
 The older APIs are deprecated since 3.7 and frozen: `/api` and `/api2` act as the service account (a user a caller names is ignored, unless `API_IMPERSONATION=true`, until 4.0), and the task API, `/api2/tasks`, acts for the user named in `x-acting-user` with `API_ACTING_USER_KEY`. [The client API](client-api.md) describes them.
 
-[Integrate an existing application](tutorial/tutorial-integrate.md) shows it with the leave request. See [Application integration](customization.md) and its [design](application-integration-design.md), and [Security](security.md) for how assignment works.
+[Integrate an existing application](tutorial/tutorial-integrate.md) shows it with the leave request. See [Application integration](customization.md) and its [design](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/application-integration-design.md), and [Security](security.md) for how assignment works.
 
 ## 3. Show tasks in your UI
 
@@ -28,7 +31,7 @@ With a user's token: list their waiting tasks (`GET /api/v3/tasks`), show one wi
 ## 4. Services and events
 
 - **Calls out:** service tasks call your application's services, or REST APIs through [connectors](connectors.md) with no code: [Connect external services](tutorial/tutorial-connectors.md).
-- **Events in:** your application tells a waiting process something happened by delivering a message or a signal through the API (`POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}`, with the key: the service account must be in `SYSTEM`). A message nothing waits for starts a process that has it as a start event. [Connect external services](tutorial/tutorial-connectors.md#hearing-back-from-outside) has the details. BPMN Server has no inbound webhook routes (they are [proposed](application-integration-design.md#5-inbound-webhooks-and-api)): your webhook handler calls the API.
+- **Events in:** your application tells a waiting process something happened by delivering a message or a signal through the API (`POST /api/v3/messages/{id}`, `POST /api/v3/signals/{id}`, with the key: the service account must be in `SYSTEM`). A message nothing waits for starts a process that has it as a start event. [Connect external services](tutorial/tutorial-connectors.md#hearing-back-from-outside) has the details. OmniWorkflow has no inbound webhook routes (they are [proposed](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/application-integration-design.md#5-inbound-webhooks-and-api)): your webhook handler calls the API.
 - **Events out:** an application that embeds the engine can listen to it (the app delegate's `executionEvent` and lifecycle hooks). Over the API, poll the tasks or instances you care about.
 
 ## 5. Test and deploy

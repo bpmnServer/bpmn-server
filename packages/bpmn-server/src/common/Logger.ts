@@ -85,16 +85,16 @@ class Logger implements ILogger {
             if (i > 0)
                 out += ' ,';
 
-            if (typeof val === 'undefined') {
-                out += val;
+            if (val === undefined || val === null) {
+                out += val;     // a null logged is a null, not a TypeError in the caller
             }
             else {
-                var cls = val.constructor.name;
+                var cls = val.constructor?.name ?? 'Object';
                 if (cls === 'String')
                     out += val;
                 else if (cls === 'Array' && val.length==1)
                     {
-                        if (val[0].constructor.name==='Array')
+                        if (Array.isArray(val[0]))
                             out += JSON.stringify(val[0]);
                         else 
                             out +=val[0];
@@ -135,7 +135,7 @@ class Logger implements ILogger {
     async save(filename,flag='w') {
         const fs = require('fs');
         console.log("writing to:" + filename + " " + this.debugMsgs.length);
-        let id = fs.openSync(filename, flag, 666);
+        let id = fs.openSync(filename, flag, 0o666);
         {
             fs.writeSync(id,'Started at: '+new Date().toISOString() + "\n", null, 'utf8');
 

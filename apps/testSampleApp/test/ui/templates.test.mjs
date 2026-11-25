@@ -9,6 +9,9 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD, FIXTURES } from '../support/webApp.mjs';
 
+// element templates are a preview in 3.7.1, off unless ELEMENT_TEMPLATES=on (docs/design/roadmap.md)
+process.env.ELEMENT_TEMPLATES = 'on';
+
 /** Open a properties group, unless the editor has (it opens the groups that have values). */
 async function openGroup(page, label) {
     const header = page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
@@ -51,7 +54,7 @@ const SERVICE_MODEL = `<?xml version="1.0" encoding="UTF-8"?>
 
 async function addModel(name, xml) {
     fs.writeFileSync(path.join(web.definitionsPath, name + '.bpmn'), xml);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     return name;
 }
 

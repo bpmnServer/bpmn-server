@@ -54,7 +54,7 @@ cd my-app
 npm start                        # http://localhost:3000
 ```
 
-Open your browser to [http://localhost:3000](http://localhost:3000). The first page asks for the administrator, with the setup token the server printed when it started.
+Open your browser to [http://localhost:3000](http://localhost:3000). Sign in as `admin`, with the password the server prints when it first starts.
 
 `init` installs the application dependencies, including `bpmn-server`, `bpmn-web`, and `bpmn-mcp`;
 `npx bpmn-server init --help` lists its options, and `--minimal` creates a one-model Hello application
@@ -164,8 +164,8 @@ Every call to the engine says which user it acts for, and the engine applies the
 
 1. Model designers assign tasks with `assignee`, `candidateUsers` and `candidateGroups`, as names or expressions
    (`$(this.data.requester)`). A task in a lane is also offered to the group with the lane's name.
-2. **bpmn-web** signs users in and keeps their groups. A new server has no users: its first page asks for the
-   administrator, with a setup token it prints where it runs.
+2. **bpmn-web** signs users in and keeps their groups. A new server makes its administrator, `admin`, on its first
+   start, with a password it makes up and prints once where it runs.
 3. **Another application** keeps its own users: it calls the APIs with a key, and names the user and their groups on
    each call to the task API.
 4. **Embedded**, your code passes the user (`SecureUser`) to each call.

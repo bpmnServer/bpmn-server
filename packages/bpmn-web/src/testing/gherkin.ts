@@ -9,7 +9,7 @@ import vm from 'node:vm';
 import { randomUUID } from 'node:crypto';
 import { AstBuilder, compile, GherkinClassicTokenMatcher, Parser } from '@cucumber/gherkin';
 import { IdGenerator } from '@cucumber/messages';
-import { runSandboxed, SandboxScriptHandler, SecureUser, type StubSet } from 'bpmn-server';
+import { runSandboxed, SandboxScriptHandler, SecureUser, notificationsOf, invokeDecision, type StubSet } from 'bpmn-server';
 import { matched, outputAt } from './decisionTests.js';
 import { compare, valueAt } from './scenarios.js';
 
@@ -159,6 +159,17 @@ class Scenario {
             const op = { is: '=', 'is not': '<>' }[ofElement[5]] ?? ofElement[5];
             return { ok: compare(actual, op, await this.value(ofElement[6])), said: `${element} ${ofElement[4]} is ${JSON.stringify(actual)}` };
         }
+        // whom a notification went to (all of them, in any order), with its template, at an element
+        const notified = new RegExp(`^:(\\w+) notified (\\[.*?\\]|"[^"]*")(?: with template ("[^"]*"))?(?: at element:${NAME})?$`).exec(statement);
+        if (notified) {
+            const { instance } = await this.instanceOf(notified[1]);
+            const to = [JSON.parse(notified[2])].flat().map(String).sort();
+            const template = notified[3] && JSON.parse(notified[3]);
+            const element = notified[4] && unquoted(notified[4]);
+            const made = (await notificationsOf(this.server, instance.id)).filter(n => (!element || n.elementId === element) && (!template || n.template === template));
+            const ok = made.some(n => { const x = [...n.to].map(String).sort(); return x.length === to.length && x.every((v, i) => v === to[i]); });
+            return { ok, said: made.length ? `notified ${made.map(n => n.to.join(', ')).join('; ')}` : 'notified no one' };
+        }
         const expression = /^\$\{([\s\S]*)\}$/.exec(statement);
         if (expression) {
             const value = await this.expression(expression[1]);
@@ -229,7 +240,8 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
     async evaluate(server, scenario, { rest, rows }) {
         const match = new RegExp(`^decision:${NAME} as :(\\w+)$`).exec(rest);
         if (!match) throw new Error('@evaluate: @evaluate decision:<name> as :<name>');
-        const { result } = await server.engine.invokeDecision(unquoted(match[1]), await scenario.table(rows));
+        // in the engine, where the scenario runs: the decision of its models folder (EngineService's invokeDecision)
+        const { result } = await invokeDecision(server, unquoted(match[1]), await scenario.table(rows));
         scenario.names[match[2]] = { result, evaluated: true };
     },
 

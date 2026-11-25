@@ -1,163 +1,95 @@
-# data.find method
+# Finding instances: dataStore.find
 
- This method allows you to retrieve workflow instances from `wf_instances` collection.
-
- - Allows of server-side pagination 
- - It allows filtering, sorting, and projecting fields in the results.
- - The results can be paginated using a cursor for efficient data retrieval.
-
-## Usage
+`server.dataStore.find` reads a page of instances from the store: a filter chooses them, a sort orders them, and a
+cursor walks through them a page at a time. It is what a list of cases is built on, and it reads only the fields the
+page needs.
 
 ```ts
-            const {data,nextCursor,error,totalCount} 
-            = await server.dataStore.find({
-              filter,sort,projection,limit,after,getTotalCount
-            });
+const { data, nextCursor, totalCount, error } = await server.dataStore.find({
+    filter: { name: 'Buy Used Car', status: 'end' },
+    sort: { _id: -1 },
+    projection: { id: 1, name: 1, status: 1, startedAt: 1, data: 1 },
+    limit: 50,
+    getTotalCount: true,
+});
 ```
 
-### find parameters
- All the parameters are optional 
+For one instance or a few, `findInstances` is simpler: see [Managing data](data.md). Over the API, a list of cases is
+`GET /api/v3/instances` ([API v3](api-v3.md)), which uses this underneath.
 
- - `sort` 
-  Sort field can be specified as an object with field name as key and 1 (ascending)  or -1 (descending) as values.
+## What to pass
 
-	    Sort by `_id` in descending order by default.
-      Examples:
-      {"data.caseId:1}
-      {"items.dueDate:1}
-      {"items.startedAt:-1}}
-      {"_id:-1}
+Every parameter is optional.
 
-		Note that MongoDB _id field is sequential, so descending order means most recently created instances
+| | |
+|---|---|
+| `filter` | Which instances: `{ status: 'end' }`, `{ 'items.status': 'wait' }`, `{ 'items.type': 'bpmn:UserTask' }`, `{ 'data.caseId': 7 }`. Fields of the instance, or of its items. |
+| `sort` | One field, `1` for ascending or `-1` for descending: `{ startedAt: -1 }`, `{ 'data.caseId': 1 }`. The default is `{ _id: -1 }`, the newest first, because `_id` grows with each instance. |
+| `projection` | The fields to return: `{ id: 1, name: 1, data: 1 }`. It must include every field the filter and the sort use. |
+| `limit` | How many instances in a page. The default is 10. |
+| `after` | The `nextCursor` of the page before, to read the next one. |
+| `getTotalCount` | `true` also counts every instance the filter matches. It costs a second pass, so ask for it on the first page only. |
 
- - `filter` is an object that specifies the criteria for filtering the results.
-      Examples:
-        "status":"end"
-        "items.status":"wait"
-        "items.type":"bpmn:UserTask"
+## What comes back
 
- - `limit` is a number that specifies the maximum number of documents to return in the result set.
+| | |
+|---|---|
+| `data` | The instances, with the fields the projection asked for. |
+| `nextCursor` | Where the next page starts, or `null` on the last page. |
+| `totalCount` | How many instances match, when `getTotalCount` was `true`. |
+| `error` | What went wrong, when something did. |
 
- - `projection` is an object that specifies which fields to include or exclude in the returned documents.
-      You need to list all fields that are part of output
+Each instance's `items` is a single object, not an array, unless the projection asks for them as one (see
+[Only some items](#only-some-items)).
 
- - `after` is a string that specifies the cursor for pagination, allowing you to retrieve results after a specific document.	
+## Page by page
 
- - `getTotalCount` returns the total number of records. (this requires additional processing, so you may call it only once.)
-
- **Important Note: `projection` must include all fields in the filter and sort.**
-
-### Find Output
-
-find returns {data,nextCursor,error,totalCount}
-
-- data: an array of instances fields as specified in the projection
-but notice that `items` field (if requested) is a single object not an array.
-- nextCursor: value to be used for next call
-- error: any error msg 
-- totalCount: if requested
-
-### Example Code 
-
-The example below shows how to call for find method and the output:
+Pass the `nextCursor` of one page as the `after` of the next, with the same `filter`, `sort` and `projection`:
 
 ```ts
-
-import  { configuration, FindParams }   from './';;
-import { BPMNServer, Logger } from './';
-import { EventEmitter } from 'events';
-
-const logger = new Logger({ toConsole: true});
-
-let name = 'find';
-const server = new BPMNServer(configuration, logger, { cron: false });
-
-main();
-
-async function main() {
-
-
-	await findAggregation({ name: 'Buy Used Car' ,"items.status": 'wait' });	// has any item in wait status
-	console.log('--------------------------------------');
-	await findAggregation({ name: 'Buy Used Car' ,"status": 'end' });			// instances with end status
-}
-async function findAggregation(filter) {
-    // benchmark findInstances
-        console.time('find-instances call');
-    
-    let insts=await server.dataStore.findInstances(filter, 'summary');
-    let lastIns=insts[insts.length-1];
-    console.log('findInstances:',insts.length,lastIns.startedAt,lastIns.data.caseId);
-
-    console.timeEnd('find-instances call');
-
-    // benchmark find)
-
-    // works perfect
-    let nextCursor = null;
-    let param:FindParams = {
-        getTotalCount: true, // get the total count of records
-        limit: 50, // limit to 10 records per page
-        filter: filter, // filter by process name
-        sort: { _id: 1 },   // sort by _id to get the earliest first
-        projection: { id: 1, data: 1, name: 1, _id:1,startedAt:1,status:1,  // columns to return
-            items: {        
-                $filter: {  // filter items to only include UserTask types    
-                  input: "$items",
-                  as: "item",
-                  cond: {
-                   $eq: ["$$item.type", "bpmn:UserTask"] // filter to include only UserTask items
-                  }
-                }
-        }
-    }};
-
-    for(let i=0;i<100;i++) {
-            if (i>0)
-                param.after=nextCursor;
-    
-            console.time('find-aggregation call');
-            let res=await server.dataStore.find(param);
-    
-            if (i===0)
-			{
-                console.log('findAggregation    total', res.totalCount,'total pages', Math.ceil(res.totalCount/param.limit));
-				console.log(JSON.stringify(param,null,2));
-				console.log('-----------------------------------------');
-			}
-
-            param.getTotalCount=false; // do not get the total count again
-            if (res.error) {
-                console.log('error',res.error);
-                return;
-            }
-            else if(!res.data)
-                return;
-            let first=res.data?res.data[0]:null;
-            let last=res.data?res.data[res.data.length-1]:null;
-    
-            nextCursor=res.nextCursor;
-            
-            console.timeEnd('find-aggregation call');
-    
-            console.log('findAggregation    page:',i+1,'length:',res.data.length,res.nextCursor,first.startedAt,first.data.caseId,last.data.caseId);//.data.length, res.data[0] );
-
-			if (i==0) {
-				console.log('Sample Instance Items:');
-				first.items.forEach(item=>{
-					console.log(`	item:# ${item.seq} 	${item.name}	status:${item.status}`);
-				})
-			}
-
-            if(res.data.length<param.limit)
-                break;
-
-    }
-}
-
-
+let after: string | undefined;
+do {
+    const page = await server.dataStore.find({
+        filter: { name: 'Buy Used Car' },
+        sort: { startedAt: -1 },
+        projection: { id: 1, name: 1, startedAt: 1 },
+        limit: 50,
+        after,
+    });
+    if (page.error) throw new Error(page.error);
+    for (const instance of page.data ?? []) console.log(instance.id, instance.startedAt);
+    after = page.nextCursor ?? undefined;
+} while (after);
 ```
-### Example Output
-![alt text](image-1.png)
 
-![alt text](image-2.png)
+Any field can be the sort field, even one that many instances share: instances with the same value are then ordered by
+`_id`, so each one appears exactly once across the pages. Instances that don't have the field come first when
+ascending and last when descending.
+
+## Only some items
+
+An instance carries every item it has run. To read only some of them, ask for them as a filtered list. On MongoDB the
+projection takes an expression:
+
+```ts
+projection: {
+    id: 1, name: 1, status: 1,
+    items: { $filter: { input: '$items', as: 'item', cond: { $eq: ['$$item.type', 'bpmn:UserTask'] } } },
+}
+```
+
+`data.items` is then an array of the user tasks only.
+
+## Timing it
+
+To see what a filter costs on your own data, time the call and ask for the count once:
+
+```ts
+console.time('find');
+const page = await server.dataStore.find({ filter: { 'items.status': 'wait' }, limit: 50, getTotalCount: true });
+console.timeEnd('find');
+console.log(page.totalCount, 'instances match;', Math.ceil(page.totalCount / 50), 'pages');
+```
+
+The store's indexes decide how fast a filter and sort are: [Performance](performance.md) has the ones it creates and
+how to add your own.

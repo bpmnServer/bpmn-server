@@ -29,6 +29,8 @@ if [[ ! -e .env ]]; then
 API_KEY=$(key)
 ADMIN_API_KEY=$(key)
 SESSION_SECRET=$(key)
+ADMIN_PASSWORD=$(openssl rand -hex 16)
+SECRETS_KEY=$(key)
 EOF
   chmod 600 .env
 fi
@@ -61,6 +63,10 @@ services:
       API_KEY: \${API_KEY:?missing}
       ADMIN_API_KEY: \${ADMIN_API_KEY:?missing}
       SESSION_SECRET: \${SESSION_SECRET:?missing}
+      # the first user, admin, with this password; empty (an .env made before): the server makes one up and prints it in its log
+      ADMIN_PASSWORD: \${ADMIN_PASSWORD:-}
+      # encrypts the secrets the server stores (a connector's own key); keep it, a backup needs the same one
+      SECRETS_KEY: \${SECRETS_KEY:-}
     volumes:
       - processes:/app/processes
     depends_on:
@@ -96,5 +102,6 @@ docker compose up -d --remove-orphans
 docker compose ps
 echo "Client $client deployed on localhost:$port"
 echo "Configure a separate HTTPS reverse-proxy vhost for this client; do NOT open port $port in Lightsail."
-echo "IMPORTANT: ensure the application's first admin password is changed BEFORE internet exposure."
+echo "The administrator: sign in as admin with ADMIN_PASSWORD from $dir/.env (sudo grep ADMIN_PASSWORD $dir/.env); an .env made before has none: the server printed one in its log (docker compose logs server)."
+echo "IMPORTANT: change that password (My account) BEFORE internet exposure."
 echo "Manage: cd $dir; sudo docker compose ps; sudo docker compose logs -f server; sudo docker compose stop/start"

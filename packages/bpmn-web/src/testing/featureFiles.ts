@@ -53,6 +53,10 @@ function checkText(check, element?: string) {
         return `${INSTANCE} passed element:${ref(check.node)}${count}${check.status ? ` with status ${json(check.status)}` : ''}`;
     }
     if (check.kind === 'data') return `${INSTANCE} data.${pathText(check.path)} ${words(check.op)} ${json(check.value)}`;
+    // who the element's latest item is assigned or offered to; whom a notification went to
+    if (check.kind === 'assignment') return `${INSTANCE} last element:${ref(check.node)} ${check.field} is ${json(check.value)}`;
+    if (check.kind === 'notified')
+        return `${INSTANCE} notified ${json(check.to)}${check.template ? ` with template ${json(check.template)}` : ''}${check.node ? ` at element:${ref(check.node)}` : ''}`;
     throw new Error(`no check of kind '${check.kind}'${element ? ` after ${element}` : ''}`);
 }
 
@@ -64,6 +68,10 @@ function readCheck(text: string) {
         if (passed[3] !== undefined) check.status = JSON.parse(passed[3]);
         return check;
     }
+    const assigned = new RegExp(`^${INSTANCE} last element:${NAME} (assignee|candidateUsers|candidateGroups) is (.+)$`).exec(text);
+    if (assigned) return { kind: 'assignment', node: unquoted(assigned[1]), field: assigned[2], value: JSON.parse(assigned[3]) };
+    const notified = new RegExp(`^${INSTANCE} notified (\\[.*?\\])(?: with template ("[^"]*"))?(?: at element:${NAME})?$`).exec(text);
+    if (notified) return { kind: 'notified', to: JSON.parse(notified[1]), ...(notified[2] ? { template: JSON.parse(notified[2]) } : {}), ...(notified[3] ? { node: unquoted(notified[3]) } : {}) };
     const status = new RegExp(`^${INSTANCE} status is (".*")$`).exec(text);
     if (status) return { kind: 'status', status: JSON.parse(status[1]) };
     const data = new RegExp(`^${INSTANCE} data\\.((?:[\\w.]|"[^"]*")+) ${OP} ${VALUE}$`).exec(text);
@@ -73,6 +81,7 @@ function readCheck(text: string) {
 
 /** A check being filled in on the Test tab (saved as it is typed) has nothing to check yet: it is not written until it has. */
 const filledIn = check => check.kind === 'node' ? !!check.node : check.kind === 'data' ? !!check.path
+    : check.kind === 'assignment' ? !!check.node && !!check.field : check.kind === 'notified' ? !!check.to?.length
     : check.kind === 'status' ? check.status != null && check.status !== '' : true;
 
 function scenarioLines(model: string, scenario, tags: string[]): string[] {
@@ -84,11 +93,22 @@ function scenarioLines(model: string, scenario, tags: string[]): string[] {
     for (const check of at(c => c.at === 'after'))
         if (!(scenario.steps ?? []).some(s => s.element === check.step))
             throw new Error(`the check after '${check.step}' names no step of ${scenario.name}`);
+    // who acts: a @login before the start or a step whose user is not the one acting already; the steps after act as them too
+    let acting = '';
+    const login = (who: { user?: string; role?: string }, keyword: string) => {
+        if (!who?.user) return;
+        if (/\s/.test(who.user)) throw new Error(`a user's name has no spaces: '${who.user}'`);
+        const as = `user:${who.user} @login${who.role ? ` with role of ${JSON.stringify(who.role)}` : ''}`;
+        if (as !== acting) lines.push(`    ${keyword} ${as}`);
+        acting = as;
+    };
+    login(start, 'Given');
     lines.push(`    When @start process:${ref(model)}${start.startNodeId ? ` at element:${ref(start.startNodeId)}` : ''}${start.only ? ' only' : ''} as ${INSTANCE}`);
     lines.push(...table(start.data, '      '));
     for (const check of at(c => c.at === 'start')) lines.push(`    And @check ${checkText(check)}`);
     for (const step of scenario.steps ?? []) {
-        lines.push(`    And @invoke element:${ref(step.element)} in ${INSTANCE}`);
+        login(step, 'And');
+        lines.push(`    And @invoke element:${ref(step.element)} in ${INSTANCE}${step.refused ? ' is refused' : ''}`);
         lines.push(...table(step.data, '      '));
         for (const check of at(c => c.at === 'after' && c.step === step.element)) lines.push(`    And @check ${checkText(check, step.element)}`);
     }
@@ -101,21 +121,25 @@ function readScenario(ast) {
     if (ast.examples?.length) throw new Error('an outline');
     const scenario: any = { name: ast.name, start: { data: {} }, steps: [], checks: [] };
     let started = false, last = null, atEnd = false;
+    let who = null;     // a @login: the user of the start or step after it
     for (const step of ast.steps) {
         const text = step.text.trim();
         if (step.docString) throw new Error('a doc string');
         const start = new RegExp(`^@start process:${NAME}(?: at element:${NAME})?( only)? as ${INSTANCE}$`).exec(text);
-        const invoke = new RegExp(`^@invoke element:${NAME} in ${INSTANCE}$`).exec(text);
+        const invoke = new RegExp(`^@invoke element:${NAME} in ${INSTANCE}( is refused)?$`).exec(text);
         const check = /^@check (.+)$/.exec(text);
+        const login = /^user:(\S+) @login(?: with role of "([^"]*)")?$/.exec(text);
         if (start && !started) {
             started = true;
-            scenario.start = { data: rowsOf(step) };
+            scenario.start = { data: rowsOf(step), ...who };
+            who = null;
             if (start[2]) scenario.start.startNodeId = unquoted(start[2]);
             if (start[3]) scenario.start.only = true;
         }
         else if (invoke && started && !atEnd) {
             last = unquoted(invoke[1]);
-            scenario.steps.push({ element: last, data: rowsOf(step) });
+            scenario.steps.push({ element: last, data: rowsOf(step), ...who, ...(invoke[2] ? { refused: true } : {}) });
+            who = null;
         }
         else if (check && started) {
             atEnd = atEnd || step.keyword.trim() === 'Then';
@@ -124,6 +148,7 @@ function readScenario(ast) {
             // a check after a step is written after each time it comes; it is one check
             if (!scenario.checks.some(c => JSON.stringify(c) === JSON.stringify(placed))) scenario.checks.push(placed);
         }
+        else if (login && !atEnd && !who) who = { user: login[1], ...(login[2] ? { role: login[2] } : {}) };
         else throw new Error(`not a step of this form: ${text}`);
     }
     if (!started) throw new Error('no @start');
@@ -177,7 +202,10 @@ const OWN_TAGS = ['@generated'];
 export function writeFeature(name: string, list: any[], { decision = false } = {}): string {
     const featureTags = [...new Set(list.flatMap(item => item.featureTags ?? []))];
     const background = list.find(item => item.background)?.background;
-    const parts = [...(featureTags.length ? [featureTags.join(' ')] : []), `Feature: ${name}`];
+    // the Feature's description, kept as written: its lines under `Feature:`
+    const description = list.find(item => item.featureDescription)?.featureDescription;
+    const parts = [...(featureTags.length ? [featureTags.join(' ')] : []), `Feature: ${name}`,
+        ...(description ? String(description).split('\n').map(line => line.trim() ? `  ${line.trim()}` : '') : [])];
     if (background) parts.push('', background);
     for (const item of list) {
         parts.push('');
@@ -204,7 +232,8 @@ export function readFeature(text: string, { decision = false, name = '' } = {}):
     const lines = text.replace(/\r\n/g, '\n').split('\n');
     const children = feature.children ?? [];
     const featureTags = (feature.tags ?? []).map(tag => tag.name);
-    const shared = featureTags.length ? { featureTags } : {};
+    const description = String(feature.description ?? '').trim();
+    const shared = { ...(featureTags.length ? { featureTags } : {}), ...(description ? { featureDescription: description.split('\n').map(line => line.trim()).join('\n') } : {}) };
     const startOf = (child) => firstLine(child.background ?? child.rule ?? child.scenario);
     const endOf = (i: number) => i + 1 < children.length ? startOf(children[i + 1]) : lines.length + 1;
     const backgroundAt = children.findIndex(child => child.background);

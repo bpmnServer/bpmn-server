@@ -14,20 +14,27 @@ import crypto from 'node:crypto';
 import readline from 'node:readline';
 import { createRequire } from 'node:module';
 import { init, MEMORY_SERVER_VERSION } from './init.js';
-import { settingProblem } from './common/settingValue.js';
+import { settingProblem, parseEnv, renderEnv } from './common/settingValue.js';
+
+// the .env's reading and writing, kept here too for setup's callers
+export { parseEnv, renderEnv };
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
 
 export const SETUP_USAGE = `usage: bpmn-server setup [folder] [options]
 
-  Sets up an application's .env step by step: the database (checked), the
-  administrator, the site, sign-in and design, email, the API keys, AI access
-  and diagnostics. Enter keeps the value shown; nothing is written until you
-  confirm. With no application in the folder, one is created first (as init).
+  Sets up an application's .env step by step: the database (checked) and the
+  site. Sign-in, the security rules and the keys are set without asking; the
+  administrator is made, and its password printed, when the server first
+  starts; the rest is on Dashboard > Settings. Enter keeps the value shown;
+  nothing is written until you confirm. With no application in the folder, one
+  is created first (as init).
 
   --profile <p>    production, or development (a developer's machine, a test
-                   server): suggests the values; asked when not given
+                   server): suggests the values; asked of an existing
+                   application when not given (init makes a development one)
   --yes            ask nothing: the profile's values, new keys where missing
+  --explain        each setting's own description beside the questions
   --no-check       do not check that the database answers
   --no-install     with a new application, do not run npm install
   --minimal        with a new application, the Hello application`;
@@ -71,62 +78,27 @@ export function terminalIO(): SetupIO {
     /** Piped answers are shown after their questions, as if typed (a secret's as ***). */
     const echo = (line: string) => { if (!tty) process.stdout.write((muted ? '***' : line) + '\n'); return line; };
     const ask = (prompt: string) => {
-        if (tty && !closed) { rl.setPrompt(muted ? '' : prompt); rl.prompt(); }
-        else if (!muted) process.stdout.write(prompt);
+        if (tty && !closed) { rl.setPrompt(prompt); rl.prompt(); }
+        else process.stdout.write(prompt);   // piped: the question is written, its answer echoed after (*** for a secret)
         if (lines.length) return Promise.resolve(echo(lines.shift()!));
         if (closed) return Promise.reject(ended());
         return new Promise<string>((resolve, reject) => waiting.push({ resolve: line => resolve(echo(line)), reject }));
     };
     return {
         question: ask,
+        /**
+         * A password: the prompt is readline's, so a terminal redrawing the line keeps it — writing it ourselves and
+         * then prompting with '' erased it, and the question looked like a server that had stopped. What is typed is
+         * not shown (muted).
+         */
         async secret(prompt) {
-            process.stdout.write(prompt);
             muted = true;
-            try { return await ask(''); }
+            try { return await ask(prompt); }
             finally { muted = false; }
         },
         print: text => console.log(text),
         close: () => rl.close(),
     };
-}
-
-// ---- .env: read, and changed in place (comments and other settings kept)
-
-/** NAME=value lines; a value's quotes taken off. */
-export function parseEnv(text: string): Record<string, string> {
-    const values: Record<string, string> = {};
-    for (const line of text.split(/\r?\n/)) {
-        const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=(.*)$/);
-        if (!m) continue;
-        let value = m[2].trim();
-        if (/^(["']).*\1$/.test(value)) value = value.slice(1, -1);
-        values[m[1]] = value;
-    }
-    return values;
-}
-
-const quote = (value: string) => /[\s#"']/.test(value) ? JSON.stringify(value) : value;
-
-/** The .env with the changes: a setting's line replaced (or its commented #NAME= line), else added; null removes it. */
-export function renderEnv(text: string, changes: Record<string, string | null>): string {
-    const lines = text.split(/\r?\n/);
-    if (lines.length && lines[lines.length - 1] === '') lines.pop();
-    const added: string[] = [];
-    for (const [name, value] of Object.entries(changes)) {
-        const active = lines.findIndex(l => new RegExp(`^\\s*${name}\\s*=`).test(l));
-        if (value === null) {
-            if (active >= 0) lines.splice(active, 1);
-            continue;
-        }
-        const line = `${name}=${quote(value)}`;
-        const commented = lines.findIndex(l => new RegExp(`^\\s*#\\s*${name}\\s*=`).test(l));
-        if (active >= 0) lines[active] = line;
-        else if (commented >= 0) lines[commented] = line;
-        else added.push(line);
-    }
-    if (added.length)
-        lines.push('', '# set by bpmn-server setup', ...added);
-    return lines.join('\n') + '\n';
 }
 
 // ---- the schema
@@ -149,7 +121,6 @@ export function findSchema(dir: string): any | null {
 export const invalid = settingProblem;
 
 const newKey = () => crypto.randomBytes(24).toString('hex');
-const newPassword = () => crypto.randomBytes(12).toString('base64url');
 const yes = (answer: string) => /^y/i.test(answer.trim());
 /** The description without its markdown, for a prompt. */
 const plain = (text = '') => text.replace(/\*\*/g, '').replace(/`/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
@@ -199,21 +170,30 @@ interface Context {
     created: boolean;
     /** A new application: its keys are new already. */
     isNew: boolean;
+    /** --explain: each setting's own description, the reference text, beside the questions. */
+    explain: boolean;
 }
 
 /** The value now: changed in this run, else .env's. */
 const current = (c: Context, name: string) => name in c.changes ? c.changes[name] ?? undefined : c.env[name];
 
 /** One setting: its description, the value proposed; Enter keeps it. Checked against the schema. */
+/** A question is asked at most this many times; then its default is taken, so the dialog can never spin. */
+const TRIES = 3;
+
 async function ask(c: Context, name: string, proposed: string | undefined, label?: string): Promise<string> {
     const entry = c.schema.properties[name];
     if (c.auto) return proposed ?? '';
-    for (; ;) {
+    for (let left = TRIES; ; left--) {
         const answer = (await c.io.question(`  ${label ?? name}${proposed !== undefined && proposed !== '' ? ` [${proposed}]` : ''}: `)).trim();
         const value = answer || proposed || '';
         const why = invalid(value, entry);
         if (!why) return value;
         c.io.print(`    ${name} is ${why}`);
+        if (left <= 1) {
+            c.io.print(`    taking ${proposed ?? 'nothing'}; change it at Dashboard > Settings`);
+            return proposed ?? '';
+        }
     }
 }
 
@@ -229,13 +209,35 @@ function set(c: Context, name: string, value: string | null) {
     else c.changes[name] = value;
 }
 
+/** Where SQLite keeps everything when the file is not named (init's --sqlite uses the same). */
+const DEFAULT_SQLITE_FILE = './data/bpmn.sqlite';
+
+/** What each step is for, in one line. A setting's own description is reference text: --explain prints those. */
+const ABOUT: Record<string, string> = {
+    'The database': 'where instances, models and users are kept',
+    'The site': 'the port it listens on, and the address people reach it at',
+    'Sign-in and design': 'who may design models here, and sign themselves up',
+    'Email': 'whether notifications are sent, and the account they go through',
+    'Keys': 'the secrets its APIs and sessions use',
+    'AI access': 'what an AI agent may do with a link from this server',
+    'Environment and diagnostics': 'which environment this is, and whether API calls are recorded',
+};
+
+/**
+ * A step's heading, with one line saying what it is for. The settings' own descriptions are several sentences each,
+ * written as reference for the documentation and the Settings page: between two questions they are noise, so they
+ * are printed only with --explain.
+ */
 function heading(c: Context, title: string, ...names: string[]) {
     c.io.print(`\n${title}`);
-    if (!c.auto)
-        for (const name of names) {
-            const description = plain(c.schema.properties[name]?.description);
-            if (description) c.io.print(`  (${name}: ${description})`);
-        }
+    if (c.auto) return;
+    const about = ABOUT[title.replace(/^\d+\.\s*/, '')];
+    if (about) c.io.print(`  ${about}`);
+    if (!c.explain) return;
+    for (const name of names) {
+        const description = plain(c.schema.properties[name]?.description);
+        if (description) c.io.print(`  (${name}: ${description})`);
+    }
 }
 
 const STEPS: Array<(c: Context) => Promise<void>> = [
@@ -244,27 +246,43 @@ const STEPS: Array<(c: Context) => Promise<void>> = [
         // DATABASE=sqlite:<file> wins over MONGO_DB_URL
         const now = current(c, 'DATABASE')?.startsWith('sqlite:') ? current(c, 'DATABASE') : current(c, 'MONGO_DB_URL');
         const suggested = (c.created ? undefined : now) || PROFILES[c.profile].MONGO_DB_URL || `mongodb://localhost:27017/${c.name}`;
-        for (; ;) {
-            const url = await ask(c, 'MONGO_DB_URL', c.profile === 'production' && suggested === 'memory' ? `mongodb://localhost:27017/${c.name}` : suggested,
-                'a MongoDB URL, memory, or sqlite:<file> (one file, no database server)');
+        // the three kinds, numbered: a URL can still be typed, but nobody has to know sqlite:<file>
+        const CHOICES = [
+            { pick: '1', url: `mongodb://localhost:27017/${c.name}`, title: 'MongoDB    a server you run; docker compose up -d brings one up' },
+            { pick: '2', url: 'memory', title: 'In memory  a MongoDB inside this process; everything is lost when it stops' },
+            { pick: '3', url: `sqlite:${DEFAULT_SQLITE_FILE}`, title: 'SQLite     one file, no database server to run (small installs)' },
+        ];
+        const of = (u: string) => u.startsWith('sqlite:') ? '3' : u === 'memory' ? '2' : '1';
+        if (!c.auto) {
+            for (const choice of CHOICES) c.io.print(`  ${choice.pick}) ${choice.title}`);
+            c.io.print('     or a mongodb:// URL, or sqlite:<file>, to say exactly where');
+        }
+        for (let left = TRIES; ; left--) {
+            const giveUp = left <= 1;
+            const wanted = c.profile === 'production' && suggested === 'memory' ? `mongodb://localhost:27017/${c.name}` : suggested;
+            const said = await ask(c, 'MONGO_DB_URL', of(wanted), '1, 2, 3 or an address');
+            const url = CHOICES.find(choice => choice.pick === said)?.url ?? said;
             if (c.profile === 'production' && url === 'memory') {
                 c.io.print('    production needs a database that keeps its data: a mongodb:// URL, or sqlite:<file>');
-                if (c.auto) return;
+                if (c.auto || giveUp) return;
                 continue;
             }
             if (url !== 'memory' && !/^(mongodb(\+srv)?:\/\/\S+|sqlite:\S+)$/.test(url)) {
                 c.io.print('    a mongodb:// URL, memory, or sqlite:<file>, such as sqlite:./data/bpmn.sqlite');
-                if (c.auto) return;
+                if (c.auto || giveUp) return;
                 continue;
             }
             if (c.check) {
                 const result = await checkDatabase(url, c.dir);
                 c.io.print(`    ${result.ok ? 'ok' : 'FAILED'}: ${result.message}`);
-                if (!result.ok && !c.auto && !(await confirm(c, 'Keep it anyway?', false)))
+                if (!result.ok && !c.auto && !giveUp && !(await confirm(c, 'Keep it anyway?', false)))
                     continue;
             }
-            if (url.startsWith('sqlite:'))
+            if (url.startsWith('sqlite:')) {
                 set(c, 'DATABASE', url);
+                // the file is the database: a MONGO_DB_URL beside it (init's template wrote one) only misleads
+                if (current(c, 'MONGO_DB_URL')) set(c, 'MONGO_DB_URL', null);
+            }
             else {
                 set(c, 'MONGO_DB_URL', url);
                 set(c, 'DATABASE', null);
@@ -272,23 +290,8 @@ const STEPS: Array<(c: Context) => Promise<void>> = [
             return;
         }
     },
-    async function administrator(c) {
-        heading(c, '2. The first administrator', 'ADMIN_PASSWORD');
-        const has = !!current(c, 'ADMIN_PASSWORD');
-        const how = c.auto ? (has ? 'keep' : 'generate')
-            : (await c.io.question(`  ${has ? 'keep, ' : ''}generate, enter, or none (the first page asks, with a setup token) [${has ? 'keep' : 'generate'}]: `)).trim().toLowerCase() || (has ? 'keep' : 'generate');
-        if (how.startsWith('g')) {
-            const password = newPassword();
-            set(c, 'ADMIN_PASSWORD', password);
-            c.io.print(`    the user admin, password ${password} (on a server with no users yet)`);
-        }
-        else if (how.startsWith('e'))
-            set(c, 'ADMIN_PASSWORD', (await c.io.secret('  password: ')).trim() || null);
-        else if (how.startsWith('n'))
-            set(c, 'ADMIN_PASSWORD', null);
-    },
     async function site(c) {
-        heading(c, '3. The site', 'PORT', 'SITE_URL');
+        heading(c, '2. The site', 'PORT', 'SITE_URL');
         const port = await ask(c, 'PORT', current(c, 'PORT') ?? '3000', 'port');
         set(c, 'PORT', port);
         // a local address follows the port
@@ -296,63 +299,32 @@ const STEPS: Array<(c: Context) => Promise<void>> = [
         const url = await ask(c, 'SITE_URL', now ?? `http://localhost:${port}`, 'its address, as people reach it');
         set(c, 'SITE_URL', url || null);
     },
-    async function access(c) {
-        heading(c, '4. Sign-in and design');
-        const profile = PROFILES[c.profile];
-        const auth = await confirm(c, 'Sign-in and security rules (no: for development only)',
-            (current(c, 'REQUIRE_AUTHENTICATION') ?? profile.REQUIRE_AUTHENTICATION) !== 'false');
-        set(c, 'REQUIRE_AUTHENTICATION', String(auth));
-        set(c, 'ENFORCE_SECURITY', String(auth));
-        const design = await confirm(c, 'Design models on this server (the editor and test runs)',
-            (current(c, 'DISABLE_DESIGN') ?? profile.DISABLE_DESIGN) !== 'true');
-        set(c, 'DISABLE_DESIGN', String(!design));
-        const signup = await confirm(c, 'Let people sign themselves up',
-            (current(c, 'DISABLE_SIGNUP') ?? profile.DISABLE_SIGNUP) !== 'true');
-        set(c, 'DISABLE_SIGNUP', String(!signup));
-    },
-    async function email(c) {
-        heading(c, '5. Email', 'EMAIL_ENABLE');
-        const on = await confirm(c, 'Send notifications by email', current(c, 'EMAIL_ENABLE') === 'true');
-        set(c, 'EMAIL_ENABLE', String(on));
-        if (!on) return;
-        const user = await ask(c, 'SMTP_USER', current(c, 'SMTP_USER'), 'the account they are sent through');
-        set(c, 'SMTP_USER', user || null);
-        const has = !!current(c, 'SMTP_PASSWORD');
-        const password = c.auto ? '' : (await c.io.secret(`  its password${has ? ' [Enter keeps it]' : ''}: `)).trim();
-        if (password) set(c, 'SMTP_PASSWORD', password);
-        set(c, 'EMAIL_FROM', (await ask(c, 'EMAIL_FROM', current(c, 'EMAIL_FROM') ?? user, 'from')) || null);
-        c.io.print('    (a test message comes with a later version of setup)');
-    },
     async function keys(c) {
-        heading(c, '6. Keys', 'API_KEY', 'ADMIN_API_KEY', 'SESSION_SECRET');
+        // No heading and no question on a new application: the keys are made, and `access` says so with the rest.
+        // An existing one is offered a new key for each that is set, which is a real question.
         for (const name of ['API_KEY', 'ADMIN_API_KEY', 'SESSION_SECRET']) {
-            if (!current(c, name)) {
+            if (!current(c, name))
                 set(c, name, newKey());
-                c.io.print(`    ${name}: generated`);
-            }
             else if (!c.auto && !c.isNew && await confirm(c, `${name} is set: make a new one (what uses the old one stops working)`, false))
                 set(c, name, newKey());
         }
+        // SECRETS_KEY encrypts what the server stores (a connector's own key). Made once, and never offered again: a new
+        // one leaves what is stored unreadable. Not made where CONNECTORS_KEY, its name before 3.7.5, is set: still read.
+        if (!current(c, 'SECRETS_KEY') && !current(c, 'CONNECTORS_KEY'))
+            set(c, 'SECRETS_KEY', newKey());
     },
-    async function ai(c) {
-        heading(c, '7. AI access', 'AI_ACCESS');
-        for (; ;) {
-            const value = await ask(c, 'AI_ACCESS', current(c, 'AI_ACCESS') ?? 'all', 'all, off, or some of work,design,administer');
-            const levels = value.split(',').map(s => s.trim()).filter(Boolean);
-            if (value === 'all' || value === 'off' || levels.every(l => ['work', 'design', 'administer'].includes(l))) {
-                set(c, 'AI_ACCESS', value === 'all' ? null : value === 'off' ? 'off' : levels.join(','));
-                return;
-            }
-            c.io.print('    all, off, or some of work, design, administer');
-            if (c.auto) return;
-        }
-    },
-    async function diagnostics(c) {
-        heading(c, '8. Environment and diagnostics', 'APP_ENV', 'API_TRACE');
-        const profile = PROFILES[c.profile];
-        set(c, 'APP_ENV', await ask(c, 'APP_ENV', profile.APP_ENV ?? current(c, 'APP_ENV'), 'environment: production, or test (the test services)'));
-        const trace = await confirm(c, 'Record every API call to a file (API_TRACE)', !!(current(c, 'API_TRACE') ?? profile.API_TRACE));
-        set(c, 'API_TRACE', trace ? (current(c, 'API_TRACE') || 'api-trace.jsonl') : null);
+    async function access(c) {
+        // Sign-in and the security rules: on, and not a question. Everything else a profile used to set — who may
+        // design, who may sign themselves up, whether API calls are recorded — is left out of .env entirely: the
+        // defaults are right, and the Security page changes them on the running server.
+        for (const name of ['REQUIRE_AUTHENTICATION', 'ENFORCE_SECURITY'])
+            if (current(c, name) === undefined) set(c, name, 'true');
+        if (c.auto) return;
+        c.io.print('');
+        c.io.print('  Sign-in is required, and the security rules enforced.');
+        c.io.print('  The administrator, admin, is made the first time the server starts, and its password');
+        c.io.print('  printed once where it runs. Change it on My account.');
+        c.io.print('  Everything else is at Dashboard > Settings.');
     },
 ];
 
@@ -375,6 +347,8 @@ export interface ConfigureOptions {
     created?: boolean;
     /** Created with a database given (init --mongo, --memory): it is offered, not the profile's. */
     keepDatabase?: boolean;
+    /** --explain: each setting's own description beside the questions. */
+    explain?: boolean;
 }
 
 /**
@@ -390,15 +364,26 @@ export async function configure(dir: string, options: ConfigureOptions): Promise
     if (!profile) {
         const guess: Profile = env.APP_ENV === 'test' || env.MONGO_DB_URL === 'memory' ? 'development' : 'production';
         profile = guess;
-        if (!auto) {
-            io.print(`\nSetting up ${dir}\n\nProfile: production (a server people rely on), or development (a developer's machine, a test server)`);
-            const answer = (await io.question(`  profile [${guess}]: `)).trim().toLowerCase();
-            if (answer) profile = answer.startsWith('d') ? 'development' : 'production';
+        // init makes a development server and does not ask: production comes after integration, and belongs to the
+        // application the workflows run inside (docs/design/setup-dialog.md). setup on an existing one still asks.
+        if (created) profile = 'development';
+        else if (!auto) {
+            io.print(`\nSetting up ${dir}\n`);
+            // what each one does, before it is answered
+            io.print('What is this server for?');
+            io.print('  1) Production   a server people rely on: a real database, nobody signs');
+            io.print('                  themselves up, and nothing records the API calls');
+            io.print('  2) Development  your own machine or a test server: the database in memory,');
+            io.print('                  people may sign themselves up, and API calls are recorded');
+            io.print('     Both require signing in. Every answer below can differ from the profile.');
+            const answer = (await io.question(`  1 or 2 [${guess === 'development' ? '2' : '1'}]: `)).trim().toLowerCase();
+            if (answer) profile = answer.startsWith('2') || answer.startsWith('d') ? 'development' : 'production';
         }
     }
     const c: Context = {
         io, schema, env, changes: {}, profile, auto, check: options.check ?? true, dir,
         name: path.basename(dir).replace(/[^A-Za-z0-9_-]/g, '_') || 'bpmn', created: created && !options.keepDatabase, isNew: created,
+        explain: options.explain ?? false,
     };
     for (const step of STEPS)
         await step(c);
@@ -411,11 +396,11 @@ export async function configure(dir: string, options: ConfigureOptions): Promise
     io.print('\nChanges to .env:');
     for (const name of names) {
         const value = c.changes[name];
-        const secret = schema.properties[name]?.['x-secret'] && name !== 'ADMIN_PASSWORD';
+        const secret = schema.properties[name]?.['x-secret'];
         io.print(`  ${name.padEnd(24)} ${value === null ? '(removed)' : secret ? '*** (new)' : value}`);
     }
     if (!auto && !(await confirm(c, 'Write them', true))) {
-        io.print('Nothing written.');
+        // the caller says what that means for it: init removes the folder it was about to fill
         return { code: 1, env };
     }
     const backup = !!before && !created;
@@ -434,6 +419,7 @@ export async function setup(argv: string[], io?: SetupIO): Promise<number> {
         console.log(SETUP_USAGE);
         return 0;
     }
+    const explain = flags.has('--explain');
     const profileFlag = flags.get('--profile');
     if (profileFlag !== undefined && profileFlag !== 'production' && profileFlag !== 'development') {
         console.error('--profile: production or development');
@@ -462,7 +448,7 @@ export async function setup(argv: string[], io?: SetupIO): Promise<number> {
     io ??= terminalIO();
     try {
         const { code, env } = await configure(dir, {
-            io, schema, profile: profileFlag as Profile | undefined, auto: flags.has('--yes'), check: !flags.has('--no-check'), created,
+            io, schema, profile: profileFlag as Profile | undefined, auto: flags.has('--yes'), check: !flags.has('--no-check'), created, explain,
         });
         if (code !== 0) return code;
         const install = !fs.existsSync(path.join(dir, 'node_modules')) || (env.MONGO_DB_URL === 'memory' && !fs.existsSync(path.join(dir, 'node_modules', 'mongodb-memory-server')));

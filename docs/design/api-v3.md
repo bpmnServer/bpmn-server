@@ -111,6 +111,13 @@ clients (said in the docs, so fields can be added without a new version).
   the docs' API pages are made from them; contract tests check each route against its document.
 - **The API's version is not the package's**: "API v3, since bpmn-web 3.7". bpmn-client follows the API: a v3 client;
   the older ones deprecated with their APIs.
+- **`/api/...` becomes v3 when v1 goes (bpmn-web 4.0; planned, not built).** Today `/api` is v1, and the two share
+  paths: `/api/rules` and `/api/openapi.json` are v1's, `/api/v3/rules` and `/api/v3/openapi.json` v3's. They also
+  sign in differently (v1 only the service key; v3 tokens, AI links, the host's credential). So no alias until v1 is
+  removed. Then `/api/<route>` is v3's `<route>`, with the same door, and `/api/v3/<route>` keeps working: the clients,
+  the docs and the AI link page keep the versioned path, so a later v4 changes nothing they call. Not considered: an
+  alias now for the paths that don't collide (two APIs under one prefix, path by path), and a version header
+  (`Accept-Version`, hard to try with curl and easy for an agent to miss).
 
 ## Steps
 

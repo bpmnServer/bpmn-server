@@ -42,7 +42,12 @@ through plain objects: not a service's other objects (its appDelegate), nor what
 
 - [evaluateExpression](SandboxScriptHandler.md#evaluateexpression)
 - [executeScript](SandboxScriptHandler.md#executescript)
+- [standardFor](SandboxScriptHandler.md#standardfor)
 - [run](SandboxScriptHandler.md#run)
+- [standardValues](SandboxScriptHandler.md#standardvalues)
+- [namesRead](SandboxScriptHandler.md#namesread)
+- [executionOf](SandboxScriptHandler.md#executionof)
+- [appVarsOf](SandboxScriptHandler.md#appvarsof)
 - [contextValues](SandboxScriptHandler.md#contextvalues)
 - [evaluateCondition](SandboxScriptHandler.md#evaluatecondition)
 - [evaluateFeel](SandboxScriptHandler.md#evaluatefeel)
@@ -78,7 +83,7 @@ through plain objects: not a service's other objects (its appDelegate), nor what
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L33)
+[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L33)
 
 ## Properties
 
@@ -90,7 +95,7 @@ Milliseconds a script or expression may run.
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L27)
+[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:27](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L27)
 
 ___
 
@@ -102,7 +107,7 @@ Bytes a script may use.
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L29)
+[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:29](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L29)
 
 ___
 
@@ -114,7 +119,7 @@ Calling a method of appServices or appUtils runs it (else it runs nothing, and t
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L31)
+[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:31](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L31)
 
 ___
 
@@ -130,7 +135,7 @@ Variables scripts and expressions see besides their own, by name. The applicatio
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L19)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:22](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L22)
 
 ## Methods
 
@@ -158,7 +163,7 @@ execute JavaScript expression , no need for $
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L38)
+[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:38](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L38)
 
 ___
 
@@ -186,7 +191,30 @@ label: which script it is (an event's, a script task's): its name for debuggers 
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L44)
+[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L44)
+
+___
+
+### standardFor
+
+▸ **standardFor**(`scope`, `body`): `Record`\<`string`, `any`\>
+
+The standard names (ScriptHandler.standardValues) the script reads, as plain values.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `scope` | `any` |
+| `body` | `string` |
+
+#### Returns
+
+`Record`\<`string`, `any`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:51](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L51)
 
 ___
 
@@ -210,7 +238,117 @@ Runs a function body against copies of the scope's values; copies back what it c
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:51](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L51)
+[packages/bpmn-server/src/engine/SandboxScriptHandler.ts:58](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/SandboxScriptHandler.ts#L58)
+
+___
+
+### standardValues
+
+▸ **standardValues**(`scope`, `materialized?`): `Record`\<`string`, `any`\>
+
+The names every expression sees besides the scope's own (docs/design/expressions.md): `user` (the operation's,
+by name), and the add-ons' names for the item's place (engine/AddOns.ts: the policies' add-ons' `actors`). An
+application's script context of the same name is used instead. `materialized`: plain values, for the sandbox.
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `scope` | `any` | `undefined` |
+| `materialized` | `boolean` | `false` |
+
+#### Returns
+
+`Record`\<`string`, `any`\>
+
+#### Inherited from
+
+[ScriptHandler](ScriptHandler.md).[standardValues](ScriptHandler.md#standardvalues)
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/ScriptHandler.ts:36](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L36)
+
+___
+
+### namesRead
+
+▸ **namesRead**(`body`): `Set`\<`string`\>
+
+The names a script reads without declaring them (Expressions.freeNames), remembered by its text.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `body` | `string` |
+
+#### Returns
+
+`Set`\<`string`\>
+
+#### Inherited from
+
+[ScriptHandler](ScriptHandler.md).[namesRead](ScriptHandler.md#namesread)
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/ScriptHandler.ts:51](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L51)
+
+___
+
+### executionOf
+
+▸ **executionOf**(`scope`): `any`
+
+The execution a scope (an item, a token, an execution) is of.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `scope` | `any` |
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+[ScriptHandler](ScriptHandler.md).[executionOf](ScriptHandler.md#executionof)
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/ScriptHandler.ts:62](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L62)
+
+___
+
+### appVarsOf
+
+▸ **appVarsOf**(`scope`, `text`): `Promise`\<`Record`\<`string`, `any`\>\>
+
+The application's variables a text reads (appVars.<name>, docs/design/app-contract.md §2.1), worked out before it
+runs: the delegate's getAppVars, made from this evaluation's context (its data, user, instance, item, and what is
+evaluating: `evaluatingSource`). None read: none asked.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `scope` | `any` |
+| `text` | `string` |
+
+#### Returns
+
+`Promise`\<`Record`\<`string`, `any`\>\>
+
+#### Inherited from
+
+[ScriptHandler](ScriptHandler.md).[appVarsOf](ScriptHandler.md#appvarsof)
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/ScriptHandler.ts:73](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L73)
 
 ___
 
@@ -236,7 +374,7 @@ The context's values for a scope.
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L29)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:94](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L94)
 
 ___
 
@@ -266,7 +404,7 @@ around it is a wrapper, whatever the language.
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L40)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:105](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L105)
 
 ___
 
@@ -274,7 +412,9 @@ ___
 
 ▸ **evaluateFeel**(`scope`, `expression`): `Promise`\<`unknown`\>
 
-A FEEL expression over the data: its values by name, and `data` itself.
+A FEEL expression, with the names every expression sees (docs/design/expressions.md): the data's fields by name,
+`data`, `this` and `item`, `instance`, `input`, `output`, `actors`, `user`, `appServices`. A call to an async
+service, as the whole expression, is awaited.
 
 #### Parameters
 
@@ -293,7 +433,7 @@ A FEEL expression over the data: its values by name, and `data` itself.
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:47](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L47)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:116](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L116)
 
 ___
 
@@ -338,7 +478,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:74](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L74)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:155](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L155)
 
 ___
 
@@ -369,7 +509,7 @@ name and stops at its breakpoints and at `debugger;`, and an error's stack says 
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:187](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L187)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:268](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L268)
 
 ___
 
@@ -396,13 +536,13 @@ bpmn:///<model>/<element>/<label>.js: the element is the item's; a process's own
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:200](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L200)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:286](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L286)
 
 ___
 
 ### getJSvars
 
-▸ **getJSvars**(`scope`): ``"\n            var data=this.data;\n            var instance=this.execution.instance;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.execution.appDelegate;\n            var appServices=this.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            var item=this;  // for backward support only\n            "`` \| ``"\n            var appDelegate=this.appDelegate;\n            var instance=this.instance;\n            var appServices=this.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "`` \| ``"\n            var item=this;\n            var data=this.data;\n            var instance=this.token.execution.instance;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.token.execution.appDelegate;\n            var appServices=this.token.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "``
+▸ **getJSvars**(`scope`): ``"\n            var data=this.data;\n            var instance=this.execution.instance;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.execution.appDelegate;\n            var appServices=this.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            var item=this;  // for backward support only\n            "`` \| ``"\n            var appDelegate=this.appDelegate;\n            var instance=this.instance;\n            var data=this.instance.data;      // a process's own script: the instance's data, at the top\n            var appServices=this.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "`` \| ``"\n            var item=this;\n            var data=this.data;\n            var instance=this.token.execution.instance;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.token.execution.appDelegate;\n            var appServices=this.token.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "``
 
 #### Parameters
 
@@ -412,7 +552,7 @@ ___
 
 #### Returns
 
-``"\n            var data=this.data;\n            var instance=this.execution.instance;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.execution.appDelegate;\n            var appServices=this.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            var item=this;  // for backward support only\n            "`` \| ``"\n            var appDelegate=this.appDelegate;\n            var instance=this.instance;\n            var appServices=this.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "`` \| ``"\n            var item=this;\n            var data=this.data;\n            var instance=this.token.execution.instance;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.token.execution.appDelegate;\n            var appServices=this.token.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "``
+``"\n            var data=this.data;\n            var instance=this.execution.instance;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.execution.appDelegate;\n            var appServices=this.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            var item=this;  // for backward support only\n            "`` \| ``"\n            var appDelegate=this.appDelegate;\n            var instance=this.instance;\n            var data=this.instance.data;      // a process's own script: the instance's data, at the top\n            var appServices=this.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "`` \| ``"\n            var item=this;\n            var data=this.data;\n            var instance=this.token.execution.instance;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.token.execution.appDelegate;\n            var appServices=this.token.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "``
 
 #### Inherited from
 
@@ -420,7 +560,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:205](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L205)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:291](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L291)
 
 ___
 
@@ -446,4 +586,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/ScriptHandler.ts:246](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/ScriptHandler.ts#L246)
+[packages/bpmn-server/src/engine/ScriptHandler.ts:333](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/ScriptHandler.ts#L333)

@@ -3,8 +3,8 @@
  * the server with an authorization key. A service task names one and an operation, `<connector>/<operationId>`
  * (camunda:connector); the server calls it.
  *
- * A connector is a file in the models folder, `<id>.connector.json`, as a model is (docs/design/connectors-as-files.md):
- * its definition and its OpenAPI document, kept in Git and released with the models that call it, found by their tests.
+ * A connector is a file in the models folder's `connectors` folder, `<id>.connector.json`, as a model is a file
+ * (docs/design/connectors-as-files.md): its definition and its OpenAPI document, kept in Git and released with the models that call it, found by their tests.
  * What is one server's alone stays in its `wf_connectors` collection (the storage port): the key, encrypted
  * (Secrets.ts), and the last connection test. The key never leaves the server: not in the file, not in `list` or
  * `get`; a call only puts it in the request it sends. A connector kept whole in the collection before (3.6) is written
@@ -14,12 +14,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import type { IBPMNServer } from '../interfaces/server.js';
-import { parseDocument, listOperations, type Operation } from './OpenAPI.js';
+import { parseDocument, listOperations, exampleOf, type Operation } from './OpenAPI.js';
 import { encrypt, decrypt } from './Secrets.js';
 
 const COLLECTION = 'wf_connectors';
-/** A connector's file in the models folder: `<id>.connector.json`. */
+/** A connector's file: `<id>.connector.json`, in the models folder's `connectors` folder. */
 const FILE = '.connector.json';
+const FOLDER = 'connectors';
 const ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 const IDEMPOTENT = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS'];
 /** A document kept packed in the collection before (3.6): its JSON, gzipped, in base64. */
@@ -63,9 +64,36 @@ export interface Connector {
     retries?: number;
     auth?: ConnectorAuth;
     test?: { at: string; operation: string; ok: boolean; status?: number; message?: string };
+    /** what it answers outside production (APP_ENV development or test only): ConnectorTesting */
+    testing?: ConnectorTesting;
     createdAt: string;
     updatedAt: string;
 }
+
+/**
+ * What a connector answers outside production (docs/docs/connectors.md#outside-production): only where APP_ENV is
+ * development or test; production, or a server that does not say, always calls the real API.
+ * - `real` (the default): the real API, as in production;
+ * - `examples`: no call: each operation answers its document's example (else one made from its schema);
+ * - `sandbox`: the same calls, to `baseUrl` (a sandbox of the API), with the same key.
+ * `answers`, by operationId: an operation's own answer, in place of the example (`examples`): the answer itself, or
+ * `{ cases: [{ when, status, output }] }`: the first case whose `when` its input matches (each value, as text; a
+ * case without `when` matches any); a status other than 2xx fails as the API's would (HTTP_<status>).
+ * `environments`: where it applies, development and test (the default), or one of them.
+ */
+export interface ConnectorTesting {
+    answer: 'real' | 'examples' | 'sandbox';
+    baseUrl?: string;
+    answers?: Record<string, any>;
+    environments?: ('development' | 'test')[];
+}
+
+const TESTING_ENVIRONMENTS = ['development', 'test'];
+/** The environment connectors may answer outside production in: APP_ENV, when it says development or test; else none. */
+export const connectorsTesting = (env = process.env): string | null => {
+    const name = String(env.APP_ENV ?? '').trim().toLowerCase();
+    return TESTING_ENVIRONMENTS.includes(name) ? name : null;
+};
 
 /** What `add` takes: the document as text (JSON or YAML) or an object, or its URL. */
 export interface ConnectorInput {
@@ -133,14 +161,38 @@ export class Connectors {
      */
     private get database() { return ((this.server.configuration.database as any)?.MongoDB ?? { db: 'bpmn' }).db; }
 
-    // ---- the files: the models folder's <id>.connector.json
+    // ---- the files: the models folder's connectors/<id>.connector.json
 
-    /** The models folder, where the connectors' files are. */
-    private get folder(): string { return path.resolve(this.server.configuration.definitionsPath ?? 'processes'); }
+    private get modelsFolder(): string { return path.resolve(this.server.configuration.definitionsPath ?? 'processes'); }
+    /** The connectors' folder, in the models folder. */
+    private get folder(): string { return path.join(this.modelsFolder, FOLDER); }
     private fileOf(id: string) { return path.join(this.folder, id + FILE); }
+
+    private looseChecked = false;
+    /**
+     * Connector files beside the models (where 3.7 wrote them at first) moved into the connectors folder: at a list,
+     * and before the first read. One already in the folder is kept; the other is left where it is, and said so.
+     */
+    private moveLoose() {
+        this.looseChecked = true;
+        let loose: string[];
+        try { loose = fs.readdirSync(this.modelsFolder).filter(f => f.endsWith(FILE)); }
+        catch { return; }
+        for (const name of loose) {
+            const from = path.join(this.modelsFolder, name), to = path.join(this.folder, name);
+            if (fs.existsSync(to)) {
+                this.server.logger.log(`connector file ${name}: one is in ${FOLDER}/ already; the one beside the models is left out`);
+                continue;
+            }
+            fs.mkdirSync(this.folder, { recursive: true });
+            fs.renameSync(from, to);
+            this.server.logger.log(`connector file ${name}: moved into the models folder's ${FOLDER}/`);
+        }
+    }
 
     /** A connector's definition from its file, or undefined; read again only when the file changed. */
     private readDefinition(id: string): any | undefined {
+        if (!this.looseChecked) this.moveLoose();
         const file = this.fileOf(id);
         let stat: fs.Stats;
         try { stat = fs.statSync(file); }
@@ -166,6 +218,7 @@ export class Connectors {
 
     /** The ids of the connectors' files. */
     private fileIds(): string[] {
+        this.moveLoose();
         try { return fs.readdirSync(this.folder).filter(f => f.endsWith(FILE)).map(f => f.slice(0, -FILE.length)); }
         catch { return []; }
     }
@@ -250,7 +303,7 @@ export class Connectors {
         const state: ServerState = { id: kept.id, ...(secret ? { key: { secret, last4, setAt, setBy } } : {}), ...(test ? { test } : {}) };
         await this.store.remove(this.database, COLLECTION, { id: kept.id });
         await this.store.insert(this.database, COLLECTION, [state]);
-        this.server.logger.log(`connector '${kept.id}': written out to ${kept.id}${FILE} in the models folder; its key and test stay with this server`);
+        this.server.logger.log(`connector '${kept.id}': written out to ${FOLDER}/${kept.id}${FILE} in the models folder; its key and test stay with this server`);
         return { definition, state };
     }
 
@@ -299,22 +352,21 @@ export class Connectors {
             createdAt: now(), updatedAt: now(),
         };
         this.writeDefinition(connector);
-        // a key or test left by a connector of that id removed before is not this one's
-        await this.store.remove(this.database, COLLECTION, { id: connector.id });
         this.server.logger.log(`connector '${connector.id}' added${userName ? ' by ' + userName : ''}: ${operations.size} operations, ${baseUrl}`);
         return this.withoutSecret(connector);
     }
 
     /** Changes a connector's name, description, base URL, operations, groups, enabled, timeout or retries. */
-    async update(id: string, patch: Partial<Pick<Connector, 'name' | 'description' | 'baseUrl' | 'operations' | 'groups' | 'enabled' | 'timeout' | 'retries'>>): Promise<Connector> {
+    async update(id: string, patch: Partial<Pick<Connector, 'name' | 'description' | 'baseUrl' | 'operations' | 'groups' | 'enabled' | 'timeout' | 'retries' | 'testing'>>): Promise<Connector> {
         await this.required(id);
         const definition = { ...this.readDefinition(id) };
-        const allowed = ['name', 'description', 'baseUrl', 'operations', 'groups', 'enabled', 'timeout', 'retries'];
+        const allowed = ['name', 'description', 'baseUrl', 'operations', 'groups', 'enabled', 'timeout', 'retries', 'testing'];
         const set: any = { updatedAt: now() };
         for (const key of allowed)
             if (patch[key] !== undefined) set[key] = patch[key];
         if (set.baseUrl !== undefined) set.baseUrl = this.checkBaseUrl(set.baseUrl);
         if (set.operations) set.operations = { ...definition.operations, ...set.operations };
+        if (set.testing !== undefined) set.testing = this.checkTesting(set.testing);
         this.writeDefinition({ ...definition, ...set });
         return this.get(id);
     }
@@ -338,17 +390,29 @@ export class Connectors {
         return { source, version: document.openapi, title: document.info?.title, fetchedAt: now(), bytes: Buffer.byteLength(JSON.stringify(document)), document };
     }
 
-    /** Removes a connector: its file, and this server's key and test. */
+    /** Removes a connector: its file, and this server's key and test. Its halves: `removeFile`, `forget`. */
     async remove(id: string): Promise<boolean> {
-        this.compiled.delete(id);
         await this.load(id);   // one kept whole in the collection: written out first, so it is removed as a file too
-        let existed = false;
-        if (ID.test(id ?? '')) {
-            try { fs.unlinkSync(this.fileOf(id)); existed = true; } catch { /* no file */ }
-            this.files.delete(id);
-        }
+        const existed = this.removeFile(id);
+        return (await this.forget(id)) || existed;
+    }
+
+    /** The connector's file gone (model access's). */
+    removeFile(id: string): boolean {
+        this.compiled.delete(id);
+        if (!ID.test(id ?? '')) return false;
+        this.files.delete(id);
+        let removed = false;
+        // its file, and one still beside the models (not moved yet)
+        for (const file of [this.fileOf(id), path.join(this.modelsFolder, id + FILE)])
+            try { fs.unlinkSync(file); removed = true; } catch { /* not there */ }
+        return removed;
+    }
+
+    /** This server's key and test for the connector gone (the engine's). */
+    async forget(id: string): Promise<boolean> {
         const { deletedCount } = await this.store.remove(this.database, COLLECTION, { id });
-        return existed || deletedCount > 0;
+        return deletedCount > 0;
     }
 
     /**
@@ -376,7 +440,7 @@ export class Connectors {
         return auth;
     }
 
-    /** This server's key for the connector, stored encrypted (CONNECTORS_KEY): the engine's, where the calls are made. */
+    /** This server's key for the connector, stored encrypted (SECRETS_KEY): the engine's, where the calls are made. */
     async storeKey(id: string, key: string, userName?: string): Promise<Connector> {
         await this.required(id);
         if (typeof key !== 'string' || !key)
@@ -471,7 +535,12 @@ export class Connectors {
         if (!op) throw new Error(`The connector '${id}' has no operation '${operationId}'`);
         if (connector.operations[operationId] === false && !options.test) throw new Error(`The operation '${ref}' is disabled`);
 
-        const request = this.buildRequest(connector, op, input ?? {});
+        // outside production, as its testing says: an example for an answer, or a sandbox for the API
+        // where its testing applies (APP_ENV development or test, as its environments say); never the Test button's call
+        const environment = connectorsTesting();
+        const testing = environment && !options.test && (connector.testing?.environments ?? TESTING_ENVIRONMENTS).includes(environment) ? connector.testing : undefined;
+        if (testing?.answer === 'examples') return this.exampleAnswer(connector, op, ref, input ?? {}, options.log);
+        const request = this.buildRequest(testing?.answer === 'sandbox' && testing.baseUrl ? { ...connector, baseUrl: testing.baseUrl } : connector, op, input ?? {});
         const timeout = connector.timeout ?? this.settings.timeout ?? 30_000;
         const tries = 1 + (IDEMPOTENT.includes(op.method) ? (connector.retries ?? this.settings.retries ?? 2) : 0);
         const started = Date.now();
@@ -501,6 +570,48 @@ export class Connectors {
         if (response.status < 200 || response.status > 299)
             throw new ConnectorError(response.status, output, ref);
         return { status: response.status, output, url: request.logUrl, ms };
+    }
+
+    /**
+     * An operation's answer outside production, with no call: the connector's own answer for it (testing.answers),
+     * else its document's example of its first success response, else one made from that response's schema.
+     */
+    private exampleAnswer(connector: Connector, op: Operation, ref: string, input: Record<string, any>, log?: (line: string) => void): CallResult {
+        const own = connector.testing?.answers ?? {};
+        const success = Object.keys(op.responses ?? {}).filter(s => /^2\d\d$/.test(s)).sort()[0];
+        const response = success ? op.responses[success] : undefined;
+        let status = Number(success ?? 200);
+        let output = response?.example !== undefined ? response.example : exampleOf(response?.schema);
+        const mine = own[op.operationId];
+        if (mine && typeof mine === 'object' && Array.isArray(mine.cases)) {
+            // the first case its input matches: { when, status, output }
+            const matches = (when: any) => !when || Object.entries(when).every(([key, value]) => String(inputValue(input, key)) === String(value));
+            const chosen = mine.cases.find(c => matches(c?.when));
+            if (chosen) {
+                status = Number(chosen.status ?? status);
+                output = chosen.output ?? null;
+            }
+        }
+        else if (op.operationId in own) output = mine;
+        log?.(`connector ${ref}: answered ${status} by its testing (examples, APP_ENV=${process.env.APP_ENV}); nothing called`);
+        if (status < 200 || status > 299) throw new ConnectorError(status, output, ref);
+        return { status, output: output ?? null, url: `example:${ref}`, ms: 0 };
+    }
+
+    /** A connector's testing, checked: its answer one of real, examples, sandbox; a sandbox's address an http(s) URL. */
+    private checkTesting(testing: any): ConnectorTesting | undefined {
+        if (testing === null || testing === '' || testing?.answer === 'real' && !testing.answers) return undefined;
+        if (!testing || !['real', 'examples', 'sandbox'].includes(testing.answer))
+            throw new Error('testing.answer is real, examples or sandbox');
+        if (testing.answer === 'sandbox') testing.baseUrl = this.checkBaseUrl(testing.baseUrl);
+        if (testing.answers !== undefined && (typeof testing.answers !== 'object' || Array.isArray(testing.answers)))
+            throw new Error('testing.answers is an object: an answer by operationId');
+        if (testing.environments !== undefined && (!Array.isArray(testing.environments) || !testing.environments.length || testing.environments.some(e => !TESTING_ENVIRONMENTS.includes(e))))
+            throw new Error('testing.environments is development, test, or both');
+        return {
+            answer: testing.answer, ...(testing.baseUrl ? { baseUrl: testing.baseUrl } : {}), ...(testing.answers ? { answers: testing.answers } : {}),
+            ...(testing.environments ? { environments: testing.environments } : {}),
+        };
     }
 
     private backoff(attempt: number) {
@@ -628,4 +739,10 @@ export class Connectors {
         if (!allowed.some(a => a === host || (a.startsWith('*.') && host.endsWith(a.slice(1)))))
             throw new Error(`${host} is not in CONNECTORS_ALLOW_HOSTS`);
     }
+}
+
+/** An input's value by its name, a dotted one (body.employeeId) read inside it. */
+function inputValue(input: Record<string, any>, key: string) {
+    if (key in (input ?? {})) return input[key];
+    return key.split('.').reduce((v, k) => v?.[k], input);
 }

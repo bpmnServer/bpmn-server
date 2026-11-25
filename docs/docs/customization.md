@@ -1,6 +1,6 @@
-# Integrating BPMN Server into your application
+# Integrating OmniWorkflow into your application
 
-BPMN Server is an **embeddable execution engine**, not a stand-alone process server. Your application hosts the engine, owns authentication and business data, and provides the business behavior invoked by workflows. Use [bpmn-web](bpmn-web.md) if you also want a packaged UI, modeler and HTTP API.
+OmniWorkflow is an **embeddable execution engine**, not a stand-alone process server. Your application hosts the engine, owns authentication and business data, and provides the business behavior invoked by workflows. Use [bpmn-web](bpmn-web.md) if you also want a packaged UI, modeler and HTTP API.
 
 This guide follows the **3.5 monorepo** and its [sample application](https://github.com/bpmnServer/bpmn-server/tree/main/apps/sampleApp), rather than the retired `WorkflowApp` layout.
 
@@ -11,7 +11,7 @@ This guide follows the **3.5 monorepo** and its [sample application](https://git
 | Use the starter | You want a complete web application with tasks, modeling, and admin | `npx bpmn-server init my-app` |
 | Embed the engine | You already have a Node.js server/UI and want to control its lifecycle | `BPMNServer.create(...)`, `BPMNAPI` |
 | Run the engine apart | Production: the host serves pages and APIs, and the engine holds your code | [Ways to run it](setup.md#ways-to-run-it) |
-| Call a remote host | Another application already runs BPMN Server and exposes its API | `bpmn-client` |
+| Call a remote host | Another application already runs OmniWorkflow and exposes its API | `bpmn-client` |
 | Integrate an external HTTP service | A BPMN task must call a REST service described by OpenAPI | [Connectors](connectors.md) |
 
 Start with [Installation](setup.md). For a local evaluation without MongoDB, `npx bpmn-server init my-app --memory` creates a starter that uses in-memory storage.
@@ -45,7 +45,7 @@ sequenceDiagram
 | --- | --- |
 | User interface, sessions, authentication | Hosting application (or `bpmn-web`) |
 | Application authorization and business rules | Hosting application, with engine-level task access checks |
-| Process definitions, instances, tokens and task state | BPMN Server and its configured workflow store |
+| Process definitions, instances, tokens and task state | OmniWorkflow and its configured workflow store |
 | Business records such as orders, claims, and employees | Hosting application's business services/database |
 | User/task interactions | Application calls `BPMNAPI.engine` with a trusted principal |
 | Service tasks and domain operations | Application services exposed by the delegate |
@@ -61,10 +61,11 @@ The source is at [`apps/sampleApp/`](https://github.com/bpmnServer/bpmn-server/t
 my-app/
 ├── processes/                 # BPMN and DMN definitions
 ├── connectors/
-│   ├── appServices.ts         # Code called by service tasks
 │   └── *.json                 # Editor element templates
 ├── delegates/
-│   └── appDelegate.ts         # App-specific hooks and service provider
+│   ├── appDelegate.ts         # App-specific hooks and service provider
+│   ├── appServices.ts         # Code called by service tasks
+│   └── testServices.ts        # The same services, sending nothing (APP_ENV=test)
 ├── settings/
 │   └── config.ts              # Engine/web configuration
 ├── index.ts                   # Hosts bpmn-web
@@ -88,6 +89,12 @@ await start({
 ```
 
 Configure `api` or `ui` to `false` when the host should serve only the other surface. The sample also uses `setupOnly` and `console` modes. The host, not the engine package alone, serves HTTP routes.
+
+### What cases and tasks are called
+
+The pages and the APIs show each case and task by its label, which its model defines (`owf:label`, with its
+values: `Client: ${data.clientId}; Order: ${data.orderNo}`). An application whose labels must be computed in code
+implements the delegate's optional `instanceLabel(instance)`. See [Labels](labels.md).
 
 ## Embed only the engine
 
@@ -114,7 +121,7 @@ The application supplies `configuration` (including `appDelegate`, `definitionsP
 
 ## Implement service tasks in application code
 
-In the starter, [`connectors/appServices.ts`](https://github.com/bpmnServer/bpmn-server/blob/main/apps/sampleApp/connectors/appServices.ts) exports `AppServices`. One of its methods is:
+In the starter, [`delegates/appServices.ts`](https://github.com/bpmnServer/bpmn-server/blob/main/apps/sampleApp/delegates/appServices.ts) exports `AppServices`. One of its methods is:
 
 ```ts
 class AppServices {
@@ -130,7 +137,7 @@ The application delegate exposes the service provider to the engine:
 
 ```ts
 import { WebAppDelegate } from 'bpmn-web';
-import { AppServices } from '../connectors/appServices.js';
+import { AppServices } from './appServices.js';
 
 export class AppDelegate extends WebAppDelegate {
   private services?: AppServices;
@@ -143,6 +150,12 @@ export class AppDelegate extends WebAppDelegate {
 
 These are **abbreviated examples** of the starter's real implementation. In the sample, the delegate also inherits web-specific functionality (notifications/startup), implements lifecycle callbacks, and can load data objects. The `greet` method is wired by a BPMN service task and its input/output mappings, not by copying TypeScript into the BPMN XML. See [Service tasks](examples/serviceTask.md) and [Scripting](scripting.md).
 
+**The services' names are read from this source when the server starts**: the delegate's file (the configuration's
+`delegateFile`, by default `delegates/appDelegate.ts`), the class its `getServicesProvider` makes, and the classes that
+one makes. Nothing of it runs. So the editor and the model checks know them even where the application's code doesn't
+run (the engine elsewhere, or none), and a service added or removed is known at the next start. The start's log says
+how many it found: `[services] 17 from delegates/appDelegate.ts`. `npx bpmn-web-services` prints them.
+
 For complex business rules, prefer maintainable, testable application services. Use [DMN](decisions.md) for decision tables, and [connectors](connectors.md) for REST operations that do not need custom application code.
 
 ## Events and data objects
@@ -153,7 +166,7 @@ To load external data into workflow variables, implement `loadDataObject(name, i
 
 ## Persistence and deployment
 
-BPMN Server supports MongoDB by default, `SqliteDocumentStore` for small persistent installs on Node.js 22.5+, and `MemoryDocumentStore` for tests and demos. Custom adapters use the `documentStore` configuration port. Locking, timer scheduling, and shutdown are described in [Setup](persistence.md).
+OmniWorkflow supports MongoDB by default, `SqliteDocumentStore` for small persistent installs on Node.js 22.5+, and `MemoryDocumentStore` for tests and demos. Custom adapters use the `documentStore` configuration port. Locking, timer scheduling, and shutdown are described in [Setup](persistence.md).
 
 Before exposing an instance to real users, configure the host's authentication, task authorization, connector keys, persistence, backups, and process recovery. See [Security](security.md) and [Advanced topics](advanced.md).
 

@@ -65,6 +65,40 @@ test('a scenario reads back as it was written, in every form', () => {
   assert.equal(text.match(/passed element:Submit 1 times/g).length, 2, 'after each time its step comes');
 });
 
+test('who acts, a refused step, and checks of an assignment and a notification read back as they were written', () => {
+  const scenario = {
+    name: 'Who acts',
+    start: { data: { days: 3 }, user: 'emp1' },
+    steps: [
+      { element: 'Approve', data: {}, user: 'bob', role: 'Employee', refused: true },
+      { element: 'Approve', data: { approved: true }, user: 'bob', role: 'Manager' },
+    ],
+    checks: [
+      { kind: 'assignment', at: 'start', node: 'Approve', field: 'candidateGroups', value: ['Manager'] },
+      { kind: 'notified', at: 'start', node: 'Approve', to: ['Manager'], template: 'approval-request' },
+      { kind: 'assignment', node: 'Approve', field: 'assignee', value: 'bob' },
+      { kind: 'notified', to: ['emp1', 'HR'] },
+    ],
+  };
+  const text = writeFeature(MODEL, [scenario]);
+  assert.match(text, /Given user:emp1 @login\n\s+When @start/);
+  assert.match(text, /And user:bob @login with role of "Employee"\n\s+And @invoke element:Approve in :instance is refused\n/);
+  assert.match(text, /And user:bob @login with role of "Manager"\n\s+And @invoke element:Approve in :instance\n/);
+  assert.match(text, /@check :instance last element:Approve candidateGroups is \["Manager"\]/);
+  assert.match(text, /@check :instance notified \["Manager"\] with template "approval-request" at element:Approve/);
+  assert.deepEqual(readFeature(text), [scenario]);
+  // a user acting already is not said again
+  const same = writeFeature(MODEL, [{ ...scenario, steps: [{ element: 'Approve', data: {}, user: 'emp1' }], checks: [] }]);
+  assert.equal(same.match(/@login/g).length, 1);
+});
+
+test('a Feature\'s description stays through a read and a write (the Test tab saving)', () => {
+  const text = `Feature: ${MODEL}\n  Each path of the request.\n  Its services are stubbed.\n\n  Scenario: S\n    When @start process:${MODEL} as :instance\n`;
+  const again = writeFeature(MODEL, readFeature(text));
+  assert.match(again, /^Feature: leave-request\n  Each path of the request\.\n  Its services are stubbed\.\n/);
+  assert.deepEqual(readFeature(again), readFeature(text));
+});
+
 test('a check still being filled in is not written, and does not stop the rest being saved', () => {
   const scenario = { ...FULL, checks: [...FULL.checks, { kind: 'node', node: '' }, { kind: 'data', path: '', op: '=' }, { kind: 'status', status: '' }] };
   assert.deepEqual(readFeature(writeFeature(MODEL, [scenario])), [FULL]);

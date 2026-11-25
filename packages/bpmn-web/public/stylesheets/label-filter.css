@@ -1,0 +1,10 @@
+/* The lists' filter by label (views/includes/labelFilter.pug) */
+.label-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 16px; padding: 10px 12px;
+  background: #f6f8fb; border: 1px solid #dce4ec; border-radius: 8px; font-size: 14px; }
+.label-filter label { display: inline-flex; align-items: center; gap: 6px; }
+.label-filter label span { color: #52575f; }
+.label-filter select, .label-filter input { font: inherit; padding: 4px 6px; border: 1px solid #c4c8cf; border-radius: 4px; background: #fff; }
+.label-filter input[type="search"] { min-width: 200px; }
+.label-filter button { font: inherit; padding: 4px 12px; border: 1px solid #1f62c8; border-radius: 4px; background: #1f62c8; color: #fff; cursor: pointer; }
+.label-filter-clear { color: #52575f; text-decoration: none; }
+.label-filter-clear:hover { text-decoration: underline; }

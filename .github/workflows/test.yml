@@ -49,6 +49,24 @@ jobs:
         env:
           TEST_REMOTE_ENGINE: '1'
 
+  # The engine's MongoDB tests on the newest server too (discussion #254); the job above runs them on MongoDB 7.
+  mongodb-8:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:8
+        ports: ['27017:27017']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w bpmn-server
+      - name: The engine, on MongoDB 8
+        run: npm test -w bpmn-server
+
   browser:
     runs-on: ubuntu-latest
     services:

@@ -53,8 +53,10 @@ With the host's user manager, **the host issues the credentials**, and owf issue
   holds at once.
 - The pages call `/api/v3` (on the server, `pageClient.ts`) with the visitor's own credential (their cookie, their
   `Authorization`), not a token of owf's: the host's `apiUser` knows them the same way.
-- owf's tokens are not issued or taken: `POST /api/v3/tokens` refuses (`TOKENS_ELSEWHERE`), and so does `/ai/key`, an AI
-  agent's link: an agent gets its credential from the host, which gives it the access it decides.
+- owf's tokens are not issued or taken: `POST /api/v3/tokens` refuses (`TOKENS_ELSEWHERE`). The exception is a person's
+  AI link (`/ai/key`, the AI Agents add-on): the host's sign-in says who the person is, owf issues the link, and API
+  v3 takes it (a `Bearer bpt_…` that is an AI link) before asking the host's `apiUser`. Any other credential is the
+  host's to judge. The link carries the person's groups when it was made, for its minutes; revoking it holds at once.
 - The service key (`API_KEY`), `/api`, `/api2` and the acting-user key are unchanged: they are the server's, not a
   person's.
 - Without `apiUser`, only the service key opens `/api/v3`, and the pages that call it (My work, starting a process)
@@ -74,7 +76,7 @@ With the host's user manager, **the host issues the credentials**, and owf issue
 | First run | the first-run page asks for the administrator | none: the host has its users |
 | Administration ▸ Users, `/api/v3/users`, the console's users | manage its users | say the host manages them |
 | Groups | as set in Administration | the host's: its roles become groups (`ADMIN`, `DESIGNER`, a task's `HR`) |
-| API credentials | owf's tokens: the pages', `/ai/key`, `POST /api/v3/tokens` | the host's (`apiUser`); owf issues none |
+| API credentials | owf's tokens: the pages', `/ai/key`, `POST /api/v3/tokens` | the host's (`apiUser`); owf issues only AI links (`/ai/key`) |
 
 bpmn-web's own keeps everything it does today, unchanged: no setting changes, no data moves.
 

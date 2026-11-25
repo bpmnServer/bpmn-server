@@ -20,6 +20,8 @@ and here
   asks for the user's token, keeps it, renews it before it expires or when the server no longer knows it;
   `signOut(userName)` revokes them. Or `{ token }`, a token the application got itself. Every v3 operation, by area;
   lists page by page (`each`); refusals as `BPMNApiError` (`status`, `code`). Uses Node's `fetch`.
+- `tasks.list` and `instances.list` (and `each`) take the filter by label (`LabelFilter`: `field`, `op`, `value`,
+  `search`; `model` for tasks); their items carry their labels.
 
 ### Changed
 - A server since 3.7 ignores the `userId` of `start`, `invoke`, `assign`, `restart` and `startEvent` unless it sets

@@ -1,6 +1,6 @@
 # Connectors
 
-> **Integration protocol (canonical):** [OWF Integration Protocol](../design/integration-protocol.md) defines the application-scoped operation allowlist, OpenAPI entity discovery, native-form lookups and shared editor/runtime validation. Existing features versus proposed extensions are distinguished there.
+> **Integration protocol (canonical):** [OWF Integration Protocol](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/integration-protocol.md) defines the application-scoped operation allowlist, OpenAPI entity discovery, native-form lookups and shared editor/runtime validation. Existing features versus proposed extensions are distinguished there.
 
 
 A service task can call a **connector** instead of a service. A connector is a REST API, described by an
@@ -98,9 +98,11 @@ A connector's page sets:
 | **OpenAPI document** | Refresh it from its URL, or give a new one; the operations added and removed are listed. |
 | **Delete** | Lists the models that use the connector first. |
 
-**Keys are encrypted** (AES-256-GCM) with `CONNECTORS_KEY` from `.env`, which is never stored in the database.
-Without `CONNECTORS_KEY` a connector cannot be given a key, and the page says so. A backup holds the encrypted
-key only: restoring it needs the same `CONNECTORS_KEY`.
+**Keys are encrypted** (AES-256-GCM) with `SECRETS_KEY` from `.env`, which is never stored in the database. It is the
+server's key for what it stores encrypted, not a connector's credential. Before 3.7.5 it was `CONNECTORS_KEY`: that
+name is still read, and the log says once to rename it.
+Without `SECRETS_KEY` a connector cannot be given a key, and the page says so. A backup holds the encrypted
+key only: restoring it needs the same `SECRETS_KEY`.
 
 ### From the console
 
@@ -164,6 +166,41 @@ or one whose `errorCode` is the exception's code (`ECONNREFUSED`, `ETIMEDOUT`).
 In **demo mode** (`DEMO_MODE=true`), connectors are not called: the task ends with no output, and the run's
 decisions say so.
 
+## Outside production
+
+In development and test, a connector doesn't have to reach the real API. Its page in Administration ▸ Connectors has
+**Outside production**, kept in its file with the models:
+
+| Answers | What happens |
+|---|---|
+| **from the real API** (the default) | The call goes to the real API, as in production. |
+| **from its document's examples** | Nothing is called. Each operation answers the example of its first success response in the OpenAPI document, else a value made from that response's schema. |
+| **from a sandbox of the API** | The same call goes to the sandbox's address instead, with the same key. |
+
+**Own answers** give an operation's answer by its operationId (`{ "getEmployee": { "id": "E-1" } }`), in place of
+the document's example.
+
+An own answer can also depend on the input, with **cases**: the first whose `when` the call's input matches, with its
+`status`. A status other than 2xx fails as the API's would (`HTTP_404` in the model):
+
+```json
+{ "getEmployee": { "cases": [
+    { "when": { "id": "EMP-002" }, "output": { "employeeId": "EMP-002", "firstName": "James" } },
+    { "status": 404, "output": { "error": "Employee not found" } }
+] } }
+```
+
+In the connector's file, `testing.environments` limits it to `["test"]` or `["development"]` (both by default). The HR
+demo's `hr` connector answers this way in `npm test` only (`APP_ENV=test`); in development it calls the HR API.
+
+It applies only where `APP_ENV` is `development` or `test`
+([Environments](environments.md)). **Production, or a server that doesn't set `APP_ENV`, always calls the real
+API**, whatever the connector says. The connector's **Test** button always calls the real API too. With a separate
+engine, it is the engine's `APP_ENV` that counts: give both the same `.env`.
+
+A scenario can still stub what it needs for itself (`@stub service:<name>`); the connector's answers are for every
+case on the server.
+
 ## Checking models
 
 [`verifyModel`](verify.md) and the editor's Problems tab check connector tasks:
@@ -188,7 +225,7 @@ command line. A model imported from elsewhere that names a connector this server
 
 | Setting | |
 |---|---|
-| `CONNECTORS_KEY` (`.env`) | The key that encrypts the connectors' keys. Required to give a connector a key. |
+| `SECRETS_KEY` (`.env`) | The key that encrypts the connectors' keys. Required to give a connector a key. |
 | `CONNECTORS_ALLOW_HOSTS` (`.env`) | A comma list of the hosts a connector may call (`api.github.com,*.example.com`). Unset: any. |
 | `CONNECTOR_CATALOG_URL` (`.env`) | The catalog the Connectors page offers (a web address or a file). |
 | `connectors.timeout` (configuration) | A call's timeout in ms, unless the connector sets its own. Default 30000. |
@@ -198,13 +235,13 @@ command line. A model imported from elsewhere that names a connector this server
 
 ## Where a connector is kept
 
-**A connector is a file in the models folder**, `<id>.connector.json`, beside the models that call it: its name, its
+**A connector is a file in the models folder's `connectors` folder**, `connectors/<id>.connector.json`, near the models that call it: its name, its
 address, its operations and groups, how its key is sent, and its OpenAPI document (as JSON). Like a model, it is kept in
 Git and released with the models, and a model's tests find it (`npm test`, the editor's Test tab). Copy an application's
 folder, and its connectors come with it.
 
 **What is one server's stays with that server**, in its storage (the `wf_connectors` collection, MongoDB, SQLite or
-memory): the key, encrypted with that server's `CONNECTORS_KEY`, and the last connection test. A file never holds a
+memory): the key, encrypted with that server's `SECRETS_KEY`, and the last connection test. A file never holds a
 key; a connector copied to another server has none until it is set there.
 
 Adding, changing, refreshing or deleting a connector in Administration writes its file. A connector kept whole in the

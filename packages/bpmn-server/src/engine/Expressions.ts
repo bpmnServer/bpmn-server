@@ -65,6 +65,9 @@ export function scriptOf(expression: string): string {
 }
 
 /** A condition's language attribute says FEEL (FEEL, or the spec's URI for it). No language, or any other, is JavaScript. */
+/** A decision table's cell that is a model expression, `$(...)` or `${...}`, evaluated as the model's others are. */
+export const isExpression = (cell: string) => typeof cell === 'string' && /^\$[({]/.test(cell.trim());
+
 export const isFeel = (language: any): boolean => /feel/i.test(String(language ?? ''));
 
 /**

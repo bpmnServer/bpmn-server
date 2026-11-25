@@ -48,7 +48,7 @@ test.before(async () => {
   web = await startWebApp();
   designer = await web.login('designer');
   await designer.get('/model/list');
-  for (const [name, source] of Object.entries(MODELS)) await web.bpmnServer.definitions.save(name, source);
+  for (const [name, source] of Object.entries(MODELS)) await web.bpmnServer.models.save(name, source);
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 

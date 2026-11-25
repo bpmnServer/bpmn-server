@@ -1,0 +1,121 @@
+//- A list's view, as the person chose it (routes/listView.ts): which columns it shows, in what order (its own, a
+//- value the labels name, a field of the cases' data), and headings that sort it. A GET form: the view is in the URL,
+//- to bookmark and share, and remembered for the session. The boxes checked are sent in their order: the shown
+//- columns first, as ← and → (javascripts/list-columns.js) leave them, then those added.
+
+mixin listColumnsPicker(v)
+	link(rel="stylesheet", href=asset("/stylesheets/list-columns.css"))
+	script(src=asset("/javascripts/list-columns.js") defer)
+	details.list-columns(data-list=v.list)
+		summary Columns
+		form(method="get", action=v.action, aria-label="Choose the columns")
+			each k in v.keep || []
+				input(type="hidden", name=k.name, value=k.value)
+			input(type="hidden", name=v.prefix + "columns_set", value="1")
+			input(type="hidden", name=v.prefix + "columns_layout", value="1")
+			input(type="hidden", name=v.prefix + "sort", value=v.sort)
+			input(type="hidden", name=v.prefix + "order", value=v.order)
+			fieldset.list-columns-shown
+				legend Shown
+				p.list-columns-hint Uncheck a column to hide it; ← and → move it.
+				ol
+					each c in v.layout
+						li
+							label
+								input(type="checkbox", name=v.prefix + "columns", value=c.key, checked)
+								|  #{c.title}
+							button.list-columns-move(type="button", data-move="up", aria-label=`Move ${c.title} left`, title="Move left") ←
+							button.list-columns-move(type="button", data-move="down", aria-label=`Move ${c.title} right`, title="Move right") →
+			if v.hidden.length
+				fieldset
+					legend More of this list's columns
+					each c in v.hidden
+						label
+							input(type="checkbox", name=v.prefix + "columns", value=c.key)
+							|  #{c.title}
+			//- each model in the list: the values its label shows, then its form fields
+			each g in v.groups
+				fieldset
+					legend= g.model
+					each c in g.items
+						label(title=c.where)
+							input(type="checkbox", name=v.prefix + "columns", value=c.key)
+							|  #{c.title}
+			label.list-columns-add
+				span Another field
+				input(type="text", name=v.prefix + "columns_add", placeholder="e.g. amount", aria-label="Another field: its name in the case's data")
+			if v.dataProblem
+				p.list-columns-problem= v.dataProblem
+			.list-columns-actions
+				button(type="submit") Show
+				a(href=v.reset) Reset to the default
+
+//- a heading: one that sorts links to sorting by it, the other way when it already is
+mixin listHeading(h)
+	if h.sortable
+		th(aria-sort=h.current ? (h.order === 'asc' ? 'ascending' : 'descending') : undefined)
+			a.sort-heading(href=h.href, class=h.current ? 'sorted' : undefined)
+				= h.title
+				if h.current
+					span.sort-mark(aria-hidden="true")= h.order === 'asc' ? ' ▲' : ' ▼'
+	else
+		th= h.title
+
+//- the headings of the columns shown, in their order
+mixin listHeadings(v)
+	each h in v.layout
+		+listHeading(h)
+
+//- a task's own cells (Task, Case, Process...); a column of data, its value
+mixin taskCell(key, item)
+	case key
+		when '@task'
+			td
+				if item.href
+					a(href=item.href)= item.name || item.elementId
+				else
+					= item.name || item.elementId
+				if item.test
+					span.test-mark(title="A test run's case") test
+				//- its own label, when it has one (engine/Labels.ts)
+				if item.ownLabel
+					.task-label= item.ownLabel
+		when '@case'
+			td= item.caseLabel && item.caseLabel !== item.processName ? item.caseLabel : ''
+		when '@process'
+			td= item.processName
+		when '@waiting'
+			td= item.fromNow
+		when '@due'
+			td= item.dueDate ? new Date(item.dueDate).toLocaleDateString() : ''
+		when '@followUp'
+			td= item.followUpDate ? new Date(item.followUpDate).toLocaleDateString() : ''
+		when '@assignee'
+			td= item.assignee || ''
+		when '@candidateUsers'
+			td= [].concat(item.candidateUsers || []).join(', ')
+		when '@candidateGroups'
+			td= [].concat(item.candidateGroups || []).join(', ')
+		when '@priority'
+			td= item.priority == null ? '' : item.priority
+		default
+			td.list-column= item.columns ? item.columns[key] : ''
+
+//- an instance's own cells (Process, Case, Status, Started, Ended); a column of data, its value
+mixin instanceCell(key, instance)
+	case key
+		when '@process'
+			td
+				= instance.name
+				if instance.test
+					span.test-mark(title="A test run's case") test
+		when '@case'
+			td= instance.label || ''
+		when '@status'
+			td= instance.status || ''
+		when '@started'
+			td= instance.fromNow
+		when '@ended'
+			td= instance.endFromNow
+		default
+			td.list-column= instance.columns ? instance.columns[key] : ''

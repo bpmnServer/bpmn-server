@@ -1,4 +1,4 @@
-# Tutorial 6: Calling services, and failing well
+# Tutorial 6: Calling services
 
 **The requirement:** an approved request is recorded in HR's system. If that system refuses it, HR fixes it and it is
 tried again. Reminders and the outcome reach people.
@@ -34,6 +34,39 @@ never loads it. `npm test` runs as the test environment. After adding a service,
 `npm run services` so the editor knows it, and offers it under **Service name**.
 
 A service task can also call a **REST API** with no code, through a connector: [Connect external services](tutorial-connectors.md).
+
+## A script task, and expressions in the model
+
+Not every calculation needs a service. Two lighter ways to put logic in the model:
+
+**An expression**, anywhere a model takes a value — a flow's condition, a timer's date, an input or output, an
+assignment:
+
+```
+${data.days > 10}
+Leave for ${data.requester}, ${data.days} day(s)
+```
+
+An expression is JavaScript, and it sees `data`, `item`, `instance`, `input`, `output`, `appServices`, `appUtils` and
+`appDelegate` — not each process variable by name. Coming from Camunda, write `${data.days > 10}`, not
+`${days gt 10}`: the model check (**Problems** in the editor, `bpmn-server verify`) reports JUEL operators and names
+an expression does not have.
+
+**A script task**, for a few lines that belong to the process rather than to your application — working out a value
+and keeping it in the data:
+
+```js
+data.days = (new Date(data.EndDate) - new Date(data.StartDate)) / 86400000 + 1;
+data.longLeave = data.days > 10;
+```
+
+Decision tables take **FEEL** expressions instead, which is the DMN standard's own language: see
+[Decisions](../decisions.md).
+
+Which to use: an **expression** for a value the model reads once, a **script task** for a few lines of the process's
+own arithmetic, a **service task** (above) for anything that belongs to your application or reaches outside it — a
+database, an API, email. Keep the business's own rules out of scripts where a decision table would show them better.
+More in [Scripting](../scripting.md).
 
 ## When the service fails
 

@@ -50,7 +50,10 @@ function sessionSecret() {
 }
 
 /** Where a person goes after signing in: a page of this site only. */
-const safeReturn = to => (typeof to === 'string' && to.startsWith('/') && !to.startsWith('//') ? to : '/hr/');
+// where to go after signing in: a page of this site, never the sign-in, welcome or sign-out pages themselves (a
+// returnTo kept from an earlier visit to them sent a person back to the form, signed in, as if it hung)
+const safeReturn = to => (typeof to === 'string' && to.startsWith('/') && !to.startsWith('//')
+  && !/^\/(hr\/)?(login|welcome|logout)(\/|\?|$)/.test(to) ? to : '/hr/');
 
 export class HrUserManager {
   /** @param {object} [options] @param {HrUsers} [options.users] the users and sessions (default: data/hr.sqlite) */
@@ -92,12 +95,21 @@ export class HrUserManager {
     return user ? { userName: user.userName, userGroups: user.userGroups, email: user.email } : null;
   }
 
+  /** The HR application's people and their groups: an instance's "who may" names them (bpmn-web's IUserManager.listUsers). */
+  listUsers() {
+    return this.hr.list().map(u => ({ userName: u.userName, userGroups: u.userGroups }));
+  }
+
   /** Signing in and out, the HR users' API, and the workflow pages' sign-in pages sent to the HR application's. */
   setup(app) {
     const json = express.json();
     const admin = (req, res, next) => (req.user?.role === 'HR Administrator' ? next() : res.status(403).json({ error: 'HR Administrator only' }));
     const signedIn = (req, res, next) => (req.user ? next() : res.status(401).json({ error: 'Not signed in' }));
     const fail = (res, error) => res.status(400).json({ error: error.message });
+    // READ_ONLY=true (a public demo, as BPMN Server's): the demo's accounts and their passwords stay as they are
+    const writable = (req, res, next) => ((process.env.READ_ONLY ?? '').toLowerCase() === 'true'
+      ? res.status(403).json({ error: 'This demo is read-only: its users and passwords can not be changed' })
+      : next());
 
     // who is signed in; signing in; signing out
     app.get('/api/hr/session', (req, res) => (req.user ? res.json(this.hr.get(req.user.userName)) : res.status(401).json({ error: 'Not signed in' })));
@@ -120,19 +132,26 @@ export class HrUserManager {
     // the demo's accounts, for its home page (HR_DEMO_ACCOUNTS=false: none shown)
     app.get('/api/hr/demo', (req, res) => res.json(process.env.HR_DEMO_ACCOUNTS === 'false'
       ? { accounts: [] }
-      : { password: demoPassword(), accounts: DEMO_USERS.map(u => ({ userName: u.userName, name: u.name, role: u.role, userGroups: ROLES[u.role] })) }));
+      : {
+        password: demoPassword(),
+        // Signing in is the sign-in page's: the accounts and their password are listed, and whoever wants one types
+        // it. The demo keeps its one-click buttons, for people who only click through; an application made by
+        // `bpmn-server init --hrdemo` has HR_DEMO_SIGN_IN_AS=false in its .env, so it signs in as a deployed one does.
+        signInAs: process.env.HR_DEMO_SIGN_IN_AS !== 'false',
+        accounts: DEMO_USERS.map(u => ({ userName: u.userName, name: u.name, role: u.role, userGroups: ROLES[u.role] })),
+      }));
 
     // the HR users, for HR Administrators
     app.get('/api/hr/roles', (req, res) => res.json(Object.keys(ROLES)));
     app.get('/api/hr/users', signedIn, admin, (req, res) => res.json(this.hr.list()));
-    app.post('/api/hr/users', json, signedIn, admin, (req, res) => { try { res.status(201).json(this.hr.add(req.body ?? {})); } catch (e) { fail(res, e); } });
-    app.put('/api/hr/users/:userName', json, signedIn, admin, (req, res) => { try { res.json(this.hr.update(req.params.userName, req.body ?? {})); } catch (e) { fail(res, e); } });
-    app.delete('/api/hr/users/:userName', signedIn, admin, (req, res) => {
+    app.post('/api/hr/users', json, signedIn, admin, writable, (req, res) => { try { res.status(201).json(this.hr.add(req.body ?? {})); } catch (e) { fail(res, e); } });
+    app.put('/api/hr/users/:userName', json, signedIn, admin, writable, (req, res) => { try { res.json(this.hr.update(req.params.userName, req.body ?? {})); } catch (e) { fail(res, e); } });
+    app.delete('/api/hr/users/:userName', signedIn, admin, writable, (req, res) => {
       if (req.params.userName === req.user.userName) return res.status(409).json({ error: 'You do not delete yourself' });
       res.json({ deleted: this.hr.remove(req.params.userName) });
     });
     // their own password
-    app.put('/api/hr/session/password', json, signedIn, (req, res) => {
+    app.put('/api/hr/session/password', json, signedIn, writable, (req, res) => {
       if (!this.hr.verify(req.user.userName, req.body?.current)) return res.status(400).json({ error: 'The current password is wrong' });
       try { this.hr.update(req.user.userName, { password: req.body?.password }); res.json({ changed: true }); } catch (e) { fail(res, e); }
     });
@@ -140,8 +159,21 @@ export class HrUserManager {
     // the workflow pages' sign-in, sign-out and account pages: the HR application's
     const toLogin = (req, res) => res.redirect('/hr/login?returnTo=' + encodeURIComponent(safeReturn(req.query.returnTo ?? req.session?.returnTo)));
     app.get('/login', toLogin);
-    // the site's address, before signing in: the demo's home page
-    app.get('/', (req, res, next) => (req.user ? next() : res.redirect('/hr/welcome')));
+    // the site's address: before signing in, the demo's welcome page; after, the HR home page when opened in the
+    // window itself. In the HR layout's frame (Sec-Fetch-Dest: iframe), owf's Workbench, as /hr/workflow shows it.
+    app.get('/', (req, res, next) => {
+      if (!req.user) return res.redirect('/hr/welcome');
+      // the Workbench, asked for by the HR layout's frame (src/pages/Workflow.jsx)
+      if (req.query.owf !== undefined) return next();
+      if (req.get('sec-fetch-dest') === 'document') return res.redirect('/hr/');
+      // in a frame, or a browser that does not say which: the page finds out. In the HR layout's frame, the
+      // Workbench; anywhere else (a whole window, an editor's browser pane), the HR home page
+      res.type('html').send(`<!doctype html><meta charset="utf-8"><title>HR System</title><script>
+        var inHr = false;
+        try { inHr = window.parent !== window && window.parent.location.origin === location.origin && window.parent.location.pathname.indexOf('/hr') === 0; } catch (e) { }
+        location.replace(inHr ? '/?owf' : '/hr/');
+      </script>`);
+    });
     app.get('/logout', (req, res) => signOut(req, res, () => res.redirect('/hr/login')));
     for (const page of ['/signup', '/setup', '/forgot', '/reset/:token'])
       app.all(page, (req, res) => res.redirect('/hr/login'));

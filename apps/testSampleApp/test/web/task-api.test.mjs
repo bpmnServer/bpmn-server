@@ -1,5 +1,5 @@
-// @features: task-api
-// Application integration, phase 1 (docs/docs/application-integration-design.md): the task API an application builds
+// @features: task-api, test-cases
+// Application integration, phase 1 (docs/design/application-integration-design.md): the task API an application builds
 // its inbox on. Two parts:
 //   - "today": what the server does now, which the design has to work with. These pass.
 //   - "contract": the routes, all in bpmn-web, as section 5.1 of the design has them.
@@ -49,7 +49,7 @@ test.before(async () => {
     web = await startWebApp({ env: { API_ACTING_USER_KEY: ACTING_KEY } });
     for (const [name, xml] of Object.entries(MODELS))
         fs.writeFileSync(path.join(web.definitionsPath, name + '.bpmn'), xml);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
@@ -261,12 +261,14 @@ test('contract: once claimed, the task is that user\'s alone', async () => {
     assert.equal((await tasks('POST', `/${task}/complete`, { ...MANAGER, body: {} })).status, 200);
 });
 
-test('contract: a task of a test run is not an application\'s', async () => {
+test('contract: a task of a test run is an ordinary task, marked test (development and test; production runs none)', async () => {
     const started = await web.bpmnServer.engine.start(MODEL, {}, null, null, { instanceId: `test-${Date.now()}` });
     await engine().invoke({ id: started.id, 'items.elementId': 'Submit' }, { days: 6 });
     const task = await approveId(started.id);
-    assert.equal((await tasks('GET', `/${task}`, MANAGER)).status, 404);
-    assert.ok(!(await tasks('GET', '?limit=200', MANAGER)).body.tasks.some(t => t.id === task));
+    const one = await tasks('GET', `/${task}`, MANAGER);
+    assert.equal(one.status, 200, why(one));
+    const listed = (await tasks('GET', '?limit=200', MANAGER)).body.tasks.find(t => t.id === task);
+    assert.ok(listed, 'listed with the others');
 });
 
 test('contract: a task has its instance\'s data; the list only its own fields, not the engine\'s', async () => {
@@ -396,7 +398,7 @@ test('bridge: a task comes with its form: fields, options, validation', async ()
     const submitted = await tasks('GET', `/${await approveId(id)}`, MANAGER);
     assert.deepEqual(submitted.body.form, { fields: [] }, 'Approve has no form');
 
-    await web.bpmnServer.definitions.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
+    await web.bpmnServer.models.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
     const started = await tasks('POST', `/start/${MANAGERS_ONLY}`, { ...MANAGER, body: {} });
     assert.equal(started.status, 200, why(started));
     const task = await tasks('GET', `/${started.body.task.id}`, MANAGER);
@@ -421,7 +423,7 @@ test('bridge: the acting user starts a process, and gets their first task in it'
 });
 
 test('bridge: only those the start event allows may start; others get 404', async () => {
-    await web.bpmnServer.definitions.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
+    await web.bpmnServer.models.save(MANAGERS_ONLY, MANAGERS_ONLY_XML);
     const refused = await tasks('POST', `/start/${MANAGERS_ONLY}`, { ...STAFF, body: {} });
     assert.equal(refused.status, 404, why(refused));
     assert.equal(refused.body.code, 'NOT_STARTABLE');

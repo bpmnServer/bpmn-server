@@ -56,7 +56,7 @@ aggregation (Aggregate.ts) answers, computed from the documents the adapter find
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentPager.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentPager.ts#L19)
+[packages/bpmn-server/src/datastore/DocumentPager.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentPager.ts#L19)
 
 ___
 
@@ -80,7 +80,7 @@ The cursor of a row: its sort value (a date as `d:<ms>`) and its `_id`.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentPager.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentPager.ts#L72)
+[packages/bpmn-server/src/datastore/DocumentPager.ts:72](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentPager.ts#L72)
 
 ___
 
@@ -103,4 +103,4 @@ A row standing for a cursor, to compare the rows against.
 
 #### Defined in
 
-[packages/bpmn-server/src/datastore/DocumentPager.ts:79](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/DocumentPager.ts#L79)
+[packages/bpmn-server/src/datastore/DocumentPager.ts:79](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/datastore/DocumentPager.ts#L79)

@@ -20,7 +20,7 @@ import helmet from 'helmet';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import multer from 'multer';
-import { BPMNServer, Logger, databaseName } from 'bpmn-server';
+import { BPMNServer, Logger, databaseName, addOnsOf } from 'bpmn-server';
 
 import { UserManager, ownUsers, hostUserManager } from './userAccess/UserManager.js';
 import type { IUserManager } from './userAccess/IUserManager.js';
@@ -41,6 +41,9 @@ import { answerMessage } from './routes/common.js';
 import { errorDetailsHandler } from './routes/middleware/errorDetails.js';
 import { processRunErrorHandler } from './routes/runErrors.js';
 import { gracefulShutdown } from './runtime/shutdown.js';
+import { readOnlyGuard } from './runtime/readOnly.js';
+import { testRunsGuard } from './runtime/testRuns.js';
+import { serviceNamesAtStart } from './runtime/serviceNames.js';
 
 const __dirname = import.meta.dirname;
 console.log('app.ts from ', import.meta.filename);
@@ -84,11 +87,13 @@ export class WebApp {
 		this.userManager.init(this.app);
 		pageSessions(this.app);
 		const wflogger = application.logger ?? new Logger({ toConsole: true });
+		// the services' names, read from the delegate's source as the server starts (runtime/serviceNames.ts)
+		application.configuration.serviceNames ??= serviceNamesAtStart(application.configuration);
 		this.bpmnServer = BPMNServer.launch(
 			application.configuration,
 			wflogger,
 			// where the engine is: ENGINE_AT=http://... (with ENGINE_KEY), or none: everything but running and testing models
-			{ ...application.serverOptions, calls: engineTests, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, ...(Number(process.env.ENGINE_TIMEOUT_MS) > 0 ? { engineTimeout: Number(process.env.ENGINE_TIMEOUT_MS) } : {}) } : {}) },
+			{ ...application.serverOptions, calls: (server) => ({ ...engineTests(server), ...(application.serverOptions?.calls as any)?.(server) }), ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, ...(Number(process.env.ENGINE_TIMEOUT_MS) > 0 ? { engineTimeout: Number(process.env.ENGINE_TIMEOUT_MS) } : {}) } : {}) },
 		);
 		// users and sessions: on the engine's store (MongoDB, SQLite, memory). On MongoDB, in the database mongoose kept
 		// them in before 3.7: the one MONGO_DB_URL names (else test), whatever MONGO_DB_NAME says
@@ -125,6 +130,14 @@ export class WebApp {
 				return file;
 			}
 		};
+		// whether an add-on is on (engine/AddOns.ts), as the server started: a page offers an add-on's parts only then
+		// (worked out when first asked: the server is launched after the app is set up)
+		let addOnsOn: Set<string>;
+		// `policies`, one add-on before 3.7.5: any of the three it became (an application's own pages may ask for it)
+		app.locals.addOnOn = (name: string) => {
+			addOnsOn ??= new Set(addOnsOf(this.bpmnServer).map(a => a.name));
+			return name === 'policies' ? ['assignment', 'notification', 'security'].some(n => addOnsOn.has(n)) : addOnsOn.has(name);
+		};
 		app.use(compression());
 		// Security headers. CSP is disabled because the modeler/UI loads inline scripts
 		// and a CDN; HSTS only takes effect over HTTPS (harmless over HTTP).
@@ -139,12 +152,19 @@ export class WebApp {
         }));
 		// an AI link's key is a credential: not in the request log
 		morgan.token('url', (req: any) => String(req.originalUrl || req.url).replace(/\/ai\/bpt_[\w-]+/g, '/ai/bpt_***'));
-		app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+		// a route that is asked all the time (a page polling) sets res.locals.quiet: not in the request log
+		app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev', { skip: (req, res: any) => res.locals?.quiet === true }));
 		const bodyLimit = process.env.BODY_LIMIT || '50mb';
 		app.use(bodyParser.json({ limit: bodyLimit }));
 		app.use(bodyParser.urlencoded({ limit: bodyLimit, extended: true }));
 
 		app.use(busboy());
+
+		// READ_ONLY=true: the processes and the server's setup can't be changed, through a page or an API (runtime/readOnly.ts);
+		// before every route, the sign-in's account pages too
+		app.use(readOnlyGuard);
+		// APP_ENV=production: no tests run, so its database holds no test cases (runtime/testRuns.ts)
+		app.use(testRunsGuard);
 
 		// Unauthenticated health/readiness probe for load balancers (before auth).
 		app.get('/healthz', (req, res) => {
@@ -259,12 +279,13 @@ export class WebApp {
 		this.application.routes?.(this.app, this);
 		// where an AI agent given this site's address starts; no sign-in
 		this.app.get('/llms.txt', (req, res, next) => siteGuide(this, req).then(text => res.type('text/markdown').send(text), next));
+		// the AI Agents add-on's (docs/design/add-ons.md): off, its pages are not there
+		this.app.use('/ai', (req, res, next) => this.app.locals.addOnOn?.('ai') === false
+			? answerMessage(req, res, 404, 'Links for AI agents are off on this site (the AI Agents add-on).') : next());
 		// a link for a person's AI agent: an API token that acts as them, at the level they choose (routes/aiAccess.ts)
 		this.app.get('/ai/key', async (req, res, next) => {
 			try {
-				// the application issues the credentials, an agent's too (docs/design/host-users.md)
-				if (hostUserManager(req))
-					return answerMessage(req, res, 404, 'Links for AI agents come from the application, not from this page.');
+				// with the application's user manager too: its sign-in says who, and the link acts as them (docs/design/host-users.md)
 				if (!req.user) {
 					req.session.returnTo = req.originalUrl;
 					return res.redirect('/login');
@@ -286,7 +307,6 @@ export class WebApp {
 			catch (error) { next(error); }
 		});
 		this.app.post('/ai/revoke', async (req, res, next) => {
-			if (hostUserManager(req)) return answerMessage(req, res, 404, 'Links for AI agents come from the application.');
 			if (!req.user) return res.redirect('/login');
 			try { res.redirect(`/ai/key?revoked=${await revokeAiLinks(this.bpmnServer, req.user.userName)}`); }
 			catch (error) { next(error); }

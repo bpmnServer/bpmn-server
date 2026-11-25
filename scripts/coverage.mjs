@@ -8,7 +8,14 @@
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+
+const require = createRequire(import.meta.url);
+const v8toIstanbul = require('v8-to-istanbul');
+const libCoverage = require('istanbul-lib-coverage');
+const libReport = require('istanbul-lib-report');
+const reports = require('istanbul-reports');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'coverage');
@@ -69,10 +76,17 @@ function offsetMapper(text, grownLengths) {
 }
 
 /**
+ * One drive letter's case for a file on Windows, the root's (as c8 --all lists the files not loaded): processes started
+ * from a shell in `c:\...` report `file:///c:/...`, others `file:///C:/...`, and c8 would count each file twice, once
+ * covered and once not.
+ */
+const sameDrive = url => /^[a-zA-Z]:/.test(root) ? url.replace(/^file:\/\/\/[a-zA-Z]:/i, `file:///${root[0]}:`) : url;
+
+/**
  * V8 reports offsets in the code that ran, and every process must agree on them for their data to merge; tsx changes what it loads.
  * A dynamic import() gains a call on its line and the file an inline source map: that is put back here. Its CommonJS hook rewrites
- * a whole file, which can't be put back: test:scenarios loads tsx/esm for that, and a file found that way is an error, as the report
- * would be wrong without saying so.
+ * a whole file, which can't be put back: test:scenarios loads tsx/esm for that. A copy found loaded that way is left out of the
+ * report, which says so: the same file loaded as a module, in that process and the others, is counted.
  */
 function normalize() {
     const texts = new Map();
@@ -84,9 +98,14 @@ function normalize() {
     for (const file of fs.readdirSync(raw)) {
         const name = path.join(raw, file);
         const coverage = JSON.parse(fs.readFileSync(name, 'utf8'));
-        const maps = coverage['source-map-cache'] ?? {};
+        // the maps' sources are file URLs too, and name the files the report counts
+        const maps = Object.fromEntries(Object.entries(coverage['source-map-cache'] ?? {}).map(([url, map]) => {
+            if (Array.isArray(map.data?.sources)) map.data.sources = map.data.sources.map(sameDrive);
+            return [sameDrive(url), map];
+        }));
         coverage.result = coverage.result.filter(script => script.url.startsWith('file:') && PACKAGE_CODE.test(script.url));
         for (const script of coverage.result) {
+            script.url = sameDrive(script.url);
             const text = textOf(script.url);
             if (Math.max(...script.functions.map(fn => fn.ranges[0].endOffset)) <= text.length) continue;
             const lines = text.split('\n').map(line => line.replace(/\r$/, ''));
@@ -94,6 +113,7 @@ function normalize() {
             // the lines with an import(), and the source map's at the end
             if (changed > text.split('import(').length + 1) {
                 rewritten.add(script.url);
+                script.rewritten = true;
                 continue;
             }
             const toFile = offsetMapper(text, maps[script.url].lineLengths);
@@ -104,19 +124,76 @@ function normalize() {
                 }
             delete maps[script.url];
         }
+        coverage.result = coverage.result.filter(script => !script.rewritten);
         coverage['source-map-cache'] = Object.fromEntries(Object.entries(maps).filter(([url]) => PACKAGE_CODE.test(url)));
         fs.writeFileSync(name, JSON.stringify(coverage));
     }
-    if (rewritten.size) throw new Error(`Rewritten when they loaded, so their coverage can't be merged:\n${[...rewritten].join('\n')}`);
+    if (rewritten.size)
+        console.warn(`Left out of the report: copies tsx's CommonJS hook rewrote where they loaded, their offsets not the file's (the copies loaded as modules are counted):\n${[...rewritten].join('\n')}`);
 }
 
-function report() {
-    const status = run(['node', '"node_modules/c8/bin/c8.js"', 'report', '--all', `--temp-directory "${raw}"`, `--reports-dir "${output}"`,
-        '--reporter=html --reporter=lcovonly --reporter=json-summary --exclude-after-remap',
-        '--include "packages/*/src/**" --include "packages/*/dist/**"',
-        // what builds and maintains the packages, not what they ship
-        '--exclude "packages/*/src/scripts/**" --exclude "packages/bpmn-server/src/arch-map.ts" --exclude "**/*.d.ts"'].join(' '));
-    if (status !== 0) throw new Error('The report failed');
+/** A packages' source the report counts: not what builds and maintains the packages, nor type declarations. */
+const reported = file => {
+    const p = file.split(path.sep).join('/');
+    return /\/packages\/[^/]+\/src\//.test(p) && !/\/packages\/[^/]+\/src\/scripts\//.test(p)
+        && !p.endsWith('/packages/bpmn-server/src/arch-map.ts') && !p.endsWith('.d.ts');
+};
+
+/** The files under a folder, recursively. */
+const filesUnder = dir => fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true, recursive: true })
+    .filter(entry => entry.isFile()).map(entry => path.join(entry.parentPath ?? entry.path, entry.name)) : [];
+
+/**
+ * Each process's data converted on its own (v8-to-istanbul, as c8 converts) and the counts added (istanbul's merge).
+ * c8 merges the processes' V8 ranges first, and on this suite's data that loses counts: on Linux, the web and UI
+ * suites together reported bpmn-web's lines at 69.9%, what the web suite reaches alone, where the UI suite alone
+ * reached 59.2% of them and adding both gives 86.9%; merged synchronously, it overflowed the stack. Here nothing is merged
+ * but counts. Then every built file once more with nothing run (c8's --all): a file no process loaded counts as untested.
+ */
+async function coverageMap() {
+    const map = libCoverage.createCoverageMap();
+    const add = async (file, sources, functions, into = map) => {
+        const converter = v8toIstanbul(file, 0, sources, source => !reported(source));
+        await converter.load();
+        converter.applyCoverage(functions);
+        into.merge(converter.toIstanbul());
+    };
+    let failures = 0;
+    for (const name of fs.readdirSync(raw)) {
+        const coverage = JSON.parse(fs.readFileSync(path.join(raw, name), 'utf8'));
+        const maps = coverage['source-map-cache'] ?? {};
+        for (const script of coverage.result) {
+            const entry = maps[script.url];
+            const sources = entry?.data ? { sourceMap: { sourcemap: entry.data },
+                ...(entry.lineLengths ? { source: entry.lineLengths.map(length => ''.padEnd(length, '.')).join('\n') + '\n' } : {}) } : {};
+            try { await add(fileURLToPath(script.url), sources, script.functions); }
+            catch (error) { failures++; if (failures <= 5) console.warn(`Not converted: ${script.url}: ${error?.message ?? error}`); }
+        }
+    }
+    // nothing run, for the files no process loaded: the built files (their source maps lead back to src), then any source
+    // with no built file. Made apart and only added when missing: istanbul merges a file's counts statement by statement,
+    // and a file read from disk need not have the statements its loaded copy had.
+    const loaded = new Set(map.files().map(f => path.resolve(f)));
+    const unloaded = libCoverage.createCoverageMap();
+    const nothingRun = file => [{ functionName: '', isBlockCoverage: true, ranges: [{ startOffset: 0, endOffset: fs.readFileSync(file, 'utf8').length, count: 0 }] }];
+    for (const dist of fs.readdirSync(path.join(root, 'packages')).map(name => path.join(root, 'packages', name, 'dist')))
+        for (const file of filesUnder(dist).filter(f => f.endsWith('.js')))
+            await add(file, {}, nothingRun(file), unloaded).catch(() => { });
+    for (const src of fs.readdirSync(path.join(root, 'packages')).map(name => path.join(root, 'packages', name, 'src')))
+        for (const file of filesUnder(src).filter(f => /\.(ts|js|mjs)$/.test(f) && reported(f) && !unloaded.files().some(u => path.resolve(u) === path.resolve(f))))
+            await add(file, {}, nothingRun(file), unloaded).catch(() => { });
+    for (const file of unloaded.files())
+        if (!loaded.has(path.resolve(file))) map.addFileCoverage(unloaded.fileCoverageFor(file));
+    if (failures) console.warn(`${failures} scripts could not be converted`);
+    map.filter(file => reported(file));
+    return map;
+}
+
+async function report() {
+    const map = await coverageMap();
+    const context = libReport.createContext({ dir: output, coverageMap: map, defaultSummarizer: 'nested' });
+    for (const kind of ['html', 'lcovonly', 'json-summary'])
+        reports.create(kind).execute(context);
     const summary = JSON.parse(fs.readFileSync(path.join(output, 'coverage-summary.json'), 'utf8'));
     const totals = new Map();
     for (const [file, data] of Object.entries(summary)) {
@@ -183,7 +260,7 @@ const only = process.argv.find(arg => arg.startsWith('--only='))?.slice('--only=
 const reportOnly = process.argv.includes('--report');
 const failed = reportOnly ? [] : runSuites(only ?? Object.keys(SUITES));
 normalize();
-const { code, under } = report();
+const { code, under } = await report();
 keepSummaries(code, !reportOnly && !only && !failed.length);
 for (const name of failed) console.error(`The suite ${name} failed`);
 for (const message of under) console.error(message);

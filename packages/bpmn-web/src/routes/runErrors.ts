@@ -13,7 +13,7 @@ export class ProcessRunError extends Error {
         super(cause?.message || String(cause));
         this.name = 'ProcessRunError';
         // a task that was already completed is the caller's mistake, not the model's
-        this.status = cause?.code === 'ITEM_NOT_WAITING' ? 409 : 422;
+        this.status = cause?.code === 'ITEM_NOT_WAITING' ? 409 : cause?.code === 'FORM_INVALID' ? 400 : 422;
     }
 }
 
@@ -42,7 +42,8 @@ export async function runProcess(server, target: RunTarget, operation: () => Pro
     catch (err) {
         const processName = await modelOf(server, target);
         let issues = [];
-        if (processName) {
+        // a form refused is the data's fault, not the model's: nothing to check
+        if (processName && err?.code !== 'FORM_INVALID') {
             try {
                 const source = await server.definitions.getSource(processName);
                 issues = (await verifyModel(source, server, processName)).issues

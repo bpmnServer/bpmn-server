@@ -8,6 +8,8 @@
 *.map
 *.d.ts
 **/*.js
+# written by hand, not built: the matcher scripts/features.mjs shares
+!src/modelFeatures.js
 /bin
 /dist
 .env

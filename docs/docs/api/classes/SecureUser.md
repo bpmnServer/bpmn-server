@@ -63,7 +63,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:52](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L52)
+[packages/bpmn-server/src/API/SecureUser.ts:53](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L53)
 
 ## Properties
 
@@ -77,7 +77,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L39)
+[packages/bpmn-server/src/API/SecureUser.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L40)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L40)
+[packages/bpmn-server/src/API/SecureUser.ts:41](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L41)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L41)
+[packages/bpmn-server/src/API/SecureUser.ts:42](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L42)
 
 ___
 
@@ -119,7 +119,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L42)
+[packages/bpmn-server/src/API/SecureUser.ts:43](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L43)
 
 ___
 
@@ -131,7 +131,7 @@ Whether the security rules are off for this user: decided when it is made, never
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L44)
+[packages/bpmn-server/src/API/SecureUser.ts:45](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L45)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L45)
+[packages/bpmn-server/src/API/SecureUser.ts:46](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L46)
 
 ## Accessors
 
@@ -157,7 +157,7 @@ Whether this user's security rules are off.
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L61)
+[packages/bpmn-server/src/API/SecureUser.ts:62](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L62)
 
 ## Methods
 
@@ -171,7 +171,7 @@ Whether this user's security rules are off.
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L62)
+[packages/bpmn-server/src/API/SecureUser.ts:63](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L63)
 
 ___
 
@@ -189,7 +189,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L65)
+[packages/bpmn-server/src/API/SecureUser.ts:66](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L66)
 
 ___
 
@@ -207,7 +207,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:70](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L70)
+[packages/bpmn-server/src/API/SecureUser.ts:71](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L71)
 
 ___
 
@@ -231,27 +231,28 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:75](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L75)
+[packages/bpmn-server/src/API/SecureUser.ts:76](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L76)
 
 ___
 
 ### qualifyInstances
 
-▸ **qualifyInstances**(`query`): `any`
+▸ **qualifyInstances**(`query`, `filters?`): `any`
 
-alters the query adding conditions based on security rules
+The query narrowed to what this user may see: their tenant's, and, unless an administrator, what the add-ons'
+filters let them (`filters`: the server's, registrationsOf(server).queryFilters; the Assignment add-on's, the
+tasks offered to them). Without `filters` (a caller from before add-ons), the tasks offered to them, as before.
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `filters?` | [`IQueryFilter`](../interfaces/IQueryFilter.md)[] |
 
 #### Returns
 
 `any`
-
-query
 
 #### Implementation of
 
@@ -259,13 +260,13 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:85](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L85)
+[packages/bpmn-server/src/API/SecureUser.ts:86](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L86)
 
 ___
 
 ### qualifyItems
 
-▸ **qualifyItems**(`query`): `any`
+▸ **qualifyItems**(`query`, `filters?`): `any`
 
 alters the query adding conditions based on security rules
 
@@ -274,6 +275,7 @@ alters the query adding conditions based on security rules
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `filters?` | [`IQueryFilter`](../interfaces/IQueryFilter.md)[] |
 
 #### Returns
 
@@ -287,13 +289,13 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:124](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L124)
+[packages/bpmn-server/src/API/SecureUser.ts:127](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L127)
 
 ___
 
 ### qualifyStartEvents
 
-▸ **qualifyStartEvents**(`query`): `any`
+▸ **qualifyStartEvents**(`query`, `filters?`): `any`
 
 alters the query adding conditions based on security rules
 
@@ -302,6 +304,7 @@ alters the query adding conditions based on security rules
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `filters?` | [`IQueryFilter`](../interfaces/IQueryFilter.md)[] |
 
 #### Returns
 
@@ -315,13 +318,13 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:136](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L136)
+[packages/bpmn-server/src/API/SecureUser.ts:143](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L143)
 
 ___
 
 ### qualifyDeleteInstances
 
-▸ **qualifyDeleteInstances**(`query`): `any`
+▸ **qualifyDeleteInstances**(`query`, `filters?`): `any`
 
 alters the query adding conditions based on security rules
 
@@ -330,6 +333,7 @@ alters the query adding conditions based on security rules
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `filters?` | [`IQueryFilter`](../interfaces/IQueryFilter.md)[] |
 
 #### Returns
 
@@ -343,7 +347,7 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:158](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L158)
+[packages/bpmn-server/src/API/SecureUser.ts:167](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L167)
 
 ___
 
@@ -371,7 +375,7 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:169](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L169)
+[packages/bpmn-server/src/API/SecureUser.ts:178](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L178)
 
 ___
 
@@ -395,7 +399,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:179](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L179)
+[packages/bpmn-server/src/API/SecureUser.ts:188](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L188)
 
 ___
 
@@ -419,7 +423,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:187](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L187)
+[packages/bpmn-server/src/API/SecureUser.ts:196](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L196)
 
 ___
 
@@ -447,7 +451,7 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:198](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L198)
+[packages/bpmn-server/src/API/SecureUser.ts:207](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L207)
 
 ___
 
@@ -471,7 +475,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:201](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L201)
+[packages/bpmn-server/src/API/SecureUser.ts:210](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L210)
 
 ___
 
@@ -495,7 +499,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:210](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L210)
+[packages/bpmn-server/src/API/SecureUser.ts:219](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L219)
 
 ___
 
@@ -521,4 +525,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/API/SecureUser.ts:237](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/SecureUser.ts#L237)
+[packages/bpmn-server/src/API/SecureUser.ts:246](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/SecureUser.ts#L246)

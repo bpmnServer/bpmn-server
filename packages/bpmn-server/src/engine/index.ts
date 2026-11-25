@@ -1,4 +1,5 @@
 export * from './Execution.js';
+export * from './Context.js';
 export * from './Token.js';
 export * from './Item.js';
 export * from './Loop.js';
@@ -8,3 +9,10 @@ export * from './ScriptHandler.js';
 export * from './SandboxScriptHandler.js';
 export * from './DataHandler.js';
 export * from './TestStubs.js';
+export * from './DataPaths.js';
+export * from './ListColumns.js';
+export * from './DecisionContext.js';
+export * from './Roles.js';
+export * from './AddOns.js';
+export { isExpression } from './Expressions.js';
+export * from './AppContract.js';

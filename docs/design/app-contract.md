@@ -1,0 +1,294 @@
+# The application's contract: what it publishes, and how we talk
+
+Status: **first slice built in 3.7.2** (docs/docs/app-contract.md): the file read and checked, `describe()`, `appVars` (`appVarsClass`, `getAppVars`, `evaluatingSource`), `verifyModel`'s checks, the start's comparison with the code, the editor's completion, `GET /api/v3/application`, the HR demo's contract. Not built: the remote delegate (`appUrl`, §4.5), the form protocol (§4.1-4.2), `await` in expressions (§4.6), the MDE adapter (§6). Draft 2026-11-13, revised 2026-11-14 with Ralph's feedback. Related:
+[expressions.md](expressions.md) (the names an expression reads), [decision-context.md](decision-context.md) (the
+application's facts), [form-keys.md](form-keys.md) (its pages), [connectors-as-files.md](connectors-as-files.md)
+(its APIs), [host-users.md](host-users.md) (its users).
+
+## 1. Why
+
+BPMN Server runs an application's workflows, so it depends on what the application has: the names an expression may
+use, its roles, its APIs, its pages. Today most of this is code no one can read before it runs. A typo in a function
+name fails only when it runs, and an unknown variable reads as `null`. The editor can't offer these names, and
+`verifyModel` can't check them.
+
+## 2. One entry point: `app-contract.json`
+
+**Decided 2026-11-18:** the application's entry point is one JSON file, `app-contract.json`, in the application's
+folder. It holds the application's configuration and its roles, declares what the application offers (below), and
+says where its code is: the delegate's module for a Node application, or `appUrl` for a remote one (§4.5). The file
+points to the delegate, not the other way round. It can be read without running anything, and it works for an
+application in any language.
+
+Policies (assignment, security, notification) and connectors are not part of it: they belong to the workflows and
+are kept with the models.
+
+An application that passes `appDelegate` in code and has no `app-contract.json` runs as today.
+
+The contract has two parts:
+
+| | What | Who reads it | Where |
+|---|---|---|---|
+| **Declarative** | what exists: the names (variables and functions, with their types), roles, APIs, pages | the editor, `verifyModel`, tests, agents; without running anything | `app-contract.json`; `appDelegate.describe()` answers it, and an application without the file may build it in code |
+| **Code** | what it does: the functions and the variables (`getAppServices`, `getAppVars`, §2.1), `notify`, the hooks | the engine, when it runs | the delegate's methods, as today |
+
+The rule: the declarative part says **what** and never **how**. Every name it lists is carried out by the code part.
+
+**The model is self-contained; the contract is guidance, not execution** (decided 2026-11-18). A model names
+everything it uses: a function, an operation, a role, a form field's lookup (its operation and fields). At run time
+the engine resolves those names against what is there (the delegate's code, the connectors), never against the
+contract. The contract only lets the editor offer names and `verifyModel` check them; without it, or with it out of
+date, a model still runs. A model can be moved, tested or run without the contract.
+
+```ts
+class HrDelegate extends DefaultAppDelegate {
+    getAppServices(context) { return new HrFunctions(context); }     // code: appServices.x(...)
+    getAppVars(context) { return new HrVars(context); }           // code: appVars.x
+    describe() { return JSON.parse(fs.readFileSync('app-contract.json', 'utf8')); }   // declarative
+    async notify(notification) { /* send it */ }                           // code: hooks
+}
+```
+
+### 2.1 Functions and variables: `getAppServices` and `getAppVars`
+
+The delegate gives each evaluation two objects, made for that evaluation from its context (§2.2):
+
+| | `getAppServices(context)` | `getAppVars(context)` |
+|---|---|---|
+| Gives | the **functions** | the **variables** |
+| Read in an expression as | `appServices.managerOf(actors.initiator)` | `appVars.employeeManager`, `appVars.endFiscalYear` |
+| Arguments | yes | none |
+| Worked out | when the expression calls it; it may wait and may change things | before the expression runs, only the names it reads, once each; the same throughout one evaluation |
+| Read in | every expression: scripts, conditions, parameters, decision tables | every expression too |
+
+```ts
+class HrVars {
+    constructor(private context) {}
+    /** The acting user's manager. */
+    async employeeManager(): Promise<string> { return hr.managerOf(this.context.user.userName); }
+    /** The last day of the fiscal year. */
+    endFiscalYear(): string { return '2027-03-31'; }
+}
+```
+
+- **Qualified names.** Variables are read as `appVars.<name>`, as functions are read as `appServices.<name>`, so they
+  can't be mistaken for the data's own fields.
+- **One method per name.** The method's name is the name an expression reads, and its comment and return type
+  describe it.
+- **The names without a context.** Validation (`verifyModel`, the editor) needs the names when nothing is evaluating,
+  so the delegate also names the two classes; their method names are the lists:
+
+  ```ts
+  class HrDelegate extends DefaultAppDelegate {
+      appVarsClass = HrVars;              // appVars.<method>
+      appServicesClass = HrFunctions;     // appServices.<method>
+  }
+  ```
+
+  Validation never calls a factory nor makes an object: it reads the class's method names, with no context:
+
+  ```ts
+  Object.getOwnPropertyNames(delegate.appVarsClass.prototype).filter(n => n !== 'constructor')
+  // ['employeeManager', 'endFiscalYear']
+  ```
+
+  The context is needed only when an expression runs. `DefaultAppDelegate.getAppVars(context)` is `new this.appVarsClass(context)` (and the same for services), so an
+  application sets the classes and overrides the methods only to build them its own way.
+- **`describe()` adds the rest:** each name's type and description, from the JSON or from TypeScript. A name in one
+  list and not the other is a warning at start.
+- **Compatibility:**
+  - `appServices` keeps working, as the delegate's functions when there is no `getAppServices`.
+  - `decisionContext` keeps working, and its facts are still read unqualified (`employeeManager`) in decision tables.
+
+### 2.2 The context, and what is evaluating
+
+Each is given the **context**: what the expression reads (expressions.md: the data, `user`, `actors`,
+`instance`, `task`, ...). The context also gains one name, `evaluatingSource`, which says what is evaluating:
+
+| `evaluatingSource` | Is evaluating | Example |
+|---|---|---|
+| `{ type: 'decision', id }` | a decision table: a business rule task's, or an assignment, security or notification policy (`policy` says which) | `{ type: 'decision', id: 'LeaveApproval', policy: 'assignment' }` |
+| `{ type: 'node', id }` | an element's expression: a script, an input or output parameter, a timer, an event's condition | `{ type: 'node', id: 'Approve' }` |
+| `{ type: 'flow', id }` | a sequence flow's condition | `{ type: 'flow', id: 'Flow_approved' }` |
+
+For example, when the assignment policy `LeaveApproval` chooses who approves Ann's request, its variables are made
+from a context that has `user` (Ann), `instance` (her request), `task` (`Approve`) and
+`evaluatingSource: { type: 'decision', id: 'LeaveApproval', policy: 'assignment' }`. `appVars.employeeManager` is then
+Ann's manager.
+
+The rest of the context is what an expression already reads: the two methods add nothing to learn.
+
+`describe()` is optional. Without it, nothing is checked or offered, and everything runs as today.
+
+## 3. The declarative part
+
+```json
+{
+  "name": "hr",
+  "expressions": [],
+  "types": {},
+  "roles": [],
+  "apis": [],
+  "pages": []
+}
+```
+
+### 3.1 Expressions: variables and functions
+
+The names an expression may use, in a script, a condition, a parameter or a decision table (FEEL or JavaScript),
+beyond the standard ones (expressions.md). The difference between the two kinds is in §2.1.
+
+```json
+"expressions": [
+  { "kind": "var", "name": "employeeManager", "type": "string", "description": "The acting user's manager" },
+  { "kind": "var", "name": "endFiscalYear", "type": "date" },
+  { "kind": "function", "name": "managerOf", "params": [{ "name": "userName", "type": "string" }],
+    "returns": "string", "async": true, "effect": "read" },
+  { "kind": "function", "name": "addAssignment", "params": [{ "name": "assignment", "type": "Assignment" }],
+    "returns": "Assignment", "async": true, "effect": "write" }
+]
+```
+
+- `effect` says what a function does: `none`, `read` or `write`. A decision may not call a `write` function.
+- `types` holds the JSON Schemas that parameters and results name, such as `Assignment`.
+
+### 3.2 Roles and APIs
+
+```json
+"roles": [
+  { "name": "Manager", "title": "Manager", "description": "Approves leave and assignments of their reports" },
+  { "name": "ProjectCoordinator", "title": "Project coordinator" }
+],
+"apis": [ { "id": "hr", "openapi": "/api/hr/openapi.json" } ]
+```
+
+- **Roles** replace `roles.json`, which is still read when there is no `describe()`. Who holds a role is the user
+  manager's business.
+- **An API** becomes the connector `<id>`, made from its OpenAPI document.
+
+### 3.3 Pages
+
+```json
+"pages": [
+  { "id": "assignment", "url": "/hr/forms/assignment", "title": "Assign an employee" },
+  { "id": "leave-request", "url": "/hr/forms/leave-request" }
+]
+```
+
+A page is its `id` and `url`. Where a page is used is the model's business: a task or a start event names it as
+`camunda:formKey="app:<id>"`.
+
+## 4. The protocol
+
+### 4.1 We open the page
+
+1. The person opens a task with `formKey="app:assignment"`. We send them to the page's `url` with the task added:
+   `?task=<id>&returnTo=<url>`. For a start event it's `?process=<name>&start=<element id>&returnTo=...`.
+2. The page reads the task as that person: `GET /api/v3/tasks/{id}`.
+3. The page completes it: `POST /api/v3/tasks/{id}/complete` with `{ data }`, or starts the process:
+   `POST /api/v3/processes/{name}/start`.
+4. It then goes back to `returnTo`.
+
+### 4.2 A page in a frame
+
+When our page shows the form in a frame, the page tells the frame what happened with `window.parent.postMessage`,
+from the application's origin only:
+- `{ type: "owf:completed", task }`
+- `{ type: "owf:cancelled", task }`
+- `{ type: "owf:height", value }`
+
+### 4.3 We tell the application
+
+Through the delegate's code, in the same process: `notify`, `executionStarted`, `messageThrown`,
+`issueMessage`, ... An application in another process or language gets them as events (§4.5).
+
+### 4.4 The application tells us
+
+Through API v3, as the person or as the service account:
+- start a process;
+- complete a task;
+- throw a message or a signal.
+
+### 4.5 An application in another language (.NET, Java, ...)
+
+The declarative part is a file, and the application calls us through API v3, so both work from any language. A
+service task calls the application's REST API as a connector. What doesn't carry over is the delegate's code, which
+runs in our Node process. For a remote application we provide a **remote delegate**, which makes the same calls
+over HTTP to the application's URL (`appUrl` in its `app-contract.json`):
+
+| The delegate's | Over HTTP |
+|---|---|
+| `getAppVars` | `POST <appUrl>/owf/vars` with `{ names, context }` answers `{ name: value }`: one call for every name an evaluation reads (for a list, every case's in one call) |
+| `getAppServices` | `POST <appUrl>/owf/services/{name}` with the arguments answers the result |
+| `notify`, the hooks | `POST <appUrl>/owf/events`, signed (an HMAC of the body with the application's key), retried if it fails: `task.waiting`, `task.completed`, `instance.ended`, `instance.failed`, a notification |
+
+A remote call is slow next to a local one, so a remote application's functions belong in service tasks and scripts,
+and its variables in expressions (§4.6).
+
+### 4.6 Waiting in expressions
+
+| Where | Can it wait for an application's function? |
+|---|---|
+| Scripts: a script task, a listener | Yes: they run as async functions; `await appServices.x()` |
+| Service tasks | Yes: they wait, and can be queued and retried |
+| Expressions: conditions, parameters, timers, assignees, FEEL, decision tables | Only when the whole expression is the call. In `appServices.isSenior(x) && data.amount > 100` the call is not awaited: it is tested as a Promise, and gives the wrong answer. Today, for any async function, local or remote |
+
+So:
+1. **Variables for expressions.** `appVars.x` is worked out before the expression runs (one batched call when the
+   application is remote), so it works in every expression.
+2. **`await` in expressions.** An expression that contains `await` is compiled as async:
+   `(await appServices.isSenior(x)) && data.amount > 100`.
+3. **`verifyModel` warns about** an `appServices` call inside a larger expression without `await`, and about any
+   function call in an expression when the application is remote.
+
+## 5. What uses the declarative part
+
+- **The model editor** offers:
+  - the variables and functions in scripts, conditions, parameters and the decision editor;
+  - the roles for candidate groups and lanes;
+  - the pages for Form Key.
+- **`verifyModel`** warns about:
+  - an unknown variable, function, role or page;
+  - a function called with the wrong number of arguments;
+  - a `write` function in a decision.
+- **At start**, the declarative part is checked against the code:
+  - a function it declares that `appServices` doesn't have is an error;
+  - a function `appServices` has that it doesn't declare is a warning.
+- **Tests:** a function stubbed by its declared signature.
+- **Agents:** `GET /api/v3/application` answers the declarative part, so an agent building a model knows what it can
+  use.
+
+## 6. An MDE-generated application
+
+Its delegate's `describe()` maps its `GET /model` (an adapter we provide):
+- its roles become `roles`;
+- its pages become `pages`;
+- its entities become `types`;
+- its operations and use cases become functions (a read is `read`, anything else `write`);
+- its OpenAPI becomes `apis`.
+
+Its variables, if any, it declares itself.
+
+## 7. An integration guide for AI agents
+
+A page in `docs/docs/ai/` for an agent integrating an application with BPMN Server. It covers:
+- writing the delegate's two parts;
+- what each name in `describe()` means;
+- the protocol of a page;
+- checking the result: start-up checks and `verifyModel`.
+
+The page sits beside `building-workflows.md` and is linked from `/llms.txt`.
+
+## 8. Compatibility
+
+Everything is optional and additive:
+- a delegate without `describe()` runs as today;
+- `roles.json` is still read when there is no `describe()`;
+- `appDelegate` stays the in-process escape hatch.
+
+## 9. Questions
+
+1. **Types:** JSON Schema (proposed), or a simpler list?
+2. ~~The file's name~~ **Decided 2026-11-18:** `app-contract.json`, the application's entry point (§2). Not
+   `owf.json`: it is the application's configuration, not the workflow's.
+3. ~~Which first~~ **Decided 2026-11-14:** the HR demo's own `describe()`, by hand; the MDE adapter after.

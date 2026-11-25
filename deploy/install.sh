@@ -274,6 +274,11 @@ fi
 # cookies marked Secure only once the site is HTTPS: a browser does not send them back over http
 grep -q '^SECURE_COOKIES=true' "$APP_DIR/.env" 2>/dev/null || set_env SECURE_COOKIES false
 
+# SECRETS_KEY encrypts the secrets the server stores (a connector's own key): made once and kept, so what is stored stays
+# readable (a backup needs the same one). init makes it in a new application; one made by an earlier release has none.
+# Not where CONNECTORS_KEY, its name before 3.7.5, is set: that is still the key.
+grep -q '^\(SECRETS_KEY\|CONNECTORS_KEY\)=' "$APP_DIR/.env" 2>/dev/null || set_env SECRETS_KEY "$(openssl rand -hex 24)"
+
 # Admin password for first-time account creation. Keep one stable value in .env
 # (the same convention as Docker); editing it later does NOT reset MongoDB users.
 # On an upgrade, migrate the initial password from the legacy root-only file if present.
@@ -293,14 +298,8 @@ set_env ADMIN_PASSWORD "$ADMIN_PASSWORD"
 chown "$APP_USER:$APP_USER" "$APP_DIR/.env"
 chmod 660 "$APP_DIR/.env"
 if [ ! -f "$CREDENTIALS" ]; then
-    # The setup command creates the first account only when no users exist.
+    # The setup command creates the first account only when no users exist: admin, with ADMIN_PASSWORD from the .env above.
     as_app "$APP_DIR" "npm run setup"
-    # Legacy compatibility: older bpmn-web releases did not honor ADMIN_PASSWORD.
-    as_app "$APP_DIR" "node --env-file=.env --input-type=module -e \"
-        import mongoose from 'mongoose'; import { UserService } from 'bpmn-web';
-        await mongoose.connect(process.env.MONGO_DB_URL);
-        await new UserService().setPassword('admin', process.env.ADMIN_PASSWORD);
-        await mongoose.disconnect();\"" || echo "the admin password could not be set here: use the console (npm run cli)"
     umask 077
     printf 'admin password: %s\n' "$ADMIN_PASSWORD" > "$CREDENTIALS"
     chown root:root "$CREDENTIALS"

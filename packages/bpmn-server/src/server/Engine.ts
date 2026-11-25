@@ -5,6 +5,23 @@ import { EXECUTION_EVENT, EXECUTION_STATUS, ITEM_STATUS } from '../interfaces/En
 import type { IEngine, IUpgradeReport, IUpgradeInstanceReport } from '../interfaces/server.js';
 import type { IItem } from '../interfaces/engine.js';
 
+/** An instance as the Rationale names it: its model, and its case id when it has one. */
+const caseName = (instance): string => {
+	const caseId = instance?.data?.caseId;
+	return `${instance?.name ?? '?'}${caseId != null && caseId !== '' ? ' #' + caseId : ''}`;
+};
+/** An element as the Rationale names it: 'its name' (its id). */
+const elementName = (id: string, name?: string): string => name ? `'${name}' (${id})` : String(id);
+/** Who threw it, as the receiver's Rationale says: the throwing instance and element; outside, when no item threw it. */
+const throwerOf = (from?: IItem): any => from?.token ? {
+	instanceId: from.token.execution.id, name: caseName(from.token.execution.instance), elementId: from.elementId, elementName: from.node?.name,
+} : null;
+const fromText = (thrower): string => thrower ? `${thrower.name} at ${elementName(thrower.elementId, thrower.elementName)}` : 'outside (an API call)';
+const keyText = (matchingQuery): string => matchingQuery && Object.keys(matchingQuery).length
+	? `its matching key: ${JSON.stringify(matchingQuery)}` : 'no matching key';
+/** The receivers listed in a thrower's row: the first 10, then how many more. */
+const listed = (reached: string[]): string => reached.length > 10 ? `${reached.slice(0, 10).join('; ')}; and ${reached.length - 10} more` : reached.join('; ');
+
 /** Item statuses after which an item is not invoked again. */
 const FINAL: string[] = [ITEM_STATUS.end, ITEM_STATUS.terminated, ITEM_STATUS.cancelled, ITEM_STATUS.discard];
 
@@ -518,26 +535,35 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param messageId		the message's name
 	 * @param matchingQuery	what narrows the waiting instances (their id, their data)
 	 */
-	async throwMessage(messageId, data = {}, matchingQuery = {}): Promise<Execution> {
+	async throwMessage(messageId, data = {}, matchingQuery = {}, from?: IItem): Promise<Execution> {
 
 		this.logger.log('..^Action:engine.throwMessage ', messageId,this.sanitizeData(data),matchingQuery);
 
 		if (!messageId)
 			return null;
+		// the Rationale's rows: the receiver's says from whom (options.thrown), the thrower's whom it reached
+		const thrown = { kind: 'message', name: messageId, key: matchingQuery ?? {}, from: throwerOf(from) };
+		const throwerSays = (action: string) => from?.token?.decision({ seq: from.seq, element: elementName(from.elementId, from.node?.name),
+			action: `throws message '${messageId}': ${action}`, why: [keyText(matchingQuery)] });
 		const items = await this.waitingFor('messageId', messageId, matchingQuery);
 		if (items.length > 0) {
 			const item = items[0];
 			this.logger.log('..^Action:engine.throwMessage found target ', item.processName, item.id);
-			return await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
+			const reached = await this.invoke({ "items.id": item.id }, this.sanitizeData(data), null, { thrown });
+			throwerSays(`reaches ${caseName(reached?.instance)} at ${elementName(item.elementId, item.name)}`);
+			return reached;
 		}
 		const events = await this.definitions.findEvents({ "events.messageId": messageId });
 		this.logger.log('..findEvents ' + events.length);
 		if (events.length > 0) {
 			const event = events[0];
 			this.logger.log('..^Action:engine.throwMessage starts ', event.modelName, event.elementId);
-			return await this.start(event.modelName, data, event.elementId, null);
+			const started = await this.start(event.modelName, data, event.elementId, null, { thrown });
+			throwerSays(`starts ${caseName(started?.instance)} at ${elementName(event.elementId, event.elementName ?? event.name)}`);
+			return started;
 		}
 		this.logger.log('** engine.throwMessage found no instance waiting and no start event for ', messageId, JSON.stringify(matchingQuery));
+		throwerSays('reaches none: no instance waits for it, no process starts on it');
 		return null;
 
 	}
@@ -572,6 +598,9 @@ class Engine extends ServerComponent implements IEngine{
 		var instances = [];
 		if (!signalId)
 			return null;
+		// the Rationale's rows: each receiver's says from whom (options.thrown), the thrower's whom it reached
+		const thrown = { kind: 'signal', name: signalId, key: matchingQuery ?? {}, from: throwerOf(from) };
+		const reachedNames: string[] = [];
 
 		// need to load instance first
 		const eventsQuery = { "events.signalId": signalId };
@@ -582,9 +611,10 @@ class Engine extends ServerComponent implements IEngine{
 				let event = events[i];
 				this.logger.log('..^Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
 
-				var res = await this.start(event.modelName, this.sanitizeData(data), event.elementId, null);
+				var res = await this.start(event.modelName, this.sanitizeData(data), event.elementId, null, { thrown });
 				this.logger.log('Signal end data',res.instance.data)
 				instances.push(res.instance.id);
+				reachedNames.push(`starts ${caseName(res.instance)} at ${elementName(event.elementId, event.elementName ?? event.name)}`);
 			}
         }
 		let itemsQuery = {};
@@ -598,8 +628,11 @@ class Engine extends ServerComponent implements IEngine{
 		if (own) {
 			for (const target of own.getItems().filter(i => i.signalId == signalId && i.status == ITEM_STATUS.wait && i.id != from.id)) {
 				this.logger.log(`..throwSignal ${signalId} found target in the throwing instance: ${target.id}`);
+				target.token.decision({ seq: target.seq, element: elementName(target.elementId, target.node?.name),
+					action: `receives signal '${signalId}' from ${fromText(thrown.from)}`, why: [keyText(matchingQuery)] });
 				own.promises.push(target.token.signal(this.sanitizeData(data)));
 				instances.push({ instanceId: own.id, itemId: target.id });
+				reachedNames.push(`reaches this instance at ${elementName(target.elementId, target.node?.name)}`);
 			}
 		}
 		const items = (await this.dataStore.findItems(itemsQuery)).filter(item => !own || item.instanceId != own.id);
@@ -615,8 +648,9 @@ class Engine extends ServerComponent implements IEngine{
 				this.logger.log('..^Action:engine.Throw Signal found target', item.processName,item.id );
 				// an earlier target's path may have ended this one (a terminate end event, an interrupting event)
 				try {
-					var res=await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
+					var res=await this.invoke({ "items.id": item.id }, this.sanitizeData(data), null, { thrown });
 					instances.push({instanceId:res.instance.id,itemId:item.id});
+					reachedNames.push(`reaches ${caseName(res.instance)} at ${elementName(item.elementId, item.name)}`);
 				}
 				catch (err) {
 					if (!(err instanceof ItemNotWaitingError)) throw err;
@@ -624,6 +658,9 @@ class Engine extends ServerComponent implements IEngine{
 				}
             }
 		}
+		from?.token?.decision({ seq: from.seq, element: elementName(from.elementId, from.node?.name),
+			action: `throws signal '${signalId}': ${reachedNames.length ? listed(reachedNames) : 'reaches none: no instance waits for it, no process starts on it'}`,
+			why: [keyText(matchingQuery)] });
 		return instances;
 	}
 	status() {

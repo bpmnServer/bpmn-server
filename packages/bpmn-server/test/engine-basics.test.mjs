@@ -137,6 +137,10 @@ test('assign updates a waiting user task without completing it', async () => {
   assert.equal(assigned.status, 'wait');
   assert.equal(assigned.assignee, 'agent-1');
   assert.equal(assigned.instanceData.assignmentNote, 'ready for review');
+
+  const [instance] = await server.dataStore.findInstances({ id: assignedExecution.instance.id }, 'full');
+  const line = (instance.logs ?? []).map(l => l.message).find(m => /Assigned by manager-1/.test(m));
+  assert.match(line, /to:\{"assignee":"agent-1"\}/, 'the log says to whom, not [object Object]');
 });
 
 test('invoking Buy Used Car with default gateway path reaches Drive only', async () => {
@@ -178,7 +182,7 @@ test('validation listener rejects invalid Buy task data', async () => {
 
   await assert.rejects(
     () => server.engine.invoke({ "items.id": buy.id }, { needsRepairs: '' }, 'buyer-e'),
-    /Validation failed with error:Invalid values/,
+    (error) => error.code === 'FORM_INVALID' && error.details.some(d => d.rule === 'validate' && d.message === 'Invalid values'),
   );
 });
 

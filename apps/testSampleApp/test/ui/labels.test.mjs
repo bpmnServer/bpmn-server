@@ -1,0 +1,233 @@
+// @features: labels
+// The model editor's Label group (docs/design/labels.md): the case's label on the process, an element's label and
+// its label once done; a template checked as it is typed; previewed with the Test tab's data; saved in the model,
+// and shown in the lists.
+//   npm run test:ui
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { chromium } from 'playwright';
+import { startWebApp, PASSWORD } from '../support/webApp.mjs';
+
+const MODEL = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="d" targetNamespace="urn:test">
+  <bpmn:process id="Claim" isExecutable="true">
+    <bpmn:startEvent id="Start" />
+    <bpmn:userTask id="Approve" name="Approve" />
+    <bpmn:endEvent id="End" />
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Approve" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Approve" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="dia">
+    <bpmndi:BPMNPlane id="plane" bpmnElement="Claim">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start"><dc:Bounds x="100" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve"><dc:Bounds x="200" y="78" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End"><dc:Bounds x="360" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1"><di:waypoint x="136" y="118" /><di:waypoint x="200" y="118" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2"><di:waypoint x="300" y="118" /><di:waypoint x="360" y="118" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+
+let web, browser;
+test.before(async () => {
+    web = await startWebApp();
+    browser = await chromium.launch();
+    fs.writeFileSync(path.join(web.definitionsPath, 'Claim.bpmn'), MODEL);
+    await web.bpmnServer.engine.install({ rebuild: true });
+});
+test.after(async () => {
+    await browser?.close();
+    await web?.stop();
+    setImmediate(() => process.exit(0));
+});
+
+async function openEditor(model) {
+    const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());
+    const page = await context.newPage();
+    page.setDefaultTimeout(20000);
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    await page.goto(web.base + '/login');
+    await page.fill('#userName', 'designer');
+    await page.fill('#password', PASSWORD);
+    await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
+    await page.goto(`${web.base}/model/edit/${model}`);
+    await page.waitForSelector('#js-canvas .djs-shape');
+    return { page, errors, close: () => context.close() };
+}
+
+const select = (page, id) => page.evaluate(id => {
+    document.activeElement?.blur();
+    const registry = window.bpmnModeler.get('elementRegistry');
+    window.bpmnModeler.get('selection').select(id ? registry.get(id) : window.bpmnModeler.get('canvas').getRootElement());
+}, id);
+
+async function openGroup(page, label) {
+    const header = page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
+    await page.waitForTimeout(100);
+    if (!/\bopen\b/.test(await header.getAttribute('class')))
+        await header.click();
+}
+
+async function type(page, entryId, value) {
+    const input = page.locator(`[data-entry-id="${entryId}"] input`);
+    await input.fill(value);
+    await page.waitForTimeout(1200);     // the panel's debounce, then its check
+    return page.locator(`[data-entry-id="${entryId}"] .bio-properties-panel-error`);
+}
+
+test('the Label group: the case label on the process, a label and a label once done on a task; checked; saved', async () => {
+    const { page, errors, close } = await openEditor('Claim');
+
+    await select(page, null);
+    await openGroup(page, 'Label');
+    await type(page, 'case-label', 'Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}');
+
+    await select(page, 'Approve');
+    await openGroup(page, 'Label');
+    let error = await type(page, 'element-label', 'Approve ${Amount = data.amount + 1}');
+    assert.match(await error.innerText(), /'data\.amount \+ 1' is not a path/, 'checked as typed');
+    error = await type(page, 'element-label', 'Approve ${Amount = data.amount}');
+    assert.equal(await error.count(), 0, await error.count() ? await error.innerText() : '');
+    await type(page, 'element-end-label', 'Approved by ${completedBy}');
+
+    const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/model/edit/Claim'));
+    await page.click('#js-save');
+    assert.equal((await saved).status(), 200);
+    const xml = await web.bpmnServer.definitions.getSource('Claim');
+    assert.match(xml, /<bpmn:process id="Claim"[^>]*owf:label="Client: \$\{Client = data.clientId\} · Order: \$\{Order = data.orderNo\}"/);
+    assert.match(xml, /<bpmn:userTask id="Approve"[^>]*owf:label="Approve \$\{Amount = data.amount\}"/);
+    assert.match(xml, /xmlns:owf="http:\/\/omniworkflow\.com\/schema\/owf\/1\.0"/, 'the namespace declared');
+    assert.match(xml, /owf:endLabel="Approved by \$\{completedBy\}"/);
+    assert.deepEqual(errors, []);
+    await close();
+
+    // the lists show them
+    const run = await web.bpmnServer.engine.start('Claim', { clientId: 'abc', orderNo: 7, amount: 90 }, null, 'admin');
+    const admin = await web.login('admin');
+    const home = (await admin.get('/')).text;
+    assert.match(home, /<td>Client: abc · Order: 7<\/td>/);
+    // the task's own label in its Task cell, the case's in its Case cell (the lists' columns)
+    assert.match(home, /<td>Approve<div class="task-label">Approve 90<\/div><\/td><td>Client: abc · Order: 7<\/td>/);
+    assert.ok(run.id);
+});
+
+const FEATURE = `Feature: Claim
+
+  Scenario: Acme claim
+    When @start process:"Claim" as :instance
+      | clientId | "acme" |
+      | orderNo | 1234 |
+      | amount | 90 |
+`;
+
+const value = (page, entryId) => page.locator(`[data-entry-id="${entryId}"] input`).inputValue();
+
+test("a label's preview from the Test tab's scenario, following the template as it is typed", async () => {
+    fs.writeFileSync(path.join(web.definitionsPath, 'Claim.feature'), FEATURE);
+    const { page, errors, close } = await openEditor('Claim');
+
+    await select(page, null);
+    await openGroup(page, 'Label');
+    const casePreview = page.locator('[data-preview-for="case-label"]');
+    assert.match(await casePreview.innerText(), /Open a scenario in the Test tab/, 'no scenario shown yet');
+    await page.click('#js-tab-test');
+    await page.waitForSelector('#js-test .test-panel');
+    await page.waitForFunction(() => /Client: acme · Order: 1234/.test(document.querySelector('[data-preview-for="case-label"]')?.textContent ?? ''));
+    assert.match(await casePreview.innerText(), /with the data of “Acme claim” \(its start data\)/);
+
+    // the preview follows the template
+    await type(page, 'case-label', 'caseId: ${data.orderNo}');
+    assert.match(await casePreview.innerText(), /caseId: 1234/);
+    await type(page, 'case-label', 'Client: ${Client = data.clientId} · No: ${No = data.orderNo}');
+
+    // an element's label sees the case's named values as instance.*
+    await select(page, 'Approve');
+    await openGroup(page, 'Label');
+    await type(page, 'element-label', 'Approve ${Amount = data.amount} for order ${instance.No}');
+    assert.match(await page.locator('[data-preview-for="element-label"]').innerText(), /Approve 90 for order 1234/);
+
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('a model saved before, with its labels as camunda:, opens with them as owf: and is saved so', async () => {
+    const legacy = MODEL.replace('xmlns:bpmn=', 'xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bpmn=')
+        .replace('<bpmn:process id="Claim" isExecutable="true">', '<bpmn:process id="Legacy" isExecutable="true" camunda:label="Old ${data.x}">')
+        .replace('<bpmn:userTask id="Approve" name="Approve" />', '<bpmn:userTask id="Approve" name="Approve" camunda:endLabel="Done by ${completedBy}" camunda:assignee="ann" />')
+        .replace('bpmnElement="Claim"', 'bpmnElement="Legacy"');
+    fs.writeFileSync(path.join(web.definitionsPath, 'Legacy.bpmn'), legacy);
+    const { page, errors, close } = await openEditor('Legacy');
+    assert.match(await page.locator('#js-save-status').innerText(), /now owf: \(they were camunda:\)/, 'said, and to be saved');
+    await select(page, 'Approve');
+    await openGroup(page, 'Label');
+    assert.equal(await page.locator('[data-entry-id="element-end-label"] input').inputValue(), 'Done by ${completedBy}', 'shown in the Label group');
+
+    const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/model/edit/Legacy'));
+    await page.click('#js-save');
+    assert.equal((await saved).status(), 200);
+    const xml = await web.bpmnServer.definitions.getSource('Legacy');
+    assert.match(xml, /<bpmn:process id="Legacy"[^>]*owf:label="Old \$\{data\.x\}"/);
+    assert.match(xml, /owf:endLabel="Done by \$\{completedBy\}"/);
+    assert.doesNotMatch(xml, /camunda:(label|endLabel)=/, 'the old names are gone');
+    assert.match(xml, /camunda:assignee="ann"/, "Camunda's own stay camunda:");
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('a process drawn in a pool: its Policies group, on the pool, writes its process\'s policies', async () => {
+    const pooled = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="d" targetNamespace="urn:test">
+  <bpmn:collaboration id="Collab"><bpmn:participant id="Pool" name="Pooled" processRef="Pooled" /></bpmn:collaboration>
+  <bpmn:process id="Pooled" isExecutable="true">
+    <bpmn:startEvent id="Start" /><bpmn:userTask id="Approve" name="Approve" /><bpmn:endEvent id="End" />
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Approve" /><bpmn:sequenceFlow id="f2" sourceRef="Approve" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="dia">
+    <bpmndi:BPMNPlane id="plane" bpmnElement="Collab">
+      <bpmndi:BPMNShape id="Pool_di" bpmnElement="Pool" isHorizontal="true"><dc:Bounds x="50" y="40" width="460" height="160" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start"><dc:Bounds x="100" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve"><dc:Bounds x="200" y="78" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End"><dc:Bounds x="360" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1"><di:waypoint x="136" y="118" /><di:waypoint x="200" y="118" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2"><di:waypoint x="300" y="118" /><di:waypoint x="360" y="118" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+    fs.writeFileSync(path.join(web.definitionsPath, 'Pooled.bpmn'), pooled);
+    // the policies to choose from: the lists are the models folder's
+    const POLICY_FILE = (name, outputs) => `<?xml version="1.0" encoding="UTF-8"?>
+    <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="${name}_d" name="${name}" namespace="t">
+      <decision id="${name}" name="${name}"><decisionTable id="${name}_t" hitPolicy="COLLECT">
+        <input id="${name}_i" label="task"><inputExpression id="${name}_e" typeRef="string"><text>task</text></inputExpression></input>
+    ${outputs.map(o => `    <output id="${name}_${o}" name="${o}" typeRef="string" />`).join('\n')}
+      </decisionTable></decision>
+    </definitions>`;
+    for (const [folder, name, outputs] of [['security', 'LeaveCases', ['see']], ['notification', 'LeaveNotices', ['notify', 'template']]]) {
+        fs.mkdirSync(path.join(web.definitionsPath, folder), { recursive: true });
+        fs.writeFileSync(path.join(web.definitionsPath, folder, `${name}.dmn.xml`), POLICY_FILE(name, outputs));
+    }
+    const { page, errors, close } = await openEditor('Pooled');
+    await select(page, 'Pool');
+    await openGroup(page, 'Policies');
+    // a list of the models folder's policies of each kind, with Open and New
+    for (const [entry, name] of [['process-security-policy', 'LeaveCases'], ['process-notification-policy', 'LeaveNotices']]) {
+        const select = page.locator(`[data-entry-id="${entry}"] select`);
+        await page.waitForFunction(([e, n]) => [...document.querySelectorAll(`[data-entry-id="${e}"] option`)].some(o => o.value === n), [entry, name]);
+        await select.selectOption(name);
+        await page.waitForTimeout(300);
+        assert.ok(await page.locator(`[data-entry-id="${entry}-actions"] .bpmn-server-policy-open`, { hasText: `Open ${name}` }).count(), `Open ${name}`);
+    }
+    const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/model/edit/Pooled'));
+    await page.click('#js-save');
+    assert.equal((await saved).status(), 200);
+    const xml = await web.bpmnServer.definitions.getSource('Pooled');
+    assert.match(xml, /<bpmn:process id="Pooled"[^>]*owf:securityPolicy="LeaveCases"/, 'on the process, not the pool');
+    assert.match(xml, /<bpmn:process id="Pooled"[^>]*owf:notificationPolicy="LeaveNotices"/);
+    assert.doesNotMatch(xml, /<bpmn:participant[^>]*owf:/);
+    assert.deepEqual(errors, []);
+    await close();
+});

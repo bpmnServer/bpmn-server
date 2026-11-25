@@ -10,17 +10,27 @@
  *  - a literal expression: { variable: value }
  */
 import * as fs from 'fs';
+import { DECISION_KEYS } from '../engine/DecisionContext.js';
 import * as path from 'path';
 import { evaluate as feelEvaluate, unaryTest } from 'feelin';
 import { DMNParser, legacyTest } from './DMNParser.js';
 import type { DMNDefinitions, Decision, DecisionTable } from './DMNParser.js';
 
-type DMNOptions = { debug?: boolean; log?: (message: string) => void };
+type DMNOptions = {
+    debug?: boolean;
+    log?: (message: string) => void;
+    /** an output cell to keep as its text, not evaluated as FEEL (an assignment policy's `$(...)`: addons/assignment/AssignmentPolicy.ts) */
+    keepOutput?: (cell: string) => boolean;
+    /** an input whose value is a list matches a rule's test when the list or one of its values does (every decision: engine/DecisionContext.ts) */
+    listInputs?: boolean;
+};
 
 /** Where a decision was found. */
 type FoundDecision = { filePath: string; definitions: DMNDefinitions; decision: Decision };
 
 const DMN_FILE = /\.dmn(\.xml)?$/i;
+/** The names every decision reads that a table's own variable can't replace (engine/DecisionContext.ts), and a notification's `event`. */
+const PROTOCOL_NAMES = new Set<string>([...DECISION_KEYS, 'event']);
 const BARE_WORD = /^[A-Za-z_][\w ]*$/;
 const NUMBER_TYPES = ['number', 'integer', 'long', 'double'];
 
@@ -28,6 +38,10 @@ class DMNEngine {
     definitions: DMNDefinitions;
     decision: Decision;
     private options: DMNOptions;
+    /** the rules the last table evaluated matched, numbered from 1 */
+    matched: number[] = [];
+    /** input expressions that call a function, their values worked out (an async one awaited) first: evaluateAsync */
+    private called = new Map<string, any>();
 
     constructor(options: DMNOptions = { debug: false }) {
         this.options = options;
@@ -92,6 +106,33 @@ class DMNEngine {
         return this.evaluateDecision(this.decision, context, []);
     }
 
+    /**
+     * Evaluate it, an input expression that calls a function (`appServices.crm.tierOf(customerId)`) awaited first:
+     * once each, with these values. A call inside a larger expression (`f(x) = 1`) is not awaited.
+     */
+    async evaluateAsync(input: Record<string, any>): Promise<any> {
+        if (!this.decision)
+            throw new Error('Must load a decision first');
+        this.called = new Map();
+        for (const decision of this.definitions.decisions)
+            for (const column of decision.table?.inputs ?? []) {
+                if (!column.expression.includes('(') || this.called.has(`${decision.id}|${column.expression}`)) continue;
+                let value;
+                try { value = feelEvaluate(column.expression, input || {}).value; }
+                catch { continue; }
+                // a value, not a promise: kept when the decision reads only these values (it requires no other decision),
+                // so the function runs once; else worked out where it is, with the decisions it requires
+                if (!(value instanceof Promise)) {
+                    if (!decision.requires?.length) this.called.set(`${decision.id}|${column.expression}`, value);
+                    continue;
+                }
+                try { this.called.set(`${decision.id}|${column.expression}`, await value); }
+                catch (error) { throw new Error(`Decision '${decision.name}' input '${column.expression}': ${error?.message ?? error}`); }
+            }
+        try { return this.evaluate(input); }
+        finally { this.called = new Map(); }
+    }
+
     private evaluateDecision(decision: Decision, context: Record<string, any>, path: string[]): any {
         if (path.includes(decision.id))
             throw new Error(`Decision '${decision.name}' requires itself: ${[...path, decision.id].join(' > ')}`);
@@ -118,10 +159,24 @@ class DMNEngine {
     }
 
     private evaluateTable(decision: Decision, table: DecisionTable, context: Record<string, any>): any {
-        const values = table.inputs.map(input => coerce(this.value(input.expression, context, false), input.typeRef));
-        // output cells see an input named by its expression as its column's type
+        const values = table.inputs.map(input => {
+            const key = `${decision.id}|${input.expression}`;
+            const value = this.called.has(key) ? this.called.get(key) : this.value(input.expression, context, false);
+            if (value instanceof Promise)
+                throw new Error(`Decision '${decision.name}' input '${input.expression}' calls an async function: evaluated with evaluateAsync`);
+            return coerce(value, input.typeRef);
+        });
+        // output cells see an input named by its expression as its column's type; and a column whose label is a plain
+        // name is the table's own variable, by that name (label employeeManager, expression appServices.managerOf(...)):
+        // worked out once, its rules' outputs read it, over a data field of that name; never one of the protocol's
+        // names (user, actors, ...: engine/DecisionContext.ts).
         context = { ...context };
-        table.inputs.forEach((input, c) => { if (/^[A-Za-z_]\w*$/.test(input.expression)) context[input.expression] = values[c]; });
+        const NAME = /^[A-Za-z_]\w*$/;
+        table.inputs.forEach((input, c) => {
+            if (NAME.test(input.expression)) context[input.expression] = values[c];
+            const label = String(input.label ?? '').trim();
+            if (NAME.test(label) && label !== input.expression && !PROTOCOL_NAMES.has(label)) context[label] = values[c];
+        });
         const matched: number[] = [];
         for (let r = 0; r < table.rules.length; r++) {
             const rule = table.rules[r];
@@ -142,6 +197,7 @@ class DMNEngine {
             const record = {};
             table.outputs.forEach((o, c) => {
                 const cell = table.rules[r].outputEntries[c];
+                if (this.options.keepOutput?.(cell)) { record[o.name] = cell.trim(); return; }
                 try {
                     record[o.name] = coerce(this.value(cell, context), o.typeRef);
                 }
@@ -151,6 +207,7 @@ class DMNEngine {
             });
             return record;
         };
+        this.matched = matched.map(r => r + 1);
         const inputsText = table.inputs.map((i, c) => `${i.expression}=${JSON.stringify(values[c])}`).join(', ');
         this.log(`..decision ${decision.name} (${table.hitPolicy}${table.aggregation ? ' ' + table.aggregation : ''}): ${inputsText}; rules matched: ${matched.length ? matched.map(r => r + 1).join(', ') : 'none'}`);
 
@@ -215,6 +272,14 @@ class DMNEngine {
         const source = legacyTest(cell);
         if (source === '' || source === '-')
             return true;
+        // an input whose value is a list (a person's groups, their relations to a case): a test holds when it holds for
+        // the list (count(?) > 1), or for one of its values ("HR" matches ["Employee", "HR"]), with listInputs
+        if (this.options.listInputs && Array.isArray(value))
+            return this.testValue(source, value, context) || value.some(one => this.testValue(source, one, context));
+        return this.testValue(source, value, context);
+    }
+
+    private testValue(source: string, value: any, context: Record<string, any>): boolean {
         const result = unaryTest(source, { ...context, '?': value });
         // a bare word no data names: a string, as bpmn-server's earlier evaluator read it
         if (BARE_WORD.test(source) && !(source in context) && missingVariable(result.warnings))

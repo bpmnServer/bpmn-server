@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L18)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:18](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L18)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L19)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L19)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L20)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L20)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L21)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:21](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L21)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L22)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:22](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L22)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L23)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:23](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L23)
 
 ___
 
@@ -94,19 +94,19 @@ the JSON request body, when the operation takes one
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L25)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:25](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L25)
 
 ___
 
 ### responses
 
-• **responses**: `Record`\<`string`, \{ `description?`: `string` ; `schema?`: `any`  }\>
+• **responses**: `Record`\<`string`, \{ `description?`: `string` ; `schema?`: `any` ; `example?`: `any`  }\>
 
-the responses by status ('200', '404', 'default'): their description and JSON schema
+the responses by status ('200', '404', 'default'): their description, JSON schema, and the document's example
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L27)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:27](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L27)
 
 ___
 
@@ -118,4 +118,4 @@ the security requirements (names of securitySchemes); none given: the document's
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L29)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:29](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L29)

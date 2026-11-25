@@ -44,7 +44,8 @@ interface IDataStore {
     findItem(query: any): Promise<IItemData>;
     findInstance(query: any, options: any): Promise<IInstanceData>;
     findInstances(query: any, option: 'summary' | 'full'|any): Promise<IInstanceData[]>;
-    findItems(query: any): Promise<IItemData[]>;
+    /** `lean`: each item's instance read without its data, tokens and logs (`data` and `instanceData` absent): for lists. */
+    findItems(query: any, options?: { lean?: boolean }): Promise<IItemData[]>;
     /** How many instances match `query`. */
     countInstances(query: any): Promise<number>;
     /** Every document the data store keeps, by collection name: for a backup. */

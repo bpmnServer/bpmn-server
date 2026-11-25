@@ -1,5 +1,6 @@
 import { QueryTranslator } from "../datastore/QueryTranslator.js";
 import type { ISecureUser, IUserInfo } from '../interfaces/User.js';
+import type { IQueryFilter } from '../engine/AddOns.js';
 
 enum USER_ROLE {
     SYSTEM = 'SYSTEM',  // SYSTEM ADMIN
@@ -62,10 +63,41 @@ class SecureUser implements ISecureUser {
     static SystemUser() {
         return new SecureUser({ userName: 'system', userGroups: [USER_ROLE.SYSTEM], tenantId: null, modelsOwner: null });
     }
+    /**
+     * The permissions the application's contract gives each of its roles (app-contract.json, rolePermissionsOf): set
+     * once when the server starts, so a role an application said may administer or design is one here too. It only
+     * ever grants: the groups below are matched as they always were, so no user loses what they had.
+     */
+    static granted: Map<string, readonly string[]> = new Map();
+    /**
+     * Whether this user holds `permission`, and whether anything said so at all. A role the contract mentions decides
+     * for itself — ticked, it holds the permission; mentioned without it, it does not, even where the role's name is
+     * one this server would otherwise match on. A role the contract does not mention leaves the default alone.
+     */
+    #decided(permission: string): boolean | undefined {
+        let said: boolean | undefined;
+        for (const group of this.userGroups ?? []) {
+            const given = SecureUser.granted.get(group);
+            if (!given) continue;                        // nothing said about this group
+            if (given.includes(permission)) return true; // one group holding it is enough
+            said = false;                                // mentioned, and not given it
+        }
+        return said;
+    }
     isAdmin(): boolean {
         if (this.#bypass)
             return true;
+        const decided = this.#decided('administrator');
+        if (decided !== undefined) return decided;
         return (this.userGroups.includes(USER_ROLE.ADMIN) || this.userGroups.includes(USER_ROLE.SYSTEM));
+    }
+    /** Whether this user may design models: the DESIGNER group, an administrator, or a role the contract allows it. */
+    isDesigner(): boolean {
+        if (this.#bypass) return true;
+        if (this.isAdmin()) return true;
+        const decided = this.#decided('designer');
+        if (decided !== undefined) return decided;
+        return this.userGroups.includes(USER_ROLE.DESIGNER);
     }
     isSystem(): boolean {
         if (this.#bypass)
@@ -78,15 +110,17 @@ class SecureUser implements ISecureUser {
         return (this.userGroups.includes(userGroup))
     }
     /**
-     * alters the query adding conditions based on security rules
-     * @param query
-     * @returns query
+     * The query narrowed to what this user may see: their tenant's, and, unless an administrator, what the add-ons'
+     * filters let them (`filters`: the server's, registrationsOf(server).queryFilters; the Assignment add-on's, the
+     * tasks offered to them). Without `filters` (a caller from before add-ons), the tasks offered to them, as before.
      */
-    qualifyInstances(query) {
+    qualifyInstances(query, filters?: IQueryFilter[]) {
         if (this.#bypass)
             return query;
         if (this.tenantId)
             query['tenantId'] = this.tenantId;
+        if (!this.isAdmin() && filters)
+            return filters.reduce((q, f) => f.filter('instances', this, q) ?? q, query);
         if (!this.isAdmin()) {
 
             const grpQuery = [];
@@ -121,9 +155,13 @@ class SecureUser implements ISecureUser {
      * @param query
      * @returns query
      */
-    qualifyItems(query) {
+    qualifyItems(query, filters?: IQueryFilter[]) {
         if (this.#bypass)
             return query;
+        if (filters && !this.isAdmin()) {
+            if (this.tenantId) query['tenantId'] = this.tenantId;
+            return filters.reduce((q, f) => f.filter('items', this, q) ?? q, query);
+        }
         return this.qualifyInstances(query);
 
     }
@@ -133,7 +171,9 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
 
-    qualifyStartEvents(query) {
+    qualifyStartEvents(query, filters?: IQueryFilter[]) {
+        if (!this.isAdmin() && filters)
+            return filters.reduce((q, f) => f.filter('startEvents', this, q) ?? q, query);
         if (!this.isAdmin()) {
             const grpQuery = [];
             grpQuery.push({ "events.candidateUsers": null, "events.candidateGroups": null ,"events.lane": null });
@@ -155,9 +195,9 @@ class SecureUser implements ISecureUser {
      * @param query
      * @returns query
      */
-    qualifyDeleteInstances(query) {
+    qualifyDeleteInstances(query, filters?: IQueryFilter[]) {
         if (this.isAdmin())
-            return this.qualifyInstances(query);
+            return this.qualifyInstances(query, filters);
         else
             return false;
     }

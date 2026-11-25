@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="Approval_definitions" name="Approval" namespace="http://bpmn-server/dmn">
+  <decision id="Approval" name="Approval">
+    <decisionTable id="Approval_table" hitPolicy="FIRST">
+      <input id="Approval_input1" label="Priority">
+        <inputExpression id="Approval_inputExpression1" typeRef="string">
+          <text>priority</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_08wnrs1" label="Size">
+        <inputExpression id="LiteralExpression_09nh05k" typeRef="string">
+          <text>size</text>
+        </inputExpression>
+      </input>
+      <output id="Approval_assignee" label="Assignee" name="assignee" typeRef="string" />
+      <output id="Approval_candidateGroups" label="Candidate groups" name="candidateGroups" typeRef="string" />
+      <rule id="DecisionRule_0efophl">
+        <description>Urgent and large: an HR administrator, with HR as backup</description>
+        <inputEntry id="UnaryTests_08qekb3">
+          <text>"high"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vdl9i2">
+          <text>"large"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0d7aa1j">
+          <text>"michael.brown"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yi2or2">
+          <text>"HR"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Approval_rule_urgent">
+        <description>Urgent: any manager</description>
+        <inputEntry id="Approval_rule_urgent_priority">
+          <text>"high"</text>
+        </inputEntry>
+        <inputEntry id="Approval_rule_urgent_size">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="Approval_rule_urgent_assignee">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="Approval_rule_urgent_groups">
+          <text>"Manager"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Approval_rule_large">
+        <description>Large: HR</description>
+        <inputEntry id="Approval_rule_large_priority">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="Approval_rule_large_size">
+          <text>"large"</text>
+        </inputEntry>
+        <outputEntry id="Approval_rule_large_assignee">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="Approval_rule_large_groups">
+          <text>"HR"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Approval_rule_other">
+        <description>Anything else: a manager</description>
+        <inputEntry id="Approval_rule_other_priority">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="Approval_rule_other_size">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="Approval_rule_other_assignee">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="Approval_rule_other_groups">
+          <text>"Manager"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="Approval_diagram">
+      <dmndi:DMNShape id="Approval_shape" dmnElementRef="Approval">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

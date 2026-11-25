@@ -5,8 +5,15 @@
   "description": "Every setting: .env (x-where env) and settings/config.ts (x-where config, named config:<path>). The x- keywords: docs/design/setup-wizard.md.",
   "type": "object",
   "properties": {
+    "ADMIN_EMAIL": {
+      "description": "The email address of the `admin` user a server with no users creates. Unset, `admin@example.com`. A server that has users already is not changed",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "x-restart": true
+    },
     "ADMIN_PASSWORD": {
-      "description": "**A secret.** Set, a server with no users creates the user `admin` with it. Unset (the default), its first page asks for the administrator, with a setup token it prints: [The first start](setup.md#the-first-start). A server that has users already is not changed",
+      "description": "**A secret.** Set, a server with no users creates the user `admin` with it. Unset, it creates `admin` with a password it makes up and prints once where the server runs: [The first start](setup.md#the-first-start). A server that has users already is not changed",
       "x-where": "env",
       "x-group": "access",
       "type": "string",
@@ -47,6 +54,13 @@
       "type": "boolean",
       "x-restart": true
     },
+    "APP_CONTRACT": {
+      "description": "The application's contract file: its roles, variables, functions and pages. Unset, `app-contract.json` in the application's folder",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "x-restart": true
+    },
     "AUTH_RATE_LIMIT": {
       "description": "Sign-in attempts allowed in the rate window. Default `50`",
       "x-where": "env",
@@ -84,6 +98,38 @@
       "type": "boolean",
       "x-restart": true,
       "default": true
+    },
+    "ELEMENT_TEMPLATES": {
+      "description": "`on` offers the application's element templates (configured tasks) in the model editor and lists them on the Design page. Off by default in 3.7.1: a preview, to be finished (docs/design/roadmap.md)",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "enum": [
+        "on",
+        "off"
+      ],
+      "x-restart": false
+    },
+    "NOTIFICATIONS": {
+      "description": "Notification policies (docs/design/notification-policies.md): `record` keeps every notification in wf_notifications without delivering it (the application's notify is not called), for a test or staging server; unset, they are delivered (a test run's are only kept)",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "enum": [
+        "record"
+      ],
+      "x-restart": false
+    },
+    "SECURITY_POLICY": {
+      "description": "Security policies (docs/design/security-policies.md): unset, they are on when the models folder has `security/`; `default` turns them on with the built-in default policy; `off` turns them off",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "string",
+      "enum": [
+        "default",
+        "off"
+      ],
+      "x-restart": false
     },
     "REQUIRE_AUTHENTICATION": {
       "description": "On unless set to `false` (`init` writes `true`). `false` turns off sign-in and the security rules: for development only",
@@ -470,8 +516,17 @@
       "type": "string",
       "x-restart": true
     },
+    "SECRETS_KEY": {
+      "description": "**A secret.** Encrypts the secrets the server stores: each connector's own key (entered on the Settings page). Not a connector's credential. Required to give a connector a key, and keep it: backups need the same one. Before 3.7.5: `CONNECTORS_KEY`, still read",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "string",
+      "x-secret": true,
+      "x-generate": "key",
+      "x-restart": true
+    },
     "CONNECTORS_KEY": {
-      "description": "**A secret.** Encrypts connectors' keys. Required to give a connector a key, and keep it: backups need the same one",
+      "description": "**A secret.** `SECRETS_KEY`'s name before 3.7.5: still read when `SECRETS_KEY` is not set, with a warning to rename it",
       "x-where": "env",
       "x-group": "models",
       "type": "string",
@@ -494,6 +549,30 @@
       "x-restart": true,
       "default": true
     },
+    "MODEL_TESTS": {
+      "description": "`false`: the model editor has no Test tab (a model's scenarios, run in the engine)",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "EXTENDED_FORMS": {
+      "description": "`false`: a form field's choices from a source (`owf:list`, `owf:lookup`) are not offered; the fields are plain ones",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
+    "FORM_RULES": {
+      "description": "`false`: a form's rules (a field's type, its constraints, a list's choices) are not checked when a task is completed",
+      "x-where": "env",
+      "x-group": "models",
+      "type": "boolean",
+      "x-restart": true,
+      "default": true
+    },
     "VERIFY_MODELS_ON_IMPORT": {
       "description": "`warn`, `enforce` or `off`, for models saved through the APIs",
       "x-where": "env",
@@ -502,16 +581,40 @@
       "x-restart": true
     },
     "APP_ENV": {
-      "description": "The environment: `test` makes the sample application use its test services (`connectors/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Default: production",
+      "description": "The environment: `development`, `test` or `production`. The pages show it as a band (Development blue, Test amber), and API v3's `/me` says it. `test` also makes the sample applications use their test services (`delegates/testServices.ts`: the same names, nothing sent or recorded); `/llms.txt` says which. Unset: not declared, as before 3.7.2 (no band; the real services). See [Environments](environments.md)",
+      "x-where": "env",
+      "x-group": "server",
+      "type": "string",
+      "enum": [
+        "development",
+        "test",
+        "production"
+      ],
+      "x-restart": true,
+      "examples": [
+        "development",
+        "test",
+        "production"
+      ]
+    },
+    "APP_ENV_LABEL": {
+      "description": "What the environment's band says instead of its name, in any environment: `Staging`, `Public demo`. Shown in production too",
       "x-where": "env",
       "x-group": "server",
       "type": "string",
       "x-restart": true,
-      "default": "production",
       "examples": [
-        "production",
-        "test"
+        "Staging",
+        "Public demo"
       ]
+    },
+    "READ_ONLY": {
+      "description": "`true`: people use the server but can't change it. They start cases and complete tasks; the models, decision tables, policies, tests, roles, connectors, settings and users can't be changed, through a page or an API. For a public demo. See [Environments](environments.md#read-only)",
+      "x-where": "env",
+      "x-group": "access",
+      "type": "boolean",
+      "x-restart": true,
+      "default": false
     },
     "BODY_LIMIT": {
       "description": "The largest request. Default `50mb`",

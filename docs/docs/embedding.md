@@ -1,6 +1,6 @@
 # Embedding the engine
 
-Journey D: run processes from your own Node.js code, with no web application. Your code holds the engine, its configuration and its lifetime: [Embedded](architecture.md#embedded).
+Run processes from your own Node.js code, with no web application. Your code holds the engine, its configuration and its lifetime: [Embedded](architecture.md#embedded).
 
 ## 1. Install
 
@@ -22,7 +22,7 @@ const api = new BPMNAPI(server);
 
 ## 3. Run processes
 
-`api.engine.start`, `invoke`, `throwMessage` and the rest, each with the user it acts for, and `api.data` to find instances and items: [Invoking workflows](invokation.md), [Engine API](api-summary.md). [Tutorial 6](tutorial/tutorial-script.md) runs the leave request this way.
+`api.engine.start`, `invoke`, `throwMessage` and the rest, each with the user it acts for, and `api.data` to find instances and items: [Invoking workflows](invokation.md), [Engine API](api-summary.md). [Tutorial 9](tutorial/tutorial-script.md) runs the leave request this way.
 
 ## 4. Lifecycle and persistence
 

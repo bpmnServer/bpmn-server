@@ -1,4 +1,4 @@
-# Advanced Topics
+# Advanced topics
 ## command line interface
 
 ```sh
@@ -38,7 +38,18 @@ npm run cli -- lm                 # the models
 npm run cli -- co                 # the connectors
 npm run cli -- cod asana          # delete the connector asana
 npm run cli -- spw alice N3w-pass # set alice's password
+npm run cli -- lu                 # list the users
 ```
+
+**Users: `lu` and `spw`.** They list and change the users bpmn-web keeps itself, on the database the console is started
+against (a MongoDB or a SQLite file; a running server sees the change at once). They need a database that outlives the
+console: with `MONGO_DB_URL=memory` the console makes its own empty one, so there is nothing of the server's to list or
+change. A password is hashed as it is saved. `spw` says `Password set for <user>.`; for a user that does not exist it
+says so and exits 1, so a script can tell.
+
+In an application that manages its own users ([your users: a user manager](integration/integration-guide.md#a5-your-users-a-user-manager);
+the HR demo does), there are none of bpmn-web's to show: `lu` and `spw` say that the application manages its own users, and
+`spw` exits 1. Change those users in the application. Test: `apps/testSampleApp/test/web/console-users.test.mjs`.
 
 ## Instance Locking
 
@@ -130,122 +141,10 @@ see test scenario `/src/test/feature/restart1.js`
 
 # Performance Benchmark
 
-To run your own benchmark, change `.env`
+For measured figures (speed, load, memory, the effect of the indexes) and the commands that reproduce them, see [Performance and test coverage](performance.md).
+
+To time the queries of [dataStore.find](data_find.md) in your own application, set this in `.env`:
 ```.env
 ENABLE_PROFILER=true
 ```
-As a result mongoDB operations will be timed as below 
-
-To run a complete benchmark, see `src/examples/stress.ts` in the bpmn-web 
-```text
-------------- at start after cleaning the data
--- only 100 instances and 100 items in wait state
-   
-start Buy Used Car
->mongo.insert:wf_locks: 0.636ms
->mongo.insert:wf_instances: 0.597ms
->mongo.update:wf_instances: 0.762ms
->mongo.remove:wf_locks: 0.667ms
->mongo.find:wf_instances: 0.038ms
->mongo.insert:wf_locks: 0.294ms
->mongo.find:wf_instances: 0.029ms
->mongo.update:wf_instances: 0.86ms
->mongo.update:wf_instances: 0.889ms
->mongo.remove:wf_locks: 0.336ms
-invoke: 6.654ms
->mongo.find:wf_instances: 0.033ms
->mongo.insert:wf_locks: 0.254ms
->mongo.find:wf_instances: 0.024ms
->mongo.update:wf_instances: 3.013ms
->mongo.remove:wf_locks: 0.716ms
->mongo.find:wf_instances: 0.057ms
->mongo.insert:wf_locks: 0.43ms
->mongo.find:wf_instances: 0.064ms
->mongo.update:wf_instances: 3.861ms
->mongo.remove:wf_locks: 1.455ms
-invoke: 13.06ms
->mongo.find:wf_instances: 0.09ms
-find: 40.099ms
-find returned  102
->mongo.find:wf_instances: 0.042ms
->mongo.insert:wf_locks: 0.329ms
->mongo.find:wf_instances: 0.026ms
->mongo.update:wf_instances: 2.094ms
->mongo.update:wf_instances: 1.636ms
->mongo.remove:wf_locks: 0.414ms
-invoke: 9.778ms
-car-0: 84.167ms
-
-   
-start Buy Used Car
->mongo.insert:wf_locks: 0.31ms
->mongo.insert:wf_instances: 0.409ms
->mongo.update:wf_instances: 1.852ms
->mongo.remove:wf_locks: 0.408ms
->mongo.find:wf_instances: 0.034ms
->mongo.insert:wf_locks: 0.291ms
->mongo.find:wf_instances: 0.011ms
->mongo.update:wf_instances: 1.629ms
->mongo.update:wf_instances: 4.226ms
->mongo.remove:wf_locks: 0.489ms
-invoke: 25.918ms
->mongo.find:wf_instances: 0.017ms
->mongo.insert:wf_locks: 0.332ms
->mongo.find:wf_instances: 0.012ms
->mongo.update:wf_instances: 2.148ms
->mongo.remove:wf_locks: 0.421ms
->mongo.find:wf_instances: 0.019ms
->mongo.insert:wf_locks: 0.291ms
->mongo.find:wf_instances: 0.011ms
->mongo.update:wf_instances: 2.885ms
->mongo.remove:wf_locks: 0.648ms
-invoke: 15.015ms
->mongo.find:wf_instances: 0.018ms
-find: 78.44ms
-find returned  102
->mongo.find:wf_instances: 0.026ms
->mongo.insert:wf_locks: 0.512ms
->mongo.find:wf_instances: 0.018ms
->mongo.update:wf_instances: 4.985ms
->mongo.update:wf_instances: 3.111ms
->mongo.remove:wf_locks: 0.753ms
-invoke: 51.493ms
-car-7074: 200.918ms
-
-
-start Buy Used Car
->mongo.insert:wf_locks: 0.236ms
->mongo.insert:wf_instances: 0.356ms
->mongo.update:wf_instances: 1.753ms
->mongo.remove:wf_locks: 0.401ms
->mongo.find:wf_instances: 0.018ms
->mongo.insert:wf_locks: 0.262ms
->mongo.find:wf_instances: 0.009ms
->mongo.update:wf_instances: 1.711ms
->mongo.update:wf_instances: 1.899ms
->mongo.remove:wf_locks: 0.71ms
-invoke: 24.353ms
->mongo.find:wf_instances: 0.021ms
->mongo.insert:wf_locks: 0.22ms
->mongo.find:wf_instances: 0.01ms
->mongo.update:wf_instances: 2.041ms
->mongo.remove:wf_locks: 0.333ms
->mongo.find:wf_instances: 0.016ms
->mongo.insert:wf_locks: 0.19ms
->mongo.find:wf_instances: 0.008ms
->mongo.update:wf_instances: 2.282ms
->mongo.remove:wf_locks: 0.349ms
-invoke: 15.213ms
->mongo.find:wf_instances: 0.015ms
-find: 66.448ms
-find returned  102
->mongo.find:wf_instances: 0.019ms
->mongo.insert:wf_locks: 0.272ms
->mongo.find:wf_instances: 0.009ms
->mongo.update:wf_instances: 2.736ms
->mongo.update:wf_instances: 2.598ms
->mongo.remove:wf_locks: 0.506ms
-invoke: 29.052ms
-car-10000: 170.839ms
-STRESS: 23:03.831 (m:ss.mmm)
-```
+Each such query is then printed with its time, for example `find: 40.099ms`, and its count, `find-count`.

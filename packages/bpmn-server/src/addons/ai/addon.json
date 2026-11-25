@@ -1,0 +1,19 @@
+{
+  "name": "ai",
+  "title": "AI Agents",
+  "brief": "Links that let a person's AI agent work on this site as them.",
+  "description": "A person's link for their AI agent (Link for an AI agent): an API key that acts as them, at the level they choose (work, design, administer), for minutes. Off: the menu has no link, the /ai pages are not there, and the API refuses the links given before. This site's guide for agents (/llms.txt) is the server's, on or off.",
+  "docs": "add-ons/ai/",
+  "attributes": [],
+  "settings": [
+    {
+      "name": "AI_ACCESS",
+      "label": "AI link levels offered",
+      "main": true
+    },
+    {
+      "name": "AI_GUIDE",
+      "label": "Guide for AI agents"
+    }
+  ]
+}

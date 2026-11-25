@@ -1,10 +1,10 @@
 
-## BPMNClient/WebAPI
+# The client API
 
-bpmn-client is a lightweight Node package to remotely access bpmn-server. Its `BPMNClient3` is the client of
+bpmn-client is a small Node.js package for calling a running server from another application. Its `BPMNClient3` is the client of
 [API v3](#api-v3): it issues and renews each user's token with the service key ([how](bpmn-client.md#usage-api-v3-bpmn-web-37-and-later)).
 
-[See code Example using bpmn-clienthere](examples/BuyCar-Remote.md)
+[An example: Buy Used Car from another application](examples/buy-used-car.md#from-another-application-over-the-api)
 
 Alternatively, you can call bpmn-server over HTTP(S). To try the API by hand, import its OpenAPI document,
 `https://your-site/api/v3/openapi.json`, into Postman (or any OpenAPI tool): every operation, its parameters and how to
@@ -16,7 +16,7 @@ bpmn-server provides api calls to the following objects:
 - [dataStore](#datastore)
 - [definitions](#definitions) 
 
-## WebServices Architecture
+## How it talks to the server
 
 Web Applications can use **bpmn-server**  WebServices to manage workflow in a similar manner described here:
 
@@ -25,7 +25,7 @@ Web Applications can use **bpmn-server**  WebServices to manage workflow in a si
 - App UI display to the User list of outstanding User Tasks to execute and prompt user for input parameters (if required)
 - Workflow App can notify involved users of new User Tasks
 
-## engine:
+## The engine: starting and running processes
 
 Perform WebAPI calls to the execution Engine 
 
@@ -40,7 +40,7 @@ Perform WebAPI calls to the execution Engine
 | **status**| |		 | Return as list of running instances or recently completed |
 
 
-## definitions
+## Definitions: the models
 
 Perform calls to BPMN defintions
 
@@ -50,7 +50,7 @@ Perform calls to BPMN defintions
 |		list	|- |	string[] |
 |		load	| name|	definition |
 
-## datastore
+## The data store: cases and tasks
 
 Perform calls to DataStore , accessing processes data
 
@@ -62,6 +62,10 @@ Perform calls to DataStore , accessing processes data
 | **deleteInstances**| [instance](data.md#instance-query)|	[Item[]](api/interfaces/IItemData.md) | |
 
 ## The task API: an application acting for its users
+
+!!! note "Frozen since 3.7"
+    New applications use [API v3](#api-v3) below, where a token for each user does the same thing and more. This API
+    still works, and still receives fixes.
 
 `/api2/tasks` is for an application with its own inbox and forms, which authenticates its own users. It is off unless
 `API_ACTING_USER_KEY` is set, and that key opens these routes and no other; `API_KEY` does not open them.
@@ -87,7 +91,7 @@ The tenant is the service account's (`API_SERVICE_TENANT_ID`), never taken from 
 - A task assigned to someone else: 403 to complete, 409 to claim. A task that has ended: 409, with the code `ITEM_NOT_WAITING`.
 - Errors are `{ errors, code }`, with a real status. An instance still busy after the lock's retries is a 503: try again.
 
-Anyone holding the key can act as any user, so it belongs on the application's server, never in a browser. The Test tab's instances are not listed.
+Anyone holding the key can act as any user, so it belongs on the application's server, never in a browser. The Test tab's tasks are listed with the others (development and test servers only).
 
 > **`/api` and `/api2` are deprecated** since 3.7: they keep working, with fixes only, until they go (v1 at 4.0). Their
 > answers say so (`Deprecation`, and a `Link` to the API's document); their documents are `/api/openapi.json` and
@@ -105,7 +109,7 @@ Every call acts as one user, and says who in one of two ways:
 
 A header naming a user is never trusted. How an application uses it:
 
-1. A user signs in to the application, the application's way: BPMN Server never sees their password.
+1. A user signs in to the application, the application's way: OmniWorkflow never sees their password.
 2. The application's back end asks for a token for them, with the service key.
 3. The application (its back end, or its pages) calls the API with that token, as that user.
 4. When the user signs out, or is disabled, the back end revokes their tokens.

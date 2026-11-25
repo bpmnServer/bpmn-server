@@ -14,11 +14,24 @@ import { InstanceLocker } from './InstanceLocker.js';
 import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
 
 import { QueryTranslator } from './QueryTranslator.js';
+import { registrationsOf } from '../engine/AddOns.js';
 import { Aggregate} from './Aggregate.js'
 import { DocumentPager } from './DocumentPager.js';
 
  
 class DataStore extends ServerComponent  implements IDataStore {
+
+	/**
+	 * The instances' indexes for the common queries, made by {@link install} besides `id`, `items.id` and `tag.process`.
+	 * An item query is one `$elemMatch` on `items` (QueryTranslator), so a compound index on two item fields is used
+	 * whole: `items.status` first, since few instances have waiting items once many have ended.
+	 */
+	static readonly QUERY_INDEXES: Record<string, 1 | -1>[] = [
+		{ "items.status": 1, "items.elementId": 1 },	// the waiting items of an element; counts of waiting
+		{ "items.status": 1, "items.type": 1 },			// task lists: the waiting user tasks
+		{ name: 1, status: 1 },							// a process's instances, running or ended
+		{ status: 1 },									// counts by status
+	];
 
 	dbConfiguration;
 	/** The storage adapter: the server's shared `documentStore`, else this data store's own MongoDB connection. */
@@ -95,7 +108,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 				if (pass) {
 					let data;
-					if (instance.tokens[i.tokenId]) {
+					if (instance.tokens?.[i.tokenId]) {
 						let dp=instance.tokens[i.tokenId].dataPath;
 						if (dp!=='')
 							data=DataHandler.getData(instance.data,dp);
@@ -136,6 +149,9 @@ class DataStore extends ServerComponent  implements IDataStore {
 				saveObject['logs'] = instance.logs;
 			if (instance.flags)
 				saveObject['flags'] = instance.flags;
+			// its actors, as the policies' add-ons keep them (instance.actors)
+			if (instance.actors)
+				saveObject['actors'] = instance.actors;
 
 			if ((instance.flags?.savePoints ?? this.enableSavePoints)===true && instance.items.length>0) {
 				let lastItem=instance.items[instance.items.length-1].id;
@@ -237,9 +253,16 @@ class DataStore extends ServerComponent  implements IDataStore {
 			projection = option['projection'];
 		if (option['sort'])
 			sort=option['sort'];
+		// at most `limit`, the first after sorting: in the database where the adapter can (a page of a list)
+		const limit = Number.isInteger(option?.['limit']) && option['limit'] > 0 ? option['limit'] : undefined;
 
-		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, query, projection,sort);
-		return records;
+		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, query, projection, sort, limit);
+		// what the add-ons fill in as an instance is read (engine/AddOns.ts): a case saved before 3.7.5 has no actors
+		const readers = registrationsOf(this.server).instanceReaders;
+		if (readers.length) for (const record of records) for (const read of readers) {
+			try { read(record); } catch { /* a reader that fails leaves the instance as stored */ }
+		}
+		return limit && records.length > limit ? records.slice(0, limit) : records;
 	}
 	/**
 		* scenario:
@@ -267,11 +290,13 @@ class DataStore extends ServerComponent  implements IDataStore {
 	 *
 	 * @param query
 	 */
-	async findItems(query) : Promise<IItemData[]> {
+	async findItems(query, options: { lean?: boolean } = {}) : Promise<IItemData[]> {
 		// let us rebuild the query form {status: value} to >  "tokens.items.status": "wait" 
 		const trans = new QueryTranslator('items');
 		const result = trans.translateCriteria(query);
-		const projection = { id: 1, data: 1, name: 1, version:1, "items": 1 , "tokens":1};
+		// lean, for a list: the instances' data and tokens are not read (data, instanceData absent)
+		const projection = options.lean ? { id: 1, name: 1, version: 1, items: 1 }
+			: { id: 1, data: 1, name: 1, version:1, "items": 1 , "tokens":1};
 		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, result, projection);
 		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 
@@ -328,6 +353,10 @@ class DataStore extends ServerComponent  implements IDataStore {
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: 1 }, { unique: true });
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { "items.id": 1 });
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { "tag.process": 1 });
+		// what task lists and dashboards ask: the waiting items (by element, by type), a process's instances, counts by
+		// status; without them each such query reads every instance, the ended ones too (test/indexes.mongo.test.mjs)
+		for (const index of DataStore.QUERY_INDEXES)
+			await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, index);
 		if (this.locker instanceof InstanceLocker) await this.locker.install();
 	}
 	

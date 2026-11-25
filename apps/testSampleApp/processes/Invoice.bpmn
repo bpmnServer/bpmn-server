@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:collaboration id="Collaboration_1vzc4e2">
     <bpmn2:participant id="Participant_1g6enp2" name="Account Payable" processRef="Process_1" />
     <bpmn2:participant id="Participant_1e7gk8x" name="Manager" processRef="Process_0t314on" />
-    <bpmn2:messageFlow id="MessageFlow_18tfm5f" sourceRef="Task_cancelByAdmin" targetRef="event_cancel" />
   </bpmn2:collaboration>
   <bpmn2:process id="Process_1" isExecutable="false">
     <bpmn2:startEvent id="StartEvent_AP" name="Issue Invoice">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="InvoiceNo" label="Invoice Number" type="string" defaultValue="I-1001" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
       <bpmn2:outgoing>SequenceFlow_129vlnl</bpmn2:outgoing>
     </bpmn2:startEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_129vlnl" sourceRef="StartEvent_AP" targetRef="Gateway_0a61oo1" />
@@ -54,7 +58,7 @@
     <bpmn2:intermediateCatchEvent id="event_cancel" name="Cancel by Admin">
       <bpmn2:incoming>SequenceFlow_0dq5qq6</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0karre6</bpmn2:outgoing>
-      <bpmn2:messageEventDefinition />
+      <bpmn2:messageEventDefinition messageRef="Message_1a7c74d" />
     </bpmn2:intermediateCatchEvent>
     <bpmn2:userTask id="task_issue_invoice" name="Issue Invoice">
       <bpmn2:incoming>Flow_0kz9p8o</bpmn2:incoming>
@@ -73,19 +77,36 @@
     </bpmn2:eventBasedGateway>
   </bpmn2:process>
   <bpmn2:process id="Process_0t314on">
-    <bpmn2:startEvent id="StartEvent_Manager" name="Cancel Invoice by a manager">
-      <bpmn2:outgoing>SequenceFlow_1vs4h9e</bpmn2:outgoing>
-    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_1vs4h9e" sourceRef="StartEvent_Manager" targetRef="Task_cancelByAdmin" />
+    <bpmn2:sequenceFlow id="Flow_0jtligs" sourceRef="Task_cancelByAdmin" targetRef="Event_00lr1kl" />
+    <bpmn2:endEvent id="endEvent_managerProcess">
+      <bpmn2:incoming>Flow_17r5gaq</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_17r5gaq" sourceRef="Event_00lr1kl" targetRef="endEvent_managerProcess" />
+    <bpmn2:intermediateThrowEvent id="Event_00lr1kl">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="matchingKey">$({ 'data.InvoiceNo': data.InvoiceNo })</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0jtligs</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_17r5gaq</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="MessageEventDefinition_1yzx5mm" messageRef="Message_1a7c74d" />
+    </bpmn2:intermediateThrowEvent>
     <bpmn2:userTask id="Task_cancelByAdmin" name="Cancel Invoice">
       <bpmn2:incoming>SequenceFlow_1vs4h9e</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0yw5wjo</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0jtligs</bpmn2:outgoing>
     </bpmn2:userTask>
-    <bpmn2:endEvent id="endEvent_managerProcess">
-      <bpmn2:incoming>SequenceFlow_0yw5wjo</bpmn2:incoming>
-    </bpmn2:endEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_1vs4h9e" sourceRef="StartEvent_Manager" targetRef="Task_cancelByAdmin" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0yw5wjo" sourceRef="Task_cancelByAdmin" targetRef="endEvent_managerProcess" />
+    <bpmn2:startEvent id="StartEvent_Manager" name="Cancel Invoice by a manager">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="InvoiceNo" label="Invoice Number to Cancel" type="string" defaultValue="I-1001" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_1vs4h9e</bpmn2:outgoing>
+    </bpmn2:startEvent>
   </bpmn2:process>
+  <bpmn2:message id="Message_1a7c74d" name="cancelInvoice" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1vzc4e2">
       <bpmndi:BPMNShape id="Participant_1g6enp2_di" bpmnElement="Participant_1g6enp2" isHorizontal="true">
@@ -205,42 +226,38 @@
       <bpmndi:BPMNShape id="Participant_1e7gk8x_di" bpmnElement="Participant_1e7gk8x" isHorizontal="true">
         <dc:Bounds x="137" y="360" width="693" height="121" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="StartEvent_Manager_di" bpmnElement="StartEvent_Manager">
-        <dc:Bounds x="183" y="396" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="158" y="439" width="87" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0qa04ti_di" bpmnElement="Task_cancelByAdmin">
-        <dc:Bounds x="250" y="374" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1q7mkqe_di" bpmnElement="endEvent_managerProcess">
-        <dc:Bounds x="413" y="396" width="36" height="36" />
+        <dc:Bounds x="562" y="396" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="385" y="415" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vno6z5_di" bpmnElement="Event_00lr1kl">
+        <dc:Bounds x="432" y="396" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0qa04ti_di" bpmnElement="Task_cancelByAdmin">
+        <dc:Bounds x="270" y="374" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_Manager_di" bpmnElement="StartEvent_Manager">
+        <dc:Bounds x="192" y="396" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="167" y="439" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1vs4h9e_di" bpmnElement="SequenceFlow_1vs4h9e">
-        <di:waypoint x="219" y="414" />
-        <di:waypoint x="250" y="414" />
+        <di:waypoint x="228" y="414" />
+        <di:waypoint x="270" y="414" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="190" y="372" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0yw5wjo_di" bpmnElement="SequenceFlow_0yw5wjo">
-        <di:waypoint x="350" y="414" />
-        <di:waypoint x="413" y="414" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="337" y="372" width="90" height="12" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_0jtligs_di" bpmnElement="Flow_0jtligs">
+        <di:waypoint x="370" y="414" />
+        <di:waypoint x="432" y="414" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_18tfm5f_di" bpmnElement="MessageFlow_18tfm5f">
-        <di:waypoint x="299" y="374" />
-        <di:waypoint x="299" y="266" />
-        <di:waypoint x="552" y="266" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="269" y="303.5" width="90" height="12" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_17r5gaq_di" bpmnElement="Flow_17r5gaq">
+        <di:waypoint x="468" y="414" />
+        <di:waypoint x="562" y="414" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

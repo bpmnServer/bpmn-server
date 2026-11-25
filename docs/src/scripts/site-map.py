@@ -55,17 +55,25 @@ def summary(page):
 def main():
     nav = yaml.load(open(os.path.join(DOCS, 'mkdocs.yml'), encoding='utf8'), Loader=Loader)['nav']
     out = ['# Site map', '', 'Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `npm run map`.', '']
-    for section in nav:
-        (name, pages), = section.items()
-        out += [f'## {name}', '']
-        for entry in pages if isinstance(pages, list) else [{name: pages}]:
+
+    def render_pages(entries, indent=''):
+        for entry in entries if isinstance(entries, list) else [{name: entries}]:
             (title, page), = entry.items()
+            if isinstance(page, list):
+                out.append(f'{indent}- **{title}**')
+                render_pages(page, indent + '  ')
+                continue
             if page == 'map.md':
                 continue
             about = summary(page)
             if about is None:           # in the nav, not in the docs
                 continue
-            out.append(f'- [{title}]({page})' + (f': {about}' if about else ''))
+            out.append(f'{indent}- [{title}]({page})' + (f': {about}' if about else ''))
+
+    for section in nav:
+        (name, nav_pages), = section.items()
+        out += [f'## {name}', '']
+        render_pages(nav_pages)
         out.append('')
     open(os.path.join(PAGES, 'map.md'), 'w', encoding='utf8', newline='\n').write('\n'.join(out))
 

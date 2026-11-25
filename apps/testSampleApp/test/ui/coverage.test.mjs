@@ -39,7 +39,6 @@ async function openTestTab(model = 'leave-request') {
 }
 
 async function record(page, name, steps) {
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.fill('.test-name', name);
     await page.click('.test-run');
@@ -127,7 +126,6 @@ function drawnFlows() {
 }
 /** A scenario of the drawn model, which runs from its start data to the end. */
 async function recordStart(page, name, data) {
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.fill('.test-name', name);
     await page.click('.test-run');
@@ -138,7 +136,7 @@ async function recordStart(page, name, data) {
 
 test('on the diagram: taken is green, not taken is marked, nodes and flows; a gap says where it goes, and is selected; it stays until asked otherwise', async () => {
     fs.writeFileSync(path.join(web.definitionsPath, 'drawn-flows.bpmn'), drawnFlows());
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     const { page, errors, close } = await openTestTab('drawn-flows');
     await recordStart(page, 'Small', { amount: 5 });
 
@@ -204,7 +202,6 @@ test('coverage comes from the kept runs after a reload; a scenario with no insta
     const kept = await counts(page);
     assert.ok(kept.nodes[0] > 0, JSON.stringify(kept));
 
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.waitForFunction(() => /1 scenario has not run/.test(document.querySelector('.test-coverage').textContent));
     assert.deepEqual(await counts(page), kept, 'written, not run: nothing added');

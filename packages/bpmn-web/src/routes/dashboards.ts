@@ -4,18 +4,21 @@
  *   /dashboard/design   designers: models and their problems, tests, decisions, templates
  *   /dashboard/admin    administrators: the server, users, operations (locks, hung items), backup, restart
  *   /dashboard/catalog  designers: browse the model catalog (CATALOG_URL) and import its models
+ *   /dashboard/settings     administrators and designers: the settings, how the workflows meet the application, the add-ons
  */
 import express from 'express';
 import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff } from '../index.js';
+import { SecureUser, ROLE_PERMISSIONS, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, readAppContract, saveContractRoles, APP_CONTRACT_FILE, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications, connectorsTesting } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
-import { loadTemplateCatalog } from './elementTemplates.js';
-import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
+import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
+import { modelFeatures } from '../modelFeatures.js';
+import { MODEL_FEATURES } from '../modelFeatureCatalog.js';
+import { listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
 import { reachedIn } from '../testing/coverage.js';
 import { loadDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
@@ -23,11 +26,18 @@ import { adminDisabled, afterWork, canDesign, isAdminGroups } from '../userAcces
 import { userNameProblem } from '../userAccess/UserService.js';
 import { ownUsers } from '../userAccess/UserManager.js';
 import validator from 'validator';
+import { labelFilterOf } from './labelFilter.js';
+import { hasFormKey, formKeyAddress, withIdentifiers } from './formKey.js';
+import { listViewOf, withChoices, MY_WORK_COLUMNS } from './listView.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
 import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
+import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
+import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea, rolePermissions, SERVER_ROLES } from './integration.js';
+import { addOnsOf, readAppConfig, addOnNames, APP_CONFIG_FILE } from '../index.js';
+import type { IAddOnManifest } from '../index.js';
 
 const handler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
@@ -86,8 +96,27 @@ function databaseName(): string {
 }
 
 export class Dashboards extends Common {
+    /**
+     * The roles for the Administration page: the names, each with where it is used and how many users are in its
+     * group; the names used (lanes, policies) that they don't list; or its error. `declared` is where the roles come
+     * from when the caller has worked it out (the application's contract, since 3.7.5); without it, the models
+     * folder's legacy roles.json.
+     */
+    async roles(definitionsPath: string, users: any[] | null, declared?: { names: string[]; where: string; writable: boolean } | null) {
+        let names: string[] | null;
+        try { names = declared ? declared.names : roleNames(definitionsPath); }
+        catch (exc) { return { error: exc.message, list: [], unlisted: [] }; }
+        const uses = await roleUses(definitionsPath);
+        const members = (role: string) => users ? users.filter(u => (u.userGroups || []).includes(role)).length : null;
+        const list = (names ?? []).map(name => ({ name, uses: uses.get(name) ?? [], members: members(name) }));
+        const unlisted = [...uses.keys()].filter(name => !(names ?? []).includes(name) && !roleNameProblem(name)).sort()
+            .map(name => ({ name, uses: uses.get(name) }));
+        // where they are, and whether this page may change them (a contract from describe() is read-only)
+        return { file: names !== null, list, unlisted, where: declared?.where, writable: declared ? declared.writable : true };
+    }
+
     /** verifyModel's counts per model, kept while the file is unchanged */
-    verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string }>();
+    verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string; features?: { id: string; name: string; at: string[] }[] }>();
 
     config() {
         const router = express.Router();
@@ -95,6 +124,30 @@ export class Dashboards extends Common {
         const server = this.webApp.bpmnServer;
         const api = new BPMNAPI(server);
         const folder = () => server.configuration.definitionsPath;
+        /**
+         * Where this server's roles are, and whether the page may change them: the contract's file when it declares
+         * any (or has none anywhere, so a first role starts there), the legacy roles.json when that is what has them,
+         * and nothing writable when the contract comes from the delegate's describe() instead of a file.
+         */
+        const rolesStore = () => {
+            const contractFile = server.configuration?.appContract ?? path.resolve(APP_CONTRACT_FILE);
+            const declared = (server.appDelegate as any)?.describe?.()?.roles ?? null;
+            const fromFile = readAppContract(contractFile).contract?.roles ?? null;
+            // a contract from code: nothing to write back to
+            if (declared?.length && !fromFile?.length)
+                return { kind: 'code' as const, names: declared.map(r => r.name), roles: declared, writable: false, where: "the delegate's describe()" };
+            if (fromFile?.length)
+                return { kind: 'contract' as const, names: fromFile.map(r => r.name), roles: fromFile, writable: true, where: APP_CONTRACT_FILE, file: contractFile };
+            const legacy = roleNames(folder());
+            if (legacy?.length)
+                return { kind: 'legacy' as const, names: legacy, roles: legacy.map(name => ({ name })), writable: true, where: 'roles.json' };
+            // none anywhere: a first role goes where roles belong now
+            return { kind: 'contract' as const, names: [], roles: [], writable: true, where: APP_CONTRACT_FILE, file: contractFile };
+        };
+        const writeRoles = (store: ReturnType<typeof rolesStore>, roles: { name: string; title?: string; description?: string }[]) => {
+            if (store.kind === 'legacy') saveRoleNames(folder(), roles.map(r => r.name));
+            else saveContractRoles(store.file!, roles);
+        };
 
         router.use(this.isAuthenticated);
 
@@ -106,7 +159,22 @@ export class Dashboards extends Common {
             isDesigner: canDesign(req.user),
         });
         // v3's startable processes as the start forms' views have them: their fields, from the form
-        const startsOf = (items) => items.map(s => ({ processName: s.processName, startNodeId: s.startNodeId, name: s.name, fields: s.form?.fields ?? [] }));
+        // formKey: the application's own page for this start event, when the model names one (docs/design/form-keys.md)
+        const startsOf = (items) => items.map(s => ({ processName: s.processName, startNodeId: s.startNodeId, name: s.name, fields: s.form?.fields ?? [], formKey: s.form?.formKey }));
+        /**
+         * Each start event's `formAddress`: where its own page is, with `${appVars.<name>}` worked out and the process
+         * and element added (form-keys.md §4). Absent when it has no form key, or its expression came to nothing —
+         * then the start page draws its fields, as before.
+         */
+        const withFormAddresses = async (starts, server, req) => Promise.all(starts.map(async s => {
+            if (!hasFormKey(s.formKey)) return s;
+            const address = await formKeyAddress(s.formKey, server, { user: req.user });
+            if (!address) return s;
+            return { ...s, formAddress: withIdentifiers(address, {
+                processName: s.processName, startNodeId: s.startNodeId,
+                returnTo: typeof req.query.returnTo === 'string' ? req.query.returnTo : undefined,
+            }) };
+        }));
         const render = (req, res, view, data) => res.render('dashboards/' + view, { ...data, ...roles(req), me: req.user?.userName, user: req.user, request: req });
 
         // ---- my work ----------------------------------------------------------------------------------------
@@ -115,22 +183,69 @@ export class Dashboards extends Common {
         router.get('/', handler(async (req, res) => {
             const api = await pageApi(req, server);
             const me = api.user.userName;
-            const [waiting, done, startable] = await Promise.all([api.waiting(200), api.completed(10), api.startable()]);
+            // filtered by the labels' named values, as the URL says (routes/labelFilter.ts)
+            // the waiting tasks' columns and sort, as the person chose them (routes/listView.ts)
+            const listView = await listViewOf(server, req, { list: 'my-work', action: '/dashboard', own: MY_WORK_COLUMNS, defaultSort: { sort: 'started', order: 'asc' } });
+            const labelFilter = await labelFilterOf(server, req, '/dashboard', { dataFields: listView.view.filterFields });
+            const filtered = labelFilter.query ?? {};
+            const [waiting, done, startable] = await Promise.all([api.waiting(200, filtered, listView.asked), api.completed(10, filtered), api.startable()]);
             const mine = [], available = [];
             for (const task of waiting as any[]) {
                 task.fromNow = dateDiff(task.startedAt);
                 (task.assignee === me ? mine : task.assignee ? [] : available).push(task);
             }
             const completed = done.map(task => ({ ...task, fromNow: dateDiff(task.endedAt) }));
-            render(req, res, 'user', { title: 'My work', mine, available, completed, starts: startsOf(startable) });
+            // what each task is for: its label and its case's (addons/labels/Labels.ts)
+            await labelItems(server, [...mine, ...available, ...completed]);
+            // the column picker offers the models of the waiting tasks, their label values and form fields
+            await withChoices(server, listView, [...mine, ...available].map(t => t.processName));
+            render(req, res, 'user', { labelFilter: labelFilter.view, listView: listView.view, title: 'My work', mine, available, completed, starts: startsOf(startable) });
         }));
 
         // the start page of a model: its start events a user can start, each with its start form
         router.get('/start/:processName', handler(async (req, res) => {
             const processName = req.params.processName;
             const startable = await (await pageApi(req, server)).startable();
-            render(req, res, 'start', { title: 'Start a process', processName, starts: startsOf(startable.filter(s => s.processName === processName)) });
+            // every start event this user may start (not a timer, error, message or signal: getStartNodes's
+            // userInvokable), for them to pick from. One whose form is the application's own page carries its
+            // address, worked out here, for the link to go straight there (form-keys.md §6, flow E).
+            const starts = await withFormAddresses(startsOf(startable.filter(s => s.processName === processName)), server, req);
+            render(req, res, 'start', { title: 'Start a process', processName, starts });
         }));
+
+        // ---- notifications ----------------------------------------------------------------------------------
+        // what the notification policies made (docs/docs/notification-policies.md), newest first: an administrator's
+        // all of them, filtered by whom, process, status (test runs' with them, marked); anyone else's, those to them
+        // (their name or one of their groups)
+        router.get('/notifications', handler(async (req, res, next) => {
+            // the Notifications add-on's (docs/design/add-ons.md): off, not there
+            if (req.app.locals.addOnOn?.('notification') === false) return res.status(404).send('The Notifications add-on is off (app-config.json)');
+            const { isAdmin } = roles(req);
+            const one = (v) => (typeof v === 'string' ? v.trim() : '');
+            const filter = {
+                to: one(req.query.to), process: one(req.query.process),
+                status: ['recorded', 'sent', 'failed'].includes(one(req.query.status)) ? one(req.query.status) : '',
+            };
+            const mine = req.user ? [...new Set([req.user.userName, ...toList(req.user.userGroups)].filter(Boolean))] : [];
+            const to = isAdmin ? (filter.to ? toList(filter.to) : undefined) : mine.filter(w => !filter.to || toList(filter.to).includes(w));
+            const list = !isAdmin && !to.length ? [] : await findNotifications(server, {
+                to, instanceName: filter.process || undefined, status: (filter.status || undefined) as any, limit: 200,
+            });
+            render(req, res, 'notifications', { title: 'Notifications', notifications: list, filter, all: isAdmin, mine });
+        }));
+
+        // a form field's choices (<owf:list>, <owf:lookup>), for the drawn forms' drop-downs and searches
+        // (public/javascripts/formLookup.js): as the person, through API v3's operations; JSON
+        const choicesAnswer = (fn) => async (req, res) => {
+            try {
+                res.json(await fn(await pageApi(req, server), req));
+            }
+            catch (error) {
+                res.status(error?.status ?? 500).json({ error: { code: error?.code ?? 'ERROR', message: error?.message ?? String(error) } });
+            }
+        };
+        router.post('/choices/task/:id/:field', choicesAnswer((api, req) => api.choices(req.params.id, req.params.field, req.body ?? {})));
+        router.post('/choices/start/:processName/:field', choicesAnswer((api, req) => api.startChoices(req.params.processName, req.params.field, req.body ?? {})));
 
         // start a process at one of its start events, with the start form's fields
         router.post('/start', handler(async (req, res) => {
@@ -158,10 +273,12 @@ export class Dashboards extends Common {
                     try {
                         const source = FS.readFileSync(path.join(dir, file), 'utf8');
                         const result = await verifyModel(source, server, name);
-                        checked = { mtime, errors: result.errors, warnings: result.warnings, description: await modelDescription(source).catch(() => '') };
+                        checked = { mtime, errors: result.errors, warnings: result.warnings, description: await modelDescription(source).catch(() => ''),
+                            // the features it uses, and where (docs/features.yaml's markers): the Feature filter
+                            features: modelFeatures(source, MODEL_FEATURES) };
                     }
                     catch {
-                        checked = { mtime, errors: 1, warnings: 0 };
+                        checked = { mtime, errors: 1, warnings: 0, features: [] };
                     }
                     this.verified.set(name, checked);
                 }
@@ -181,11 +298,29 @@ export class Dashboards extends Common {
                 const name = f.replace(DMN_FILE, '');
                 return { name, tests: decisionTests.get(name) ?? 0 };
             });
-            const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, undefined);
+            const catalog = templatesOn() ? loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, undefined) : { templates: [], rejected: [] };
+            // the policies of the models folder, assignment, security and notification, each with the models that name it
+            const sources = new Map(models.map(m => {
+                try { return [m.name, FS.readFileSync(path.join(dir, m.name + '.bpmn'), 'utf8')]; } catch { return [m.name, '']; }
+            }));
+            const usedBy = (attribute: string, name: string) => models.filter(m =>
+                new RegExp(`\\s(?:[\\w.-]+:)?${attribute}\\s*=\\s*"${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).test(sources.get(m.name) ?? '')).map(m => m.name);
+            const security = new SecurityPolicy(dir);
+            // each kind of policy its add-on's (docs/design/add-ons.md): one that is off has none here
+            const on = (name: string) => req.app.locals.addOnOn?.(name) !== false;
+            const policies = {
+                assignment: !on('assignment') ? [] : policyNames(dir).map(name => ({ name, tests: decisionTests.get(`${name}.policy`) ?? 0, models: usedBy('assignmentPolicy', name) })),
+                security: !on('security') ? [] : security.names().map(name => ({ name, tests: decisionTests.get(`${name}.security-policy`) ?? 0, models: usedBy('securityPolicy', name), isDefault: name === DEFAULT_SECURITY_POLICY })),
+                notification: !on('notification') ? [] : notificationPolicyNames(dir).map(name => ({ name, tests: decisionTests.get(`${name}.notification-policy`) ?? 0, models: usedBy('notificationPolicy', name) })),
+                securityOn: security.on,
+            };
+            // the features some model uses, with how many: the Feature filter's choices, by the catalog's order
+            const featureUse = MODEL_FEATURES.map(f => ({ id: f.id, name: f.name, models: models.filter(m => m.features?.some(u => u.id === f.id)).length }))
+                .filter(f => f.models > 0);
             render(req, res, 'design', {
-                title: 'Design', models, recent, decisions, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
+                title: 'Design', models, recent, decisions, policies, featureUse, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
                 message: req.query.message,
-                templates: catalog.templates ?? [], rejectedTemplates: catalog.rejected ?? [],
+                templates: catalog.templates ?? [], rejectedTemplates: catalog.rejected ?? [], templatesOn: templatesOn(),
                 problems: { errors: models.filter(m => m.errors).length, warnings: models.filter(m => !m.errors && m.warnings).length },
             });
         }));
@@ -259,6 +394,7 @@ export class Dashboards extends Common {
             const connectorList = await server.connectors.list();
             render(req, res, 'admin', {
                 title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: await keysSettable(),
+                roles: await this.roles(folder(), users, rolesStore()),
                 serverInfo: {
                     bpmnWeb: this.webApp.packageJson?.version ?? packageVersion('bpmn-web'),
                     bpmnServer: packageVersion('bpmn-server'),
@@ -295,6 +431,73 @@ export class Dashboards extends Common {
             back(res, `User '${userName}' added.`);
         }));
 
+        // ---- the roles (docs/docs/assignment-policies.md#roles): the application's contract (app-contract.json),
+        // where they belong since 3.7.5; the models folder's roles.json is read for an application that has not moved
+        // them, and the editor writes whichever of the two the roles came from.
+        const rolesBack = (res, message: string) => res.redirect('/dashboard/admin?message=' + encodeURIComponent(message) + '#roles');
+        // the roles are the server's: always here, whichever add-ons are on
+        router.post('/admin/roles', this.isAdmin, handler(async (req, res) => {
+            const name = String(req.body.name ?? '').trim();
+            const problem = roleNameProblem(name);
+            if (problem)
+                return rolesBack(res, problem + '.');
+            let store: ReturnType<typeof rolesStore>;
+            try { store = rolesStore(); }
+            catch (exc) { return rolesBack(res, `The roles can not be read: ${exc.message}`); }
+            if (!store.writable)
+                return rolesBack(res, `The roles come from ${store.where}, which this page can not change: add '${name}' there.`);
+            if (store.names.includes(name))
+                return rolesBack(res, `'${name}' is a role already.`);
+            writeRoles(store, [...store.roles, { name }]);
+            rolesBack(res, `Role '${name}' added to ${store.where}.`);
+        }));
+        /**
+         * What each role is allowed to do (the Security area's table): the ticked permissions, written to the
+         * application's contract (app-contract.json). The group names this server matches on (ADMIN, SYSTEM,
+         * DESIGNER) keep what they have whatever is sent, so nobody loses access by saving this page.
+         */
+        router.post('/settings/secure/permissions', this.isAdmin, handler(async (req, res) => {
+            const back = (message: string) => res.redirect('/dashboard/settings/secure?message=' + encodeURIComponent(message));
+            let store: ReturnType<typeof rolesStore>;
+            try { store = rolesStore(); }
+            catch (exc) { return back(`The roles can not be read: ${exc.message}`); }
+            if (!store.writable || store.kind === 'legacy')
+                return back(`The roles come from ${store.where}, which this page can not change.`);
+            // name:permission for each ticked box
+            const ticked = new Set(Object.keys(req.body ?? {})
+                .filter(k => k.startsWith('may:') && req.body[k])
+                .map(k => k.slice(4)));
+            // every role gets a permissions list, so an unticked box is a decision and not a silence. The rows the
+            // table always shows (PUBLIC, User, SYSTEM) are the server's own, and are saved beside the application's
+            // so their ticks are not dropped.
+            const of = (name: string) => ROLE_PERMISSIONS.filter(p => ticked.has(`${name}:${p}`));
+            const named = new Set(store.roles.map((r: any) => r.name));
+            const roles = [
+                ...SERVER_ROLES.filter(n => !named.has(n)).map(name => ({ name, permissions: of(name) })),
+                ...store.roles.map((role: any) => ({ ...role, permissions: of(role.name) })),
+            ];
+            // nobody could administer this server afterwards: refused, so this page cannot lock its administrator out.
+            // SYSTEM is the server's own and is not a row here, so it is not an answer to this.
+            if (!roles.some((r: any) => r.permissions.includes('administrator')))
+                return back('Nothing saved: at least one role must be an administrator, or nobody could administer this server.');
+            saveContractRoles(store.file!, roles);
+            SecureUser.granted = new Map(roles.map((r: any) => [r.name, r.permissions]));
+            back('Saved to ' + store.where + '. What each role is allowed to do applies now.');
+        }));
+        router.post('/admin/roles/delete', this.isAdmin, handler(async (req, res) => {
+            const name = String(req.body.name ?? '').trim();
+            let store: ReturnType<typeof rolesStore>;
+            try { store = rolesStore(); }
+            catch (exc) { return rolesBack(res, `The roles can not be read: ${exc.message}`); }
+            if (!store.writable)
+                return rolesBack(res, `The roles come from ${store.where}, which this page can not change: remove '${name}' there.`);
+            if (!store.names.includes(name))
+                return rolesBack(res, `'${name}' is not a role.`);
+            writeRoles(store, store.roles.filter(r => r.name !== name));
+            const used = (await roleUses(folder())).get(name);
+            rolesBack(res, `Role '${name}' removed from ${store.where}.` + (used?.length ? ` It is still used (${used.join('; ')}): the models' checks warn about it.` : ''));
+        }));
+
         router.post('/admin/locks/release', this.isAdmin, handler(async (req, res) => {
             // the locks are the engine's: released there (docs/design/engine-isolation.md)
             try { await server.engine.releaseLocks(req.body.id || undefined); }
@@ -316,7 +519,7 @@ export class Dashboards extends Common {
         }));
 
         // ---- connectors: REST APIs (OpenAPI) that service tasks call, added with their keys (docs/docs/connectors.md)
-        /** Whether a key can be set: the engine says (CONNECTORS_KEY is its); no engine, none. */
+        /** Whether a key can be set: the engine says (SECRETS_KEY is its); no engine, none. */
         const keysSettable = () => server.engine.facts().then(facts => facts.connectorKeys === true, () => false);
         const connectors = () => server.connectors;
         const backToConnectors = (res, message: string, id?: string) =>
@@ -369,6 +572,8 @@ export class Dashboards extends Common {
             render(req, res, 'connector', {
                 title: `Connector: ${connector.name}`, connector, operations: await connectors().operations(connector.id),
                 schemes, models: this.connectorUse().get(connector.id) ?? [], canEncrypt: await keysSettable(), message: req.query.message,
+                // outside production (ConnectorTesting): whether this server answers as the connector's testing says
+                testingOn: connectorsTesting(), appEnv: process.env.APP_ENV || '',
             });
         }));
 
@@ -382,6 +587,19 @@ export class Dashboards extends Common {
             backToConnectors(res, 'Settings saved.', req.params.id);
         }));
 
+        // what it answers outside production (APP_ENV development or test): bpmn-server's ConnectorTesting
+        router.post('/admin/connectors/:id/testing', this.isAdmin, action(async (req, res) => {
+            const { answer, baseUrl, answers } = req.body;
+            let own;
+            if (String(answers ?? '').trim()) {
+                try { own = JSON.parse(answers); }
+                catch (exc) { throw new Error(`Own answers: not JSON (${exc.message})`); }
+            }
+            await connectors().update(req.params.id, {
+                testing: answer === 'real' && !own ? null : { answer, ...(String(baseUrl ?? '').trim() ? { baseUrl: String(baseUrl).trim() } : {}), ...(own ? { answers: own } : {}) },
+            } as any);
+            backToConnectors(res, 'Outside production: saved.', req.params.id);
+        }));
         router.post('/admin/connectors/:id/enabled', this.isAdmin, action(async (req, res) => {
             const on = req.body.enabled === 'true';
             await connectors().update(req.params.id, { enabled: on });
@@ -433,7 +651,9 @@ export class Dashboards extends Common {
         }));
 
         router.post('/admin/connectors/:id/delete', this.isAdmin, action(async (req, res) => {
-            const removed = await connectors().remove(req.params.id);
+            // its file (model access), then its key and test (the engine's)
+            const removed = connectors().removeFile(req.params.id);
+            await server.engine.connectorRemoved(req.params.id);
             backToConnectors(res, removed ? `Connector '${req.params.id}' deleted.` : `No connector '${req.params.id}'.`);
         }));
 
@@ -496,7 +716,149 @@ export class Dashboards extends Common {
             res.redirect('/model/edit/' + encodeURIComponent(name));
         }));
 
+        // ---- settings (routes/integration.ts): administrators and designers; each changes the settings that are theirs
+        const integrationViewer = (req) => { const r = roles(req); return { isAdmin: r.isAdmin, isDesigner: r.isDesigner }; };
+        const mayIntegrate = (req, res, next) => {
+            const viewer = integrationViewer(req);
+            if (viewer.isAdmin || viewer.isDesigner) return next();
+            return res.status(403).send('Administrator or designer permission required');
+        };
+        const appHostSettings = () => !!this.webApp.application?.hostSettings;
+        /**
+         * The Settings page's areas for this viewer: the server's, then each add-on's (its manifest's settings, on or
+         * off), each with what the page knows of it, its settings and its summary.
+         */
+        const integrationPoints = async (req) => {
+            const viewer = integrationViewer(req);
+            const dir = folder();
+            const delegate = server.appDelegate;
+            let services = [], servicesError = null;
+            try { services = appServiceNames(await delegate?.getServicesProvider(null)); }
+            catch (exc) { servicesError = exc.message; }    // a provider that needs a running execution
+            const own = ownUsers(this.webApp.userManager);
+            const users = own && viewer.isAdmin ? await own.listUsers() : null;
+            const used = this.connectorUse();
+            const notifications = await findNotifications(server, { limit: 1000 }).catch(() => []);
+            const byStatus: Record<string, number> = {};
+            for (const n of notifications) byStatus[n.status] = (byStatus[n.status] ?? 0) + 1;
+            const security = new SecurityPolicy(dir);
+            // the application's delegate is the engine's: it says its class and methods (none, an engine that does not run or is older)
+            const facts: any = await server.engine.facts().catch(() => ({}));
+            const methods: string[] = facts.delegate?.methods ?? [];
+            const info: Record<string, any> = {
+                application: {
+                    delegate: facts.delegate?.name ?? null, methods, services, servicesError,
+                    hostUsers: !own, hostSettings: appHostSettings(),
+                },
+                connectors: {
+                    list: (await server.connectors.list()).map(c => ({ ...c, models: used.get(c.id) ?? [] })),
+                    canEncrypt: await keysSettable(),
+                },
+                api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
+            };
+            // the roles are the server's; each policy add-on's, while it is on: its policies (and the notifications they send)
+            info.roles = { roles: await this.roles(dir, users, rolesStore()) };
+            // the Security area: what each role may do on this server now, and the restrictions that take a right
+            // from everyone (userAccess/roles.ts, docs/design/security-profiles.md)
+            info.secure = rolePermissions(rolesStore().names, SecureUser.granted);
+            if (addOnsRunning.includes('assignment')) info.assignment = { assignment: policyNames(dir) };
+            if (addOnsRunning.includes('security')) info.security = { security: security.names(), securityOn: security.on };
+            if (addOnsRunning.includes('notification'))
+                info.notification = { notification: notificationPolicyNames(dir), byStatus, total: notifications.length, notify: methods.includes('notify') };
+            const addOns = addOnsOf_();
+            // an add-on that is another's option (Extended Forms, Model Options') has no area of its own
+            const areas = [...INTEGRATION_POINTS, ...addOns.filter(a => !a.partOf).map(a => addOnArea(a))];
+            return areas.map(p => {
+                const settings = settingsOf(p, viewer, this.envFile(), appHostSettings());
+                const addOn = p.addOn ? addOns.find(a => a.name === p.addOn) : undefined;
+                return { ...p, settings, info: info[p.id] ?? {}, summary: summaryOf(p.id, info[p.id] ?? {}, settings),
+                    pending: settings.filter(s => s.pending).length, ...(addOn ? { addOnState: addOn } : {}) };
+            });
+        };
+        // ---- the add-ons (engine/AddOns.ts): each with its manifest, on or off as app-config.json says; the models using it
+        const appConfigFile = () => path.resolve(server.configuration?.appConfig ?? APP_CONFIG_FILE);
+        const addOnsRunning = addOnsOf(server).map(a => a.name);       // as the server started: a change applies when it restarts
+        const addOnsOf_ = () => {
+            const manifests: IAddOnManifest[] = server.configuration?.addOnManifests?.() ?? [];
+            let config = null, problem = null;
+            try { config = readAppConfig(appConfigFile()); } catch (exc) { problem = exc.message; }
+            const dir = folder();
+            const models = (() => { try { return FS.readdirSync(dir).filter(f => f.endsWith('.bpmn')); } catch { return []; } })();
+            return manifests.map(m => {
+                const saved = config?.addOns ? addOnNames(config.addOns).includes(m.name) : true;
+                const uses = models.filter(file => {
+                    const xml = FS.readFileSync(path.join(dir, file), 'utf8');
+                    return m.attributes.some(attr => xml.includes(` ${attr}=`) || xml.includes(` ${attr.replace(/^owf:/, 'camunda:')}=`));
+                }).map(f => f.slice(0, -'.bpmn'.length));
+                return { ...m, on: addOnsRunning.includes(m.name), saved, pending: saved !== addOnsRunning.includes(m.name), models: uses };
+            }).map(a => ({ ...a, problem }));
+        };
+        const settingsPage = (req, res, points, point?) => render(req, res, 'integration', {
+            title: point ? `Settings: ${point.title}` : 'Settings',
+            points, point, addOns: addOnsOf_(), appConfigFile: appConfigFile(),
+            envFile: this.envFile().file, supervisor: supervisor(), separateEngine: !!process.env.ENGINE_AT,
+            message: req.query.message,
+        });
+        // what was /dashboard/integration before 3.7.5, and its areas now an add-on's or renamed
+        const MOVED: Record<string, string> = { notifications: 'notification', policies: 'assignment', forms: 'modeling' };
+        router.get(['/integration', '/integration/:point'], (req, res) => res.redirect(301, '/dashboard/settings' + (req.params.point ? '/' + (MOVED[String(req.params.point)] ?? req.params.point) : '')));
+        // the Policies add-on, before the three it became; and Notifications, its area before
+        router.get(['/settings/notifications', '/settings/policies', '/settings/forms'], (req, res) => res.redirect(301, '/dashboard/settings/' + MOVED[req.path.split('/').pop()]));
+        // the overview: each point, what it has in a few words, and the add-ons; and one point's page, its settings
+        router.get('/settings', mayIntegrate, handler(async (req, res) => settingsPage(req, res, await integrationPoints(req))));
+        // an administrator turns add-ons on and off: app-config.json, read when the server restarts
+        router.post('/settings/add-ons', mayIntegrate, handler(async (req, res) => {
+            const back = (message: string) => res.redirect('/dashboard/settings?message=' + encodeURIComponent(message) + '#add-ons');
+            if (!integrationViewer(req).isAdmin) return back('Nothing saved. Only an administrator turns add-ons on and off.');
+            const known = (server.configuration?.addOnManifests?.() ?? []).map(m => m.name);
+            const on = known.filter(name => req.body?.[`addon:${name}`] === 'on');
+            const file = appConfigFile();
+            let config = {};
+            try { config = readAppConfig(file) ?? {}; } catch (exc) { return back(`Nothing saved. ${exc.message}`); }
+            FS.writeFileSync(file, JSON.stringify({ ...config, addOns: on }, null, 2) + '\n');
+            back(`Saved to ${APP_CONFIG_FILE}: ${on.length ? on.join(', ') : 'no add-ons'} on. It applies when the server restarts.`);
+        }));
+        // one add-on on or off, from its card or its area: the others as app-config.json has them
+        router.post('/settings/add-ons/:name', mayIntegrate, handler(async (req, res) => {
+            const name = String(req.params.name);
+            const back = (message: string) => res.redirect('/dashboard/settings?message=' + encodeURIComponent(message) + '#' + name);
+            if (!integrationViewer(req).isAdmin) return back('Nothing saved. Only an administrator turns add-ons on and off.');
+            const known = (server.configuration?.addOnManifests?.() ?? []).map(m => m.name);
+            if (!known.includes(name)) return res.status(404).send('No such add-on');
+            const file = appConfigFile();
+            let config: any = {};
+            try { config = readAppConfig(file) ?? {}; } catch (exc) { return back(`Nothing saved. ${exc.message}`); }
+            const before: string[] = Array.isArray(config.addOns) ? addOnNames(config.addOns) : known;     // none said: all on; `policies`, the three
+            const on = req.body?.on === 'true' ? [...new Set([...before, name])] : before.filter(n => n !== name);
+            FS.writeFileSync(file, JSON.stringify({ ...config, addOns: known.filter(n => on.includes(n)) }, null, 2) + '\n');
+            back(`Saved to ${APP_CONFIG_FILE}: ${name} ${on.includes(name) ? 'on' : 'off'}. It applies when the server restarts.`);
+        }));
+        router.get('/settings/:point', mayIntegrate, handler(async (req, res) => {
+            const points = await integrationPoints(req);
+            const point = points.find(p => p.id === req.params.point);
+            if (!point) return res.status(404).send('No such settings page');
+            settingsPage(req, res, points, point);
+        }));
+        router.post(['/integration/:point', '/settings/:point'], mayIntegrate, handler(async (req, res) => {
+            const areas = [...INTEGRATION_POINTS, ...(server.configuration?.addOnManifests?.() ?? []).map(m => addOnArea(m))];
+            const point = areas.find(p => p.id === req.params.point);
+            if (!point) return res.status(404).send('No such settings page');
+            const back = (message: string) => res.redirect(`/dashboard/settings/${point.id}?message=` + encodeURIComponent(message));
+            const { changes, problems } = changesFrom(point, req.body ?? {}, integrationViewer(req), this.envFile(), appHostSettings());
+            if (problems.length) return back('Nothing saved. ' + problems.join('; ') + '.');
+            const names = Object.keys(changes);
+            if (!names.length) return back('Nothing changed.');
+            this.envFile().write(changes);
+            back(`Saved to .env: ${names.join(', ')}. ${names.length > 1 ? 'They apply' : 'It applies'} when the server restarts.`);
+        }));
+
         return router;
+    }
+
+    /** The .env the Settings page writes: the application's (envFile), else the working folder's. */
+    private env: EnvFile;
+    envFile(): EnvFile {
+        return this.env ??= new EnvFile(this.webApp.application?.envFile ?? path.resolve('.env'));
     }
 
     /** The models that call each connector (camunda:connectorId <connector>/<operation>), by connector id. */

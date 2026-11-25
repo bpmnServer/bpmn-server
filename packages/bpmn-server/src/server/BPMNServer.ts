@@ -17,6 +17,10 @@ import { Cron } from './Cron.js';
 import { Listener } from './Listener.js';
 import { Connectors } from '../connectors/Connectors.js';
 import type { ILifecycleListener } from '../interfaces/lifecycle.js';
+import { contractProblems, compareWithCode, methodNames, rolePermissionsOf } from '../engine/AppContract.js';
+import { SecureUser } from '../API/SecureUser.js';
+import type { IAddOn } from '../engine/AddOns.js';
+import { Registrations } from '../engine/AddOns.js';
 
 /**
  *	The main class of Server Layer
@@ -65,6 +69,10 @@ class BPMNServer implements IBPMNServer {
 	locker: ILockManager;
 	/** The connectors an administrator added: REST APIs service tasks call (docs/docs/connectors.md). */
 	connectors: Connectors;
+	/** What is built on the engine and plugs into its hooks (engine/AddOns.ts): the configuration's. */
+	addOns: IAddOn[] = [];
+	/** What the add-ons registered where the engine has no event: model checks, decision lookups (engine/AddOns.ts). */
+	registrations = new Registrations();
 	/** What the tests running in here replace: no call of the engine reaches them. */
 	testStubs = new TestStubs(this);
 	error;
@@ -125,6 +133,10 @@ class BPMNServer implements IBPMNServer {
 		this.scriptHandler = configuration.scriptHandler(this);
 		this.locker = configuration.locker ? configuration.locker(this) : this.dataStore.locker;
 		this.connectors = new Connectors(this);
+		// what is built on the engine: the configuration's, none for one that has no addOns (engine/AddOns.ts)
+		this.addOns = typeof configuration.addOns === 'function' ? configuration.addOns(this) ?? [] : [];
+		// each registers for the engine's events it needs
+		for (const addOn of this.addOns) addOn.register?.(this);
 
 		this.logger.log('bpmn-server version ' + BPMNServer.getVersion());
 
@@ -135,8 +147,31 @@ class BPMNServer implements IBPMNServer {
 	}
 	private async start(options) {
 		await this.appDelegate.startUp(options);
+		await this.checkAppContract();
 		if (options['cron'] == false) return;
 		await this.cron.start();
+	}
+	/**
+	 * The application's contract (app-contract.json, docs/design/app-contract.md §5) against its delegate's code, at
+	 * start: its problems, a declared function or variable the code lacks (an error), one the code has that it doesn't
+	 * declare (a warning). Said in the log; nothing stops.
+	 */
+	private async checkAppContract() {
+		const delegate: any = this.appDelegate;
+		let contract;
+		try { contract = typeof delegate?.describe === 'function' ? delegate.describe() : null; }
+		catch (error) { this.logger.log(`[app contract] can not be read: ${error?.message ?? error}`); return; }
+		// the permissions its roles are given, for isAdmin/isDesigner: granting only, so no user loses what they had
+		SecureUser.granted = rolePermissionsOf(contract);
+		if (!contract) return;
+		for (const problem of contractProblems(contract)) this.logger.log(`[app contract] error: ${problem}`);
+		let provider = null;
+		try { provider = await delegate.getServicesProvider(null); } catch { provider = null; }
+		// the delegate itself (DefaultAppDelegate's): its own methods are not the application's functions
+		const services = provider && provider !== delegate ? [...new Set([...methodNames(provider.constructor), ...Object.keys(provider).filter(k => typeof provider[k] === 'function')])] : null;
+		const vars = delegate.appVarsClass ? methodNames(delegate.appVarsClass) : null;
+		for (const { severity, message } of compareWithCode(contract, { services, vars }))
+			this.logger.log(`[app contract] ${severity}: ${message}`);
 	}
 	/** Subscribe without coupling the engine to application implementations. */
 	onLifecycle(listener: ILifecycleListener): () => void {

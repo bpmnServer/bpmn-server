@@ -1,0 +1,12 @@
+{
+  "name": "labels",
+  "title": "Labels",
+  "brief": "What each case and task is called, from its data.",
+  "description": "What each case and task is called (owf:label, owf:endLabel): its text from the case's data, and its values as the lists' columns.",
+  "docs": "add-ons/labels/",
+  "attributes": [
+    "owf:label",
+    "owf:endLabel"
+  ],
+  "settings": []
+}

@@ -6,9 +6,17 @@ import { ScriptHandler } from '../engine/ScriptHandler.js';
 import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames, isFeel, conditionScript } from '../engine/Expressions.js';
 import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
+import { owfAttribute, legacyAttributes } from './owfAttributes.js';
+import { registrationsOf, addOnsOf } from '../engine/AddOns.js';
+import type { IAddOn, IAddOnModelCheck, IAddOnDecisionFile, IModelCheck, IAddOnManifest } from '../engine/AddOns.js';
+import fs from 'node:fs';
+import path from 'node:path';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { DMNParser } from '../dmn/DMNParser.js';
+import { roleNames } from '../engine/Roles.js';
+import { contractNames, readAppContract, APP_CONTRACT_FILE } from '../engine/AppContract.js';
+import type { IAppContract } from '../engine/AppContract.js';
 
 /**
  * Static verification of a BPMN model: reports what would stop the engine from loading or
@@ -35,6 +43,10 @@ interface IModelIssue {
 interface IVerifyOptions {
     /** the folder of the decision files (`<name>.dmn.xml`) business rule tasks name; the server's definitionsPath by default */
     decisionsFolder?: string;
+    /** the add-ons whose checks run too (engine/AddOns.ts); the server's by default, none without a server */
+    addOns?: IAddOn[];
+    /** every add-on's manifest, on or off, for a model that uses one that is off; the server configuration's by default */
+    manifests?: IAddOnManifest[];
 }
 
 interface IModelVerification {
@@ -64,9 +76,72 @@ class ModelVerifier {
 
     constructor(private server?: IBPMNServer, private options: IVerifyOptions = {}) { }
 
+    /**
+     * A model that uses an add-on that is off: its attributes (the add-on's manifest says which) are kept, and the
+     * engine doesn't read them. One warning for each such add-on, naming where.
+     */
+    verifyAddOnsOff(definition) {
+        const manifests: IAddOnManifest[] = this.options.manifests ?? this.server?.configuration?.addOnManifests?.() ?? [];
+        if (!manifests.length) return;
+        const on = new Set((this.options.addOns ?? addOnsOf(this.server)).map(a => a.name));
+        const elements = [...definition.processes.values()].map(p => p.def || p).concat([...definition.nodes.values()].map(n => n.def));
+        for (const manifest of manifests.filter(m => !on.has(m.name))) {
+            const uses = elements.flatMap(def => Object.keys(def?.$attrs ?? {}).filter(k => manifest.attributes.includes(k))
+                .map(k => `${k.replace(/^\w+:/, '')} on ${def.name || def.id}`));
+            for (const element of manifest.elements ?? [])
+                if (this.source?.includes(`<${element}`)) uses.push(element.replace(/^\w+:/, ''));
+            if (!uses.length) continue;
+            const shown = uses.slice(0, 3).join(', ') + (uses.length > 3 ? `, and ${uses.length - 3} more` : '');
+            this.processId = undefined;
+            this.add('warning', 'add-on-off', `This model uses ${manifest.title} (${shown}), which is off; the engine ignores it.`);
+        }
+    }
+
+    /** The model checks the add-ons registered: the server's, else those of the add-ons given. */
+    get modelChecks(): IModelCheck[] {
+        return registrationsOf(this.server, this.options.addOns).modelChecks;
+    }
+
+    /** What an add-on's checks are given: the folder, the roles, and a way to report (engine/AddOns.ts). */
+    get addOnCheck(): IAddOnModelCheck {
+        return {
+            folder: this.decisionsFolder, roles: () => this.roles(), add: (severity, code, message, element) => this.add(severity, code, message, element),
+            hasService: name => this.services ? resolvePath(this.services, name) : undefined,
+            connectorOperation: (ref, element, fails) => this.operationOf(ref, element, fails),
+        };
+    }
+
+    /** Each add-on's model check, in turn; one that throws is a warning. */
+    async addOnChecks(hook: 'verifyNode' | 'verifyProcess', ...args: any[]) {
+        for (const check of this.modelChecks) {
+            if (typeof check[hook] !== 'function') continue;
+            try { await (check[hook] as Function).call(check, this.addOnCheck, ...args); }
+            catch (exc) { this.add('warning', 'add-on-check-failed', `The ${check.name} add-on's check failed: ${exc?.message ?? exc}`); }
+        }
+    }
+
+    /** The decision files the model uses through its add-ons (its policies). */
+    async addOnDecisionFiles(definition): Promise<IAddOnDecisionFile[]> {
+        const folder = this.decisionsFolder;
+        if (!folder) return [];
+        const files: IAddOnDecisionFile[] = [];
+        for (const check of this.modelChecks)
+            try { files.push(...(await check.decisionFiles?.(definition, folder) ?? [])); } catch { /* its own checks say why */ }
+        return files;
+    }
+
     get decisionsFolder(): string {
         return this.options.decisionsFolder
             || (this.server && this.server.configuration && this.server.configuration.definitionsPath) || null;
+    }
+
+    /**
+     * Label templates (owf:label, owf:endLabel): data paths, names once (addons/labels/Labels.ts). And OWF's attributes
+     * still under their old camunda: names (elements/owfAttributes.ts).
+     */
+    checkLabel(def) {
+        for (const name of legacyAttributes(def))
+            this.add('warning', 'owf-attribute-legacy', `camunda:${name} is OWF's, not Camunda's: it is read, and the model editor saves it as owf:${name}.`, def);
     }
 
     add(severity: ModelIssueSeverity, code: string, message: string, element?) {
@@ -88,7 +163,11 @@ class ModelVerifier {
         return (this.server && this.server.appDelegate && this.server.appDelegate.moddleOptions) || defaultModdleOptions;
     }
 
+    /** the model's XML, as it was given */
+    source: string;
+
     async verify(source: string, name: string): Promise<IModelVerification> {
+        this.source = source;
         if (!source || !source.trim()) {
             this.add('error', 'empty-model', 'The model source is empty.');
             return this.result();
@@ -134,7 +213,10 @@ class ModelVerifier {
             const definition = await this.loadDefinition(name, source);
             if (definition) {
                 await this.verifyExecutables(definition);
+                await this.verifyWholeModel(source, definition);
+                await this.verifyContract(source, definition);
                 await this.verifyApplication(name, source, definition);
+                this.verifyAddOnsOff(definition);
             }
         }
         return this.result();
@@ -341,31 +423,9 @@ class ModelVerifier {
                 : 'The task calls a connector but does not name it: choose the connector and its operation.', def);
             return;
         }
-        const connectors = this.server?.connectors;
-        if (!connectors)
+        const operation = await this.operationOf(ref, def, 'the task fails');
+        if (!operation)
             return;
-        const id = ref.slice(0, slash), operationId = ref.slice(slash + 1);
-        const found = await connectors.get(id).catch(() => undefined);
-        if (!found) {
-            this.add('error', 'connector-unknown', `The server has no connector '${id}': an administrator adds it (Administration, Connectors).`, def);
-            return;
-        }
-        if (!found.enabled)
-            this.add('warning', 'connector-disabled', `The connector '${id}' is disabled: the task fails until an administrator enables it.`, def);
-        let operation;
-        try {
-            operation = (await connectors.operations(id)).find(op => op.operationId === operationId);
-        }
-        catch (exc) {
-            this.add('error', 'connector-unreadable', `The connector '${id}' can not be read: ${exc.message}`, def);
-            return;
-        }
-        if (!operation) {
-            this.add('error', 'connector-operation-unknown', `The connector '${id}' has no operation '${operationId}'.`, def);
-            return;
-        }
-        if (!operation.enabled)
-            this.add('warning', 'connector-operation-disabled', `The operation '${ref}' is disabled: the task fails until an administrator enables it.`, def);
         const given = new Set(((connector.io?.parameters ?? []) as any[]).filter(p => p.isInput()).map(p => p.name));
         const bodyFields = operation.body?.schema?.properties ? Object.keys(operation.body.schema.properties) : [];
         const inputs = [
@@ -387,6 +447,41 @@ class ModelVerifier {
                 this.add('warning', 'connector-input-unknown', `'${name}' is not an input of '${ref}': it is not sent.`, def);
     }
 
+    /**
+     * A connector's operation a model names, `<connector>/<operationId>` (already checked to be one), with the server's
+     * connectors: the connector and the operation there and enabled. `fails`: what happens when one is disabled.
+     * Undefined, with the error added, when it is not there; and when the server has no connectors.
+     */
+    async operationOf(ref: string, def, fails: string) {
+        const connectors = this.server?.connectors;
+        if (!connectors)
+            return undefined;
+        const slash = ref.indexOf('/');
+        const id = ref.slice(0, slash), operationId = ref.slice(slash + 1);
+        const found = await connectors.get(id).catch(() => undefined);
+        if (!found) {
+            this.add('error', 'connector-unknown', `The server has no connector '${id}': an administrator adds it (Administration, Connectors).`, def);
+            return undefined;
+        }
+        if (!found.enabled)
+            this.add('warning', 'connector-disabled', `The connector '${id}' is disabled: ${fails} until an administrator enables it.`, def);
+        let operation;
+        try {
+            operation = (await connectors.operations(id)).find(op => op.operationId === operationId);
+        }
+        catch (exc) {
+            this.add('error', 'connector-unreadable', `The connector '${id}' can not be read: ${exc.message}`, def);
+            return undefined;
+        }
+        if (!operation) {
+            this.add('error', 'connector-operation-unknown', `The connector '${id}' has no operation '${operationId}'.`, def);
+            return undefined;
+        }
+        if (!operation.enabled)
+            this.add('warning', 'connector-operation-disabled', `The operation '${ref}' is disabled: ${fails} until an administrator enables it.`, def);
+        return operation;
+    }
+
     async verifyExecutables(definition: Definition) {
         const handler = this.server && this.server.scriptHandler;
         // scripts and expressions are only checked for the built-in JavaScript handler
@@ -395,16 +490,22 @@ class ModelVerifier {
         const services = await this.servicesProvider();
         this.services = services;
 
+        for (const proc of definition.processes.values()) {
+            this.processId = proc.id;
+            await this.addOnChecks('verifyProcess', proc, proc.def || proc);
+        }
         definition.processes.forEach(proc => {
             this.processId = proc.id;
-            if (checkScripts) proc.scripts.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `process '${event}' script`, proc.def || proc)));
+            this.checkLabel(proc.def || proc);
+            if (checkScripts) proc.scripts?.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `process '${event}' script`, proc.def || proc)));
         });
 
         for (const node of definition.nodes.values()) {
             this.processId = node.processId;
             const def = node.def || {};
+            this.checkLabel(def);
             if (checkScripts) {
-                node.scripts.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `'${event}' script`, def)));
+                node.scripts?.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `'${event}' script`, def)));
                 if (node.type == 'bpmn:ScriptTask' && def.script)
                     this.checkScript(def.script, 'script', def);
                 const attrs = def.$attrs || {};
@@ -424,6 +525,7 @@ class ModelVerifier {
 
             const timer = node.getBehaviour(Behaviour_names.TimerEventDefinition);
             if (timer) this.checkTimer(timer, def, checkScripts);
+
 
             const connector = node instanceof ServiceTask ? node.connector : undefined;
             if (connector)
@@ -449,6 +551,8 @@ class ModelVerifier {
             if (node instanceof BusinessRuleTask)
                 await this.checkDecision(node, def);
 
+            await this.addOnChecks('verifyNode', node, def);
+
             if (node instanceof CallActivity && node.calledElement && knownModels && !knownModels.has(node.calledElement))
                 this.add('warning', 'called-model-missing', `Called process '${node.calledElement}' is not a saved model.`, def);
         }
@@ -469,6 +573,114 @@ class ModelVerifier {
         }
         this.processId = undefined;
     }
+
+    /**
+     * The whole model, once, by the add-ons' checks (engine/AddOns.ts, verifyModel): with its source, its definition,
+     * and the decision files it uses (its business rule tasks' and the add-ons' whose actors are read), each its text.
+     */
+    async verifyWholeModel(source: string, definition) {
+        const checks = this.modelChecks.filter(c => typeof c.verifyModel === 'function');
+        if (!checks.length) return;
+        const decisions: { what: string; text: string }[] = [];
+        const folder = this.decisionsFolder;
+        const read = (file: string | null) => { try { return file ? fs.readFileSync(file, 'utf8') : null; } catch { return null; } };
+        if (folder) {
+            const named = new Map<string, string>();     // a file, and what it is
+            for (const { what, file, actors } of await this.addOnDecisionFiles(definition))
+                if (actors !== false) named.set(file, what);
+            for (const node of definition.nodes.values())
+                if (node instanceof BusinessRuleTask && node.decisionRef)
+                    try { named.set((await DMNEngine.find(folder, node.decisionRef)).filePath, `decision ${node.decisionRef}`); } catch { }
+            for (const [file, what] of named) {
+                const text = read(file);
+                if (text) decisions.push({ what, text });
+            }
+        }
+        this.processId = undefined;
+        for (const check of checks) {
+            try { await check.verifyModel(this.addOnCheck, { source, definition, decisions }); }
+            catch (exc) { this.add('warning', 'add-on-check-failed', `The ${check.name} add-on's check failed: ${exc?.message ?? exc}`); }
+        }
+    }
+
+    /**
+     * The roles: the application's contract (app-contract.json), which is where they belong. `roles.json` beside the
+     * models is what they were before 3.7.5: still read when a contract declares none, so an application that has not
+     * moved them keeps working. A bad roles.json is an error.
+     */
+    roles(): string[] | null {
+        if (this.#roles !== undefined) return this.#roles;
+        const declared = this.contract()?.roles?.map(r => r.name) ?? null;
+        if (declared?.length) return this.#roles = [...new Set(declared)];
+        let fromFile: string[] | null = null;
+        try { fromFile = this.decisionsFolder ? roleNames(this.decisionsFolder) : null; }
+        catch (exc) { this.add('error', 'roles-invalid', exc.message); }
+        this.#roles = fromFile?.length ? [...new Set(fromFile)] : declared ?? fromFile;
+        return this.#roles;
+    }
+
+    /** The application's contract (its delegate's describe(): app-contract.json), or null. */
+    contract(): IAppContract | null {
+        if (this.#contract !== undefined) return this.#contract;
+        const delegate = this.server && (this.server as any).appDelegate;
+        // the delegate's describe(); with no delegate (the command line's verify), the application folder's file
+        try { this.#contract = typeof delegate?.describe === 'function' ? delegate.describe() ?? null : readAppContract(path.resolve(APP_CONTRACT_FILE)).contract; }
+        catch (exc) { this.add('warning', 'contract-unreadable', `The application's contract can not be read: ${exc.message}`); this.#contract = null; }
+        return this.#contract;
+    }
+    #contract: IAppContract | null | undefined = undefined;
+
+    /**
+     * The model against the application's contract (docs/design/app-contract.md §5), when it has one: each
+     * appServices.<name> a function it declares, with as many arguments as it takes; each appVars.<name> a variable it
+     * declares; each app:<page> form key one of its pages; and no decision the model uses (its business rule tasks',
+     * its policies) calling a function that changes things (effect write). Warnings, but the last: the contract is
+     * guidance; the model runs as it is.
+     */
+    async verifyContract(source: string, definition?) {
+        const contract = this.contract();
+        if (!contract) return;
+        const names = contractNames(contract);
+        const text = decodeXml(source);
+        const reported = new Set<string>();
+        const once = (key: string, report: () => void) => { if (!reported.has(key)) { reported.add(key); report(); } };
+        if (contract.expressions) {
+            for (const call of appServicesCalls(text)) {
+                const fn = names.functions.get(call.name);
+                if (!fn) once('f:' + call.name, () => this.add('warning', 'function-unknown', `appServices.${call.name}: ${APP_CONTRACT_FILE} declares no such function (${[...names.functions.keys()].join(', ') || 'none'}).`));
+                else if (call.args !== null && fn.params && call.args !== fn.params.length)
+                    once(`a:${call.name}:${call.args}`, () => this.add('warning', 'function-arguments', `appServices.${call.name} is called with ${call.args} argument${call.args === 1 ? '' : 's'}; it takes ${fn.params.length} (${fn.params.map(p => p.name).join(', ')}).`));
+            }
+            for (const [, name] of text.matchAll(/\bappVars\s*\.\s*([A-Za-z_$][\w$]*)/g))
+                if (!names.vars.has(name)) once('v:' + name, () => this.add('warning', 'variable-unknown', `appVars.${name}: ${APP_CONTRACT_FILE} declares no such variable (${[...names.vars.keys()].join(', ') || 'none'}).`));
+        }
+        if (contract.pages)
+            for (const [, page] of text.matchAll(/\bformKey\s*=\s*"app:([^"]+)"/g))
+                if (!names.pages.includes(page)) once('p:' + page, () => this.add('warning', 'page-unknown', `Form key app:${page}: ${APP_CONTRACT_FILE} has no page '${page}' (${names.pages.join(', ') || 'none'}).`));
+        // the decisions it uses: none may call a function that changes things
+        const writes = [...names.functions.values()].filter(f => f.effect === 'write').map(f => f.name);
+        if (!writes.length || !this.decisionsFolder) return;
+        for (const { what, file } of await this.decisionFilesUsed(text, definition)) {
+            let table: string;
+            try { table = decodeXml(fs.readFileSync(file, 'utf8')); } catch { continue; }
+            for (const call of appServicesCalls(table))
+                if (writes.includes(call.name))
+                    once(`w:${what}:${call.name}`, () => this.add('error', 'function-write-in-decision', `${what} calls appServices.${call.name}, which changes things (effect write): a decision may only read.`));
+        }
+    }
+
+    /** The decision files a model uses: its business rule tasks' decisions and its add-ons' (the policies it names). */
+    async decisionFilesUsed(text: string, definition?): Promise<{ what: string; file: string }[]> {
+        const folder = this.decisionsFolder, out = [];
+        const add = (what: string, file: string | null) => { if (file && fs.existsSync(file)) out.push({ what, file }); };
+        for (const [, ref] of text.matchAll(/\bdecisionRef\s*=\s*"([^"]+)"/g))
+            add(`Decision '${ref}'`, [path.join(folder, ref), path.join(folder, ref + '.dmn'), path.join(folder, ref + '.dmn.xml')].find(f => fs.existsSync(f)) ?? null);
+        if (definition)
+            for (const { what, file, calls } of await this.addOnDecisionFiles(definition))
+                if (calls !== false) add(what.charAt(0).toUpperCase() + what.slice(1), file);
+        return out;
+    }
+    #roles: string[] | null | undefined = undefined;
 
     /**
      * A business rule task's decision: named, found in the decisions folder, readable and valid, and its result
@@ -645,3 +857,29 @@ async function verifyModel(source: string, server?: IBPMNServer, name = 'model',
 
 export { verifyModel, ModelVerifier };
 export type { IModelIssue, IModelVerification, ModelIssueSeverity, IVerifyOptions };
+
+/** A model's or a table's text as its expressions read: XML's entities decoded. */
+function decodeXml(text: string): string {
+    return String(text ?? '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&#10;/g, '\n').replace(/&amp;/g, '&');
+}
+
+/** Each appServices.<name> a text reads, and how many arguments it is called with (null: not called there). */
+function appServicesCalls(text: string): { name: string; args: number | null }[] {
+    const calls = [];
+    for (const m of text.matchAll(/\bappServices\s*\.\s*([A-Za-z_$][\w$]*)\s*(\()?/g)) {
+        if (!m[2]) { calls.push({ name: m[1], args: null }); continue; }
+        // its arguments: the commas at its own depth, up to its closing parenthesis
+        let depth = 0, args = 0, any = false, quote: string | null = null;
+        for (let i = m.index + m[0].length; i < text.length; i++) {
+            const c = text[i];
+            if (quote) { if (c === '\\') i++; else if (c === quote) quote = null; continue; }
+            if (c === '"' || c === "'" || c === '`') { quote = c; any = true; continue; }
+            if (c === '(' || c === '[' || c === '{') { depth++; any = true; continue; }
+            if (c === ')' || c === ']' || c === '}') { if (depth === 0) break; depth--; continue; }
+            if (c === ',' && depth === 0) { args++; continue; }
+            if (!/\s/.test(c)) any = true;
+        }
+        calls.push({ name: m[1], args: any ? args + 1 : 0 });
+    }
+    return calls;
+}

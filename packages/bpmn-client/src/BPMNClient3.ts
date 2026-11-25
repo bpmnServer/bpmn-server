@@ -25,6 +25,8 @@ export interface BPMNClient3Options {
 
 export interface Page<T = any> { items: T[]; next?: string }
 export interface PageOptions { limit?: number; cursor?: string }
+/** A filter by label: a named value of the models' case labels that contains (or is) a value, or a search of them all. */
+export interface LabelFilter { field?: string; op?: 'contains' | 'is'; value?: string; search?: string }
 
 /** A call the API refused: its status, and the error's code (`TASK_NOT_FOUND`, `TOKEN_INVALID`, ...). */
 export class BPMNApiError extends Error {
@@ -200,11 +202,12 @@ class Processes3 extends Area3 {
 /** This user's tasks. */
 class Tasks3 extends Area3 {
     /** Waiting tasks this user has a part in (oldest first), or with status 'completed' the ones they completed. */
-    list(options: PageOptions & { status?: 'waiting' | 'completed' } = {}): Promise<Page> {
+    /** Each with its `label` and its case's `caseLabel`; `model` and a LabelFilter narrow it. */
+    list(options: PageOptions & LabelFilter & { status?: 'waiting' | 'completed'; model?: string } = {}): Promise<Page> {
         return this.client.call('GET', '/tasks', { query: options });
     }
     /** Every task of the list, page after page. */
-    each(options: { status?: 'waiting' | 'completed'; limit?: number } = {}) {
+    each(options: LabelFilter & { status?: 'waiting' | 'completed'; model?: string; limit?: number } = {}) {
         return this.client.each(page => this.list({ ...options, ...page }), options);
     }
     /** One task, with its instance's data and its form: { ..., form: { fields, formKey } }. */
@@ -219,11 +222,11 @@ class Tasks3 extends Area3 {
 
 /** The instances this user may see. */
 class Instances3 extends Area3 {
-    /** Newest first: { items, next }. */
-    list(options: PageOptions & { status?: string; name?: string } = {}): Promise<Page> {
+    /** Newest first: { items, next }, each with its `label`; `name` (the model) and a LabelFilter narrow it. */
+    list(options: PageOptions & LabelFilter & { status?: string; name?: string } = {}): Promise<Page> {
         return this.client.call('GET', '/instances', { query: options });
     }
-    each(options: { status?: string; name?: string; limit?: number } = {}) {
+    each(options: LabelFilter & { status?: string; name?: string; limit?: number } = {}) {
         return this.client.each(page => this.list({ ...options, ...page }), options);
     }
     /** One instance, with its data and items. */

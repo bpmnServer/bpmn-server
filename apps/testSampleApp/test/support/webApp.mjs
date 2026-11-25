@@ -59,6 +59,9 @@ function definitionsFolder() {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-defs-'));
     for (const file of FIXTURE_MODELS)
         fs.copyFileSync(path.join(FIXTURES, file), path.join(dir, file));
+    // the application's contract, copied so a test that adds or removes a role writes this run's own (APP_CONTRACT)
+    const contract = path.join(ROOT, 'app-contract.json');
+    if (fs.existsSync(contract)) fs.copyFileSync(contract, path.join(dir, 'app-contract.json'));
     return dir + path.sep;
 }
 
@@ -76,7 +79,10 @@ function startEngineProcess(port = '0') {
     });
 }
 
-export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true, userManager, hostSettings } = {}) {
+export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true, userManager, hostSettings, envFile, engineCalls } = {}) {
+    // the .env the Settings page writes: a file of this test's own, never the folder's
+    const envDir = envFile ? null : fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-env-'));
+    envFile ??= path.join(envDir, '.env');
     const dbUrl = testDatabaseUrl();
     // TEST_DATABASE=sqlite: the same tests on a SQLite file of this app's own (DATABASE=sqlite:<file>)
     const sqliteDir = process.env.TEST_DATABASE === 'sqlite' ? fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-sqlite-')) : null;
@@ -125,18 +131,24 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
         constructor(server) { super(server); embedded = server; }
     }
     const webApp = new WebApp({
-        configuration: webConfiguration(config(), TestDelegate),
+        // which add-ons are on: the test's own app-config.json, beside its .env (none: every one)
+        // appContract: this run's own copy of the application's contract (its roles), so a test that adds or
+        // removes a role does not write the repository's app-contract.json
+        configuration: webConfiguration({ ...config(), appConfig: path.join(path.dirname(envFile), 'app-config.json'),
+            appContract: path.join(definitionsPath, 'app-contract.json') }, TestDelegate),
         elementTemplatesPath: connectorsPath,
-        serverOptions: { cron: false },
+        // the application's own engine calls (start({ engineCalls })), added to bpmn-web's
+        serverOptions: { cron: false, ...(engineCalls ? { calls: engineCalls } : {}) },
         // an application's own sign-in (IUserManager): bpmn-web then keeps no users of its own
         userManager,
         // the API's settings of this server (keys, service account), else .env's
         hostSettings,
+        envFile,
     });
     const bpmnServer = webApp.bpmnServer;
     await bpmnServer.ready;
-    await bpmnServer.dataStore.install?.();
-    await bpmnServer.definitions.rebuild();
+    // the engine sets up its own stores and its index of the models (docs/design/engine-isolation.md)
+    if (bpmnServer.engine.running) await bpmnServer.engine.install({ rebuild: true });
 
     // users: false, a server's first start: no users at all
     for (const [userName, userGroups] of users && !userManager ? Object.entries(USERS) : [])
@@ -151,7 +163,7 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     const base = `http://127.0.0.1:${webApp.server.address().port}`;
 
     const web = {
-        base, webApp, bpmnServer, definitionsPath, dbUrl, embedded,
+        base, webApp, bpmnServer, definitionsPath, dbUrl, embedded, envFile, appConfigFile: path.join(path.dirname(envFile), 'app-config.json'),
         engineAt: engineProcess?.at, enginePid: engineProcess?.child.pid,
         /** Killed, not asked to stop: what a crash leaves behind. */
         async killEngine() {
@@ -195,6 +207,7 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
             } catch { /* best effort */ }
             await mongoose.disconnect().catch(() => { });
             fs.rmSync(definitionsPath, { recursive: true, force: true });
+            if (envDir) fs.rmSync(envDir, { recursive: true, force: true });
             if (sqliteDir) {
                 // what the store's last writes started ends first: exiting on it crashes Node on Windows (UV_HANDLE_CLOSING)
                 await new Promise(resolve => setTimeout(resolve, 200));

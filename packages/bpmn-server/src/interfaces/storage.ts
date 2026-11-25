@@ -14,8 +14,12 @@ export type StorageProjection = Record<string, 0 | 1 | any> | null;
 export type StorageSort = Record<string, 1 | -1> | null;
 
 export interface IDocumentStore {
-    /** Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's db name; ignored by single-database adapters). */
-    find(database: string, collection: string, query: StorageQuery, projection?: StorageProjection, sort?: StorageSort): Promise<any[]>;
+    /**
+     * Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's
+     * db name; ignored by single-database adapters). `limit`: at most that many, the first after sorting; optional, so
+     * an adapter written before it may return more, and callers cut the answer to it themselves.
+     */
+    find(database: string, collection: string, query: StorageQuery, projection?: StorageProjection, sort?: StorageSort, limit?: number): Promise<any[]>;
     /** How many documents of `collection` match `query`. Optional: without it, callers count what {@link find} returns. */
     count?(database: string, collection: string, query: StorageQuery): Promise<number>;
     /** Inserts all of `documents`, or none: a unique-index conflict throws a {@link DuplicateKeyError}; any other failure throws as it is. Returns how many were inserted. */

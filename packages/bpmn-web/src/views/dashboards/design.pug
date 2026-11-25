@@ -36,6 +36,8 @@ mixin runButton(field, name)
 
 block intro
 	p.dash-intro The models, what their checks find, their tests, decisions and configured tasks.
+		|  Each scenario's last case:#{' '}
+		a#test-cases-link(href='/test-cases') Test cases
 
 block dash
 	.dash-grid
@@ -60,9 +62,14 @@ block dash
 				.dash-stat
 					b= decisions.length
 					span decisions
-				.dash-stat
-					b= templates.length
-					span task templates
+				if typeof addOnOn === 'undefined' || addOnOn('policies')
+					.dash-stat
+						b= policies.assignment.length + policies.security.length
+						span policies
+				if templatesOn
+					.dash-stat
+						b= templates.length
+						span task templates
 			//- a div: a form (Run all tests) can not be inside a p
 			div(style='margin:14px 0 0')
 				a.btn.btn-primary.btn-sm(href='/model/new') New model
@@ -113,27 +120,84 @@ block dash
 									+runButton('decision', d.name)
 			else
 				p.dash-empty No decision tables (.dmn) in the models folder.
-			h2(style='margin-top:18px') Task templates
-				span.count= templates.length
-			if templates.length
-				table
-					each t in templates
-						tr
-							td= t.name
-							td.dash-muted= (t.appliesTo || []).join(', ').replace(/bpmn:/g, '')
-			else
-				p.dash-empty No element templates.
-			if rejectedTemplates.length
-				p.dash-muted #{rejectedTemplates.length} template file(s) left out: #{rejectedTemplates.map(r => r.file).join(', ')}
+			if typeof addOnOn === 'undefined' || addOnOn('policies')
+				//- the policies of the models folder (docs/docs/assignment-policies.md, docs/design/security-policies.md, docs/docs/notification-policies.md)
+				h2#policies(style='margin-top:18px') Policies
+					span.count= policies.assignment.length + policies.security.length + policies.notification.length
+				if policies.assignment.length || policies.security.length || policies.notification.length
+					table
+						each p in policies.assignment
+							tr(data-policy=`assignment/${p.name}`)
+								td: a(href=`/model/policy/${encodeURIComponent(p.name)}`)= p.name
+								td.dash-muted assignment
+								td
+									if p.tests
+										a(href=`/model/policy/${encodeURIComponent(p.name)}#tests`) #{p.tests} test#{p.tests === 1 ? '' : 's'}
+								td.dash-muted
+									if p.models.length
+										| used by #{p.models.join(', ')}
+									else
+										| not used
+						each p in policies.security
+							tr(data-policy=`security/${p.name}`)
+								td: a(href=`/model/security-policy/${encodeURIComponent(p.name)}`)= p.name
+								td.dash-muted security
+								td
+									if p.tests
+										a(href=`/model/security-policy/${encodeURIComponent(p.name)}#tests`) #{p.tests} test#{p.tests === 1 ? '' : 's'}
+								td.dash-muted
+									if p.isDefault
+										| the default: every process that names none
+										if p.models.length
+											| ; named by #{p.models.join(', ')}
+									else if p.models.length
+										| used by #{p.models.join(', ')}
+									else
+										| not used
+						each p in policies.notification
+							tr(data-policy=`notification/${p.name}`)
+								td: a(href=`/model/notification-policy/${encodeURIComponent(p.name)}`)= p.name
+								td.dash-muted notification
+								td
+									if p.tests
+										a(href=`/model/notification-policy/${encodeURIComponent(p.name)}#tests`) #{p.tests} test#{p.tests === 1 ? '' : 's'}
+								td.dash-muted
+									if p.models.length
+										| used by #{p.models.join(', ')}
+									else
+										| not used
+					if policies.security.length && !policies.securityOn
+						p.dash-muted Security policies are off (SECURITY_POLICY=off).
+				else
+					p.dash-empty No policies (assignment/, security/, notification/ in the models folder).
+			if templatesOn
+				h2(style='margin-top:18px') Task templates
+					span.count= templates.length
+				if templates.length
+					table
+						each t in templates
+							tr
+								td= t.name
+								td.dash-muted= (t.appliesTo || []).join(', ').replace(/bpmn:/g, '')
+				else
+					p.dash-empty No element templates.
+				if rejectedTemplates.length
+					p.dash-muted #{rejectedTemplates.length} template file(s) left out: #{rejectedTemplates.map(r => r.file).join(', ')}
 
 		section.dash-card.wide#models
 			a#tests
 			h2 Models
 				span.count= models.length
-			p.dash-muted Models with errors first; search, or click a heading to sort. Run a model's tests here, or open it to see its Problems list and its tests (the Test tab).
+			p.dash-muted Models with errors first; search, choose a feature to see the models that use it and where, or click a heading to sort. Run a model's tests here, or open it to see its Problems list and its tests (the Test tab).
 			if models.length
 				//- search by name or description; click a heading to sort by it, again to reverse
-				input#model-search.form-control.input-sm(type='search', placeholder='Search models', aria-label='Search models', style='max-width:280px; margin:6px 0 10px')
+				.model-filters(style='display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 10px')
+					input#model-search.form-control.input-sm(type='search', placeholder='Search models', aria-label='Search models', style='max-width:280px')
+					//- the features the models use (docs/features.yaml's markers): the models that use one, and where
+					select#feature-filter.form-control.input-sm(aria-label='Models that use a feature', style='max-width:280px')
+						option(value='') Any feature
+						each f in (featureUse || [])
+							option(value=f.id)= `${f.name} (${f.models})`
 				table#models-table
 					tr.sort-head
 						th(data-sort='name') Model
@@ -149,11 +213,13 @@ block dash
 						tr.model-row(data-name=m.name.toLowerCase(), data-text=(m.name + ' ' + (m.description || '')).toLowerCase(),
 							data-checks=(m.errors || 0) * 1000 + (m.warnings || 0), data-tests=m.tests || 0,
 							data-coverage=m.coverage ? m.coverage.percent : -1, data-run=r ? (r.failed ? -r.failed : r.passed) : -1000,
-							data-versions=m.versions || 0, data-changed=m.saved ? new Date(m.saved).getTime() : 0)
+							data-versions=m.versions || 0, data-changed=m.saved ? new Date(m.saved).getTime() : 0,
+							data-where=JSON.stringify(Object.fromEntries((m.features || []).map(f => [f.id, f.at]))))
 							td
 								a(href=`/model/edit/${encodeURIComponent(m.name)}`)= m.name
 								if m.description
 									.dash-muted.model-description(title=m.description)= m.description
+								.model-feature-where.dash-muted(hidden)
 							td: +checks(m)
 							td= m.tests ? m.tests + ' scenario' + (m.tests === 1 ? '' : 's') : ''
 							td: +coverage(m)
@@ -167,16 +233,35 @@ block dash
 				script.
 					(function () {
 						var table = document.getElementById('models-table'), search = document.getElementById('model-search');
+						var feature = document.getElementById('feature-filter');
 						var rows = function () { return Array.prototype.slice.call(table.querySelectorAll('tr.model-row')); };
-						search.addEventListener('input', function () {
-							var words = search.value.toLowerCase().split(/\s+/).filter(Boolean), shown = 0;
+						// the words searched, and the feature chosen: a model that uses it shows where, each a link into the editor
+						var filter = function () {
+							var words = search.value.toLowerCase().split(/\s+/).filter(Boolean), chosen = feature.value, shown = 0;
 							rows().forEach(function (row) {
-								var match = words.every(function (w) { return row.dataset.text.indexOf(w) >= 0; });
+								var where = JSON.parse(row.dataset.where || '{}')[chosen];
+								var match = words.every(function (w) { return row.dataset.text.indexOf(w) >= 0; }) && (!chosen || !!where);
 								row.hidden = !match;
 								if (match) shown++;
+								var box = row.querySelector('.model-feature-where');
+								box.textContent = '';
+								box.hidden = !chosen || !where;
+								if (!chosen || !where) return;
+								var name = row.querySelector('a').getAttribute('href');
+								box.appendChild(document.createTextNode('At: '));
+								where.forEach(function (id, i) {
+									if (i) box.appendChild(document.createTextNode(', '));
+									var link = document.createElement('a');
+									link.href = name + '#element=' + encodeURIComponent(id);
+									link.textContent = id;
+									link.title = 'Open the model at ' + id;
+									box.appendChild(link);
+								});
 							});
 							document.getElementById('model-search-none').hidden = shown > 0;
-						});
+						};
+						search.addEventListener('input', filter);
+						feature.addEventListener('change', filter);
 						var current = null, ascending = true;
 						table.querySelectorAll('th[data-sort]').forEach(function (th) {
 							th.style.cursor = 'pointer';

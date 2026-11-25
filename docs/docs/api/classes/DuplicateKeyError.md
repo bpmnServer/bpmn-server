@@ -53,7 +53,7 @@ Error.constructor
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L36)
+[packages/bpmn-server/src/interfaces/storage.ts:40](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L40)
 
 ## Properties
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L35)
+[packages/bpmn-server/src/interfaces/storage.ts:39](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L39)
 
 ## Methods
 
@@ -261,4 +261,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L40)
+[packages/bpmn-server/src/interfaces/storage.ts:44](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L44)

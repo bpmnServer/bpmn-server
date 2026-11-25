@@ -22,6 +22,9 @@ const BY_CODE = {
     'decision-invalid': () => ['decisionRef'],
     'decision-input-from-data': () => ['decisionRef'],
     'decision-result-not-saved': () => ['decision-resultVariable'],
+    'assignment-policy-not-found': () => ['assignment-policy'],
+    'assignment-policy-invalid': () => ['assignment-policy'],
+    'assignment-policy-output': () => ['assignment-policy'],
     'script-syntax': fieldsOfScript,
     'unknown-app-service': fieldsOfScript,
     'expression-syntax': fieldsOfScript

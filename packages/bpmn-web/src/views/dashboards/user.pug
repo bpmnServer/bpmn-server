@@ -1,30 +1,43 @@
 extends layout
 
 include ../includes/startForm.pug
+include ../includes/labelFilter.pug
+include ../includes/listColumns.pug
 
+//- a waiting task's row: the columns shown, in the person's order (routes/listView.ts); its name opens it
 mixin taskRow(item)
+	- item.href = `/invokeItem?id=${item.id}&processName=${item.processName}&elementId=${item.elementId}`
 	tr
-		td
-			a(href=`/invokeItem?id=${item.id}&processName=${item.processName}&elementId=${item.elementId}`)= item.name || item.elementId
-		td= item.processName
-		td= item.fromNow
-		td= item.dueDate ? new Date(item.dueDate).toLocaleDateString() : ''
+		each h in listView ? listView.layout : [{ key: '@task' }, { key: '@case' }, { key: '@process' }, { key: '@waiting' }, { key: '@due' }]
+			+taskCell(h.key, item)
+
+//- the waiting tasks' headings
+mixin taskHeadings()
+	tr
+		if listView
+			+listHeadings(listView)
+		else
+			th Task
+			th Case
+			th Process
+			th Waiting
+			th Due
 
 block intro
 	p.dash-intro Tasks waiting for you, the ones you completed, and the processes you can start.
 
 block dash
+	if labelFilter
+		+labelFilter(labelFilter)
+	if listView
+		+listColumnsPicker(listView)
 	.dash-grid
 		section.dash-card#my-tasks
 			h2 Assigned to me
 				span.count= mine.length
 			if mine.length
 				table
-					tr
-						th Task
-						th Process
-						th Waiting
-						th Due
+					+taskHeadings()
 					each item in mine
 						+taskRow(item)
 			else
@@ -36,11 +49,7 @@ block dash
 			p.dash-muted Not assigned yet: for you, for one of your groups, or for anyone.
 			if available.length
 				table
-					tr
-						th Task
-						th Process
-						th Waiting
-						th Due
+					+taskHeadings()
 					each item in available
 						+taskRow(item)
 			else
@@ -53,11 +62,18 @@ block dash
 				table
 					tr
 						th Task
+						th Case
 						th Process
 						th Completed
 					each item in completed
 						tr
-							td= item.name || item.elementId
+							td
+								= item.name || item.elementId
+								if item.test
+									span.test-mark(title="A test run's case") test
+								if item.ownLabel
+									.task-label= item.ownLabel
+							td= item.caseLabel && item.caseLabel !== item.processName ? item.caseLabel : ''
 							td
 								a(href=`/instanceDetails?id=${item.instanceId}`)= item.processName
 							td= item.fromNow
@@ -74,6 +90,8 @@ block dash
 							b= start.processName
 							if start.name !== start.processName
 								|  · #{start.name}
+						p.dash-muted
+							a.guide-link(href=`/guide/${encodeURIComponent(start.processName)}`) How #{start.processName} goes
 						+startForm(start)
 			else
 				p.dash-empty No process can be started by hand.

@@ -1,0 +1,41 @@
+//- Notifications, as a notification policy made them (docs/docs/notification-policies.md): kept in wf_notifications,
+//- delivered or not. On an instance's page (its own: withInstance false) and on the Notifications page.
+mixin notificationsTable(list, withInstance)
+  - var when = d => { const t = new Date(d); return isNaN(t) ? '' : t.toLocaleString(); }
+  table.instance-table.notifications-table
+    thead
+      tr
+        th(scope="col") When
+        if withInstance
+          th(scope="col") Instance
+        th(scope="col") Task
+        th(scope="col") Event
+        th(scope="col") To
+        th(scope="col") Message
+        th(scope="col") Channel
+        th(scope="col") Status
+    tbody
+      each n in list
+        tr(data-notification=n.id, data-status=n.status, data-event=n.event)
+          td.text-nowrap #{when(n.createdAt)}
+          if withInstance
+            td
+              a(href=`/instanceDetails?id=${encodeURIComponent(n.instanceId)}`) #{n.instanceName}
+              if n.test
+                span.label.label-default(style='margin-left: 6px', title="A test run's: kept, not delivered") test
+          td #{n.elementId || '—'}
+          td #{n.event}
+          td #{(n.to || []).join(', ')}
+          td
+            if n.message && n.message !== n.subject
+              details
+                summary #{n.subject || '(no subject)'}
+                pre.notification-message #{n.message}
+            else
+              | #{n.subject || n.message || '—'}
+            .instance-hint policy #{n.policy}, rule #{n.rule}#{n.template ? `, template ${n.template}` : ''}
+          td #{n.channel || '—'}
+          td(title=n.error || undefined)
+            | #{n.status === 'recorded' ? 'kept, not delivered' : n.status}
+            if n.error
+              .instance-hint #{n.error}

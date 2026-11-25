@@ -31,11 +31,11 @@
 
 ### behaviours
 
-▪ `Static` **behaviours**: (\{ `name`: `string` = Behaviour\_names.CamundaFormData; `funct`: (`node`: `any`, `def`: `any`) => [`CamundaFormData`](CamundaFormData.md)  } \| \{ `name`: `string` = Behaviour\_names.SignalEventDefinition; `funct`: (`node`: `any`, `def`: `any`) => [`SignalEventBehaviour`](SignalEventBehaviour.md)  } \| \{ `name`: `string` = Behaviour\_names.CamundaScript2; `funct`: (`node`: `any`, `def`: `any`) => [`ScriptBehaviour`](ScriptBehaviour.md)  } \| \{ `name`: `string` = Behaviour\_names.TerminateEventDefinition; `funct`: (`node`: `any`, `def`: `any`) => [`TerminateBehaviour`](TerminateBehaviour.md)  })[]
+▪ `Static` **behaviours**: (\{ `name`: `string` = Behaviour\_names.CamundaFormData; `funct`: (`node`: `any`, `def`: `any`) => [`CamundaFormData`](CamundaFormData.md)  } \| \{ `name`: `string` = Behaviour\_names.CamundaScript2; `funct`: (`node`: `any`, `def`: `any`) => [`ScriptBehaviour`](ScriptBehaviour.md)  } \| \{ `name`: `string` = Behaviour\_names.TerminateEventDefinition; `funct`: (`node`: `any`, `def`: `any`) => [`TerminateBehaviour`](TerminateBehaviour.md)  })[]
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L43)
+[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:43](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L43)
 
 ## Methods
 
@@ -61,7 +61,7 @@ at start, before servers load definitions.
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:132](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L132)
+[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:132](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L132)
 
 ___
 
@@ -116,4 +116,4 @@ example:
 
 #### Defined in
 
-[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:174](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L174)
+[packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts:174](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/elements/behaviours/BehaviourLoader.ts#L174)

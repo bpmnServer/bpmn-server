@@ -33,6 +33,8 @@ export interface WorkflowApplication {
 	userManager?: IUserManager;
 	/** The API's settings (keys, service account, impersonation) of this server; default `.env`'s (hostSettings.ts). */
 	hostSettings?: HostSettingsSource;
+	/** The .env file the Settings page (/dashboard/settings) changes; default the working folder's `.env`. */
+	envFile?: string;
 }
 
 export function defineWorkflowApplication(application: WorkflowApplication): WorkflowApplication {

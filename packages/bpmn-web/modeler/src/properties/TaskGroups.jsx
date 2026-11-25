@@ -16,8 +16,8 @@ function ExceptionsAsErrorsField({ element, id }) {
         id={id}
         label={translate('Exceptions raise a BPMN error')}
         description={translate('When the service or connector can not be called, or the script throws, a BPMN error is raised: its code is the exception\'s code (ECONNREFUSED, ETIMEDOUT), else its name (TypeError). An error event with no error catches any. Unchecked, the instance stops at the task, which can be retried.')}
-        getValue={() => Boolean(getBusinessObject(element).get('camunda:exceptionsAsErrors'))}
-        setValue={value => modeling.updateProperties(element, { 'camunda:exceptionsAsErrors': value || undefined })}
+        getValue={() => Boolean(getBusinessObject(element).get('owf:exceptionsAsErrors'))}
+        setValue={value => modeling.updateProperties(element, { 'owf:exceptionsAsErrors': value || undefined })}
     />;
 }
 

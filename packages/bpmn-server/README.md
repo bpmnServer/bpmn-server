@@ -23,7 +23,7 @@ cd my-app
 npm start                        # http://localhost:3000
 ```
 
-Open your browser to [http://localhost:3000](http://localhost:3000). The first page asks for the administrator, with the setup token the server printed when it started.
+Open your browser to [http://localhost:3000](http://localhost:3000). Sign in as `admin`, with the password the server prints when it first starts.
 
 `init` creates the sample application, with `bpmn-server` and `bpmn-web` as its dependencies;
 `npx bpmn-server init --help` lists its options, and `--minimal` creates a one-model Hello application
@@ -160,7 +160,7 @@ Features include:
 
 ## Live Demo
 
-A live demo is available at: [https://bpmn.omniworkflow.com](https://bpmn.omniworkflow.com)
+Two live demos: [demo.omniworkflow.com](https://demo.omniworkflow.com), an HR application with the engine inside it (read-only), and [try.omniworkflow.com](https://try.omniworkflow.com), the workbench to build your own workflows in.
 
 ## Installation
 

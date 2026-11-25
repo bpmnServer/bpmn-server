@@ -138,15 +138,19 @@ class Cron  extends ServerComponent implements ICron {
 		if (delay === null || !Number.isFinite(delay)) return;
 		const ms = Math.max(delay * 1000, 100);
 		const due = Date.now() + ms;
-		this.logger.log('scheduling process ' + entry.modelName + ' at ' + new Date(due));
 		const key = 'process:' + entry.modelName + ':' + entry.elementId;
 		// the occurrence, as stored and the same for every server: a due time worked out here would differ between them when overdue
 		const occurrence = entry.referenceDateTime ?? Math.round(due / 1000);
-		this.schedule(key, ms, undefined, () => this.fireClaimed(`timer:${key}:${occurrence}`, () => this.processTimerExpired(entry)));
+		// said once: a timer already scheduled here (the start's check, then the re-read) is not scheduled again
+		if (this.schedule(key, ms, undefined, () => this.fireClaimed(`timer:${key}:${occurrence}`, () => this.processTimerExpired(entry))))
+			this.logger.log('scheduling process ' + entry.modelName + ' at ' + new Date(due));
 	}
-	/** One timer, owned by this server, once per key; a delay longer than `setTimeout` takes is waited out in steps. */
-	private schedule(key: string, delayMs: number, instanceId: string | undefined, fire: () => Promise<void>) {
-		if (this.stopped || this.scheduled.has(key)) return;
+	/**
+	 * One timer, owned by this server, once per key; a delay longer than `setTimeout` takes is waited out in steps.
+	 * Whether it was scheduled now (false: stopped, or already scheduled).
+	 */
+	private schedule(key: string, delayMs: number, instanceId: string | undefined, fire: () => Promise<void>): boolean {
+		if (this.stopped || this.scheduled.has(key)) return false;
 		const delay = Math.max(Number.isFinite(delayMs) ? delayMs : 0, 1);
 		const step = Math.min(delay, MAX_DELAY);
 		const timeout = setTimeout(() => {
@@ -157,6 +161,7 @@ class Cron  extends ServerComponent implements ICron {
 		}, step);
 		this.scheduled.set(key, { timeout, instanceId });
 		this.counters.scheduled++;
+		return true;
 	}
 	/** Fires `fire` when this server wins the claim on `claim`; otherwise another server has fired, or is firing, it. */
 	private async fireClaimed(claim: string, fire: () => Promise<void>) {

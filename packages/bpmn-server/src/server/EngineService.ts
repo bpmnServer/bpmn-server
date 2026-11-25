@@ -2,6 +2,8 @@ import crypto from 'node:crypto';
 import http from 'node:http';
 import path from 'node:path';
 import { DMNEngine } from '../dmn/DMNEngine.js';
+import { registrationsOf } from '../engine/AddOns.js';
+import { formContext } from '../engine/Context.js';
 import { canEncrypt } from '../connectors/Secrets.js';
 import { Definition } from '../elements/Definition.js';
 import type { IExecutionResult } from '../interfaces/engine.js';
@@ -12,6 +14,31 @@ import type { BPMNServer } from './BPMNServer.js';
  * read (`.id`, `.status`, `.instance`, with `instance.items` and `instance.tokens`). Nothing in it reaches a running
  * process, and it can cross a network as it is.
  */
+/**
+ * A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id;
+ * an add-on's by its tests' name (a policy: `LeaveApproval.policy`, `Cases.security-policy`), as the add-on says
+ * (decisionByName). The engine's own (EngineService's invokeDecision, and a scenario's @evaluate, which runs in the engine).
+ */
+export async function invokeDecision(server: any, ref: string, data = {}) {
+    const definitionsPath = server.configuration.definitionsPath;
+    const own = registrationsOf(server).decisionLookups.map(lookup => lookup(ref, definitionsPath)).find(Boolean);
+    const found = await DMNEngine.find(own?.folder ?? definitionsPath, own?.name ?? ref);
+    const decision = await new DMNEngine().load(found.filePath, found.decision.id);
+    return { decision: found.decision.id, file: path.basename(found.filePath), result: decision.evaluate(data) };
+}
+
+/** The application's delegate: its class, and the methods it defines itself (not those of bpmn-server's or bpmn-web's base). */
+export function delegateFacts(delegate): { name: string | null; methods: string[] } {
+    const found = new Set<string>();
+    for (let o = Object.getPrototypeOf(delegate ?? {}); o && o !== Object.prototype; o = Object.getPrototypeOf(o)) {
+        if (['WebAppDelegate', 'DefaultAppDelegate'].includes(o.constructor?.name)) break;
+        // by descriptor: a getter (moddleOptions) is not run on the prototype
+        for (const [key, d] of Object.entries(Object.getOwnPropertyDescriptors(o)))
+            if (key !== 'constructor' && typeof d.value === 'function') found.add(key);
+    }
+    return { name: delegate?.constructor?.name ?? null, methods: [...found].sort() };
+}
+
 export function executionResult(execution): IExecutionResult {
     const { id, name, status, userName, operation, errors, action, instance } = execution;
     return JSON.parse(JSON.stringify({
@@ -81,11 +108,15 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         },
         /** A short claim of one key (a task being claimed through the API): whether this caller has it. */
         claim: async (key: string) => server.dataStore.locker.claim(key),
-        /** The engine's stores set up (their indexes; connectors kept whole before written out): at setup, and at start. */
-        install: async () => {
+        /**
+         * The engine's stores set up (their indexes; connectors kept whole before written out), and with `rebuild` its
+         * index of the models made again from their files (a model changed since it was indexed): at setup, at start.
+         */
+        install: async ({ rebuild = false }: { rebuild?: boolean } = {}) => {
             await server.dataStore.install();
             await server.definitions.install();
             await server.connectors?.install();
+            if (rebuild) await server.definitions.rebuild();
             return true;
         },
         // the models' files are model access's; the engine's index of them (start events, timers, messages) is its own,
@@ -93,17 +124,46 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         modelSaved: async (name: string) => { await (server.definitions as any).indexModel(name); return true; },
         modelRemoved: async (name: string) => { await (server.definitions as any).unindexModel(name); return true; },
         modelRenamed: async (name: string, newName: string) => { await (server.definitions as any).renameIndex(name, newName); return true; },
-        // a connector's key and its test are this server's, the engine's: encrypted and kept here (CONNECTORS_KEY)
+        // a connector's key and its test are this server's, the engine's: encrypted and kept here (SECRETS_KEY)
         setConnectorKey: async (id: string, key: string, userName?: string) => server.connectors.storeKey(id, key, userName),
         clearConnectorKey: async (id: string) => server.connectors.forgetKey(id),
+        /** A connector removed (its file, by model access): its key and test here go too. */
+        connectorRemoved: async (id: string) => server.connectors.forget(id),
         testConnector: async (id: string, operationId?: string, input = {}) => server.connectors.test(id, operationId, input),
         releaseClaim: async (key: string) => { await server.dataStore.locker.release(`claim:${key}`); return true; },
-        /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
-        invokeDecision: async (ref: string, data = {}) => {
-            const found = await DMNEngine.find(server.configuration.definitionsPath, ref);
-            const decision = await new DMNEngine().load(found.filePath, found.decision.id);
-            return { decision: found.decision.id, file: path.basename(found.filePath), result: decision.evaluate(data) };
+        /**
+         * Cases' labels by the application's instanceLabel hook (#295): its code, so here; for many cases at once, one
+         * call. Each answer is the hook's text, or null (no hook, nothing said, or it failed).
+         */
+        instanceLabels: async (instances: any[]) => {
+            const delegate = server.appDelegate as any;
+            if (typeof delegate?.instanceLabel !== 'function') return (instances ?? []).map(() => null);
+            return Promise.all((instances ?? []).map(async instance => {
+                try { const text = await delegate.instanceLabel(instance); return text ? String(text) : null; }
+                catch (error) { server.logger?.warn?.(`instanceLabel failed for ${instance?.id}: ${error?.message ?? error}`); return null; }
+            }));
         },
+        /**
+         * A form field's choices (addons/forms/FormLookup.ts; docs/design/form-lookups.md): the source its list or lookup
+         * names in the model, the application's service or a connector's operation, is called here, where the
+         * application's code and the connectors' keys are. The host has decided who may ask, and the criteria.
+         */
+        formChoices: async (processName: string, elementId: string, fieldId: string, criteria = {}, context = {}) => {
+            const definition = await server.definitions.load(processName);
+            const field = (definition.getNodeInfo(elementId)?.fields ?? []).find(f => f.id === fieldId);
+            // the field's context (docs/design/context-object.md): kind form; a task's case and item, read here
+            const instance = (context as any)?.instanceId ? await server.dataStore.findInstance({ id: (context as any).instanceId }, 'full').catch(() => undefined) : undefined;
+            const item = instance?.items?.find(i => i.id === (context as any)?.taskId);
+            const asked = formContext(fieldId, criteria, { ...context, instance, item, element: definition.getNodeById?.(elementId) });
+            // the add-ons' (engine/AddOns.ts): the Forms add-on's lists and lookups
+            for (const provider of field ? registrationsOf(server).fieldChoices : []) {
+                const choices = await provider.choices(server, field, criteria, asked);
+                if (choices) return choices;
+            }
+            throw Object.assign(new Error(`The form of '${elementId}' has no field '${fieldId}' with a list or a lookup`), { code: 'NO_CHOICES' });
+        },
+        /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
+        invokeDecision: (ref: string, data = {}) => invokeDecision(server, ref, data),
         /** What is being run now. */
         live: async () => (server.cache.list() || []).map(execution => {
             const answer: any = executionResult(execution);
@@ -117,8 +177,11 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
             let provider = null;
             try { provider = await server.appDelegate.getServicesProvider(null); }
             catch { /* a provider that needs a running execution */ }
-            // connectorKeys: whether a connector's key can be stored here (CONNECTORS_KEY is the engine's)
-            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt() };
+            // connectorKeys: whether a connector's key can be stored here (SECRETS_KEY is the engine's)
+            // delegate: the application's class and the methods it defines (the Settings page)
+            // instanceLabel: whether the application labels cases in code (asked with instanceLabels)
+            return { moddleOptions: server.appDelegate.moddleOptions, services: serviceNames(provider), connectorKeys: canEncrypt(), delegate: delegateFacts(server.appDelegate),
+                instanceLabel: typeof (server.appDelegate as any).instanceLabel === 'function' };
         },
         /** The application's own checks of a model (appDelegate.verifyModel): its code, so here. */
         checkModel: async (name: string, source: string) => {
@@ -177,7 +240,7 @@ export function startEngineService(server: BPMNServer, { port = 3001, host = '12
                 send(response, 200, { result: await calls[method](...args) });
             }
             catch (error) {
-                send(response, 200, { error: { name: error?.name, message: error?.message ?? String(error), code: error?.code, status: error?.status } });
+                send(response, 200, { error: { name: error?.name, message: error?.message ?? String(error), code: error?.code, status: error?.status, ...(error?.details ? { details: error.details } : {}) } });
             }
         });
     });

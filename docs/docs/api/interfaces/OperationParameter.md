@@ -20,17 +20,17 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L10)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:10](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L10)
 
 ___
 
 ### in
 
-• **in**: ``"header"`` \| ``"query"`` \| ``"cookie"`` \| ``"path"``
+• **in**: ``"query"`` \| ``"header"`` \| ``"cookie"`` \| ``"path"``
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L11)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:11](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L11)
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:12](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L12)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:12](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L12)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L13)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:13](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L13)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/connectors/OpenAPI.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/connectors/OpenAPI.ts#L14)
+[packages/bpmn-server/src/connectors/OpenAPI.ts:14](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/connectors/OpenAPI.ts#L14)

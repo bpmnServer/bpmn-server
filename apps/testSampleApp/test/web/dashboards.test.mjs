@@ -88,6 +88,18 @@ test('design: every model with its checks and the decisions', async () => {
   assert.match(card(page, 'models'), /dash-badge/);
 });
 
+test('design: a Feature filter of what the models use; each model says where it uses each (docs/features.yaml\'s markers)', async () => {
+  const models = card((await designer.get('/dashboard/design')).text, 'models');
+  assert.match(models, /<select[^>]* id="feature-filter"/);
+  assert.match(models, /<option value="user-task">User task \(\d+\)<\/option>/, 'a feature some model uses, with how many');
+  assert.doesNotMatch(models, /<option value="mongodb"/, 'not a feature that does not show in models');
+  const at = models.indexOf(`/model/edit/${MODEL}`);
+  const tr = models.lastIndexOf('<tr', at);
+  const where = JSON.parse(/data-where="([^"]*)"/.exec(models.slice(tr, at))[1].replaceAll('&quot;', '"').replaceAll('&amp;', '&'));
+  assert.deepEqual(where['user-task'], ['Submit', 'Approve'], 'the elements, by id: where the links open the model');
+  assert.ok(where['start-events']?.length && where['exclusive-gateway']?.length, JSON.stringify(where));
+});
+
 test('design: a model\'s description, its saved versions, and what its scenarios cover, saved with the runs', async () => {
   const row = html => { const models = card(html, 'models'); const at = models.indexOf(`/model/edit/${MODEL}`); return models.slice(at, models.indexOf('</tr>', at)); };
   const before = row((await designer.get('/dashboard/design')).text);
@@ -120,12 +132,12 @@ test('design: a model\'s description, its saved versions, and what its scenarios
 
   const file = path.join(web.definitionsPath, `${MODEL}.bpmn`);
   const source = fs.readFileSync(file, 'utf8');
-  await web.bpmnServer.definitions.save(MODEL, source.replace('name="Submit request"', 'name="Submit it"'), null, null, 'designer');
+  await web.bpmnServer.models.save(MODEL, source.replace('name="Submit request"', 'name="Submit it"'), null, 'designer');
   const edited = row((await designer.get('/dashboard/design')).text);
   assert.match(edited, /out of date/, 'the model changed since its runs');
   assert.match(edited, /<td>[1-9]\d*<\/td>/, 'its saved versions');
   await designer.request('PUT', `/model/scenarios/${MODEL}`, { json: { scenarios: [] } });
-  await web.bpmnServer.definitions.save(MODEL, source, null, null, 'designer');
+  await web.bpmnServer.models.save(MODEL, source, null, 'designer');
 });
 
 test('design: coverage counts as the Test tab does: an event sub-process is not an element, what is inside it is', async () => {
@@ -197,7 +209,7 @@ test('Run on a model with several start events, or a start form, asks first: the
     <bpmn:sequenceFlow id="f3" sourceRef="Quick" targetRef="FromQuick" />
   </bpmn:process>
 </bpmn:definitions>`);
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
 
   const run = await admin.get('/execute/multi-start');
   assert.equal(run.status, 302);
@@ -230,4 +242,47 @@ test('My work and starting a process use API v3\'s operations in this process: n
   const start = await staff.get(`/dashboard/start/${MODEL}`);
   assert.equal(start.status, 200, why(start));
   assert.equal(await tokens.revoke('staff'), 0, 'the pages made no token');
+});
+
+test('Design shows the policies: assignment (to its editor, its tests) security (the default said) and notification, each editable, with the models that name it', async () => {
+  const folder = web.definitionsPath;
+  const table = name => `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="${name}_d" name="${name}" namespace="t">
+  <decision id="${name}" name="${name}"><decisionTable id="${name}_t" hitPolicy="FIRST">
+    <input id="${name}_i" label="amount"><inputExpression id="${name}_e" typeRef="number"><text>amount</text></inputExpression></input>
+    <output id="${name}_o" name="candidateGroups" typeRef="string" />
+    <rule id="${name}_r"><inputEntry id="${name}_ri"><text>-</text></inputEntry><outputEntry id="${name}_ro"><text>"manager"</text></outputEntry></rule>
+  </decisionTable></decision>
+</definitions>`;
+  fs.mkdirSync(path.join(folder, 'assignment'), { recursive: true });
+  fs.mkdirSync(path.join(folder, 'security'), { recursive: true });
+  fs.mkdirSync(path.join(folder, 'notification'), { recursive: true });
+  fs.writeFileSync(path.join(folder, 'assignment', 'DashApproval.dmn.xml'), table('DashApproval'));
+  fs.writeFileSync(path.join(folder, 'security', 'default.dmn.xml'), table('default'));
+  fs.writeFileSync(path.join(folder, 'notification', 'DashNotices.dmn.xml'), table('DashNotices'));
+  const model = 'dash-policies';
+  await web.bpmnServer.models.save(model, `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="t">
+  <bpmn:process id="P" isExecutable="true">
+    <bpmn:startEvent id="S" /><bpmn:userTask id="Approve" camunda:assignmentPolicy="DashApproval" /><bpmn:endEvent id="E" />
+    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Approve" /><bpmn:sequenceFlow id="f2" sourceRef="Approve" targetRef="E" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  try {
+    const page = (await designer.get('/dashboard/design')).text;
+    const row = key => (new RegExp(`<tr data-policy="${key}">([^]*?)</tr>`).exec(page) ?? [])[1] ?? '';
+    const assignment = row('assignment/DashApproval');
+    assert.match(assignment, /href="\/model\/policy\/DashApproval"/);
+    assert.match(assignment, new RegExp(`used by [^<]*${model}`));
+    assert.match(row('security/default'), /the default: every process that names none/);
+    assert.match(row('security/default'), /href="\/model\/security-policy\/default"/, 'a security policy opens in the decision editor');
+    assert.match(row('notification/DashNotices'), /href="\/model\/notification-policy\/DashNotices"/, 'notification policies are listed, editable');
+    assert.match(row('notification/DashNotices'), /not used/);
+    assert.match(page, /<h2 id="policies"[^>]*>Policies/);
+  } finally {
+    fs.rmSync(path.join(folder, 'security'), { recursive: true, force: true });
+    fs.rmSync(path.join(folder, 'notification', 'DashNotices.dmn.xml'), { force: true });
+    fs.rmSync(path.join(folder, 'assignment', 'DashApproval.dmn.xml'), { force: true });
+    await web.bpmnServer.models.remove?.(model).catch?.(() => {});
+  }
 });

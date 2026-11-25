@@ -9,17 +9,245 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **The console's `spw` says what it did, and `lu`/`spw` know an application's own users** (docs/docs/advanced.md):
+  `spw` prints `Password set for <user>.`, and for a user that does not exist it exits 1 (it exited 0). In an
+  application that manages its own users (`start({ userManager })`, as the HR demo does) `lu` and `spw` say so instead
+  of reading bpmn-web's own, empty, store (`spw` exits 1). `UserService.setPassword` answers whether there was such a
+  user. Test: `apps/testSampleApp/test/web/console-users.test.mjs` (SQLite, MongoDB, and the HR demo).
+- **A new server makes its administrator, with a password nobody can guess** (docs/docs/setup.md): `admin`, with
+  `ADMIN_PASSWORD` when it is set, else a password made up and printed once where the server runs (nothing is
+  written to `.env`), and `ADMIN_EMAIL` (`admin@example.com` unset). There is no admin/admin, and no page asks for the
+  administrator: **removed** are the first-run page (`/setup`), its setup token (`firstRun.ts`) and the redirect
+  that led every page to it. A server whose users were all removed makes `admin` again the next time it starts. The
+  tutorials' `user1` and `manager1` are added on Dashboard > Administration. `ADMIN_EMAIL` and `APP_CONTRACT` are in
+  the settings schema. **Compatibility:** `GET` and `POST /setup` are gone. Test:
+  `apps/testSampleApp/test/unit/app-hosting.test.mjs`.
+- **Simulate shows a close-up** (docs/docs/modeler.md, docs/docs/execution.md): a small card beside the element a
+  change is about, zoomed in from it: a user task's form, empty as it starts and filled in as it is done; a gateway's
+  conditions as they are evaluated and which held, with a join's flows arriving; a flow's condition; a service's
+  input and output; a message sent or received; a timer's clock; an error or escalation raised or caught; who began the process
+  and who a task is given to and who did it, as avatars (also a badge on the element); and each notification, after the fact:
+  whom it told, what it said, how it went. **Show
+  close-up** (on by default, remembered in the browser) turns it off; Play stays longer on a card; nothing moves for
+  less motion. It reads only what the model and the run already hold, and adds no data to the engine or the APIs
+  (`modeler/src/simulation/stage.js`, in the editor's Test tab and on the instance page).
+- **An HR demo made by `init --hrdemo` signs people in for real**: its welcome page lists the accounts and their
+  password, and the one-click "Sign in as" buttons are off, because its `.env` has `HR_DEMO_SIGN_IN_AS=false`
+  (`apps/hrdemo/.env.example`); the public demo, with it unset, keeps them. `npm start` no longer prints the SQLite
+  experimental or DEP0190 warnings.
+
+- **Notifications on the pages** (docs/docs/notification-policies.md): an instance's page lists its notifications
+  (whom, the message, delivered or not); the **Notifications** page (`/dashboard/notifications`, in the menu for
+  everyone) lists them across the instances: an administrator's all of them, filtered by whom, process and status;
+  anyone else's, those to them or their groups. Test: `apps/testSampleApp/test/web/notifications.test.mjs`.
+- The HR demo keeps the notifications it is sent in its own database (`apps/hrdemo/server/notifications.js`, table
+  `notifications`), not the console; its Workflow menu has Notifications.
+- **Form rules** (docs/docs/form-rules.md): a task's completion that breaks its form's rules is refused, 400
+  `FORM_INVALID` with `details` (API v3, the task API) or a 400 page that says why (the drawn task form). The drawn
+  task form carries the rules as its inputs' attributes (`routes/formAttributes.ts`); a task's form shows the case's values,
+  and a read-only drop-down is disabled. `FORM_RULES=false` turns the checks off. Test:
+  `apps/testSampleApp/test/web/form-rules.test.mjs`.
+
+
+### Changed
+-->
+## [Unreleased]
+### Added
+- **Every cell of that table is a tick**, the server's own rows (`PUBLIC`, `User`, `SYSTEM`) and the User column
+  included. A role the contract does not mention keeps the server's default for its name; one it mentions decides
+  for itself, so a role can be given Administrator or have it taken away. A save that would leave no role an
+  administrator is refused, so the page cannot lock its own administrator out.
+- Fixed: a tick in the **User** column, and any tick on `PUBLIC`, `User` or `SYSTEM`, was dropped on save without
+  saying so — `user` was not a permission the save knew, and only the application's roles were written.
+- `REQUIRE_AUTHENTICATION`, `ALLOW_INSECURE_NO_AUTH` and `SECURITY_POLICY` are no longer offered as settings on the
+  Security page either; the Roles page and its messages name `app-contract.json`, not the retired `roles.json`.
+- **What each role is allowed to do, on the Security area**: a row for each role — `PUBLIC` (not signed in), `User`
+  (anyone signed in), `SYSTEM` (the server itself), then the application's own — and a column for each permission
+  (User, Designer, Administrator). An administrator ticks an application's row and it is saved to its
+  `app-contract.json`, taking effect at once; the pages and APIs honour it through the same helpers as before, so
+  every route inherits it. A role the server matches on by name keeps what it has, whatever is sent.
+- `DISABLE_ADMIN`, `DISABLE_DESIGN`, `READ_ONLY` and `ENFORCE_SECURITY` are no longer offered as settings on that
+  page: each empties a column for every role, which the table now says, and they stay settable in `.env`.
+- **A Security area on the Settings page** (`/dashboard/settings/secure`), answering the three questions apart: who
+  may reach this server, what each of them may do, and what its models are allowed to run. It gathers the settings
+  that were spread over the other areas and the fifteen that were only in `.env` and never shown — among them
+  `REQUIRE_AUTHENTICATION`, `DISABLE_ADMIN`, `DISABLE_DESIGN`, `SECURITY_POLICY`, `AI_ACCESS` and the sign-up and
+  session settings. Its card says the effective configuration in plain words and warns about a combination that is
+  not safe, such as no sign-in with administration on, where anyone reaching the server administers it.
+- **An area's card shows what it has**, in a few words: the summary was worked out and passed to the page but never
+  drawn.
+- **The Roles editor writes the application's contract** (`app-contract.json`), where roles belong since 3.7.5,
+  instead of the models folder's `roles.json`; it still edits a `roles.json` for an application whose roles are
+  there. An application whose contract comes from its delegate's `describe()` has no file to write, so the
+  Administration page lists its roles and says where to change them instead of offering Add and Remove.
+- **A task list answers its form key**: `GET /api/v3/tasks` gives each task `form.formKey` where its model names the
+  application's own page, with any `${appVars.<name>}` already worked out, so an application's own list opens that
+  page itself instead of owf's task page (docs/design/form-keys.md, flow A). The HR demo's To do panel does, and its
+  **Assign Employee** start event uses HR's own assignment form (`apps/hrdemo/src/pages/AssignmentForm.jsx`,
+  `HR_FORMS_URL` in its `.env`).
+- **Form keys** (docs/design/form-keys.md): a user task or a start event may name the application's own page with
+  `camunda:formKey`, and owf sends the person there instead of drawing the task's fields. The key is the page's
+  address and may hold an expression (`${appVars.hrForms}/assignment`) worked out from the application's contract,
+  so the model carries no one deployment's routes. owf adds identifiers only — a task's `?instance=&item=`, a start
+  event's `?process=&start=`, with `returnTo` — and the page reads and completes the task through API v3 as the
+  person, so no case data travels in an address. A key whose expression comes to nothing falls back to the task's
+  fields. The start page lists every start event a user may start, each with its own form or a link to the
+  application's page. Tests: `test/web/form-keys.test.mjs`, bpmn-server's `test/form-keys.test.mjs`.
+- **AI Agent is a menu item of its own**, for everyone signed in, while the AI Agents add-on is on; it was in the
+  account menu. An application that signs people in itself (a host user manager) gets the links too: `/ai/key` works
+  under its sign-in, and API v3 takes the link (`Bearer bpt_…`) before the application's credentials. API v3's
+  `/me` says `may.aiLink`. The HR demo has the item, and its Settings item is for administrators and designers only.
+  Tests: `test/web/ai-key.test.mjs`, `test/web/host-user-manager.test.mjs`, the HR demo's `src/workflowAccess.test.mjs`.
+- **More examples of what to ask an AI agent** (`/ai/key`): five or six for each level, one click to put one in the
+  box, which can now be edited before copying. Test: `test/web/ai-key.test.mjs`.
+- **The environment's band says what runs differently here** (docs/docs/environments.md): beside Test (or the
+  label) and read-only, **Timers off** (`TIMERS`), **Service tasks off** (`SERVICE_TASKS`) and **Scripts in a sandbox**
+  (`SCRIPT_SANDBOX`), as set or as `DEMO_MODE` says; the editors' badge too. A restriction alone shows the band. API
+  v3's `/me` says them (`environment.restrictions`). Test: `test/web/environment.test.mjs`.
+- **The Forms and display, and Modeling tools add-ons in the editor and the pages:** the form fields' list and lookup
+  entries are the Forms add-on's editor module (`modeler/src/addons/forms/`); the Test tab is loaded, and the Test and
+  History tabs shown, only with Modeling tools on (with it off, `modelHistory` is false). Test: `test/web/add-ons.test.mjs`.
+- **The editor takes the add-ons' parts only when they are on** (`modeler/src/addons/`): the Policies add-on's
+  (the Assignment group, a start event's who may start, the process's policies) and the Labels add-on's (the Label
+  group) are bpmn-js modules the modeler loads for the add-ons the page names; the model report marks an off add-on's
+  attributes as its, off, and shows none of its policy tables. The preview of the panel's fields is
+  `properties/preview.js`. The menus offer Notifications, and the Settings page the Policies cards, only with the
+  Policies add-on on (`addOnOn(name)` in the views).
+- **The Integration page is the Settings page** (`/dashboard/settings`; `/dashboard/integration` and its pages
+  redirect), with an **Add-ons** section (docs/docs/integration-settings.md): each add-on, on or off, what it is and the
+  models using it; an administrator turns them on and off, saved to `app-config.json` (`appConfig`), applied when the
+  server restarts. Test: `test/web/integration.test.mjs`.
+- **The Integration page, simpler** (docs/docs/integration-settings.md): an overview of the integration points, each
+  in a line or two with what needs setting up, opening its own page (`/dashboard/integration/<point>`) with its main
+  settings first and the rest under More settings; the delegate's functions and methods folded.
+- **The services' names read from the delegate's source when the server starts** (`runtime/serviceNames.ts`): the
+  configuration's `delegateFile` (default `delegates/appDelegate.ts`), for the editor and the model checks where the
+  engine runs elsewhere or not at all, and `/llms.txt`. `services.json`, `npm run services` and `servicesFile` are gone
+  (a `servicesFile` setting is no longer read; the start says so); `bpmn-web-services` prints the names it finds.
+- **The services in `delegates/`:** the sample applications and the HR demo keep `appServices.ts` and
+  `testServices.ts` with the delegate (they were in `connectors/`, the folder of the editor's element templates).
+  The engine doesn't look for them by path; an application that keeps them elsewhere goes on working. The HR demo's
+  element templates for the removed `add` and `echo` services are gone too.
+- **Columns shown, hidden and moved** (docs/docs/list-columns.md): a list's own columns (Process, Case, Started...)
+  can be hidden, shown again and moved (← →) with the columns added; the lists name them alike (Pending Tasks as My
+  work: Task with its own label, Case, Process, Waiting; its Label and CaseId columns are gone, Case id is offered).
+  Test: `apps/testSampleApp/test/ui/list-columns.test.mjs`.
+- HR demo: Workbench in the sidebar opens the Workbench again after an instance was opened from it (the frame's src
+  was unchanged, so nothing happened).
+- **The lists as each person wants them** (docs/docs/list-columns.md): the Workbench's Instances and Pending Tasks
+  and My work have an **Add columns** picker: for each model in the list, the values its label names and its form fields by their labels, or any other field of the cases' data
+  (`data.amount`); their headings sort the list; the filter bar offers the data columns too, and more than / less
+  than. The view is in the URL (bookmark, share) and remembered for the session (`routes/listView.ts`). API v3's
+  `GET /instances` and `GET /tasks` take `columns`, `sort` and `order` (each item answers `columns`), and the filter's
+  `op` takes `gt` and `lt`. A column shows what the person may read of the case; with security policies, sorting and
+  filtering on data no label reads are refused (`SORT_REFUSED`, `FILTER_REFUSED`). Tests:
+  `apps/testSampleApp/test/web/list-columns.test.mjs`, `security-policies.test.mjs`.
+- **The application's contract on the web:** API v3's `GET /application` answers it, `/llms.txt` links it, and the
+  editor completes its functions (with their descriptions) and its variables (`appVars.`). The HR demo has one
+  (`apps/hrdemo/app-contract.json`, its variables in `workflow/delegates/appVars.ts`), and its unused sample services
+  are gone.
+- **Red is for errors only:** names, ids and values shown as code are no longer Bootstrap's pink-red; the docs pages' tables, a connector's DELETE operations and a model history's removed or earlier values are no longer red.
+- Simulate's **Show details** says what an item is at the change shown (started, done, waits; a flow: taken), not
+  its status at the run's end: an activity that ended later no longer reads *done* where it starts. The end reads
+  *End of the run*, not *Done*.
+- **Simulate moves** (the Test tab, an instance's page): a flow taken draws itself as a token travels it, an element
+  that starts glows, one that ends flashes, a waiting one's dashes crawl, each number pops in; Back redraws without
+  moving; none for less motion (`modeler/src/simulation`). Test: `apps/testSampleApp/test/ui/instance-filters.test.mjs`.
+- A connector's page has **Outside production**: answers from the real API, its document's examples, or a sandbox,
+  where APP_ENV is development or test (docs/docs/connectors.md#outside-production).
+- **The case lists read only what a security policy could show** (API v3's instances, the Workbench): narrowed in the
+  database (`CaseAccess.seeQuery`), then the policy decides each case. Fewer cases read, the same ones shown.
+- **A process explained** (docs/docs/process-guide.md): `/guide/<process>`, **How this process goes**, for the people
+  who work in it (whoever may start it or works in it): its description and diagram, its steps (who does each, what
+  each form asks, where it goes next), its rules, and its examples, the scenarios of its tests in plain words, each
+  with the case it made. API v3: `GET /processes/{name}/guide`. Linked from My Work and from each case's page. Test:
+  `apps/testSampleApp/test/web/guide.test.mjs`.
+- **Test cases** (docs/docs/environments.md#test-cases): tests run in development and test only. A scenario's run is
+  an ordinary case, listed with the others and marked **test**; nothing filters test runs out any more (API v3's
+  instances and tasks say `test: true`). Each scenario's last case is also saved as a file with the models,
+  `test-cases/<model>/<scenario>.json`. Production (`APP_ENV=production`) refuses every test run (403 `TESTS_OFF`) and
+  shows those files: **Test cases** (`/test-cases`), each on the instance page, read-only, marked *changed since* when
+  the model changed after it ran. The Notifications page lists test runs' notifications with the others, marked.
+  Test: `apps/testSampleApp/test/web/test-cases.test.mjs`.
+- **The environment on every page** (docs/docs/environments.md): `APP_ENV` takes `development`, `test` or
+  `production`, shown as a band above the menu bar (Development blue, Test amber) and a badge in the editors;
+  `APP_ENV_LABEL` names it otherwise (`Staging`, `Public demo`). API v3's `/me` says it (`environment`). Unset
+  `APP_ENV` shows nothing, as before. Test: `apps/testSampleApp/test/web/environment.test.mjs`.
+- **Read-only servers** (`READ_ONLY=true`, docs/docs/environments.md#read-only): people start cases and complete tasks;
+  changes to the models, decision tables, policies, tests, roles, connectors, settings and bpmn-web's users are refused
+  with 403 `READ_ONLY`, through the pages and every API (`runtime/readOnly.ts`, one guard in front of every route).
+  The editors' Save is off. For a public demo, such as the HR demo's.
+- **The Integration page** (docs/docs/integration-settings.md): Dashboard ▸ Integration (`/dashboard/integration`),
+  for administrators and designers. One section per integration point (the application's delegate and its functions,
+  connectors, roles and policies, notifications, the API the application calls, forms and scripts, AI agents): what is
+  in place, and its settings from the settings schema. An administrator changes every setting, a designer the
+  design-side ones (`FORM_RULES`, `ELEMENT_TEMPLATES`, `VERIFY_MODELS_ON_IMPORT`, `MODEL_HISTORY`). A change is checked
+  against the schema and written to the server's `.env` (the one before kept as `.env.bak`); it applies on restart.
+  Secrets are never shown; a setting the environment or the application's `hostSettings` gives is not changed there.
+  `envFile` (`start()`, `WorkflowApplication`) names the `.env` it writes. In the menu and the HR demo's Workflow menu.
+  Test: `apps/testSampleApp/test/web/integration.test.mjs`.
+- **Lists and lookups in forms** (docs/docs/form-lookups.md): the drawn forms show a field with `<owf:list>` as a
+  drop-down and one with `<owf:lookup>` as a search box (`public/javascripts/formLookup.js`); the key is the value,
+  its label is sent as `<id>Display`. API v3:
+  - `POST /tasks/{id}/choices/{field}` and `POST /processes/{name}/choices/{field}`, with `{ text, data }`: the
+    choices, as the user. The source is the model's, called by the engine. A filter reads `data` (the form's values),
+    then the case's data. Errors: 404 `NO_CHOICES`, 400 `BAD_TEXT`, 502 `CHOICES_FAILED`.
+  - A form's fields say `list` or `lookup`: `{ source, key, display, filter }`.
+  - The model editor: each form field's **Choices** (List, Lookup), its source and attributes
+    (`modeler/src/properties/FormChoicesEntries.jsx`). The editor's descriptors define `owf:List` and `owf:Lookup`;
+    without them, saving a model in the editor dropped its lists and lookups.
+  - Tests: `apps/testSampleApp/test/web/form-choices.test.mjs`; in a browser, `test/ui/form-lookups.test.mjs` (the
+    drop-down, the search as one types, the label saved, the task's form; the editor). The HR demo's Leave
+    Application asks for a Department (a list) and who covers (a lookup).
+- **API v3's Task says what decided who works on it:** `assignedBy`, its assignment policy and rule (`{ policy,
+  rule }`), or who reassigned it (`{ userName }`); absent when nothing did (PR #286's question).
+- **Security policies**, a first slice (docs/design/security-policies.md, `routes/caseAccess.ts`), when an application
+  has `policies/security/` (or `SECURITY_POLICY=default`): API v3's instance list and one instance, its Rationale,
+  restart and start events, and its task list, one task, claim and complete ask the case's policy, as do the
+  Workbench's Instances and Pending Tasks, the instance page and the task form. A case not seen is left out (one
+  asked for is the same 404 as an unknown one); its data is what the policy lets the person read (a task's own form
+  fields always); a refused action is a 403 `POLICY_DENIED` naming the rule; a task the person may not complete is
+  not listed, nor theirs to claim. Off, nothing changes. The HR demo's Leave Application has one (`LeaveCases`).
+- **In place of PR #281's `.env` columns** (`INSTANCE_COLUMNS`, `TASK_COLUMNS`: not added) **and PR #286's
+  proposals:** a case's label says what its values are, and the lists' filter by label finds any value it shows; #281's
+  safe reading and display of values is kept in `engine/LabelTemplate.ts`. Whether named values also become columns is
+  open until the labels are tried. Roles and assignment policies are kept with the models (see bpmn-server's changelog).
+- **Roles on the Administration page** (docs/docs/assignment-policies.md#roles): `roles.json`'s roles, each with
+  where it is used and its users; add and remove; the names lanes and policies use that it doesn't list, to add.
+- **Assignment policies in the editor** (docs/docs/assignment-policies.md): a user task's **Assignment policy**, in
+  User assignment, chosen from the models folder's `policies/assignment/`; Open and New policy; a preview with the Test tab's
+  scenario. `/model/policy/<name>` edits a policy in the decision editor, with its tests; `GET /model/policies`,
+  `POST /model/policy/<name>/preview`. The decision editor's Test tab asks its own page's tests.
+- **Labels in API v3** (docs/docs/labels.md#in-api-v3, `routes/api/labels.ts`): tasks answer `label`,
+  `labelValues`, `caseLabel` and `caseLabelValues`; instances `label` and `labelValues` (and their items, on
+  `GET /instances/{id}`). `GET /tasks` and `GET /instances` take the filter by label (`field`, `op`, `value`,
+  `search`; `model` on `/tasks`); a wrong `op` is a 400 `BAD_FILTER`. Fields added only: nothing removed or renamed.
+  `/api` and `/api2` are unchanged.
+- **The filter bar** finds what a label shows: a plain `${data.caseId}` is a field (*caseId*), a model with no case
+  label offers *caseId*, and Field *Any* with a value looks in every field (it was ignored).
+- **The Label group's preview** (`properties/LabelGroup.jsx`): under each label, the label filled in from the Test
+  tab's scenario (its last run, else its start data). The Test tab offers its data with `labelPreview()` and fires
+  `testPanel.changed` when it is drawn.
+- **Labels in the pages** (docs/docs/labels.md): the Instances list's Case column, the Pending Tasks table's Label
+  column, My work (under each task's name), and the instance page (the case's label; each element's under its
+  name), filled in from each case's model when shown.
+- **Filters by label** on the Workbench's Instances and Pending Tasks sections (each its own) and on My work: a model; a named value of the
+  cases' labels that contains, or is, a value; or search everything. A database query on the values' data paths,
+  kept in the URL (`?field=Car&op=contains&value=porsche`) (`routes/labelFilter.ts`, `includes/labelFilter.pug`).
+- **My work:** a Case column with each task's case's label; a task's own label under its name.
+- **The model editor's Label group:** *Case label* on the process, *Label* and *Label once done* on any element of
+  the diagram; a template checked as it is typed (`camunda:label`, `camunda:endLabel` declared in the editor's
+  descriptor).
+- **The Design dashboard finds the models that use a feature**: beside the search, **Any feature** lists the features
+  the models use (user tasks, timers, connectors, forms, ...: docs/features.yaml's `xml` markers), with how many models
+  use each; one chosen, only those models are listed, each with the elements where, a link that opens the model at the
+  element. The editor opens at an element named in its address: `/model/edit/<model>#element=<id>`.
 - **A workflow page framed by a page of the same site leaves out its menu bar** (an application's own layout around
   the workflow pages: `apps/hrdemo`), as the browser says it is framed (`Sec-Fetch-Dest: iframe`, `Sec-Fetch-Site:
   same-origin`; on HTTPS and localhost). The body has the class `framed`, a hook for the application's styles; the
   model and decision editors keep their actions. Opened by itself, or framed by another site, a page is as before.
 - **`API_RATE_LIMIT`**: calls a minute one address may make to the APIs (`/api`, `/api2`, `/api/v3`, the
   administration APIs); over it, `429` (`RATE_LIMITED`, with `RateLimit` headers). Unset, no limit, as before.
-
-### Changed
--->
-## [Unreleased]
-### Added
 - **An application's own sign-in: `start({ userManager })`.** An application that signs people in itself gives
   bpmn-web its user manager (`IUserManager`: `init(app)` for its sessions and `req.user`, `setup(app)` for `/login` and
   `/logout`, optional `apiUser(req)` for its API credential). bpmn-web then keeps no users, sessions or credentials of
@@ -43,6 +271,49 @@ and here
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
 
 ### Changed
+- **`SECRETS_KEY`** in place of `CONNECTORS_KEY` (bpmn-server): the Settings page's Connectors area, its messages,
+  the schema (`CONNECTORS_KEY` kept as its old name, a secret) and the `.env` examples. Rename it in `.env`, keeping its
+  value.
+- **The policies' folders are the add-ons' own** (bpmn-server): the editor's policy lists, the decision editor and
+  the Design page read and save `assignment/`, `notification/` and `security/` of the models folder; one from before
+  3.7.5 (`policies/<kind>/`) is moved there first. The HR demo's are moved.
+- **The policies' three add-ons on the pages**: the Settings page has Assignment, Notifications and Access Control, each its
+  own area and card (`/dashboard/settings/policies` leads to Assignment), and **Roles**, the server's area; the roles are
+  on Administration whichever add-ons are on. Notifications (the menu, the page) are the Notifications add-on's; each
+  kind of policy's pages, and its rows on Design, its add-on's. `addOnOn('policies')`, for an application's own pages,
+  is any of the three.
+- **The Settings page, by add-on** (was Integration): the server's areas (the application, connectors, the API,
+  models, forms and scripts, AI agents), then one area for each add-on, with the settings its manifest declares
+  (`addon.json` `settings`) and whether it is on, turned on or off on its card (`POST /dashboard/settings/add-ons/<name>`). Roles and policies and Notifications are the Policies add-on's area
+  (`/dashboard/settings/notifications` leads there); `MODEL_HISTORY` is the Modeling tools add-on's; Forms, scripts and
+  the model editor is now *Models, forms and scripts* (`/dashboard/settings/models`). READ_ONLY refuses the page's
+  changes at `/dashboard/settings/...` too (it refused only `/dashboard/integration/...`).
+- **Security policies are asked by the API** (bpmn-server's `pre-query`, `pre-action`): claiming, completing, assigning,
+  restarting and firing a start event are refused there, not in the routes; `CaseAccess` is the Policies add-on's,
+  `routes/caseAccess.ts` re-exports it and keeps the user directory (`accessDirectory`).
+- **With the Policies add-on off**, the Design page has no Policies, Administration no Roles, the guide no policies;
+  their pages and calls (`/model/policy/...`, `/model/security-policy/...`, `/model/notification-policy/...`,
+  `/model/policies`, `/dashboard/notifications`, `/dashboard/admin/roles`) answer 404. Tests:
+  `test/web/add-ons.test.mjs`, the editor's `test/ui/modeler-add-ons.test.mjs`.
+- **Security policies decide a list's cases several at once** (16; `CaseAccess.decideAll`), so an application's
+  `decisionContext` hook that waits waits for several cases together; the task list stops deciding once its page is
+  full. Measured in docs/docs/performance.md#security-policies.
+- **The workflow pages ask API v3's operations** (the Workbench, the task and assign forms, the instance page, the
+  task list), as the person signed in: the operations decide who sees and does what, and the pages hold no security
+  rules of their own (`routes/workflow.ts`). The Workbench lists instances a page at a time (50, *Older instances*);
+  its Case Id column is gone (a list carries no case data). The task and assign forms no longer show case data a
+  security policy hides from the person. API v3: an administrator may open, complete and claim any waiting task, and
+  force any other waiting item, as the pages always allowed. Test: `apps/testSampleApp/test/web/pages-through-api.test.mjs`.
+- **Lists read less.** `/api/v3/instances` filters, sorts and cuts its page in the database, reading only the fields
+  it shows; the task lists (`/api/v3/tasks`, `/api2/tasks`, My work) read the tasks without their instances' data. The
+  answers are as before. The HR demo's To do panel no longer reads the tasks every 30 seconds and on each return to the
+  window: on the page's load, its Refresh button, and a task completed in the workflow pages.
+- **The host changes nothing of the engine's but by asking it** (docs/design/engine-isolation.md): Administration
+  releases locks, sets, tests and removes a connector's key through engine calls; claiming a task (`/api/v3`,
+  `/api2/tasks`) takes the engine's claim; the model editor, the APIs and the catalog save, rename and delete models
+  through model access (`server.models`: the files, then the engine told); the console uses the engine calls for locks,
+  connector keys and tests, and deleting instances. The host needs no `CONNECTORS_KEY`. The console still runs in the
+  host's process; moving it onto the API is left for later.
 - **The log and the pages keep secrets in:** the MongoDB address is logged with its password as `***`; an operation's
   error in the workflow pages is its message, escaped, with the menu (the stack goes to the server's log, no longer to
   the browser), and the page no longer answers twice after it. A mongoose connection error is logged, and no longer
@@ -70,7 +341,6 @@ and here
 - `@start ... is refused` in a model's tests: holds when the start fails (a listener or script throws, the engine
   refuses), as `@invoke ... is refused` does for an item.
 
-### Changed
 - **`/api` acts as its service account** (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`, which `init` sets), as `/api2`
   does: a user a call names (`userName`, `options.userName`; bpmn-client's `userId`) is ignored, and the answer has a
   `Warning` header saying so. Before, `/api` acted as whatever user it was sent, with no security rules, so anyone with
@@ -91,6 +361,131 @@ and here
 - **The pages apply the security rules one way.** My work and the start page (API v3's operations) follow
   `ENFORCE_SECURITY` as every other page does; before, they kept the rules on while the task forms and the instance
   page turned them off with `ENFORCE_SECURITY=false`. API v3 keeps them on for its clients, as before.
+- **The Test tab says more of what it knows** (from a review of the tab):
+  - **Saved, Saving…, Not saved [Retry]** by the scenario's name; a failed save stays said until one succeeds (it was
+    a status line the next message overwrote).
+  - **The result line:** how many checks, and the failed ones listed with what was found; a run with no checks is
+    *○ Ran: nothing checked*, not *✓ Passed* (○ in the list too); when and how it ran, in sight; *the scenario
+    changed since* and *the model changed since*.
+  - **Record leads** on a scenario with no steps; **Run** is off while a recording is on (it dropped the recording).
+  - **Debug** says a kept run's debugging is that run only.
+  - **Keyboard and screen readers:** the scenario list by Tab and Enter; a check's shield says passed, failed or not
+    checked, and an empty shield is not checked (it was the passed one in blue); the list resizer shows its focus.
+- **Assigning a task asks the case's security policy** (its `assign` action): the pages' Assign form,
+  `/api/engine/assign` and `/api2/engine/assign` answer 403 `POLICY_DENIED` with the rule when a rule denies it;
+  taking a task oneself asks `claim`; without a rule, today's rule holds. The HR demo's `LeaveCases`: HR may reassign;
+  whoever asked may not give their own leave's approval away.
+- **The Report says bpmn-server's own settings and policies:** `label`, `endLabel`, `assignmentPolicy` and
+  `securityPolicy` lines; a user task's assignment policy table and a process's security policy table (the one it
+  names, else the application's default, else the built-in one, said), as a business rule task's decision table is
+  shown. `/model/decisions` also returns the policies (`policies: { assignment, security, securityOn }`).
+- **The Test tab's Open instance** opens in one tab, used again by the next one, not a new tab each time.
+- **The instance page opens with every item**, not filtered to the user tasks: the Rationale's steps showed one row
+  of several. A filter you choose still narrows it.
+- **The instance page:** the Rationale comes first, above the items, open, each step one line (it opens to its rows);
+  a click on a section's heading (Rationale, Model report, Instance logs) opens or closes it, as its button does.
+  **Simulate** replaces Show animation: the editor's Test tab's, the same frames, controls and colours
+  (`modeler/src/simulation/simulation.js`, used by both; the page's is `public/modeler/instance.js`).
+- **The decision editor shows an input column's calculation under its name** when they differ (a table's own
+  variable, `employeeManager`: `appServices.managerOf(actors.initiator)`); dmn-js alone shows the name only.
+- **HR demo: a leave goes to the employee's own manager** (`LeaveApproval`: `appServices.managerOf(actors.initiator)`,
+  from HR's records; the Manager group for someone with no manager), and its notification to whoever it is assigned to.
+- **Policies chosen from lists:** a process's (or its pool's) Security and Notification policy, and a user task's
+  own, are lists of the models folder's policies with Open and New, as the assignment policy is; security and
+  notification policies open in the decision editor (`/model/security-policy/<name>`,
+  `/model/notification-policy/<name>`, with their tests), a new one from a table of their kind's inputs and outputs.
+  `GET /model/policies?kind=security|notification`.
+- **Design's Policies: every policy opens in the decision editor.** A security policy's name links to it (it was
+  plain text), and notification policies are listed too, each with its tests and the models that name it.
+- **A new build reaches the browser.** `public/` is cached for a year; the instance page loaded `/modeler/report.js`,
+  `/modeler/instance.js` (and every page its scripts and stylesheets) by a URL without its build, so a browser kept
+  running an old one (the Report's form fields as lines, not their table). Every page's own scripts and stylesheets
+  now go through `asset()`, their URL carrying the file's build time.
+- **The Test tab: who acts.** A recorded scenario's start and steps have a User and a Role: who acts there and in the
+  steps after, written as Gherkin's `user:<name> @login [with role of "<role>"]`; with a role, only a task offered to
+  them is theirs (`completeTest`, `POST /model/test/invoke` take `user`, `role`). A step that fails says why in its
+  box, and can be kept as a refused step (`@invoke ... is refused`), which Run checks still is.
+- **The Test tab: checks of an assignment and a notification.** A waiting task shows whom it is assigned or offered
+  to, and a *notified* row of What happened offers its check: `:instance last element:<e> candidateGroups is [...]`,
+  `:instance notified [...] [with template "t"] [at element:<e>]` (Gherkin's runner reads both). Add as a check is a
+  small icon (`+✓`), as Copy check is (`⧉`); a step's data is collapsed, its JSON when opened; New is one button (Start at chooses a task by
+  itself).
+- **The Problems tab, and the Report, say *Model is validated: no problems found*** (it was *No problems found*).
+- **An actor on a start event too** (Who can start, Actor): the user who starts the process there. An actor is the
+  name for the user who completes a user task or starts the process; nowhere else.
+- **The instance page:** its actors under Instance data; the Access section (was Assignment and access) only says who
+  may do what, for designers and administrators while security policies are on, and no longer repeats each task's
+  assignment (the Rationale says it). A form in a diagram's popup: its headings left, a field's id and type unbroken.
+- **Element templates are a preview, off by default** (`ELEMENT_TEMPLATES=on` shows them): the model editor leaves
+  out the Template chooser, `GET /model/templates` offers none, and the Design page doesn't list them. To be finished
+  (docs/design/roadmap.md): what they set shown in the editor, the `owf:` attributes, their documentation.
+- **The instance page, plainer:** Assignment and access says each task in a line (*Offered to Manager by policy
+  LeaveApproval, rule 2*; *Assigned to user1 by the task itself*), then claims, reassignments and who completed it;
+  those with no access are not listed (API v3's `/access` still lists everyone). A diagram element's popup leaves out
+  its outgoing flows (the Model report keeps them). Simulate's details start with the item: `#12 Approve · done`. A
+  form's fields in the Model report: its labels as text, not code.
+- **A user task's own security policy in the editor** (User assignment, Security policy), beside the process's
+  (Policies: select the process, or its pool when it is drawn in one). A policy's and a label's preview say which data they are with: *with the data of "A long leave" (its
+  start data)*.
+- **Notification policies:** API v3's `GET /instances/{id}/notifications` (whoever sees the instance fully): what its
+  policies notified, kept, delivered or not. `NOTIFICATIONS=record` in the settings. The model editor: a process's
+  **Policies** group (its security policy and its notification policy) and a user task's notification policy in User
+  assignment; the Model report says them.
+- **Actor** on a user task in the model editor's User assignment group (`owf:actor`): who completes it is that actor
+  of the instance, `actors.approver` in every expression. The Model report says it. The HR demo's Leave Application
+  names its approver, and its security policy `LeaveCases` reads the actors.
+- **The model editor writes OmniWorkflow's attributes as `owf:`** (an `owf` moddle descriptor): labels, the
+  assignment policy, exceptions as errors, the security policy. A model saved with them as `camunda:` opens with them
+  moved to `owf:`, says so, and is saved so. The HR demo's models use `owf:`.
+- **Assignment and access, under the Rationale on the instance page:** each user task, after the fact: who it was
+  offered to, its assignee, what decided it (a policy's rule, or who reassigned it), its assignment as the log tells it,
+  who completed it. While security policies are on, for designers and administrators: who may see the case and its
+  data, restart it, and claim, complete and assign each waiting task, the case's policy asked for each person (the
+  user directory) and role. API v3: `GET /instances/{id}/access` (an administrator's own token, or the service key).
+  An application's user manager may have `listUsers()`, to name its people; the HR demo's does.
+- **An assignment policy's editor preview** reads what the task will: the one decision context.
+- **A diagram element's popup on the instance page says what the Model report says of it** (its section: settings,
+  form, policies, flows), then what this run did with it (`#3 ended`, `#15 waits`); any part of a shape opens it.
+- **The Report shows an element's form as a table:** a field a row (Field, Type, Label, Default, Options, Other), not a
+  `formField` line for each field and each of its values; an empty `camunda:properties`'s generated id is left out.
+- **Design shows the policies:** each assignment policy (to its editor, its tests) and security policy (the default
+  said), with the models that name it; the overview counts them.
+- **Simulate's Show details**, in the Test tab and on the instance page: each change with what the Rationale says of
+  it (who completed it and with what data, a flow's condition and the values it read, a gateway's choice); remembered
+  in the browser.
+- **A route can stay out of the request log** (`res.locals.quiet = true`); the HR demo's reload check, asked every
+  1.5s by each page, is.
+
+### Fixed
+- **A case seen as a summary opens as a summary**, not "This task or case is not there, or not yours to open": its
+  name, status, and the tasks you completed in it, none of its data (a security policy's `see: summary`). For example
+  a manager who approved a leave, which is no longer offered to them, from Recently completed. Test:
+  `test/web/case-summary.test.mjs`.
+- **An application's own engine calls** (#294): `start({ engineCalls })` adds them to bpmn-web's own (the Test tab's),
+  where bpmn-web used to replace whatever calls an application gave. A host route asks for one by name
+  (`web.bpmnServer.engine.call('app.x', ...)`), and it runs in the engine, under its lock, so a route can again change
+  an instance (`ENGINE_ONLY` otherwise). Test: `test/web/engine-calls.test.mjs`.
+- **The instance page showed a run's colours on its diagram:** the editor saved the model's picture with the Test tab's
+  marks of the run it showed (a task still waiting, orange). The editor now saves the picture without them, and the
+  instance page leaves them out of a picture saved before.
+- **The instance page's items** had no header over the name, so every column from Started on sat under the wrong
+  one.
+- **The Test tab:**
+  - **Debugging a kept run no longer rewrites the scenario.** Restarting a step and running it again saved the run's
+    steps as the scenario's, without their data, so the next Run could take another path.
+  - **A check after a step the scenario doesn't have no longer stops every save** ("Scenarios not saved: the check
+    after … names no step"). It is saved as a check at the end; one naming its step by the element's name is saved by
+    its id. Converting an older `.tests.json` still leaves such a file as it is.
+  - `GET` and `PUT /model/scenarios/:process` refuse a model name that isn't one (400), as the `/feature` routes do.
+  - Unused code removed (`checkExpectations`, a simulation branch of the diagram marks, a request wrapper).
+- **Signing in goes back to the page that asked for it**, and only to it: the page is kept where a page that needs a
+  person sends them to `/login` (`rememberPage`), not on every page asked for while signed out. An application's own
+  sign-in or welcome page (apps/hrdemo's `/hr/login`), or a page such as `/forgot`, was kept too, and signing in then
+  went back there: to the sign-in form, signed in, as if it hung.
+- **A sequence flow with no condition shows its Condition group as empty again** in the editor's panel: the Language
+  (JavaScript, the default) counted as a value; it counts only when it is not the default (FEEL).
+- **The Test tab's Run is offered for a scenario with no steps** (a start, then what is expected checked: a process that
+  runs to its end by itself, or stops at its first wait); it was greyed out until steps were recorded.
 
 ### Removed
 - **`/user`, a second copy of the workflow pages** (`routes/endUser.ts`, the `user/` views): nothing linked to it. Its

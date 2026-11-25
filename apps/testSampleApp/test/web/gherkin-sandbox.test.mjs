@@ -24,7 +24,7 @@ test.before(async () => {
   web = await startWebApp({ env: SETTINGS });
   designer = await web.login('designer');
   await designer.get('/model/list');
-  await web.bpmnServer.definitions.save('sand', SOURCE);
+  await web.bpmnServer.models.save('sand', SOURCE);
 });
 test.after(async () => {
   for (const key of Object.keys(SETTINGS)) delete process.env[key];

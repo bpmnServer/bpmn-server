@@ -1,5 +1,7 @@
 import { Element } from './Element.js';
 import { Flow } from './Flow.js';
+import { owfAttribute } from './owfAttributes.js';
+import { formProblems, FormInvalidError, IFormProblem } from './FormRules.js';
 import { EventBasedGateway } from './Gateway.js';
 
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
@@ -8,6 +10,7 @@ import { Item } from '../engine/Item.js';
 import { BPMN_TYPE } from '../interfaces/Enums.js';
 import { Behaviour_names, BehaviourLoader } from './behaviours/BehaviourLoader.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
+import { itemContext } from '../engine/Context.js';
 
 
 // ---------------------------------------------
@@ -45,18 +48,40 @@ class Node extends Element {
 
         BehaviourLoader.load(this);
     }
-    async validate(item: Item) {
+    /**
+     * The validate event's scripts; and, when a task is completed (`form`: the data sent, and the case's before it), its
+     * form's rules (elements/FormRules.ts). On completion, a rule broken or a script's `{ error }` refuses it:
+     * FormInvalidError (FORM_INVALID), before anything is saved. Otherwise (an assignment) a script's error is an
+     * execution error, as it always was.
+     */
+    async validate(item: Item, form?: { sent: Record<string, any>, current: Record<string, any> }) {
 
         let validate = await item.node.doEvent(item, EXECUTION_EVENT.node_validate,item.status);
+        const problems: IFormProblem[] = [];
         validate.forEach(retVal => {
             if (retVal) {
                 const err = retVal['error'];
                 if (err) {
-                    item.token.execution.error('Validation failed with error:' + err);
+                    // completing: refused with the form's own problems, below; otherwise as before (it throws)
+                    if (form)
+                        problems.push({ field: retVal['field'], rule: 'validate', message: String(err) });
+                    else
+                        item.token.execution.error('Validation failed with error:' + err);
                 }
             }
         });
-
+        if (!form)
+            return;
+        const execution = item.token.execution;
+        const server = execution.server;
+        const fields = this.getBehaviour(Behaviour_names.CamundaFormData)?.fields;
+        if (server?.configuration?.formRules !== false && fields?.length)
+            problems.push(...await formProblems(server, fields, form.sent ?? {}, form.current ?? {}, {
+                user: { userName: execution.userName }, processName: execution.name, elementId: this.id,
+                instanceId: execution.instance?.id, taskId: item.id, instance: execution.instance, item, element: this,
+                data: item.data ?? execution.instance?.data }));
+        if (problems.length)
+            throw new FormInvalidError(this.id, problems);
     }
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS=null,eventDetails={}) {
         item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' newStatus:'+newStatus);
@@ -185,7 +210,7 @@ class Node extends Element {
             return;
         }
         for (const name of names) {
-            const value = await delegate.loadDataObject(name, item);
+            const value = await delegate.loadDataObject(name, item, itemContext(item, { what: `data object ${name}` }));
             item.token.data[name] = value;
             item.token.log(`..data object ${name} loaded`);
         }
@@ -292,9 +317,9 @@ class Node extends Element {
         return ret2;
 
     }
-    /** `camunda:exceptionsAsErrors="true"`: an exception of the task's work is raised as a BPMN error. */
+    /** `owf:exceptionsAsErrors="true"` (or the old `camunda:` name): an exception of the task's work is raised as a BPMN error. */
     get exceptionsAsErrors(): boolean {
-        return String(this.def?.$attrs?.['camunda:exceptionsAsErrors'] ?? this.def?.exceptionsAsErrors ?? '') === 'true';
+        return String(owfAttribute(this.def, 'exceptionsAsErrors') ?? this.def?.exceptionsAsErrors ?? '') === 'true';
     }
     /**
      * The task's work threw. With exceptionsAsErrors and an error event that catches it (by the exception's code,

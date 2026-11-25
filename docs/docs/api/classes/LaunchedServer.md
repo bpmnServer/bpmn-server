@@ -32,6 +32,8 @@ this process (holding the engine, when it is the one in this process).
 - [dataStore](LaunchedServer.md#datastore)
 - [definitions](LaunchedServer.md#definitions)
 - [connectors](LaunchedServer.md#connectors)
+- [documentStore](LaunchedServer.md#documentstore)
+- [models](LaunchedServer.md#models)
 - [scriptHandler](LaunchedServer.md#scripthandler)
 
 ### Methods
@@ -62,7 +64,7 @@ this process (holding the engine, when it is the one in this process).
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:155](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L155)
+[packages/bpmn-server/src/server/LaunchedServer.ts:218](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L218)
 
 ## Properties
 
@@ -72,7 +74,7 @@ this process (holding the engine, when it is the one in this process).
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:150](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L150)
+[packages/bpmn-server/src/server/LaunchedServer.ts:213](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L213)
 
 ___
 
@@ -82,7 +84,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:151](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L151)
+[packages/bpmn-server/src/server/LaunchedServer.ts:214](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L214)
 
 ___
 
@@ -92,7 +94,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:152](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L152)
+[packages/bpmn-server/src/server/LaunchedServer.ts:215](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L215)
 
 ___
 
@@ -102,7 +104,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:153](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L153)
+[packages/bpmn-server/src/server/LaunchedServer.ts:216](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L216)
 
 ## Accessors
 
@@ -116,7 +118,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:168](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L168)
+[packages/bpmn-server/src/server/LaunchedServer.ts:234](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L234)
 
 ___
 
@@ -130,7 +132,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:169](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L169)
+[packages/bpmn-server/src/server/LaunchedServer.ts:235](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L235)
 
 ___
 
@@ -144,27 +146,16 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:170](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L170)
+[packages/bpmn-server/src/server/LaunchedServer.ts:236](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L236)
 
 ___
 
 ### dataStore
 
-• `get` **dataStore**(): [`IDataStore`](../interfaces/IDataStore.md)
+• `get` **dataStore**(): `any`
 
-#### Returns
-
-[`IDataStore`](../interfaces/IDataStore.md)
-
-#### Defined in
-
-[packages/bpmn-server/src/server/LaunchedServer.ts:171](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L171)
-
-___
-
-### definitions
-
-• `get` **definitions**(): `any`
+The instance viewer: instances, their items and locks, read only (docs/design/engine-isolation.md). Writing them
+is the engine's (`engine`); the raw store is not here (`documentStore` is the host's own, for its own data).
 
 #### Returns
 
@@ -172,21 +163,79 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:172](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L172)
+[packages/bpmn-server/src/server/LaunchedServer.ts:241](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L241)
+
+___
+
+### definitions
+
+• `get` **definitions**(): `any`
+
+Model access: the models' files (read and written, with no database), and the engine's index read only.
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/LaunchedServer.ts:254](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L254)
 
 ___
 
 ### connectors
 
-• `get` **connectors**(): [`Connectors`](Connectors.md)
+• `get` **connectors**(): `any`
+
+The connectors: their files (model access's); their keys and tests the engine's.
 
 #### Returns
 
-[`Connectors`](Connectors.md)
+`any`
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:173](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L173)
+[packages/bpmn-server/src/server/LaunchedServer.ts:262](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L262)
+
+___
+
+### documentStore
+
+• `get` **documentStore**(): `any`
+
+The host's own store, for what is the host's (users, sessions, API tokens): not the engine's collections.
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/LaunchedServer.ts:271](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L271)
+
+___
+
+### models
+
+• `get` **models**(): `Object`
+
+The models, as the host changes them (docs/design/engine-isolation.md): model access writes their files, with no
+database, and the engine updates its index of them. Models kept in the database alone (no folder) are saved there.
+
+#### Returns
+
+`Object`
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `save` | (`name`: `string`, `source`: `string`, `svg?`: `string`, `savedBy?`: `string`) => `Promise`\<`any`\> | - |
+| `rename` | (`name`: `string`, `newName`: `string`) => `Promise`\<`any`\> | - |
+| `remove` | (`name`: `string`) => `Promise`\<`any`\> | - |
+| `deleteVersion` | (`name`: `string`, `version`: `number`) => `any` | - |
+
+#### Defined in
+
+[packages/bpmn-server/src/server/LaunchedServer.ts:276](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L276)
 
 ___
 
@@ -202,7 +251,7 @@ Which handler checks a model's scripts, and the variables it adds.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:175](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L175)
+[packages/bpmn-server/src/server/LaunchedServer.ts:305](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L305)
 
 ## Methods
 
@@ -230,7 +279,7 @@ Which handler checks a model's scripts, and the variables it adds.
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:176](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L176)
+[packages/bpmn-server/src/server/LaunchedServer.ts:306](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L306)
 
 ___
 
@@ -244,4 +293,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/server/LaunchedServer.ts:177](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/LaunchedServer.ts#L177)
+[packages/bpmn-server/src/server/LaunchedServer.ts:307](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/server/LaunchedServer.ts#L307)

@@ -44,7 +44,7 @@ test('a token acts as its user, with their groups', async () => {
   const me = await v3('GET', '/me', { token: issued.body.token });
   assert.equal(me.status, 200, why(me));
   assert.deepEqual([me.body.userName, me.body.groups, me.body.credential], ['mary', ['staff'], 'token']);
-  assert.deepEqual(me.body.may, { start: true, design: false, administer: false });
+  assert.deepEqual(me.body.may, { start: true, design: false, administer: false, aiLink: true });
 });
 
 test('only the service key issues and revokes tokens', async () => {

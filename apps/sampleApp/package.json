@@ -11,7 +11,6 @@
     "cli": "tsx index.ts --cli",
     "mcp": "bpmn-mcp",
     "verify": "bpmn-server verify processes",
-    "services": "bpmn-web-services delegates/appDelegate.ts services.json",
     "test": "tsx test/features.ts"
   },
   "dependencies": {

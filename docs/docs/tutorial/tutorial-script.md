@@ -1,4 +1,4 @@
-# Execute from Node.js
+# Tutorial 9: Execute from Node.js
 
 The same leave request, from a script: start it as `user1`, fill in the request, and approve it as `manager1`. The script runs the engine itself, in its own process, on the same database as your application: this needs MongoDB or SQLite, not `--memory`.
 
@@ -49,4 +49,4 @@ npx tsx --env-file=.env leave.ts
 - Each call says who it acts for, and with `ENFORCE_SECURITY=true` the same rules apply: as `user1`, the `Approve` call would be refused.
 - The engine is yours here: you create it and shut it down. That is [Embedding the engine](../embedding.md), and the API is in [Engine API](../api-summary.md).
 
-One of the walkthroughs after the [tutorials](start.md): next, [Integrate an existing application](tutorial-integrate.md).
+Previous: [Tutorial 8](review.md). Next: [Tutorial 10, integrate an existing application](tutorial-integrate.md).

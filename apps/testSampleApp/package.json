@@ -30,12 +30,12 @@
     "test:scenario-coverage": "node --import tsx test/coverage/scenario-coverage.mjs",
     "pretest:ui": "npm run build:modeler -w bpmn-web",
     "test:ui": "node --import tsx --test --test-concurrency=1 \"test/ui/*.test.mjs\"",
-    "demo:video": "npm run build:modeler -w bpmn-web && node --import tsx test/demo/record-demo.mjs",
-    "services": "node ../../packages/bpmn-web/dist/scanServices.js delegates/appDelegate.ts services.json"
+    "demo:video": "npm run build:modeler -w bpmn-web && node --import tsx test/demo/record-demo.mjs"
   },
   "dependencies": {
     "axios": "^1.18.1",
-    "bpmn-web": "*",
+    "bpmn-server": "file:../../packages/bpmn-server",
+    "bpmn-web": "file:../../packages/bpmn-web",
     "dayjs": "^1.11.21",
     "pug": "^3.0.4"
   },

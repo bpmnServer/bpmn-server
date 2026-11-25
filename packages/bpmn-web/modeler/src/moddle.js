@@ -1,10 +1,98 @@
-// The Camunda 7 descriptor that bpmn-server models use, plus the attributes bpmn-server reads that Camunda
-// does not define. The engine reads camunda:candidateUsers and camunda:candidateGroups on start events
-// (who may start the process), so they are declared on bpmn:StartEvent here; and camunda:exceptionsAsErrors on
-// service, send and script tasks.
+// The descriptors the editor reads models with (docs/design/owf-namespace.md):
+//  - camunda: Camunda 7's own, as bpmn-server models use it, plus camunda:candidateUsers and camunda:candidateGroups
+//    on start events (who may start the process: Camunda defines them, on other elements);
+//  - owf: OmniWorkflow's own attributes, which Camunda does not define. Four were written as camunda: before;
+//    upgradeToOwf moves them when a model is opened, so the editor saves them as owf:.
 import camunda from 'camunda-bpmn-moddle/resources/camunda.json';
 
-export default {
+export const OWF_NAMESPACE = 'http://omniworkflow.com/schema/owf/1.0';
+
+/** OWF's attributes once written as camunda: (engine: elements/owfAttributes.ts). */
+export const LEGACY_CAMUNDA = ['assignmentPolicy', 'label', 'endLabel', 'exceptionsAsErrors'];
+
+export const owf = {
+    name: 'OmniWorkflow',
+    uri: OWF_NAMESPACE,
+    prefix: 'owf',
+    xml: { tagAlias: 'lowerCase' },
+    associations: [],
+    types: [
+        {
+            // the labels (addons/labels/Labels.ts): a template, with its values named
+            name: 'Labeled',
+            isAbstract: true,
+            extends: ['bpmn:Process', 'bpmn:FlowNode'],
+            properties: [
+                { name: 'label', isAttr: true, type: 'String' },
+                { name: 'endLabel', isAttr: true, type: 'String' }
+            ]
+        },
+        {
+            // a user task's assignment policy (addons/assignment/AssignmentPolicy.ts)
+            name: 'AssignmentPolicy',
+            isAbstract: true,
+            extends: ['bpmn:UserTask'],
+            properties: [{ name: 'assignmentPolicy', isAttr: true, type: 'String' }]
+        },
+        {
+            // an actor: the name for the user who completes a user task, or starts the process at a start event:
+            // actors.<name> (engine/DecisionContext.ts)
+            name: 'Actor',
+            isAbstract: true,
+            extends: ['bpmn:UserTask', 'bpmn:StartEvent'],
+            properties: [{ name: 'actor', isAttr: true, type: 'String' }]
+        },
+        {
+            // a process's or a task's security policy (addons/security/SecurityPolicy.ts)
+            name: 'SecurityPolicy',
+            isAbstract: true,
+            extends: ['bpmn:Process', 'bpmn:UserTask', 'bpmn:StartEvent'],
+            properties: [{ name: 'securityPolicy', isAttr: true, type: 'String' }]
+        },
+        {
+            // a process's or a user task's notification policy (addons/notification/NotificationPolicy.ts)
+            name: 'NotificationPolicy',
+            isAbstract: true,
+            extends: ['bpmn:Process', 'bpmn:UserTask'],
+            properties: [{ name: 'notificationPolicy', isAttr: true, type: 'String' }]
+        },
+        {
+            // Node.failed: an exception of the task's work is raised as a BPMN error
+            name: 'ExceptionsAsErrors',
+            isAbstract: true,
+            extends: ['bpmn:ServiceTask', 'bpmn:SendTask', 'bpmn:ScriptTask'],
+            properties: [{ name: 'exceptionsAsErrors', isAttr: true, type: 'Boolean' }]
+        },
+        {
+            // a form field's choices from a source (engine/addons/forms/FormLookup.ts): <owf:list> or <owf:lookup> inside
+            // a camunda:formField; without these the editor dropped them as unknown when it saved the model
+            name: 'FormFieldChoices',
+            isAbstract: true,
+            extends: ['camunda:FormField'],
+            properties: [
+                { name: 'list', type: 'owf:List' },
+                { name: 'lookup', type: 'owf:Lookup' }
+            ]
+        },
+        {
+            name: 'Choices',
+            isAbstract: true,
+            properties: [
+                { name: 'source', isAttr: true, type: 'String' },
+                { name: 'key', isAttr: true, type: 'String' },
+                { name: 'display', isAttr: true, type: 'String' },
+                { name: 'filter', isAttr: true, type: 'String' },
+                { name: 'filterInput', isAttr: true, type: 'String' },
+                { name: 'text', isAttr: true, type: 'String' },
+                { name: 'items', isAttr: true, type: 'String' }
+            ]
+        },
+        { name: 'List', superClass: ['owf:Choices'] },
+        { name: 'Lookup', superClass: ['owf:Choices'] }
+    ]
+};
+
+const camundaExtended = {
     ...camunda,
     types: [
         ...camunda.types,
@@ -16,15 +104,40 @@ export default {
                 { name: 'candidateUsers', isAttr: true, type: 'String' },
                 { name: 'candidateGroups', isAttr: true, type: 'String' }
             ]
-        },
-        {
-            // bpmn-server's own (Node.failed): an exception of the task's work is raised as a BPMN error
-            name: 'ExceptionsAsErrors',
-            isAbstract: true,
-            extends: ['bpmn:ServiceTask', 'bpmn:SendTask', 'bpmn:ScriptTask'],
-            properties: [
-                { name: 'exceptionsAsErrors', isAttr: true, type: 'Boolean' }
-            ]
         }
     ]
 };
+
+/** The editor's and the viewers' moddle extensions. */
+export const moddleExtensions = { camunda: camundaExtended, owf };
+
+/**
+ * A model's OWF attributes still under their old camunda: names, moved to owf: (a value already under owf: wins).
+ * `definitions`: the model's root, as read. Returns how many it moved.
+ */
+export function upgradeToOwf(definitions) {
+    let moved = 0;
+    const seen = new Set();
+    const visit = element => {
+        if (!element || typeof element !== 'object' || seen.has(element)) return;
+        seen.add(element);
+        const attrs = element.$attrs;
+        if (attrs && element.$type)
+            for (const name of LEGACY_CAMUNDA) {
+                const old = `camunda:${name}`;
+                if (!(old in attrs)) continue;
+                if (element.get(`owf:${name}`) === undefined) {
+                    const value = attrs[old];
+                    element.set(`owf:${name}`, name === 'exceptionsAsErrors' ? String(value) === 'true' : value);
+                }
+                delete attrs[old];
+                moved++;
+            }
+        for (const key of ['rootElements', 'flowElements', 'participants'])
+            (element.get?.(key) ?? []).forEach(visit);
+    };
+    visit(definitions);
+    return moved;
+}
+
+export default camundaExtended;

@@ -139,9 +139,9 @@ export class SqliteDocumentStore implements IDocumentStore {
         }
     }
 
-    async find(database: string, collection: string, query: StorageQuery, projection: StorageProjection = null, sort: StorageSort = null): Promise<any[]> {
-        const docs = this.matching(collection, query).map(r => r.doc);
-        return DocumentQuery.sort(docs, sort).map(d => DocumentQuery.project(d, projection));
+    async find(database: string, collection: string, query: StorageQuery, projection: StorageProjection = null, sort: StorageSort = null, limit?: number): Promise<any[]> {
+        const docs = DocumentQuery.sort(this.matching(collection, query).map(r => r.doc), sort);
+        return (limit > 0 ? docs.slice(0, limit) : docs).map(d => DocumentQuery.project(d, projection));
     }
 
     async count(database: string, collection: string, query: StorageQuery): Promise<number> {

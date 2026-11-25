@@ -238,3 +238,17 @@ test('a service named by a path is looked for along it', async () => {
   assert.notDeepEqual(await unknown('flat.x'), []);
   assert.notDeepEqual(await unknown('billing'), [], 'an object, not a service');
 });
+
+test('a compensation association (a boundary event to its handler) is checked without the verifier failing', async () => {
+  const source = model(`
+    <bpmn:startEvent id="s" />
+    <bpmn:serviceTask id="Book" name="Book" />
+    <bpmn:boundaryEvent id="OnUndo" attachedToRef="Book"><bpmn:compensateEventDefinition /></bpmn:boundaryEvent>
+    <bpmn:serviceTask id="Unbook" name="Unbook" isForCompensation="true" />
+    <bpmn:endEvent id="e" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="Book" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Book" targetRef="e" />
+    <bpmn:association id="undo" associationDirection="One" sourceRef="OnUndo" targetRef="Unbook" />`);
+  const result = await verifyModel(source, undefined, 'compensation');
+  assert.equal(result.valid, true, JSON.stringify(result.issues ?? result.errors));
+});

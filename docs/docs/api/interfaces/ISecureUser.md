@@ -50,7 +50,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:3](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L3)
+[packages/bpmn-server/src/interfaces/User.ts:4](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L4)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:4](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L4)
+[packages/bpmn-server/src/interfaces/User.ts:5](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L5)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:5](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L5)
+[packages/bpmn-server/src/interfaces/User.ts:6](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L6)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:6](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L6)
+[packages/bpmn-server/src/interfaces/User.ts:7](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L7)
 
 ## Methods
 
@@ -106,7 +106,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L10)
+[packages/bpmn-server/src/interfaces/User.ts:11](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L11)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L11)
+[packages/bpmn-server/src/interfaces/User.ts:12](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L12)
 
 ___
 
@@ -140,13 +140,13 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:12](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L12)
+[packages/bpmn-server/src/interfaces/User.ts:13](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L13)
 
 ___
 
 ### qualifyInstances
 
-▸ **qualifyInstances**(`query`): `any`
+▸ **qualifyInstances**(`query`, `filters?`): `any`
 
 alters the query adding conditions based on security rules
 
@@ -155,6 +155,7 @@ alters the query adding conditions based on security rules
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `filters?` | [`IQueryFilter`](IQueryFilter.md)[] |
 
 #### Returns
 
@@ -164,13 +165,13 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L18)
+[packages/bpmn-server/src/interfaces/User.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L19)
 
 ___
 
 ### qualifyItems
 
-▸ **qualifyItems**(`query`): `any`
+▸ **qualifyItems**(`query`, `filters?`): `any`
 
 alters the query adding conditions based on security rules
 
@@ -179,6 +180,7 @@ alters the query adding conditions based on security rules
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `filters?` | [`IQueryFilter`](IQueryFilter.md)[] |
 
 #### Returns
 
@@ -188,13 +190,13 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L25)
+[packages/bpmn-server/src/interfaces/User.ts:26](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L26)
 
 ___
 
 ### qualifyStartEvents
 
-▸ **qualifyStartEvents**(`query`): `any`
+▸ **qualifyStartEvents**(`query`, `filters?`): `any`
 
 alters the query adding conditions based on security rules
 
@@ -203,6 +205,7 @@ alters the query adding conditions based on security rules
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `filters?` | [`IQueryFilter`](IQueryFilter.md)[] |
 
 #### Returns
 
@@ -212,13 +215,13 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L32)
+[packages/bpmn-server/src/interfaces/User.ts:33](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L33)
 
 ___
 
 ### qualifyDeleteInstances
 
-▸ **qualifyDeleteInstances**(`query`): `any`
+▸ **qualifyDeleteInstances**(`query`, `filters?`): `any`
 
 alters the query adding conditions based on security rules
 
@@ -227,6 +230,7 @@ alters the query adding conditions based on security rules
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
+| `filters?` | [`IQueryFilter`](IQueryFilter.md)[] |
 
 #### Returns
 
@@ -236,7 +240,7 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L38)
+[packages/bpmn-server/src/interfaces/User.ts:39](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L39)
 
 ___
 
@@ -260,7 +264,7 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L44)
+[packages/bpmn-server/src/interfaces/User.ts:45](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L45)
 
 ___
 
@@ -280,7 +284,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:47](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L47)
+[packages/bpmn-server/src/interfaces/User.ts:48](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L48)
 
 ___
 
@@ -300,7 +304,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L50)
+[packages/bpmn-server/src/interfaces/User.ts:51](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L51)
 
 ___
 
@@ -324,7 +328,7 @@ query
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L56)
+[packages/bpmn-server/src/interfaces/User.ts:57](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L57)
 
 ___
 
@@ -344,7 +348,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L57)
+[packages/bpmn-server/src/interfaces/User.ts:58](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L58)
 
 ___
 
@@ -364,7 +368,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L58)
+[packages/bpmn-server/src/interfaces/User.ts:59](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L59)
 
 ___
 
@@ -386,4 +390,4 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/User.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/User.ts#L59)
+[packages/bpmn-server/src/interfaces/User.ts:60](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/User.ts#L60)

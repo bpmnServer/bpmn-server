@@ -8,6 +8,8 @@ import type { IDefinition } from '../interfaces/elements.js';
 import type { IExecution } from '../interfaces/engine.js';
 import type { IBPMNServer, IEngine } from '../interfaces/server.js';
 import { verifyModel, type IModelVerification } from '../elements/verifyModel.js';
+import { registrationsOf, listensTo, fireApiEvent } from '../engine/AddOns.js';
+import { queryContext, actionContext, narrowed } from '../engine/Context.js';
 
 /**
  *  root object to api
@@ -66,9 +68,61 @@ class APIComponent {
     public get server() {
         return this.api.server;
     }
+    /**
+     * What the add-ons narrow a user's queries by (the Assignment add-on: the tasks offered to them). A server that says
+     * nothing of add-ons (no registrations, no configuration's addOns): undefined, so the user's own narrowing applies,
+     * as before; nothing is opened by not knowing.
+     */
+    protected get filters() {
+        const server: any = this.server;
+        return server?.registrations || typeof server?.configuration?.addOns === 'function' ? registrationsOf(server).queryFilters : undefined;
+    }
     getUser(user) {
         if (!user) throw new Error('A trusted authenticated principal is required');
         return user;
+    }
+
+    /**
+     * A query narrowed to what this user may see (docs/design/context-object.md): their tenant's (SecureUser), then
+     * `pre-query`, its listeners' conditions all holding. No listener (the policies' add-ons off, a server from before
+     * add-ons): the user's own built-in narrowing, the tasks offered to them. Not narrowed for an administrator.
+     */
+    protected async qualify(kind: 'instances' | 'items' | 'startEvents' | 'deleteInstances', user: ISecureUser, query) {
+        const method = { instances: 'qualifyInstances', items: 'qualifyItems', startEvents: 'qualifyStartEvents', deleteInstances: 'qualifyDeleteInstances' }[kind];
+        const legacy = this.filters;
+        // an add-on of before 3.7.5 still filtering (registrations.addQueryFilter): as before
+        if (legacy?.length) return user[method](query, legacy);
+        // nothing listens (the policies' add-ons off): the built-in narrowing, the tasks offered to them
+        if (!listensTo(this.server, 'pre-query')) return user[method](query);
+        // the tenant, administrators and security turned off: the user's own rules, with no narrowing of theirs
+        const base = user[method](query, []);
+        if ((user as any).securityBypassed || user.isAdmin() || kind === 'deleteInstances') return base;
+        const context = queryContext(kind, user, base);
+        await fireApiEvent(this.server, 'pre-query', context);
+        return narrowed(base, context.conditions);
+    }
+
+    /**
+     * Whether this user may do this (the one check of each action: canStart, canInvoke, canAssign, canRestart,
+     * canFireEvent, canModifyModel, canDeleteModel): the user's own rule, then `pre-action`, whose listeners may refuse
+     * by throwing (the error is the caller's). No listener: the built-in rules only.
+     */
+    protected async can(action: string, user: ISecureUser, on: { item?: any; instance?: any; element?: any; model?: string; input?: any; assignment?: any } = {}): Promise<boolean> {
+        if (action === 'modifyModel' && !(await user.canModifyModel(on.model))) return false;
+        if (action === 'deleteModel' && !(await user.canDeleteModel(on.model))) return false;
+        if (!listensTo(this.server, 'pre-action')) return true;
+        await fireApiEvent(this.server, 'pre-action', actionContext(action, user, on));
+        return true;
+    }
+
+    /** The waiting items a query finds, each with its case (what a pre-action decides on); none when nothing listens. */
+    protected async targets(query): Promise<{ item: any; instance: any }[]> {
+        if (!listensTo(this.server, 'pre-action')) return [];
+        const items = await this.server.dataStore.findItems(query);
+        const ids = [...new Set(items.map(i => i.instanceId).filter(Boolean))];
+        const cases = ids.length ? await this.server.dataStore.findInstances({ id: { $in: ids } }, { projection: { id: 1, name: 1, data: 1, items: 1, tokens: 1, userName: 1 } } as any) : [];
+        const byId = new Map(cases.map(c => [c.id, c]));
+        return items.map(item => ({ item, instance: byId.get(item.instanceId) }));
     }
 }
 /**
@@ -173,7 +227,7 @@ export interface IAPIData {
 /**
     returns list of `item`s
 */
-     findItems(query, user?: ISecureUser): Promise<IItemData[]>;
+     findItems(query, user?: ISecureUser, options?: { lean?: boolean }): Promise<IItemData[]>;
      findItem(query, user?: ISecureUser): Promise<IItemData>;
 /**
     returns list of `instance`s
@@ -247,18 +301,28 @@ class APIEngine extends APIComponent implements IAPIEngine {
 
     public async start(name, data = {}, user?: ISecureUser, options: IEngineOptions = {}): Promise<IExecution> {
         user = this.getUser(user);
+        await this.can('start', user, { model: name, element: options['startNodeId'] ? { id: options['startNodeId'] } : undefined, input: data });
         return await this.server.engine.start(name, data, options['startNodeId'], user.userName,
             { ...options, tenantId: user.tenantId });
     }
     public async invoke(query, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
-        query = user.qualifyItems(query);
+        query = await this.qualify('items', user, query);
+        for (const { item, instance } of await this.targets(query))
+            if (item.status === 'wait') await this.can('complete', user, { item, instance, input: data });
         return await this.server.engine.invoke(query, data, user.userName, options);
     }
 
     public async assign(query, data, assignment, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
-        query = user.qualifyItems(query);
+        query = await this.qualify('items', user, query);
+        // who works on it: a person taking it as its assignee, and nothing else, is claiming it; else assigning
+        const who = ['assignee', 'candidateUsers', 'candidateGroups'].filter(f => f in (assignment ?? {}));
+        if (who.length) {
+            const claim = who.length === 1 && who[0] === 'assignee' && assignment.assignee === user.userName;
+            for (const { item, instance } of await this.targets(query))
+                if (item.status === 'wait') await this.can(claim ? 'claim' : 'assign', user, { item, instance, assignment });
+        }
         return await this.server.engine.assign(query, data, assignment, user.userName, options);
     }
     public async throwMessage(messageId, data, messageMatchingKey, user?: ISecureUser, options:IEngineOptions = {}) {
@@ -273,17 +337,23 @@ class APIEngine extends APIComponent implements IAPIEngine {
     }
     public async startEvent(query, elementId, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
-        const instance = await this.server.dataStore.findInstance(user.qualifyInstances({ id: query }), 'summary');
+        const instance = await this.server.dataStore.findInstance(await this.qualify('instances', user, { id: query }), 'summary');
+        if (listensTo(this.server, 'pre-action')) {
+            const [full] = await this.server.dataStore.findInstances({ id: instance.id }, 'full');
+            await this.can('events', user, { instance: full ?? instance, element: { id: elementId }, input: data });
+        }
         return await this.server.engine.startEvent(instance.id, elementId, data,user.userName,options);
     }
     /** Runs a failed item's work again (its status `error`), and the instance on from it. */
     public async retry(itemQuery, user?: ISecureUser): Promise<IExecution> {
         user = this.getUser(user);
-        return await this.server.engine.retry(user.qualifyItems({ ...itemQuery }), user.userName);
+        return await this.server.engine.retry(await this.qualify('items', user, { ...itemQuery }), user.userName);
     }
     public async restart(itemQuery, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
         user = this.getUser(user);
-        return await this.server.engine.restart(user.qualifyItems({ ...itemQuery }), data,user.userName, options);
+        const query = await this.qualify('items', user, { ...itemQuery });
+        for (const { item, instance } of await this.targets(query)) await this.can('restart', user, { item, instance, input: data });
+        return await this.server.engine.restart(query, data,user.userName, options);
 
     }
     public async upgrade(model,afterNodeIds,user?: ISecureUser) {
@@ -293,6 +363,10 @@ class APIEngine extends APIComponent implements IAPIEngine {
     }
 }
 class APIData extends APIComponent {
+    /** A query narrowed to what this user may see, as the API's reads narrow theirs (pre-query). */
+    public async qualifyQuery(kind: 'instances' | 'items' | 'startEvents', query, user?: ISecureUser) {
+        return this.qualify(kind, this.getUser(user), { ...(query ?? {}) });
+    }
     public async getPendingUserTasks(query, user?: ISecureUser): Promise<IItemData[]> {
 
         query['items.status'] = 'wait';
@@ -301,27 +375,28 @@ class APIData extends APIComponent {
         return this.findItems(query, user);
     }
 
-    public async findItems(query, user?: ISecureUser): Promise<IItemData[]> {
+    /** `lean`: without the instances' data (for lists): see IDataStore.findItems. */
+    public async findItems(query, user?: ISecureUser, options?: { lean?: boolean }): Promise<IItemData[]> {
         user=this.getUser(user);
-        query = user.qualifyInstances(query);
-        return await this.server.dataStore.findItems(query);
+        query = await this.qualify('items', user, query);
+        return await this.server.dataStore.findItems(query, options);
     }
     public async findItem(query, user?: ISecureUser): Promise<IItemData> {
         user=this.getUser(user);
-        query = user.qualifyInstances(query);
+        query = await this.qualify('items', user, query);
         const items = await this.server.dataStore.findItems(query);
         return items[0];
     }
     public async findInstances(query, user?: ISecureUser, options?): Promise<IInstanceData[]> {
         user=this.getUser(user);
-        query = user.qualifyInstances(query);
+        query = await this.qualify('instances', user, query);
         // The same visibility as findItems (qualifyInstances): an instance the principal may see is
         // returned whole. 3.1.0 stripped data and items for non-admins, which findItems still returned.
         return await this.server.dataStore.findInstances(query, options);
     }
     public async deleteInstances(query, user?: ISecureUser) {
         user=this.getUser(user);
-        query = user.qualifyDeleteInstances(query);
+        query = await this.qualify('deleteInstances', user, query);
         // the engine's to do, under each instance's lock and with its timers, wherever it runs
         return await this.server.engine.deleteInstances(query)
     }
@@ -355,7 +430,7 @@ class APIModelReader extends APIComponent {
         user=this.getUser(user);
         query = { ...(query ?? {}) };
         query['events.subType'] = null;
-        query = user.qualifyStartEvents(query);
+        query = await this.qualify('startEvents', user, query);
         return await this.server.definitions.findEvents(query, user.modelsOwner);
     }
     public async getSource(name, user?: ISecureUser) {
@@ -405,20 +480,20 @@ class APIModel extends APIModelReader {
 
     public async save(name, source, svg, user?: ISecureUser) {
         user=this.getUser(user);
-        if (await user.canModifyModel(name))
+        if (await this.can('modifyModel', user, { model: name }))
             return await (this.modelsOf(user)?.save(name, source, svg, user.userName) ?? this.server.definitions.save(name, source, svg, user.modelsOwner, user.userName));
         else
             return false;
     }
     public async delete(name, user?: ISecureUser) {
         user=this.getUser(user);
-        if (await user.canDeleteModel(name))
+        if (await this.can('deleteModel', user, { model: name }))
             return await (this.modelsOf(user)?.remove(name) ?? this.server.definitions.deleteModel(name, user.modelsOwner));
         return false;
     }
     public async rename(name, newName, user?: ISecureUser) {
         user=this.getUser(user);
-        if (await user.canModifyModel(name))
+        if (await this.can('modifyModel', user, { model: name }))
             return await (this.modelsOf(user)?.rename(name, newName) ?? this.server.definitions.renameModel(name, newName, user.modelsOwner));
         return false;
     }

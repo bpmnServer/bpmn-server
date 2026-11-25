@@ -1,0 +1,48 @@
+/* The Settings page (views/dashboards/integration.pug): the overview's cards, and a point's page */
+.integration-group { font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #52575f; margin: 8px 0 10px; }
+.integration-overview { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.integration-card { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; background: #fff; border: 1px solid #dce4ec; border-radius: 10px; color: #1f2937; text-decoration: none; }
+.integration-card:hover, .integration-card:focus { border-color: #1f62c8; box-shadow: 0 2px 8px rgba(31, 98, 200, .12); text-decoration: none; color: #1f2937; }
+.integration-card h2 { font-size: 17px; margin: 0 0 4px; }
+.integration-card p { margin: 0; color: #52575f; font-size: 14px; }
+.integration-card .dash-badge { align-self: flex-start; }
+.integration-card h2 a { color: inherit; }
+.integration-switch { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.integration-switch form { margin: 0; }
+.integration-docs { font-size: 13px; }
+.integration-card .integration-brief { color: #1f2937; }
+.integration-card h2 { display: flex; align-items: center; gap: 8px; }
+.integration-state { font-size: 13px; line-height: 1; }
+.integration-state.is-on { color: #1a7f37; }
+.integration-state.is-off { color: #9aa1aa; }
+.integration-used { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 2px; }
+.integration-used-label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #6b7280; margin-right: 2px; }
+.integration-model { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #eef2f7; color: #1f2937; text-decoration: none; }
+.integration-model:hover { background: #dde6f2; text-decoration: none; }
+.integration-card-links { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 6px; }
+.integration-options { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.integration-options li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.integration-options form { margin: 0 0 0 auto; }
+.integration-option-name { min-width: 120px; font-size: 14px; }
+/* something to set up: amber, not red (red is for errors) */
+.integration-attention { color: #8a5a00 !important; }
+/* what an area has, in a few words, on its card (summaryOf) */
+.integration-summary { margin: 6px 0 0; padding-left: 18px; list-style: disc; }
+.integration-summary li { color: #555; font-size: 0.92em; line-height: 1.5; }
+.integration-open { margin-top: auto; padding-top: 6px; color: #1f62c8; font-size: 14px; }
+.integration-more { margin: 12px 0; }
+.integration-more > summary { cursor: pointer; color: #1f62c8; margin-bottom: 8px; }
+.integration-list > summary { cursor: pointer; color: #1f62c8; }
+.integration-list[open] > summary { margin-bottom: 4px; }
+.integration-points { margin: 8px 0 24px; font-size: 14px; }
+.integration-card-links .integration-open { margin: 0; padding: 0; }
+
+/* what each role may do (the Security area): a table of the roles and their rights */
+.integration-permissions { width: 100%; border-collapse: collapse; margin: 8px 0 4px; }
+.integration-permissions th, .integration-permissions td { border-bottom: 1px solid #e6e6e6; padding: 8px 10px; text-align: left; vertical-align: top; }
+.integration-permissions th { font-weight: 600; color: #444; }
+.integration-permissions td.is-held { text-align: center; font-size: 1.15em; }
+.integration-permissions th.is-off { opacity: 0.65; }
+.integration-permissions th .dash-muted { font-weight: 400; font-size: 0.85em; line-height: 1.4; margin-top: 2px; }
+.integration-restrictions { margin: 6px 0 10px; padding-left: 18px; list-style: disc; }
+.integration-tick { display: inline-flex; align-items: center; gap: 2px; font-size: 0.8em; cursor: pointer; }

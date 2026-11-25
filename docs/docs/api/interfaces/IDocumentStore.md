@@ -24,9 +24,11 @@
 
 ### find
 
-▸ **find**(`database`, `collection`, `query`, `projection?`, `sort?`): `Promise`\<`any`[]\>
+▸ **find**(`database`, `collection`, `query`, `projection?`, `sort?`, `limit?`): `Promise`\<`any`[]\>
 
-Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's db name; ignored by single-database adapters).
+Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's
+db name; ignored by single-database adapters). `limit`: at most that many, the first after sorting; optional, so
+an adapter written before it may return more, and callers cut the answer to it themselves.
 
 #### Parameters
 
@@ -37,6 +39,7 @@ Documents of `collection` matching `query`, projected and sorted. `database` nam
 | `query` | [`StorageQuery`](../readme.md#storagequery) |
 | `projection?` | `Record`\<`string`, `any`\> |
 | `sort?` | `Record`\<`string`, ``-1`` \| ``1``\> |
+| `limit?` | `number` |
 
 #### Returns
 
@@ -44,7 +47,7 @@ Documents of `collection` matching `query`, projected and sorted. `database` nam
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L18)
+[packages/bpmn-server/src/interfaces/storage.ts:22](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L22)
 
 ___
 
@@ -68,7 +71,7 @@ How many documents of `collection` match `query`. Optional: without it, callers 
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L20)
+[packages/bpmn-server/src/interfaces/storage.ts:24](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L24)
 
 ___
 
@@ -92,7 +95,7 @@ Inserts all of `documents`, or none: a unique-index conflict throws a [Duplicate
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L22)
+[packages/bpmn-server/src/interfaces/storage.ts:26](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L26)
 
 ___
 
@@ -119,7 +122,7 @@ Updates the first document matching `query` (`$set` fields, or replaces it); `{ 
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L24)
+[packages/bpmn-server/src/interfaces/storage.ts:28](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L28)
 
 ___
 
@@ -143,7 +146,7 @@ Removes every document matching `query`; returns `{ deletedCount }`.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L26)
+[packages/bpmn-server/src/interfaces/storage.ts:30](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L30)
 
 ___
 
@@ -169,7 +172,7 @@ Declares an index; `{ unique: true }` makes [insert](IDocumentStore.md#insert) r
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L28)
+[packages/bpmn-server/src/interfaces/storage.ts:32](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L32)
 
 ___
 
@@ -185,4 +188,4 @@ Releases connections. Idempotent.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/storage.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/storage.ts#L30)
+[packages/bpmn-server/src/interfaces/storage.ts:34](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/storage.ts#L34)

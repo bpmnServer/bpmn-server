@@ -26,7 +26,7 @@ test.before(async () => {
     web = await startWebApp();
     [admin, staff] = await Promise.all([web.login('admin'), web.login('staff')]);
     fs.writeFileSync(path.join(web.definitionsPath, 'broken-run.bpmn'), BROKEN);
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
@@ -82,7 +82,7 @@ const FLAKY = upAt => `<?xml version="1.0" encoding="UTF-8"?>
 test('a task whose work threw: the instance page says it failed and why, and Retry runs it again', async () => {
     const upAt = Date.now() + 5000;
     fs.writeFileSync(path.join(web.definitionsPath, 'flaky.bpmn'), FLAKY(upAt));
-    await web.bpmnServer.definitions.rebuild();
+    await web.bpmnServer.engine.install({ rebuild: true });
     await assert.rejects(web.bpmnServer.engine.start('flaky', {}), /service down/);
     const [instance] = await web.bpmnServer.dataStore.findInstances({ name: 'flaky' }, 'full');
     const failed = instance.items.find(i => i.elementId === 'Work');

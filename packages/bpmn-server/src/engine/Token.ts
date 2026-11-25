@@ -50,6 +50,12 @@ enum TOKEN_TYPE {
     EventSubProcess='EventSubProces', BoundaryEvent ='BoundaryEvent' ,AdHoc ='AdHoc'
 }
 // ---------------------------------------------
+/** A copy of the case's data as it was (a value that cannot be cloned is kept as it is). */
+function cloneData(data) {
+    try { return structuredClone(data ?? {}); }
+    catch { return { ...(data ?? {}) }; }
+}
+
 class Token implements IToken {
     id;
     type: TOKEN_TYPE;
@@ -414,7 +420,7 @@ class Token implements IToken {
                 tokens.push(ev.token);
         });
 
-        let handler=this.checkTokensForError(tokens,bhName,propertyName,code);
+        let handler=this.checkTokensForError(tokens,bhName,propertyName,code,nodeSubType);
 
         if (handler)
             return handler;
@@ -437,7 +443,7 @@ class Token implements IToken {
                 tokens.push(ct);
         });
 
-        return this.checkTokensForError(tokens,bhName,propertyName,code);
+        return this.checkTokensForError(tokens,bhName,propertyName,code,nodeSubType);
 
     }
     catch (exc) {
@@ -446,7 +452,7 @@ class Token implements IToken {
     }
 
     }
-    private checkTokensForError(tokens,bhName,propertyName,errorCode) {
+    private checkTokensForError(tokens,bhName,propertyName,errorCode,nodeSubType) {
 
         let handlingCodeEventToken=null;
         let handlingAllEventToken=null;
@@ -462,7 +468,10 @@ class Token implements IToken {
                     handlingAllEventToken=ct;
     
             }
-            else
+            // without the definition, it handles all only if it is of this kind: an error boundary event does not
+            // catch an escalation, nor an escalation boundary event an error (the task's own boundary events are all
+            // asked first)
+            else if (ct.currentNode.subType == nodeSubType)
                 handlingAllEventToken=ct;
 
         });
@@ -571,6 +580,10 @@ class Token implements IToken {
         //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
         this.logS('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
+        // a waiting task completed: its form is checked (Node.validate) against the case's data before this input
+        const completing = !restart && item.status == ITEM_STATUS.wait && item.type == 'bpmn:UserTask';
+        const before = completing ? cloneData(this.data) : null;
+
         await this.currentNode.setInput(item, data);
         
         if (restart) { // case when in restart mode  
@@ -584,7 +597,7 @@ class Token implements IToken {
             }  
         else if (item.status == ITEM_STATUS.wait || recover) {// || item.type=='bpmn:SubProcess') {
 
-            await item.node.validate(item);
+            await item.node.validate(item, before ? { sent: data ?? {}, current: before } : undefined);
 
             const ret = await this.currentNode.run(item);
 

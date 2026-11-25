@@ -3,16 +3,19 @@
 ## An application on bpmn-server and bpmn-web
 
 ```sh
-npx bpmn-server init my-app      # asks for the settings step by step; --memory --yes to try it without MongoDB
+npx bpmn-server init my-app      # asks the folder, what to start from and the settings; --memory --yes to try it without MongoDB
 cd my-app
-npm start                        # http://localhost:3000: the first page asks for the administrator
+npm start                        # http://localhost:3000: sign in as admin, with the password it prints the first time
 ```
 
 `init` creates the sample application: `processes/` (Hello, Buy Used Car, Leave Application,
 employee-onboarding, Business Rules, GitHub repository),
-`connectors/` (the services the models call, `appServices.ts`, and element
-templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`), `settings/config.ts` (the settings
-you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead.
+`connectors/` (the editor's element templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`,
+and the services the models call, `appServices.ts`), `settings/config.ts` (the settings
+you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead, and `--hrdemo` starts from the HR demo (its own pages, users and
+API, and the workflows that call them; from the repository only, so far). The HR demo `init` makes signs people in for
+real: its home page lists the accounts and their password, and `HR_DEMO_SIGN_IN_AS=false` in its `.env` leaves out the
+one-click "Sign in as" buttons the public demo has.
 `npm run setup` asks the settings step by step (below), then prepares the database and stops (with no terminal, as
 in a script, it only prepares the database); `npm run cli` opens the console, `npm run verify` checks the
 models. (`init` ships with bpmn-server 3.5.)
@@ -23,25 +26,41 @@ models. (`init` ships with bpmn-server 3.5.)
 npx bpmn-server setup my-app     # a new application, then its settings; in an application's folder: npx bpmn-server setup
 ```
 
-`init`, at a terminal, asks the same steps after the folder and what the application serves. `setup` asks for the
-settings in `.env` step by step: the database (MongoDB, memory, or a SQLite file; checked), the first administrator,
-the site's address, sign-in and model design, email, the API keys, AI access, and the environment and API trace. It
-starts with a profile, **production** or **development**, which suggests the values; Enter keeps the value shown.
-Nothing is written until you confirm the summary (secrets shown as `***`), and the `.env` before is kept as `.env.bak`.
-Run it again any time to change them. `--yes` asks nothing: the profile's values and new keys where there are none
-(`--profile production|development`, `--no-check`). It reads the settings schema of bpmn-web 3.7 or later.
+`init`, at a terminal, asks the folder and what to start from (the sample application, or the HR demo), then the same steps
+as `setup`. `setup` asks for the settings in `.env` step by step, and only what a server needs to start:
+
+1. **The database**: MongoDB, a MongoDB in memory (nothing to install; the data goes when the server stops), or a SQLite
+   file (`DATABASE=sqlite:<file>`; one writer at a time, Node 22.5 or later). Checked: when it does not answer, you are
+   asked whether to keep the address anyway.
+2. **The site**: its port, and the address people reach it by.
+
+Sign-in and the security rules are switched on without a question, and the API keys, the session secret and `SECRETS_KEY` are made (`SECRETS_KEY` encrypts the secrets the server stores, a connector's own key: it is made once, never offered again, and not made where `CONNECTORS_KEY`, its name before 3.7.5, is set). The
+administrator is not asked either: the server makes it the first time it starts ([The first start](#the-first-start)). Every
+other setting is changed on **Dashboard > Settings** once the server runs ([Settings](settings.md)); `--explain` shows each
+setting's own description beside the questions.
+
+`init` makes a development server and does not ask what it is for. `setup` on an existing application first asks whether it
+is for **production** or **development**, which suggests the values. Enter keeps the value shown, and a question asked
+three times without an answer takes its default, so the dialog never loops. Nothing is written until you confirm the
+summary (secrets shown as `***`), and the `.env` before is kept as `.env.bak`. `init` makes its folder last: answer no, and nothing was created. Run `setup` again any time to change them.
+`--yes` asks nothing: the profile's values and new keys where there are none (`--profile production|development`,
+`--no-check`). It reads the settings schema of bpmn-web 3.7 or later.
 
 ### The first start
 
-A new server has no users. When it starts, it prints a **setup token**, and its pages ask for the administrator: open it,
-give the token, and choose the administrator's name, email and password. It can also add the tutorials' sample users,
-`user1` and `manager1`. Then you're signed in, and the setup page is gone.
+There is no admin/admin. A new server has no users, and its first start makes one: `admin`, in the group `ADMIN`, with the
+address `ADMIN_EMAIL` (`admin@example.com` when unset) and a password it makes up and **prints once, where it runs**: read the
+console, or the log. Sign in as `admin`, and change the password on **My account**. No password is written to `.env`: a secret
+in a file is one more place it leaks from. A server on the in-memory database, which keeps nothing, makes it again, with a new
+password, each time it starts.
 
-The token is there because whoever reaches a new server first could otherwise make themselves its administrator: only someone
-who can read the server's console or log has it. Its REST APIs and `/healthz` work while it waits.
+To choose the password instead, set `ADMIN_PASSWORD` (and `ADMIN_EMAIL`) in `.env` before the first start. The Docker files and
+the server install script do, and print it.
 
-With `ADMIN_PASSWORD` set, the first start makes `admin` with that password instead, and asks nothing. The Docker files and
-the server install script set it.
+There is no page that asks for the administrator, so nobody who reaches a new server first can make themselves one: only
+someone who can read the server's console or log has the password. A server whose users were all removed makes `admin` again
+the next time it starts. The tutorials use two more users, `user1` and `manager1`: add them on **Dashboard > Administration**
+(groups `Employee`, and `Employee, Manager`).
 
 ### To Update
 
@@ -109,7 +128,8 @@ ENGINE_AT=http://127.0.0.1:3001 ENGINE_KEY=your-secret npm start
 | `ENGINE_PORT` | Engine | Its port. Default `3001` |
 | `ENGINE_LISTEN` | Engine | The address it listens on. Default `127.0.0.1`, this machine only |
 
-- **Give both processes the same database and models folder.** They read and write the same instances and models.
+- **Give both processes the same database and models folder.** The engine reads and writes the instances; the host only reads them, and writes its own users, sessions and API tokens there. The host writes the models' and the connectors' files, and tells the engine, which updates its index of them.
+- **`SECRETS_KEY` is the engine's only.** The connectors' keys are set, kept encrypted and used by the engine; the host needs no `SECRETS_KEY`.
 - **Keep the engine private.** Only the host should be able to reach it. Change `ENGINE_LISTEN` only if the host is on another machine, and then only on a private network.
 - **Turn design off, on both.** `DISABLE_DESIGN=true` removes the model editor, the Design dashboard and test runs from the host's pages, and the test calls from the engine. Without it, anyone with `ENGINE_KEY` can run a test's scripts on the engine. Models then arrive through the admin REST APIs, and the admin APIs stay on.
 - **Leave tests out of a deployment.** A production server doesn't run them, so don't deploy `*.feature` files.
@@ -153,107 +173,25 @@ npx bpmn-client-cli                         # a console on the server: start pro
 
 ```js
 import 'dotenv/config';
-import { BPMNClient2 } from 'bpmn-client';
+import { BPMNClient3 } from 'bpmn-client';
 
-const client = new BPMNClient2(process.env.HOST, process.env.PORT, process.env.API_KEY);
-const instance = await client.engine.start('Hello', { name: 'Ada' });
+const service = new BPMNClient3({ url: `http://${process.env.HOST}:${process.env.PORT}`, apiKey: process.env.API_KEY });
+const ada = service.as('ada', ['staff']);              // every call acts as this person
+const { instance, task } = await ada.processes.start('Hello', { name: 'Ada' });
 ```
 
 See [bpmn-client](bpmn-client.md) for the API. To update: `npm update bpmn-client`.
 
-# Setup bpmn Application with bpmn-server
+## The engine's own configuration
 
-## Configuration
+An application that creates the engine itself passes a `Configuration`: the models folder, the storage, the timers
+and the components. See [Configuring the engine](configuration.md).
 
-Every project must have a configuration file that is an instance of [Configuration class](api/classes/Configuration.md)
-
-This configuration file is passed to the BPMNServer constructor.
-
-For testing purposes, you can have a different configuration than production in same environemnt by passign a different object.
-
-## Example
-
-bpmn-server 3 is an ES module and needs Node.js 20 or later.
-
-```ts
-import { Configuration, DataStore } from 'bpmn-server';
-import { MyAppDelegate } from './appDelegate.js';
-
-export const configuration = new Configuration({
-    definitionsPath: import.meta.dirname + '/processes/',
-    timers: {
-        precision: 3000,
-    },
-    database: {
-        MongoDB: {
-            db_url: 'mongodb://localhost:27017?retryWrites=true&w=majority',
-            db: 'bpmn',
-        },
-    },
-    /* Server components: each one left out keeps its default */
-    appDelegate: (server) => new MyAppDelegate(server),
-    dataStore: (server) => new DataStore(server),
-});
-```
-
-The components are made by factories, each given the server: `definitions` (`ModelsDatastore`), `appDelegate`
-(`DefaultAppDelegate`), `dataStore` (`DataStore`), `scriptHandler` (`ScriptHandler`), `cacheManager`
-(`NoCacheManager`; `CacheManager` keeps running instances in memory). The logger is the server's second argument.
-
-Start a server with it, and stop it when your application stops:
-
-```ts
-import { BPMNServer, BPMNAPI, Logger } from 'bpmn-server';
-import { configuration } from './configuration.js';
-
-const server = await BPMNServer.create(configuration, new Logger({ toConsole: false }));
-const api = new BPMNAPI(server);
-
-// ...
-
-await server.shutdown();
-```
-
-`BPMNServer.create` waits until the server has started (the application delegate's `startUp`, then the timers).
-`new BPMNServer(...)` starts it too; `await server.ready` waits for it. Pass `{ cron: false }` as the third
-argument to start a server that does not fire timers (a script or a test).
-
-`shutdown()` refuses new engine calls, cancels the server's timers, gives running executions `shutdownTimeout`
-milliseconds to finish, and closes its connections. Several servers can run in one Node.js process, each with
-its own engine, cache, listeners and timers.
-
-## Options
-
-| Option | |
-|---|---|
-| `definitionsPath` | the folder of model files |
-| `timers.precision` | milliseconds; timers due within it fire together |
-| `timers.forceTimersDelay` | milliseconds; every timer fires after this delay (for testing). When `timers` is not given at all, the default is `{ forceTimersDelay: 1000, precision: 3000 }`: give `timers` in production |
-| `timers.pollInterval` | milliseconds between re-reads of waiting timers, so a timer another server scheduled fires here when that server is gone (default 60000; 0: never) |
-| `database.MongoDB` | `db_url`, `db`, and optionally the collections: `Locks_collection`, `Instance_collection`, `Archive_collection` |
-| `documentStore(server)` | the storage both data stores use (MongoDB when absent); see [Storage](#storage) |
-| `locker(server)` | the lock manager (the data store's own when absent) |
-| `serverId` | this server's identity as a lock owner (default `SERVER_ID`, else the host, the process id and a random suffix) |
-| `locks.retryDelay` | milliseconds between lock tries (1500) |
-| `locks.maxTries` | tries before a lock gives up (20) |
-| `locks.staleAfter` | milliseconds after which a lock or timer claim is stale and another server may take it (300000) |
-| `shutdownTimeout` | how long `shutdown()` waits for running executions, in milliseconds (10000) |
-| `definitions`, `appDelegate`, `dataStore`, `scriptHandler`, `cacheManager` | the server's components (factories) |
-
-Things that usually differ between development and production: the timers (`forceTimersDelay`, `precision`) and
-the database.
-
-Storage, and the options of the data stores: [Custom persistence](persistence.md). The app delegate: [Custom delegates](delegates.md).
-
-## Processes Folder
-
-This is where the definition files reside, the demo WebApp contains a set of those file for you to start with.
-
-# Packages
+## The packages
 
 | Package | |
 |---|---|
-| [bpmn-server](https://github.com/bpmnServer/bpmn-server) | the engine: execution, persistence (MongoDB or your own storage), the API, `verifyModel` and the `bpmn-server` command line |
-| [bpmn-web](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-web) | a web application on bpmn-server: model editor, task lists, administration, and REST APIs |
-| [bpmn-client](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-client) | calls a bpmn-web server's REST API from Node.js |
-| [bpmn-mcp](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-mcp) | connects AI clients to a running server over MCP; `npx bpmn-server init` installs it |
+| [bpmn-server](https://github.com/bpmnServer/bpmn-server) | The engine: execution, storage, the API, `verifyModel` and the `bpmn-server` command |
+| [bpmn-web](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-web) | The web application on it: the Workbench, the model editor, Administration, the REST APIs |
+| [bpmn-client](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-client) | Calls a running server's API from another Node.js application |
+| [bpmn-mcp](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-mcp) | Connects AI clients to a running server over MCP; `npx bpmn-server init` installs it |

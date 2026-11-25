@@ -9,12 +9,259 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **`SECRETS_KEY` is made everywhere a server is set up, and Docker keeps its data by default**: `init` writes it into
+  `.env` and `setup` makes it when it is missing (once, never offered again, and not where `CONNECTORS_KEY`, its name
+  before 3.7.5, is set: a new key would hide what the old one encrypted). The Linux installer, `deploy-client.sh` and
+  the Docker scripts (`setup.sh`, `up.cmd`, `owf.ps1`, `.env.example`) make one too, so a connector can be given its key
+  on the Settings page without setting anything first. In Docker the database is MongoDB, in a container of its own with
+  a volume, unless `memory` was chosen: users, instances and models survive recreating the server's container.
+  **Compatibility:** an installation that chose `memory` keeps it on `--reconfigure`; `up.cmd` fetches
+  `docker-compose.mongo.yml` itself. Tests: `packages/bpmn-server/test/setup.test.mjs`, `cli.test.mjs`.
+- **Fixed: the Linux installer (`deploy/install.sh`) stopped at the end of a fresh install.** After `npm run setup` made `admin`
+  from `ADMIN_PASSWORD`, a block meant for releases before 3.5 set the password again with a bare `UserService` call; users
+  are on the engine's store now, which only the web application names, so the call waited for ever. The block is gone.
+  `deploy/docker/deploy-client.sh` generates and passes an `ADMIN_PASSWORD` for each new client, as the other installers do;
+  its README and `docs/docs/docker.md` no longer speak of a default admin, and say how to keep Docker's data in a SQLite file.
+- **`init` and `setup` ask less** (docs/docs/setup.md, docs/design/setup-dialog.md): the dialog asks the database
+  (MongoDB, in memory or SQLite, checked) and the site. Sign-in and the security rules are switched on, and the API
+  keys and session secret made, without a question; the administrator is made, and its password printed, when the
+  server first starts, and nothing is written to `.env`; everything else is on the Settings page. A question is
+  asked at most three times, then its default is taken, so the dialog cannot loop. `init` also asks what to start
+  from (`--hrdemo` for the HR demo, from the repository only, with `HR_DEMO_SIGN_IN_AS=false` in its `.env`), makes
+  a development server without asking its profile, creates its folder last, and removes it when you answer no
+  (`Cancelled. Nothing was created`). `setup` on an existing application still asks production or development.
+  `--explain` shows each setting's own description beside the questions. **Compatibility:** the dialog no longer
+  asks for, or writes, `ADMIN_PASSWORD`; one already in `.env` is kept and still chooses the password. Test:
+  `test/setup.test.mjs`.
+
+- **Notifications across the instances** (docs/design/notification-policies.md): `findNotifications(server, { to,
+  instanceId, instanceName, status, test, limit })`, newest first; `to` matches any of the names (a user and their
+  groups), a test run's are left out unless asked. Test: `test/notifications.test.mjs`.
+- **Form rules** (docs/design/form-rules.md, `elements/FormRules.ts`): when a user task is completed, its validate
+  step (`Node.validate`) checks its form's rules, before anything is saved: each field's
+  type (`long`, `boolean`, `date`, `enum`), its constraints (`required`, `readonly`, `minlength`, `maxlength`,
+  `min`, `max`) an `<owf:list>`'s choices, and the `validate` event's scripts' `{ error }`. Refused: `FormInvalidError`, code `FORM_INVALID`, status 400,
+  `details: [{ field, rule, message }]` (sent by a launched engine too). `validator` and a lookup's value are not
+  checked, nor a start event's fields. **Compatibility:** a model whose rules were ignored before is now held to them;
+  `formRules: false` in the configuration turns the rules off. A validate script's error, an execution error before,
+  is now `FORM_INVALID`. Test: `test/form-rules.test.mjs`.
 
 ### Changed
 -->
 
 ## [Unreleased]
 ### Added
+- **A role's permissions** (`app-contract.json`): a role may be given `designer` or `administrator`, and the engine
+  honours them — `SecureUser.isAdmin()` and the new `isDesigner()` consult what the contract granted as well as the
+  groups they have always matched on (`ADMIN`, `SYSTEM`, `DESIGNER`). Granting only, so no user loses what they had,
+  and an application that declares none behaves exactly as before. `rolePermissionsOf(contract)` reads them, and the
+  server publishes them when it starts.
+- **`appContract` in the configuration**: where the application's `app-contract.json` is, as `appConfig` says where
+  its `app-config.json` is. It was read from the working folder only, so a test or a deployment could not move it.
+- **The roles are the application's** (`app-contract.json`), not the models folder's `roles.json`. `verifyModel`
+  reads the contract's `roles` and falls back to `roles.json` only when the contract declares none, so an
+  application that has not moved them keeps working. `saveContractRoles(file, roles)` writes them back, keeping the
+  rest of the contract. The sample applications now declare their roles, so their lanes are checked; the HR demo's
+  `roles.json` is gone, its roles being in its contract.
+- **Where a message or signal went, in the Rationale** (docs/docs/examples/msg-throw-catch.md): the throwing
+  item's row says whom it reached (`throws message 'X': reaches <model> #<case> at <element>`, `starts ...`, `reaches
+  none`; a signal lists each), with its matching key; each receiver's row says from whom (`receives message 'X' from
+  ...`, `is started by ...`, `from outside (an API call)`). `engine.throwMessage` takes the throwing item (`from`),
+  as `throwSignal` does; the default delegate passes it. Test: `test/throw-events.test.mjs`.
+- **A throw's matching key as an output field** (docs/docs/examples/msg-throw-catch.md): a message or signal throw
+  event's output field `matchingKey` (`$({ 'data.caseId': data.caseId })`) is the key that picks the waiting instances
+  it reaches; it is not thrown with the data. `this.context.messageMatchingKey`, set by a script, still works.
+  **Compatibility:** a model that threw a field named `matchingKey` as data now has it taken as the key.
+  Test: `test/throw-events.test.mjs`.
+- **An add-on's settings** (`IAddOnManifest.settings`, `addon.json`): the `.env` names it reads, each with its label,
+  who changes it (`editor`) and whether it is shown first (`main`); the Settings page gives each add-on its own area of
+  them. The Policies add-on declares its security and notification settings, Modeling tools `MODEL_HISTORY`.
+- **The context** (`engine/Context.ts`, docs/design/context-object.md): one object made for each call, handed to
+  services (`(input, context)`), listeners and lifecycle subscribers (`{ context }`), the delegate's
+  `executionEvent(context, event)`, and, added at the end of their arguments, `executionStarted`,
+  `getServicesProvider`, `serviceCalled`, `messageThrown`, `signalThrown`, `loadDataObject`. Its `source` says where it
+  was made (`item`, `element`, `dmn`, `query`, `form`); it holds the user, the instance, the element, the item (fixed for
+  the call), the data and the input, the engine's own objects. What it doesn't have it reads from the execution, as
+  code was handed the execution before: deprecated, removed in 4.0. Scripts and decisions see `source` beside
+  `evaluatingSource` (deprecated). Test: `test/context.test.mjs`.
+- **The API's events, `pre-query` and `pre-action`**: before a read, the listeners add conditions to
+  `context.conditions` (all holding: they narrow, never widen); before an action (start, complete, claim, assign,
+  restart, a start event, a model's change) a listener may refuse, by throwing. With none, the built-in rules: the
+  tasks offered to the user, as before. The Policies add-on listens: the assignment's narrowing (was
+  `registrations.addQueryFilter`, still read for an add-on that uses it), the security policies' condition of what a user
+  may see, and their refusals (`CaseAccess`, moved here from bpmn-web: `addons/policies/security/CaseAccess.ts`). A user
+  that is an administrator, or with security off, is not narrowed. `api.data.qualifyQuery(kind, query, user)`.
+- **`instance.actors`**: the case's actors, kept on it by the Policies add-on as its work starts and ends, and saved with
+  it; a case saved before has them worked out as it is read (`registrations.addInstanceReader`), no migration.
+- **The context, also for `appVars` and forms**: the application's `appVarsClass` (or `getAppVars`) is made from the
+  context, a script's (`item`, `element`) and a decision's (`dmn`) alike, with the live case and item and the names it
+  had before; a form's rules (`addFieldRule`) and choices (`addFieldChoices`) are handed a `form` context, the field and
+  the form's values its `input`, what they had before (`processName`, `taskId`, ...) kept.
+- **The Forms and display add-on** (`addons/forms/`): a form field's lists and lookups (`<owf:list>`, `<owf:lookup>`,
+  `FormLookup.ts`), their checks, a list's value held to its choices (a field rule: `addFieldRule`), and the choices the
+  form asks for as it is filled (`addFieldChoices`, the engine's `choices` call). A manifest names the model elements an
+  add-on reads too (`elements`). **The Modeling tools add-on** (`addons/modeling/`): the editor's Test and History tabs;
+  off, a save keeps no version. bpmn-server comes with four add-ons: Policies, Labels, Forms and display, Modeling tools.
+- **The Policies add-on, whole** (docs/design/add-ons.md): what a user sees is narrowed by the add-ons' query filters
+  (`addQueryFilter`): the Policies add-on's, the tasks offered to them and the processes they may start, moved out of
+  `SecureUser`, which applies the filters it is given (`qualifyInstances(query, filters)`, and the API passes the
+  server's); a server that says nothing of add-ons keeps the narrowing as before, so nothing is opened by not knowing.
+  **Actors** are the add-on's (`addons/policies/actors.ts`): `actors` is a name it registers for every expression and
+  decision (`addExpressionName`; `namesAt(server, place)`), `decisionContext({ names })` takes them, and the actor and
+  lane-role checks are its model check (`verifyModel` hook). Off: `actors` is not a name, and `camunda:assignee` and the
+  candidates are not read.
+- **The Labels add-on** (`addons/labels/`): labels, their checks (`label-template`, `label-old-form`) and their values
+  as the lists' fields; off, a case is shown by its default (`<model> #<caseId>`) and a task by its name, and
+  `labelFields` offers caseId. The data paths the lists' columns read are the engine's (`engine/DataPaths.ts`:
+  `pathProblem`, `pathValue`, `valueText`); `ListColumns` takes `IListField`.
+- **`app-config.json`: which add-ons are on** (docs/design/add-ons.md): `{ "addOns": ["policies"] }` in the
+  application's folder (`appConfig` in the configuration names another); no file, or no `addOns`, is every add-on, as
+  before. The assignment, notification and security policies are one add-on, **Policies** (`src/addons/policies/`).
+  Each add-on has a manifest (`addon.json`: name, title, the model attributes it reads), read whether it is on or off
+  (`addOnManifests()`, the configuration's `addOnManifests()`): a model that uses one that's off gets one warning
+  (`add-on-off`), naming where. `enabledAddOns(file)`, `readAppConfig(file)`. `policyAddOns()` is the Policies add-on.
+  Test: `test/add-ons.test.mjs`.
+- **Labels in parts** (docs/docs/labels.md, `engine/LabelTemplate.ts`): a label is parts separated by `;`, each its
+  text and at most one value: `Client: ${data.clientId}; Order: ${data.orderNo}` is shown as `Client: abc · Order:
+  1234`. A part whose value is missing is left out, its text too. Each value is a column and a filter of the lists,
+  named by its part's text without a trailing `:` (*Client*), else its path's last name. A part with no value is always
+  shown. `labelParts(template)` replaces `parseTemplate`. **Compatibility:** the earlier `${Name = path}` form is still
+  read, and `verifyModel` suggests the parts (`label-old-form`, a warning). A plain `${data.x}` in an earlier label is
+  now one of its values, named by the text before it. Test: `test/labels.test.mjs`.
+- **Add-ons** (docs/design/add-ons.md, `engine/AddOns.ts`): the engine no longer calls the policies. They are
+  add-ons in `src/addons/`, each depending on the engine only, that register (`register(server)`) for the engine's own
+  events. **Who works on a user task** is changed in one engine step, `Execution.assignItem(item, fields, why)`: it sets
+  the fields, records what decided it (`item.assignment`) and fires `assign`, with `before`, `assignment`, `why`,
+  `previous`, `changed` and `by` (the person; none as the task starts). A person's `assign` (a claim, a reassignment)
+  goes through it, and so does the assignment add-on as a user task starts: it evaluates `camunda:assignee`,
+  `candidateUsers` and `candidateGroups`, adds the lane's group, applies the policy, and sets them once. The
+  notification policy tells on `assign` (`assigned`: as the task starts, and when a person changes who works on it),
+  `end` (`completed`) and `process.end` (`ended`). What has no event, an
+  add-on registers in `server.registrations`: its model checks (`addModelCheck`: `verifyNode`, `verifyProcess`,
+  `decisionFiles`) and its decisions by their tests' name (`addDecisionLookup`); the engine runs what is registered. A server has its
+  configuration's `addOns(server)`, by default `policyAddOns()`; `addOns: () => []` is the engine alone, and an
+  application may add its own. A subscriber that throws is reported and fails nothing. `roleNames`, `roleNameProblem` and `saveRoleNames` moved to `engine/Roles.ts`,
+  `isExpression` to `engine/Expressions.ts`. **Compatibility:** everything is still exported from the package's entry.
+  A model checked without a server (`verifyModel(source, undefined, …)`) and `invokeDecision` on an object that isn't a
+  server have no add-ons unless given (`options.addOns`, `addOns`): no policy checks, no `<name>.policy`. A
+  configuration that isn't a `Configuration` has no policies unless it gives `addOns`. A user task's description shows
+  every `owf:` attribute the engine doesn't read. Who works on a user task is decided on its `start` event, so a
+  `start` script sees no assignee yet (as before), and one on `wait` the final one. With no add-ons, a task's
+  `camunda:assignee` and candidates are not read. A person's reassignment is now told to the notification policy
+  (`assigned`). Test: `test/add-ons.test.mjs`.
+- **The services' names from the configuration** (`serviceNames`, set by the host as it starts: bpmn-web reads them
+  from the delegate's source, `delegateFile`): a launched server with no application code knows them so, else asks the
+  engine. `servicesFile` (a services.json) is no longer read.
+- **List columns** (`engine/ListColumns.ts`): `listColumns`, `columnValues`, `columnSortPath`, `sortRecords`; the
+  label filter (`labelQuery`) takes a data path as its field, and `gt`/`lt`. Test: `test/list-columns.test.mjs`.
+- **The application's contract** (docs/docs/app-contract.md): `app-contract.json` read and checked (`AppContract.ts`;
+  `DefaultAppDelegate.describe()`); `appVars.<name>` from the delegate's `appVarsClass` (or `getAppVars`), worked out
+  before an expression runs, in scripts, conditions, FEEL and decision tables, with `evaluatingSource`; `verifyModel`
+  checks a model against it (`function-unknown`, `function-arguments`, `variable-unknown`, `page-unknown`, its roles,
+  `function-write-in-decision`); the start compares it with the delegate's code. Test: `test/app-contract.test.mjs`.
+- A connector's own answers outside production can depend on the input (`cases`: `when`, `status`, `output`; a
+  status other than 2xx fails as the API would), and `testing.environments` limits it to development or test.
+- `invokeDecision(server, ref, data)` is exported, and finds a policy by its tests' name (`<name>.policy`,
+  `<name>.security-policy`, `<name>.notification-policy`).
+- **Connectors outside production** (docs/docs/connectors.md#outside-production): a connector's `testing`, where
+  APP_ENV is development or test: its OpenAPI document's examples (nothing called; `exampleOf` makes one from a
+  schema; `testing.answers` by operationId first) or a sandbox's address. Production, or no APP_ENV, always calls the
+  real API. Test: `test/connectors-testing.test.mjs`.
+- **A security policy narrows the store's query** (`SecurityPolicy.seeQuery`, `engine/SecurityQuery.ts`): a superset of
+  the cases a user may see, from the rules that may grant `see` (their tests on the user, and on an actor as a
+  condition on the items). The policy still decides each case. Test: `test/security-query.test.mjs`.
+- A load test of security policies (`test/load/security.test.mjs`): what one case's check costs, with the built-in
+  default, a decision table, and an application hook that waits.
+- `findNotifications` lists test runs' notifications with the others (marked `test`); `test: true` gives only
+  theirs, `test: false` none of them.
+- `bpmn-server setup` asks for the environment as `development`, `test` or `production`.
+- The engine's `facts()` also says the application's delegate: its class and the methods it defines
+  (`delegate: { name, methods }`), for bpmn-web's Integration page. `parseEnv` and `renderEnv` (a `.env` read and
+  changed in place) are exported from the package; `renderEnv` takes who set the lines it adds.
+- **Lists and lookups in forms** (docs/design/form-lookups.md, `elements/FormLookup.ts`): a form field's choices from
+  a source, asked for while the form is filled. `<owf:list>` (a drop-down) or `<owf:lookup>` (a search) on a
+  `camunda:formField`:
+  - `source`: `service:<name>`, a function of the application's services, called with `{ text, filter }` and who
+    asks; or `connector:<connector>/<operationId>`, with the text and the filter as its inputs `text` and
+    `filterInput`.
+  - `key` (saved), `display` (shown), `filter` (a data path, `${data.<field>}`), `items` (the rows in the answer).
+  - `formFieldLookup(field)`, `lookupChoices(server, lookup, criteria, context)`, `choicesOf`; the engine call
+    `formChoices`, so the source runs where the application's code and the connectors' keys are.
+  - `verifyModel` checks the source (`lookup-source`, `lookup-service-unknown`, `connector-unknown`, ...), its
+    inputs and its filter.
+
+  Test: `test/form-lookup.test.mjs`.
+- **Security policies**, a first slice (docs/design/security-policies.md, `engine/SecurityPolicy.ts`): who sees a
+  case, which of its data, and what they may do with it and its tasks. A process names one (`owf:securityPolicy`), a
+  user task may too, for its actions: a DMN table in `policies/security/<name>.dmn.xml`, hit policy COLLECT, a denial
+  winning. `new SecurityPolicy(definitionsPath)`: `decide(user, instance, task?)`, `actorsOf`, `combine`, `data`,
+  `visibleData`, `model`, `on` (an application may subclass it and override a step: `context`, `builtInDefault`); `on` when the
+  application has `policies/security/`, or `SECURITY_POLICY=default`, and off otherwise. Its actions: `see`, `data`,
+  `claim`, `complete`, `assign` (giving a task to someone else), `restart`, `events`. `DMNEngine`'s `listInputs`: an input whose value is a list matches a test when one of its values does.
+- **OmniWorkflow's attributes are `owf:`** (docs/design/owf-namespace.md): `owf:assignmentPolicy`, `owf:label`,
+  `owf:endLabel`, `owf:exceptionsAsErrors`, in `xmlns:owf="http://omniworkflow.com/schema/owf/1.0"`; `camunda:` is
+  only for what Camunda defines. The old `camunda:` names are still read, and `verifyModel` warns of them
+  (`owf-attribute-legacy`). `owfAttribute(def, name)`, `legacyAttributes(def)`, `OWF_NAMESPACE`.
+- **Notification policies** (docs/design/notification-policies.md, `engine/NotificationPolicy.ts`), a first slice: a
+  process (and a user task) names one, `owf:notificationPolicy`: a DMN table in `policies/notification/<name>.dmn.xml`,
+  every matching rule notifying. Asked when a user task waits (`assigned`), is completed (`completed`) and when the
+  instance ends (`ended`), with the names every expression reads and `event`. Its outputs: `notify` (actors, users,
+  groups, a `$(...)` expression), `template` (a file in `policies/notification/templates/`, its first line the subject,
+  or the text; `${...}` filled in), `channel`. The application delivers, the new optional `appDelegate.notify`; each is
+  kept in `wf_notifications` (`recorded`, `sent`, `failed`), and a test run's, or every one with
+  `NOTIFICATIONS=record`, only kept. Never fails the process; the Rationale says it. `notificationsOf(server, id)`;
+  `verifyModel`: `notification-policy-not-found`, `-invalid`, `-output`, `notification-template-not-found`.
+- **One set of names for every expression** (docs/design/expressions.md, `engine/DecisionContext.ts`): JavaScript
+  and FEEL, conditions, scripts, a business rule task's decision, an assignment policy and a security policy see the
+  same names: `data` (the item's, in its scope), `instance`, `item` and `this` (FEEL too: `this.data.amount` is no
+  longer a silent null), `input`, `output`, `user` (the application's, as it gives it), `actors`, `task`,
+  `appServices`; a decision table also reads the data's fields and its task's prepared inputs by name, then the
+  application's facts from the new optional `appDelegate.decisionContext(context, about)`. A process's own script
+  reads `data`. A list input matches when the list or one of its values does, in every table.
+- **A decision table's own variables:** an input column whose label is a plain name (`employeeManager`) is a
+  variable of the table, calculated there (`appServices.managerOf(actors.initiator)`) once, and read by name in its
+  rules' outputs; over a data field of that name, never one of the protocol's. `evaluateAsync` works out a call once.
+- **An assignment policy's `[]` clears a field:** an empty list in `candidateUsers` or `candidateGroups` clears what the
+  task's attributes or lane gave ("this assignee, and no one else"); an empty cell still leaves it as it was.
+- **An actor is the user who completes a user task, or starts the process at a start event:** `owf:actor` is read
+  there only; on another element `verifyModel` warns (`actor-element`).
+- **Actors:** who did what in an instance, worked out from its items, nothing stored: `actors.initiator`,
+  `actors.assignee`, `actors.candidate`, and `actors.<name>` for the elements a model names so
+  (`owf:actor="approver"`): who completed them, a list when several, latest first; in a multi-instance, those of the
+  item's branch. A rule asks "is this user the approver" with an `actors.approver` column and `user.userName` in its
+  cell. `verifyModel` warns of an actor no element is (`actor-unknown`). A security policy deciding about a task reads
+  its item's actors and data.
+- **FEEL calls the application's services:** `appServices.regionOf(data.requester)` in a condition or a decision
+  table's input; an async one is awaited (`DMNEngine.evaluateAsync`).
+- `SecurityPolicy.whoMay(instance, { users, roles, admins })`: the reverse of a security policy, who may do what with
+  an instance, and the actors each person is.
+- **In place of PR #286's proposals:** labels are templates in the model, filled in when shown and never stored (no
+  `display` settings, no label saved at each save); roles and assignment are `roles.json` and DMN policies in
+  `policies/assignment/` (no `resolveAssignment` hook, no `camunda:properties`, no `assignment` settings): a policy's output
+  can be a `$(...)` expression to reach the application's code. The delegate's optional `instanceLabel` stays.
+- **Assignment policies** (docs/docs/assignment-policies.md, `engine/AssignmentPolicy.ts`), a first try: a user task's
+  `camunda:assignmentPolicy` names a DMN table in `policies/assignment/<name>.dmn.xml` (one written directly in
+  `policies/` is moved there when read); when the task starts, its first matching
+  rule sets `assignee`, `candidateUsers` and `candidateGroups` (a FEEL value, or a `$(...)` model expression), over the
+  task's attributes and lane. The item keeps `assignment: { policy, rule }`; the Rationale says who and why, or why
+  nobody (no match, no policy, a failing one: the task is not failed). `roles.json` lists the roles (`roleNames`, `saveRoleNames`, `roleUses`: where each is used). `verifyModel`:
+  `assignment-policy-not-found`, `assignment-policy-invalid`, `assignment-policy-output`, `role-unknown`,
+  `roles-invalid`. `DMNEngine` keeps output cells a caller names as text (`keepOutput`) and the rules matched (`matched`).
+- **Labels** (docs/docs/labels.md, `engine/Labels.ts`): `camunda:label` on the process, `camunda:label` and
+  `camunda:endLabel` on any element, templates with their values named (`Client: ${Client = data.clientId}`);
+  filled in when shown, from the case's data and its own model, nothing stored: `labelInstances`, `labelItems`,
+  `fillTemplate`, `templateProblems` (`engine/LabelTemplate.ts`, no dependencies). A missing value takes its name
+  along. Defaults: the delegate's optional `instanceLabel(instance)`, else `<model> #<caseId>`. `verifyModel`
+  reports a label that is not a template of data paths (`label-template`).
+- **Filters by label:** `labelFields(server)` (the named values the models' case labels offer, with their data
+  paths) and `labelQuery(fields, { model, field, op, value, search })`: a query on those paths, for `findInstances`
+  and `findItems` (contains in any case, or is; a number as a number too; search everything).
+- **Filters by label work on what a label shows:** `labelFields` offers every `${data.…}` placeholder of a case
+  label, a plain one under its path's last name (`${data.caseId}` is caseId), and `caseId` for a model with no case
+  label (unless the delegate's `instanceLabel` labels it); `labelQuery` with a value and no field looks in every field.
+- `labelInstances` reads the sources of cases given without one (a summary, an API's answer) in one query, so they
+  are labeled by the model they run; a value that is only spaces is missing, like an empty one; an end label's
+  `${completedBy}` is filled from a task's `completedBy` when it has no `userName` (an API's task).
 - **`bpmn-server setup [folder]`**: an application's `.env` settings step by step, from bpmn-web's settings schema:
   the database (checked), the first administrator, the site, sign-in and design, email, the API keys, AI access, the
   environment and API trace. A profile (production, development) suggests the values; nothing is written until the
@@ -41,7 +288,53 @@ and here
   next steps no longer list `npm run setup`: `npm start` prepares the database.
 
 ### Changed
-- **Connectors are files in the models folder**, `<id>.connector.json`, beside the models that call them: the same
+- **`SECRETS_KEY` is `CONNECTORS_KEY`'s new name**: the server's key for the secrets it stores encrypted (each
+  connector's own key), not a connector's credential. `CONNECTORS_KEY` is still read when `SECRETS_KEY` is not set, and
+  the log says once to rename it; with the same value, the stored keys decrypt as before (`secretsKey`). Test:
+  `test/connectors.test.mjs`.
+- **Each policy add-on has a folder of its own**, in the code and in the models folder.
+  - The code: `src/addons/assignment`, `notification` and `security`, beside the other add-ons; what the three share
+    (the actors, the policy folders) in `src/addons/basics`, which is no add-on. `policies` in `app-config.json` is
+    still the three (`policiesAddOn`, deprecated).
+  - The models folder: `assignment/`, `notification/` (its `templates/` too) and `security/`, where they were
+    `policies/assignment/` and so on. A folder from before is moved to the new one the first time it is read, and the
+    log says so once (`movePolicyFolder`); a file already in the new folder is kept, and the old one left where it is.
+  - Tests: `test/assignment.test.mjs` (the move), `test/add-ons.test.mjs` (no add-on imports another; `basics/` is
+    shared).
+- **Add-ons' titles**: Modeling tools is **Model History**, Forms and display **Extended Forms**, Security **Access
+  Control**; their names (`modeling`, `forms`, `security`), what an `app-config.json` says, are as they were.
+- **The policies are three add-ons** (were one, Policies): **Assignment** (`assignment`: who works on each task and who
+  may start a process, assignment policies), **Notifications** (`notification`: notification policies) and **Access Control**
+  (`security`: security policies), each with its manifest, its settings and its doc page, on or off on its own. What
+  they share, the actors (`actors`, `instance.actors`), is there while any of them is on (`policies/basics.ts`); the
+  roles are the server's. `"policies"` in an `app-config.json` means the three (`addOnNames`); `policiesAddOn`,
+  `policyAddOns()` and `policiesManifest` are kept. A model using an add-on that is off is warned once for each.
+- **Indexes for task lists and dashboards on MongoDB.** `dataStore.install()` (setup, and each start of bpmn-web) also
+  makes `{items.status, items.elementId}`, `{items.status, items.type}`, `{name, status}` and `{status}` on the
+  instances (`DataStore.QUERY_INDEXES`). Before, the waiting tasks, a process's instances and the dashboard counts read
+  every instance, ended ones included. With 50,000 ended and 1,000 waiting, a task list took about 300 ms (a user's
+  about 1,100 ms) and now takes about 30 ms; the counts take under 5 ms. Existing databases get them at their next start.
+  The in-memory and SQLite stores are unchanged. Test: `test/indexes.mongo.test.mjs`.
+- **A new application's `.gitignore` leaves out `api-trace.jsonl`**, the API trace `bpmn-server setup` turns on
+  (`API_TRACE`): what the running app writes is not committed.
+- **A page of a list is cut in the database.** The storage port's `find` takes an optional `limit` (the first that
+  many after sorting: MongoDB's `limit`; the in-memory and SQLite stores the same), and `findInstances(query, {
+  projection, sort, limit })` passes it. `findItems(query, { lean: true })` (and `BPMNAPI.data.findItems(query, user,
+  { lean: true })`) reads each item's instance without its data and tokens, for lists: the items have no `data` or
+  `instanceData`. An adapter written before `limit` still works: the data store cuts what it returns.
+- **A launched server's host writes nothing of the engine's** (docs/design/engine-isolation.md). Its `dataStore` is a
+  read-only instance viewer, `definitions` model access (the models' files, no database), and `connectors` keeps the
+  connectors' files; a write of the engine's data through them (an instance, a lock, the models' index, a connector's
+  key or test, `install`) throws `ENGINE_ONLY`, naming the call to use, and `server`, `db` and `monitor` are not
+  there. New: `server.models` (`save`, `rename`, `remove`, `deleteVersion`: the files, then the engine told);
+  `server.documentStore`, the host's own store; engine calls `releaseLocks`, `claim`, `releaseClaim`,
+  `install({ rebuild })`, `modelSaved`, `modelRenamed`, `modelRemoved`, `setConnectorKey`, `clearConnectorKey`,
+  `testConnector`, `connectorRemoved`; `ModelsDatastore.saveFiles`, `renameFiles`, `deleteFiles` (files only) and
+  `indexModel`, `unindexModel`, `renameIndex` (the index only); `Connectors.setScheme`, `storeKey`, `clearScheme`,
+  `forgetKey`, `removeFile`, `forget`, the halves of `setKey`, `clearKey`, `remove`. An embedded server
+  (`new BPMNServer`) is as before.
+- **Connectors are files in the models folder's `connectors` folder**, `connectors/<id>.connector.json` (one written
+  beside the models by an earlier 3.7 build is moved in the first time it is read), near the models that call them: the same
   document the `wf_connectors` collection held (name, address, operations, groups, the key's scheme, the OpenAPI
   document, now as JSON). Kept in Git and released with the models, found by their tests, copied with an application's
   folder. Each server keeps its own key (encrypted with its `CONNECTORS_KEY`) and last connection test in
@@ -49,6 +342,88 @@ and here
   first time it is read, its key kept. `server.connectors` keeps its methods (docs/design/connectors-as-files.md).
 
 ### Fixed
+- **A matching key is its throw's only**: the key a throw event's script set (`this.context.messageMatchingKey`) stayed
+  on the execution and narrowed every later throw in the same run, one meant to reach every instance too. It is read
+  once for its throw, and cleared. Test: `test/throw-events.test.mjs`.
+- **The application's `instanceLabel` hook labels cases seen from a host** (#295): a launched server's delegate is
+  only what it knows of the application, so the hook was never there and every case without a model label showed
+  `<model> #<caseId>`. The host now asks the engine, where the code is, for all of a list's cases in one call (an engine
+  call, `instanceLabels`; the engine's `facts` say whether there is a hook), in this process or at `ENGINE_AT`. Test:
+  `test/instance-label-hook.test.mjs`.
+- A scenario's `@evaluate` failed in an engine in the same process (`npm test`): `server.engine.invokeDecision is not
+  a function`. It evaluates the decision itself, and finds a policy by its tests' name.
+- **MongoDB paging by a field many instances share** (`dataStore.find` with `sort` and `after`, Aggregate.ts;
+  discussion #247). Page after page repeated some instances and left others out:
+  - The sort had no tie-break, so MongoDB could order a tie differently from one page to the next, while the cursor
+    broke ties by `_id`. Rows are now sorted by `_id` after the sort field.
+  - The cursor read the type of its value from the text. Text that reads as a date ("Stage 1", "A-1") was compared
+    as a date, and text that reads as a number ("007") as a number, so the next page found nothing.
+    - The cursor now writes the value's own type: `d:` for a date, `n:` for a missing value, a number as it is.
+    - Text is written as it is, or as `s:<text>` when it would read as one of those.
+    - Cursors from before still read as they did.
+  - A missing value gave an `undefined` cursor. Sorted descending, the instances without the value were left out.
+  - A nested path (`data.a.b`) gave the cursor `[object Object]`.
+  - A value with a `|` in it split the cursor.
+  - A sort field that an inclusion `projection` leaves out sorted every row as a tie. It is now kept in the
+    projection and returned.
+
+  Test: `test/paging.mongo.test.mjs` pages each sort one, two and three rows at a time and checks every instance
+  comes once, in the unpaged order.
+- **Logging a `null` no longer throws.** `Logger.toString` read `null.constructor`, so a `null` among a log call's
+  values (or `[null]`, or an object without a prototype) threw a TypeError in the caller: `engine.throwSignal(null)`
+  threw where it means to answer `null`. Tests: `test/logger.test.mjs`; `test/throw-events.test.mjs`, which also covers
+  a signal starting a process and reaching the throwing instance's own waiting branch.
+- **A security policy's data path that is not there shows nothing.** `SecurityPolicy.visibleData` with the path
+  `a.b.c`, where `a.b` is not an object, showed `a: { b: {} }`: a wrong value, and the data's shape. Now the path adds
+  nothing. Tests in `test/security-policy.test.mjs` (now tagged security-policies), with a policy name that leaves the
+  folder (`../x`) refused, `SECURITY_POLICY=off`, a policy that cannot be read, and paths given as text.
+- **On MongoDB, paging items by an item's field no longer skips the rest of the cursor's instance.** `dataStore.find`
+  with an item filter gives a row per item; its cursor (`<value>|<instance _id>`) left out every row of that instance,
+  so its later items never appeared on the next page (a task list sorted by an item's field lost tasks). Now a later
+  value is enough, as the other stores page (DocumentPager). Test: `test/paging.mongo.test.mjs`, which runs the paged
+  search on MongoDB through every case the other stores' test does.
+- **A signal that reached an instance is not issued as uncaught.** `DefaultAppDelegate.signalThrown` checked
+  `throwSignal`'s answer for `.instance`, but it is a list of what the signal reached, so `issueSignal` (for a signal
+  nobody catches) was called for every signal, caught or not. Test: `test/throw-events.test.mjs`, the first of a model's
+  throw events through the default delegate. Removed: `Model.ts`'s `DataQuery`, `InstanceQuery` and `ItemQuery`, and
+  `DefaultAppDelegate.ts`'s `delay`, none of them exported or used (the exported `Query` stays).
+- **Error, escalation and signal events describe themselves rightly.** An error event said "catches message 'E1'" (as
+  did an escalation), and a signal event's `describe()` gave one `[label, text]` pair instead of a list of them, so the
+  designer's descriptions (which keep only the pairs) left signals out. Now `Error` / `catches error 'E1'` (`'any'`
+  with no code), `Escalation` / `throws escalation 'Late'`, and `[['Signal', …]]`. `Definition.getJson()` carries the
+  same. Test: `test/describe.test.mjs`, which also covers every behaviour's description and `BehaviourLoader.register`.
+- **A `$py` script on a server without Python fails the script, not the server.** The spawn's error (ENOENT) had no
+  handler, so it was an uncaught exception that ended the whole process. Now the script fails with "Python could not
+  be started". Test: `test/python-missing.test.mjs`.
+- **A log saved to a file can be read on Linux.** `Logger.save` (and `saveForInstance`, with `logFolder`) created the
+  file with mode `666` in decimal (octal 1232): its owner could not read it. Now `0o666`. Windows ignores the mode, so
+  only Linux and macOS were affected. Test: `test/logger.test.mjs`, which failed on Linux.
+- **An escalation is caught by an escalation event, and an error by an error event.** Looking for a catcher, any
+  boundary event without the thrown kind's definition counted as a catch-all: a script's escalation went to the
+  task's error boundary event, and an error could go to an escalation boundary event. And an escalation boundary
+  event's code was never read (moddle gives the reference as `escalationRef`, as `errorRef` for errors), so one for
+  a code caught every code. Test: `test/boundary-kind.test.mjs`; testSampleApp's test-escalation2.
+- **A multi-instance task on a branch an exclusive merge cancels no longer keeps the instance running.** When
+  another branch reached the merge first, the loop's rounds were cancelled but the loop's own token stayed running,
+  so the instance never ended. Test: `test/loop-exclusive-merge.test.mjs`; testSampleApp's Complex Approval Process.
+- **An item is saved once.** A loop's token with an empty path borrows its first round's item (issue 186's
+  workaround); `Execution.getItems` listed it, and the instance saved it, twice. Same test.
+- `Loop.cancel` with no other round no longer throws (#289), as on 3.6.1 and main.
+- **`this.token.loop.end()` ends a parallel or sequential multi-instance loop.** Called by a round's script or
+  listener, the loop ends when that round does: the rounds still waiting are cancelled and the process goes on, as
+  when a completion condition holds. Before, a parallel loop ended this way waited for ever (not even its last round
+  moved it on), and a sequential one ran every round regardless. A standard loop is unchanged. Test:
+  `test/loop-end.test.mjs`; testSampleApp's Standard Loop feature.
+- `Execution.assign`'s log line says to whom a task was assigned (`to:{"assignee":"agent-1"}`), not
+  `to:[object Object]`, and what it was before (reported on PR #286). A claim or a reassignment now writes a Rationale
+  entry (*is claimed by dora*; *is reassigned by mgr: assigned to ed*, why: what it was and what decided it). A
+  reassignment by someone other than the one taking it replaces `item.assignment` with `{ userName }`, now one of
+  `{ policy, rule }` or `{ userName }`; a claim keeps the policy that offered it. An assign that leaves the same people
+  (a form sends every field) writes nothing and keeps what decided.
+- **Checking a model with a compensation association** (a compensation boundary event to its handler) no longer fails
+  (`Cannot read properties of undefined (reading 'forEach')`); the editor's Problems list stayed empty for it.
+- `scheduling process <model> at ...` is logged once for a process timer: the timers read again (at start, by the
+  re-read) logged it each time, though it was scheduled only once.
 - `SecureUser.qualifyModels` gives the query back when the security rules are off, as the other `qualify*` do (it gave
   `true`).
 

@@ -20,9 +20,9 @@ export class MemoryDocumentStore implements IDocumentStore {
         return this.collections.get(name)!;
     }
 
-    async find(database: string, collection: string, query: StorageQuery, projection: StorageProjection = null, sort: StorageSort = null): Promise<any[]> {
-        const found = this.docs(database, collection).filter(d => DocumentQuery.matches(d, query ?? {}));
-        return DocumentQuery.sort(found, sort).map(d => DocumentQuery.project(structuredClone(d), projection));
+    async find(database: string, collection: string, query: StorageQuery, projection: StorageProjection = null, sort: StorageSort = null, limit?: number): Promise<any[]> {
+        const found = DocumentQuery.sort(this.docs(database, collection).filter(d => DocumentQuery.matches(d, query ?? {})), sort);
+        return (limit > 0 ? found.slice(0, limit) : found).map(d => DocumentQuery.project(structuredClone(d), projection));
     }
 
     async count(database: string, collection: string, query: StorageQuery): Promise<number> {

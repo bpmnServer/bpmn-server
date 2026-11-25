@@ -10,7 +10,9 @@ import { ScriptHandler } from '../engine/ScriptHandler.js';
 import type { IConfiguration, IConnectorsConfiguration, ILogger, IAppDelegate } from '../interfaces/common.js';
 import type { IModelsDatastore, IDataStore } from '../interfaces/datastore.js';
 import { NoCacheManager } from '../server/CacheManager.js';
-import { Logger } from './Logger.js';import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
+import { Logger } from './Logger.js';
+import { enabledAddOns, addOnManifests } from '../addons/index.js';
+import type { IAddOn, IAddOnManifest } from '../engine/AddOns.js';import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
 
 export class Configuration implements IConfiguration {
 	definitionsPath?: string;
@@ -30,6 +32,8 @@ export class Configuration implements IConfiguration {
 	apiKey: string;
 	moddleOptions?: any;
 	servicesFile?: string;
+	delegateFile?: string;
+	serviceNames?: string[] | null | Promise<string[] | null>;
 	sendGridAPIKey: string;
 	definitions(server)/* :IModelsDatastore */{
 		return new ModelsDatastore(server); 
@@ -46,6 +50,18 @@ export class Configuration implements IConfiguration {
 	scriptHandler(server) {
 		return new ScriptHandler();
 	}
+	/** Where the application's app-config.json is (which add-ons are on); the working folder's by default. */
+	appConfig?: string;
+	/** Where the application's app-contract.json is (its roles, variables, functions, pages); the working folder's by default. */
+	appContract?: string;
+	/** The add-ons that are on (engine/AddOns.ts): those app-config.json names, every one without it; unless the configuration gives its own. */
+	addOns(server): IAddOn[] {
+		return enabledAddOns(this.appConfig);
+	}
+	/** Every add-on bpmn-server comes with, on or off: their manifests. */
+	addOnManifests(): IAddOnManifest[] {
+		return addOnManifests();
+	}
 
 
 	documentStore?(server): IDocumentStore;
@@ -58,16 +74,18 @@ export class Configuration implements IConfiguration {
 	runServiceTasks?: boolean;
 	connectors?: IConnectorsConfiguration;
 	modelHistory?: boolean;
+	/** false: a form's rules are not checked (elements/FormRules.ts). Default true. */
+	formRules?: boolean;
 
 	/** Each factory given replaces the default one; one left out keeps it. */
 	constructor({
-		definitionsPath = undefined, templatesPath = undefined, timers = { forceTimersDelay: 1000, precision: 3000 }, database = undefined, apiKey = undefined, moddleOptions = undefined, servicesFile = undefined,
+		definitionsPath = undefined, templatesPath = undefined, timers = { forceTimersDelay: 1000, precision: 3000 }, database = undefined, apiKey = undefined, moddleOptions = undefined, servicesFile = undefined, delegateFile = undefined, serviceNames = undefined,
 		logger = undefined,
 		definitions = undefined,
 		appDelegate = undefined,
-		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined,
+		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined, addOns = undefined, appConfig = undefined, appContract = undefined,
 		runTimers = undefined, runServiceTasks = undefined,
-		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined }: any) {
+		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined, formRules = undefined }: any) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -75,12 +93,17 @@ export class Configuration implements IConfiguration {
 		this.apiKey = apiKey;
 		this.moddleOptions = moddleOptions;
 		this.servicesFile = servicesFile;
+		this.delegateFile = delegateFile;
+		this.serviceNames = serviceNames;
 		this.logger = logger;
 		if (definitions) this.definitions = definitions;
 		if (appDelegate) this.appDelegate = appDelegate;
 		if (dataStore) this.dataStore = dataStore;
 		if (cacheManager) this.cacheManager = cacheManager;
 		if (scriptHandler) this.scriptHandler = scriptHandler;
+		if (addOns) this.addOns = addOns;
+		this.appConfig = appConfig;
+		this.appContract = appContract;
 		if (documentStore) this.documentStore = documentStore;
 		if (locker) this.locker = locker;
 		this.serverId = serverId;
@@ -91,6 +114,7 @@ export class Configuration implements IConfiguration {
 		this.runServiceTasks = runServiceTasks ?? !demo;
 		this.connectors = connectors;
 		this.modelHistory = modelHistory;
+		this.formRules = formRules;
 	
 	}
 

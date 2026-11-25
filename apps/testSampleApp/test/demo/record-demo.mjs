@@ -23,7 +23,7 @@ process.prependListener('unhandledRejection', fail);
 process.prependListener('uncaughtException', fail);
 const web = await startWebApp();
 fs.copyFileSync(path.join(webRoot, 'processes', MODEL + '.bpmn'), path.join(web.definitionsPath, MODEL + '.bpmn'));
-await web.bpmnServer.definitions.rebuild();
+await web.bpmnServer.engine.install({ rebuild: true });
 
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: SIZE, recordVideo: { dir: outDir, size: SIZE } });
@@ -196,7 +196,6 @@ await caption('Conditions, forms and scripts, in flow order', 2500);
 await caption('Test: record a run of the process in the editor, step by step');
 await click(page.locator('#js-tab-test'));
 await page.waitForSelector('#js-test .test-panel');
-await click(page.locator('.test-new-menu summary'));
 await click(page.locator('.test-new'));
 await click(page.locator('.test-name'));
 await page.locator('.test-name').fill('');
@@ -237,7 +236,7 @@ await click(page.locator('.test-simulate'));
 await wait(600);
 await click(page.locator('.test-sim-play'));
 await caption('Blue: started  ·  Green: done  ·  Orange: waiting');
-await page.locator('.test-sim-text', { hasText: 'Done (' }).waitFor({ timeout: 60000 });
+await page.locator('.test-sim-text', { hasText: 'End of the run (' }).waitFor({ timeout: 60000 });
 await wait(1500);
 await caption('', 0);
 

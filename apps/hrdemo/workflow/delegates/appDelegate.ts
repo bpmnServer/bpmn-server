@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import { Item, IExecution, WebAppDelegate } from 'bpmn-web';
-import { AppServices } from '../connectors/appServices.js';
-import { AppUtils } from './appUtils.js';
+import { AppServices } from './appServices.js';
+import { HrNotifications } from '../../server/notifications.js';
+import { HrVars } from './appVars.js';
 
 
 var seq = 1;
@@ -12,18 +13,20 @@ console.log('appDelegate from ', import.meta.filename);
 
 
 class AppDelegate extends WebAppDelegate{
+    /** The application's variables, appVars.<name> (./appVars.ts; declared in app-contract.json) */
+    appVarsClass = HrVars;
     winSocket;
     appServices;
-    appUtils;
-    
+    /** the HR application's notifications (server/notifications.js), opened on the first */
+    notifications: HrNotifications;
+
     constructor(server) {
         super(server);
-        this.appUtils = new AppUtils(server);
     }
 
     async getServicesProvider(context) {
 
-        // for multiple appServices  -start 
+        // for multiple appServices  -start
         if (MULTI_APP_SERVICES) {
             this.appServices = new Map();
 
@@ -40,25 +43,36 @@ class AppDelegate extends WebAppDelegate{
                     console.log('instance loaded', path, instance);
                 }
                 return instance;
-            // for multiple appServices  -end 
+            // for multiple appServices  -end
         }
     else
         {
         // the environment's services: the test environment (APP_ENV=test) has its own; production never loads them
         if (this.appServices == null)
         this.appServices = process.env.APP_ENV === 'test'
-            ? new (await import('../connectors/testServices.js')).TestServices(this)
+            ? new (await import('./testServices.js')).TestServices(this)
             : new AppServices(this);
         return this.appServices
         }
-        
+
     }
     // startUp (housekeeping) and sendEmail (notifications) come from WebAppDelegate
 
-    
+    /**
+     * A notification policy's notification (policies/notification/LeaveNotices.dmn.xml): delivered here, into the HR
+     * application's own table of notifications (server/notifications.js, in its database); an application would send
+     * it by its channel too (email, ...). Not called for a test run's instance, nor with NOTIFICATIONS=record: those
+     * are only kept (wf_notifications). A notify that throws: the notification is kept as failed, the process goes on.
+     */
+    async notify(notification) {
+        this.notifications ??= new HrNotifications();
+        this.notifications.save(notification);
+    }
+
+
     ///
-    
-    /* only for show 
+
+    /* only for show
     sendEmailSendGrid(to, msg, body) {
 
         console.log(`Sending email to ${to}`);
@@ -97,10 +111,10 @@ class AppDelegate extends WebAppDelegate{
 
     /**
      * is Called everytime a workflow is completed
-     * @param execution 
+     * @param execution
      */
     async executionEnded(execution: IExecution) {
-        
+
     }
     async executionStarted(execution: IExecution) {
         await super.executionStarted(execution);
@@ -117,7 +131,7 @@ class AppDelegate extends WebAppDelegate{
  //       else
  //           console.log('----->All:' + event, context.definition.name);
 
-    
+
     }
     async messageThrown(messageId, data, matchingQuery, item: Item) {
         await super.messageThrown(messageId, data, matchingQuery,item);

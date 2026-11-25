@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L59)
+[packages/bpmn-server/src/interfaces/datastore.ts:60](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L60)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L60)
+[packages/bpmn-server/src/interfaces/datastore.ts:61](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L61)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L61)
+[packages/bpmn-server/src/interfaces/datastore.ts:62](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L62)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L62)
+[packages/bpmn-server/src/interfaces/datastore.ts:63](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L63)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:64](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L64)
+[packages/bpmn-server/src/interfaces/datastore.ts:65](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L65)
 
 ___
 
@@ -158,7 +158,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:66](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L66)
+[packages/bpmn-server/src/interfaces/datastore.ts:67](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L67)
 
 ___
 
@@ -179,7 +179,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L67)
+[packages/bpmn-server/src/interfaces/datastore.ts:68](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L68)
 
 ___
 
@@ -200,7 +200,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:68](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L68)
+[packages/bpmn-server/src/interfaces/datastore.ts:69](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L69)
 
 ___
 
@@ -220,7 +220,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L69)
+[packages/bpmn-server/src/interfaces/datastore.ts:70](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L70)
 
 ___
 
@@ -236,7 +236,7 @@ Every document the models datastore keeps, by collection name: for a backup.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:71](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L71)
+[packages/bpmn-server/src/interfaces/datastore.ts:72](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L72)
 
 ___
 
@@ -250,7 +250,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:73](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L73)
+[packages/bpmn-server/src/interfaces/datastore.ts:74](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L74)
 
 ___
 
@@ -270,7 +270,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:74](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L74)
+[packages/bpmn-server/src/interfaces/datastore.ts:75](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L75)
 
 ___
 
@@ -290,7 +290,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:75](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L75)
+[packages/bpmn-server/src/interfaces/datastore.ts:76](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L76)
 
 ___
 
@@ -311,7 +311,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:76](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L76)
+[packages/bpmn-server/src/interfaces/datastore.ts:77](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L77)
 
 ___
 
@@ -333,7 +333,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:77](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L77)
+[packages/bpmn-server/src/interfaces/datastore.ts:78](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L78)
 
 ___
 
@@ -355,7 +355,7 @@ A model's saved versions, newest first (files-based datastores: ModelHistory).
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:79](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L79)
+[packages/bpmn-server/src/interfaces/datastore.ts:80](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L80)
 
 ___
 
@@ -378,7 +378,7 @@ A saved version of a model, or null.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:81](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L81)
+[packages/bpmn-server/src/interfaces/datastore.ts:82](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L82)
 
 ___
 
@@ -401,7 +401,7 @@ Removes one saved version of a model; false when there is none.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:83](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L83)
+[packages/bpmn-server/src/interfaces/datastore.ts:84](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L84)
 
 ___
 
@@ -423,4 +423,4 @@ Removes a model's history; returns how many versions it had.
 
 #### Defined in
 
-[packages/bpmn-server/src/interfaces/datastore.ts:85](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/datastore.ts#L85)
+[packages/bpmn-server/src/interfaces/datastore.ts:86](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/interfaces/datastore.ts#L86)

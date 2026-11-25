@@ -34,7 +34,7 @@ let web, browser;
 test.before(async () => {
   web = await startWebApp();
   fs.writeFileSync(path.join(web.definitionsPath, 'feel-model.bpmn'), MODEL);
-  await web.bpmnServer.definitions.rebuild();
+  await web.bpmnServer.engine.install({ rebuild: true });
   browser = await chromium.launch();
 });
 test.after(async () => {
@@ -126,7 +126,6 @@ test('the Test tab runs a FEEL condition: the data chooses the path', async () =
   await page.waitForSelector('#js-test .test-panel');
 
   const run = async (name, data, reached, passed) => {
-    await page.click('.test-new-menu summary');
     await page.click('.test-new');
     await page.fill('.test-name', name);
     await page.click('.test-run');

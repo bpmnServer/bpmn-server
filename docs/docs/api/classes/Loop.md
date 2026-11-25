@@ -19,6 +19,7 @@
 - [\_items](Loop.md#_items)
 - [completed](Loop.md#completed)
 - [endFlag](Loop.md#endflag)
+- [endAsked](Loop.md#endasked)
 
 ### Methods
 
@@ -58,7 +59,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L25)
+[packages/bpmn-server/src/engine/Loop.ts:25](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L25)
 
 ## Properties
 
@@ -68,7 +69,7 @@
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L14)
+[packages/bpmn-server/src/engine/Loop.ts:14](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L14)
 
 ___
 
@@ -78,7 +79,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L15)
+[packages/bpmn-server/src/engine/Loop.ts:15](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L15)
 
 ___
 
@@ -88,7 +89,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L16)
+[packages/bpmn-server/src/engine/Loop.ts:16](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L16)
 
 ___
 
@@ -98,7 +99,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L17)
+[packages/bpmn-server/src/engine/Loop.ts:17](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L17)
 
 ___
 
@@ -108,7 +109,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L18)
+[packages/bpmn-server/src/engine/Loop.ts:18](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L18)
 
 ___
 
@@ -118,7 +119,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L19)
+[packages/bpmn-server/src/engine/Loop.ts:19](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L19)
 
 ___
 
@@ -128,7 +129,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L20)
+[packages/bpmn-server/src/engine/Loop.ts:20](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L20)
 
 ___
 
@@ -138,7 +139,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L21)
+[packages/bpmn-server/src/engine/Loop.ts:21](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L21)
 
 ___
 
@@ -148,7 +149,19 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L58)
+[packages/bpmn-server/src/engine/Loop.ts:59](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L59)
+
+___
+
+### endAsked
+
+• **endAsked**: `boolean` = `false`
+
+end() was called: a parallel or sequential loop ends at this round's end, as its completion condition ends it
+
+#### Defined in
+
+[packages/bpmn-server/src/engine/Loop.ts:61](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L61)
 
 ## Methods
 
@@ -162,7 +175,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L22)
+[packages/bpmn-server/src/engine/Loop.ts:22](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L22)
 
 ___
 
@@ -176,7 +189,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L23)
+[packages/bpmn-server/src/engine/Loop.ts:23](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L23)
 
 ___
 
@@ -196,12 +209,13 @@ ___
 | `dataPath` | `any` |
 | `items` | `any`[] |
 | `endFlag` | `boolean` |
+| `endAsked` | `boolean` |
 | `completed` | `number` |
 | `sequence` | `any` |
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L50)
+[packages/bpmn-server/src/engine/Loop.ts:51](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L51)
 
 ___
 
@@ -209,13 +223,16 @@ ___
 
 ▸ **end**(): `void`
 
+Ends the loop: a standard loop at its next round; a parallel or sequential one when the current round ends (a
+script or listener of that round calls it), the rounds still running cancelled and the loop going on.
+
 #### Returns
 
 `void`
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L59)
+[packages/bpmn-server/src/engine/Loop.ts:66](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L66)
 
 ___
 
@@ -236,7 +253,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L62)
+[packages/bpmn-server/src/engine/Loop.ts:71](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L71)
 
 ___
 
@@ -250,7 +267,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:73](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L73)
+[packages/bpmn-server/src/engine/Loop.ts:82](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L82)
 
 ___
 
@@ -264,7 +281,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:76](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L76)
+[packages/bpmn-server/src/engine/Loop.ts:85](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L85)
 
 ___
 
@@ -278,7 +295,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:87](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L87)
+[packages/bpmn-server/src/engine/Loop.ts:96](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L96)
 
 ___
 
@@ -292,7 +309,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:91](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L91)
+[packages/bpmn-server/src/engine/Loop.ts:100](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L100)
 
 ___
 
@@ -315,7 +332,7 @@ A round's key in the loop's data: its element, or its index when the element is 
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:99](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L99)
+[packages/bpmn-server/src/engine/Loop.ts:108](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L108)
 
 ___
 
@@ -338,7 +355,7 @@ A round's own data: its element under the loop's elementVariable, and its index 
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:103](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L103)
+[packages/bpmn-server/src/engine/Loop.ts:112](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L112)
 
 ___
 
@@ -362,7 +379,7 @@ the expression, so any script handler (the sandbox too) sees them.
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:112](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L112)
+[packages/bpmn-server/src/engine/Loop.ts:121](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L121)
 
 ___
 
@@ -382,7 +399,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:140](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L140)
+[packages/bpmn-server/src/engine/Loop.ts:149](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L149)
 
 ___
 
@@ -402,7 +419,7 @@ ___
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:227](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L227)
+[packages/bpmn-server/src/engine/Loop.ts:236](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L236)
 
 ___
 
@@ -430,4 +447,4 @@ is called just before moving to next item in the flow
 
 #### Defined in
 
-[packages/bpmn-server/src/engine/Loop.ts:278](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/Loop.ts#L278)
+[packages/bpmn-server/src/engine/Loop.ts:292](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/engine/Loop.ts#L292)

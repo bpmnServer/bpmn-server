@@ -151,3 +151,30 @@ test('runSandboxed: an expression over given values (the Test tab debugger in a 
   assert.equal(result, 7);
   await assert.rejects(runSandboxed({}, 'return process.env', { name: 'evaluate' }), /evaluate: 'process' is not defined/);
 });
+
+/** A script model saved and run: the instance, or the error it failed with. */
+async function runScript(name, script) {
+  fs.writeFileSync(`${dir}${name}.bpmn`, scripted(name, script));
+  await server.definitions.rebuild();
+  try { return { execution: await server.engine.start(name, { a: 1 }) }; }
+  catch (error) { return { error }; }
+}
+const failedWith = ({ error, execution }) => String(error?.message ?? execution?.instance?.items?.find(i => i.status === 'error')?.statusDetails?.message ?? execution?.error ?? '');
+
+test('a Python script, a script that does not compile and a thrown text fail with what went wrong', async () => {
+  assert.match(failedWith(await runScript('sbPy', '$py print(1)')), /Python scripts do not run on this server/);
+  assert.match(failedWith(await runScript('sbSyntax', 'data.x = (;')), /SyntaxError|expecting|unexpected/i);
+  assert.match(failedWith(await runScript('sbThrowText', "throw 'plain words';")), /plain words/);
+});
+
+test('a script reads the standard names (who acts, the actors) as plain values; the fields it sets on its output are kept', async () => {
+  const { execution, error } = await runScript('sbStandard', "data.who = user.userName; data.actorKinds = typeof actors; output.total = 42;");
+  assert.ifError(error);
+  assert.equal(execution.instance.data.who, null, 'no user started it');
+  assert.equal(execution.instance.data.actorKinds, 'object');
+  assert.deepEqual(execution.instance.items.find(i => i.elementId === 'run').output, { total: 42 });
+});
+
+test('an empty expression is nothing', async () => {
+  assert.equal(await new SandboxScriptHandler().evaluateExpression({}, ''), undefined);
+});

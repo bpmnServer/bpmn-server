@@ -1,0 +1,35 @@
+extends layout
+
+include ../includes/notifications.pug
+
+block intro
+	if all
+		p.dash-intro Whom the notification policies told what, newest first, delivered or not (the 200 newest that match).
+	else
+		p.dash-intro What the notification policies told you or your groups (#{mine.join(', ')}), newest first.
+
+block dash
+	link(rel='stylesheet', href=asset("/stylesheets/instance-details.css"))
+	form.dash-form.notifications-filter(method='get', action='/dashboard/notifications')
+		label
+			| To
+			input.form-control(type='text', name='to', value=filter.to, placeholder=all ? 'a user or a group' : 'you, or one of your groups')
+		label
+			| Process
+			input.form-control(type='text', name='process', value=filter.process, placeholder='its name')
+		label
+			| Status
+			select.form-control(name='status')
+				option(value='', selected=!filter.status) any
+				option(value='sent', selected=filter.status === 'sent') sent
+				option(value='recorded', selected=filter.status === 'recorded') kept, not delivered
+				option(value='failed', selected=filter.status === 'failed') failed
+		button.btn.btn-default.btn-sm(type='submit') Show
+	section.dash-card#notifications
+		h2 Notifications
+			span.count= notifications.length
+		if notifications.length
+			.instance-table-scroll
+				+notificationsTable(notifications, true)
+		else
+			p.dash-empty No notifications.

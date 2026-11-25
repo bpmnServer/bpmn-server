@@ -1,4 +1,4 @@
-// @features: tasks-forms-web
+// @features: pages-through-api, tasks-forms-web
 // Process scenarios through the UI routes: start, task lists, task forms, assignment, approval paths,
 // candidate-group authorization and instance administration. Uses processes/leave-request.bpmn:
 //   Submit request (staff, form: days, reason) -> More than 5 days?

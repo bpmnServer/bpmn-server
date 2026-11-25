@@ -62,6 +62,15 @@ export class ViewHelper {
             data[field] = value;
         }
     }
+    /**
+     * A diagram's SVG without the marks a run put on it (test-passed, test-waiting, ...): a model saved while the
+     * editor's Test tab showed a run on it kept them, and the instance page showed that run's colours as its own.
+     */
+    static withoutRunMarks(svg: string): string {
+        return String(svg ?? '').replace(/class="([^"]*)"/g, (all, names) =>
+            /\btest-/.test(names) ? `class="${names.split(/\s+/).filter(n => n && !n.startsWith('test-')).join(' ')}"` : all);
+    }
+
     static calculateDecorations(items,tokens) {
         let decors = [];
         let seq = 1;

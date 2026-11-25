@@ -25,10 +25,14 @@
 ### Accessors
 
 - [server](APIEngine.md#server)
+- [filters](APIEngine.md#filters)
 
 ### Methods
 
 - [getUser](APIEngine.md#getuser)
+- [qualify](APIEngine.md#qualify)
+- [can](APIEngine.md#can)
+- [targets](APIEngine.md#targets)
 - [start](APIEngine.md#start)
 - [invoke](APIEngine.md#invoke)
 - [assign](APIEngine.md#assign)
@@ -61,7 +65,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L63)
+[packages/bpmn-server/src/API/API.ts:65](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L65)
 
 ## Properties
 
@@ -75,7 +79,7 @@ APIComponent.api
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L61)
+[packages/bpmn-server/src/API/API.ts:63](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L63)
 
 ## Accessors
 
@@ -93,7 +97,29 @@ APIComponent.server
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:66](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L66)
+[packages/bpmn-server/src/API/API.ts:68](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L68)
+
+___
+
+### filters
+
+• `get` **filters**(): [`IQueryFilter`](../interfaces/IQueryFilter.md)[]
+
+What the add-ons narrow a user's queries by (the Assignment add-on: the tasks offered to them). A server that says
+nothing of add-ons (no registrations, no configuration's addOns): undefined, so the user's own narrowing applies,
+as before; nothing is opened by not knowing.
+
+#### Returns
+
+[`IQueryFilter`](../interfaces/IQueryFilter.md)[]
+
+#### Inherited from
+
+APIComponent.filters
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:76](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L76)
 
 ## Methods
 
@@ -117,7 +143,99 @@ APIComponent.getUser
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L69)
+[packages/bpmn-server/src/API/API.ts:80](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L80)
+
+___
+
+### qualify
+
+▸ **qualify**(`kind`, `user`, `query`): `Promise`\<`any`\>
+
+A query narrowed to what this user may see (docs/design/context-object.md): their tenant's (SecureUser), then
+`pre-query`, its listeners' conditions all holding. No listener (the policies' add-ons off, a server from before
+add-ons): the user's own built-in narrowing, the tasks offered to them. Not narrowed for an administrator.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `kind` | ``"items"`` \| ``"instances"`` \| ``"startEvents"`` \| ``"deleteInstances"`` |
+| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `query` | `any` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Inherited from
+
+APIComponent.qualify
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:90](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L90)
+
+___
+
+### can
+
+▸ **can**(`action`, `user`, `on?`): `Promise`\<`boolean`\>
+
+Whether this user may do this (the one check of each action: canStart, canInvoke, canAssign, canRestart,
+canFireEvent, canModifyModel, canDeleteModel): the user's own rule, then `pre-action`, whose listeners may refuse
+by throwing (the error is the caller's). No listener: the built-in rules only.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `action` | `string` |
+| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `on` | `Object` |
+| `on.item?` | `any` |
+| `on.instance?` | `any` |
+| `on.element?` | `any` |
+| `on.model?` | `string` |
+| `on.input?` | `any` |
+| `on.assignment?` | `any` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Inherited from
+
+APIComponent.can
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:110](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L110)
+
+___
+
+### targets
+
+▸ **targets**(`query`): `Promise`\<\{ `item`: `any` ; `instance`: `any`  }[]\>
+
+The waiting items a query finds, each with its case (what a pre-action decides on); none when nothing listens.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+
+#### Returns
+
+`Promise`\<\{ `item`: `any` ; `instance`: `any`  }[]\>
+
+#### Inherited from
+
+APIComponent.targets
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:119](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L119)
 
 ___
 
@@ -146,7 +264,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:248](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L248)
+[packages/bpmn-server/src/API/API.ts:302](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L302)
 
 ___
 
@@ -175,7 +293,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:253](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L253)
+[packages/bpmn-server/src/API/API.ts:308](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L308)
 
 ___
 
@@ -206,7 +324,7 @@ Also, updates item data
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:259](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L259)
+[packages/bpmn-server/src/API/API.ts:316](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L316)
 
 ___
 
@@ -236,7 +354,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:264](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L264)
+[packages/bpmn-server/src/API/API.ts:328](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L328)
 
 ___
 
@@ -266,7 +384,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:270](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L270)
+[packages/bpmn-server/src/API/API.ts:334](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L334)
 
 ___
 
@@ -296,7 +414,7 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:274](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L274)
+[packages/bpmn-server/src/API/API.ts:338](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L338)
 
 ___
 
@@ -319,7 +437,7 @@ Runs a failed item's work again (its status `error`), and the instance on from i
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:280](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L280)
+[packages/bpmn-server/src/API/API.ts:348](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L348)
 
 ___
 
@@ -350,7 +468,7 @@ this add a savePoint for each item, allowing you to select that item to restore 
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:284](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L284)
+[packages/bpmn-server/src/API/API.ts:352](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L352)
 
 ___
 
@@ -380,4 +498,4 @@ However, this routine will upgrade already started instances with the revised mo
 
 #### Defined in
 
-[packages/bpmn-server/src/API/API.ts:289](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L289)
+[packages/bpmn-server/src/API/API.ts:359](https://github.com/bpmnServer/bpmn-server/blob/c8e51315c75e44af0601374b1fc8baad86fd4779/packages/bpmn-server/src/API/API.ts#L359)

@@ -1,8 +1,7 @@
 # Tutorial 7: Testing every path
 
-**The requirement:** every path of the leave request is proved before each release: approved, wrong dates, rejected,
-information required, HR's system refusing the record, and the reminders. Without sending a message or touching HR's
-system, and without waiting two days.
+**Developer outcome:** prove every path before each release: approved, wrong dates, rejected, information required, HR's
+system refusing the record, and reminders. Tests isolate external systems and time, so they are repeatable and fast.
 
 ## The tests
 

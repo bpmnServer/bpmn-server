@@ -39,6 +39,19 @@ theme:
 
 plugins:
   - search
+  # pages retired or merged: their old addresses lead to what replaced them
+  - redirects:
+      redirect_maps:
+        journeys.md: index.md
+        design changes.md: whats-new-3.md
+        executionStructure.md: execution.md
+        bpmn-changes.md: examples.md
+        dt.md: decisions.md
+        bpmn/intro.md: examples.md
+        examples/BuyCar-Server.md: examples/buy-used-car.md
+        examples/BuyCar-Remote.md: examples/buy-used-car.md
+        examples/BuyCar-Web.md: examples/buy-used-car.md
+        application-integration-design.md: 'https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/application-integration-design.md'
 markdown_extensions:
   - toc:
       permalink: "#" 
@@ -67,6 +80,14 @@ markdown_extensions:
 
 use_directory_urls: true
 
+# the include script's test files (npm run incl), not pages
+exclude_docs: |
+  example1.md
+  example1.out
+  include1.md
+  *.output
+  *.mmd
+
 # Pages for features not released yet: shown by `mkdocs serve`, left out of `mkdocs build` and `gh-deploy`.
 # At release, move a page out of drafts/ and add it to the nav.
 draft_docs: |
@@ -74,99 +95,123 @@ draft_docs: |
 
 
 nav:
-- Getting Started:
+- Get Started:
   - Overview: index.md
-  - Choose Your Journey: journeys.md
-  - Building Workflows with AI: ai/building-workflows.md
-  - Chatting with Your Server: ai/chat-assistants.md
-  - Online Demo: first-workflow.md
-  - Build an Application: build.md
-  - Integrate an Existing Application: integrate.md
-  - Installation: setup.md
-  - "Settings: .env and configuration": settings.md
-  - "What's new in 3.6": whats-new-3.6.md
-  - "What's new in 3.5": whats-new-3.5.md
-  - "Upgrade to 3.x": whats-new-3.md
+  - Try it online: first-workflow.md
+  - Build an application: build.md
+  - Integrate an existing application: integrate.md
+  - Embed the engine: embedding.md
+  - With an AI agent:
+    - Building workflows with an AI agent: ai/building-workflows.md
+    - Chatting with your server: ai/chat-assistants.md
+  - What's new:
+    - "Upgrade from 3.6 to 3.7.5": upgrade-3.7.md
+    - "What's new in 3.6": whats-new-3.6.md
+    - "What's new in 3.5": whats-new-3.5.md
+    - "Upgrade to 3.x": whats-new-3.md
 
 - Tutorials:
-  - '1. A Workflow Ready for Production': tutorial/start.md
-  - '2. Roles and Assignment': tutorial/roles.md
-  - '3. Forms and Data': tutorial/forms.md
-  - '4. Decisions and Paths': tutorial/paths.md
-  - '5. Deadlines': tutorial/deadlines.md
-  - '6. Calling Services, and Failing Well': tutorial/services.md
-  - '7. Testing Every Path': tutorial/tutorial-testing.md
-  - '8. Review Before Release': tutorial/review.md
-  - '9. Release': tutorial/release.md
+  - 'Part 1: Modeling — straight BPMN':
+    - '1. Build a Workflow Brief': tutorial/start.md
+    - '2. Roles and Assignment': tutorial/roles.md
+    - '3. Forms and Data': tutorial/forms.md
+    - '4. Decisions and Paths': tutorial/paths.md
+    - '5. Deadlines': tutorial/deadlines.md
+  - 'Part 2: Adding Logic — JavaScript and FEEL':
+    - '6. Calling Services': tutorial/services.md
+    - '7. Testing Every Path': tutorial/tutorial-testing.md
+    - '8. Review Before Release': tutorial/review.md
+  - 'Calling OmniWorkflow from your application':
+    - 'Start here': tutorial/calling-owf.md
+    - '9. Execute from Node.js': tutorial/tutorial-script.md
+    - '10. Integrate an Existing Application': tutorial/tutorial-integrate.md
+    - '11. Connect External Services': tutorial/tutorial-connectors.md
+    - '12. Release': tutorial/release.md
 
-- Walkthroughs:
-  - Execute from Node.js: tutorial/tutorial-script.md
-  - Integrate an Existing Application: tutorial/tutorial-integrate.md
-  - Connect External Services: tutorial/tutorial-connectors.md
-
-- Core Concepts:
-  - Invoking Workflows: invokation.md
-  - Workflow Execution: execution.md
-  - Data and Persistence: data.md
-  - Scripting: scripting.md
-  - Security: security.md
-
-- Modeling and Integration:
-  - Model editor: modeler.md
-  - Checking models: verify.md
-  - Testing and debugging models: testing.md
-  - Connectors (REST APIs): connectors.md
-  - Decisions (DMN): decisions.md
+- Concepts:
+  - Architecture: architecture.md
+  - How a workflow runs: execution.md
+  - Workflow data: data.md
+  - Finding instances: data_find.md
   - Data objects: data-objects.md
+  - Who may do what: security.md
+  - Environments and read-only servers: environments.md
+
+- Modeling:
+  - The model editor: modeler.md
+  - Checking models: verify.md
+  - Testing and debugging: testing.md
+  - Scripts and expressions: scripting.md
+  - Decisions (DMN): decisions.md
+  - Labels: labels.md
+  - Form rules: form-rules.md
+  - Lists and lookups in forms: form-lookups.md
+  - A process explained: process-guide.md
+  - Timers: timers.md
+  - BPMN by example:
+    - Overview: examples.md
+    - Service task: examples/serviceTask.md
+    - Script task: examples/scriptTask.md
+    - Business rule task: examples/Business Rules.md
+    - Conditional flow: examples/conditionalFlow.md
+    - Script listeners: examples/scriptEvents.md
+    - Gateways: examples/gateways.md
+    - Event-based gateway: examples/ebg.md
+    - Multiple start events: examples/multiStartEvent.md
+    - Input fields: examples/inputFields.md
+    - Boundary events: examples/boundary-events.md
+    - Messages: examples/msg-throw-catch.md
+    - Signals: examples/signal-throw-catch.md
+    - Errors and escalations: examples/error_events.md
+    - Call activity: examples/callProcess.md
+    - Multi-instance (loops): examples/loop.md
+    - Subprocess: examples/subProcess.md
+    - Transactions: examples/transactions.md
+    - Ad-hoc subprocess: examples/adHoc.md
+
+- Integration:
+  - 'Integration, step by step': integration/integration-guide.md
+  - Integrating your application: customization.md
+  - 'Calling it from your application (C#, Python, curl)': integration-examples.md
+  - Connectors (REST APIs): connectors.md
+  - The application's contract: app-contract.md
+  - Custom delegates: delegates.md
+  - Custom persistence: persistence.md
+  - Invoking workflows: invokation.md
+  - The engine's API: api-summary.md
+  - bpmn-client:
+    - Installing it: bpmn-client.md
+    - The client API: client-api.md
+  - 'Example: Buy Used Car, three ways': examples/buy-used-car.md
+
+- Add-ons:
+  - Assignment: add-ons/assignment.md
+  - Assignment policies: assignment-policies.md
+  - Notifications: add-ons/notification.md
+  - Notification policies: notification-policies.md
+  - Access Control: add-ons/security.md
+  - Labels: add-ons/labels.md
+  - Model Options: add-ons/modeling.md
+  - Extended Forms: add-ons/forms.md
+  - AI Agents: add-ons/ai.md
+
+- Operate:
+  - Installation: setup.md
+  - Configuring the engine: configuration.md
+  - Docker: docker.md
+  - The web application: bpmn-web.md
+  - The Settings page: integration-settings.md
+  - Lists, columns and filters: list-columns.md
+  - Performance and test coverage: performance.md
+  - Advanced topics: advanced.md
+  - Frequently asked questions: faq/index.md
 
 - Reference:
   - Features: features.md
-  - Advanced Topics: advanced.md
-  - Frequently Asked Questions: faq/index.md
-  - Site Map: map.md
-
-- Examples/Features:
-  - 'Service Task': examples/serviceTask.md
-  - 'Script Task': examples/scriptTask.md
-  - 'Conditional Flow': examples/conditionalFlow.md
-  - 'Scripts Listeners': examples/scriptEvents.md
-  - 'Gateways': examples/gateways.md
-  - 'Event Based Gateway': examples/ebg.md
-  - 'Multiple Start Events': examples/multiStartEvent.md
-  - 'Input Fields': examples/inputFields.md
-  - 'Boundary Events': examples/boundary-events.md
-  - 'Throwing/Catching Messages': examples/msg-throw-catch.md
-  - 'Throwing/Catching Signals': examples/signal-throw-catch.md
-  - 'Error/Escalate Events': examples/error_events.md
-  - 'Call Process': examples/callProcess.md
-  - 'Multi-instances (loop)': examples/loop.md
-  - 'UserTask Assignment': security.md
-  - 'Timers': timers.md
-  - 'SubProcess': examples/subProcess.md
-  - 'Transactions': examples/transactions.md
-  - 'Ad Hoc SubProcess': examples/adHoc.md
- 
-- API:
-  - 'API Example': examples/BuyCar-Server.md
-  - 'API': api/readme.md
-
-- Advanced Development:
-  - Embedding the Engine: embedding.md
-  - Engine API: api-summary.md
-  - Application Integration: customization.md
-  - Custom Persistence: persistence.md
-  - Custom Delegates: delegates.md
-  - Runtime Architecture: architecture.md
-
-
-- bpmn-web:
-  - 'install': bpmn-web.md
-  - 'Executing Example': examples/BuyCar-Web.md
-
-- bpmn-client:
-  - 'install': bpmn-client.md
-  - 'Executing Example': examples/BuyCar-Remote.md
-  - 'Client API': client-api.md
-  - 'API v3 reference': api-v3.md
+  - "Settings (.env)": settings.md
+  - API v3: api-v3.md
+  - Engine and client classes: api/readme.md
+  - Site map: map.md
+  - Contributing: Development.md
 
 not_in_nav: api/
