@@ -37,7 +37,7 @@ test('setup --yes: a new application, the development profile: memory, new keys,
   const env = readEnv(dir);
   assert.equal(env.MONGO_DB_URL, 'memory');
   assert.equal(env.REQUIRE_AUTHENTICATION, 'true');
-  for (const key of ['API_KEY', 'ADMIN_API_KEY', 'SESSION_SECRET'])
+  for (const key of ['API_KEY', 'ADMIN_API_KEY', 'SESSION_SECRET', 'SECRETS_KEY'])
     assert.ok(env[key]?.length >= 16, key);
   // no password in .env: the server makes the administrator when it first starts, and prints it then
   assert.equal(env.ADMIN_PASSWORD, undefined, 'the dialog does not write a password');
@@ -226,4 +226,18 @@ test('init --hrdemo: the HR demo it makes signs people in for real; the sample a
   const options = { port: '3000', memory: true, sqlite: null, api: true, ui: true, auth: true };
   assert.match(envFile('a', { ...options, from: 'hrdemo' }), /^HR_DEMO_SIGN_IN_AS=false$/m);
   assert.doesNotMatch(envFile('a', { ...options, from: 'sample' }), /HR_DEMO_SIGN_IN_AS/);
+});
+
+test('setup makes SECRETS_KEY once: kept where it is set, and not made where CONNECTORS_KEY is, its name before 3.7.5', () => {
+  const run = env => {
+    const dir = app(env);
+    const r = spawnSync(process.execPath, [CLI, 'setup', dir, '--yes', '--no-install', '--no-check', '--profile', 'development'], { encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stdout + r.stderr);
+    return readEnv(dir);
+  };
+  assert.ok(run('PORT=3000\nMONGO_DB_URL=memory\n').SECRETS_KEY?.length >= 16, 'an application without one gets one');
+  assert.equal(run('PORT=3000\nMONGO_DB_URL=memory\nSECRETS_KEY=keep-this-one\n').SECRETS_KEY, 'keep-this-one', 'one that is set is kept');
+  const old = run('PORT=3000\nMONGO_DB_URL=memory\nCONNECTORS_KEY=the-old-name\n');
+  assert.equal(old.SECRETS_KEY, undefined, 'a key under the old name is still the key: a new one would hide what it encrypted');
+  assert.equal(old.CONNECTORS_KEY, 'the-old-name');
 });

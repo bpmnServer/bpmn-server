@@ -13,7 +13,7 @@ curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/s
 sh setup.sh
 ```
 
-The setup prompts for the **host port**, **database** (memory or persistent MongoDB), and **image** (published Docker Hub image or local build). It generates a private `.env` with secrets and remembers your choices. For a local image, it downloads editable `image/Dockerfile` and `image/docker-entrypoint.sh` along with a build override. Edit these files, then run the same Compose build command again. An existing `.env` is preserved on ordinary startup; `sh setup.sh --reconfigure` prompts again.
+The setup prompts for the **host port**, **database** (MongoDB, the default, in a container of its own; or memory, which keeps nothing), and **image** (published Docker Hub image or local build). It generates a private `.env` with secrets and remembers your choices. For a local image, it downloads editable `image/Dockerfile` and `image/docker-entrypoint.sh` along with a build override. Edit these files, then run the same Compose build command again. An existing `.env` is preserved on ordinary startup; `sh setup.sh --reconfigure` prompts again.
 
 ```sh
 # Run the same mode again (after downloading up.sh)
@@ -63,7 +63,7 @@ The file is next to `docker-compose.yml`. Edit it with `nano .env` or VS Code:
 
 ```dotenv
 PORT=3000
-MONGO_DB_URL=memory
+MONGO_DB_URL=mongodb://mongo:27017/bpmn
 BPMN_IMAGE=bpmnserver/bpmn-server:latest
 REQUIRE_AUTHENTICATION=true
 ENFORCE_SECURITY=true
@@ -72,14 +72,15 @@ API_SERVICE_USER_GROUPS=SYSTEM
 API_KEY=...                 # generated secret
 ADMIN_API_KEY=...           # generated secret
 SESSION_SECRET=...          # generated secret
+SECRETS_KEY=...             # generated secret: encrypts what the server stores (a connector's key); keep it, a backup needs the same one
 ADMIN_PASSWORD=...          # first admin user only
 ```
 
 `env_file: .env` passes settings into the container. `PORT` sets the host-facing port only; the internal application port remains 3000. Changes to `.env` require recreating the container (not `docker compose restart`).
 
-`MONGO_DB_URL=memory` needs no MongoDB container. It uses `mongodb-memory-server`, which downloads its MongoDB executable on first start and loses DB contents when the container stops. The image is Debian based for compatibility. Model files persist in the `processes` volume.
+MongoDB is the default: setup (and `up.sh`, `up.cmd`, `owf`) add `docker-compose.mongo.yml`, a MongoDB service whose data is in a volume, so users, instances and models survive recreating the container. It isn't exposed outside the Docker network.
 
-For persistent MongoDB, choose `mongo` during setup (or set `MONGO_DB_URL=mongodb://mongo:27017/bpmn` and use `docker-compose.mongo.yml`). The optional MongoDB service isn't exposed outside the Docker network.
+`MONGO_DB_URL=memory` needs no MongoDB container, to try it out. It uses `mongodb-memory-server`, which downloads its MongoDB executable on first start and loses DB contents when the container stops. The image is Debian based for compatibility. Model files persist in the `processes` volume either way.
 
 ## Docker `owf` management command
 
@@ -161,7 +162,7 @@ For a shell inside the container: `sh it.sh`, or `it.cmd` on Windows (`docker co
 
 ## Commands
 
-For a normal published memory installation:
+For a published installation with no overlay (a `memory` database; add `-f docker-compose.mongo.yml` after `-f docker-compose.yml` for the default MongoDB, or use `up.sh`):
 
 ```sh
 docker compose up -d --force-recreate
@@ -196,10 +197,11 @@ See [image/README.md](image/README.md). The image must be built, tested, then pu
 ```powershell
 mkdir bpmn-server; cd bpmn-server
 curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.mongo.yml
 curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.cmd
 .\up.cmd
 ```
 
-This creates a local `.env` for memory mode with random secrets, then starts the published image. For an interactive installer use WSL, or edit `.env` and use the Compose overlays manually. To manage it afterwards (status, logs, password, the console), download `owf.cmd` and `owf.ps1`: see [Windows (PowerShell or cmd)](#windows-powershell-or-cmd).
+This creates a local `.env` for MongoDB with random secrets, then starts the published image and its MongoDB (`up.cmd` downloads `docker-compose.mongo.yml` itself if it is missing). For an interactive installer use WSL, or edit `.env` and use the Compose overlays manually. To manage it afterwards (status, logs, password, the console), download `owf.cmd` and `owf.ps1`: see [Windows (PowerShell or cmd)](#windows-powershell-or-cmd).
 
 Run the image through Compose, not with a plain `docker run` or Docker Desktop's Run button: without the settings in `.env` the server refuses to start (`MONGO_DB_URL is not set`).

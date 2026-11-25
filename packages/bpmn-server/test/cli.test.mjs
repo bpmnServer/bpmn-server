@@ -83,6 +83,7 @@ test('init: the sample application, on MongoDB with sign-in, by default', () => 
   assert.match(env, /^SERVE=both$/m);
   assert.match(env, /^REQUIRE_AUTHENTICATION=true$/m);
   assert.match(env, /^API_KEY=[0-9a-f]{48}$/m);
+  assert.match(env, /^SECRETS_KEY=[0-9a-f]{48}$/m, 'the key the server encrypts its stored secrets with');
   assert.match(env, /^PORT=3050$/m);
   const pkg = JSON.parse(app.read('package.json'));
   assert.equal(pkg.name, 'app');

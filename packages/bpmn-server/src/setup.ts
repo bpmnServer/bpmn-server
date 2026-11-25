@@ -308,6 +308,10 @@ const STEPS: Array<(c: Context) => Promise<void>> = [
             else if (!c.auto && !c.isNew && await confirm(c, `${name} is set: make a new one (what uses the old one stops working)`, false))
                 set(c, name, newKey());
         }
+        // SECRETS_KEY encrypts what the server stores (a connector's own key). Made once, and never offered again: a new
+        // one leaves what is stored unreadable. Not made where CONNECTORS_KEY, its name before 3.7.5, is set: still read.
+        if (!current(c, 'SECRETS_KEY') && !current(c, 'CONNECTORS_KEY'))
+            set(c, 'SECRETS_KEY', newKey());
     },
     async function access(c) {
         // Sign-in and the security rules: on, and not a question. Everything else a profile used to set — who may

@@ -295,6 +295,8 @@ API_SERVICE_USER_NAME=integration
 API_SERVICE_USER_GROUPS=SYSTEM
 
 SESSION_SECRET=${randomKey()}
+# encrypts the secrets the server stores (a connector's own key). Keep it: a backup needs the same one
+SECRETS_KEY=${randomKey()}
 # false: no sign-in and no security rules, for development only
 REQUIRE_AUTHENTICATION=${options.auth}
 ENFORCE_SECURITY=${options.auth}

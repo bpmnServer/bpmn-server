@@ -30,6 +30,7 @@ API_KEY=$(key)
 ADMIN_API_KEY=$(key)
 SESSION_SECRET=$(key)
 ADMIN_PASSWORD=$(openssl rand -hex 16)
+SECRETS_KEY=$(key)
 EOF
   chmod 600 .env
 fi
@@ -64,6 +65,8 @@ services:
       SESSION_SECRET: \${SESSION_SECRET:?missing}
       # the first user, admin, with this password; empty (an .env made before): the server makes one up and prints it in its log
       ADMIN_PASSWORD: \${ADMIN_PASSWORD:-}
+      # encrypts the secrets the server stores (a connector's own key); keep it, a backup needs the same one
+      SECRETS_KEY: \${SECRETS_KEY:-}
     volumes:
       - processes:/app/processes
     depends_on:

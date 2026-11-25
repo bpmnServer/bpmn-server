@@ -103,12 +103,12 @@ CLI runs in a separate process and cannot access the live memory database.
         if (Test-Path .env) { '.env exists: edit it with owf env (rename it first for a new one).'; break }
         $key = { [guid]::NewGuid().ToString('N') }
         $password = & $key
-        'PORT=3000', 'MONGO_DB_URL=memory', 'REQUIRE_AUTHENTICATION=true', 'ENFORCE_SECURITY=true',
+        'PORT=3000', 'MONGO_DB_URL=mongodb://mongo:27017/bpmn', 'REQUIRE_AUTHENTICATION=true', 'ENFORCE_SECURITY=true',
             'API_SERVICE_USER_NAME=integration', 'API_SERVICE_USER_GROUPS=SYSTEM', "API_KEY=$(& $key)",
-            "ADMIN_API_KEY=$(& $key)", "SESSION_SECRET=$(& $key)", "ADMIN_PASSWORD=$password" |
+            "ADMIN_API_KEY=$(& $key)", "SESSION_SECRET=$(& $key)", "SECRETS_KEY=$(& $key)", "ADMIN_PASSWORD=$password" |
             Set-Content -Encoding ascii .env
-        "Created .env (database: memory); initial admin password: $password"
-        'For MongoDB: set MONGO_DB_URL=mongodb://mongo:27017/bpmn with owf env. Then: owf start'
+        "Created .env (database: MongoDB, in a container of its own); initial admin password: $password"
+        'For a database that keeps nothing (to try it): set MONGO_DB_URL=memory with owf env. Then: owf start'
     }
     default { Fail "Unknown command: $cmd (use owf help)" 2 }
 }

@@ -11,7 +11,7 @@ curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/s
 sh setup.sh
 ```
 
-Setup asks for the **port**, the **database** (`memory` or persistent MongoDB), and the **image** (published or local build). It generates `.env` next to the Compose file with random credentials and preserves that file on repeated runs. To change choices, use `sh setup.sh --reconfigure`.
+Setup asks for the **port**, the **database** (MongoDB, the default, in a container of its own; or `memory`, which keeps nothing), and the **image** (published or local build). It generates `.env` next to the Compose file with random credentials and preserves that file on repeated runs. To change choices, use `sh setup.sh --reconfigure`.
 
 The **local build** option downloads editable image files into `./image/` and builds them. It uses the selected npm release of `bpmn-server` and `bpmn-web`; edits to the packages' source in GitHub are not automatically compiled into the image.
 
@@ -53,17 +53,17 @@ If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 
 
 ```dotenv
 PORT=3000
-MONGO_DB_URL=memory
+MONGO_DB_URL=mongodb://mongo:27017/bpmn
 BPMN_IMAGE=bpmnserver/bpmn-server:latest
 REQUIRE_AUTHENTICATION=true
 ENFORCE_SECURITY=true
 ```
 
-These are example settings; the generated file also includes API keys, the session secret and the initial admin password. Keep `.env` private. `env_file` passes the file to the container, while `PORT` controls its host mapping (the internal port is 3000). After edits, recreate the service rather than using `docker compose restart`.
+These are example settings; the generated file also includes API keys, the session secret, `SECRETS_KEY` (it encrypts the secrets the server stores, a connector's own key: keep it, a backup needs the same one) and the initial admin password. Keep `.env` private. `env_file` passes the file to the container, while `PORT` controls its host mapping (the internal port is 3000). After edits, recreate the service rather than using `docker compose restart`.
 
-Memory mode needs no MongoDB container, but loses users and workflow instances on restart. It uses `mongodb-memory-server`; the first start may need internet access to fetch a MongoDB binary. Model files persist in a Docker volume.
+MongoDB is the default: setup adds `docker-compose.mongo.yml`, a MongoDB container of its own that is not exposed outside the Docker network, with its data in a volume, so users, instances and models survive recreating the server's container.
 
-For persistent MongoDB, setup uses `docker-compose.mongo.yml` and sets `MONGO_DB_URL=mongodb://mongo:27017/bpmn`.
+`MONGO_DB_URL=memory` needs no MongoDB container, to try it out, but loses users and workflow instances on restart. It uses `mongodb-memory-server`; the first start may need internet access to fetch a MongoDB binary. Model files persist in a Docker volume either way.
 
 A SQLite file persists too, with nothing else to run (3.7.5 or later): keep `/app/data` on a volume and set
 `DATABASE=sqlite:/app/data/bpmn.sqlite` with `MONGO_DB_URL` empty. One server writes to it at a time
@@ -128,7 +128,7 @@ settings in `.env` the server refuses to start (`MONGO_DB_URL is not set`).
 
 ## Manage
 
-In the default memory/published configuration:
+With the published image and no overlay (a `memory` database):
 
 ```sh
 docker compose up -d --force-recreate
@@ -137,7 +137,7 @@ docker compose logs --tail=100 server
 docker compose down
 ```
 
-When using the MongoDB or local build overlays, include them with `-f docker-compose.yml -f docker-compose.mongo.yml` and/or `-f docker-compose.build.yml`, or run the mode-aware `up.sh` from the installation folder.
+With the default MongoDB, or a local build, include the overlays: `-f docker-compose.yml -f docker-compose.mongo.yml` and/or `-f docker-compose.build.yml`, or run the mode-aware `up.sh` from the installation folder.
 
 Do not use `docker compose down -v` if you want to preserve models or database volumes.
 

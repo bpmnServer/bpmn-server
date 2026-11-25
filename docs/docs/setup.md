@@ -34,7 +34,7 @@ as `setup`. `setup` asks for the settings in `.env` step by step, and only what 
    asked whether to keep the address anyway.
 2. **The site**: its port, and the address people reach it by.
 
-Sign-in and the security rules are switched on without a question, and the API keys and the session secret are made. The
+Sign-in and the security rules are switched on without a question, and the API keys, the session secret and `SECRETS_KEY` are made (`SECRETS_KEY` encrypts the secrets the server stores, a connector's own key: it is made once, never offered again, and not made where `CONNECTORS_KEY`, its name before 3.7.5, is set). The
 administrator is not asked either: the server makes it the first time it starts ([The first start](#the-first-start)). Every
 other setting is changed on **Dashboard > Settings** once the server runs ([Settings](settings.md)); `--explain` shows each
 setting's own description beside the questions.

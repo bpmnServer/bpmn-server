@@ -274,6 +274,11 @@ fi
 # cookies marked Secure only once the site is HTTPS: a browser does not send them back over http
 grep -q '^SECURE_COOKIES=true' "$APP_DIR/.env" 2>/dev/null || set_env SECURE_COOKIES false
 
+# SECRETS_KEY encrypts the secrets the server stores (a connector's own key): made once and kept, so what is stored stays
+# readable (a backup needs the same one). init makes it in a new application; one made by an earlier release has none.
+# Not where CONNECTORS_KEY, its name before 3.7.5, is set: that is still the key.
+grep -q '^\(SECRETS_KEY\|CONNECTORS_KEY\)=' "$APP_DIR/.env" 2>/dev/null || set_env SECRETS_KEY "$(openssl rand -hex 24)"
+
 # Admin password for first-time account creation. Keep one stable value in .env
 # (the same convention as Docker); editing it later does NOT reset MongoDB users.
 # On an upgrade, migrate the initial password from the legacy root-only file if present.

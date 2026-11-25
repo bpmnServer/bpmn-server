@@ -9,6 +9,14 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **`SECRETS_KEY` is made everywhere a server is set up, and Docker keeps its data by default**: `init` writes it into
+  `.env` and `setup` makes it when it is missing (once, never offered again, and not where `CONNECTORS_KEY`, its name
+  before 3.7.5, is set: a new key would hide what the old one encrypted). The Linux installer, `deploy-client.sh` and
+  the Docker scripts (`setup.sh`, `up.cmd`, `owf.ps1`, `.env.example`) make one too, so a connector can be given its key
+  on the Settings page without setting anything first. In Docker the database is MongoDB, in a container of its own with
+  a volume, unless `memory` was chosen: users, instances and models survive recreating the server's container.
+  **Compatibility:** an installation that chose `memory` keeps it on `--reconfigure`; `up.cmd` fetches
+  `docker-compose.mongo.yml` itself. Tests: `packages/bpmn-server/test/setup.test.mjs`, `cli.test.mjs`.
 - **Fixed: the Linux installer (`deploy/install.sh`) stopped at the end of a fresh install.** After `npm run setup` made `admin`
   from `ADMIN_PASSWORD`, a block meant for releases before 3.5 set the password again with a bare `UserService` call; users
   are on the engine's store now, which only the web application names, so the call waited for ever. The block is gone.
