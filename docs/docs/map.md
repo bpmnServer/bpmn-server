@@ -7,7 +7,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Overview](index.md): OmniWorkflow runs business processes.
 - [Try it online](first-workflow.md): Two sites run OmniWorkflow with nothing to install.
 - [Build an application](build.md): Your own application on OmniWorkflow, with your models, users and services.
-- [Integrate an existing application](integrate.md): Your application keeps its own UI, users and data, and OmniWorkflow runs its processes, on a private network behind it: Your application in control.
+- [Integrate an existing application](integrate.md): Journey C: your application keeps its own UI, users and data, and OmniWorkflow runs its processes, on a private network behind it: Your application in control.
 - [Embed the engine](embedding.md): Run processes from your own Node.js code, with no web application.
 - **With an AI agent**
   - [Building workflows with an AI agent](ai/building-workflows.md): On a server, start with its /llms.txt (for example https://try.omniworkflow.com/llms.txt): what that site has (its API, services, connectors, user groups), its own rules, then…
