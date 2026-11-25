@@ -5,12 +5,7 @@ decisions along the way and the deadlines. OmniWorkflow follows the diagram for 
 people, calls the services that do the automatic steps, waits for answers and timers, and keeps each case until it ends.
 For every case it records what happened and why.
 
-It is open source, written in TypeScript for Node.js, and comes as three packages:
-
-- **bpmn-server**, the engine. It runs the processes and stores the cases.
-- **bpmn-web**, the web application on top of it: the Workbench where people see and do their tasks, the model editor
-  where the processes are drawn and tested, the Settings page, and the API other applications call.
-- **bpmn-client**, for another application that calls a running server.
+It is open source, and written in TypeScript for Node.js.
 
 ## What it does
 
@@ -59,72 +54,74 @@ the workbench, to build your own workflows in. [Try it online](first-workflow.md
 A workflow is a diagram, some rules and a set of tests, all of them files and API calls. An AI agent can do that work,
 and OmniWorkflow is built so that it can check its own output instead of guessing.
 
-**What an agent needs to start** is a server's address. Every server answers **`/llms.txt`** with what that site has:
-its API, the services and connectors it offers, its user groups, its own rules, and a guide to building workflows on
-it. An agent given nothing but the address can read that and begin.
+??? note "How an agent works, what it needs to start, and where to read more"
 
-**How an agent works, and why its output can be trusted:**
+    **What an agent needs to start** is a server's address. Every server answers **`/llms.txt`** with what that site has:
+    its API, the services and connectors it offers, its user groups, its own rules, and a guide to building workflows on
+    it. An agent given nothing but the address can read that and begin.
 
-1. It reads the site's `/llms.txt`, and the guide behind it.
-2. It writes a model: the steps, who does each, the forms, the decisions.
-3. It asks the server to **check** the model. The answer names what is wrong or missing, and what to do about it.
-4. It writes the model's **tests** as scenarios, and runs them in the engine: the same engine that will run the real
-   cases.
-5. It fixes what fails, and repeats until the tests pass.
+    **How an agent works, and why its output can be trusted:**
 
-Steps 3 to 5 are the point: the agent is not asked to be right the first time. The server tells it what is wrong, and
-the tests say whether the process does what was asked. A person reviews a model that already checks and tests clean.
+    1. It reads the site's `/llms.txt`, and the guide behind it.
+    2. It writes a model: the steps, who does each, the forms, the decisions.
+    3. It asks the server to **check** the model. The answer names what is wrong or missing, and what to do about it.
+    4. It writes the model's **tests** as scenarios, and runs them in the engine: the same engine that will run the real
+       cases.
+    5. It fixes what fails, and repeats until the tests pass.
 
-![A link for an AI agent](images/ai-key.png)
+    Steps 3 to 5 are the point: the agent is not asked to be right the first time. The server tells it what is wrong, and
+    the tests say whether the process does what was asked. A person reviews a model that already checks and tests clean.
 
-**Giving an agent access.** A person signs in and asks for a link for their agent. The link acts as that person, at a
-level they choose: to work on their own tasks, to design models, or to read the settings and advise on them. It lasts
-minutes, not forever, and it can be revoked. An agent never gets more than the person has. See the
-[AI Agents add-on](add-ons/ai.md).
+    ![A link for an AI agent](images/ai-key.png)
 
-**Four things to ask an agent for.** Each of these is a prompt to paste into your agent as it is.
+    **Giving an agent access.** A person signs in and asks for a link for their agent. The link acts as that person, at a
+    level they choose: to work on their own tasks, to design models, or to read the settings and advise on them. It lasts
+    minutes, not forever, and it can be revoked. An agent never gets more than the person has. See the
+    [AI Agents add-on](add-ons/ai.md).
 
-**Explore** an application that already uses OmniWorkflow, changing nothing:
+    **Four things to ask an agent for.** Each of these is a prompt to paste into your agent as it is.
 
-```text
-Show me how OmniWorkflow is integrated into the HR demo at https://demo.omniworkflow.com.
-Explain the application and the workflow integration. Change nothing: the site is read-only.
-```
+    **Explore** an application that already uses OmniWorkflow, changing nothing:
 
-**Try** building a process on the public workbench, and see the real results:
+    ```text
+    Show me how OmniWorkflow is integrated into the HR demo at https://demo.omniworkflow.com.
+    Explain the application and the workflow integration. Change nothing: the site is read-only.
+    ```
 
-```text
-Using https://try.omniworkflow.com and its API, create an employee leave approval workflow:
-an employee submits the dates and a reason, a manager approves or rejects it, and an employee
-cannot approve their own. Check the model, save it, write and run its tests, fix what fails,
-and give me the model's link and the test results as the server reported them.
-```
+    **Try** building a process on the public workbench, and see the real results:
 
-**Install** it on your own machine and prove it runs:
+    ```text
+    Using https://try.omniworkflow.com and its API, create an employee leave approval workflow:
+    an employee submits the dates and a reason, a manager approves or rejects it, and an employee
+    cannot approve their own. Check the model, save it, write and run its tests, fix what fails,
+    and give me the model's link and the test results as the server reported them.
+    ```
 
-```text
-Read the OmniWorkflow installation page at
-https://bpmnserver.github.io/bpmn-server/setup/ and install the current release locally.
-Start it, check that it is running, run one process end to end, and tell me the URL to open.
-```
+    **Install** it on your own machine and prove it runs:
 
-**Integrate** it with an application you already have:
+    ```text
+    Read the OmniWorkflow installation page at
+    https://bpmnserver.github.io/bpmn-server/setup/ and install the current release locally.
+    Start it, check that it is running, run one process end to end, and tell me the URL to open.
+    ```
 
-```text
-Read my application and OmniWorkflow's integration documentation at
-https://bpmnserver.github.io/bpmn-server/integrate/. Recommend how to connect the two and why.
-With my approval, build one small working example and show the process running.
-```
+    **Integrate** it with an application you already have:
 
-Any agent that can run commands or call an API can do this: Claude Code, Codex, Cursor, Copilot and others. There is
-no separate OmniWorkflow for agents; they use the same CLI, API and models that people do.
+    ```text
+    Read my application and OmniWorkflow's integration documentation at
+    https://bpmnserver.github.io/bpmn-server/integrate/. Recommend how to connect the two and why.
+    With my approval, build one small working example and show the process running.
+    ```
 
-Ask an agent to report what the server actually said. A model is checked and tested by the server, so "it verified"
-means the check and the tests ran and passed, not that the diagram looks right.
+    Any agent that can run commands or call an API can do this: Claude Code, Codex, Cursor, Copilot and others. There is
+    no separate OmniWorkflow for agents; they use the same CLI, API and models that people do.
 
-**Where to read more:** [Building workflows with an AI agent](ai/building-workflows.md) is the guide an agent follows,
-and the one to read to understand what agents can do here. [Chatting with your server](ai/chat-assistants.md) connects
-a chat assistant to a running server over MCP.
+    Ask an agent to report what the server actually said. A model is checked and tested by the server, so "it verified"
+    means the check and the tests ran and passed, not that the diagram looks right.
+
+    **Where to read more:** [Building workflows with an AI agent](ai/building-workflows.md) is the guide an agent follows,
+    and the one to read to understand what agents can do here. [Chatting with your server](ai/chat-assistants.md) connects
+    a chat assistant to a running server over MCP.
 
 ## Trying it locally
 
@@ -155,6 +152,13 @@ flowchart LR
 
 The engine runs the processes; bpmn-web is how people and other applications reach it. The engine can run inside the
 web application or as a separate service: see [Architecture](architecture.md).
+
+It comes as three packages:
+
+- **bpmn-server**, the engine. It runs the processes and stores the cases.
+- **bpmn-web**, the web application on top of it: the Workbench where people see and do their tasks, the model editor
+  where the processes are drawn and tested, the Settings page, and the API other applications call.
+- **bpmn-client**, for another application that calls a running server.
 
 The engine keeps the processes, the cases, their tasks and the data the process needs. The business records, such as
 orders, claims or employees, stay in the application's own database. A case carries their keys, calls the application

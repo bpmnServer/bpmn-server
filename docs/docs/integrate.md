@@ -2,6 +2,10 @@
 
 Your application keeps its own UI, users and data, and OmniWorkflow runs its processes, on a private network behind it: [Your application in control](architecture.md#your-application-in-control). The walkthrough [Integrate an existing application](tutorial/tutorial-integrate.md) does it with the leave request.
 
+**Where to start:** [Integration, step by step](integration/integration-guide.md) is the roadmap, with a checklist for each
+way (embedded in your server, or remote over the API), and [Calling OmniWorkflow from your application](tutorial/calling-owf.md)
+is the tutorial that builds it with the leave request. This page is the overview of the remote way.
+
 ## 1. Connect
 
 Your application talks to a running OmniWorkflow over its API, [API v3](api-v3.md) (`/api/v3`), from any language, with one key: the server's `API_KEY`. Keep it on your application's server. The API describes itself: `GET /api/v3/openapi.json`, with no key. `ADMIN_API_KEY` is for the administration APIs: [Settings](settings.md#rest-apis).

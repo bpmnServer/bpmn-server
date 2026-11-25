@@ -1,7 +1,7 @@
-# Tutorial 1: Build a workflow ready for production
+# Tutorial 1: Build a workflow
 
-These tutorials are for developers building a production workflow. You will design, implement, test, integrate, and
-release one example: a **leave request**. The business scenario uses employees, managers, and HR so the requirements
+These tutorials are for developers building a production workflow. You will design, implement and test one example: a
+**leave request**. The business scenario uses employees, managers, and HR so the requirements
 are concrete; your job is to turn them into BPMN, forms, services, security, and tests.
 
 The sample application has the finished model. Each tutorial explains what to change, why it belongs in the model or
@@ -26,20 +26,14 @@ failures. Prove each path with automated tests.
 
 | Tutorial | Add this |
 |---|---|
-| [6. Calling services, and failing well](services.md) | Service tasks, script tasks, expressions, errors, and retries |
+| [6. Calling services](services.md) | Service tasks, script tasks, expressions, errors, and retries |
 | [7. Testing every path](tutorial-testing.md) | Gherkin scenarios, stubs, and assertions |
 | [8. Review before release](review.md) | Model verification and acceptance checks |
 
-## Part 3: Integration — application and deployment
+## Integration is a separate tutorial
 
-Connect the workflow to your application, users, APIs, and production environment.
-
-| Tutorial | Integrate this |
-|---|---|
-| [Run a workflow from Node.js](tutorial-script.md) | Start and complete work from application code |
-| [Integrate an existing application](tutorial-integrate.md) | Use API v3 with your users and UI |
-| [Connect external services](tutorial-connectors.md) | Configure REST connectors |
-| [Release](release.md) | Deploy safely and keep the checks running |
+Calling the workflow from your application, with your users and your interface, and releasing it, is
+[Calling OmniWorkflow from your application](calling-owf.md): it starts from the workflow these tutorials build.
 
 ## Developer brief: what the process must do
 

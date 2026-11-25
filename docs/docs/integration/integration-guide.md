@@ -1,21 +1,25 @@
 # Integration, step by step
 
-Two ways to put OmniWorkflow in an application. Pick one, then follow its steps in order: each says the file, what it
-must provide, and the HR demo's own code to copy from (`apps/hrdemo`, the worked example of the embedded way).
+Two ways to put OmniWorkflow in an application: **embedded** in your own server, or **remote**, called over HTTP. Pick
+one and follow its steps in order. Each step names the file, what it must provide, and the code to copy from in the HR
+demo (`apps/hrdemo`), the worked example of the embedded way.
 
 ## Which way
 
 | | **Embedded** | **Remote** |
-|---|---|---|
+|:--|:--|:--|
 | Where the engine runs | inside your application's own server process | a server of its own, behind your application |
-| Your application reaches it by | calling it in process (`start({ ... })`) | HTTP, [API v3](api-v3.md) |
+| Your application reaches it by | calling it in process (`start({ ... })`) | HTTP, [API v3](../api-v3.md) |
 | Your users | sign in to your application, which tells OmniWorkflow who they are | sign in to your application, which acts for them with tokens |
 | Your language | Node.js | any |
-| Service tasks reach your code | directly, as methods | through a [connector](connectors.md) to your REST API |
+| Service tasks reach your code | directly, as methods | through a [connector](../connectors.md) to your REST API |
 | Choose it when | you have a Node application and want one deployment | you have another language, or want the engine separate |
 
-Embedded is what the HR demo does: section A. Remote is [Integrate an existing application](integrate.md), with the
-walkthrough [Integrate an existing application](tutorial/tutorial-integrate.md); section B is its checklist.
+- **Embedded** is what the HR demo does: section A.
+- **Remote** is described in [Integrate an existing application](../integrate.md) and walked through in
+  [Tutorial 10](../tutorial/tutorial-integrate.md); section B is its checklist.
+
+The tutorials that go with this guide start at [Calling OmniWorkflow from your application](../tutorial/calling-owf.md).
 
 Either way the models, their tests and the workflows' own code live in one folder of your repository (the HR demo's
 `workflow/`), and your application keeps its own interface, its users and its data.
@@ -23,6 +27,18 @@ Either way the models, their tests and the workflows' own code live in one folde
 ## A. Embedded: OmniWorkflow in your own server
 
 ### A1. Install
+
+Start from the HR demo, the worked example of this way:
+
+```sh
+npx bpmn-server init my-app --hrdemo
+```
+
+It copies the HR demo (its own pages, users and API, and the workflows that call them) as your starting point, and asks
+for the database and the site ([Installation](../setup.md)). The published package does not carry the HR demo yet: from a
+clone of the repository, run `node packages/bpmn-server/dist/cli.js init my-app --hrdemo` instead.
+
+To add OmniWorkflow to an application you already have, install the two packages:
 
 ```sh
 npm install bpmn-server bpmn-web
@@ -86,7 +102,7 @@ Your application signs people in; OmniWorkflow keeps no users and no sessions of
 ### A6. What a model may use: `app-contract.json`
 
 A file beside your application declaring what its models may name: the variables, functions, types, roles and APIs
-([The application's contract](app-contract.md)). The editor completes these names, `verifyModel` checks them, and
+([The application's contract](../app-contract.md)). The editor completes these names, `verifyModel` checks them, and
 `GET /api/v3/application` answers them for an agent:
 
 ```json
@@ -129,7 +145,7 @@ const webApp = await start({
 ### A8. Your API as a connector, for service tasks with no code
 
 Register your OpenAPI document once and a service task can call your API without code
-([Connectors](connectors.md)). The HR demo does it after `start`:
+([Connectors](../connectors.md)). The HR demo does it after `start`:
 
 ```ts
 const kept = await server.connectors.get('hr');
@@ -159,17 +175,17 @@ A task or a start event may use one of your application's pages instead of the f
 
 Each model's tests are a Gherkin `.feature` file beside it, with your services stubbed: `delegates/testServices.ts`,
 a class with the same service names that answers as the real ones and sends nothing. `APP_ENV=test` makes the
-application use it; production never loads it. See [Testing](testing.md).
+application use it; production never loads it. See [Testing](../testing.md).
 
 ### A11. `.env`
 
 Per-machine values and secrets, never committed. `npx bpmn-server init` writes one with new keys, and `npm run setup`
 asks step by step. At least `PORT`, `MONGO_DB_URL`, `SESSION_SECRET`, `API_KEY` and `SECRETS_KEY`, plus your own
-(`MY_SERVICE_KEY`, `MY_FORMS_URL`). All of them: [Settings](settings.md).
+(`MY_SERVICE_KEY`, `MY_FORMS_URL`). All of them: [Settings](../settings.md).
 
 ## B. Remote: your application calls a running server
 
-The detail is in [Integrate an existing application](integrate.md). The order to do it in:
+The detail is in [Integrate an existing application](../integrate.md). The order to do it in:
 
 1. **Run a server**, and keep its `API_KEY` on your application's server. `GET /api/v3/openapi.json` describes the
    API, with no key.
@@ -179,11 +195,11 @@ The detail is in [Integrate an existing application](integrate.md). The order to
 3. **Start a process as a user**: `POST /api/v3/processes/{name}/start` with their token.
 4. **Their tasks in your interface**: `GET /api/v3/tasks`, `GET /api/v3/tasks/{id}` (its data and its form),
    `POST /api/v3/tasks/{id}/claim`, `POST /api/v3/tasks/{id}/complete`.
-5. **Your services**: a [connector](connectors.md) to your REST API, with no code.
+5. **Your services**: a [connector](../connectors.md) to your REST API, with no code.
 6. **Events in**: `POST /api/v3/messages/{id}` and `POST /api/v3/signals/{id}` with the key (the service account must
    be in `SYSTEM`). There are no inbound webhook routes: your own webhook handler calls the API.
 7. **Deploy** with the engine on a private network behind your application
-   ([Your application in control](architecture.md#your-application-in-control)).
+   ([Your application in control](../architecture.md#your-application-in-control)).
 
 ## Before you call it done
 
@@ -196,8 +212,8 @@ The detail is in [Integrate an existing application](integrate.md). The order to
 
 ## Next
 
-- [The application's contract](app-contract.md): what a model may name of your application
-- [Connectors](connectors.md): your REST API as a service task
-- [Testing](testing.md): Gherkin tests with your services stubbed
-- [Settings](settings.md): every value in `.env`
-- [Integrating OmniWorkflow into your application](customization.md): the responsibilities either way
+- [The application's contract](../app-contract.md): what a model may name of your application
+- [Connectors](../connectors.md): your REST API as a service task
+- [Testing](../testing.md): Gherkin tests with your services stubbed
+- [Settings](../settings.md): every value in `.env`
+- [Integrating OmniWorkflow into your application](../customization.md): the responsibilities either way

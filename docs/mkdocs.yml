@@ -100,7 +100,6 @@ nav:
   - Try it online: first-workflow.md
   - Build an application: build.md
   - Integrate an existing application: integrate.md
-  - 'Integration, step by step': integration-guide.md
   - Embed the engine: embedding.md
   - With an AI agent:
     - Building workflows with an AI agent: ai/building-workflows.md
@@ -118,10 +117,11 @@ nav:
     - '4. Decisions and Paths': tutorial/paths.md
     - '5. Deadlines': tutorial/deadlines.md
   - 'Part 2: Adding Logic — JavaScript and FEEL':
-    - '6. Calling Services, and Failing Well': tutorial/services.md
+    - '6. Calling Services': tutorial/services.md
     - '7. Testing Every Path': tutorial/tutorial-testing.md
     - '8. Review Before Release': tutorial/review.md
-  - 'Part 3: Integration — Application and Deployment':
+  - 'Calling OmniWorkflow from your application':
+    - 'Start here': tutorial/calling-owf.md
     - '9. Execute from Node.js': tutorial/tutorial-script.md
     - '10. Integrate an Existing Application': tutorial/tutorial-integrate.md
     - '11. Connect External Services': tutorial/tutorial-connectors.md
@@ -169,6 +169,7 @@ nav:
     - Ad-hoc subprocess: examples/adHoc.md
 
 - Integration:
+  - 'Integration, step by step': integration/integration-guide.md
   - Integrating your application: customization.md
   - 'Calling it from your application (C#, Python, curl)': integration-examples.md
   - Connectors (REST APIs): connectors.md

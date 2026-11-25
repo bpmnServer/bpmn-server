@@ -1,4 +1,4 @@
-# Tutorial 6: Calling services, and failing well
+# Tutorial 6: Calling services
 
 **The requirement:** an approved request is recorded in HR's system. If that system refuses it, HR fixes it and it is
 tried again. Reminders and the outcome reach people.

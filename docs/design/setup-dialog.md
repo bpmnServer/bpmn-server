@@ -57,7 +57,7 @@ it can.
 `init` makes a **development server**: an application to work from, on your own machine. That is all it makes.
 
 A production server is not something this dialog sets up. By the time there is one, the workflows are running inside
-an application ([integration guide](../docs/integration-guide.md)), and it is that application which is deployed,
+an application ([integration guide](../docs/integration/integration-guide.md)), and it is that application which is deployed,
 with its own database, its own address, its own users and its own secrets. The workflow server is a part of it, and
 takes those from it. Setting up production here would be setting up the wrong thing.
 

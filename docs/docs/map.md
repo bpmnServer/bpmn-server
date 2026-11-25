@@ -26,10 +26,11 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
   - [4. Decisions and Paths](tutorial/paths.md): not, and a request that needs more information goes back to the employee.
   - [5. Deadlines](tutorial/deadlines.md): once, after that long; a Date at that time.
 - **Part 2: Adding Logic — JavaScript and FEEL**
-  - [6. Calling Services, and Failing Well](tutorial/services.md): tried again.
+  - [6. Calling Services](tutorial/services.md): tried again.
   - [7. Testing Every Path](tutorial/tutorial-testing.md): system refusing the record, and reminders.
   - [8. Review Before Release](tutorial/review.md): an end-to-end acceptance check using representative user identities.
-- **Part 3: Integration — Application and Deployment**
+- **Calling OmniWorkflow from your application**
+  - [Start here](tutorial/calling-owf.md): These tutorials start where Tutorial 1 to Tutorial 8 end: you have the leave request, modeled, with its services and its tests.
   - [9. Execute from Node.js](tutorial/tutorial-script.md): The same leave request, from a script: start it as user1, fill in the request, and approve it as manager1.
   - [10. Integrate an Existing Application](tutorial/tutorial-integrate.md): Your company already has an HR application, with its own users and pages.
   - [11. Connect External Services](tutorial/tutorial-connectors.md): A process often needs another system: check a balance, create a ticket, wait for a payment.
@@ -80,6 +81,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 
 ## Integration
 
+- [Integration, step by step](integration/integration-guide.md): Two ways to put OmniWorkflow in an application: embedded in your own server, or remote, called over HTTP.
 - [Integrating your application](customization.md): OmniWorkflow is an embeddable execution engine, not a stand-alone process server.
 - [Calling it from your application (C#, Python, curl)](integration-examples.md): Any application that can make HTTP calls can run workflows: C#, Java, Python, Go, PHP, Ruby, or Node.js.
 - [Connectors (REST APIs)](connectors.md): A service task can call a connector instead of a service.
