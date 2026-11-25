@@ -77,6 +77,7 @@ person the HR application signed in (`server/userManager.js`, bpmn-web's `IUserM
   the data the workflows see.
 - `npm run hr`: the HR application alone, without BPMN Server, on `HR_PORT` (default 3101).
 - `npm run cli`, `npm run mcp`, `npm run verify`: the console, the MCP server, a check of the models.
+- `npm run demo:video`: records a read-only My Work and Leave Application process-guide walkthrough to `scripts/out/`.
 
 BPMN Server comes from this repository's packages (`file:../../packages/...`), so it runs the code as built here
 (`npm run build` at the root). This application is separate from `apps/sampleApp`: it shares no code or data with it.
