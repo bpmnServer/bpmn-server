@@ -63,4 +63,3 @@ export function webUser(person: { userName: string; userGroups?: string[]; email
         hasGroup: (group: string) => userGroups.includes(group),
     };
 }
-

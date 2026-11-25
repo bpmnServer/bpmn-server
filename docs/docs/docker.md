@@ -142,4 +142,3 @@ With the default MongoDB, or a local build, include the overlays: `-f docker-com
 Do not use `docker compose down -v` if you want to preserve models or database volumes.
 
 See the [detailed Docker README](https://github.com/bpmnServer/bpmn-server/blob/main/docker/README.md) for installation, configuration, and publishing instructions.
-

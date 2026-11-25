@@ -26,7 +26,7 @@ class AppDelegate extends WebAppDelegate{
 
     async getServicesProvider(context) {
 
-        // for multiple appServices  -start 
+        // for multiple appServices  -start
         if (MULTI_APP_SERVICES) {
             this.appServices = new Map();
 
@@ -43,7 +43,7 @@ class AppDelegate extends WebAppDelegate{
                     console.log('instance loaded', path, instance);
                 }
                 return instance;
-            // for multiple appServices  -end 
+            // for multiple appServices  -end
         }
     else
         {
@@ -54,7 +54,7 @@ class AppDelegate extends WebAppDelegate{
             : new AppServices(this);
         return this.appServices
         }
-        
+
     }
     // startUp (housekeeping) and sendEmail (notifications) come from WebAppDelegate
 
@@ -69,10 +69,10 @@ class AppDelegate extends WebAppDelegate{
         this.notifications.save(notification);
     }
 
-    
+
     ///
-    
-    /* only for show 
+
+    /* only for show
     sendEmailSendGrid(to, msg, body) {
 
         console.log(`Sending email to ${to}`);
@@ -111,10 +111,10 @@ class AppDelegate extends WebAppDelegate{
 
     /**
      * is Called everytime a workflow is completed
-     * @param execution 
+     * @param execution
      */
     async executionEnded(execution: IExecution) {
-        
+
     }
     async executionStarted(execution: IExecution) {
         await super.executionStarted(execution);
@@ -131,7 +131,7 @@ class AppDelegate extends WebAppDelegate{
  //       else
  //           console.log('----->All:' + event, context.definition.name);
 
-    
+
     }
     async messageThrown(messageId, data, matchingQuery, item: Item) {
         await super.messageThrown(messageId, data, matchingQuery,item);
