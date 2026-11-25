@@ -9,6 +9,11 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **Fixed: the Linux installer (`deploy/install.sh`) stopped at the end of a fresh install.** After `npm run setup` made `admin`
+  from `ADMIN_PASSWORD`, a block meant for releases before 3.5 set the password again with a bare `UserService` call; users
+  are on the engine's store now, which only the web application names, so the call waited for ever. The block is gone.
+  `deploy/docker/deploy-client.sh` generates and passes an `ADMIN_PASSWORD` for each new client, as the other installers do;
+  its README and `docs/docs/docker.md` no longer speak of a default admin, and say how to keep Docker's data in a SQLite file.
 - **`init` and `setup` ask less** (docs/docs/setup.md, docs/design/setup-dialog.md): the dialog asks the database
   (MongoDB, in memory or SQLite, checked) and the site. Sign-in and the security rules are switched on, and the API
   keys and session secret made, without a question; the administrator is made, and its password printed, when the

@@ -65,6 +65,15 @@ Memory mode needs no MongoDB container, but loses users and workflow instances o
 
 For persistent MongoDB, setup uses `docker-compose.mongo.yml` and sets `MONGO_DB_URL=mongodb://mongo:27017/bpmn`.
 
+A SQLite file persists too, with nothing else to run (3.7.5 or later): keep `/app/data` on a volume and set
+`DATABASE=sqlite:/app/data/bpmn.sqlite` with `MONGO_DB_URL` empty. One server writes to it at a time
+([Custom persistence](persistence.md)).
+
+**The administrator.** The first start makes `admin`, with `ADMIN_PASSWORD` from `.env` (setup generates one; `owf password`
+shows it). With none, the container makes a password up and prints it once in its log (`docker compose logs server`). There
+is no admin/admin and no setup page. To change the password later, on a persistent database:
+`docker compose exec server npm run cli -- spw admin <new password>` (see [Advanced topics](advanced.md)).
+
 ## Docker management command
 
 The Docker distribution provides an `owf` command for the most common operations (named `bpmn` before 3.7; the old

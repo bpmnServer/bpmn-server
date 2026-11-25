@@ -1,6 +1,6 @@
 # Docker deployment on an existing AWS Lightsail Ubuntu server
 
-If you **already created the Lightsail instance**, use the Docker scripts below instead of `deploy/install.sh`. That older installer sets up a **non-Docker** Node.js + MongoDB + nginx installation; do not run both on the same host unless you deliberately plan port/resource allocation.
+If you **already created the Lightsail instance**, use the Docker scripts below instead of `deploy/install.sh`. That native installer sets up a **non-Docker** Node.js + MongoDB + nginx installation; do not run both on the same host unless you deliberately plan port/resource allocation.
 
 ## 1. Install Docker once
 
@@ -30,7 +30,7 @@ Each client has its own Compose project, persistent `mongodb` and `processes` vo
 
 For example: `acme.trial.omniworkflow.com → 127.0.0.1:3101`, `beta.trial.omniworkflow.com → 127.0.0.1:3102`.
 
-**Important:** the existing Docker image may initialize a default `admin` account/password. Verify the running image and immediately set a strong admin password via its supported management interface before exposing it. This script does not automate administrator provisioning. Also, the current image is built from the older `bpmn-web` repository; validate compatibility with the current monorepo and pin a known-good image tag/digest before production use. Docker containers alone are **not** a secure sandbox for arbitrary untrusted customer JavaScript.
+**Important:** there is no default `admin` password. Each new client's `.env` gets a generated `ADMIN_PASSWORD`, which the container makes the first user's (`sudo grep ADMIN_PASSWORD /opt/bpmn-clients/<client>/.env`); change it on **My account** before exposing the client. An `.env` made by an earlier version of this script has none: with image 3.7.5 or later the container makes one up and prints it once (`sudo docker compose logs server`). Pin a known-good image tag or digest before production use. Docker containers alone are **not** a secure sandbox for arbitrary untrusted customer JavaScript.
 
 ### MongoDB fails on kernel 6.19+ (SERVER-121912)
 
