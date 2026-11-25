@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 your comment goes here
 and here
 ## [Unreleased]
+### Fixed
+- **A new application no longer logs a warning for each of its sample services at every start**: the start compares
+  the contract with the delegate's functions only when the contract declares `expressions`; the sample application's has
+  only roles. Test: `test/app-contract.test.mjs`.
+
 ### Added
 - **`SECRETS_KEY` is made everywhere a server is set up, and Docker keeps its data by default**: `init` writes it into
   `.env` and `setup` makes it when it is missing (once, never offered again, and not where `CONNECTORS_KEY`, its name
@@ -50,6 +55,8 @@ and here
 -->
 
 ## [Unreleased]
+
+## Release 3.7.5 (2026-11-25)
 ### Added
 - **A role's permissions** (`app-contract.json`): a role may be given `designer` or `administrator`, and the engine
   honours them — `SecureUser.isAdmin()` and the new `isDesigner()` consult what the contract granted as well as the

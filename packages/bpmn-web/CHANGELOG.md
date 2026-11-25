@@ -52,6 +52,8 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+
+## Release 3.7.5 (2026-11-25)
 ### Added
 - **Every cell of that table is a tick**, the server's own rows (`PUBLIC`, `User`, `SYSTEM`) and the User column
   included. A role the contract does not mention keeps the server's default for its name; one it mentions decides

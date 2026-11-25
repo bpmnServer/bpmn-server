@@ -14,6 +14,7 @@ and here
 -->
 ## [Unreleased]
 
+## Release 3.7.5 (2026-11-25)
 ### Added
 - **`BPMNClient3`, the client of API v3** (`/api/v3`, bpmn-web 3.7 and later): every call acts as one user. With the
   service key it acts as the service account, and `as(userName, groups)` gives a client acting as that user: the client

@@ -4,6 +4,10 @@ Released with bpmn-server, bpmn-web and bpmn-client, with the same version.
 
 ## [Unreleased]
 
+## Release 3.7.5 (2026-11-25)
+### Changed
+- Moves with the others to 3.7.5: it depends on bpmn-server and bpmn-client of its own version. No changes of its own.
+
 ## Release 3.6.0 (2026-11-10)
 ### Added
 - **bpmn-mcp**: a running server's API as MCP tools over stdio, for AI clients: models, processes, tasks, signals and messages, instances, and the engine's status. What it may do is what the keys in `.env` allow.
