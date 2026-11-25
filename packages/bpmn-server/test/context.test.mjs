@@ -104,25 +104,6 @@ test('narrowed: conditions all hold, a key said twice kept both ways', () => {
   assert.equal(typeof itemContext, 'function');
 });
 
-test("appVars are made from the context: a script's, its item's, with its source", async (t) => {
-  const dir = definitionsFolder();
-  fs.writeFileSync(path.join(dir, 'Vars.bpmn'), model('Vars', `
-    <bpmn:startEvent id="S"><bpmn:outgoing>f1</bpmn:outgoing></bpmn:startEvent>
-    <bpmn:scriptTask id="Calc"><bpmn:incoming>f1</bpmn:incoming><bpmn:script>data.w = appVars.who;</bpmn:script></bpmn:scriptTask>
-    <bpmn:sequenceFlow id="f1" sourceRef="S" targetRef="Calc" />`));
-  const { server } = await makeServer({ dir });
-  t.after(() => server.shutdown());
-  let seen;
-  server.appDelegate.appVarsClass = class { constructor(context) { seen = context; } who() { return 'w'; } };
-  const started = await server.engine.start('Vars', {});
-  assert.equal(started.instance.data.w, 'w');
-  assert.equal(seen.source.kind, 'item');
-  assert.equal(seen.source.elementId, 'Calc');
-  assert.equal(seen.item.elementId, 'Calc', 'the live item');
-  assert.equal(seen.instance.id, started.instance.id);
-  assert.equal(seen.evaluatingSource.id, 'Calc', 'its name before 3.7.5, kept');
-});
-
 test("a form's rules are handed the field's context, kind form, what they were handed before kept", async (t) => {
   const server = await serverWith(t);
   let seen;

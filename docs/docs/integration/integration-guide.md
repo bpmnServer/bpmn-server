@@ -79,7 +79,6 @@ The one object the engine asks about your application. Extend `WebAppDelegate` a
 | Member | What it is |
 |---|---|
 | `appServices` | the methods a service task calls (`appServices.recordLeave`) |
-| `appVarsClass` | the class whose methods are `appVars.<name>` in an expression |
 | `executionEvent` | optional: what the engine did, when you want to hear it |
 
 Keep the services small and named for the business (`recordLeave`, not `post`), so the model reads as the process.
@@ -163,13 +162,10 @@ A task or a start event may use one of your application's pages instead of the f
 ([form-keys.md](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/form-keys.md)):
 
 1. Serve the page on a route of your own (`/forms/assignment`).
-2. Declare where your forms are as a variable of your own, so no deployment's routes end up in a model:
-   `myForms(): string { return process.env.MY_FORMS_URL ?? '/forms'; }`
-3. In the model: `camunda:formKey="${appVars.myForms}/assignment"`.
-4. Your page is sent identifiers only, never case data: `?instance=&item=` for a task, `?process=&start=` for a start
+2. In the model: `camunda:formKey="/forms/assignment"` (a path on the same host, or a full URL).
+3. Your page is sent identifiers only, never case data: `?instance=&item=` for a task, `?process=&start=` for a start
    event, each with `returnTo`. It reads and completes the task through API v3, as the person.
-5. Your own task list can open that page itself: each task's `form.formKey` in `GET /api/v3/tasks` is the address
-   already worked out. `apps/hrdemo/src/pages/AssignmentForm.jsx` and its To do panel are the example.
+4. Your own task list can open that page itself: each task's `form.formKey` in `GET /api/v3/tasks` is the address. `apps/hrdemo/src/pages/AssignmentForm.jsx` and its To do panel are the example.
 
 ### A10. Tests
 

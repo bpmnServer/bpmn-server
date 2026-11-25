@@ -93,9 +93,7 @@ and here
   that is an administrator, or with security off, is not narrowed. `api.data.qualifyQuery(kind, query, user)`.
 - **`instance.actors`**: the case's actors, kept on it by the Policies add-on as its work starts and ends, and saved with
   it; a case saved before has them worked out as it is read (`registrations.addInstanceReader`), no migration.
-- **The context, also for `appVars` and forms**: the application's `appVarsClass` (or `getAppVars`) is made from the
-  context, a script's (`item`, `element`) and a decision's (`dmn`) alike, with the live case and item and the names it
-  had before; a form's rules (`addFieldRule`) and choices (`addFieldChoices`) are handed a `form` context, the field and
+- **The context, also for forms**: a form's rules (`addFieldRule`) and choices (`addFieldChoices`) are handed a `form` context, the field and
   the form's values its `input`, what they had before (`processName`, `taskId`, ...) kept.
 - **The Forms and display add-on** (`addons/forms/`): a form field's lists and lookups (`<owf:list>`, `<owf:lookup>`,
   `FormLookup.ts`), their checks, a list's value held to its choices (a field rule: `addFieldRule`), and the choices the
@@ -155,9 +153,8 @@ and here
 - **List columns** (`engine/ListColumns.ts`): `listColumns`, `columnValues`, `columnSortPath`, `sortRecords`; the
   label filter (`labelQuery`) takes a data path as its field, and `gt`/`lt`. Test: `test/list-columns.test.mjs`.
 - **The application's contract** (docs/docs/app-contract.md): `app-contract.json` read and checked (`AppContract.ts`;
-  `DefaultAppDelegate.describe()`); `appVars.<name>` from the delegate's `appVarsClass` (or `getAppVars`), worked out
-  before an expression runs, in scripts, conditions, FEEL and decision tables, with `evaluatingSource`; `verifyModel`
-  checks a model against it (`function-unknown`, `function-arguments`, `variable-unknown`, `page-unknown`, its roles,
+  `DefaultAppDelegate.describe()`); `verifyModel`
+  checks a model against it (`function-unknown`, `function-arguments`, `page-unknown`, its roles,
   `function-write-in-decision`); the start compares it with the delegate's code. Test: `test/app-contract.test.mjs`.
 - A connector's own answers outside production can depend on the input (`cases`: `when`, `status`, `output`; a
   status other than 2xx fails as the API would), and `testing.environments` limits it to development or test.

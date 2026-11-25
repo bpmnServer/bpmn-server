@@ -7,12 +7,10 @@ import { evaluate as feelEvaluate } from 'feelin';
 import { feelView, itemView, instanceView, namesAt } from './DecisionContext.js';
 import { spawn } from 'child_process';
 import vm from 'node:vm';
-import { appVarsFor, appVarsRead } from './AppContract.js';
-import { itemContext, elementContext } from './Context.js';
 
     
 /** What scripts see already: a context can not replace these. */
-const RESERVED = new Set(['data', 'item', 'instance', 'input', 'output', 'appDelegate', 'appServices', 'appUtils', 'appVars', 'this']);
+const RESERVED = new Set(['data', 'item', 'instance', 'input', 'output', 'appDelegate', 'appServices', 'appUtils', 'this']);
 
 /** A variable scripts see besides their own: its value, from a copy of the data (so it can not change the process's). */
 export type ScriptContext = Record<string, (scope: { data: any }) => any>;
@@ -65,31 +63,6 @@ class ScriptHandler implements IScriptHandler{
         return scope.token?.execution ?? scope.execution;
     }
 
-    /**
-     * The application's variables a text reads (appVars.<name>, docs/design/app-contract.md §2.1), worked out before it
-     * runs: the delegate's getAppVars, made from this evaluation's context (its data, user, instance, item, and what is
-     * evaluating: `evaluatingSource`). None read: none asked.
-     */
-    async appVarsOf(scope, text: string): Promise<Record<string, any> | undefined> {
-        const names = appVarsRead(text);
-        if (!names.length) return undefined;
-        const execution = ScriptHandler.executionOf(scope);
-        const delegate = execution?.appDelegate;
-        const item = scope?.token ? scope : undefined;
-        // the context (docs/design/context-object.md), as a service is handed it: an item's, else its element's; with
-        // the names the script sees (actors), and evaluatingSource, the source's name before 3.7.5 (deprecated)
-        const source = {
-            kind: item ? 'item' : 'element', type: item?.element?.type === 'bpmn:SequenceFlow' ? 'flow' : 'node',
-            id: item?.elementId ?? scope?.currentNode?.id ?? 'process', elementId: item?.elementId ?? scope?.currentNode?.id };
-        const fields = {
-            data: scope?.data ?? execution?.instance?.data ?? {}, user: { userName: execution?.userName ?? null },
-            ...this.standardValues(scope, true), source, evaluatingSource: { type: source.type, id: source.id },
-        } as any;
-        const context = item ? itemContext(item, fields)
-            : elementContext(execution, scope?.currentNode ?? scope?.node, fields);
-        return appVarsFor(delegate, context, names);
-    }
-
     /** The context's values for a scope. */
     contextValues(scope): Record<string, any> {
         const names = Object.keys(this.context);
@@ -123,9 +96,6 @@ class ScriptHandler implements IScriptHandler{
             instance: instanceView(execution?.instance), appServices: feelView(execution?.servicesProvider) ?? {},
             ...this.standardValues(scope), ...this.contextValues(scope),
         };
-        // the application's variables it reads (appVars.<name>), worked out before it runs
-        const vars = await this.appVarsOf(scope, String(expression));
-        if (vars) (context as any).appVars = vars;
         let { value } = feelEvaluate(scriptOf(String(expression).trim()), context);
         if (value instanceof Promise) value = await value;
         return value === undefined ? null : value;
@@ -278,8 +248,6 @@ class ScriptHandler implements IScriptHandler{
         const reads = ScriptHandler.namesRead(body);
         const standard = Object.fromEntries(Object.entries(this.standardValues(scope)).filter(([name]) => reads.has(name)));
         const context: Record<string, any> = { ...standard, ...this.contextValues(scope) };
-        // the application's variables it reads (appVars.<name>), worked out before it runs, so any expression can read them
-        if (reads.has('appVars')) context.appVars = await this.appVarsOf(scope, body) ?? {};
         return ScriptHandler.compile(scope, body, label, Object.keys(context)).call(scope, ...Object.values(context));
     }
     /** bpmn:///<model>/<element>/<label>.js: the element is the item's; a process's own scripts are under 'process'. */

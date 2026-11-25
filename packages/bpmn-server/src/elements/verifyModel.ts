@@ -632,8 +632,7 @@ class ModelVerifier {
 
     /**
      * The model against the application's contract (docs/design/app-contract.md §5), when it has one: each
-     * appServices.<name> a function it declares, with as many arguments as it takes; each appVars.<name> a variable it
-     * declares; each app:<page> form key one of its pages; and no decision the model uses (its business rule tasks',
+     * appServices.<name> a function it declares, with as many arguments as it takes; each app:<page> form key one of its pages; and no decision the model uses (its business rule tasks',
      * its policies) calling a function that changes things (effect write). Warnings, but the last: the contract is
      * guidance; the model runs as it is.
      */
@@ -651,8 +650,6 @@ class ModelVerifier {
                 else if (call.args !== null && fn.params && call.args !== fn.params.length)
                     once(`a:${call.name}:${call.args}`, () => this.add('warning', 'function-arguments', `appServices.${call.name} is called with ${call.args} argument${call.args === 1 ? '' : 's'}; it takes ${fn.params.length} (${fn.params.map(p => p.name).join(', ')}).`));
             }
-            for (const [, name] of text.matchAll(/\bappVars\s*\.\s*([A-Za-z_$][\w$]*)/g))
-                if (!names.vars.has(name)) once('v:' + name, () => this.add('warning', 'variable-unknown', `appVars.${name}: ${APP_CONTRACT_FILE} declares no such variable (${[...names.vars.keys()].join(', ') || 'none'}).`));
         }
         if (contract.pages)
             for (const [, page] of text.matchAll(/\bformKey\s*=\s*"app:([^"]+)"/g))

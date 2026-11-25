@@ -16,8 +16,6 @@
  * A decision table also reads the data's fields by name (`amount`) and its task's prepared inputs by name, under the
  * names above, which the data can't set. Then the application's facts: appDelegate.decisionContext(context, about).
  */
-import { appVarsFor } from './AppContract.js';
-import { decisionContextOf } from './Context.js';
 import { registrationsOf } from './AddOns.js';
 import type { IExpressionPlace } from './AddOns.js';
 
@@ -141,22 +139,6 @@ export async function decisionContext({ data, input, user, instance, task, kind,
     };
     // a reserved name no one gave (`actors` without the policies' add-ons) is not the data's either
     for (const key of DECISION_KEYS) if (!(key in (names ?? {})) && context[key] === scoped[key] && key !== 'data') delete context[key];
-    // the application's variables (appVars.<name>, docs/design/app-contract.md §2.1): its variables class's, worked
-    // out before the table is asked, for this decision (evaluatingSource)
-    if (appDelegate && (appDelegate.appVarsClass || typeof appDelegate.getAppVars === 'function')) {
-        try {
-            const evaluatingSource = { type: 'decision', id: name ?? '', ...(kind !== 'decision' ? { policy: kind } : {}) };
-            // source: where it was made (docs/design/context-object.md); evaluatingSource, before 3.7.5, deprecated
-            // the context (docs/design/context-object.md), kind dmn: the live case and item, as a script's; the table's
-            // names (its views of them, `decision` as before) besides
-            const of = decisionContextOf(name ?? '', input, { user: person as any, instance, item, data: scoped }, kind !== 'decision' ? kind : undefined);
-            context.appVars = await appVarsFor(appDelegate, { ...context, ...of, decision: context.decision, evaluatingSource });
-        }
-        catch (error) {
-            log?.(`appVars failed (${kind} ${name ?? ''}): ${error?.message ?? error}`);
-            context.appVars = {};
-        }
-    }
     if (typeof appDelegate?.decisionContext === 'function') {
         try {
             const facts = await appDelegate.decisionContext(context, { kind, name, user: person, instance, task } as IDecisionAbout);

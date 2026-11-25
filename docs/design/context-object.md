@@ -1,5 +1,7 @@
 # One context object
 
+> **`appVars` was removed before 3.7.5 shipped** (no released version had it): the variables class, `getAppVars`, `${appVars.<name>}` in a form key and the contract's `var` expressions are gone. Where this page describes them, read it as the design as it was; a form key is the page's address as written, and the contract's expressions are functions (`appServices.<name>`).
+
 **Status:** built in 3.7.5 (`bpmn-server/src/engine/Context.ts`, tests `test/context.test.mjs`), with
 [add-ons](add-ons.md): services, listeners and subscribers, the delegate's hooks, and the API's `pre-query` and
 `pre-action` take it; the application's `appVars` are made from it, a script's and a decision's alike (kind `item`,

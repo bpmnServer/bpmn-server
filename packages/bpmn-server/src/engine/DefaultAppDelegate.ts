@@ -8,11 +8,6 @@ import type { IAppContract } from './AppContract.js';
 
 class DefaultAppDelegate implements IAppDelegate {
     server;
-    /**
-     * The application's variables (docs/design/app-contract.md §2.1): a class whose methods are the names an expression
-     * reads as appVars.<name>, made for each evaluation from its context. None: appVars is empty.
-     */
-    appVarsClass?: new (context: any) => any;
     /** The application's functions, as a class (appServices.<method>): its method names, for checks without a context. */
     appServicesClass?: new (context: any) => any;
 
@@ -23,11 +18,6 @@ class DefaultAppDelegate implements IAppDelegate {
         server.listener.on('all', async function ({ context, event }) {
             await self.executionEvent(context, event);
         });
-    }
-
-    /** The variables for one evaluation (appVars.<name>): the variables class, made from its context. */
-    getAppVars(context): any {
-        return this.appVarsClass ? new this.appVarsClass(context) : null;
     }
 
     /**

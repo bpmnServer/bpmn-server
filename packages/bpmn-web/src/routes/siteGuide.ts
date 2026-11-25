@@ -63,7 +63,7 @@ async function facts(webApp, origin: string) {
         `- Environment: ${environment()}`,
         `- Services a model can call (\`camunda:delegateExpression\` or \`implementation\`): ${list(services)}. Anything else is not on this site: use a script task`,
         `- Connectors (\`camunda:connector\`): ${list(connectors)}`,
-        ...(contractOf(server) ? [`- The application's contract (its variables \`appVars.<name>\` and functions \`appServices.<name>\`, with their types; its roles and pages): ${origin}/api/v3/application`] : []),
+        ...(contractOf(server) ? [`- The application's contract (its functions \`appServices.<name>\`, with their types; its roles and pages): ${origin}/api/v3/application`] : []),
         `- User groups in use: ${list(groups)}. Give each role a lane named as its group: the lane's tasks are offered to that group (\`@login ... with role of\` in tests)`,
         `- A model opens in the editor at ${origin}/model/edit/<name>, for a person signed in to this site (the API key does not open it)`,
     ].join('\n');

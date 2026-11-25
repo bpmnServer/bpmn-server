@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 /**
  * The HR application's own form for a workflow step (docs/design/form-keys.md, flow A/E).
  *
- * A model names this page with `camunda:formKey="${appVars.hrForms}/assignment"`, and owf sends the person here with
+ * A model names this page with `camunda:formKey="/forms/assignment"`, and owf sends the person here with
  * identifiers only: a task's `?instance=&item=`, or a start event's `?process=&start=`, each with `returnTo`. No case
  * data travels in the address: this page reads what it needs through API v3, as the person signed in, and completes
  * the task (or starts the process) the same way.

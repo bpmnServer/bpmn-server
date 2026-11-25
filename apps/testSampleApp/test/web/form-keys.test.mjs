@@ -1,7 +1,6 @@
 // @features: app-contract
 // Form keys (docs/design/form-keys.md): the address owf sends a person to when a task or a start event names the
-// application's own page. The key may hold an expression worked out from the application's variables (§3), and owf
-// adds identifiers only — never case data (§4).
+// application's own page. The key is its address (§3), and owf adds identifiers only — never case data (§4).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { hasFormKey, formKeyAddress, withIdentifiers } from 'bpmn-web';
@@ -14,29 +13,14 @@ test('a form key is a key only when it says something', () => {
   assert.equal(hasFormKey(null), false);
 });
 
-test('a plain address is used as it stands', async () => {
-  const address = await formKeyAddress('/hr/forms/assignment', { appDelegate: null });
-  assert.equal(address, '/hr/forms/assignment');
+test('a plain address is used as it stands', () => {
+  assert.equal(formKeyAddress('/hr/forms/assignment'), '/hr/forms/assignment');
+  assert.equal(formKeyAddress('  https://hr.example.com/forms/leave '), 'https://hr.example.com/forms/leave', 'a full URL too, trimmed');
 });
 
-test("an expression is worked out from the application's variables (section 3)", async () => {
-  class Vars { hrForms() { return '/hr/forms'; } }
-  const server = { appDelegate: { appVarsClass: Vars } };
-  assert.equal(await formKeyAddress('${appVars.hrForms}/assignment', server), '/hr/forms/assignment');
-  assert.equal(await formKeyAddress('${ appVars.hrForms }/leave', server), '/hr/forms/leave', 'spaces inside are fine');
-  // A full URL works the same way: the application may be served from another host.
-  class Host { base() { return 'https://hr.example.com/forms'; } }
-  assert.equal(await formKeyAddress('${appVars.base}/assignment', { appDelegate: { appVarsClass: Host } }), 'https://hr.example.com/forms/assignment');
-});
-
-test('an expression that works out to nothing: no address, so the task keeps its fields (section 3)', async () => {
-  class Vars { hrForms() { return undefined; } }
-  assert.equal(await formKeyAddress('${appVars.hrForms}', { appDelegate: { appVarsClass: Vars } }), null);
-  // Only the model's own path left: still somewhere to go.
-  assert.equal(await formKeyAddress('${appVars.hrForms}/assignment', { appDelegate: { appVarsClass: Vars } }), '/assignment');
-  // An unknown variable, and a delegate with none at all, are the same: nothing to put in.
-  assert.equal(await formKeyAddress('${appVars.missing}', { appDelegate: { appVarsClass: Vars } }), null);
-  assert.equal(await formKeyAddress('${appVars.hrForms}', { appDelegate: null }), null);
+test('a blank key is no address, so the task keeps its fields (section 3)', () => {
+  assert.equal(formKeyAddress(''), null);
+  assert.equal(formKeyAddress('   '), null);
 });
 
 test('owf adds identifiers only: a task by its instance and item (section 4)', () => {
