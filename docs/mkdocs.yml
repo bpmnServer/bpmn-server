@@ -105,6 +105,7 @@ nav:
     - Building workflows with an AI agent: ai/building-workflows.md
     - Chatting with your server: ai/chat-assistants.md
   - What's new:
+    - "Upgrade from 3.6 to 3.7.5": upgrade-3.7.md
     - "What's new in 3.6": whats-new-3.6.md
     - "What's new in 3.5": whats-new-3.5.md
     - "Upgrade to 3.x": whats-new-3.md
