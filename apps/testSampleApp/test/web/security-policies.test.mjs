@@ -171,3 +171,40 @@ test('a list\'s columns show only what the policy lets them read; sorting or fil
   assert.equal(filtered.status, 400, why(filtered));
   assert.equal(filtered.body.error.code, 'FILTER_REFUSED');
 });
+
+// ---- a policy that cannot be read (the security query cannot be made, and each case's decision fails)
+
+/** Runs `check` with the models folder's default security policy not a readable decision table, and puts it back. */
+async function withUnreadablePolicy(check) {
+  const file = path.join(web.definitionsPath, 'security', 'default.dmn.xml');
+  fs.writeFileSync(file, '<definitions><this is not a decision table');
+  try { await check(); }
+  finally { fs.writeFileSync(file, POLICY); }
+}
+
+test('a policy that cannot be read shows no case to anyone: the list is not narrowed in the store, and each case is still decided', async () => {
+  await withUnreadablePolicy(async () => {
+    for (const [name, token] of [['sam', sam], ['olga', olga], ['mona', mona]]) {
+      const list = await v3('GET', '/instances?limit=50', token);
+      assert.equal(list.status, 200, why(list));
+      const ids = list.body.items.map(i => i.id);
+      assert.ok(!ids.includes(samsCase) && !ids.includes(monasCase), `${name}: no case in the list`);
+      assert.equal(list.body.next, undefined, `${name}: nothing left to page to`);
+      assert.equal((await v3('GET', `/instances/${samsCase}`, token)).status, 404, `${name}: the same 404 as no such case`);
+    }
+  });
+  // and with the policy back, the same people see what it says: nothing was left changed
+  assert.ok((await v3('GET', '/instances', sam)).body.items.some(i => i.id === samsCase));
+  assert.ok(!(await v3('GET', '/instances', olga)).body.items.some(i => i.id === samsCase));
+});
+
+test('a policy that cannot be read does not let a manager complete her own approval', {
+  todo: 'it decides nothing, so the engine\'s rule holds and the policy\'s separation of duties is lost: the completion is answered 200',
+}, async () => {
+  await withUnreadablePolicy(async () => {
+    const own = ((await v3('GET', '/tasks', mona)).body.items ?? []).find(t => t.instanceId === monasCase && t.elementId === 'Approve');
+    assert.ok(own, 'her own approval is waiting');
+    const done = await v3('POST', `/tasks/${own.id}/complete`, mona, { data: { approved: true } });
+    assert.equal(done.status, 403, why(done));
+  });
+});
