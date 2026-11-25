@@ -1,6 +1,7 @@
 # OmniWorkflow — Target Architecture
 
 **Status:** Proposed architecture for 3.8 and subsequent releases; release strategy (section 10) agreed
+
 **Date:** November 25, 2026
 
 ## 1. Purpose
