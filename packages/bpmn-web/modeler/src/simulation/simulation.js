@@ -4,6 +4,7 @@
 // With Show details, each change says what the Rationale says of it: what happened, who did it with what data, and
 // why the engine went that way (a condition and the values it read, a gateway's choice).
 import './simulation.css';
+import { stageOn, setStageOn } from './stage.js';
 
 /** ms between the changes Play shows */
 export const SIMULATION_STEP = 450;
@@ -162,8 +163,8 @@ export function popBadge(node) {
  * animated; not when Back draws the changes before again); `reset()` clears them all; `changed()` after each move.
  */
 export class Simulation {
-    constructor(frames, { paint, reset, changed, steps }) {
-        Object.assign(this, { frames, paint, reset, changed, steps });
+    constructor(frames, { paint, reset, changed, steps, stage }) {
+        Object.assign(this, { frames, paint, reset, changed, steps, stage });
         this.index = 0;
         this.paused = true;
         this.timer = null;
@@ -185,6 +186,7 @@ export class Simulation {
             return false;
         }
         this.paint(this.frames[this.index++], true);
+        this.stage?.show(this.current, true);
         this._status();
         this.changed?.();
         return true;
@@ -198,6 +200,7 @@ export class Simulation {
         this.reset();
         this.index--;
         this.frames.slice(0, this.index).forEach(frame => this.paint(frame, false));
+        this.stage?.show(this.current, false);
         this._status();
         this.changed?.();
     }
@@ -207,7 +210,7 @@ export class Simulation {
         const next = () => {
             if (this.stopped || this.paused) return;
             if (!this.step()) return;
-            this.timer = setTimeout(next, SIMULATION_STEP);
+            this.timer = setTimeout(next, this.stage?.dwell(this.current, SIMULATION_STEP) ?? SIMULATION_STEP);
         };
         next();
         this.changed?.();
@@ -226,6 +229,7 @@ export class Simulation {
     stop() {
         clearTimeout(this.timer);
         this.stopped = true;
+        this.stage?.stop();
     }
 
     _status() {
@@ -261,6 +265,14 @@ export function simulationPanel(sim, actions) {
             el('input', { type: 'checkbox', class: 'test-sim-details-on', checked: showDetails(),
                 onchange: e => { setShowDetails(e.target.checked); updateSimulationPanel(panel, panel._sim); } }),
             ' Show details'),
+        el('label', { class: 'test-sim-details-toggle', title: 'A close-up beside each task, gateway and condition: the form being filled in, the condition being evaluated, the service called' },
+            el('input', { type: 'checkbox', class: 'test-sim-stage-on', checked: stageOn(),
+                onchange: e => {
+                    setStageOn(e.target.checked);
+                    const sim = panel._sim;
+                    if (e.target.checked && sim?.current) sim.stage?.show(sim.current, false); else sim?.stage?.hide();
+                } }),
+            ' Show close-up'),
         el('span', { class: 'test-sim-text', role: 'status' }),
         el('ul', { class: 'test-sim-details', hidden: true }));
     updateSimulationPanel(panel, sim);
@@ -303,4 +315,5 @@ export function updateSimulationPanel(root, sim) {
     if (showDetails() && sim && !lines.length && sim.current)
         details.replaceChildren(...(heading ? [heading] : []), el('li', { class: 'test-sim-details-none' }, sim.steps?.length ? 'Nothing more in the Rationale about this change.' : 'No Rationale: this run kept no log.'));
     find('.test-sim-details-on').checked = showDetails();
+    find('.test-sim-stage-on').checked = stageOn();
 }

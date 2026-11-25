@@ -277,14 +277,14 @@ function writeTsconfig(dir: string) {
 }
 
 /** .env: the machine's settings, new keys. */
-function envFile(name: string, options: InitOptions): string {
+export function envFile(name: string, options: InitOptions): string {
     return `# ${name}: machine settings and secrets. Not committed (.gitignore).
 PORT=${options.port}
 ${options.sqlite
         ? `# sqlite: the database is this file, nothing to install; MONGO_DB_URL with a mongodb://... URL instead for a server
 DATABASE=sqlite:${options.sqlite}`
         : `${options.memory ? '# memory: a MongoDB in the process, emptied when it stops; a mongodb://... URL keeps the data\n' : ''}MONGO_DB_URL=${options.memory ? 'memory' : options.mongo}`}
-# both, api (the REST APIs only) or ui (the web pages only)
+${options.from === 'hrdemo' ? '# the HR demo lists its accounts and their password; whoever wants one types it on the sign-in page\nHR_DEMO_SIGN_IN_AS=false\n' : ''}# both, api (the REST APIs only) or ui (the web pages only)
 SERVE=${options.api && options.ui ? 'both' : options.api ? 'api' : 'ui'}
 
 # REST API keys (x-api-key): API_KEY runs processes, ADMIN_API_KEY also changes models
@@ -389,11 +389,11 @@ Cancelled. Nothing was created: ${dir} does not exist.`);
 
     if (options.install) {
         console.log('npm install ...');
-        // one command line, no arguments: Windows runs npm.cmd only through a shell
-        // the command and its argument apart: Node 22 deprecates passing them as one string with shell: true
-        // (DEP0190). npm is npm.cmd on Windows, which still needs a shell to be found.
-        const npm = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['install'],
-            { cwd: dir, stdio: 'inherit', shell: process.platform === 'win32' });
+        // npm is npm.cmd on Windows, which only runs through cmd.exe. Passing arguments to a command with `shell: true`
+        // is what Node deprecates (DEP0190), so cmd.exe is the command and the line it runs is fixed.
+        const npm = process.platform === 'win32'
+            ? spawnSync('cmd.exe', ['/d', '/s', '/c', 'npm install'], { cwd: dir, stdio: 'inherit' })
+            : spawnSync('npm', ['install'], { cwd: dir, stdio: 'inherit' });
         if (npm.status !== 0) {
             console.error('npm install failed; run it in the folder once the problem is fixed');
             return 1;

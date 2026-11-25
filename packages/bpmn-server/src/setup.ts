@@ -23,13 +23,16 @@ const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
 
 export const SETUP_USAGE = `usage: bpmn-server setup [folder] [options]
 
-  Sets up an application's .env step by step: the database (checked), the
-  administrator, the site, sign-in and design, email, the API keys, AI access
-  and diagnostics. Enter keeps the value shown; nothing is written until you
-  confirm. With no application in the folder, one is created first (as init).
+  Sets up an application's .env step by step: the database (checked) and the
+  site. Sign-in, the security rules and the keys are set without asking; the
+  administrator is made, and its password printed, when the server first
+  starts; the rest is on Dashboard > Settings. Enter keeps the value shown;
+  nothing is written until you confirm. With no application in the folder, one
+  is created first (as init).
 
   --profile <p>    production, or development (a developer's machine, a test
-                   server): suggests the values; asked when not given
+                   server): suggests the values; asked of an existing
+                   application when not given (init makes a development one)
   --yes            ask nothing: the profile's values, new keys where missing
   --explain        each setting's own description beside the questions
   --no-check       do not check that the database answers
@@ -117,8 +120,6 @@ export function findSchema(dir: string): any | null {
 /** Why a value does not fit its schema entry, or null (common/settingValue.ts). */
 export const invalid = settingProblem;
 
-/** A password nobody can guess, made here and printed so whoever runs setup leaves with it. */
-const newPassword = () => crypto.randomBytes(9).toString('base64url');
 const newKey = () => crypto.randomBytes(24).toString('hex');
 const yes = (answer: string) => /^y/i.test(answer.trim());
 /** The description without its markdown, for a prompt. */
@@ -214,7 +215,6 @@ const DEFAULT_SQLITE_FILE = './data/bpmn.sqlite';
 /** What each step is for, in one line. A setting's own description is reference text: --explain prints those. */
 const ABOUT: Record<string, string> = {
     'The database': 'where instances, models and users are kept',
-    'The first administrator': 'who signs in first: the account is made with the password below',
     'The site': 'the port it listens on, and the address people reach it at',
     'Sign-in and design': 'who may design models here, and sign themselves up',
     'Email': 'whether notifications are sent, and the account they go through',
@@ -290,34 +290,8 @@ const STEPS: Array<(c: Context) => Promise<void>> = [
             return;
         }
     },
-    async function administrator(c) {
-        heading(c, '2. The first administrator', 'ADMIN_PASSWORD');
-        const has = !!current(c, 'ADMIN_PASSWORD');
-        // A password is made here and printed, so whoever runs setup leaves with it. Nothing is deferred to a first
-        // start nobody may be watching.
-        if (!c.auto) {
-            c.io.print(`  1) Make one now${has ? ' (replacing the one in .env)' : ''}`);
-            c.io.print('  2) Choose one now');
-            if (has) c.io.print('  3) Keep the one in .env');
-        }
-        const said = c.auto ? (has ? '3' : '1')
-            : (await c.io.question(`  1, 2${has ? ' or 3' : ''} [1]: `)).trim() || '1';
-        if (said.startsWith('3') && has) return;
-        let password = '';
-        if (said.startsWith('2')) {
-            // shown as it is typed: it is printed below anyway, and a password you cannot see is easy to mistype
-            password = (await c.io.question('  password: ')).trim();
-            if (!password) c.io.print('    nothing given: one is made instead');
-        }
-        const made = !password;
-        if (made) password = newPassword();
-        set(c, 'ADMIN_PASSWORD', password);
-        // one made here is printed; one just typed is already on the screen
-        if (made) c.io.print(`    the user admin, password ${password}`);
-        else c.io.print('    the user admin');
-    },
     async function site(c) {
-        heading(c, '3. The site', 'PORT', 'SITE_URL');
+        heading(c, '2. The site', 'PORT', 'SITE_URL');
         const port = await ask(c, 'PORT', current(c, 'PORT') ?? '3000', 'port');
         set(c, 'PORT', port);
         // a local address follows the port
@@ -343,8 +317,9 @@ const STEPS: Array<(c: Context) => Promise<void>> = [
             if (current(c, name) === undefined) set(c, name, 'true');
         if (c.auto) return;
         c.io.print('');
-        c.io.print(`  The administrator is admin, password ${current(c, 'ADMIN_PASSWORD')}.`);
         c.io.print('  Sign-in is required, and the security rules enforced.');
+        c.io.print('  The administrator, admin, is made the first time the server starts, and its password');
+        c.io.print('  printed once where it runs. Change it on My account.');
         c.io.print('  Everything else is at Dashboard > Settings.');
     },
 ];
@@ -417,7 +392,7 @@ export async function configure(dir: string, options: ConfigureOptions): Promise
     io.print('\nChanges to .env:');
     for (const name of names) {
         const value = c.changes[name];
-        const secret = schema.properties[name]?.['x-secret'] && name !== 'ADMIN_PASSWORD';
+        const secret = schema.properties[name]?.['x-secret'];
         io.print(`  ${name.padEnd(24)} ${value === null ? '(removed)' : secret ? '*** (new)' : value}`);
     }
     if (!auto && !(await confirm(c, 'Write them', true))) {

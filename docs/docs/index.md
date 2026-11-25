@@ -136,8 +136,8 @@ cd my-app
 npm start
 ```
 
-Then open **http://localhost:3000**. The first page asks for the administrator's name and password, with the setup
-token the server printed when it started ([The first start](setup.md#the-first-start)). With `--memory` nothing is
+Then open **http://localhost:3000** and sign in as `admin`, with the password the server prints when it first starts
+([The first start](setup.md#the-first-start)). With `--memory` nothing is
 kept when the server stops; without it, the application keeps its data in MongoDB or SQLite
 ([Installation](setup.md)).
 

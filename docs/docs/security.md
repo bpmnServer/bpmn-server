@@ -203,15 +203,25 @@ REQUIRE_AUTHENTICATION=true
 ENFORCE_SECURITY=true
 ```
 
-Answering **no** to `init`'s "Require sign-in and security rules?" writes both `false`, for development on your own
-machine only. Either setting left out of `.env` counts as on.
+`init --no-auth` writes both `false`, for development on your own machine only; the dialog itself never asks, and
+switches both on. Either setting left out of `.env` counts as on.
 
 **An application made before 3.6** may have both `false` in its `.env`: set them to `true` before anyone else can reach
 it. In production (`NODE_ENV=production`), `REQUIRE_AUTHENTICATION=false` stops the server at start unless
 `ALLOW_INSECURE_NO_AUTH=true`.
 
-**The first administrator**: a server with no users asks for one on its first page, with a setup token it prints
-where it runs; `ADMIN_PASSWORD`, when set, creates `admin` instead. See [The first start](setup.md#the-first-start).
+**The first administrator**: a server with no users makes `admin` the first time it starts, with a password it makes up and
+prints once, where it runs; nothing is written to `.env`. `ADMIN_PASSWORD`, set before that first start, chooses it instead.
+There is no admin/admin, and no page that asks for the administrator. See [The first start](setup.md#the-first-start).
+
+**What each role may do** is a table on **Dashboard > Settings > Security**: a row for each role, `PUBLIC` (not signed in),
+`User` (anyone signed in), `SYSTEM` (the server itself) and the application's own, and a column for each permission:
+**User** (start the workflows it may, work its own tasks), **Designer** (design models) and **Administrator** (manage users,
+roles, credentials and the settings). An administrator ticks a cell and it is saved to the application's
+[`app-contract.json`](app-contract.md) and takes effect at once, for the pages, the APIs and the engine alike. A role the
+contract does not mention keeps the server's default for its name (`ADMIN`, `SYSTEM`, `DESIGNER`); one it mentions decides for
+itself, so a role can be given Administrator or have it taken away. A save that would leave no role an administrator is
+refused. An application that declares its roles with a `describe()` delegate instead of the file shows the table read-only.
 
 ### A public demo
 

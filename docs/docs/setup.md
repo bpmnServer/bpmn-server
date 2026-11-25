@@ -3,16 +3,19 @@
 ## An application on bpmn-server and bpmn-web
 
 ```sh
-npx bpmn-server init my-app      # asks for the settings step by step; --memory --yes to try it without MongoDB
+npx bpmn-server init my-app      # asks the folder, what to start from and the settings; --memory --yes to try it without MongoDB
 cd my-app
-npm start                        # http://localhost:3000: the first page asks for the administrator
+npm start                        # http://localhost:3000: sign in as admin, with the password it prints the first time
 ```
 
 `init` creates the sample application: `processes/` (Hello, Buy Used Car, Leave Application,
 employee-onboarding, Business Rules, GitHub repository),
 `connectors/` (the editor's element templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`,
 and the services the models call, `appServices.ts`), `settings/config.ts` (the settings
-you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead.
+you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead, and `--hrdemo` starts from the HR demo (its own pages, users and
+API, and the workflows that call them; from the repository only, so far). The HR demo `init` makes signs people in for
+real: its home page lists the accounts and their password, and `HR_DEMO_SIGN_IN_AS=false` in its `.env` leaves out the
+one-click "Sign in as" buttons the public demo has.
 `npm run setup` asks the settings step by step (below), then prepares the database and stops (with no terminal, as
 in a script, it only prepares the database); `npm run cli` opens the console, `npm run verify` checks the
 models. (`init` ships with bpmn-server 3.5.)
@@ -23,25 +26,41 @@ models. (`init` ships with bpmn-server 3.5.)
 npx bpmn-server setup my-app     # a new application, then its settings; in an application's folder: npx bpmn-server setup
 ```
 
-`init`, at a terminal, asks the same steps after the folder and what the application serves. `setup` asks for the
-settings in `.env` step by step: the database (MongoDB, memory, or a SQLite file; checked), the first administrator,
-the site's address, sign-in and model design, email, the API keys, AI access, and the environment and API trace. It
-starts with a profile, **production** or **development**, which suggests the values; Enter keeps the value shown.
-Nothing is written until you confirm the summary (secrets shown as `***`), and the `.env` before is kept as `.env.bak`.
-Run it again any time to change them. `--yes` asks nothing: the profile's values and new keys where there are none
-(`--profile production|development`, `--no-check`). It reads the settings schema of bpmn-web 3.7 or later.
+`init`, at a terminal, asks the folder and what to start from (the sample application, or the HR demo), then the same steps
+as `setup`. `setup` asks for the settings in `.env` step by step, and only what a server needs to start:
+
+1. **The database**: MongoDB, a MongoDB in memory (nothing to install; the data goes when the server stops), or a SQLite
+   file (`DATABASE=sqlite:<file>`; one writer at a time, Node 22.5 or later). Checked: when it does not answer, you are
+   asked whether to keep the address anyway.
+2. **The site**: its port, and the address people reach it by.
+
+Sign-in and the security rules are switched on without a question, and the API keys and the session secret are made. The
+administrator is not asked either: the server makes it the first time it starts ([The first start](#the-first-start)). Every
+other setting is changed on **Dashboard > Settings** once the server runs ([Settings](settings.md)); `--explain` shows each
+setting's own description beside the questions.
+
+`init` makes a development server and does not ask what it is for. `setup` on an existing application first asks whether it
+is for **production** or **development**, which suggests the values. Enter keeps the value shown, and a question asked
+three times without an answer takes its default, so the dialog never loops. Nothing is written until you confirm the
+summary (secrets shown as `***`), and the `.env` before is kept as `.env.bak`. `init` makes its folder last: answer no, and nothing was created. Run `setup` again any time to change them.
+`--yes` asks nothing: the profile's values and new keys where there are none (`--profile production|development`,
+`--no-check`). It reads the settings schema of bpmn-web 3.7 or later.
 
 ### The first start
 
-A new server has no users. When it starts, it prints a **setup token**, and its pages ask for the administrator: open it,
-give the token, and choose the administrator's name, email and password. It can also add the tutorials' sample users,
-`user1` and `manager1`. Then you're signed in, and the setup page is gone.
+There is no admin/admin. A new server has no users, and its first start makes one: `admin`, in the group `ADMIN`, with the
+address `ADMIN_EMAIL` (`admin@example.com` when unset) and a password it makes up and **prints once, where it runs**: read the
+console, or the log. Sign in as `admin`, and change the password on **My account**. No password is written to `.env`: a secret
+in a file is one more place it leaks from. A server on the in-memory database, which keeps nothing, makes it again, with a new
+password, each time it starts.
 
-The token is there because whoever reaches a new server first could otherwise make themselves its administrator: only someone
-who can read the server's console or log has it. Its REST APIs and `/healthz` work while it waits.
+To choose the password instead, set `ADMIN_PASSWORD` (and `ADMIN_EMAIL`) in `.env` before the first start. The Docker files and
+the server install script do, and print it.
 
-With `ADMIN_PASSWORD` set, the first start makes `admin` with that password instead, and asks nothing. The Docker files and
-the server install script set it.
+There is no page that asks for the administrator, so nobody who reaches a new server first can make themselves one: only
+someone who can read the server's console or log has the password. A server whose users were all removed makes `admin` again
+the next time it starts. The tutorials use two more users, `user1` and `manager1`: add them on **Dashboard > Administration**
+(groups `Employee`, and `Employee, Manager`).
 
 ### To Update
 

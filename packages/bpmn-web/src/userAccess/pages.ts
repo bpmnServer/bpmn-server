@@ -1,7 +1,6 @@
 import flash from 'express-flash';
 import lusca from 'lusca';
 import { adminDisabled, canDesign, isAdminGroups, signupDisabled } from './roles.js';
-import { firstRunPending } from './firstRun.js';
 import { serverEnvironment } from '../runtime/environment.js';
 
 /*
@@ -18,7 +17,7 @@ import { serverEnvironment } from '../runtime/environment.js';
  */
 export function rememberPage(req) {
 	if (!req.session || (req.method !== 'GET' && req.method !== 'HEAD')) return;
-	if (/^\/(login|logout|signup|setup|forgot|reset)(\/|$)|^\/auth\//.test(req.path) || /\./.test(req.path)) return;
+	if (/^\/(login|logout|signup|forgot|reset)(\/|$)|^\/auth\//.test(req.path) || /\./.test(req.path)) return;
 	req.session.returnTo = req.originalUrl;
 }
 
@@ -42,19 +41,11 @@ export function pageSessions(app) {
 	app.use((req, res, next) => apiPath.test(req.path) ? next() : csrf(req, res, next));
 }
 
-/** Before the user manager's routes: headers, the first-run page, the menu's values, the page to go back to. */
+/** Before the user manager's routes: headers, the menu's values, the page to go back to. */
 export function pageLocals(app) {
 	app.use(lusca.xframe('SAMEORIGIN'));
 	app.use(lusca.xssProtection(true));
 	app.disable('x-powered-by');
-
-	// a server with no users yet: its pages ask for the administrator first (firstRun.ts)
-	app.use((req, res, next) => {
-		if (!firstRunPending(req.app) || req.path === '/setup' || /\./.test(req.path)
-			|| /^\/(api|api2|admin\/api|admin\/api2|healthz)(\/|$)/.test(req.path))
-			return next();
-		return res.redirect('/setup');
-	});
 
 	app.use((req, res, next) => {
 		res.locals.user = req.user;

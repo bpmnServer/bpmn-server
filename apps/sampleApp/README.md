@@ -12,7 +12,7 @@ npm run setup            # the database's indexes
 npm start                # http://localhost:3000 (PORT in .env)
 ```
 
-The first page asks for the administrator. It needs the setup token the server prints when it starts.
+Sign in as `admin`, with the password the server prints when it first starts.
 
 ## What is where
 

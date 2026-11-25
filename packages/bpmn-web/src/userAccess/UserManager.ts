@@ -47,7 +47,7 @@ export class UserManager implements IUserManager {
 		app.use(passport.session());
 	}
 
-	/** The sign-in, sign-up, setup and account pages, with brute-force protection. */
+	/** The sign-in, sign-up and account pages, with brute-force protection. */
 	setup(app = this.app) {
 		const authLimiter = rateLimit({
 			windowMs: 15 * 60 * 1000,
@@ -56,7 +56,7 @@ export class UserManager implements IUserManager {
 			legacyHeaders: false,
 			message: { error: 'Too many attempts, please try again later.' },
 		});
-		app.use(['/login', '/signup', '/forgot', '/reset', '/account/verify', '/setup'], authLimiter);
+		app.use(['/login', '/signup', '/forgot', '/reset', '/account/verify'], authLimiter);
 		app.use('/', (new Account(this)).config());
 	}
 

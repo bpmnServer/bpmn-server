@@ -4,16 +4,18 @@
 import { BpmnModdle } from 'bpmn-moddle';
 import { moddleExtensions } from '../moddle.js';
 import './instance.css';
+import { Stage, modelFacts } from '../simulation/stage.js';
 import { Simulation, simulationFrames, simulationPanel, updateSimulationPanel, SIMULATION_MARKERS, animateChange, popBadge } from '../simulation/simulation.js';
 
 const json = id => {
     try { return JSON.parse(document.getElementById(id)?.textContent || 'null'); } catch { return null; }
 };
 
-/** The model's flows, by id, to the element each leaves (in its sub-processes too). */
-async function flowSources(xml) {
+/** The model's flows, by id, to the element each leaves (in its sub-processes too); and what it says of each element close up. */
+async function readModel(xml) {
     const flows = new Map();
-    if (!xml) return flows;
+    let facts = new Map();
+    if (!xml) return { flows, facts };
     try {
         const { rootElement } = await new BpmnModdle(moddleExtensions).fromXML(xml);
         const walk = container => (container.get?.('flowElements') || []).forEach(e => {
@@ -21,8 +23,9 @@ async function flowSources(xml) {
             if (e.$type === 'bpmn:SubProcess' || e.$type === 'bpmn:Transaction' || e.$type === 'bpmn:AdHocSubProcess') walk(e);
         });
         (rootElement.get('rootElements') || []).filter(r => r.$type === 'bpmn:Process').forEach(walk);
+        facts = modelFacts(rootElement);
     } catch { /* a model that does not read: no flows, its elements alone */ }
-    return flows;
+    return { flows, facts };
 }
 
 async function setUp() {
@@ -35,7 +38,7 @@ async function setUp() {
     const source = document.querySelector('script[data-report-source]');
     let xml = null;
     try { xml = source ? JSON.parse(source.textContent) : null; } catch { xml = null; }
-    const flowSource = await flowSources(typeof xml === 'string' ? xml : null);
+    const { flows: flowSource, facts } = await readModel(typeof xml === 'string' ? xml : null);
 
     const shape = id => { try { return svg.querySelector(`.djs-element[data-element-id="${CSS.escape(id)}"]`); } catch { return null; } };
     const badges = () => [...svg.querySelectorAll('[id^="seq_"]')];
@@ -80,7 +83,9 @@ async function setUp() {
             flowSource, drawn: id => Boolean(shape(id)), label: (id, name) => name ? `${name} (${id})` : id,
         });
         reset();
-        sim = new Simulation(frames, { paint, reset, changed, steps });
+        const diagram = svg.closest('.instance-diagram') ?? svg.parentElement;
+        const stage = new Stage({ container: diagram, rectOf: frame => shape(frame.item.elementId)?.getBoundingClientRect?.() ?? null, facts, run: { items, steps } });
+        sim = new Simulation(frames, { paint, reset, changed, steps, stage });
         sim.step();
     };
     holder.replaceChildren(simulationPanel(null, {

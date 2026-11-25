@@ -9,6 +9,18 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **`init` and `setup` ask less** (docs/docs/setup.md, docs/design/setup-dialog.md): the dialog asks the database
+  (MongoDB, in memory or SQLite, checked) and the site. Sign-in and the security rules are switched on, and the API
+  keys and session secret made, without a question; the administrator is made, and its password printed, when the
+  server first starts, and nothing is written to `.env`; everything else is on the Settings page. A question is
+  asked at most three times, then its default is taken, so the dialog cannot loop. `init` also asks what to start
+  from (`--hrdemo` for the HR demo, from the repository only, with `HR_DEMO_SIGN_IN_AS=false` in its `.env`), makes
+  a development server without asking its profile, creates its folder last, and removes it when you answer no
+  (`Cancelled. Nothing was created`). `setup` on an existing application still asks production or development.
+  `--explain` shows each setting's own description beside the questions. **Compatibility:** the dialog no longer
+  asks for, or writes, `ADMIN_PASSWORD`; one already in `.env` is kept and still chooses the password. Test:
+  `test/setup.test.mjs`.
+
 - **Notifications across the instances** (docs/design/notification-policies.md): `findNotifications(server, { to,
   instanceId, instanceName, status, test, limit })`, newest first; `to` matches any of the names (a user and their
   groups), a test run's are left out unless asked. Test: `test/notifications.test.mjs`.

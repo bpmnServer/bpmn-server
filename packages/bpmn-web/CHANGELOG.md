@@ -9,6 +9,26 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **A new server makes its administrator, with a password nobody can guess** (docs/docs/setup.md): `admin`, with
+  `ADMIN_PASSWORD` when it is set, else a password made up and printed once where the server runs (nothing is
+  written to `.env`), and `ADMIN_EMAIL` (`admin@example.com` unset). There is no admin/admin, and no page asks for the
+  administrator: **removed** are the first-run page (`/setup`), its setup token (`firstRun.ts`) and the redirect
+  that led every page to it. A server whose users were all removed makes `admin` again the next time it starts. The
+  tutorials' `user1` and `manager1` are added on Dashboard > Administration. `ADMIN_EMAIL` and `APP_CONTRACT` are in
+  the settings schema. **Compatibility:** `GET` and `POST /setup` are gone. Test:
+  `apps/testSampleApp/test/unit/app-hosting.test.mjs`.
+- **Simulate shows a close-up** (docs/docs/modeler.md, docs/docs/execution.md): a small card beside the element a
+  change is about, zoomed in from it: a user task's form, empty as it starts and filled in as it is done; a gateway's
+  conditions as they are evaluated and which held, with a join's flows arriving; a flow's condition; a service's
+  input and output; a message sent or received; a timer's clock; an error or escalation raised or caught. **Show
+  close-up** (on by default, remembered in the browser) turns it off; Play stays longer on a card; nothing moves for
+  less motion. It reads only what the model and the run already hold, and adds no data to the engine or the APIs
+  (`modeler/src/simulation/stage.js`, in the editor's Test tab and on the instance page).
+- **An HR demo made by `init --hrdemo` signs people in for real**: its welcome page lists the accounts and their
+  password, and the one-click "Sign in as" buttons are off, because its `.env` has `HR_DEMO_SIGN_IN_AS=false`
+  (`apps/hrdemo/.env.example`); the public demo, with it unset, keeps them. `npm start` no longer prints the SQLite
+  experimental or DEP0190 warnings.
+
 - **Notifications on the pages** (docs/docs/notification-policies.md): an instance's page lists its notifications
   (whom, the message, delivered or not); the **Notifications** page (`/dashboard/notifications`, in the menu for
   everyone) lists them across the instances: an administrator's all of them, filtered by whom, process and status;

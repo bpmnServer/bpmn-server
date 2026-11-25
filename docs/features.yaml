@@ -849,7 +849,7 @@ features:
   - id: setup-wizard
     area: install
     name: "Settings step by step"
-    what: "bpmn-server setup (and init at a terminal) asks for an application's .env settings step by step from the settings schema, with a profile (production, development), the database checked, and writes them once confirmed; it creates the application first if needed."
+    what: "bpmn-server setup (and init at a terminal) asks for an application's .env settings step by step from the settings schema: the database (checked; MongoDB, memory or SQLite) and the site; sign-in, the security rules and the keys are set without asking, and the administrator is made, its password printed, the first time the server starts, and a question asked three times takes its default. init makes a development server; setup on an existing application asks for a profile (production, development). Written once confirmed; it creates the application first if needed."
     docs: [docs/docs/setup.md, docs/design/setup-wizard.md]
     code: [packages/bpmn-server/src/setup.ts, packages/bpmn-server/src/init.ts]
     tests: [packages/bpmn-server/test/setup.test.mjs]

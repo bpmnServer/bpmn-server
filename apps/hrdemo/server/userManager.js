@@ -135,8 +135,9 @@ export class HrUserManager {
       : {
         password: demoPassword(),
         // Signing in is the sign-in page's: the accounts and their password are listed, and whoever wants one types
-        // it. HR_DEMO_SIGN_IN_AS=true puts the one-click buttons back, for a public demo people only click through.
-        signInAs: process.env.HR_DEMO_SIGN_IN_AS === 'true',
+        // it. The demo keeps its one-click buttons, for people who only click through; an application made by
+        // `bpmn-server init --hrdemo` has HR_DEMO_SIGN_IN_AS=false in its .env, so it signs in as a deployed one does.
+        signInAs: process.env.HR_DEMO_SIGN_IN_AS !== 'false',
         accounts: DEMO_USERS.map(u => ({ userName: u.userName, name: u.name, role: u.role, userGroups: ROLES[u.role] })),
       }));
 

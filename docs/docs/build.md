@@ -17,7 +17,7 @@ cd my-app
 npm start
 ```
 
-Open **http://localhost:3000**. The first page asks for the administrator: give the setup token the server printed when it started, and choose a name and password. See [The first start](setup.md#the-first-start). The in-memory database is **temporary** and is cleared when the application stops.
+Open **http://localhost:3000**. Sign in as `admin`, with the password the server prints when it first starts. See [The first start](setup.md#the-first-start). The in-memory database is **temporary** and is cleared when the application stops.
 
 For data that is kept, create the application without `--memory`: it uses MongoDB, or SQLite as [Custom persistence](persistence.md) shows. See [Installation](setup.md).
 

@@ -62,9 +62,9 @@ cd my-app
 npm start
 ```
 
-`init` asks for the database (MongoDB; `--memory` to try it without one). Open **http://localhost:3000**: a new
-server's first page asks for its administrator, with a setup token printed where `npm start` runs. Tick **Add user1
-and manager1**: the tutorials use them. See [The first start](../setup.md#the-first-start).
+`init` asks for the database (MongoDB; `--memory` to try it without one). Open **http://localhost:3000** and sign in as `admin`, with the
+password printed where `npm start` runs. The tutorials use two more users: on **Dashboard > Administration**, add `user1` (group
+`Employee`) and `manager1` (groups `Employee, Manager`). See [The first start](../setup.md#the-first-start).
 
 ## The model
 

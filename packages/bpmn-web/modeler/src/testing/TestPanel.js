@@ -30,6 +30,7 @@ import { el, json, parse, parseValue, showValue, request, CHECK_OPS } from './co
 import { coverageOf, reachedIn } from '../../../src/testing/coverage.js';
 import { conditionValues, explore, modelGraph, withValue } from './paths.js';
 import { Simulation, simulationFrames, simulationPanel, updateSimulationPanel, animateChange } from '../simulation/simulation.js';
+import { Stage, modelFacts } from '../simulation/stage.js';
 
 const STATUSES = ['', 'end', 'wait', 'running', 'terminated'];
 /** The steps (src/testing/scenarios.ts isStep): user tasks, receive tasks and events. */
@@ -764,6 +765,13 @@ export default class TestPanel {
             reset: () => this._unmark(),
             changed: () => this._simulationControls(),
             steps: instance.steps,
+            // the close-up: a form being filled in, a condition evaluated, a service called (simulation/stage.js)
+            stage: new Stage({
+                container: this._canvas.getContainer(),
+                rectOf: frame => this._elementRegistry.getGraphics(frame.item.elementId)?.getBoundingClientRect?.() ?? null,
+                facts: modelFacts(this._bpmnjs.getDefinitions()),
+                run: { items: instance.items, steps: instance.steps },
+            }),
         });
         this._simulation.step();
     }

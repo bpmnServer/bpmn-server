@@ -259,7 +259,7 @@ export async function start(options: StartOptions = {}) {
 				? 'setup done: the database is ready; the application manages its users'
 			: await usersNow(users) > 0
 				? 'setup done: the database is ready; it already has users, none was added'
-				: 'setup done: the database is ready; no users yet: start the server, and its first page asks for the administrator');
+				: 'setup done: the database is ready; no users yet: start the server: it makes the administrator, and prints its password once');
 		await webApp.bpmnServer.shutdown();
 		process.exit(0);
 	}
@@ -268,13 +268,8 @@ export async function start(options: StartOptions = {}) {
 		await runConsole(webApp.bpmnServer);
 		return webApp;
 	}
-	// A new server makes its administrator and prints the password (UserService.install), so there is nothing for a
-	// page to ask. Where that did not happen and a server has no users at all -- its own were removed, or a store it
-	// could not write -- its pages ask for one, with a token printed here (firstRun.ts).
-	if (users && process.env.REQUIRE_AUTHENTICATION !== 'false' && await usersNow(users) === 0) {
-		const { beginFirstRun } = await import('./userAccess/firstRun.js');
-		beginFirstRun(webApp.app);
-	}
+	// A server with no users makes its administrator, and prints the password, as it starts (UserService.install): there
+	// is no page that asks for one.
 	webApp.start();
 	return webApp;
 }
