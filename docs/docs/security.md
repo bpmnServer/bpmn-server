@@ -9,7 +9,7 @@ In general Application Security deals with the following topics:
 
 # User Identification and Authentication
 
-BPMNServer does not provide user identification and authentication component, but relies on the calling application to authenticate the user. The companion package BPMN-web provides full authentication and identification as a mere demo.
+The engine (bpmn-server) does not sign anyone in: the calling application authenticates the user and tells the engine who it is. bpmn-web, the web application on top of it, signs users in with its own accounts (or your application's, through a user manager) and enforces the security rules for its pages and its APIs.
 
 Every API call names the user it runs for: a principal your application built after authenticating the user
 (since 3.x, a call without one is refused; there is no default user).
@@ -33,33 +33,32 @@ await api.engine.start(modelName, data, user1, options);
 `BPMNAdminAPI`. Give the runtime API to the parts of the application that run processes (task lists, forms,
 integrations), so they can not change models; the admin API only to deployment and model administration.
 
-### WebAPI/REST
+### REST: who a call acts as
 
-    Since WebAPP is already authenticated by **APIKey** is trusted to pass user object
+A REST call acts as someone, and which one depends on the API:
 
-```ts
+- **API v3** (`/api/v3`): your application asks for a **token for each user**, with the service key
+  (`POST /api/v3/tokens` with `x-api-key`, and `{ userName, groups, minutes }`), and calls with
+  `Authorization: Bearer <token>`. Every call then runs as that person, under the models' rules. The key alone acts as the
+  server's service account (`API_SERVICE_USER_NAME`, `API_SERVICE_USER_GROUPS`), never as one of your users.
+- **`/api` and `/api2`** (deprecated until 4.0) act as the service account too. A user a call names (`userName`,
+  `options.userName`, bpmn-client's `userId`) is ignored, and the answer has a `Warning` header saying so.
+  `API_IMPERSONATION=true` keeps the old behavior while you move to API v3; it goes at 4.0. Before 3.7 these APIs acted as
+  whatever user they were sent, so anyone with `API_KEY` could act as anyone: keep the key on your application's server.
 
-    // get api-key from header
-    // url/engine/start
+See [Integration, step by step](integration/integration-guide.md#b-remote-your-application-calls-a-running-server) and
+[Upgrading from 3.6](upgrade-3.7.md).
 
-    await api.engine.start(processName,data,user,options);  
-
-``` 
 ## Using BPMNClient as a service
 
 ```ts
-
-    const client= new BPMNClient(url,apiKey);
-    // userId is passed here bypassing authentication, assuming user is already authenticated
-    
-    // await server.engine.start(processName,data,startNode,userId,options);  
-    let response = await server.engine.start('Buy Used Car', { caseId: 1050 },null,'user1');
-
-    //await  server.engine.invoke(query, data, userId);
-
-    response = await server.engine.invoke({id: response.id , "items.elementId": 'task_Buy' },{},'user1');
-
+const client = new BPMNClient(url, apiKey);
+// acts as the service account: the user a call names is ignored (unless API_IMPERSONATION=true, until 4.0)
+let response = await client.engine.start('Buy Used Car', { caseId: 1050 });
 ```
+
+For work done as a user, call API v3 with a token for that user.
+
 ## Access Control Rules
 
 bpmn along with Camunda Extensions, provide adequate means of defining access Rules:
@@ -71,11 +70,11 @@ The following properties can be defined for each `User Task`
 | Property| Description|
 | ------------ | -------------- |
 | assignee | defines the userName to perform the task   |
-| candidateUser | defines potential users that can perform the task|
+| candidateUsers | defines potential users that can perform the task|
 | candidateGroups | defines potential userGroups whose members can perform the task|
 | dueDate    | Date the task is due|
-| followUpDAte    | Date to followup|
-| priority        | Task periority |
+| followUpDate    | Date to follow up|
+| priority        | Task priority |
 
 Values provided in the model editor, can be static string or an [Model Expressions](scripting.md#ModelExpressions)
 

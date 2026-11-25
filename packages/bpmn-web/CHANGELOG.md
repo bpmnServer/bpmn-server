@@ -52,6 +52,8 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+
+## Release 3.7.5 (2026-11-25)
 ### Added
 - **Every cell of that table is a tick**, the server's own rows (`PUBLIC`, `User`, `SYSTEM`) and the User column
   included. A role the contract does not mention keeps the server's default for its name; one it mentions decides
@@ -81,16 +83,14 @@ and here
   there. An application whose contract comes from its delegate's `describe()` has no file to write, so the
   Administration page lists its roles and says where to change them instead of offering Add and Remove.
 - **A task list answers its form key**: `GET /api/v3/tasks` gives each task `form.formKey` where its model names the
-  application's own page, with any `${appVars.<name>}` already worked out, so an application's own list opens that
+  application's own page, so an application's own list opens that
   page itself instead of owf's task page (docs/design/form-keys.md, flow A). The HR demo's To do panel does, and its
-  **Assign Employee** start event uses HR's own assignment form (`apps/hrdemo/src/pages/AssignmentForm.jsx`,
-  `HR_FORMS_URL` in its `.env`).
+  **Assign Employee** start event uses HR's own assignment form (`apps/hrdemo/src/pages/AssignmentForm.jsx`).
 - **Form keys** (docs/design/form-keys.md): a user task or a start event may name the application's own page with
   `camunda:formKey`, and owf sends the person there instead of drawing the task's fields. The key is the page's
-  address and may hold an expression (`${appVars.hrForms}/assignment`) worked out from the application's contract,
-  so the model carries no one deployment's routes. owf adds identifiers only — a task's `?instance=&item=`, a start
+  address (a path on the same host, or a full URL). owf adds identifiers only — a task's `?instance=&item=`, a start
   event's `?process=&start=`, with `returnTo` — and the page reads and completes the task through API v3 as the
-  person, so no case data travels in an address. A key whose expression comes to nothing falls back to the task's
+  person, so no case data travels in an address. A blank key falls back to the task's
   fields. The start page lists every start event a user may start, each with its own form or a link to the
   application's page. Tests: `test/web/form-keys.test.mjs`, bpmn-server's `test/form-keys.test.mjs`.
 - **AI Agent is a menu item of its own**, for everyone signed in, while the AI Agents add-on is on; it was in the
@@ -143,9 +143,8 @@ and here
   filtering on data no label reads are refused (`SORT_REFUSED`, `FILTER_REFUSED`). Tests:
   `apps/testSampleApp/test/web/list-columns.test.mjs`, `security-policies.test.mjs`.
 - **The application's contract on the web:** API v3's `GET /application` answers it, `/llms.txt` links it, and the
-  editor completes its functions (with their descriptions) and its variables (`appVars.`). The HR demo has one
-  (`apps/hrdemo/app-contract.json`, its variables in `workflow/delegates/appVars.ts`), and its unused sample services
-  are gone.
+  editor completes its functions (with their descriptions). The HR demo has one
+  (`apps/hrdemo/app-contract.json`), and its unused sample services are gone.
 - **Red is for errors only:** names, ids and values shown as code are no longer Bootstrap's pink-red; the docs pages' tables, a connector's DELETE operations and a model history's removed or earlier values are no longer red.
 - Simulate's **Show details** says what an item is at the change shown (started, done, waits; a flow: taken), not
   its status at the run's end: an activity that ended later no longer reads *done* where it starts. The end reads

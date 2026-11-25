@@ -169,8 +169,7 @@ class BPMNServer implements IBPMNServer {
 		try { provider = await delegate.getServicesProvider(null); } catch { provider = null; }
 		// the delegate itself (DefaultAppDelegate's): its own methods are not the application's functions
 		const services = provider && provider !== delegate ? [...new Set([...methodNames(provider.constructor), ...Object.keys(provider).filter(k => typeof provider[k] === 'function')])] : null;
-		const vars = delegate.appVarsClass ? methodNames(delegate.appVarsClass) : null;
-		for (const { severity, message } of compareWithCode(contract, { services, vars }))
+		for (const { severity, message } of compareWithCode(contract, { services }))
 			this.logger.log(`[app contract] ${severity}: ${message}`);
 	}
 	/** Subscribe without coupling the engine to application implementations. */

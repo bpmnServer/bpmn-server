@@ -27,7 +27,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install mkdocs==1.6.1 mkdocs-material==9.6.20 mkdocs-redirects==1.2.2
-      - run: mkdocs build
+      # strict, as docs-check.yml builds a pull request: a broken page is not published
+      - run: mkdocs build --strict
         working-directory: docs
       - uses: actions/upload-pages-artifact@v3
         with:

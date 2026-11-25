@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import { Item, IExecution, WebAppDelegate } from 'bpmn-web';
 import { AppServices } from './appServices.js';
 import { HrNotifications } from '../../server/notifications.js';
-import { HrVars } from './appVars.js';
 
 
 var seq = 1;
@@ -13,8 +12,6 @@ console.log('appDelegate from ', import.meta.filename);
 
 
 class AppDelegate extends WebAppDelegate{
-    /** The application's variables, appVars.<name> (./appVars.ts; declared in app-contract.json) */
-    appVarsClass = HrVars;
     winSocket;
     appServices;
     /** the HR application's notifications (server/notifications.js), opened on the first */

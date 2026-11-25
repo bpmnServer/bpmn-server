@@ -57,8 +57,7 @@ export interface IContext {
     /** kind query, pre-action: the conditions listeners added (ANDed), the action */
     conditions?: Record<string, any>[];
     action?: string;
-    /** the application's terms and functions */
-    appVars?: any;
+    /** the application's functions */
     appServices?: any;
     [more: string]: any;
 }

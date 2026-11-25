@@ -1,5 +1,7 @@
 # Form keys: a task's form from the application
 
+> **`appVars` was removed before 3.7.5 shipped** (no released version had it): the variables class, `getAppVars`, `${appVars.<name>}` in a form key and the contract's `var` expressions are gone. Where this page describes them, read it as the design as it was; a form key is the page's address as written, and the contract's expressions are functions (`appServices.<name>`).
+
 Status: draft for 3.7 (the 3.7 plan, part 5: "a task can name the app's own form instead"). Related:
 [host-users.md](host-users.md) (the application signs people in), [api-v3.md](api-v3.md) (a task's form),
 [app-contract.md](app-contract.md) (`appVars`, for the address's expression), `apps/hrdemo`.

@@ -1,4 +1,4 @@
-# OmniWorkflow (OmniWorkflow)
+# OmniWorkflow (OWF)
 
 OmniWorkflow runs business processes. A process is drawn as a BPMN diagram: the steps, who does each one, the
 decisions along the way and the deadlines. OmniWorkflow follows the diagram for every case: it gives tasks to the right

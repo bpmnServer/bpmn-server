@@ -58,7 +58,7 @@ Errors are `{ "error": { "code", "message" } }`, with the status the error's kin
 | [POST /settings/checks/{name}](#post-settingschecksname) | Run a check: database, engine, url (SITE_URL) or email |
 | [POST /tokens](#post-tokens) | A token for one of the application's users (the service key) |
 | [DELETE /tokens](#delete-tokens) | Revoke every token of a user (the service key) |
-| [GET /application](#get-application) | The application's contract (app-contract.json): the variables (appVars) and functions (appServices) an expression may use, with their types; its roles, APIs and pages; and its problems |
+| [GET /application](#get-application) | The application's contract (app-contract.json): the functions (appServices) an expression may call, with their types; its roles, APIs and pages; and its problems |
 
 ## Who am I
 
@@ -818,7 +818,7 @@ Credential: The service key (API_KEY): the service account only.
 
 ### GET /application
 
-The application's contract (app-contract.json): the variables (appVars) and functions (appServices) an expression may use, with their types; its roles, APIs and pages; and its problems.
+The application's contract (app-contract.json): the functions (appServices) an expression may call, with their types; its roles, APIs and pages; and its problems.
 
 | Answer | Means | Body |
 |---|---|---|

@@ -184,11 +184,11 @@ export class TaskOperations {
         const definitions = new Map<string, any>();
         for (const name of new Set(tasks.map(t => t.processName).filter(Boolean)))
             definitions.set(name, await this.server.definitions.load(name).catch(() => null));
-        // the address as the client needs it: any ${appVars.<name>} worked out here, so a list opens it as it stands
+        // the address as the client needs it: as the client needs it, so a list opens it as it stands
         return Promise.all(tasks.map(async task => {
             const formKey = definitions.get(task.processName)?.getNodeInfo(task.elementId)?.formKey;
             if (!hasFormKey(formKey)) return task;
-            const address = await formKeyAddress(formKey, this.server, { user: task.userName });
+            const address = formKeyAddress(formKey);
             return address ? { ...task, form: { formKey: address } } : task;
         }));
     }

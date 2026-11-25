@@ -250,10 +250,10 @@ export class Workflow extends Common {
             processName = page.task.processName ?? instance.name;
             let vars = ViewHelper.formatData(instance.data || {});
 
-            // the application's own page, when the model names one (docs/design/form-keys.md §3, flow B): its address,
-            // with any ${appVars.<name>} worked out, and the identifiers only — the page reads the task itself
+            // the application's own page, when the model names one (docs/design/form-keys.md §3, flow B): its address
+            // and the identifiers only — the page reads the task itself
             if (hasFormKey(formKey)) {
-                const address = await formKeyAddress(formKey, serverOf(request), { user: request.user, instance, item: page.task });
+                const address = formKeyAddress(formKey);
                 if (address)
                     return response.redirect(withIdentifiers(address, {
                         instanceId: instance.id, itemId: id as string,

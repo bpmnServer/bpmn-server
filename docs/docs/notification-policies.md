@@ -10,7 +10,8 @@ working example in `apps/hrdemo/workflow/processes/notification/LeaveNotices.dmn
 ## Quick start
 
 1. Add `owf:notificationPolicy="LeaveNotices"` to a process.
-2. Create `notification/LeaveNotices.dmn.xml` with `event`, `notify`, `template`, and optional `channel` outputs.
+2. Create `notification/LeaveNotices.dmn.xml`: `event` (and the `task` and the data) are what its rules read; its outputs are
+   `notify`, `template` and an optional `channel`.
 3. Implement `appDelegate.notify(notification)` to deliver each notification.
 4. Run the process and inspect notifications through API v3 or a Gherkin test.
 
@@ -104,7 +105,8 @@ class AppDelegate extends WebAppDelegate {
 `to` holds what the rule said, users and groups alike: the application knows its directory. The HR demo's `notify`
 writes each notification to the console.
 
-**Every notification is kept**, delivered or not, in the store's `wf_notifications`, with its `status`:
+**Every notification is kept**, delivered or not, in the store's `wf_notifications`, with its `status`. It is delivered first and kept
+after: one that cannot be kept is logged.
 
 | status | |
 |---|---|
@@ -153,5 +155,5 @@ What an instance notified: API v3's `GET /api/v3/instances/{id}/notifications`, 
 
 ## Not yet
 
-The `overdue` (a task past its due date) and `started` events; the notifications on the instance page; a scenario
-step to say who was notified.
+The `overdue` (a task past its due date) and `started` events. Notifications are made as a task is assigned or completed, or
+the instance ends: there are none that are delayed or repeat (a reminder is a timer in the model that calls a service).

@@ -162,13 +162,13 @@ export class Dashboards extends Common {
         // formKey: the application's own page for this start event, when the model names one (docs/design/form-keys.md)
         const startsOf = (items) => items.map(s => ({ processName: s.processName, startNodeId: s.startNodeId, name: s.name, fields: s.form?.fields ?? [], formKey: s.form?.formKey }));
         /**
-         * Each start event's `formAddress`: where its own page is, with `${appVars.<name>}` worked out and the process
-         * and element added (form-keys.md §4). Absent when it has no form key, or its expression came to nothing —
+         * Each start event's `formAddress`: where its own page is, with the process
+         * and element added (form-keys.md §4). Absent when it has no form key, or it is blank —
          * then the start page draws its fields, as before.
          */
         const withFormAddresses = async (starts, server, req) => Promise.all(starts.map(async s => {
             if (!hasFormKey(s.formKey)) return s;
-            const address = await formKeyAddress(s.formKey, server, { user: req.user });
+            const address = formKeyAddress(s.formKey);
             if (!address) return s;
             return { ...s, formAddress: withIdentifiers(address, {
                 processName: s.processName, startNodeId: s.startNodeId,
