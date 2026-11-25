@@ -62,17 +62,18 @@ export class UserService {
 		await user.save();
 		return user;
 	}
-	async setPassword(userName, password) {
+	/** Sets a user's password (hashed as it is saved). False, and nothing changed, when there is no such user. */
+	async setPassword(userName, password): Promise<boolean> {
 
 		let user = await User.findOne({ userName });
 		if (!user) {
 			console.log("User does not exist")
-			return;
+			return false;
         }
 		user.password = password;
 
 		await user.save();
-
+		return true;
 	}
 	/**
 	 * The first user: admin, with the password ADMIN_PASSWORD (a server's install sets it), else 'admin'; only when

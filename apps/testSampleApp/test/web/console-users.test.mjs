@@ -4,7 +4,7 @@
 // commands work on any database that outlives the console: a SQLite file and a MongoDB are tried here; a memory
 // database ends with the console that made it, so there is nothing for a second process to list or change.
 //
-// The `todo` tests say what the commands do not do yet; they do not fail the run.
+// An application that manages its own users (the HR demo) has none of bpmn-web's for them to show: they say so.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -75,8 +75,6 @@ const STORES = [
     },
 ];
 
-const outcomes = {};          // what each store's runs said, for the todo tests below
-
 for (const store of STORES) {
     test(`${store.kind}: lu lists the users of the database: the administrator a new server makes`, { skip: store.skip }, () => {
         const listed = cli('testSampleApp', store.env, ['lu']);
@@ -88,8 +86,9 @@ for (const store of STORES) {
     test(`${store.kind}: spw sets the password in the database: the new one matches, the old one does not`, { skip: store.skip }, async () => {
         const before = await store.user('admin');
         assert.ok(await bcrypt.compare('Cli-test-1', before.password), 'the password the server made it with');
-        const changed = outcomes[`${store.kind} changed`] = cli('testSampleApp', store.env, ['spw', 'admin', 'New-pass-2']);
+        const changed = cli('testSampleApp', store.env, ['spw', 'admin', 'New-pass-2']);
         assert.equal(changed.status, 0, changed.out);
+        assert.match(changed.out, /Password set for admin\./, 'it says it did');
         const after = await store.user('admin');
         assert.ok(await bcrypt.compare('New-pass-2', after.password), 'the new password');
         assert.equal(await bcrypt.compare('Cli-test-1', after.password), false, 'not the old one');
@@ -99,8 +98,10 @@ for (const store of STORES) {
 
     test(`${store.kind}: spw for a user that does not exist says so, and changes nothing`, { skip: store.skip }, async () => {
         const before = (await store.user('admin')).password;
-        const unknown = outcomes[`${store.kind} unknown`] = cli('testSampleApp', store.env, ['spw', 'nosuchuser', 'Whatever-1']);
+        const unknown = cli('testSampleApp', store.env, ['spw', 'nosuchuser', 'Whatever-1']);
         assert.match(unknown.out, /User does not exist/);
+        assert.equal(unknown.status, 1, 'a script can tell: it exits 1');
+        assert.doesNotMatch(unknown.out, /Password set/);
         assert.ok(!(await store.user('nosuchuser')), 'no user is made');
         assert.equal((await store.user('admin')).password, before, 'nobody else changes');
     });
@@ -110,20 +111,17 @@ for (const store of STORES) {
     });
 }
 
-// ---- what they do not do yet
+// ---- an application with its own users
 
-test('spw says it changed the password', { todo: 'it prints nothing on success: only the prompts it was given' }, () => {
-    assert.match(outcomes['SQLite changed'].out, /password (changed|set|updated)|changed the password/i);
-});
-
-test('spw for a user that does not exist is a failure: a script can tell', { todo: 'it exits 0, with a line in the log' }, () => {
-    assert.notEqual(outcomes['SQLite unknown'].status, 0);
-});
-
-test('in an application with its own users (the HR demo) the console does not pretend to list or change them', {
-    todo: 'it reads bpmn-web\'s own user store, which that application leaves empty: lu lists no one, spw says "User does not exist"',
-}, () => {
-    const own = cli('hrdemo', { MONGO_DB_URL: '', DATABASE: `sqlite:${path.join(work, 'hr-engine.sqlite')}` }, ['lu'],
-        { HR_DATA: path.join(work, 'hr.sqlite'), ADMIN_PASSWORD: '' });
-    assert.match(own.out, /own users|managed by the application|application manages/i);
+test('in an application with its own users (the HR demo) lu and spw say so, and spw is a failure', () => {
+    const env = { HR_DATA: path.join(work, 'hr.sqlite'), ADMIN_PASSWORD: '' };
+    const database = { MONGO_DB_URL: '', DATABASE: `sqlite:${path.join(work, 'hr-engine.sqlite')}` };
+    const listed = cli('hrdemo', database, ['lu'], env);
+    assert.equal(listed.status, 0, listed.out);
+    assert.match(listed.out, /manages its own users/);
+    assert.doesNotMatch(listed.out, /users:\n name/, 'it does not list bpmn-web\'s empty store as if it were theirs');
+    const changed = cli('hrdemo', database, ['spw', 'david.kim', 'New-pass-9'], env);
+    assert.equal(changed.status, 1, changed.out);
+    assert.match(changed.out, /manages its own users/);
+    assert.doesNotMatch(changed.out, /Password set|User does not exist/);
 });

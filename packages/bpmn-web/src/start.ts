@@ -265,7 +265,8 @@ export async function start(options: StartOptions = {}) {
 	}
 	if (options.console) {
 		const { runConsole } = await import('./console.js');
-		await runConsole(webApp.bpmnServer);
+		// an application that manages its own users (users is null) has none of bpmn-web's for lu and spw to show
+		await runConsole(webApp.bpmnServer, undefined, { ownUsers: !users });
 		return webApp;
 	}
 	// A server with no users makes its administrator, and prints the password, as it starts (UserService.install): there

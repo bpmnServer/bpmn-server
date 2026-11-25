@@ -9,6 +9,11 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **The console's `spw` says what it did, and `lu`/`spw` know an application's own users** (docs/docs/advanced.md):
+  `spw` prints `Password set for <user>.`, and for a user that does not exist it exits 1 (it exited 0). In an
+  application that manages its own users (`start({ userManager })`, as the HR demo does) `lu` and `spw` say so instead
+  of reading bpmn-web's own, empty, store (`spw` exits 1). `UserService.setPassword` answers whether there was such a
+  user. Test: `apps/testSampleApp/test/web/console-users.test.mjs` (SQLite, MongoDB, and the HR demo).
 - **A new server makes its administrator, with a password nobody can guess** (docs/docs/setup.md): `admin`, with
   `ADMIN_PASSWORD` when it is set, else a password made up and printed once where the server runs (nothing is
   written to `.env`), and `ADMIN_EMAIL` (`admin@example.com` unset). There is no admin/admin, and no page asks for the

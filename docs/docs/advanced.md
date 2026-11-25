@@ -44,12 +44,12 @@ npm run cli -- lu                 # list the users
 **Users: `lu` and `spw`.** They list and change the users bpmn-web keeps itself, on the database the console is started
 against (a MongoDB or a SQLite file; a running server sees the change at once). They need a database that outlives the
 console: with `MONGO_DB_URL=memory` the console makes its own empty one, so there is nothing of the server's to list or
-change. A password is hashed as it is saved. `spw` for a user that does not exist prints `User does not exist` and
-still exits 0, and on success it prints nothing but the prompts it was given.
+change. A password is hashed as it is saved. `spw` says `Password set for <user>.`; for a user that does not exist it
+says so and exits 1, so a script can tell.
 
 In an application that manages its own users ([your users: a user manager](integration/integration-guide.md#a5-your-users-a-user-manager);
-the HR demo does), `lu` lists no one and `spw` finds no user: they read bpmn-web's own users, which that application
-leaves empty. Change those users in the application. Test: `apps/testSampleApp/test/web/console-users.test.mjs`.
+the HR demo does), there are none of bpmn-web's to show: `lu` and `spw` say that the application manages its own users, and
+`spw` exits 1. Change those users in the application. Test: `apps/testSampleApp/test/web/console-users.test.mjs`.
 
 ## Instance Locking
 

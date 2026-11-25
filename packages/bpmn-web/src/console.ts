@@ -9,6 +9,9 @@ import { UserService } from "./userAccess/UserService.js";
 
 let server: BPMNServer;
 let userService: UserService;
+/** The application manages its own users (start({ userManager })): the commands on users have none of bpmn-web's to show. */
+let ownUsers = false;
+const OWN_USERS = "This application manages its own users (start({ userManager })): list and change them in the application.\nbpmn-web's own user store, which these commands read, is not used.";
 let api: BPMNAPI;
 
 //const cl = readline.createInterface(process.stdin,null);
@@ -81,9 +84,11 @@ const question = function(q):Promise<string> {
 /**
  * Runs the console on a server until the user quits (q), then exits the process. `args`: a command and the answers
  * to its questions (default: the words after --cli, as in `npm run cli -- cod asana`): it runs, then the console
- * quits; a yes/no question it does not answer is yes (the command line said so).
+ * quits; a yes/no question it does not answer is yes (the command line said so). `options.ownUsers`: the application
+ * keeps its own users, so lu and spw say so rather than read bpmn-web's, which it leaves empty.
  */
-export async function runConsole(bpmnServer: BPMNServer, args: string[] = commandLineArgs()) {
+export async function runConsole(bpmnServer: BPMNServer, args: string[] = commandLineArgs(), options: { ownUsers?: boolean } = {}) {
+	ownUsers = options.ownUsers === true;
 	server = bpmnServer;
 	api = new BPMNAPI(server);
 	userService = new UserService();
@@ -224,6 +229,7 @@ async function completeUserTask() {
 			break;
 		case 'lu':
 			console.log("listing Users");
+			if (ownUsers) { console.log(OWN_USERS); break; }
 			var users = await userService.findUsers({});
 			console.log('users:\n name\t email\t userGroups');
 			users.forEach(u => {
@@ -241,11 +247,14 @@ async function completeUserTask() {
 			break;
 		case 'spw':
 			console.log("setting user password");
+			if (ownUsers) { console.log(OWN_USERS); process.exitCode = 1; break; }
 
 			const userName = await question('UserName: ');
 			const newPassword = await question('NewPassword: ');
 
-			list = await userService.setPassword(userName, newPassword);
+			// a script can tell: it exits 1 when there was no such user
+			if (await userService.setPassword(userName, newPassword)) console.log(`Password set for ${userName}.`);
+			else process.exitCode = 1;
 	}
   
   }
