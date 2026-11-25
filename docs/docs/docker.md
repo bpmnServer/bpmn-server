@@ -143,18 +143,3 @@ Do not use `docker compose down -v` if you want to preserve models or database v
 
 See the [detailed Docker README](https://github.com/bpmnServer/bpmn-server/blob/main/docker/README.md) for installation, configuration, and publishing instructions.
 
-## Separated host and engine
-
-The repository also includes a self-contained example that runs the web/API
-host and workflow engine in separate containers:
-
-```sh
-cd apps/docker-isolated-engine
-cp .env.example .env
-docker compose up -d
-```
-
-See the [separated Docker deployment README](https://github.com/bpmnServer/bpmn-server/blob/main/apps/docker-isolated-engine/README.md) for
-the topology, configuration, health checks, and local-package build. It uses
-`apps/hrdemo` as the application base; the engine service is private to the
-Compose network and the host connects to it with `ENGINE_AT=http://engine:3001`.

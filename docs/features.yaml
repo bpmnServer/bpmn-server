@@ -865,7 +865,7 @@ features:
     area: install
     name: "Docker"
     what: "A published image and a local-package Compose example, including a separated HRDemo host and engine."
-    docs: [docs/docs/docker.md, docker/README.md, apps/docker-isolated-engine/README.md]
-    code: [docker/docker-compose.yml, apps/docker-isolated-engine/docker-compose.yml, apps/docker-isolated-engine/Dockerfile, apps/hrdemo/engine.ts]
+    docs: [docs/docs/docker.md, docker/README.md]
+    code: [docker/docker-compose.yml, apps/hrdemo/engine.ts]
     status: partial
     note: "Not tested in the suite."
