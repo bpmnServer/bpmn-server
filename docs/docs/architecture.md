@@ -24,7 +24,7 @@ isolated, one for each tenant, holding everything of it. Without tenants, A and 
 |---|---|---|---|---|---|---|
 | 1 | **Data store** | The operator runs it (MongoDB, SQLite); OmniWorkflow owns its interface | nothing | anything above it | Store | B |
 | 2 | **Engine** | OmniWorkflow | the data store, through its interface; it calls 4 and 5 | add-ons, the API, the pages | Engine | B |
-| 3 | **Add-ons' code** | Each add-on's author (OmniWorkflow for the four); the admin turns it on (`app-config.json`) | the engine's events and registrations | other add-ons, the data store directly | Engine | B |
+| 3 | **Add-ons' code** | Each add-on's author (OmniWorkflow for the seven it ships); the admin turns it on (`app-config.json`) | the engine's events and registrations | other add-ons, the data store directly | Engine | B |
 | 4 | **Delegates and services** | The app developer | the engine's execution | the data store directly, add-ons | Engine | B |
 | 5 | **Scripts, conditions, policies and decisions (DMN)** | The modeler: they are part of the models | their context only (item, data, services) | anything else | Engine | B |
 | 6 | **Models, read only** | OmniWorkflow owns the reader; the modeler owns the models | the models folder | writing anything (saves go through the API) | Engine | B |
@@ -94,7 +94,7 @@ flowchart LR
       API["BPMNAPI<br/>each call as a user;<br/>pre-query, pre-action"]
       Engine["Engine<br/>executions, timers, decisions"]
       Code["Your code<br/>delegate, services, model scripts"]
-      AddOns["Add-ons (app-config.json)<br/>Policies, Labels, Extended Forms, Model History"]
+      AddOns["Add-ons (app-config.json)<br/>Assignment, Notifications, Access Control, Labels, Extended Forms, Model Options, AI Agents"]
       API --> Engine
       Engine --> Code
       AddOns -. "register for its events" .-> Engine

@@ -18,7 +18,7 @@ real: its home page lists the accounts and their password, and `HR_DEMO_SIGN_IN_
 one-click "Sign in as" buttons the public demo has.
 `npm run setup` asks the settings step by step (below), then prepares the database and stops (with no terminal, as
 in a script, it only prepares the database); `npm run cli` opens the console, `npm run verify` checks the
-models. (`init` ships with bpmn-server 3.5.)
+models.
 
 ### The settings, step by step
 
