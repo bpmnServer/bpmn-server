@@ -52,6 +52,9 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+### Fixed
+- **bpmn-web declares its license**: `license: MIT` in `package.json` and a `LICENSE` file, as bpmn-server, bpmn-client and
+  bpmn-mcp have. Up to 3.7.5, npm showed it as having none.
 
 ## Release 3.7.5 (2026-11-25)
 ### Added

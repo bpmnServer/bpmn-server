@@ -1,6 +1,7 @@
 {
   "name": "bpmn-web",
   "version": "3.7.5",
+  "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
