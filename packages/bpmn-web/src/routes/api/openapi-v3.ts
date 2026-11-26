@@ -153,6 +153,14 @@ export function openApiV3(origin: string) {
                 requestBody: body({ type: 'object', properties: { data: { ...data, description: 'The decision\'s inputs, by name' } } }),
                 responses: { 200: answer('What it decided', ref('RuleResult')), ...errors(400, 401, 404, 422) },
             } },
+            '/handoffs': {
+                post: {
+                    operationId: 'issueHandoff', summary: 'A one-visit link that opens one page of this server for one of the application\'s users (the service key)', security: [{ serviceKey: [] }],
+                    description: 'The person opens the link in their browser and is taken to the page, with no second sign-in. The link is spent by its first visit, lasts a minute unless asked for longer (at most 5), and opens that page and nothing else: a task\'s form, without this server\'s menu. When the task is done the person is sent to returnTo.',
+                    requestBody: body({ type: 'object', required: ['userName', 'page'], properties: { userName: { type: 'string' }, groups: { type: 'array', items: { type: 'string' }, description: 'The groups the application gives the user: not SYSTEM, ADMIN or DESIGNER' }, page: { type: 'object', required: ['type', 'id'], properties: { type: { enum: ['task'] }, id: { type: 'string', description: 'The task\'s id' } } }, returnTo: { type: 'string', description: 'Where the person goes when done: an http or https address of the application, or a path' }, minutes: { type: 'number', description: 'default 1, at most 5' } } }),
+                    responses: { 201: answer('The handoff: give the url to the person\'s browser', { type: 'object', properties: { handoff: { type: 'string' }, url: { type: 'string' }, expiresAt: { type: 'string', format: 'date-time' }, userName: { type: 'string' }, page: { type: 'object', properties: { type: { type: 'string' }, id: { type: 'string' } } } } }), ...errors(400, 401, 403) },
+                },
+            },
             '/tokens': {
                 post: {
                     operationId: 'issueToken', summary: 'A token for one of the application\'s users (the service key)', security: [{ serviceKey: [] }],

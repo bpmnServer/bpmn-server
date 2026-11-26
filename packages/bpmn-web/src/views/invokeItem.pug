@@ -15,7 +15,7 @@ block content
 	div(class="form-container")
 	
 	
-		form(name='InvokeForm',action="/invokeItem",method="post")
+		form(name='InvokeForm',action=(typeof formAction !== 'undefined' && formAction) || "/invokeItem",method="post")
 			input(type='hidden', name='_csrf', value=_csrf)
 			input(type='hidden',name='itemId',id='itemId',value=`${id}`)
 			input(type='hidden',name='returnTo',id='returnTo',value=`${returnTo}`)
@@ -28,7 +28,7 @@ block content
 					
 					//- its choices from a source (<owf:list>, <owf:lookup>): public/javascripts/formLookup.js; its label saved as <id>Display
 					- var lookup = lookups && lookups[field.id]
-					- var choicesUrl = lookup ? `/dashboard/choices/task/${encodeURIComponent(id)}/${encodeURIComponent(field.id)}` : null
+					- var choicesUrl = lookup ? `${(typeof choicesBase !== 'undefined' && choicesBase) || '/dashboard/choices/task'}/${encodeURIComponent(id)}/${encodeURIComponent(field.id)}` : null
 					- var caseData = (instance && instance.data) || {}
 					- var chosen = caseData[field.id] == null ? '' : String(caseData[field.id])
 					- var chosenDisplay = caseData[field.id + 'Display'] == null ? '' : String(caseData[field.id + 'Display'])

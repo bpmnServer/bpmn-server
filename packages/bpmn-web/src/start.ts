@@ -147,8 +147,9 @@ export async function setup(server: BPMNServer, users: UserService | null = unde
 		await server.definitions.install();
 		await server.connectors?.install();
 	}
-	const { installTokens } = await import('./routes/api/v3.js');
+	const { installTokens, installHandoffs } = await import('./routes/api/v3.js');
 	await installTokens(server);
+	await installHandoffs(server);
 	// the Test tabs' tests, kept in MongoDB before 3.5, become files beside the models
 	try {
 		const { migrateScenarioSets } = await import('./testing/scenarios.js');

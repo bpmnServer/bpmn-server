@@ -23,6 +23,8 @@ export class ApiError extends Error {
  * or an ApiError 401. API v3 itself keeps them on for its clients, whatever ENFORCE_SECURITY says.
  */
 export async function pageUser(req): Promise<SecureUser> {
+    // a person an application handed to one page (routes/embed.ts): that page's session stands for them, nothing else does
+    if (req.embedUser) return req.embedUser;
     const host = hostUserManager(req);
     if (host) {
         const info = await host.apiUser?.(req);

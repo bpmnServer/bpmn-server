@@ -84,6 +84,8 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 ## Integration
 
 - [Integration, step by step](integration/integration-guide.md): Two ways to put OmniWorkflow in an application: embedded in your own server, or remote, called over HTTP.
+- [Handoffs: a person sent to one page of OWF](handoffs.md): An application that runs OWF beside it signs its people in and keeps their sessions.
+- [Handoffs: a person sent to one page of OWF](handoffs.md): An application that runs OWF beside it signs its people in and keeps their sessions.
 - [Integrating your application](customization.md): OmniWorkflow is an embeddable execution engine, not a stand-alone process server.
 - [Calling it from your application (C#, Python, curl)](integration-examples.md): Any application that can make HTTP calls can run workflows: C#, Java, Python, Go, PHP, Ruby, or Node.js.
 - [Connectors (REST APIs)](connectors.md): A service task can call a connector instead of a service.

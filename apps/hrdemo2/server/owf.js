@@ -57,6 +57,20 @@ export class OwfLink {
     return token;
   }
 
+  /**
+   * A handoff (POST /api/v3/handoffs, with the service key): a one-visit link to OWF's form of this task for this person,
+   * and where OWF sends them when it is done. Returns the link.
+   */
+  async handoff(user, taskId, returnTo) {
+    const groups = [...new Set((user.userGroups ?? []).map(String).filter(g => !OWF_ONLY.has(g)))].sort();
+    const response = await this.fetch(`${this.url}/api/v3/handoffs`, {
+      method: 'POST', headers: { 'x-api-key': this.key, 'content-type': 'application/json' },
+      body: JSON.stringify({ userName: user.userName, groups, page: { type: 'task', id: taskId }, returnTo }),
+    });
+    if (!response.ok) throw new OwfError(response.status, `OWF would not open that task for ${user.userName} (${response.status})`);
+    return (await response.json()).url;
+  }
+
   /** A call to OWF's API v3 as this person; the token asked for again once if OWF no longer knows it. */
   async call(user, method, path, body) {
     for (const fresh of [false, true]) {
@@ -73,6 +87,26 @@ export class OwfLink {
 
 export class OwfError extends Error {
   constructor(status, message) { super(message); this.status = status; }
+}
+
+/** Where a person goes when OWF is done: a page of this site, as an address (OWF sends the browser back to it). */
+const safePath = to => typeof to === 'string' && to.startsWith('/') && !to.startsWith('//') && !/[\\\s]/.test(to) ? to : null;
+
+/**
+ * GET /api/hr/owf/task/:id?returnTo=/hr/...: opens a task in OWF's own form, for the person signed in here: this server asks
+ * OWF for a handoff and sends the browser to it, so the person is not asked to sign in again. When they are done OWF sends
+ * them to returnTo (a page of this site; default /hr/).
+ */
+export function owfOpenTask(link = new OwfLink()) {
+  return async (req, res) => {
+    if (!link.configured) return res.status(404).json({ error: { code: 'NOT_CONNECTED', message: 'No workflow server is connected (OWF_URL, OWF_SERVICE_KEY)' } });
+    if (!req.user) return res.status(401).json({ error: { code: 'NOT_SIGNED_IN', message: 'Sign in to the HR application' } });
+    const to = req.query.returnTo === undefined ? '/hr/' : safePath(req.query.returnTo);
+    if (!to) return res.status(400).json({ error: { code: 'BAD_RETURN', message: 'returnTo is a page of this site' } });
+    const here = `${String(req.get('x-forwarded-proto') ?? req.protocol).split(',')[0].trim()}://${req.get('x-forwarded-host') ?? req.get('host')}`;
+    try { res.redirect(await link.handoff(req.user, req.params.id, here + to)); }
+    catch (error) { res.status(error instanceof OwfError ? 502 : 504).json({ error: { code: 'WORKFLOW_SERVER', message: error.message } }); }
+  };
 }
 
 /**

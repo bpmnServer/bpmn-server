@@ -39,8 +39,12 @@ first, in both directions:
 - **OWF to application:** sampleApp2's connector `hr` is made from the application's own `/api/hr/openapi.json`, with the key
   `HR_SERVICE_KEY` kept by OWF. Checked: the model *List Employees* returns the application's employees.
 
-Next in the prototype: a form-only OWF page for a task (entered by token, no second sign-in), and the event feed so the
-application's lists refresh.
+- **A person sent to OWF's own form, with no second sign-in** ([handoffs](../docs/handoffs.md)): a task with no HR form opens
+  through `GET /api/hr/owf/task/:id` on hrdemo2, which asks OWF for a one-visit link (`POST /api/v3/handoffs`) and sends the
+  browser to it; OWF shows the form with no menu, completes it as that person and sends them back. Checked end to end: the
+  link is spent, the form's fields are drawn, the submit moves the case on, and the session ends.
+
+Next in the prototype: the event feed so the application's lists refresh, and a page in a frame.
 
 ## Open decisions
 

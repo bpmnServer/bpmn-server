@@ -5,7 +5,7 @@ import express from 'express';
 import { hrRoutes } from './routes.js';
 import { hrPages } from './pages.js';
 import { HrUserManager } from './userManager.js';
-import { owfProxy } from './owf.js';
+import { owfProxy, owfOpenTask } from './owf.js';
 
 const app = express();
 const userManager = new HrUserManager();
@@ -13,6 +13,7 @@ userManager.init(app);
 userManager.setup(app);
 app.use(express.json());
 app.use('/api/v3', owfProxy());
+app.get('/api/hr/owf/task/:id', owfOpenTask());
 hrRoutes(app);
 hrPages(app);
 app.get('/', (req, res) => res.redirect('/hr/'));

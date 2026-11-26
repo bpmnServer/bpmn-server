@@ -172,6 +172,8 @@ nav:
 
 - Integration:
   - 'Integration, step by step': integration/integration-guide.md
+  - 'Handoffs: a person sent to one page of OWF': handoffs.md
+  - 'Handoffs: a person sent to one page of OWF': handoffs.md
   - Integrating your application: customization.md
   - 'Calling it from your application (C#, Python, curl)': integration-examples.md
   - Connectors (REST APIs): connectors.md

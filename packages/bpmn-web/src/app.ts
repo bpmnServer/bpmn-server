@@ -34,6 +34,7 @@ import { Workflow } from './routes/workflow.js';
 import { Docs } from './routes/docs.js';
 import { Model } from './routes/model.js';
 import { Dashboards } from './routes/dashboards.js';
+import { embedRouter } from './routes/embed.js';
 import { API } from './routes/api.js';
 import { API2 } from './routes/api2.js';
 import { v3Router } from './routes/api/v3.js';
@@ -402,6 +403,8 @@ export class WebApp {
 		router.use('/webfonts', express.static(path.join(pkg('@fortawesome/fontawesome-free'), 'webfonts'), { maxAge: 31557600000 }));
 		this.app.use('/', router);
 
+		// the pages an application hands a person to, by a handoff: their own session, not the pages' sign-in (routes/embed.ts)
+		this.app.use('/embed', embedRouter());
 		this.app.use('/dashboard', (new Dashboards(this)).config());
 		// /user was a second copy of the workflow pages (routes/endUser.ts, gone in 3.7: the Fable Review, M2): its
 		// addresses go to the one set; a form posted there is sent on as it was (307)

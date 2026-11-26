@@ -2,6 +2,7 @@ import express from 'express';
 import { accessDirectory } from '../caseAccess.js';
 import { door } from './door.js';
 import { Tokens, TokenError } from './tokens.js';
+import { Handoffs, HandoffError } from './handoffs.js';
 import { canDesign, isAdminGroups } from '../../userAccess/roles.js';
 import { TaskOperations, DEFAULT_LIMIT } from './tasks.js';
 import { v2TaskError } from '../taskApi.js';
@@ -39,6 +40,7 @@ const fromCursor = (cursor: unknown) => typeof cursor === 'string' ? Buffer.from
 export function v3Router(server, { users: managed }: { users?: UserService | null } = {}) {
     const router = express.Router();
     const tokens = new Tokens(server);
+    const handoffs = new Handoffs(server);
     const tasks = new TaskOperations(server);
     const guides = new GuideOperations(server);
     const instances = new InstanceOperations(server);
@@ -91,7 +93,7 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         catch (error) {
             if (error instanceof ModelError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } });
-            if (error instanceof TokenError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError || error instanceof LabelFilterError || error instanceof ListColumnError || error instanceof GuideError)
+            if (error instanceof TokenError || error instanceof HandoffError || error instanceof InstanceError || error instanceof SettingsError || error instanceof UserError || error instanceof RuleError || error instanceof LabelFilterError || error instanceof ListColumnError || error instanceof GuideError)
                 return res.status(error.status).json({ error: { code: error.code, message: error.message } });
             // the task operations' errors, and the engine's, as v2 sorts them; in v3's shape
             const [code, body] = v2TaskError(error) as [number, any];
@@ -248,6 +250,10 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
         : next();
     router.post('/tokens', serviceOnly, ownTokens, handler(async req => tokens.issue(req.body ?? {}, req.apiUser.userName), 201));
 
+    // a handoff: a one-visit link that opens one page of this server for one of the application's users, with no second
+    // sign-in: { userName, groups, page: { type: 'task', id }, returnTo, minutes } (routes/embed.ts)
+    router.post('/handoffs', serviceOnly, ownTokens, handler(async req => handoffs.issue(req.body ?? {}, req.apiUser.userName, process.env.SITE_URL || originOf(req)), 201));
+
     // revoke a user's tokens: ?userName=
     router.delete('/tokens', serviceOnly, ownTokens, handler(async req => {
         const userName = req.query.userName;
@@ -262,3 +268,4 @@ export function v3Router(server, { users: managed }: { users?: UserService | nul
 
 /** The token store's indexes: part of a server's setup. */
 export const installTokens = server => new Tokens(server).install();
+export const installHandoffs = server => new Handoffs(server).install();

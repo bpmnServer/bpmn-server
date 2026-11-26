@@ -4,4 +4,6 @@ block head
   script(src=asset("/javascripts/descriptions.js"))
 
 block nav
-  include includes/menu.pug
+  //- a page an application hands a person to (routes/embed.ts) has no menu: it is the application's to frame
+  unless embed
+    include includes/menu.pug

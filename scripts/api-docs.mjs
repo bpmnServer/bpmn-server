@@ -18,7 +18,7 @@ const SITE = 'https://<site>';
 const AREAS = [
     ['me', 'Who am I'], ['processes', 'Processes'], ['tasks', 'Tasks'], ['instances', 'Instances'], ['models', 'Models and their tests'],
     ['rules', 'Rules'], ['messages', 'Messages and signals'], ['signals', 'Messages and signals'], ['users', 'Users'],
-    ['settings', 'Settings'], ['tokens', 'Tokens'],
+    ['settings', 'Settings'], ['tokens', 'Tokens'], ['handoffs', 'Tokens'],
 ];
 const METHODS = ['get', 'post', 'put', 'delete', 'patch'];
 

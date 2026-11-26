@@ -706,6 +706,14 @@ features:
     docs: [docs/docs/integration-settings.md]
     code: [packages/bpmn-web/src/routes/integration.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/dashboards/integration.pug, packages/bpmn-server/src/common/settingValue.ts, packages/bpmn-server/src/engine/AddOns.ts]
     tests: [apps/testSampleApp/test/web/integration.test.mjs, apps/testSampleApp/test/web/add-ons.test.mjs]
+  - id: handoff
+    area: api
+    name: "Handoff: a person sent to one page of OWF"
+    what: "An application's back end asks for a one-visit link (POST /api/v3/handoffs, the service key) for one of its people and one task; the browser opens it and gets that task's form, with no menu and no second sign-in, through a short session that opens that page and nothing else. The task is completed as that person (the model's rules and the case's security apply), then they go to returnTo. A link is spent by its first visit and lasts a minute (at most 5); the groups SYSTEM, ADMIN and DESIGNER are refused, as for a token."
+    docs: [docs/docs/handoffs.md, docs/docs/api-v3.md, docs/design/roadmap-3.8.md]
+    code: [packages/bpmn-web/src/routes/api/handoffs.ts, packages/bpmn-web/src/routes/embed.ts, packages/bpmn-web/src/routes/api/v3.ts, packages/bpmn-web/src/routes/api/pageClient.ts, packages/bpmn-web/src/views/invokeItem.pug, packages/bpmn-web/src/views/layout.pug]
+    examples: [apps/hrdemo2/server/owf.js]
+    tests: [apps/testSampleApp/test/web/embed-handoff.test.mjs]
   - id: export-import
     area: modeling
     name: "Export and import of models, in a package"

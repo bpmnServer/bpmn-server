@@ -56,6 +56,7 @@ Errors are `{ "error": { "code", "message" } }`, with the status the error's kin
 | [GET /settings](#get-settings) | Every setting by group: its value (secrets as ***), where it comes from (an administrator; an AI link at the administer level) |
 | [GET /settings/schema](#get-settingsschema) | The settings’ schema: each setting’s type, default, description, group, and whether it is a secret |
 | [POST /settings/checks/{name}](#post-settingschecksname) | Run a check: database, engine, url (SITE_URL) or email |
+| [POST /handoffs](#post-handoffs) | A one-visit link that opens one page of this server for one of the application's users (the service key) |
 | [POST /tokens](#post-tokens) | A token for one of the application's users (the service key) |
 | [DELETE /tokens](#delete-tokens) | Revoke every token of a user (the service key) |
 | [GET /application](#get-application) | The application's contract (app-contract.json): the functions (appServices) an expression may call, with their types; its roles, APIs and pages; and its problems |
@@ -775,6 +776,29 @@ Run a check: database, engine, url (SITE_URL) or email.
 | 404 | No such thing, or not this user's to see | [Error](#error) |
 
 ## Tokens
+
+### POST /handoffs
+
+A one-visit link that opens one page of this server for one of the application's users (the service key).
+
+Credential: The service key (API_KEY): the service account only.
+
+Body (JSON):
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `userName` | string | yes |  |
+| `groups` | list of string |  | The groups the application gives the user: not SYSTEM, ADMIN or DESIGNER |
+| `page` | { type, id } | yes |  |
+| `returnTo` | string |  | Where the person goes when done: an http or https address of the application, or a path |
+| `minutes` | number |  | default 1, at most 5 |
+
+| Answer | Means | Body |
+|---|---|---|
+| 201 | The handoff: give the url to the person's browser | { handoff, url, expiresAt, userName, page } |
+| 400 | The input is not right | [Error](#error) |
+| 401 | No credential, or an unknown, expired or revoked token | [Error](#error) |
+| 403 | Not this user's to do | [Error](#error) |
 
 ### POST /tokens
 

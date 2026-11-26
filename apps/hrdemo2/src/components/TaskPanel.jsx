@@ -90,14 +90,16 @@ export default function TaskPanel({ onToggle, onCount }) {
   /**
    * Where a task opens. A model may name one of HR's own forms (`camunda:formKey`, docs/design/form-keys.md flow A):
    * then the task's `form.formKey` is that page's address, and we open it ourselves with the identifiers it needs —
-   * never through owf, and with no case data in the address. Anything else is OWF's own page: not opened from here yet.
+   * never through owf, and with no case data in the address. Anything else is OWF's own form: this site asks OWF for a
+   * handoff (server/owf.js) and the browser goes to it, signed in as this person, and comes back here when it is done.
    */
   const ownForm = t => typeof t.form?.formKey === 'string' && t.form.formKey.startsWith('/');
-  const open_ = t => go(`${t.form.formKey}?instance=${encodeURIComponent(t.instanceId)}&item=${encodeURIComponent(t.id)}&returnTo=${encodeURIComponent(window.location.pathname)}`);
+  const open_ = t => ownForm(t)
+    ? go(`${t.form.formKey}?instance=${encodeURIComponent(t.instanceId)}&item=${encodeURIComponent(t.id)}&returnTo=${encodeURIComponent(window.location.pathname)}`)
+    : window.location.assign(`/api/hr/owf/task/${encodeURIComponent(t.id)}?returnTo=${encodeURIComponent('/hr' + window.location.pathname + window.location.search)}`);
   const row = t => (
     <li key={t.id}>
-      <button className="task-item" disabled={!ownForm(t)} onClick={() => open_(t)}
-        title={ownForm(t) ? `Open ${t.name || t.elementId}` : "This task opens in the workflow server's own pages, which are not shown here yet"}>
+      <button className="task-item" onClick={() => open_(t)} title={`Open ${t.name || t.elementId}`}>
         <span className="task-name">{t.name || t.elementId}</span>
         <span className="task-meta">
           {t.processName} · {waited(t.startedAt)}
