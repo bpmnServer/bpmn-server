@@ -186,10 +186,17 @@ test('administration: server, users, add a user, locks, backup', async () => {
 });
 
 test('restart without a supervisor does not stop the server', async () => {
-  const res = await admin.post('/dashboard/admin/restart', {});
-  assert.equal(res.status, 302);
-  assert.match(decodeURIComponent(res.location), /Nothing restarts this process/);
-  assert.equal((await admin.get('/dashboard')).status, 200, 'still running');
+  // a CI runner is a systemd service (INVOCATION_ID), which the server takes for a supervisor: none is what is tested
+  const was = ['RESTART_ON_EXIT', 'pm_id', 'INVOCATION_ID'].map(name => [name, process.env[name]]);
+  for (const [name] of was) delete process.env[name];
+  try {
+    const res = await admin.post('/dashboard/admin/restart', {});
+    assert.equal(res.status, 302);
+    assert.match(decodeURIComponent(res.location), /Nothing restarts this process/);
+    assert.equal((await admin.get('/dashboard')).status, 200, 'still running');
+  } finally {
+    for (const [name, value] of was) if (value !== undefined) process.env[name] = value;
+  }
 });
 
 test('Run on a model with several start events, or a start form, asks first: the start page, then the start chosen with its data', async () => {

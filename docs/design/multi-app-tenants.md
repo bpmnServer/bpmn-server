@@ -1,6 +1,6 @@
 # Several applications on one server, and tenants
 
-Status: draft. Built in 3.8; in 3.7 a design constraint that new work must respect (§8).
+Status: draft. **Held past 3.8** (decided 2026-11-25: 3.8 is application integration only, see [roadmap-3.8.md](roadmap-3.8.md)); in 3.7 a design constraint that new work must respect (§8).
 
 Related: [API v3](api-v3.md) (the door, user tokens); [business labels, roles and
 assignment](https://github.com/bpmnServer/bpmn-server/pull/286) (PR #286); the `tenants` branch (commit 74f7b2d,
@@ -113,7 +113,7 @@ Built in 3.8, but these hold for everything written in 3.7, so that nothing has 
 4. Limits per workspace on a shared site (models, instances, requests): the public demo needs them.
 5. One person in several workspaces: separate accounts (3.8), or a shared sign-in later.
 
-## 10. Steps (3.8)
+## 10. Steps (after 3.8)
 
 1. Rebase the `tenants` branch on 3.7: the door and user tokens per workspace; API v3 under `/<workspace>/api/v3`.
 2. The 3.7 leftovers of §8: the setup token and the AI link's keys per workspace.
