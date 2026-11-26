@@ -14,7 +14,7 @@ Build the workflow UI once, for standalone OWF and for embedding. Embedding is o
 | Phase | Deliverable | Explicit exclusions |
 | --- | --- | --- |
 | 1 — Services only | Two-way API integration, trusted user identity, application contract, allowed connector operations, integration tests | No embedded OWF UI, UI SDK, browser bridge, new form renderer or UI refactoring |
-| 2 — Embedded OWF UI | JavaScript UI SDK, controller/details composition, native task/start forms, instance details, theming and lifecycle | No requirement to rewrite host business forms or replace its navigation |
+| 2 — Shared OWF UI components | Reusable internal component library, standalone OWF composition, JavaScript UI SDK, controller/details composition, native task/start forms, instance details, theming and lifecycle | No requirement to rewrite host business forms or replace its navigation |
 | 3 — Advanced composition (optional) | Host-owned forms in a details region, shared details across controllers, standalone widgets and richer integration | No new workflow engine or alternate workflow API |
 
 Phase 1 is a complete releaseable integration mode and the first 3.8 delivery priority. Phases 2 and 3 are subsequent increments; their release assignment is not fixed. An existing host UI may call the Phase 1 services; no new UI work is required. Existing standalone OWF UI and form-key behavior are unaffected. UI work must not block Phase 1.
@@ -133,7 +133,32 @@ OWF independently enforces authorization for every query and mutation. A trusted
 
 The host supplies theme tokens (font, colors, spacing, borders), locale and container size. OWF owns responsive content, accessibility, keyboard navigation and error states inside the containers. Do not impose global CSS or change host routing. Refactor existing OWF view logic out of shell/router/global state only as needed. The standalone OWF shell consumes the same reusable views and API client. Measure reuse and refactoring effort against source before estimating delivery.
 
-**Phase 2 acceptance:** in the HR demo, mount a task list and details region using two divs. Select, claim and complete a native task without host navigation or selection code. Repeat with process list/start and instance list/details. Verify identity, theme, responsive layout, independent placements, stale responses, conflicts, unmounting and authorization. Confirm the standalone UI still works and Phase 1 tests pass unchanged.
+### 4.6 OWF itself is a component host
+
+Components are a first-class part of the OWF UI architecture, not an external integration-only feature. The standalone OWF application is the first consumer of the common component library. It can compose its own pages, dashboards, panels and dialogs from the same workflow components offered to external applications.
+
+```mermaid
+flowchart TD
+  S[Standalone OWF shell] --> C[Shared OWF UI components and composition]
+  A[External application shell] --> SDK[Public JavaScript UI SDK]
+  SDK --> C
+  C --> API[Shared API client / API v3]
+```
+
+| OWF page or region | Composition |
+| --- | --- |
+| My Tasks | Task-list controller + task-form details |
+| My Instances | Instance-list controller + instance details, history and diagram |
+| Start Process | Process-catalog controller + start-form details |
+| Dashboard (as supported) | Task count, filtered task list, process status or other independently reusable widgets |
+
+The shared library owns workflow-specific UI behavior, state and interactions; the standalone shell owns its menus, routes, authentication, layouts and built-in theme. External hosts can use the DOM mounting facade, while OWF may use its own internal composition interface over the same implementation. Both use the same authorization-aware API client and server operations. There must be no separate internal and external implementation of a task form or other workflow view.
+
+Controller/details is the default paired composition, not a restriction on all components. Components should be reusable independently where appropriate, with explicit inputs (identifiers, context, filters), lifecycle and output events. Avoid coupling component logic to OWF's global navigation or page-specific state. Built-in layouts come first; user-configurable dashboard/page composition is a possible later enhancement, not a new requirement for Phase 2 or a commitment to a page-builder framework.
+
+Implement and validate the shared components inside OWF first, then expose the same implementation through the public SDK and verify it in the HR demo. This is sequencing within Phase 2 only: Phase 1 remains services only.
+
+**Phase 2 acceptance:** in the HR demo, mount a task list and details region using two divs. Select, claim and complete a native task without host navigation or selection code. Repeat with process list/start and instance list/details. Verify identity, theme, responsive layout, independent placements, stale responses, conflicts, unmounting and authorization. Confirm that the standalone OWF task, instance and start-process pages actually consume the same shared components as the external HR demo (not merely behave similarly), that the standalone UI still works, and that Phase 1 tests pass unchanged.
 
 ## 5. Phase 3: application-specific forms and richer composition
 
@@ -147,7 +172,7 @@ Advanced shared-details composition should use one explicit coordinator owning t
 
 ## 6. Decisions and open implementation questions
 
-**Decisions:** services first; optional UI; controller/details as the default public embedding pattern; host owns layout/navigation; OWF owns workflow views and their internal interaction; reuse API v3; no direct dependency on host framework.
+**Decisions:** services first; shared internal/external UI component architecture; optional external UI; controller/details as the default public embedding pattern; host owns layout/navigation; OWF owns workflow views and their internal interaction; reuse API v3; no direct dependency on host framework.
 
 **Open:** exact SDK/package naming, authentication adapter implementation, final event/type schemas, current view extraction effort, theming contract and accessibility details, release assignment for later UI phases. No UI implementation is authorized by this design alone.
 
