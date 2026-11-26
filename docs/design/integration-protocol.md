@@ -4,6 +4,10 @@
 
 This is the **single entry point** for OWF's application integration contract. Other integration, connector, form and verification documents should link here rather than independently define connector permissions, discovery or lookup semantics.
 
+## Delivery phases (decision 2026-11-26)
+
+**Phase 1 is services only**: API v3, trusted identity, application contract, approved connector operations and service-level verification. No embedded UI, browser SDK or UI refactoring is required. The later UI phase uses two host-provided DOM containers (controller and details), with OWF managing selection and rendering. Application-specific form handoff and richer composition can follow. See [Side-by-side integration design](embedded-ui-integration.md) for the UI contract and phase acceptance criteria. The service contract remains independent of the UI.
+
 ## 1. Boundary and principle
 
 The host application owns users, authorization of business records, authoritative business objects, API implementations, and application forms. OWF owns workflow instances, items, assignments, forms it renders, and orchestration.
@@ -127,7 +131,7 @@ This document defines the desired protocol, not a claim that native lookups or a
 
 ## Related documentation
 
-- [Application integration design](../docs/application-integration-design.md) — architecture and lifecycle.
+- [Application integration design](application-integration-design.md) — architecture and lifecycle.
 - [Connectors](../docs/connectors.md) — implemented connector format, permissions and operations.
 - [Integrate an existing application](../docs/integrate.md) — how host applications connect.
 - [Connectors as files](connectors-as-files.md) — existing connector persistence decisions.
