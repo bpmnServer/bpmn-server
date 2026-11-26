@@ -214,8 +214,8 @@ Agreed November 25, 2026. 3.7.5 is released; the architecture above arrives in 3
 | **3.6.x** | Security fixes only | The line customers are on today. No API v3, add-ons or other backports from 3.7: they would bring half of 3.7 without its upgrade guide. Issues #294 and #295 are assessed for a targeted fix only. |
 | **3.7.5** | The work done: API v3, add-ons, the security model, the application contract, Simulate, the document-store users, the upgrade guide | Published first under the npm `next` dist-tag, then promoted to `latest` (below). |
 | **3.7.6** | Export and import of several models with their dependencies in one package (section 8) | Additive: no change to an API contract. Built on the 3.7.5 tag, on a branch of its own. |
-| **3.8** | The OWF Host composition layer, external identity integration (including issuer and audience validation), application-aware modeling and the Integration Workbench | Architecture changes: not squeezed into patch releases. |
-| **Later** | Optional Work Management, separate persistence, a unified My Work view | Incremental. A complete Work Management is not required to release 3.8. |
+| **3.8** | Application integration only ([roadmap-3.8.md](roadmap-3.8.md)): the OWF Host composition layer, external identity integration (including issuer and audience validation), application-aware modeling and the Integration Workbench | Architecture changes: not squeezed into patch releases. |
+| **Later** | Tenants and quotas (held past 3.8, decided 2026-11-25), optional Work Management, separate persistence, a unified My Work view | Incremental. A complete Work Management is not required to release 3.8. |
 
 ### Why 3.7.5 is released, and how
 
