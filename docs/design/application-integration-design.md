@@ -8,6 +8,8 @@
 - **Scope:** BPMN Server 3.5+ evolution, including future multi-application hosting
 - **Placement:** the integration is built in `bpmn-web`, where the API is, with as little change to `bpmn-server` as possible
 
+> **Delivery update (2026-11-26):** This page records the earlier service and task API design. For the current side-by-side architecture and rollout, see [Side-by-side application integration](embedded-ui-integration.md) and the [integration protocol](integration-protocol.md). The first delivery is services only (API v3); embedded UI is a later optional increment using host-provided controller/details containers. Existing historical phase numbering below refers to the older service implementation sequence, not the new delivery phases.
+
 ## 1. Overview
 
 BPMN Server should integrate with an existing business application without requiring custom TypeScript for ordinary operations. The application owns its user interface, business rules, authoritative business data and identities; BPMN Server owns process execution, waiting items, task state, tokens, timers and workflow history.
