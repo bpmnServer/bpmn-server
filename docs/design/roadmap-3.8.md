@@ -18,7 +18,7 @@ engine's isolation from the host is done in 3.7 ([engine-isolation.md](engine-is
 
 **Phase 1 — services only.** Deliver the two-way service integration, identity, contract, connector permissions and service-level tests first. No browser SDK, embedded pages, UI refactoring or new UI composition is needed. Workbench UI is not a Phase 1 dependency; use existing tools, manual configuration or agent-assisted discovery.
 
-**Phase 2 — embedded OWF UI.** Use a versioned JavaScript SDK with two application-owned DOM containers: controller and details. OWF manages selection and rendering without taking over host navigation.
+**Phase 2 — shared OWF UI components and embedding.** Establish reusable components in the standalone OWF UI first; compose OWF pages from them, then expose the same implementation through a versioned JavaScript SDK with two application-owned DOM containers: controller and details. OWF manages selection and rendering without taking over host navigation. No duplicate internal/external views. This work is entirely outside Phase 1.
 
 **Phase 3 — optional advanced composition.** Host form handoff, shared details and standalone widgets. Phase 2 and 3 release assignments are not fixed. See [Side-by-side integration design](embedded-ui-integration.md) for interfaces and acceptance criteria.
 
