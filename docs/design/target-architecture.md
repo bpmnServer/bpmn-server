@@ -119,6 +119,8 @@ A unified My Work page can aggregate results from both Readers without merging t
 
 ## 6. Application-aware modeling and integration
 
+**Delivery decision (2026-11-26):** service integration is the first standalone delivery, without UI SDK or embedded OWF views. Optional UI composition follows using two application-owned DOM containers, controller and details. See [Side-by-side integration design](embedded-ui-integration.md) and [3.8 roadmap](roadmap-3.8.md). The modeling maturity levels below are independent of these delivery phases.
+
 Full integration is not a prerequisite for modeling. OWF supports three progressive levels:
 
 | Level | Awareness | Execution |
