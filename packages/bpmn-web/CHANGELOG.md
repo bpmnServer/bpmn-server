@@ -57,8 +57,8 @@ and here
   and what it publishes in `app-contract.json`: its APIs, each with the connector made from it and how that stands (no
   connector made, no key, not tested, connected, last test failed, off), its pages, roles and functions, what is wrong with the
   file, and how the application and this server reach each other (the API it calls and whether the service key is set, the
-  address links begin with, who signs people in). An administrator's **Test** button on each API runs its connector's test and
-  comes back to the card. `contractCard` is exported. Test:
+  address links begin with, who signs people in). An administrator's **Make connector** button (for an API with none: its document is read from
+  the address the contract gives) and **Test** button on each API come back to the card. `contractCard` is exported. Test:
   `apps/testSampleApp/test/web/integration-contract.test.mjs`.
 - **Handoffs** (docs/docs/handoffs.md): an application that runs OWF beside it sends a person to one of OWF's pages with no
   second sign-in. Its back end asks for a handoff (`POST /api/v3/handoffs`, the service key: a person, their groups, a task,

@@ -123,3 +123,47 @@ test("Test on the card: the connector's test is run, and the card says connected
     fs.rmSync(path.join(web.definitionsPath, 'app-contract.json'), { force: true });
   }
 });
+
+// ---- Make connector: an API the contract declares, made a connector from its document, from the card
+
+test("Make connector on the card: the contract's API is read from its address and made a connector, then it is tested", async () => {
+  process.env.SECRETS_KEY ??= 'a test encryption key';
+  const doc = { openapi: '3.0.3', info: { title: 'Payroll', version: '1' }, paths: { '/ping': { get: { operationId: 'ping', responses: { 200: { description: 'OK' } } } } } };
+  const api = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(req.url === '/api/payroll/openapi.json' ? doc : { ok: true }));
+  });
+  await new Promise(resolve => api.listen(0, '127.0.0.1', resolve));
+  const root = `http://127.0.0.1:${api.address().port}/api/payroll`;
+  try {
+    fs.writeFileSync(path.join(web.definitionsPath, 'app-contract.json'), JSON.stringify({ name: 'pay', apis: [{ id: 'payroll', openapi: `${root}/openapi.json` }, { id: 'elsewhere', openapi: 'https://nowhere.invalid/spec.yaml' }] }));
+    const before = (await admin.get('/dashboard/settings/contract')).text;
+    assert.match(before, /no connector made/);
+    assert.match(before, /name="source" value="http:\/\/127\.0\.0\.1:\d+\/api\/payroll\/openapi\.json"/, 'its document');
+    assert.match(before, new RegExp(`name="baseUrl" value="${root.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&')}"`), 'its address, from where the document is');
+    assert.equal((await designer.get('/dashboard/settings/contract')).text.includes('Make connector'), false, 'an administrator\'s button');
+
+    const made = await admin.post('/dashboard/admin/connectors', { id: 'payroll', source: `${root}/openapi.json`, baseUrl: root, returnTo: '/dashboard/settings/contract' });
+    assert.equal(made.status, 302, why(made));
+    assert.match(made.location, /^\/dashboard\/settings\/contract\?message=/, 'back to the card');
+    assert.match(decodeURIComponent(made.location), /Connector 'payroll' added: 1 operations/);
+    const connector = await web.bpmnServer.connectors.get('payroll');
+    assert.equal(connector.baseUrl, root);
+    assert.match((await admin.get('/dashboard/settings/contract')).text, /not tested/);
+
+    const ran = await admin.post('/dashboard/admin/connectors/payroll/test', { returnTo: '/dashboard/settings/contract' });
+    assert.match(decodeURIComponent(ran.location), /Test of payroll\/ping: OK/);
+    assert.match((await admin.get('/dashboard/settings/contract')).text, /connected/);
+
+    // a failure comes back to the card too, with what went wrong; a return address that is not the Settings goes to the connector pages
+    const failed = await admin.post('/dashboard/admin/connectors', { id: 'elsewhere', source: 'https://nowhere.invalid/spec.yaml', returnTo: '/dashboard/settings/contract' });
+    assert.match(failed.location, /^\/dashboard\/settings\/contract\?message=/);
+    const stray = await admin.post('/dashboard/admin/connectors', { id: 'payroll', source: `${root}/openapi.json`, returnTo: 'http://evil.example/' });
+    assert.match(stray.location, /^\/dashboard\/admin\/connectors/, 'not sent anywhere else');
+    assert.equal((await designer.post('/dashboard/admin/connectors', { id: 'x', source: `${root}/openapi.json`, returnTo: '/dashboard/settings/contract' })).status, 403);
+  }
+  finally {
+    api.close();
+    fs.rmSync(path.join(web.definitionsPath, 'app-contract.json'), { force: true });
+  }
+});

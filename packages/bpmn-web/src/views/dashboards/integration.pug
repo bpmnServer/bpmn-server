@@ -38,6 +38,15 @@ mixin contract(info)
               = a.state
               if a.tested && !a.tested.ok && a.tested.message
                 span.dash-muted  (#{a.tested.message})
+              if !a.connector && isAdmin
+                | &nbsp;
+                form.integration-test(method='post', action='/dashboard/admin/connectors', style='display:inline')
+                  input(type='hidden', name='_csrf', value=_csrf)
+                  input(type='hidden', name='returnTo', value='/dashboard/settings/contract')
+                  input(type='hidden', name='id', value=a.id)
+                  input(type='hidden', name='source', value=a.openapi)
+                  input(type='hidden', name='baseUrl', value=a.baseUrl)
+                  button.btn.btn-primary.btn-sm(type='submit', title='Read its document and make the connector') Make connector
               if a.connector && isAdmin
                 | &nbsp;
                 a(href=`/dashboard/admin/connectors/${encodeURIComponent(a.id)}`) open

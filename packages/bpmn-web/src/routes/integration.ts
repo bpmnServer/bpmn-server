@@ -273,7 +273,7 @@ export function rolePermissions(appRoles: string[] = [], granted: Map<string, re
 }
 
 /** One of the contract's APIs, as this server has it: the connector made from it, and how that connector stands. */
-export interface ContractApi { id: string; openapi: string; connector: boolean; enabled?: boolean; keyed?: boolean; tested?: { ok: boolean; at: string; message?: string }; state: string }
+export interface ContractApi { id: string; openapi: string; /** where its calls go, taken from its document's address (`.../openapi.json`): for making the connector */ baseUrl?: string; connector: boolean; enabled?: boolean; keyed?: boolean; tested?: { ok: boolean; at: string; message?: string }; state: string }
 export interface ContractCard {
     found: boolean;
     name?: string;
@@ -311,7 +311,9 @@ export function contractCard(contract: any, problems: string[], connectors: any[
             : !keyed && connector.auth ? 'no key'
             : tested ? (tested.ok ? 'connected' : 'last test failed')
             : 'not tested';
-        return { id: a.id, openapi: a.openapi, connector: !!connector, enabled: connector?.enabled, keyed, tested, state };
+        // the document is at `<the API>/openapi.json` by convention: the API's address is what is before it
+        const baseUrl = /^https?:\/\/.+\/openapi\.json$/i.test(String(a.openapi)) ? String(a.openapi).replace(/\/openapi\.json$/i, '') : undefined;
+        return { id: a.id, openapi: a.openapi, ...(baseUrl ? { baseUrl } : {}), connector: !!connector, enabled: connector?.enabled, keyed, tested, state };
     });
     return {
         found: true, name: contract.name, description: contract.description, apis,

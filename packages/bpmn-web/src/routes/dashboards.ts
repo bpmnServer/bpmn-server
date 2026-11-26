@@ -553,13 +553,25 @@ export class Dashboards extends Common {
             });
         }));
 
+        // a page of the Settings an action may send the person back to (the application's contract card), else none
+        const settingsReturn = (to: unknown): string | null => /^\/dashboard\/settings(\/[a-z]+)?$/.test(String(to ?? '')) ? String(to) : null;
         router.post('/admin/connectors', this.isAdmin, action(async (req, res) => {
             const { id, name, source, document, baseUrl } = req.body;
-            const added = await connectors().add({
-                id: String(id ?? '').trim(), name: name?.trim() || undefined, baseUrl: baseUrl?.trim() || undefined,
-                ...(document?.trim() ? { document } : { source: source?.trim() }),
-            }, req.user?.userName);
-            backToConnectors(res, `Connector '${added.id}' added: ${Object.keys(added.operations).length} operations.`, added.id);
+            const back = settingsReturn(req.body.returnTo);
+            let added;
+            try {
+                added = await connectors().add({
+                    id: String(id ?? '').trim(), name: name?.trim() || undefined, baseUrl: baseUrl?.trim() || undefined,
+                    ...(document?.trim() ? { document } : { source: source?.trim() }),
+                }, req.user?.userName);
+            }
+            catch (exc) {
+                if (back) return res.redirect(`${back}?message=` + encodeURIComponent(exc.message));
+                throw exc;
+            }
+            const said = `Connector '${added.id}' added: ${Object.keys(added.operations).length} operations.`;
+            if (back) return res.redirect(`${back}?message=` + encodeURIComponent(said));
+            backToConnectors(res, said, added.id);
         }));
 
         router.get('/admin/connectors/:id', this.isAdmin, handler(async (req, res) => {
@@ -643,7 +655,7 @@ export class Dashboards extends Common {
             const result = await server.engine.testConnector(req.params.id, req.body.operation || undefined, input);
             const said = `Test of ${req.params.id}/${result.operation}: ${result.ok ? 'OK' : 'failed'}, ${result.message}`;
             // from the application's contract card (Settings): back to it, with the answer; else the connector's own page
-            if (/^\/dashboard\/settings(\/[a-z]+)?$/.test(String(req.body.returnTo ?? '')))
+            if (settingsReturn(req.body.returnTo))
                 return res.redirect(`${req.body.returnTo}?message=` + encodeURIComponent(said));
             backToConnectors(res, said.replace(`${req.params.id}/`, ''), req.params.id);
         }));
