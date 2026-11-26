@@ -15,8 +15,9 @@ and here
 ## [Unreleased]
 ### Added
 - **`handoffs`** on `BPMNClient3` (the service key's): `handoffs.task(userName, groups, taskId, { returnTo, minutes })`, or
+  `handoffs.start(userName, groups, process, { startNodeId, returnTo })` for a process's start form, or
   `handoffs.issue(userName, groups, page, options)`, asks for a one-visit link that sends one of the application's people to a
-  task's form in OWF with no second sign-in (`POST /api/v3/handoffs`, docs/docs/handoffs.md). Tests: `test/unit/client3.test.mjs`,
+  task's or a start form in OWF with no second sign-in (`POST /api/v3/handoffs`, docs/docs/handoffs.md). Tests: `test/unit/client3.test.mjs`,
   `test/contract/client3.test.mjs`.
 
 ## Release 3.7.5 (2026-11-25)

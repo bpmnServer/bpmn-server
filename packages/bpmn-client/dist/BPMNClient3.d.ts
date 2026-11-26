@@ -250,11 +250,15 @@ declare class Tokens3 extends Area3 {
         revoked: number;
     }>;
 }
-/** What a handoff opens: a task's form (POST /handoffs). */
-interface HandoffPage {
+/** What a handoff opens: a task's form, or a process's start form (POST /handoffs). */
+type HandoffPage = {
     type: 'task';
     id: string;
-}
+} | {
+    type: 'start';
+    process: string;
+    startNodeId?: string;
+};
 interface HandoffOptions {
     returnTo?: string; /** how long the link lasts: default 1, at most 5 */
     minutes?: number;
@@ -278,6 +282,10 @@ declare class Handoffs3 extends Area3 {
     issue(userName: string, groups: string[], page: HandoffPage, options?: HandoffOptions): Promise<Handoff>;
     /** A handoff to a task's form, for this person. */
     task(userName: string, groups: string[], taskId: string, options?: HandoffOptions): Promise<Handoff>;
+    /** A handoff to a process's start form, for this person (`startNodeId`: its start event; none: the first they may use). */
+    start(userName: string, groups: string[], process: string, options?: HandoffOptions & {
+        startNodeId?: string;
+    }): Promise<Handoff>;
 }
 export { BPMNClient3, Processes3, Tasks3, Instances3, Models3, Rules3, Messages3, Signals3, Admin3, Tokens3, Handoffs3 };
 export type { HandoffPage, HandoffOptions, Handoff };

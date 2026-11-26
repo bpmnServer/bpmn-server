@@ -323,6 +323,11 @@ class Handoffs3 extends Area3 {
     task(userName, groups, taskId, options = {}) {
         return this.issue(userName, groups, { type: 'task', id: taskId }, options);
     }
+    /** A handoff to a process's start form, for this person (`startNodeId`: its start event; none: the first they may use). */
+    start(userName, groups, process, options = {}) {
+        const { startNodeId, ...rest } = options;
+        return this.issue(userName, groups, { type: 'start', process, ...(startNodeId ? { startNodeId } : {}) }, rest);
+    }
 }
 export { BPMNClient3, Processes3, Tasks3, Instances3, Models3, Rules3, Messages3, Signals3, Admin3, Tokens3, Handoffs3 };
 //# sourceMappingURL=BPMNClient3.js.map

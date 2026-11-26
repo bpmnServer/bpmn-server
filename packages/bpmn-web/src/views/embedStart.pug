@@ -1,0 +1,12 @@
+extends layout
+
+include includes/startForm.pug
+
+//- A process's start form for a person an application handed to this page (routes/embed.ts): no menu (layout, embed),
+//- the form the start page draws, posted to the embed address, with its choices answered there too.
+block content
+	div(class="container")
+		h3 Start <strong>#{start.name || processName}</strong>
+		if !start.fields.length
+			p.dash-muted It asks for nothing: press Start.
+		+startForm(start, formAction, choicesBase)

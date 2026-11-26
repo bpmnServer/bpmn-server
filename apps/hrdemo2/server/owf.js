@@ -58,16 +58,17 @@ export class OwfLink {
   }
 
   /**
-   * A handoff (POST /api/v3/handoffs, with the service key): a one-visit link to OWF's form of this task for this person,
-   * and where OWF sends them when it is done. Returns the link.
+   * A handoff (POST /api/v3/handoffs, with the service key): a one-visit link to a page of OWF for this person (`page`: a
+   * task's form, { type: 'task', id }, or a process's start form, { type: 'start', process, startNodeId }), and where OWF
+   * sends them when it is done. Returns the link.
    */
-  async handoff(user, taskId, returnTo) {
+  async handoff(user, page, returnTo) {
     const groups = [...new Set((user.userGroups ?? []).map(String).filter(g => !OWF_ONLY.has(g)))].sort();
     const response = await this.fetch(`${this.url}/api/v3/handoffs`, {
       method: 'POST', headers: { 'x-api-key': this.key, 'content-type': 'application/json' },
-      body: JSON.stringify({ userName: user.userName, groups, page: { type: 'task', id: taskId }, returnTo }),
+      body: JSON.stringify({ userName: user.userName, groups, page, returnTo }),
     });
-    if (!response.ok) throw new OwfError(response.status, `OWF would not open that task for ${user.userName} (${response.status})`);
+    if (!response.ok) throw new OwfError(response.status, `OWF would not open that for ${user.userName} (${response.status})`);
     return (await response.json()).url;
   }
 
@@ -98,13 +99,26 @@ const safePath = to => typeof to === 'string' && to.startsWith('/') && !to.start
  * them to returnTo (a page of this site; default /hr/).
  */
 export function owfOpenTask(link = new OwfLink()) {
+  return opener(link, req => ({ type: 'task', id: req.params.id }));
+}
+
+/**
+ * GET /api/hr/owf/start/:process?startNodeId=&returnTo=/hr/...: opens a process's start form in OWF, for the person signed in
+ * here, the same way. OWF sends them back to returnTo with ?instance= (the case that was made).
+ */
+export function owfOpenStart(link = new OwfLink()) {
+  return opener(link, req => ({ type: 'start', process: req.params.process, ...(req.query.startNodeId ? { startNodeId: String(req.query.startNodeId) } : {}) }));
+}
+
+/** The route of a page: not connected, not signed in, a return address of this site, then the handoff and the redirect. */
+function opener(link, pageOf) {
   return async (req, res) => {
     if (!link.configured) return res.status(404).json({ error: { code: 'NOT_CONNECTED', message: 'No workflow server is connected (OWF_URL, OWF_SERVICE_KEY)' } });
     if (!req.user) return res.status(401).json({ error: { code: 'NOT_SIGNED_IN', message: 'Sign in to the HR application' } });
     const to = req.query.returnTo === undefined ? '/hr/' : safePath(req.query.returnTo);
     if (!to) return res.status(400).json({ error: { code: 'BAD_RETURN', message: 'returnTo is a page of this site' } });
     const here = `${String(req.get('x-forwarded-proto') ?? req.protocol).split(',')[0].trim()}://${req.get('x-forwarded-host') ?? req.get('host')}`;
-    try { res.redirect(await link.handoff(req.user, req.params.id, here + to)); }
+    try { res.redirect(await link.handoff(req.user, pageOf(req), here + to)); }
     catch (error) { res.status(error instanceof OwfError ? 502 : 504).json({ error: { code: 'WORKFLOW_SERVER', message: error.message } }); }
   };
 }

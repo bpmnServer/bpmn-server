@@ -1,14 +1,15 @@
 //- A start event's form: its fields (typed as the model says), then Start. My work lists one per start event; the
-//- start page (/execute/<model>) the ones of a model. start: { processName, startNodeId, name, fields }.
-mixin startForm(start)
-  form.dash-start-form(method='post', action='/dashboard/start')
+//- start page (/execute/<model>) the ones of a model. start: { processName, startNodeId, name, fields }. A page an application
+//- hands a person to (routes/embed.ts) gives its own action and choices address.
+mixin startForm(start, action, choicesBase)
+  form.dash-start-form(method='post', action=action || '/dashboard/start')
     input(type='hidden', name='_csrf', value=_csrf)
     input(type='hidden', name='processName', value=start.processName)
     input(type='hidden', name='startNodeId', value=start.startNodeId)
     each field in start.fields
       label(for=`${start.startNodeId}-${field.id}`)= field.label || field.id
       //- its choices from a source (<owf:list>, <owf:lookup>): public/javascripts/formLookup.js; its label saved as <id>Display
-      - var choicesUrl = (field.list || field.lookup) ? `/dashboard/choices/start/${encodeURIComponent(start.processName)}/${encodeURIComponent(field.id)}` : null
+      - var choicesUrl = (field.list || field.lookup) ? `${choicesBase || '/dashboard/choices/start'}/${encodeURIComponent(start.processName)}/${encodeURIComponent(field.id)}` : null
       - var fid = `${start.startNodeId}-${field.id}`
       if field.list
         select(id=fid, name=`field.${field.id}`, data-choices-url=choicesUrl, data-start=start.startNodeId, data-value=field.defaultValue || '', data-filtered=(field.list.filter ? 'true' : 'false'), data-display-for=`${fid}-display`)

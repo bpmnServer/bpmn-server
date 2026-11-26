@@ -335,8 +335,8 @@ class Tokens3 extends Area3 {
     }
 }
 
-/** What a handoff opens: a task's form (POST /handoffs). */
-interface HandoffPage { type: 'task'; id: string }
+/** What a handoff opens: a task's form, or a process's start form (POST /handoffs). */
+type HandoffPage = { type: 'task'; id: string } | { type: 'start'; process: string; startNodeId?: string };
 interface HandoffOptions { /** where the person goes when the page is done: an http(s) address of the application, or a path */ returnTo?: string; /** how long the link lasts: default 1, at most 5 */ minutes?: number }
 interface Handoff { handoff: string; url: string; expiresAt: string; userName: string; page: HandoffPage }
 
@@ -355,6 +355,11 @@ class Handoffs3 extends Area3 {
     /** A handoff to a task's form, for this person. */
     task(userName: string, groups: string[], taskId: string, options: HandoffOptions = {}): Promise<Handoff> {
         return this.issue(userName, groups, { type: 'task', id: taskId }, options);
+    }
+    /** A handoff to a process's start form, for this person (`startNodeId`: its start event; none: the first they may use). */
+    start(userName: string, groups: string[], process: string, options: HandoffOptions & { startNodeId?: string } = {}): Promise<Handoff> {
+        const { startNodeId, ...rest } = options;
+        return this.issue(userName, groups, { type: 'start', process, ...(startNodeId ? { startNodeId } : {}) }, rest);
     }
 }
 

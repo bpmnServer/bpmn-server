@@ -2,11 +2,13 @@ import crypto from 'node:crypto';
 import { REFUSED_GROUPS } from './tokens.js';
 
 /*
- * Handoffs (docs/design/roadmap-3.8.md): the application hands a person it has signed in to one page of OWF, with no
- * second sign-in. Its back end asks, with the service key, for a handoff: a link good for one visit, within a minute or
- * so, for one person and one page (a task's form). The person's browser opens the link; OWF trades it for a short session
- * that opens that page and nothing else (routes/embed.ts). The link is random and the store keeps its SHA-256, never the
- * link, in a collection of its own (wf_handoffs) through the storage port, as the tokens are.
+ * Handoffs (docs/docs/handoffs.md): the application hands a person it has signed in to one page of OWF, with no second
+ * sign-in. Its back end asks, with the service key, for a handoff: a link good for one visit, within a minute or so, for
+ * one person and one page. The person's browser opens the link; OWF trades it for a short session that opens that page and
+ * nothing else (routes/embed.ts). The link is random and the store keeps its SHA-256, never the link, in a collection of its
+ * own (wf_handoffs) through the storage port, as the tokens are.
+ *
+ * The page is a task's form (`{ type: 'task', id }`) or a process's start form (`{ type: 'start', process, startNodeId? }`).
  *
  * A handoff is not a token: a token is a person's credential for API calls and lasts minutes to a day; a handoff is
  * spent by its first visit, and what it leads to is one page.
@@ -14,7 +16,7 @@ import { REFUSED_GROUPS } from './tokens.js';
 const COLLECTION = 'wf_handoffs';
 export const DEFAULT_HANDOFF_MINUTES = 1, MAX_HANDOFF_MINUTES = 5;
 
-export type HandoffPage = { type: 'task'; id: string };
+export type HandoffPage = { type: 'task'; id: string } | { type: 'start'; process: string; startNodeId?: string };
 /** What a spent handoff gives: whom the page is for, which page, and where to go when it is done. */
 export interface HandoffHolder { userName: string; groups: string[]; page: HandoffPage; returnTo?: string; issuedBy: string }
 
@@ -27,6 +29,18 @@ const nowIso = (now: number) => new Date(now).toISOString();
 /** Where a person goes when done: an address of the application's (http or https), or a path on this site. */
 const isReturnTo = (value: unknown): value is string => typeof value === 'string' && value.length <= 2000
     && (/^https?:\/\/[^\s]+$/i.test(value) || (value.startsWith('/') && !value.startsWith('//')));
+
+/** A name that is a part of an address: no separator, no `..`, no control characters. */
+const plain = (value: unknown, max = 128): value is string => typeof value === 'string' && value.trim() !== '' && value.length <= max
+    && !/[\\/?#\u0000-\u001f]/.test(value) && !value.includes('..');
+
+/** The page as it is kept, or undefined when it is not one a handoff opens. */
+export function pageOf(page: any): HandoffPage | undefined {
+    if (page?.type === 'task' && plain(page.id, 200)) return { type: 'task', id: page.id.trim() };
+    if (page?.type === 'start' && plain(page.process) && (page.startNodeId === undefined || plain(page.startNodeId)))
+        return { type: 'start', process: page.process.trim(), ...(page.startNodeId ? { startNodeId: page.startNodeId.trim() } : {}) };
+    return undefined;
+}
 
 export class Handoffs {
     constructor(private readonly server) { }
@@ -51,8 +65,9 @@ export class Handoffs {
             throw new HandoffError(400, 'groups is a list of names', 'BAD_GROUPS');
         if (groups.some(g => REFUSED_GROUPS.includes(g.toUpperCase())))
             throw new HandoffError(403, `a handoff can not have ${REFUSED_GROUPS.join(', ')}`, 'GROUP_REFUSED');
-        if (page?.type !== 'task' || typeof page.id !== 'string' || !page.id.trim() || /[\\/?#]/.test(page.id))
-            throw new HandoffError(400, "page is { type: 'task', id }: the task's id", 'BAD_PAGE');
+        const stored = pageOf(page);
+        if (!stored)
+            throw new HandoffError(400, "page is { type: 'task', id } (the task's id) or { type: 'start', process, startNodeId? }", 'BAD_PAGE');
         if (returnTo !== undefined && !isReturnTo(returnTo))
             throw new HandoffError(400, 'returnTo is an http or https address, or a path', 'BAD_RETURN');
         const minutesNumber = Number(minutes);
@@ -62,11 +77,12 @@ export class Handoffs {
         const handoff = `bph_${crypto.randomBytes(32).toString('base64url')}`;
         const expiresAt = nowIso(now + minutesNumber * 60_000);
         await this.store.insert(this.database, COLLECTION, [{
-            hash: hash(handoff), userName: userName.trim(), groups, page: { type: 'task', id: page.id.trim() }, ...(returnTo ? { returnTo } : {}),
+            hash: hash(handoff), userName: userName.trim(), groups, page: stored, ...(returnTo ? { returnTo } : {}),
             issuedBy, issuedAt: nowIso(now), expiresAt,
         }]);
-        const url = `${site.replace(/\/+$/, '')}/embed/task/${encodeURIComponent(page.id.trim())}?handoff=${handoff}`;
-        return { handoff, url, expiresAt, userName: userName.trim(), page: { type: 'task', id: page.id.trim() } };
+        const where = stored.type === 'task' ? `task/${encodeURIComponent(stored.id)}` : `start/${encodeURIComponent(stored.process)}`;
+        const url = `${site.replace(/\/+$/, '')}/embed/${where}?handoff=${handoff}`;
+        return { handoff, url, expiresAt, userName: userName.trim(), page: stored };
     }
 
     /**

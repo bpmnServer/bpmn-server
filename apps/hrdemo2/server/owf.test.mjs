@@ -1,7 +1,7 @@
 // The HR application's link to OWF (server/owf.js): what it passes on, and the token it asks for each person.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { OwfLink, mayAsk, owfProxy, owfOpenTask } from './owf.js';
+import { OwfLink, mayAsk, owfProxy, owfOpenTask, owfOpenStart } from './owf.js';
 
 /** A fake OWF: tokens are asked for with the key; every other call must carry the token. */
 function fakeOwf({ revoked = [], startAt = 0 } = {}) {
@@ -96,7 +96,7 @@ test('a handoff is asked for with the service key, for the person and the task, 
     calls.push({ url, init });
     return new Response(JSON.stringify({ url: 'http://owf/embed/task/7?handoff=bph_x' }), { status: 201 });
   } });
-  const url = await link.handoff(ann, '7', 'http://hr/hr/employees');
+  const url = await link.handoff(ann, { type: 'task', id: '7' }, 'http://hr/hr/employees');
   assert.equal(url, 'http://owf/embed/task/7?handoff=bph_x');
   assert.equal(calls[0].url, 'http://owf/api/v3/handoffs');
   assert.equal(calls[0].init.headers['x-api-key'], 'the-key');
@@ -128,4 +128,21 @@ test('opening a task in OWF: not connected, not signed in, a return address that
   assert.equal(sent.at(-1).returnTo, 'http://hr.example:3200/hr/assignments?x=1', 'back to this site, as the browser reached it');
   assert.equal((await open(handler, { user: ann })).status, 302, 'no returnTo: the home page');
   assert.equal(sent.at(-1).returnTo, 'http://hr.example:3200/hr/');
+});
+
+test('opening a start form in OWF: the process and, when it says, its start event, for the person signed in', async () => {
+  const sent = [];
+  const link = new OwfLink({ url: 'http://owf', key: 'the-key', fetch: async (url, init) => {
+    sent.push(JSON.parse(init.body));
+    return new Response(JSON.stringify({ url: 'http://owf/embed/start/Leave?handoff=bph_x' }), { status: 201 });
+  } });
+  const handler = owfOpenStart(link);
+  assert.equal((await open(handler, {})).status, 401, 'nobody signed in');
+  assert.equal((await open(handler, { user: ann, params: { process: 'Leave' }, query: { returnTo: 'http://evil.example/' } })).status, 400);
+  const first = await open(handler, { user: ann, params: { process: 'Leave' }, query: { returnTo: '/hr/start' } });
+  assert.deepEqual([first.status, first.to], [302, 'http://owf/embed/start/Leave?handoff=bph_x']);
+  assert.deepEqual(sent.at(-1).page, { type: 'start', process: 'Leave' });
+  assert.equal(sent.at(-1).returnTo, 'http://hr.example:3200/hr/start');
+  await open(handler, { user: ann, params: { process: 'Leave' }, query: { startNodeId: 'Begin', returnTo: '/hr/start' } });
+  assert.deepEqual(sent.at(-1).page, { type: 'start', process: 'Leave', startNodeId: 'Begin' });
 });

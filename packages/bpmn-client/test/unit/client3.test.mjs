@@ -176,3 +176,12 @@ test('handoffs: a refusal comes back as the API error', async () => {
   const c = new BPMNClient3({ url: base, apiKey: 'k' });
   await assert.rejects(() => c.handoffs.task('ann', ['ADMIN'], '7'), e => e instanceof BPMNApiError && e.status === 403 && e.code === 'GROUP_REFUSED');
 });
+
+test('handoffs: a start form, for a process and, when it says, its start event', async () => {
+  reply = r => r.path.endsWith('/handoffs') ? { status: 201, body: { handoff: 'bph_y', url: 'http://owf/embed/start/leave?handoff=bph_y', expiresAt: 'soon', userName: 'ann', page: r.body.page } } : { body: {} };
+  const c = new BPMNClient3({ url: base, apiKey: 'k' });
+  await c.handoffs.start('ann', ['Employee'], 'leave', { returnTo: '/hr/' });
+  assert.deepEqual(requests[0].body, { userName: 'ann', groups: ['Employee'], page: { type: 'start', process: 'leave' }, returnTo: '/hr/' });
+  await c.handoffs.start('ann', [], 'leave', { startNodeId: 'Begin', minutes: 3 });
+  assert.deepEqual(requests[1].body, { userName: 'ann', groups: [], page: { type: 'start', process: 'leave', startNodeId: 'Begin' }, minutes: 3 });
+});

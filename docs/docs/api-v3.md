@@ -789,7 +789,7 @@ Body (JSON):
 |---|---|---|---|
 | `userName` | string | yes |  |
 | `groups` | list of string |  | The groups the application gives the user: not SYSTEM, ADMIN or DESIGNER |
-| `page` | { type, id } | yes |  |
+| `page` | { type, id, process, startNodeId } | yes | A task's form ({ type: 'task', id }) or a process's start form ({ type: 'start', process, startNodeId }) |
 | `returnTo` | string |  | Where the person goes when done: an http or https address of the application, or a path |
 | `minutes` | number |  | default 1, at most 5 |
 

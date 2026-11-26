@@ -63,10 +63,12 @@ and here
 - **Handoffs** (docs/docs/handoffs.md): an application that runs OWF beside it sends a person to one of OWF's pages with no
   second sign-in. Its back end asks for a handoff (`POST /api/v3/handoffs`, the service key: a person, their groups, a task,
   where to go when done); the person's browser opens the link, which is spent by its first visit (a minute, at most 5), and
-  gets the task's form with no menu (`/embed/task/<id>`) through a short session that opens that page, its choices and its
-  submit and nothing else. The task is completed as that person through API v3's operations, then they go to `returnTo`. The
+  gets the task's form with no menu (`/embed/task/<id>`), or a process's start form (`/embed/start/<process>`: the page is
+  `{ type: 'start', process, startNodeId }`, and `returnTo` gets `?instance=`), through a short session that opens that page, its
+  choices and its submit and nothing else. The task is completed, or the process started, as that person through API v3's
+  operations, then they go to `returnTo`. The
   groups SYSTEM, ADMIN and DESIGNER are refused, as for a token. `apps/hrdemo2` (the HR application on its own) and
-  `apps/sampleApp2` (OWF beside it) are the working example. Test: `apps/testSampleApp/test/web/embed-handoff.test.mjs`.
+  `apps/sampleApp2` (OWF beside it) are the working example. Tests: `apps/testSampleApp/test/web/embed-handoff.test.mjs`, `embed-start.test.mjs`.
 - **Export and import of several models at once** (docs/docs/export-import.md): tick processes, decisions and policies on the
   export page, review what each needs (the models it calls, its decisions and policies, notification templates, the
   connectors it names, its tests and diagram, and the cases its tests made (`test-cases/`, which the model guide's

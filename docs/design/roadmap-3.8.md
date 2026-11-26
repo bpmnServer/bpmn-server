@@ -44,7 +44,12 @@ first, in both directions:
   browser to it; OWF shows the form with no menu, completes it as that person and sends them back. Checked end to end: the
   link is spent, the form's fields are drawn, the submit moves the case on, and the session ends.
 
-Next in the prototype: the event feed so the application's lists refresh, and a page in a frame.
+- **Start forms the same way:** hrdemo2's **Start a process** page lists what the person may start (OWF's API v3 through its
+  proxy) and opens a start form in OWF by a handoff (`GET /api/hr/owf/start/:process`); OWF starts it as that person and sends
+  them back with `?instance=`. `BPMNClient3.handoffs.task` and `.start` are the application-side call.
+
+Not in the prototype yet: a page in a frame, and OWF's other pages (a case's diagram, the guide) from the application. Events
+are out of scope for now (the outbox later), and sending notifications is the application's.
 
 ## Open decisions
 
