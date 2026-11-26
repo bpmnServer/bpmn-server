@@ -1,0 +1,95 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "HR application", "version": "1.0.0", "description": "The HR demo application, running in this server's process." },
+  "paths": {
+    "/employees": {
+      "get": {
+        "operationId": "listEmployees",
+        "summary": "List the employees",
+        "responses": {
+          "200": { "description": "The employees", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Employee" } } } } }
+        }
+      }
+    },
+    "/employees/{id}": {
+      "get": {
+        "operationId": "getEmployee",
+        "summary": "Read an employee",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "description": "The employee's ID, such as EMP-003", "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "The employee", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Employee" } } } },
+          "404": { "description": "No such employee" }
+        }
+      }
+    },
+    "/assignments": {
+      "get": {
+        "operationId": "listAssignments",
+        "summary": "List the assignments",
+        "responses": {
+          "200": { "description": "The assignments", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Assignment" } } } } }
+        }
+      },
+      "post": {
+        "operationId": "createAssignment",
+        "summary": "Assign an employee to a project",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["employeeId", "projectId", "role", "allocation", "startDate", "endDate", "status"],
+                "properties": {
+                  "employeeId": { "type": "string" },
+                  "projectId": { "type": "string" },
+                  "role": { "type": "string" },
+                  "allocation": { "type": "number", "description": "Percent of the employee's time" },
+                  "startDate": { "type": "string", "format": "date" },
+                  "endDate": { "type": "string", "format": "date" },
+                  "status": { "type": "string", "enum": ["Active", "Planned", "Completed"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "The new assignment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Assignment" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "employeeId": { "type": "string" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "email": { "type": "string" },
+          "jobTitle": { "type": "string" },
+          "status": { "type": "string" },
+          "departmentName": { "type": "string" },
+          "managerName": { "type": "string" },
+          "utilization": { "type": "number" }
+        }
+      },
+      "Assignment": {
+        "type": "object",
+        "properties": {
+          "assignmentId": { "type": "string" },
+          "employeeId": { "type": "string" },
+          "projectId": { "type": "string" },
+          "role": { "type": "string" },
+          "allocation": { "type": "number" },
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" },
+          "status": { "type": "string" },
+          "employeeName": { "type": "string" },
+          "projectName": { "type": "string" }
+        }
+      }
+    }
+  }
+}

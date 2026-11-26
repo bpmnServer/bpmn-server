@@ -1,0 +1,62 @@
+[
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema@0.1.0/resources/schema.json",
+    "name": "Manager approval",
+    "id": "bpmn-web.sample.manager-approval",
+    "version": 1,
+    "description": "A task for the manager group, due in two days.",
+    "appliesTo": ["bpmn:UserTask"],
+    "properties": [
+      {
+        "label": "Approvers",
+        "description": "The group whose members can take the task",
+        "type": "String",
+        "value": "manager",
+        "binding": { "type": "property", "name": "camunda:candidateGroups" },
+        "constraints": { "notEmpty": true }
+      },
+      {
+        "label": "Due",
+        "description": "An expression giving the due date",
+        "type": "String",
+        "value": "$new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)",
+        "binding": { "type": "property", "name": "camunda:dueDate" }
+      },
+      {
+        "label": "Priority",
+        "type": "Dropdown",
+        "value": "50",
+        "choices": [
+          { "name": "High", "value": "80" },
+          { "name": "Normal", "value": "50" },
+          { "name": "Low", "value": "20" }
+        ],
+        "binding": { "type": "property", "name": "camunda:priority" }
+      },
+      {
+        "label": "On completion",
+        "description": "JavaScript run when the task ends",
+        "type": "Hidden",
+        "value": "this.data.approvedAt = new Date().toISOString();",
+        "binding": { "type": "camunda:executionListener", "event": "end", "scriptFormat": "JavaScript" }
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema@0.1.0/resources/schema.json",
+    "name": "Review by requester",
+    "id": "bpmn-web.sample.requester-review",
+    "version": 1,
+    "description": "A task assigned back to the user who started the process.",
+    "appliesTo": ["bpmn:UserTask"],
+    "properties": [
+      {
+        "label": "Assignee",
+        "description": "The data field that holds the requester, set by the start event's initiator",
+        "type": "String",
+        "value": "$data.requester",
+        "binding": { "type": "property", "name": "camunda:assignee" }
+      }
+    ]
+  }
+]

@@ -27,6 +27,21 @@ engine's isolation from the host is done in 3.7 ([engine-isolation.md](engine-is
 | 7 | **A small module in the application**: it calls OWF for events (start a process, send a message or signal, complete a task) as the signed-in user, hands OWF the identity it vouches for (item 2), and answers the pages OWF sends a person to (the identifiers in the address, the task read and completed through the API, then back to `returnTo`) | Part: `BPMNClient3` (a token per user, every API v3 operation), the form-key page protocol, `AssignmentForm.jsx` in the HR demo as the example | The module itself, small and in one package (bpmn-client, or beside it); events from OWF back to the application (task events, webhooks) are the part not designed yet |
 | 8 | **Documents and journeys**: model-first and application-first | Part: the integration guide, `building-workflows.md` for agents | One path in the docs for each |
 
+## The working prototype: two servers, side by side
+
+`apps/hrdemo2` (the business application, on its own) and `apps/sampleApp2` (OWF beside it) establish the communication
+first, in both directions:
+
+- **Application to OWF:** hrdemo2 asks OWF for a token for the person signed in (with OWF's service key, which stays on
+  its server) and passes its pages' calls on to OWF's API v3 as that person (`server/owf.js`: only tasks, cases, the
+  processes to start and who they are). Its To do panel lists the tasks that way. Checked: signed in as an HR user, it
+  starts *Leave Application* and lists the task, and `/users` and a call with no session are refused.
+- **OWF to application:** sampleApp2's connector `hr` is made from the application's own `/api/hr/openapi.json`, with the key
+  `HR_SERVICE_KEY` kept by OWF. Checked: the model *List Employees* returns the application's employees.
+
+Next in the prototype: a form-only OWF page for a task (entered by token, no second sign-in), and the event feed so the
+application's lists refresh.
+
 ## Open decisions
 
 - **Workbench scope in 3.8:** the whole of item 5, or manual discovery only, with the AI route documented?

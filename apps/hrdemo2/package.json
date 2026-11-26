@@ -1,0 +1,25 @@
+{
+  "name": "hrdemo2",
+  "private": true,
+  "version": "1.0.0",
+  "description": "The HR application on its own, beside OWF (OmniWorkflow): its pages (/hr) and REST API (/api/hr); its people's tasks and forms come from OWF's API v3 through server/owf.js",
+  "type": "module",
+  "scripts": {
+    "start": "vite build && node --env-file-if-exists=.env server/index.js",
+    "dev": "vite",
+    "build": "vite build",
+    "test": "node --test server/userManager.test.mjs server/owf.test.mjs"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-session": "^1.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
+    "vite": "^5.4.2"
+  }
+}
