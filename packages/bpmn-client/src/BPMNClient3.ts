@@ -66,6 +66,7 @@ class BPMNClient3 {
     readonly signals: Signals3;
     readonly admin: Admin3;
     readonly tokens: Tokens3;
+    readonly handoffs: Handoffs3;
 
     constructor(options: BPMNClient3Options) {
         if (!options || !options.url) throw new Error('BPMNClient3: url is required');
@@ -84,6 +85,7 @@ class BPMNClient3 {
         this.signals = new Signals3(this);
         this.admin = new Admin3(this);
         this.tokens = new Tokens3(this);
+        this.handoffs = new Handoffs3(this);
     }
 
     /**
@@ -333,4 +335,28 @@ class Tokens3 extends Area3 {
     }
 }
 
-export { BPMNClient3, Processes3, Tasks3, Instances3, Models3, Rules3, Messages3, Signals3, Admin3, Tokens3 };
+/** What a handoff opens: a task's form (POST /handoffs). */
+interface HandoffPage { type: 'task'; id: string }
+interface HandoffOptions { /** where the person goes when the page is done: an http(s) address of the application, or a path */ returnTo?: string; /** how long the link lasts: default 1, at most 5 */ minutes?: number }
+interface Handoff { handoff: string; url: string; expiresAt: string; userName: string; page: HandoffPage }
+
+/**
+ * Handoffs: a person the application has signed in, sent to one page of OWF with no second sign-in. The service key's
+ * (docs/docs/handoffs.md). Send the person's browser to `url`: it is spent by its first visit.
+ *
+ *   const { url } = await service.handoffs.task('ann', ['Employee'], task.id, { returnTo: 'https://hr.example.com/hr/' });
+ *   response.redirect(url);
+ */
+class Handoffs3 extends Area3 {
+    /** A handoff for this person and page: { handoff, url, expiresAt, userName, page }; groups may not be SYSTEM, ADMIN or DESIGNER. */
+    issue(userName: string, groups: string[], page: HandoffPage, options: HandoffOptions = {}): Promise<Handoff> {
+        return this.client.call('POST', '/handoffs', { body: { userName, groups, page, ...options } });
+    }
+    /** A handoff to a task's form, for this person. */
+    task(userName: string, groups: string[], taskId: string, options: HandoffOptions = {}): Promise<Handoff> {
+        return this.issue(userName, groups, { type: 'task', id: taskId }, options);
+    }
+}
+
+export { BPMNClient3, Processes3, Tasks3, Instances3, Models3, Rules3, Messages3, Signals3, Admin3, Tokens3, Handoffs3 };
+export type { HandoffPage, HandoffOptions, Handoff };

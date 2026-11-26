@@ -44,6 +44,7 @@ class BPMNClient3 {
     signals;
     admin;
     tokens;
+    handoffs;
     constructor(options) {
         if (!options || !options.url)
             throw new Error('BPMNClient3: url is required');
@@ -63,6 +64,7 @@ class BPMNClient3 {
         this.signals = new Signals3(this);
         this.admin = new Admin3(this);
         this.tokens = new Tokens3(this);
+        this.handoffs = new Handoffs3(this);
     }
     /**
      * A client acting as one of the application's users. Needs the service key: the client asks for the user's
@@ -305,5 +307,22 @@ class Tokens3 extends Area3 {
         return this.client.call('DELETE', '/tokens', { query: { userName } });
     }
 }
-export { BPMNClient3, Processes3, Tasks3, Instances3, Models3, Rules3, Messages3, Signals3, Admin3, Tokens3 };
+/**
+ * Handoffs: a person the application has signed in, sent to one page of OWF with no second sign-in. The service key's
+ * (docs/docs/handoffs.md). Send the person's browser to `url`: it is spent by its first visit.
+ *
+ *   const { url } = await service.handoffs.task('ann', ['Employee'], task.id, { returnTo: 'https://hr.example.com/hr/' });
+ *   response.redirect(url);
+ */
+class Handoffs3 extends Area3 {
+    /** A handoff for this person and page: { handoff, url, expiresAt, userName, page }; groups may not be SYSTEM, ADMIN or DESIGNER. */
+    issue(userName, groups, page, options = {}) {
+        return this.client.call('POST', '/handoffs', { body: { userName, groups, page, ...options } });
+    }
+    /** A handoff to a task's form, for this person. */
+    task(userName, groups, taskId, options = {}) {
+        return this.issue(userName, groups, { type: 'task', id: taskId }, options);
+    }
+}
+export { BPMNClient3, Processes3, Tasks3, Instances3, Models3, Rules3, Messages3, Signals3, Admin3, Tokens3, Handoffs3 };
 //# sourceMappingURL=BPMNClient3.js.map

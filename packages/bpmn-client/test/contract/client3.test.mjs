@@ -84,3 +84,12 @@ test('models, as the service account', { skip }, async () => {
   const element = await service.models.element(MODEL, 'Submit');
   assert.ok(element.form.fields.length > 0);
 });
+
+test("a handoff: the service key asks for a link to a task's form for a person; what may not be asked for is refused", { skip }, async () => {
+  const made = await service.handoffs.task('sam', ['staff'], 'a-task-id', { returnTo: 'https://hr.example.com/hr/' });
+  assert.match(made.handoff, /^bph_/);
+  assert.equal(made.url.startsWith(`http://${server.host}:${server.port}/embed/task/a-task-id?handoff=bph_`), true);
+  assert.deepEqual(made.page, { type: 'task', id: 'a-task-id' });
+  await assert.rejects(() => service.handoffs.task('sam', ['ADMIN'], 'a-task-id'), e => e instanceof BPMNApiError && e.status === 403);
+  await assert.rejects(() => service.as('sam', ['staff']).handoffs.task('sam', [], 'a-task-id'), e => e instanceof BPMNApiError && e.status === 403, "a person's token is not the service key");
+});

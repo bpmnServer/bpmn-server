@@ -35,6 +35,14 @@ Send the person's browser to `url`.
   is done.
 - **How long:** `minutes`, default 1, at most 5. The link is **spent by its first visit**, whoever makes it.
 
+With `bpmn-client`'s `BPMNClient3` (the application's side):
+
+```ts
+const service = new BPMNClient3({ url: process.env.OWF_URL, apiKey: process.env.OWF_SERVICE_KEY });
+const { url } = await service.handoffs.task('ann', ['Employee'], task.id, { returnTo: 'https://hr.example.com/hr/' });
+response.redirect(url);
+```
+
 ## What the link opens
 
 `/embed/task/<id>`: the task's form with no menu, for that person, as `/invokeItem` draws it, with its choices

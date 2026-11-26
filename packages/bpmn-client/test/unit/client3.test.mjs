@@ -158,3 +158,21 @@ test('a credential is required, and as() needs the service key', () => {
   assert.throws(() => new BPMNClient3({ url: base }), /apiKey or a token/);
   assert.throws(() => new BPMNClient3({ url: base, token: 't' }).as('sam'), /service key/);
 });
+
+test('handoffs: the service key asks for a one-visit link for a person and a page, and says where to go when done', async () => {
+  reply = r => r.path.endsWith('/handoffs') ? { status: 201, body: { handoff: 'bph_x', url: 'http://owf/embed/task/7?handoff=bph_x', expiresAt: 'soon', userName: 'ann', page: { type: 'task', id: '7' } } } : { body: {} };
+  const c = new BPMNClient3({ url: base, apiKey: 'k' });
+  const made = await c.handoffs.task('ann', ['Employee'], '7', { returnTo: 'https://hr.example.com/hr/', minutes: 2 });
+  assert.equal(made.url, 'http://owf/embed/task/7?handoff=bph_x');
+  assert.equal(requests.length, 1, 'one call, no token asked for: the service key asks');
+  assert.deepEqual(requests[0], { method: 'POST', path: '/api/v3/handoffs', query: {}, key: 'k', auth: undefined,
+    body: { userName: 'ann', groups: ['Employee'], page: { type: 'task', id: '7' }, returnTo: 'https://hr.example.com/hr/', minutes: 2 } });
+  await c.handoffs.issue('bob', [], { type: 'task', id: '9' });
+  assert.deepEqual(requests[1].body, { userName: 'bob', groups: [], page: { type: 'task', id: '9' } }, 'no options: none sent');
+});
+
+test('handoffs: a refusal comes back as the API error', async () => {
+  reply = () => ({ status: 403, body: { error: { code: 'GROUP_REFUSED', message: 'a handoff can not have SYSTEM, ADMIN, DESIGNER' } } });
+  const c = new BPMNClient3({ url: base, apiKey: 'k' });
+  await assert.rejects(() => c.handoffs.task('ann', ['ADMIN'], '7'), e => e instanceof BPMNApiError && e.status === 403 && e.code === 'GROUP_REFUSED');
+});
