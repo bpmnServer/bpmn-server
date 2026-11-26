@@ -5,6 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import http from 'node:http';
 import path from 'node:path';
 import { startWebApp, why } from '../support/webApp.mjs';
 import { contractCard } from 'bpmn-web';
@@ -77,4 +78,48 @@ test('a file with problems is said so, and so is no contract', async () => {
   fs.rmSync(path.join(web.definitionsPath, 'app-contract.json'));
   assert.match((await admin.get('/dashboard/settings')).text, /No contract: the application publishes none/);
   assert.match((await admin.get('/dashboard/settings/contract')).text, /The application publishes no contract/);
+});
+
+// ---- the Test button: the connector's test, from the card, and back to it
+
+const HR_DOC = JSON.stringify({ openapi: '3.0.3', info: { title: 'HR', version: '1' }, paths: { '/ping': { get: { operationId: 'ping', summary: 'Is it up', responses: { 200: { description: 'OK' } } } } } });
+test("Test on the card: the connector's test is run, and the card says connected, or that the last test failed", async () => {
+  process.env.SECRETS_KEY ??= 'a test encryption key';
+  let up = true;
+  const api = http.createServer((req, res) => { res.writeHead(up ? 200 : 503, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ ok: up })); });
+  await new Promise(resolve => api.listen(0, '127.0.0.1', resolve));
+  try {
+    fs.writeFileSync(path.join(web.definitionsPath, 'app-contract.json'), JSON.stringify({ name: 'hr', apis: [{ id: 'hr', openapi: 'http://hr.example/openapi.json' }] }));
+    await web.bpmnServer.connectors.add({ id: 'hr', document: HR_DOC, baseUrl: `http://127.0.0.1:${api.address().port}` });
+    const before = (await admin.get('/dashboard/settings/contract')).text;
+    assert.match(before, /not tested/);
+    assert.match(before, /action="\/dashboard\/admin\/connectors\/hr\/test"/, 'a Test button, for an administrator');
+    assert.match(before, /name="returnTo" value="\/dashboard\/settings\/contract"/);
+
+    const ran = await admin.post('/dashboard/admin/connectors/hr/test', { returnTo: '/dashboard/settings/contract' });
+    assert.equal(ran.status, 302, why(ran));
+    assert.match(ran.location, /^\/dashboard\/settings\/contract\?message=/, 'back to the card');
+    assert.match(decodeURIComponent(ran.location), /Test of hr\/ping: OK/);
+    assert.match((await admin.get('/dashboard/settings/contract')).text, /connected/);
+    assert.match((await admin.get('/dashboard/settings')).text, /1 API \(1 connected\)/, 'the overview counts it');
+
+    up = false;
+    const failed = await admin.post('/dashboard/admin/connectors/hr/test', { returnTo: '/dashboard/settings/contract' });
+    assert.match(decodeURIComponent(failed.location), /Test of hr\/ping: failed/);
+    const card = (await admin.get('/dashboard/settings/contract')).text;
+    assert.match(card, /last test failed/);
+    assert.match((await admin.get('/dashboard/settings')).text, /needs its key or fails its test/);
+
+    // the return address is a page of the Settings, nothing else; the connector page is where it goes otherwise
+    for (const returnTo of ['http://evil.example/', '//evil.example/x', '/dashboard/admin', '/dashboard/settings/../admin'])
+      assert.match((await admin.post('/dashboard/admin/connectors/hr/test', { returnTo })).location, /^\/dashboard\/admin\/connectors\/hr\?message=/, returnTo);
+    assert.match((await admin.post('/dashboard/admin/connectors/hr/test', {})).location, /^\/dashboard\/admin\/connectors\/hr\?message=/, 'no returnTo: as before');
+    // the button is the administrator's, as the connector pages are
+    assert.doesNotMatch((await designer.get('/dashboard/settings/contract')).text, /connectors\/hr\/test/);
+    assert.equal((await designer.post('/dashboard/admin/connectors/hr/test', { returnTo: '/dashboard/settings/contract' })).status, 403);
+  }
+  finally {
+    api.close();
+    fs.rmSync(path.join(web.definitionsPath, 'app-contract.json'), { force: true });
+  }
 });

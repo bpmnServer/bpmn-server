@@ -641,7 +641,11 @@ export class Dashboards extends Common {
                 }
             }
             const result = await server.engine.testConnector(req.params.id, req.body.operation || undefined, input);
-            backToConnectors(res, `Test of ${result.operation}: ${result.ok ? 'OK' : 'failed'}, ${result.message}`, req.params.id);
+            const said = `Test of ${req.params.id}/${result.operation}: ${result.ok ? 'OK' : 'failed'}, ${result.message}`;
+            // from the application's contract card (Settings): back to it, with the answer; else the connector's own page
+            if (/^\/dashboard\/settings(\/[a-z]+)?$/.test(String(req.body.returnTo ?? '')))
+                return res.redirect(`${req.body.returnTo}?message=` + encodeURIComponent(said));
+            backToConnectors(res, said.replace(`${req.params.id}/`, ''), req.params.id);
         }));
 
         router.post('/admin/connectors/:id/refresh', this.isAdmin, action(async (req, res) => {

@@ -41,6 +41,11 @@ mixin contract(info)
               if a.connector && isAdmin
                 | &nbsp;
                 a(href=`/dashboard/admin/connectors/${encodeURIComponent(a.id)}`) open
+                form.integration-test(method='post', action=`/dashboard/admin/connectors/${encodeURIComponent(a.id)}/test`, style='display:inline')
+                  input(type='hidden', name='_csrf', value=_csrf)
+                  input(type='hidden', name='returnTo', value='/dashboard/settings/contract')
+                  | &nbsp;
+                  button.btn.btn-default.btn-sm(type='submit', title='Call one of its operations that needs no input') Test
       p.dash-muted An API in the contract is made a connector here, with its key: Settings, Connectors.
     else
       p.dash-muted The contract declares no APIs.
