@@ -39,7 +39,7 @@ mixin contract(info)
               if a.tested && !a.tested.ok && a.tested.message
                 span.dash-muted  (#{a.tested.message})
               if a.connector && isAdmin
-                |  
+                | &nbsp;
                 a(href=`/dashboard/admin/connectors/${encodeURIComponent(a.id)}`) open
       p.dash-muted An API in the contract is made a connector here, with its key: Settings, Connectors.
     else
