@@ -19,6 +19,14 @@ hrdemo2 (the HR application)                    sampleApp2 (OWF)
 `.env` here: `PORT`, `API_KEY` (hrdemo2's `OWF_SERVICE_KEY`), `HR_API_BASE_URL=http://localhost:3200/api/hr`,
 `HR_SERVICE_KEY` (the same as in hrdemo2), `SECRETS_KEY` (this server keeps the key encrypted with it).
 
+## A demonstration with no sign-in
+
+`npm run demo` (or `DEMO_NO_LOGIN=true`) runs this server with no sign-in, for a demonstration on your own machine: whoever
+reaches it is an administrator (bpmn-web's `REQUIRE_AUTHENTICATION=false`). So it prints a notice, answers this machine only
+(another address gets 403), and is refused with `NODE_ENV=production`. The API is not opened: the application still calls it
+with the service key and a token for each person. Normal start (`npm start`) keeps the sign-in for the designer and the
+administrator; end users never sign in here, they come through the application.
+
 ## Try it: list the employees
 
 Start the model **List Employees**: a service task calls `hr/listEmployees`, and the employees of the HR application are in
