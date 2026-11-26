@@ -17,7 +17,9 @@ import { BPMNServer, BPMNAdminAPI, verifyModel, Definition, policyNames, evaluat
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { loadTemplateCatalog, templatesOn } from './elementTemplates.js';
-import { zip } from './zip.js';
+import { zip, unzip, ZipError } from './zip.js';
+import { listExportable, planExport, parseChoice, buildPackage, withoutSecrets, previewImport, writePackageFile } from './modelPackage.js';
+import crypto from 'node:crypto';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
 import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest, withNotifications } from '../testing/scenarios.js';
 import { withReached, idsByName } from '../testing/modelCoverage.js';
@@ -98,15 +100,51 @@ export class Model extends Common {
             view.displayNew(processName, request, response);
 
         }));
+        const isAdminRequest = (request) => request.isAdmin === true || process.env.REQUIRE_AUTHENTICATION === 'false';
+        const on = (value, otherwise = true) => value === undefined ? otherwise : value === true || value === 'on' || value === 'true';
+        const listOf = (value): string[] => (Array.isArray(value) ? value : value === undefined ? [] : [value]).map(String);
+        const MAX_CHOICES = 500;
+
         router.get('/export', awaitHandlerFactory(async (request, response) => {
-            console.log(request.params);
             let procs = await bpmnServer.definitions.getList();
             // each model's tests, when it has them
             const dir = bpmnServer.configuration.definitionsPath;
             const tests = Object.fromEntries(procs.map(proc => [proc.name,
                 ['feature', 'engine.feature'].map(extension => `${proc.name}.${extension}`).filter(file => FS.existsSync(path.join(dir, file)))]));
-            response.render('models/export', { procs, tests });
+            const listed = listExportable(bpmnServer);
+            response.render('models/export', {
+                procs, tests, decisions: listed.decisions,
+                policies: listed.policies.filter(file => isAdminRequest(request) || !file.startsWith('security/')),
+            });
 
+        }));
+        /** What a package of these choices would hold (the page's review): its files, why each is there, and what is missing. */
+        router.post('/export/plan', awaitHandlerFactory(async (request, response) => {
+            const choices = listOf(request.body?.items);
+            if (!choices.length || choices.length > MAX_CHOICES) return response.status(400).send('Choose something to export.');
+            const plan = await planExport(bpmnServer, choices, {
+                dependencies: on(request.body?.dependencies), companions: on(request.body?.companions), cases: on(request.body?.cases), admin: isAdminRequest(request) });
+            response.json(plan);
+        }));
+        /**
+         * The package for the choices, less the files left out (`skip`): one .zip with a manifest; or, when one file is
+         * all that is left, that file alone.
+         */
+        router.post('/export/package', awaitHandlerFactory(async (request, response) => {
+            const choices = listOf(request.body?.items), skip = new Set(listOf(request.body?.skip));
+            if (!choices.length || choices.length > MAX_CHOICES) return response.status(400).send('Choose something to export.');
+            const plan = await planExport(bpmnServer, choices, {
+                dependencies: on(request.body?.dependencies), companions: on(request.body?.companions), cases: on(request.body?.cases), admin: isAdminRequest(request) });
+            plan.files = plan.files.filter(file => !skip.has(file.path));
+            if (!plan.files.length) return response.status(400).send('Nothing is left to export.');
+            if (plan.files.length === 1) {
+                const [only] = plan.files;
+                const data = FS.readFileSync(path.join(path.resolve(bpmnServer.configuration.definitionsPath), ...only.path.split('/')));
+                return response.attachment(path.posix.basename(only.path)).send(only.kind === 'connector' ? Buffer.from(withoutSecrets(data.toString('utf8'))) : data);
+            }
+            const chosen = choices.filter(c => parseChoice(c));
+            const name = chosen.length === 1 ? parseChoice(chosen[0]).name.replace(/^.*\//, '').replace(/\.dmn(\.xml)?$/, '') : 'models';
+            response.attachment(`${name}.zip`).type('application/zip').send(buildPackage(bpmnServer, plan, chosen, request.user?.userName));
         }));
         /** Every model, diagram, decision and test file of the models folder as one .zip. */
         router.get('/download-all', awaitHandlerFactory(async (request, response) => {
@@ -126,11 +164,43 @@ export class Model extends Common {
         }));
 
         router.get('/import', awaitHandlerFactory(async (request, response) => {
-            console.log(request.params);
             response.render('models/import');
 
         }));
 
+        // ---- a package, or a decision, is shown first: what is new, the same, different; the person chooses (docs/docs/export-import.md)
+        const STAGED_MINUTES = 10;
+        const IMPORT_BYTES = 50 * 1024 * 1024;
+        const staged = new Map<string, { entries: { name: string; data: Buffer }[]; user: string; expires: number }>();
+        const stage = (entries, user: string) => {
+            for (const [key, value] of staged) if (value.expires < Date.now()) staged.delete(key);
+            const token = crypto.randomBytes(16).toString('hex');
+            staged.set(token, { entries, user, expires: Date.now() + STAGED_MINUTES * 60000 });
+            return token;
+        };
+
+        /** A model saved as the importer saves it: laid out when it has no diagram, its diagram drawn when none came with it. */
+        const saveImportedModel = async (name: string, source: string, svg: string | null, user?: string) => {
+            if (!/<(\w+:)?BPMNDiagram[\s>]/.test(source)) {
+                try { source = await layoutModel(source); }
+                catch (exc) { console.log('auto-layout error:', exc); }
+            }
+            if (!svg) {
+                try { svg = await bpmnToSvg(source); }
+                catch (exc) { console.log('svg render error:', exc); }
+            }
+            await models.save(name, source, svg, user);
+        };
+
+        /** The preview page for what a person sent, or the page saying why it can not be read. */
+        const showPackage = (request, response, entries: { name: string; data: Buffer }[], title: string) => {
+            const { rows, manifest, problem } = previewImport(bpmnServer, entries, isAdminRequest(request));
+            if (problem || !rows.length) return response.render('models/import-package', { title, problem: problem ?? 'There is nothing in it to import.' });
+            response.render('models/import-package', {
+                title, manifest, token: stage(entries, request.user?.userName ?? ''),
+                rows: rows.filter(row => row.kind !== 'diagram').map(row => ({ ...row, takeable: row.status !== 'refused' && row.status !== 'same' })),
+            });
+        };
 
         router.post('/import', awaitHandlerFactory(async (req, res) => {
 
@@ -155,33 +225,31 @@ export class Model extends Common {
                 }
                 // read the upload in memory: no temp folder (dist/tmp does not exist in a build)
                 const chunks = [];
-                file.on('data', chunk => chunks.push(chunk));
+                let size = 0;
+                file.on('data', chunk => { size += chunk.length; if (size <= IMPORT_BYTES) chunks.push(chunk); });
                 file.on('end', async function () {
                     console.log("Upload Finished of " + safeName);
-                    const name = safeName.replace(/\.(bpmn|xml)$/i, '');   // the model's name, not the file's: saved as <name>.bpmn
-                    let source = Buffer.concat(chunks).toString('utf8');
+                    if (size > IMPORT_BYTES)
+                        return res.status(413).render('models/import-package', { title: safeName, problem: `It is larger than ${IMPORT_BYTES / 1048576} MB.` });
+                    const upload = Buffer.concat(chunks);
 
-                    // files without diagram information (BPMN DI) can't be drawn by the modeler
-                    if (!/<(\w+:)?BPMNDiagram[\s>]/.test(source)) {
-                        try {
-                            source = await layoutModel(source);
-                        }
+                    // a package: unpacked in memory, within limits, and shown before anything is written
+                    if (/\.zip$/i.test(safeName)) {
+                        try { return showPackage(req, res, unzip(upload), safeName); }
                         catch (exc) {
-                            console.log('auto-layout error:', exc);
+                            if (exc instanceof ZipError) return res.status(400).render('models/import-package', { title: safeName, problem: exc.message });
+                            throw exc;
                         }
                     }
+                    // a decision: the same preview, of one file
+                    if (/\.dmn(\.xml)?$/i.test(safeName))
+                        return showPackage(req, res, [{ name: safeName, data: upload }], safeName);
 
-                    let svg = null;
+                    const name = safeName.replace(/\.(bpmn|xml)$/i, '');   // the model's name, not the file's: saved as <name>.bpmn
+                    const source = upload.toString('utf8');
                     try {
-                        svg = await bpmnToSvg(source);
-                    }
-                    catch (exc) {
-                        console.log('svg render error:', exc);
-                    }
-
-                    try {
-                    await models.save(name, source, svg, req.user?.userName);
-                    req.session.processName = name;     // focus the imported model on the home page
+                        await saveImportedModel(name, source, null, req.user?.userName);
+                        req.session.processName = name;     // focus the imported model on the home page
                     }
                     catch(exc)
                     {
@@ -194,6 +262,38 @@ export class Model extends Common {
             });
 
 
+        }));
+
+        /** What was chosen on the preview, written: a model saved as the designer saves it (its history kept), the rest beside the others. */
+        router.post('/import/apply', awaitHandlerFactory(async (req, res) => {
+            const user = req.user?.userName ?? '';
+            const held = staged.get(String(req.body?.token));
+            if (!held || held.user !== user || held.expires < Date.now())
+                return res.render('models/import-package', { title: 'package', problem: `What was sent is not kept any longer (${STAGED_MINUTES} minutes): choose it again.` });
+            staged.delete(String(req.body.token));
+            const take = new Set(listOf(req.body.take)), replace = new Set(listOf(req.body.overwrite));
+            const data = new Map(held.entries.map(e => [e.name, e.data]));
+            // seen again now: the folder may have changed since the preview, and what is refused stays refused
+            const { rows } = previewImport(bpmnServer, held.entries, isAdminRequest(req));
+            const result: { path: string; outcome: string; why?: string }[] = [];
+            for (const row of rows) {
+                if (row.kind === 'diagram') continue;       // it goes with its model
+                if (row.status === 'refused') { result.push({ path: row.path, outcome: 'refused', why: row.why }); continue; }
+                if (!take.has(row.path)) { result.push({ path: row.path, outcome: 'not taken' }); continue; }
+                if (row.status === 'same') { result.push({ path: row.path, outcome: 'already here' }); continue; }
+                if (row.status === 'different' && !replace.has(row.path)) { result.push({ path: row.path, outcome: 'left as it is', why: 'Replace was not ticked' }); continue; }
+                try {
+                    if (row.kind === 'process') {
+                        const name = row.path.slice(0, -'.bpmn'.length);
+                        await saveImportedModel(name, data.get(row.path).toString('utf8'), data.get(`${name}.svg`)?.toString('utf8') ?? null, user);
+                        req.session.processName = name;
+                    }
+                    else writePackageFile(bpmnServer, row.path, row.kind === 'connector' ? Buffer.from(withoutSecrets(data.get(row.path).toString('utf8'))) : data.get(row.path));
+                    result.push({ path: row.path, outcome: row.status === 'new' ? 'imported' : 'replaced' });
+                }
+                catch (exc) { result.push({ path: row.path, outcome: 'failed', why: exc?.message ?? String(exc) }); }
+            }
+            res.render('models/import-package', { title: 'done', result });
         }));
 
 

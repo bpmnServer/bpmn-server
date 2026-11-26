@@ -12,6 +12,9 @@ export { apiKeyAuth } from './routes/middleware/apiKeyAuth.js';
 export { crossSiteWrite } from './routes/api/door.js';
 // form keys (docs/design/form-keys.md): the address a task's or start event's page is at, and what owf adds to it
 export { hasFormKey, formKeyAddress, withIdentifiers } from './routes/formKey.js';
+// model packages (docs/docs/export-import.md): several models with what they need in one .zip, and the .zip's reader
+export { zip, unzip, ZipError, isSafeEntryName } from './routes/zip.js';
+export { planExport, buildPackage, previewImport, kindOf, listExportable, withoutSecrets, PACKAGE_FORMAT } from './routes/modelPackage.js';
 // what each role may do on this server, for the Security settings area (docs/design/security-profiles.md)
 export { rolePermissions } from './routes/integration.js';
 export { UserService } from './userAccess/UserService.js';

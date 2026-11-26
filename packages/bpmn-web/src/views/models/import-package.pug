@@ -1,0 +1,51 @@
+extends ../layout
+
+block content
+	h3 Import: #{title}
+	if problem
+		p.text-danger= problem
+		a.btn.btn-outline-secondary(href="/model/import") Back
+	else if result
+		table.table.table-sm
+			each row in result
+				tr
+					td= row.path
+					td= row.outcome
+					td.text-muted= row.why || ""
+		a.btn.btn-primary(href="/") Done
+	else
+		if manifest
+			p.text-muted A package made #{manifest.createdAt}#{manifest.createdBy ? " by " + manifest.createdBy : ""}.
+		form(action="/model/import/apply", method="post")
+			input(type="hidden", name="_csrf", value=_csrf)
+			input(type="hidden", name="token", value=token)
+			table.table.table-sm
+				tr
+					th Take
+					th File
+					th What
+					th Here
+					th Replace
+				each row in rows
+					tr
+						td
+							if row.takeable
+								input(type="checkbox", name="take", value=row.path, checked=row.status === "new")
+						td= row.path
+						td= row.kind
+						td
+							if row.status === "new"
+								| new
+							else if row.status === "same"
+								| the same
+							else if row.status === "different"
+								| different
+							else
+								span.text-danger refused: #{row.why}
+						td
+							if row.status === "different"
+								input(type="checkbox", name="overwrite", value=row.path)
+			p.text-muted A file that is different is taken only if you also tick Replace. A diagram goes with its model.
+			button.btn.btn-primary(type="submit") Import
+			| &nbsp;
+			a.btn.btn-outline-secondary(href="/model/import") Cancel

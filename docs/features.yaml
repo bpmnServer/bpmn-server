@@ -706,6 +706,13 @@ features:
     docs: [docs/docs/integration-settings.md]
     code: [packages/bpmn-web/src/routes/integration.ts, packages/bpmn-web/src/routes/dashboards.ts, packages/bpmn-web/src/views/dashboards/integration.pug, packages/bpmn-server/src/common/settingValue.ts, packages/bpmn-server/src/engine/AddOns.ts]
     tests: [apps/testSampleApp/test/web/integration.test.mjs, apps/testSampleApp/test/web/add-ons.test.mjs]
+  - id: export-import
+    area: modeling
+    name: "Export and import of models, in a package"
+    what: "Several models, decisions and policies chosen at once, each with what it needs (the models it calls, its decisions and policies, notification templates, connectors, tests, diagram, and the cases its tests made) in one .zip with a manifest of checksums, or one file alone; a connector never carries its key, an administrator's files (security policies, connectors) need one. The import reads a .bpmn at once, or a .zip or decision after a preview (new, the same, different, refused) and writes what is chosen, a model saved as the editor saves it."
+    docs: [docs/docs/export-import.md, docs/design/target-architecture.md]
+    code: [packages/bpmn-web/src/routes/modelPackage.ts, packages/bpmn-web/src/routes/zip.ts, packages/bpmn-web/src/routes/model.ts, packages/bpmn-web/src/views/models/export.pug, packages/bpmn-web/src/views/models/import.pug, packages/bpmn-web/src/views/models/import-package.pug]
+    tests: [apps/testSampleApp/test/web/model-package.test.mjs]
   - id: app-contract
     area: application
     name: "The application's contract (app-contract.json)"

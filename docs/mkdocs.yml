@@ -139,6 +139,7 @@ nav:
 
 - Modeling:
   - The model editor: modeler.md
+  - Exporting and importing models: export-import.md
   - Checking models: verify.md
   - Testing and debugging: testing.md
   - Scripts and expressions: scripting.md

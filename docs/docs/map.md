@@ -50,6 +50,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 ## Modeling
 
 - [The model editor](modeler.md): bpmn-web's model editor is bpmn-js with a properties panel that offers what bpmn-server runs, checks the model as it is edited, and runs it, step by step, before it is saved…
+- [Exporting and importing models](export-import.md): Move models between servers: choose several at once, and what each needs comes with them in one .zip, or take one file alone.
 - [Checking models](verify.md): verifyModel checks a BPMN model the way bpmn-server loads and runs it, without running it.
 - [Testing and debugging](testing.md): A model is ready when it passes three kinds of checks:
 - [Scripts and expressions](scripting.md): BPMN-Server provides scripting throughout the workflow.

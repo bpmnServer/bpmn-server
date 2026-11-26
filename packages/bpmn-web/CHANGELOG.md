@@ -52,6 +52,18 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+### Added
+- **Export and import of several models at once** (docs/docs/export-import.md): tick processes, decisions and policies on the
+  export page, review what each needs (the models it calls, its decisions and policies, notification templates, the
+  connectors it names, its tests and diagram, and the cases its tests made (`test-cases/`, which the model guide's
+  examples link to; each an option); what is missing is said) and download one `.zip` with a `manifest.json` of
+  checksums, or one file alone. A connector never carries its key; security policies and connectors are an
+  administrator's. The import reads a `.bpmn` at once, as before, and a `.zip` or a `.dmn` after a preview (new, the same,
+  different, refused): you take what you choose, and replace only what you tick. Refused: names that leave the folder or
+  are not a package's, damaged, encrypted or oversize archives (500 files, 10 MB a file, 50 MB), files that do not match
+  the manifest, a newer package version, and, for a designer, security policies and connectors. `zip` and `unzip` of
+  `routes/zip.ts`, `planExport` and `previewImport` are exported. Test: `apps/testSampleApp/test/web/model-package.test.mjs`.
+
 ### Fixed
 - **bpmn-web declares its license**: `license: MIT` in `package.json` and a `LICENSE` file, as bpmn-server, bpmn-client and
   bpmn-mcp have. Up to 3.7.5, npm showed it as having none.

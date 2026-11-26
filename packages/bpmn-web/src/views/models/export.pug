@@ -1,18 +1,95 @@
 extends ../layout
 
 block content
-	h3 Processes to Export
-		table
+	h3 Export
+	p.text-muted Choose what to export. A .zip has each choice with what it needs (the models it calls, its decisions, policies, message templates and connectors, its tests and diagram); a connector never carries its key. Choose one file and clear what comes with it, and you get that file alone.
+	form#choose
+		input(type="hidden", name="_csrf", value=_csrf)
+		h5 Processes
+		table.table.table-sm
 			each proc in procs
-				tr 
-					a(vertical-align="top")
-					td 
-						a(href=`/model/download/${proc.name}.bpmn`) #{proc.name}.bpmn
-					td 
-						a(href=`/model/download/${proc.name}.svg`) #{proc.name}.svg
+				tr
+					td
+						input(type="checkbox", name="items", value=`process:${proc.name}`, id=`p-${proc.name}`)
+					td
+						label(for=`p-${proc.name}`) #{proc.name}
+					td
+						a(href=`/model/download/${proc.name}.bpmn`) .bpmn
+					td
+						a(href=`/model/download/${proc.name}.svg`) .svg
 					td
 						each file in tests[proc.name] || []
 							a(href=`/model/download/${file}`) #{file}
 							br
-	p
-		a.btn.btn-primary(href='/model/download-all') Download all (.zip)
+		if decisions.length
+			h5 Decisions
+			table.table.table-sm
+				each file in decisions
+					tr
+						td
+							input(type="checkbox", name="items", value=`decision:${file}`, id=`d-${file}`)
+						td
+							label(for=`d-${file}`) #{file}
+		if policies.length
+			h5 Policies
+			table.table.table-sm
+				each file in policies
+					tr
+						td
+							input(type="checkbox", name="items", value=`policy:${file}`, id=`o-${file}`)
+						td
+							label(for=`o-${file}`) #{file}
+		.form-check
+			input#dependencies.form-check-input(type="checkbox", checked)
+			label.form-check-label(for="dependencies") With what they need
+		.form-check
+			input#companions.form-check-input(type="checkbox", checked)
+			label.form-check-label(for="companions") With their tests and diagrams
+		.form-check
+			input#cases.form-check-input(type="checkbox", checked)
+			label.form-check-label(for="cases") With the cases their tests made (the guide's "See the case it made")
+		p
+			button#review.btn.btn-primary(type="button") Review what will be exported
+			| &nbsp;
+			a.btn.btn-outline-secondary(href="/model/download-all") Download everything (.zip)
+	#plan(hidden)
+		h5 In the package
+		p.text-muted Clear a file to leave it out.
+		table#files.table.table-sm
+		ul#gaps.text-warning
+		form#download(action="/model/export/package", method="post")
+			input(type="hidden", name="_csrf", value=_csrf)
+			button.btn.btn-primary(type="submit") Download
+	script.
+		const form = document.getElementById("choose");
+		const options = () => ({ items: [...form.querySelectorAll("input[name=items]:checked")].map(i => i.value), dependencies: document.getElementById("dependencies").checked, companions: document.getElementById("companions").checked, cases: document.getElementById("cases").checked });
+		document.getElementById("review").addEventListener("click", async () => {
+			const chosen = options();
+			if (!chosen.items.length) return alert("Choose something to export.");
+			const response = await fetch("/model/export/plan", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRF-Token": form._csrf.value }, body: JSON.stringify(chosen) });
+			if (!response.ok) return alert(await response.text());
+			const { files, gaps } = await response.json();
+			const table = document.getElementById("files"), list = document.getElementById("gaps"), down = document.getElementById("download");
+			table.replaceChildren(); list.replaceChildren();
+			for (const file of files) {
+				const row = table.insertRow();
+				const box = document.createElement("input"); box.type = "checkbox"; box.checked = true; box.value = file.path; box.dataset.file = "1"; box.className = "keep";
+				row.insertCell().append(box);
+				row.insertCell().textContent = file.path;
+				row.insertCell().textContent = file.kind;
+				row.insertCell().textContent = file.selected ? "chosen" : "needed by " + file.requiredBy.join(", ");
+			}
+			for (const gap of gaps) { const li = document.createElement("li"); li.textContent = `${gap.what}: ${gap.why} (${gap.neededBy})`; list.append(li); }
+			document.getElementById("plan").hidden = false;
+			down.dataset.items = JSON.stringify(chosen);
+		});
+		document.getElementById("download").addEventListener("submit", event => {
+			const form = event.target, chosen = JSON.parse(form.dataset.items || "{}");
+			form.querySelectorAll("input.generated").forEach(i => i.remove());
+			const hidden = (name, value) => { const i = document.createElement("input"); i.type = "hidden"; i.name = name; i.value = value; i.className = "generated"; form.append(i); };
+			for (const item of chosen.items || []) hidden("items", item);
+			hidden("dependencies", chosen.dependencies ? "on" : "");
+			hidden("companions", chosen.companions ? "on" : "");
+			hidden("cases", chosen.cases ? "on" : "");
+			for (const box of document.querySelectorAll("#files input.keep")) if (!box.checked) hidden("skip", box.value);
+		});
