@@ -27,7 +27,7 @@ test('administrators and designers open it, with every area: the server\'s, then
         const res = await who.get('/dashboard/settings');
         assert.equal(res.status, 200, why(res));
         // the overview: a card for each point, saying what it has in a few words, and linking to its page
-        for (const id of ['roles', 'application', 'connectors', 'api', 'models'])
+        for (const id of ['contract', 'roles', 'application', 'connectors', 'api', 'models'])
             assert.ok(res.text.includes(`<a class="integration-card" href="/dashboard/settings/${id}" id="${id}">`), `${who.userName} sees ${id}`);
         // an add-on's card: whether it is on (read only), its title linking to its area, where it is turned on or off;
         // Extended Forms is part of Model Options, and AI Agents an add-on

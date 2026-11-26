@@ -13,6 +13,67 @@ mixin names(list)
   else
     span.dash-muted none
 
+mixin contract(info)
+  if !info.found
+    p.dash-muted The application publishes no contract. Put an #[code app-contract.json] in its folder (or have its delegate answer #[code describe()]): its APIs, pages, roles and functions are then shown here, and models are checked against them.
+  else
+    if info.description
+      p= info.description
+    if info.problems.length
+      ul.integration-attention
+        each problem in info.problems
+          li= problem
+    h3 APIs
+    if info.apis.length
+      table
+        tr
+          th API
+          th Its document
+          th Connector here
+        each a in info.apis
+          tr
+            td: code= a.id
+            td: code= a.openapi
+            td
+              = a.state
+              if a.tested && !a.tested.ok && a.tested.message
+                span.dash-muted  (#{a.tested.message})
+              if a.connector && isAdmin
+                |  
+                a(href=`/dashboard/admin/connectors/${encodeURIComponent(a.id)}`) open
+      p.dash-muted An API in the contract is made a connector here, with its key: Settings, Connectors.
+    else
+      p.dash-muted The contract declares no APIs.
+    h3 Pages
+    if info.pages.length
+      table
+        tr
+          th Page
+          th Address
+        each p in info.pages
+          tr
+            td= p.title || p.id
+            td: code= p.url
+    else
+      p.dash-muted The contract declares no pages (the application's own forms a model can name, #[code camunda:formKey="app:&lt;page&gt;"]).
+    h3 Roles and functions
+    dl
+      dt Roles
+      dd
+        +names(info.roles)
+      dt Functions (appServices)
+      dd= info.functions
+  h3 How it connects
+  dl
+    dt The API the application calls
+    dd
+      code= info.connection.api
+      |  with the service key (#{info.connection.serviceKey ? 'set' : 'not set'})
+    dt Links this server sends (a handoff's)
+    dd= info.connection.siteAddress
+    dt Who signs in
+    dd= info.connection.signIn
+
 mixin application(info)
   dl
     dt Delegate
@@ -318,6 +379,8 @@ block dash
         case point.id
           when 'secure'
             +permissions(point.info)
+          when 'contract'
+            +contract(point.info)
           when 'application'
             +application(point.info)
           when 'connectors'

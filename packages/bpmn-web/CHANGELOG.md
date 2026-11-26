@@ -53,6 +53,12 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The application's contract on the Settings page** (`/dashboard/settings/contract`, the first card): who the application is
+  and what it publishes in `app-contract.json`: its APIs, each with the connector made from it and how that stands (no
+  connector made, no key, not tested, connected, last test failed, off), its pages, roles and functions, what is wrong with the
+  file, and how the application and this server reach each other (the API it calls and whether the service key is set, the
+  address links begin with, who signs people in). `contractCard` is exported. Test:
+  `apps/testSampleApp/test/web/integration-contract.test.mjs`.
 - **Handoffs** (docs/docs/handoffs.md): an application that runs OWF beside it sends a person to one of OWF's pages with no
   second sign-in. Its back end asks for a handoff (`POST /api/v3/handoffs`, the service key: a person, their groups, a task,
   where to go when done); the person's browser opens the link, which is spent by its first visit (a minute, at most 5), and

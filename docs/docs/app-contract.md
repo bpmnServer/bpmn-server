@@ -41,6 +41,9 @@ contract lets the editor offer names, and the checks find a wrong one before it 
 - **The editor** offers its functions with their descriptions after `appServices.`.
 - **API v3:** `GET /api/v3/application` answers it (and its problems), for an agent building a model; `/llms.txt`
   links it.
+- **The Settings page** has a card for it (`/dashboard/settings/contract`): the contract's APIs with the connector made from
+  each and how it stands, its pages, roles and functions, its problems, and how the application and this server reach each
+  other ([the Settings page](integration-settings.md)).
 
 Not built yet: a delegate in another language over HTTP (`appUrl`), opening an application's page from a task (the
 form protocol), the MDE adapter.

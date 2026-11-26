@@ -48,6 +48,11 @@ export function addOnArea(manifest: { name: string; title: string; description?:
 /** The server's areas, no add-on's, in the page's order (each add-on's follow, from its manifest). */
 export const INTEGRATION_POINTS: IntegrationPoint[] = [
     {
+        id: 'contract', title: "The application's contract",
+        about: 'What the application publishes in app-contract.json (its APIs, pages, roles and functions), and how it is connected to this server.',
+        settings: [],
+    },
+    {
         id: 'roles', title: 'Roles',
         about: 'The roles lanes and tasks are given to, and that policies name (the application\'s app-contract.json): the server\'s, whichever add-ons are on. What each role is allowed to do is on Security.',
         settings: [],
@@ -267,6 +272,56 @@ export function rolePermissions(appRoles: string[] = [], granted: Map<string, re
     return { permissions, roles, restrictions };
 }
 
+/** One of the contract's APIs, as this server has it: the connector made from it, and how that connector stands. */
+export interface ContractApi { id: string; openapi: string; connector: boolean; enabled?: boolean; keyed?: boolean; tested?: { ok: boolean; at: string; message?: string }; state: string }
+export interface ContractCard {
+    found: boolean;
+    name?: string;
+    description?: string;
+    apis: ContractApi[];
+    pages: { id: string; url: string; title?: string }[];
+    roles: string[];
+    functions: number;
+    problems: string[];
+    /** how the application and this server reach each other */
+    connection: { api: string; serviceKey: boolean; siteAddress: string; signIn: string };
+}
+
+/**
+ * The application's contract (app-contract.json) as a card of the Settings page: who it is, its APIs each with the
+ * connector made from it and how that stands (made, enabled, key set, last test), its pages, roles and functions, what is
+ * wrong with the file, and how the application and this server reach each other (the API it calls, and the address the
+ * links this server sends, a handoff's among them, begin with). No contract: found is false, and the card says so.
+ */
+export function contractCard(contract: any, problems: string[], connectors: any[], { hostUsers = false, origin = '', env = process.env }: { hostUsers?: boolean; origin?: string; env?: Record<string, string | undefined> } = {}): ContractCard {
+    const connection = {
+        api: `${origin}/api/v3`,
+        serviceKey: !!String(env.API_KEY ?? '').trim(),
+        siteAddress: String(env.SITE_URL ?? '').trim() || 'not set: links begin with the address a request came to',
+        signIn: hostUsers ? 'the application signs its people in (its user manager)' : "this server's own users",
+    };
+    if (!contract) return { found: false, apis: [], pages: [], roles: [], functions: 0, problems: [], connection };
+    const apis: ContractApi[] = (Array.isArray(contract.apis) ? contract.apis : []).map(a => {
+        const connector = connectors.find(c => c.id === a.id);
+        const test = connector?.test;
+        const keyed = !!connector?.auth?.last4;
+        const tested = test ? { ok: !!test.ok, at: test.at, message: test.message } : undefined;
+        const state = !connector ? 'no connector made'
+            : connector.enabled === false ? 'off'
+            : !keyed && connector.auth ? 'no key'
+            : tested ? (tested.ok ? 'connected' : 'last test failed')
+            : 'not tested';
+        return { id: a.id, openapi: a.openapi, connector: !!connector, enabled: connector?.enabled, keyed, tested, state };
+    });
+    return {
+        found: true, name: contract.name, description: contract.description, apis,
+        pages: (Array.isArray(contract.pages) ? contract.pages : []).map(p => ({ id: p.id, url: p.url, ...(p.title ? { title: p.title } : {}) })),
+        roles: (Array.isArray(contract.roles) ? contract.roles : []).map(r => r.name),
+        functions: (Array.isArray(contract.expressions) ? contract.expressions : []).filter(e => e.kind === 'function').length,
+        problems, connection,
+    };
+}
+
 /**
  * What an integration point has, in a few words, for the Settings page's overview: { lines, attention } (attention:
  * something to set up, said so). From what the page knows of it (`info`) and its settings.
@@ -299,6 +354,17 @@ export function summaryOf(id: string, info: any, settings: any[]): { lines: stri
                     : valueOf(settings, 'SESSION_SECRET') === 'not set' && !env('REQUIRE_AUTHENTICATION', 'false')
                         ? 'Sign-in is required but no session secret is set'
                         : undefined };
+        }
+        case 'contract': {
+            const card = info as ContractCard;
+            if (!card.found) return { lines: ['No contract: the application publishes none (app-contract.json)'] };
+            const connected = card.apis.filter(a => a.state === 'connected').length;
+            return { lines: [
+                `${card.name ?? 'The application'}: ${count(card.apis.length, 'API')}${card.apis.length ? ` (${connected} connected)` : ''}, ${count(card.pages.length, 'page')}, ${count(card.roles.length, 'role')}`,
+            ], attention: card.problems.length ? `${count(card.problems.length, 'problem')} in app-contract.json`
+                : card.apis.some(a => a.state === 'no connector made') ? 'An API in the contract has no connector yet'
+                : card.apis.some(a => a.state === 'no key' || a.state === 'last test failed') ? 'An API in the contract needs its key or fails its test'
+                : !card.connection.serviceKey ? 'No service key: the application cannot call this server' : undefined };
         }
         case 'application': {
             const functions = (info.services ?? []).filter(s => s.kind === 'function').length;

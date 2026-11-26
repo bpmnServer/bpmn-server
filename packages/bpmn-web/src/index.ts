@@ -16,7 +16,7 @@ export { hasFormKey, formKeyAddress, withIdentifiers } from './routes/formKey.js
 export { zip, unzip, ZipError, isSafeEntryName } from './routes/zip.js';
 export { planExport, buildPackage, previewImport, kindOf, listExportable, withoutSecrets, PACKAGE_FORMAT } from './routes/modelPackage.js';
 // what each role may do on this server, for the Security settings area (docs/design/security-profiles.md)
-export { rolePermissions } from './routes/integration.js';
+export { rolePermissions, contractCard } from './routes/integration.js';
 export { UserService } from './userAccess/UserService.js';
 // who signs in: bpmn-web's own (UserManager), or the application's (start({ userManager }))
 export { UserManager } from './userAccess/UserManager.js';

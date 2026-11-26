@@ -11,7 +11,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, ROLE_PERMISSIONS, BPMNAPI, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, readAppContract, saveContractRoles, APP_CONTRACT_FILE, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications, connectorsTesting } from '../index.js';
+import { SecureUser, ROLE_PERMISSIONS, BPMNAPI, contractProblems, verifyModel, dateDiff, labelItems, roleNames, saveRoleNames, roleUses, roleNameProblem, readAppContract, saveContractRoles, APP_CONTRACT_FILE, policyNames, SecurityPolicy, DEFAULT_SECURITY_POLICY, notificationPolicyNames, findNotifications, connectorsTesting } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { pageApi } from './api/pageClient.js';
@@ -35,7 +35,7 @@ import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 import { hostSettings as hostSettingsOf } from '../runtime/hostSettings.js';
-import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea, rolePermissions, SERVER_ROLES } from './integration.js';
+import { INTEGRATION_POINTS, EnvFile, settingsOf, changesFrom, appServiceNames, summaryOf, addOnArea, rolePermissions, SERVER_ROLES, contractCard } from './integration.js';
 import { addOnsOf, readAppConfig, addOnNames, APP_CONFIG_FILE } from '../index.js';
 import type { IAddOnManifest } from '../index.js';
 
@@ -745,13 +745,19 @@ export class Dashboards extends Common {
             // the application's delegate is the engine's: it says its class and methods (none, an engine that does not run or is older)
             const facts: any = await server.engine.facts().catch(() => ({}));
             const methods: string[] = facts.delegate?.methods ?? [];
+            // the application's contract, and how it stands here (routes/integration.ts: contractCard)
+            let contract = null;
+            try { contract = server.appDelegate?.describe?.() ?? null; } catch { contract = null; }
+            const connectorList = (await server.connectors.list()).map(c => ({ ...c, models: used.get(c.id) ?? [] }));
             const info: Record<string, any> = {
+                contract: contractCard(contract, contract ? contractProblems(contract) : [], connectorList,
+                    { hostUsers: !own, origin: `${req.protocol}://${req.get('host')}` }),
                 application: {
                     delegate: facts.delegate?.name ?? null, methods, services, servicesError,
                     hostUsers: !own, hostSettings: appHostSettings(),
                 },
                 connectors: {
-                    list: (await server.connectors.list()).map(c => ({ ...c, models: used.get(c.id) ?? [] })),
+                    list: connectorList,
                     canEncrypt: await keysSettable(),
                 },
                 api: { taskApi: !!hostSettingsOf(req).actingUserKey, hostSettings: appHostSettings() },
