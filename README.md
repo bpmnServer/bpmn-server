@@ -1,4 +1,21 @@
-# bpmnServer
+# BPMN Server
+
+**From BPMN diagram to running workflow.**
+
+BPMN Server by **OmniWorkflow** is an open-source workflow engine for Node.js applications. Design BPMN processes visually, execute and monitor workflow instances, and integrate long-running business processes into your own application.
+
+**[Try the live demo](https://bpmn.omniworkflow.com)** · **[Get started](#quick-start)** · **[Documentation](https://bpmnserver.github.io/bpmn-server/)** · **[OmniWorkflow.com](https://omniworkflow.com/)**
+
+### Try it locally
+
+```sh
+npx bpmn-server init my-app --memory
+cd my-app
+npm run setup
+npm start
+```
+
+Open [http://localhost:3000](http://localhost:3000). You can later configure MongoDB or SQLite for persistent storage.
 
 `bpmn-server` is a BPMN-based workflow engine that integrates easily into your Node.js app. It supports built-in state persistence, variable management, and concurrency across clusters—ideal for long-running processes, durable services, and scheduled tasks.
 
